@@ -1,0 +1,8 @@
+{
+    "/backend/ebazar.style.min.css": "/backend/ebazar.style.min.css",
+    "/backend/dist/assets/bundles/libscripts.bundle.js": "/backend/dist/assets/bundles/libscripts.bundle.js",
+    "/backend/dist/assets/bundles/apexcharts.bundle.js": "/backend/dist/assets/bundles/apexcharts.bundle.js",
+    "/backend/dist/assets/bundles/sparkline.bundle.js": "/backend/dist/assets/bundles/sparkline.bundle.js",
+    "/backend/dist/assets/bundles/dataTables.bundle.js": "/backend/dist/assets/bundles/dataTables.bundle.js",
+    "/backend/dist/assets/bundles/dropify.bundle.js": "/backend/dist/assets/bundles/dropify.bundle.js"
+}
