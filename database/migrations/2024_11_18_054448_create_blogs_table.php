@@ -18,10 +18,13 @@ return new class extends Migration
             $table->string('title');
             $table->text('content');
             $table->string('description',510)->nullable();
-            $table->foreignId('author')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('author')->nullable(); // Add user_id column
             $table->string('image')->nullable();
             $table->boolean('is_published')->default(false);
             $table->timestamps();
+
+            $table->foreign('author')->references('id')->on('users')->onDelete('cascade');
+
         });
     }
 
