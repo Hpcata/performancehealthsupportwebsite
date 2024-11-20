@@ -54,7 +54,7 @@ class LoginController extends Controller
     public function index()
     {
         if (Auth::user() && Auth::user()->id) {
-            return redirect()->route('dashboard');
+            return redirect()->route('blog.index');
         }
         return view('backend.pages.auth.login');
     }
@@ -423,7 +423,9 @@ class LoginController extends Controller
     }
 
     public function dashboard() {
-		return view('backend.pages.index');
+        return redirect()->route('backend.blogs.index');
+
+		// return view('backend.pages.index');
 	}
 
 }

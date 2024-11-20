@@ -10,7 +10,7 @@
 		<!-- Menu: main ul -->
 		<ul class="menu-list flex-grow-1 mt-3">
 
-			<li><a class="m-link {!! routeIsActive(backendRoute('dashboard')) !!}" href="{!! backendRoutePut('dashboard') !!}"><i class="icofont-home fs-5"></i> <span>Dashboard</span></a></li>
+			<!-- <li><a class="m-link {!! routeIsActive(backendRoute('dashboard')) !!}" href="{!! backendRoutePut('dashboard') !!}"><i class="icofont-home fs-5"></i> <span>Dashboard</span></a></li> -->
 
 			<li>
 			<?php
