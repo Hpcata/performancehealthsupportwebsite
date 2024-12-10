@@ -38,9 +38,10 @@ class Plan extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function categories()
+    // Define relationship with MealTime
+    public function mealTimes()
     {
-        return $this->hasMany(Category::class);
+        return $this->belongsToMany(MealTime::class, 'plan_meal_time');
     }
 
 }

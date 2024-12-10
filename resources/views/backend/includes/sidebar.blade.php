@@ -28,12 +28,36 @@
 				</a>
 			</li>
 			<li>
+				<a class="m-link" href="{{ route('admin.meal-times.index') }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Meal Times</span>
+				</a>
+			</li>
+			<li>
 				<a class="m-link" href="{{ route('admin.plans.index') }}">
 					<i class="icofont-focus fs-5"></i>
 					<span>Plans</span>
 				</a>
 			</li>
 			<li>
+				<a class="m-link" href="{{ route('admin.categories.index') }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Categories</span>
+				</a>
+			</li>
+			<li>
+				<a class="m-link" href="{{ route('admin.subcategories.index') }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Sub Categories</span>
+				</a>
+			</li>
+			<li>
+				<a class="m-link" href="{{ route('admin.meals.index') }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Meals</span>
+				</a>
+			</li>
+			{{-- <li>
 				
 				<a class="m-link" data-bs-toggle="collapse" data-bs-target="#categories" href="#">
 					<i class="icofont-chart-flow fs-5"></i> <span>Plan Categories</span> <span class="arrow icofont-rounded-down ms-auto text-end fs-5"></span></a>
@@ -43,11 +67,11 @@
 					<li><a class="ms-link " href="{{ route('admin.categories.index') }}">Categories List</a></li>
 					<li><a class="ms-link " href="{{ route('admin.subcategories.index') }}">Sub Categories List</a></li>
 				</ul>
-			</li>
+			</li> --}}
 			<li>
 				<a class="m-link" href="{{ route('admin.items.index') }}">
 					<i class="icofont-focus fs-5"></i>
-					<span>Plan Items</span>
+					<span>Meal Items</span>
 				</a>
 			</li>
 			<li><?php

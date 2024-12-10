@@ -21,20 +21,6 @@
                         @if (isset($plan)) @method('PUT') @endif
 
                         <div class="row g-3 align-items-center">
-                            <!-- User ID -->
-                            {{--  <div class="col-md-12">
-                                <label for="user_id" class="form-label">User</label>
-                                <input type="text" id="name" name="name" class="form-control" value="{{ $plan->user->name ?? '' }}" required>
-
-                               <select id="user_id" name="user_id" class="form-select" required>
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}" {{ isset($plan) && $plan->user_id == $user->id ? 'selected' : '' }}>
-                                            {{ $user->name }}
-                                        </option>
-                                    @endforeach
-                                </select> 
-                            </div>--}}
-
                             <!-- Name -->
                             <div class="col-md-12">
                                 <label for="name" class="form-label">Name</label>
@@ -59,6 +45,19 @@
                                 <textarea id="description" name="description" class="form-control">{{ $plan->description ?? '' }}</textarea>
                             </div>
 
+                            <!-- Meal Times -->
+                            <div class="col-md-12">
+                                <label for="meal_times" class="form-label">Meal Times</label>
+                                <select id="meal_times" name="meal_times[]" class="form-select select2" multiple>
+                                    @foreach ($mealTimes as $mealTime)
+                                        <option value="{{ $mealTime->id }}" 
+                                            {{ isset($plan) && $plan->mealTimes->contains($mealTime->id) ? 'selected' : '' }}>
+                                            {{ $mealTime->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <!-- Image -->
                             <div class="col-md-12">
                                 <label for="image" class="form-label">Image</label>
@@ -78,4 +77,15 @@
         </div>
     </div>
 </div>
+
 @endsection
+@push('custom_scripts')
+<script>
+$(document).ready(function() {
+    $('.select2').select2({
+        placeholder: "Select meal times",
+        allowClear: true
+    });
+});
+</script>
+@endpush

@@ -14518,10 +14518,9 @@ span.border-heading:after {
 .entry-categories { display: flex; align-items: end; justify-content: end; width: 100%; flex-wrap: wrap; }
 .entry-categories a:before { content: "/"; margin: 0 0.7rem; }
 .entry-categories a:first-child:before { display: none; }
-
 .nutrition-page-banner { background-color: #3B3B3B; position: relative; z-index: 1; min-height: calc(100vh - 84px); background-repeat: no-repeat; background-size: cover; background-position: top center; height: 800px; display: flex; flex-direction: column; } 
 .nutrition-page-banner .container { height: 100%; display: flex; flex-direction: column; }
-.nutrition-page-banner:after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: -1; opacity: 0.8; background: linear-gradient(0deg, rgb(210, 79, 79) 0%, rgba(0, 0, 0, 0) 100%); }
+.nutrition-page-banner:after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: -1; opacity: 0.8; background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%); }
 .power-peak-row .row > div:last-child { position: relative; z-index: 2; }
 .about-content { margin-left: -16%; background: #fff; padding: 2rem; }
 .about-content p:last-child { margin-bottom: 0; }
@@ -14570,6 +14569,9 @@ span.border-heading:after {
     .nutrition-page-banner { height: 450px; }
 }
 
+
+
+
 .nutrition-plan-img-box { position: relative; max-width: 540px; margin: 0 auto; width: 100%; }
 .nutrition-plan-img figure { margin: 0; border-radius: 2rem; overflow: hidden; } 
 .nutrition-plan-img figure img { width: 100%; height: auto; }
@@ -14581,7 +14583,7 @@ span.border-heading:after {
 .bottom-corner { right: 0; top: 100%; }
 .nutrition-plan-text .text-primary { color: #649ef7 !important; display: block; }
 
-.nutrition-bottom-box { position: absolute; bottom: 0; left: 0; background: #fafafa; padding: 30px 30px 0 30px; border-radius: 0 80px 0 0; }
+.nutrition-bottom-box { position: absolute; bottom: 0; left: 0; background: #fafafa; padding: 30px 30px 0 0; border-radius: 0 80px 0 0; }
 .nutrition-bottom-box .top-corner, .nutrition-bottom-box .bottom-corner { position: absolute; width: 35px; margin: 0; }
 .nutrition-bottom-box .top-corner { bottom: 100%; left: 0; right: auto; top: auto; }
 .nutrition-bottom-box .bottom-corner { right: auto; top: auto; left: 100%; bottom: 0; }
@@ -14595,6 +14597,62 @@ span.border-heading:after {
 .plan-buttons-link a { border: 2px solid #3b3b3b; color: #3b3b3b; padding: 0.4rem 1.2rem; border-radius: 50px; font-weight: 500; letter-spacing: 0.03rem; margin: 0.3rem; text-decoration: none; }
 .plan-buttons-link a:hover { background: #3b3b3b; border-color: #3b3b3b; color: #fff; }
 
-.nutrition-plan-box { border: 1px solid #E4EAF5; border-radius: 1rem; padding: 1rem; }
+.nutrition-plan-box { border: 1px solid #E4EAF5; border-radius: 1rem; padding: 1rem; background-color: #fff; }
 .nutrition-plan-box figure { position: relative; overflow: hidden; border-radius: 0.5rem; }
 .nutrition-plan-box figure img { width: 100%; height: auto; }
+
+@media only screen and (max-width: 1199px) {
+
+}
+@media only screen and (max-width: 991px) {
+    .go-bottom-link { border-radius: 0 0 0 50px; padding: 20px; }
+    .go-bottom-link .btn { height: 70px; width: 70px; }
+    .go-bottom-link .btn svg { width: 40px; }
+    .nutrition-bottom-box { padding: 20px 20px 0 0; border-radius: 0 70px 0 0; }
+    .nutrition-athlete-box figure { width: 60px; max-width: 60px; min-width: 60px; }
+
+}
+@media only screen and (max-width: 767px) {
+    .nutrition-plan-img-box, .plan-buttons-link { margin-top: 2rem; }
+    
+}
+@media only screen and (max-width: 575px) {
+        .go-bottom-link { border-radius: 0 0 0 40px; padding: 15px; top: -2px; right: -2px; }
+        .go-bottom-link .btn { height: 60px; width: 60px; }
+        .go-bottom-link .btn svg { width: 54%; }
+        .nutrition-bottom-box { padding: 15px 15px 0 0; border-radius: 0 60px 0 0; bottom: -2px; left: -2px; }
+        .nutrition-athlete-box { padding: 13px; } 
+        .nutrition-athlete-box figure { width: 50px; max-width: 50px; min-width: 50px; }
+        .nutrition-athlete-info { font-size: 0.8rem; padding-right: 0.4rem; }
+        .nutrition-athlete-box h5 { font-size: 1rem; }
+}
+
+
+.main-category-list .row > div { width: 280px; margin-right: 16px; }
+.main-category-list .row { position: relative; overflow-x: auto; flex-wrap: nowrap; }
+.category-swap-list-box { position: relative; overflow: hidden; display: flex; align-items: center; border-bottom: 1px solid #dee2e6; margin-bottom: 1rem; padding-bottom: 1rem; }
+.category-swap-list-box:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+.category-swap-list-box figure { margin: 0 1rem 0 0; max-width: 100px; min-width: 100px; width: 100%; }
+.category-swap-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 130px; padding: 0 0 0 0.6rem; margin-left: auto; }
+.category-swap-btn .btn { width: 100%; font-size: 1rem; padding: 1rem 1rem; justify-content: center; }
+.btn.btn-primary:hover, .btn:active.btn-primary, .btn.btn-primary:focus { color: #fff; background-color: #3B3B3B; border-color: #3B3B3B; }
+
+.category-swap-list-box:hover .category-swap-btn { transform: translateX(0); opacity: 1; visibility: visible; }
+
+.btn.btn-swap svg { transform: rotate(0); transition: 0.35s all; }
+.btn.btn-swap:hover svg { transform: rotate(180deg); }
+
+.category-item-swap.category-swap-list-box figure { margin-right: 0; }
+.category-item-swap .category-swap-btn { padding-left: 0; }
+.category-swap-list-box figcaption { font-family: "Merriweather", serif; font-weight: 600; text-align: center; letter-spacing: 0.03rem; }
+.apply-changes-btn.btn { font-size: 15px; padding: 0.5rem 1.3rem 0.7rem; border-radius: 0.6rem; }
+
+
+@media only screen and (max-width: 479px) {
+    .category-swap-list-box { flex-wrap: wrap; }
+    .category-swap-list-box figure { max-width: 70px; min-width: 70px; }
+    .category-item-swap.category-swap-list-box figure { margin-right: 0; }
+    .category-swap-btn { width: 100%; flex-direction: row; padding-left: 0; margin-top: 0.6rem; max-width: 260px; margin-left: 0; }
+    .category-item-swap.category-swap-list-box { flex-wrap: nowrap; }
+    .category-item-swap.category-swap-list-box .category-swap-btn { max-width: 130px; }
+}

@@ -9,15 +9,16 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['plan_id', 'title', 'description', 'image'];
+    protected $fillable = ['title', 'description', 'image'];
 
-    public function plan()
+    public function mealtimes()
     {
-        return $this->belongsTo(Plan::class);
+        return $this->belongsToMany(MealTime::class, 'category_mealtime');
     }
 
-    public function subCategories()
+    // Define the many-to-many relationship
+    public function subcategories()
     {
-        return $this->hasMany(SubCategory::class);
+        return $this->belongsToMany(SubCategory::class, 'category_subcategory');
     }
 }

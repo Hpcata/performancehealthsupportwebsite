@@ -89,8 +89,8 @@
             </div>
             <div class="mt-4">
                 <div class="row g-4">
-                @if($plan->categories->count())
-                    @foreach($plan->categories as $category)
+                @if($plan->mealTimes->count())
+                    @foreach($plan->mealTimes as $category)
                     <div class="col-md-4">
                         <div class="nutrition-plan-box">
                             <figure>
@@ -100,7 +100,7 @@
                             </figure>
                             <h5>{{ $category->title }}</h5>
                             <p>1024 Calories</p>
-                            <a href="#" class="btn btn-primary view-details-btn" data-category-id="{{ $category->id }}" 
+                            <a href="{{ route('front.meal-time.details', ['id' => $category->id]) }}" class="btn btn-primary view-details-btn" data-category-id="{{ $category->id }}" 
                                 data-category-name="{{ $category->title }}">View Details</a>
                         </div>
                     </div>

@@ -22,15 +22,14 @@
                         @if (isset($category)) @method('PUT') @endif
 
                         <div class="row g-3 align-items-center">
-                            <!-- Plan Select Dropdown -->
+                            <!-- Mealtime Selection (Multiple Select) -->
                             <div class="col-md-12">
-                                <label for="plan_id" class="form-label">Select Plan</label>
-                                <select name="plan_id" class="form-select" required>
-                                    <option value="" disabled {{ isset($category) ? '' : 'selected' }}>Select a plan</option>
-                                    @foreach ($plans as $plan)
-                                        <option value="{{ $plan->id }}" 
-                                                {{ isset($category) && $category->plan_id == $plan->id ? 'selected' : '' }}>
-                                            {{ $plan->name }}
+                                <label for="mealtime_ids" class="form-label">Select Mealtimes</label>
+                                <select name="mealtime_ids[]" class="form-select select2" multiple required>
+                                    @foreach ($mealtimes as $mealtime)
+                                        <option value="{{ $mealtime->id }}" 
+                                                {{ isset($category) && $category->mealtimes->contains($mealtime->id) ? 'selected' : '' }}>
+                                            {{ $mealtime->title }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -69,4 +68,22 @@
         </div>
     </div>
 </div>
+
+<!-- Include Select2 CSS and JS -->
+@push('css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('custom_scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Select options",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+@endpush
 @endsection

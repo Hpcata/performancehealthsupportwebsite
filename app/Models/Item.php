@@ -10,8 +10,18 @@ class Item extends Model
 
     protected $fillable = ['title', 'description', 'price', 'image'];
 
-    public function subcategories()
+    public function meals()
     {
-        return $this->belongsToMany(Subcategory::class, 'subcategories_items');
+        return $this->belongsToMany(Meal::class, 'item_meals', 'item_id', 'meal_id');
+    }
+
+    public function swapItems()
+    {
+        return $this->belongsToMany(Item::class, 'item_swaps', 'item_id', 'swap_item_id');
+    }
+
+    public function subCategories()
+    {
+        return $this->belongsToMany(SubCategory::class, 'subcategories_items');
     }
 }

@@ -201,7 +201,7 @@
 		</div>
 
 	</div>
-
+<!-- jQuery -->
 	<!-- Jquery Core Js -->
 	<script src="{!! backendAssets('dist/assets/bundles/libscripts.bundle.js') !!}"></script>
 	<script src="{!! backendAssets('dist/assets/bundles/dataTables.bundle.js') !!}"></script>
@@ -241,6 +241,7 @@
 	@stack('scripts')
 	<!-- Jquery Page Js -->
 	<script src="{!! backendAssets('dist/assets/js/template.js') !!}"></script>
+	
 	@stack('custom_scripts')
 </body>
 

@@ -153,4 +153,71 @@ class FrontController extends Controller
 
         return view('front.blog-details', compact('blog', 'relatedBlogs'));
     }
+
+    public function subHomePage()
+    {
+        // $user = getUserBySlug($slug);
+        // if (!$user) {
+        //     return $this->jsonService->sendRequest(false, [
+        //         'message' => 'User Not found!',
+        //     ], 400);
+        //     // return redirect('/booking');
+        // }
+        // $requirements = $this->requirement->getRequirementsByUser($user->id);
+        $plans = \App\Models\Plan::all();
+        //dd($plans);
+        $page = \App\Models\Page::with('sections')->where('slug', 'home')->first();
+        //dd($page->sections);
+        // if(!$requirements || !$plans){
+        //     return $this->jsonService->sendRequest(false, [
+        //         'message' => 'Requirements & Plans Not found!',
+        //     ], 400);
+        //     // return redirect('/booking');
+        // }
+        $requirements = [];
+       // $plans = [];
+        // $bookingConfiguration = BookingConfiguration::getBookingConfiguration($user->id);
+        // if(!$bookingConfiguration->selected_days 
+        // || !$bookingConfiguration->selected_timerange 
+        // || ($bookingConfiguration->selected_timerange 
+        // && (!$bookingConfiguration->selected_timerange->startTime || !$bookingConfiguration->selected_timerange->endTime))){
+        //     return $this->jsonService->sendRequest(false, [
+        //         'message' => 'Booking configuration failed!',
+        //     ], 400);
+        //     // return redirect('/booking');
+        // }
+        
+        // $days = [
+        //     1 => 'monday',
+        //     2 => 'tuesday',
+        //     3 => 'wednesday',
+        //     4 => 'thursday',
+        //     5 => 'friday',
+        //     6 => 'saturday',
+        //     0 => 'sunday',
+        // ];
+        
+        // $selectedDay = $bookingConfiguration->selected_days;
+        // $selectedDayCount = [];
+
+        // foreach($selectedDay as $day){
+        //     $selectedDayCount[] = array_search($day, $days);
+        // }
+
+        // $disabledDay = [];
+        // foreach($days as $key => $day){
+        //     if(!in_array($key, $selectedDayCount)){
+        //         $disabledDay[] = $key;
+        //     }
+        // }
+
+        // $disabledDay = json_encode($disabledDay);
+        $disabledDay = json_encode([]);
+        // $organization = $user->getOrganizationImages();
+        // $testimonials = $user->getTestimonials();
+        $organization = [];
+        $testimonials = [];
+        // dd($testimonials);
+        return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials'));
+    }
 }

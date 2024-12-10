@@ -7,7 +7,7 @@
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">{{ isset($item) ? 'Edit Item' : 'Create Item' }}</h3>
                 <div class="col-auto d-flex w-sm-100">
-                    <a type="button" href="{{ route('admin.items.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
+                    <a href="{{ route('admin.items.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
                 </div>
             </div>
         </div>
@@ -21,17 +21,32 @@
                         @if (isset($item)) @method('PUT') @endif
 
                         <div class="row g-3 align-items-center">
-                            <!-- Subcategory Selection (Multiple Select) -->
                             <div class="col-md-12">
-                                <label for="subcategory_ids" class="form-label">Subcategories</label>
-                                <select name="subcategory_ids[]" class="form-control" multiple required>
-                                    @foreach ($subcategories as $subcategory)
-                                    <option value="{{ $subcategory->id }}" 
-                                        {{ isset($item) && $item->subcategories->contains($subcategory->id) ? 'selected' : '' }}>
-                                        {{ $subcategory->title }}
-                                    </option>
+                                <label for="meal_ids" class="form-label">Meals</label>
+                                <select name="meal_ids[]" class="form-control select2" multiple required>
+                                    @foreach ($meals as $meal)
+                                        <option value="{{ $meal->id }}" 
+                                            {{ isset($item) && $item->meals->contains($meal->id) ? 'selected' : '' }}>
+                                            {{ $meal->title }}
+                                        </option>
                                     @endforeach
                                 </select>
+                            </div>
+
+                            <!-- Swap Items Selection -->
+                            <div class="col-md-12">
+                                <label for="swap_item_ids" class="form-label">Swap Items</label>
+                                <select name="swap_item_ids[]" class="form-control select2" multiple>
+                                    @foreach ($allItems as $swapItem)
+                                        <option value="{{ $swapItem->id }}" 
+                                            {{ isset($item) && $item->swapItems->contains($swapItem->id) ? 'selected' : '' }}>
+                                            {{ $swapItem->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="mt-2">
+                                    <a href="{{ route('admin.items.create') }}" class="btn btn-link">Create New Item</a>
+                                </div>
                             </div>
 
                             <!-- Title Field -->
@@ -40,16 +55,16 @@
                                 <input type="text" name="title" class="form-control" value="{{ $item->title ?? '' }}" required>
                             </div>
 
-                            <!-- Description Field -->
+                            <!-- Short Description Field -->
                             <div class="col-md-12">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="4">{{ $item->description ?? '' }}</textarea>
+                                <label for="short_description" class="form-label">Short Description</label>
+                                <textarea name="short_description" class="form-control" rows="2">{{ $item->short_description ?? '' }}</textarea>
                             </div>
 
-                            <!-- Price Field -->
+                            <!-- Full Description Field -->
                             <div class="col-md-12">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" name="price" class="form-control" value="{{ $item->price ?? '' }}" placeholder="e.g., 100.00" required>
+                                <label for="description" class="form-label">Full Description</label>
+                                <textarea name="description" class="form-control" rows="4">{{ $item->description ?? '' }}</textarea>
                             </div>
 
                             <!-- Image Field -->
@@ -57,7 +72,7 @@
                                 <label for="image" class="form-label">Image</label>
                                 <input type="file" name="image" class="form-control">
                                 @if (isset($item) && $item->image)
-                                <img src="{{ asset('storage/' . $item->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                    <img src="{{ asset('storage/' . $item->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
                                 @endif
                             </div>
                         </div>
@@ -68,4 +83,22 @@
         </div>
     </div>
 </div>
+
+<!-- Include Select2 CSS and JS -->
+@push('css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('custom_scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Select options",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+@endpush
 @endsection

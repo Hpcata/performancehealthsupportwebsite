@@ -7,6 +7,7 @@ use App\Models\Plan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Models\MealTime;
 
 class PlanController extends Controller
 {
@@ -24,7 +25,8 @@ class PlanController extends Controller
      */
     public function create()
     {
-        return view('backend.pages.plan.form');
+        $mealTimes = MealTime::all(); // Fetch all meal times
+        return view('backend.pages.plan.form', compact('mealTimes'));
     }
 
     /**
@@ -38,52 +40,57 @@ class PlanController extends Controller
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'meal_times' => 'nullable|array', // Validate meal times
+            'meal_times.*' => 'exists:meal_times,id',
         ]);
-
-        $validated['user_id'] = Auth::id();
-
+    
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('plans', 'public');
         }
-
-        Plan::create($validated);
-
+    
+        $plan = Plan::create($validated);
+    
+        if ($request->has('meal_times')) {
+            $plan->mealTimes()->sync($request->meal_times); // Sync meal times
+        }
+    
         return redirect()->route('admin.plans.index')->with('success', 'Plan created successfully.');
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(Plan $plan)
     {
-        return view('backend.pages.plan.form', compact('plan'));
+        $mealTimes = MealTime::all(); // Fetch all meal times
+        return view('backend.pages.plan.form', compact('plan', 'mealTimes'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, Plan $plan)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'meal_times' => 'nullable|array',
+            'meal_times.*' => 'exists:meal_times,id',
         ]);
-
+    
         if ($request->hasFile('image')) {
             if ($plan->image) {
                 Storage::disk('public')->delete($plan->image);
             }
             $validated['image'] = $request->file('image')->store('plans', 'public');
         }
-
+    
         $plan->update($validated);
-
+    
+        if ($request->has('meal_times')) {
+            $plan->mealTimes()->sync($request->meal_times); // Sync meal times
+        }
+    
         return redirect()->route('admin.plans.index')->with('success', 'Plan updated successfully.');
     }
+    
 
     /**
      * Remove the specified resource from storage.

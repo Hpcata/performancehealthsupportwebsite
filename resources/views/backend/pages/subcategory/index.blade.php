@@ -1,6 +1,6 @@
 @extends('backend.layouts.app')
 
-@section('title', 'SubCategories List')
+@section('title', 'Sub Categories List')
 
 @section('content')
 <div class="container-xxl">
@@ -20,9 +20,9 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">SubCategories List</h3>
+                <h3 class="fw-bold mb-0">Sub Categories List</h3>
                 <a href="{{ route('admin.subcategories.create') }}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100">
-                    <i class="icofont-plus-circle me-2 fs-6"></i> Add SubCategory
+                    <i class="icofont-plus-circle me-2 fs-6"></i> Add Sub Category
                 </a>
             </div>
         </div>
@@ -37,7 +37,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Title</th>
-                                <th>Category</th>
+                                <th>Categories</th>
                                 <th>Image</th>
                                 <th>Description</th>
                                 <th>Created At</th>
@@ -45,26 +45,26 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($subcategories as $item)
+                            @foreach ($subCategories as $category)
                             <tr>
-                                <td><strong>{{ $item->id }}</strong></td>
-                                <td>{{ $item->title }}</td>
-                                <td>{{ $item->category->title ?? 'N/A' }}</td>
+                                <td><strong>{{ $category->id }}</strong></td>
+                                <td>{{ $category->title }}</td>
+                                <td>{{ $category->categories ?? 'N/A' }}</td>
                                 <td>
-                                    @if($item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}" alt="" width="50">
+                                    @if($category->image)
+                                    <img src="{{ asset('storage/' . $category->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif
                                 </td>
-                                <td>{{ Str::limit($item->description, 50, '...') }}</td>
-                                <td>{{ $item->created_at->format('Y-m-d') }}</td>
+                                <td>{{ Str::limit($category->description, 50, '...') }}</td>
+                                <td>{{ $category->created_at->format('Y-m-d') }}</td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                        <a href="{{ route('admin.subcategories.edit', $item->id) }}" class="btn btn-outline-secondary">
+                                        <a href="{{ route('admin.subcategories.edit', $category->id) }}" class="btn btn-outline-secondary">
                                             <i class="icofont-edit text-success"></i>
                                         </a>
-                                        <form action="{{ route('admin.subcategories.destroy', $item->id) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('admin.subcategories.destroy', $category->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-secondary">
