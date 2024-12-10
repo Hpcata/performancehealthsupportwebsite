@@ -22,4 +22,19 @@ return [
     'CURRENCY' => 'aud',
 
     'TIMEZONE' => 'Australia/Brisbane',
+
+    'PAGES_LIST' => [
+        'home' => [
+            'title' => 'Home',
+            'url' => 'front.index',
+        ],
+        'blog' => [
+            'title' => 'Blog',
+            'url' => 'front.blog',
+        ],
+        'contact' => [
+            'title' => 'Contact',
+            'url' => '',
+        ],
+    ],  
 ];

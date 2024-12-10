@@ -35,18 +35,20 @@ class FrontController extends Controller
         $this->stripeService = new StripeService;
     }
 
-    public function index($slug)
+    public function index()
     {
-        $user = getUserBySlug($slug);
-        if (!$user) {
-            return $this->jsonService->sendRequest(false, [
-                'message' => 'User Not found!',
-            ], 400);
-            // return redirect('/booking');
-        }
+        // $user = getUserBySlug($slug);
+        // if (!$user) {
+        //     return $this->jsonService->sendRequest(false, [
+        //         'message' => 'User Not found!',
+        //     ], 400);
+        //     // return redirect('/booking');
+        // }
         // $requirements = $this->requirement->getRequirementsByUser($user->id);
-        // $plans = $this->plan->getPlansByUser($user->id);
-        
+        $plans = \App\Models\Plan::all();
+        //dd($plans);
+        $page = \App\Models\Page::with('sections')->where('slug', 'home')->first();
+        //dd($page->sections);
         // if(!$requirements || !$plans){
         //     return $this->jsonService->sendRequest(false, [
         //         'message' => 'Requirements & Plans Not found!',
@@ -54,7 +56,7 @@ class FrontController extends Controller
         //     // return redirect('/booking');
         // }
         $requirements = [];
-        $plans = [];
+       // $plans = [];
         // $bookingConfiguration = BookingConfiguration::getBookingConfiguration($user->id);
         // if(!$bookingConfiguration->selected_days 
         // || !$bookingConfiguration->selected_timerange 
@@ -92,10 +94,12 @@ class FrontController extends Controller
 
         // $disabledDay = json_encode($disabledDay);
         $disabledDay = json_encode([]);
-        $organization = $user->getOrganizationImages();
-        $testimonials = $user->getTestimonials();
+        // $organization = $user->getOrganizationImages();
+        // $testimonials = $user->getTestimonials();
+        $organization = [];
+        $testimonials = [];
         // dd($testimonials);
-        return view('front.index', compact('slug', 'requirements', 'plans','user','disabledDay','organization','testimonials'));
+        return view('front.index', compact('requirements','page', 'plans','disabledDay','organization','testimonials'));
     }
 
     public function save(QueryRequest $request)
@@ -121,32 +125,32 @@ class FrontController extends Controller
         }
     }
 
-    public function blog($slug)
+    public function blog()
     {
         // dd($slug);
-        $user = getUserBySlug($slug);
-        if (!$user) {
-            Session::flash('message', 'User not found.');
-        }
+        // $user = getUserBySlug($slug);
+        // if (!$user) {
+        //     Session::flash('message', 'User not found.');
+        // }
 
-        $blogs = \App\Models\Blog::where('author', $user->id)->where('is_published', 1)->get();
-        return view('front.blog', compact('slug', 'user', 'blogs'));
+        $blogs = \App\Models\Blog::where('is_published', 1)->get();
+        return view('front.blog', compact('blogs'));
     }
 
-    public function blogDetails($slug, $id)
+    public function blogDetails($id)
     {
         $blog = Blog::findOrFail($id);
 
-        $user = getUserBySlug($slug);
-        if (!$user) {
-            Session::flash('message', 'User not found.');
-        }
+        // $user = getUserBySlug($slug);
+        // if (!$user) {
+        //     Session::flash('message', 'User not found.');
+        // }
 
         // Get related blogs based on tags
         $relatedBlogs = Blog::whereHas('tags', function ($query) use ($blog) {
             $query->whereIn('tags.id', $blog->tags->pluck('id'));
         })->where('id', '!=', $blog->id)->limit(5)->get();
 
-        return view('front.blog-details', compact('slug', 'blog', 'relatedBlogs', 'user'));
+        return view('front.blog-details', compact('blog', 'relatedBlogs'));
     }
 }

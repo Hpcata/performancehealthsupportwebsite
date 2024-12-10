@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="{!! frontAssets('css/style.css') !!}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-	<title>{{ $user->name }}</title>
+	<title>Kerry </title>
     <!-- Hotjar Tracking Code for Bookings PHS -->
     <script>
         (function(h, o, t, j, a, r) {
@@ -45,6 +45,8 @@
             a.appendChild(r);
         })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
     </script>
+    
+
 	@stack('styles')
 	@stack('custom_styles')
 </head>

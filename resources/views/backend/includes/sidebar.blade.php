@@ -21,14 +21,57 @@
 				?>
 				<a class="m-link {!! $isChildActive ? 'active' : '' !!}" href="{{ route('backend.blogs.index') }}"><i class="icofont-focus fs-5"></i> <span>Blog Page</span></a>
 			</li>
+			<li>
+				<a class="m-link" href="{{ route('pages.index') }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Pages</span>
+				</a>
+			</li>
+			<li>
+				<a class="m-link" href="{{ route('admin.plans.index') }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Plans</span>
+				</a>
+			</li>
+			<li>
+				
+				<a class="m-link" data-bs-toggle="collapse" data-bs-target="#categories" href="#">
+					<i class="icofont-chart-flow fs-5"></i> <span>Plan Categories</span> <span class="arrow icofont-rounded-down ms-auto text-end fs-5"></span></a>
+				<!-- Menu: Sub menu ul -->
+				
+				<ul class="sub-menu collapse " id="categories">
+					<li><a class="ms-link " href="{{ route('admin.categories.index') }}">Categories List</a></li>
+					<li><a class="ms-link " href="{{ route('admin.subcategories.index') }}">Sub Categories List</a></li>
+				</ul>
+			</li>
+			<li>
+				<a class="m-link" href="{{ route('admin.items.index') }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Plan Items</span>
+				</a>
+			</li>
 			<li><?php
 				$isChildActive = (routeIsActive(backendRoute('testimonials.index'))
 					|| routeIsActive(backendRoute('blogs.edit'))
 				) ? 1 : 0;
 				?>
-				<a class="m-link {!! $isChildActive ? 'active' : '' !!}" href="{!! route('testimonials.index') !!}"><i class="icofont-users-alt-2 fs-5"></i> <span>Testimonials</span></a></li>
-			<li><a class="m-link {!! routeIsActive(backendRoute('organizations')) !!}" href="{!! route('organizations') !!}"><i class="icofont-ui-rating fs-5"></i> <span>Associations</span></a></li>
-
+				<a class="m-link {!! $isChildActive ? 'active' : '' !!}" href="{!! route('testimonials.index') !!}"><i class="icofont-users-alt-2 fs-5"></i> <span>Testimonials</span></a>
+			</li>
+			<li><a class="m-link {!! routeIsActive(backendRoute('organizations')) !!}" href="{!! route('organizations') !!}"><i class="icofont-ui-rating fs-5"></i> <span>Associations</span></a>
+			</li>
+			<li>
+				<a class="m-link" href="{{ route('site-settings', ['slug' => 'general']) }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Site Settings</span>
+				</a>
+				<ul class="sub-menu collapse {!! $isChildActive ? 'show' : '' !!}" id="menu-sale">
+					<li>
+						<a class="ms-link" href="{{ route('site-settings', ['slug' => 'general']) }}">
+							General Settings
+						</a>
+					</li>
+				</ul>
+			</li>
 
 			{{-- <li class="collapsed">
 				<?php

@@ -13,7 +13,7 @@
             <nav aria-label="breadcrumb">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('front.index', $slug) }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('front.index') }}">Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Blog</li>
                     </ol>
                 </div>
@@ -146,7 +146,7 @@
                                     <!-- <a href="#">Uncategorized</a> -->
                                 </div>
                                 <p>{{ $blog->description }}</p>
-                                <a href="{{ route('front.blog.detail', ['slug' => $slug, 'id' => $blog->id]) }}" class="btn btn-primary mt-2 w-100">Read More</a>
+                                <a href="{{ route('front.blog.detail', ['id' => $blog->id]) }}" class="btn btn-primary mt-2 w-100">Read More</a>
                             </div>
                         </div>
                     </div>

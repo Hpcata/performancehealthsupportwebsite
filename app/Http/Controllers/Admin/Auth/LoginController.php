@@ -54,7 +54,7 @@ class LoginController extends Controller
     public function index()
     {
         if (Auth::user() && Auth::user()->id) {
-            return redirect()->route('blog.index');
+            return redirect()->route('backend.blogs.index');
         }
         return view('backend.pages.auth.login');
     }

@@ -1,3 +1,7 @@
+<?php
+$setting = \App\Models\SiteSettings::where('page_id', 'general')->where('meta_key', 'header_headermenu')->first();
+$headerData = json_decode($setting['meta_value'], true);
+?>
 <header id="header">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
@@ -10,15 +14,27 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="ms-lg-auto header-navbar navbar-nav">
-                    <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" title="{{$slug}}" href="{{ route('front.index', $slug) }}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="{{ route('front.blog', $slug) }}">Blog</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                    </li>
+                @foreach ($headerData as $menu)
+                    @php
+                        $slug = '';
+                        $link = $menu['link'] ?? '';
+                        if(str_contains($link, '|')){
+                            $explodelinks = explode('|', $link);
+                            $link = $explodelinks[0] ?? '';
+                            $slug = $explodelinks[1] ?? '';
+                        }
+                        $title = $menu['title'] ?? 'Untitled';
+                    @endphp
+                    @if($link != '' && $link != '#')
+                        <li class="nav-item">
+                            <a class="nav-link restriction-page" href="{{ route($link, $slug ? ['page_slug' => $slug] : []) }}">{{ $title }}</a>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link restriction-page" href="#{{ strtolower($title) }}">{{ $title }}</a>
+                        </li>
+                    @endif
+                @endforeach
                 </ul>
                 </div>
             </div>

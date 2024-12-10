@@ -6,6 +6,15 @@ use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\Admin\Auth\LoginController as AdminAuthController;
+use App\Http\Controllers\Admin\SiteSettingsController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\SectionController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\ItemController;
+use App\Http\Controllers\Admin\PlanController;
+use App\Http\Controllers\Front\PlanController as FrontPlanController;
+use App\Http\Controllers\Front\CategoryController as FrontCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,19 +90,81 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::as('backend.')->group(function () {
 			Route::resource('blogs', BlogController::class);
 		});
+
+		Route::get('/site-settings/{slug}', [SiteSettingsController::class, 'index'])->name('site-settings');
+		Route::post('/site-settings-save', [SiteSettingsController::class, 'saveSiteSettings'])->name('save-site-settings');
+		
+		// Route::resource('pages', PageController::class);
+		Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
+		Route::get('/pages/create', [PageController::class, 'create'])->name('pages.create');
+		Route::post('/pages', [PageController::class, 'store'])->name('pages.store');
+		Route::get('/pages/{page}/edit', [PageController::class, 'edit'])->name('pages.edit');
+		Route::PUT('/pages/{page}', [PageController::class, 'update'])->name('pages.update');
+		Route::delete('/pages/{page}', [PageController::class, 'destroy'])->name('pages.destroy');
+
+		Route::get('pages/{page}/sections', [SectionController::class, 'index'])->name('sections.index');
+
+		// Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
+		Route::get('/sections/create', [SectionController::class, 'create'])->name('sections.create');
+		Route::post('/sections/store', [SectionController::class, 'store'])->name('sections.store');
+		Route::get('/sections/{section}', [SectionController::class, 'show'])->name('sections.show');
+		Route::get('/sections/{section}/edit', [SectionController::class, 'edit'])->name('sections.edit');
+		Route::put('/sections/{section}', [SectionController::class, 'update'])->name('sections.update');
+		Route::delete('/sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy');
+
+		// Category
+		Route::get('categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+    	Route::get('categories/create', [CategoryController::class, 'create'])->name('admin.categories.create');
+    	Route::post('categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+    	Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
+    	Route::put('categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
+    	Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
+		// Subcategory
+		Route::get('sub-categories', [SubCategoryController::class, 'index'])->name('admin.subcategories.index');
+    	Route::get('sub-categories/create', [SubCategoryController::class, 'create'])->name('admin.subcategories.create');
+    	Route::post('sub-categories', [SubCategoryController::class, 'store'])->name('admin.subcategories.store');
+    	Route::get('sub-categories/{subcategory}/edit', [SubCategoryController::class, 'edit'])->name('admin.subcategories.edit');
+    	Route::put('sub-categories/{subcategory}', [SubCategoryController::class, 'update'])->name('admin.subcategories.update');
+    	Route::delete('sub-categories/{subcategory}', [SubCategoryController::class, 'destroy'])->name('admin.subcategories.destroy');
+
+		// Items
+		Route::get('items', [ItemController::class, 'index'])->name('admin.items.index');
+		Route::get('items/create', [ItemController::class, 'create'])->name('admin.items.create');
+		Route::post('items', [ItemController::class, 'store'])->name('admin.items.store');
+		Route::get('items/{item}/edit', [ItemController::class, 'edit'])->name('admin.items.edit');
+		Route::put('items/{item}', [ItemController::class, 'update'])->name('admin.items.update');
+		Route::delete('items/{item}', [ItemController::class, 'destroy'])->name('admin.items.destroy');
+		
+		// Plans
+		Route::get('plans', [PlanController::class, 'index'])->name('admin.plans.index');
+		Route::get('plans/create', [PlanController::class, 'create'])->name('admin.plans.create');
+		Route::post('plans', [PlanController::class, 'store'])->name('admin.plans.store');
+		Route::get('plans/{plan}/edit', [PlanController::class, 'edit'])->name('admin.plans.edit');
+		Route::put('plans/{plan}', [PlanController::class, 'update'])->name('admin.plans.update');
+		Route::delete('plans/{plan}', [PlanController::class, 'destroy'])->name('admin.plans.destroy');
 	});
 });
 
-Route::get('/{slug}', [FrontController::class, 'index'])->name('front.index');
-Route::get('/{slug}/blog', [FrontController::class, 'blog'])->name('front.blog');
-Route::get('{slug}/blog/{id}', [FrontController::class, 'blogDetails'])->name('front.blog.detail');
+Route::get('/', [FrontController::class, 'index'])->name('front.index');
+Route::get('/blog', [FrontController::class, 'blog'])->name('front.blog');
+Route::get('blog/{id}', [FrontController::class, 'blogDetails'])->name('front.blog.detail');
 Route::POST('/save-query', [FrontController::class, 'save'])->name('save-query');
+
+// Plans
+Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
+
+//categories
+Route::get('/category/{id}/subcategories', [FrontPlanController::class, 'getSubCategories'])->name('front.category.subcategories');
+Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
 
 // Route::get('/backend', function () {
 // 	return redirect()->route('backend.home');
 // });
 
 Route::prefix('admin')->group(function () {
+	
+	
 	//dd('backend');
 	// Route::get('/home', [BackendController::class, 'index'])->name('backend.home');
 

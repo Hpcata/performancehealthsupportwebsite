@@ -4,8 +4,7 @@
         <div class="row mt-5">
         <div class="col-12 text-center">
             <p class="mb-0">
-                <?php $user->copyright_text = str_replace('#YEAR#', date('Y'), $user->copyright_text); ?>
-                {{ $user->copyright_text }}
+            Copyright © 2024 Kerry O’Bryan.
             </p>
         </div>
         </div>
