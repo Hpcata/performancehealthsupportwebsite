@@ -50,15 +50,15 @@
                                 <td><strong>{{ $item->id }}</strong></td>
                                 <td>{{ $item->title }}</td>
                                 <td>
-                                    @if($item->subcategories->isNotEmpty())
-                                        {{ $item->subcategories->pluck('title')->implode(', ') }}
+                                    @if($item->meals->isNotEmpty())
+                                        {{ $item->meals->pluck('title')->implode(', ') }}
                                     @else
-                                        <span class="text-muted">No Subcategories</span>
+                                        <span class="text-muted">No Melas</span>
                                     @endif
                                 </td>
                                 <td>
                                     @if($item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}" alt="" width="50">
+                                    <img src="{{ asset('private/public/storage/' . $item->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif

@@ -159,9 +159,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 	Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
 	Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
 	Route::post('meal-times', [MealTimeController::class, 'store'])->name('admin.meal-times.store');
-	Route::get('meal-times/{meal-time}/edit', [MealTimeController::class, 'edit'])->name('admin.meal-times.edit');
-	Route::put('meal-times/{meal-time}', [MealTimeController::class, 'update'])->name('admin.meal-times.update');
-	Route::delete('meal-times/{meal-time}', [MealTimeController::class, 'destroy'])->name('admin.meal-times.destroy');
+	Route::get('meal-times/{id}/edit', [MealTimeController::class, 'edit'])->name('admin.meal-times.edit');
+	Route::put('meal-times/{id}', [MealTimeController::class, 'update'])->name('admin.meal-times.update');
+	Route::delete('meal-times/{id}', [MealTimeController::class, 'destroy'])->name('admin.meal-times.destroy');
 	
     // Route::resource('meal-times', MealTimeController::class);
 	// Route::resource('meals', MealController::class);
@@ -183,7 +183,9 @@ Route::get('/subcategory/{id}/meals', [FrontPlanController::class, 'getMeals'])-
 Route::get('/category/{id}/subcategories', [FrontPlanController::class, 'getSubCategories'])->name('front.category.subcategories');
 Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
 Route::get('/meal/{id}/items', [FrontPlanController::class, 'getMealItems'])->name('front.meals.items');
+Route::get('/item/{id}/swap-items', [FrontPlanController::class, 'getSwapItems'])->name('front.items.swap-items');
 
+Route::get('item/swap', [FrontPlanController::class, 'applySwaps'])->name('front.items.swaps');
 // Route::get('/backend', function () {
 // 	return redirect()->route('backend.home');
 // });

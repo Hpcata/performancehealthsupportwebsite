@@ -36,6 +36,7 @@
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Price</th>
+                                <th>Meal Times</th>
                                 <th>User</th>
                                 <th>Actions</th>
                             </tr>
@@ -46,6 +47,13 @@
                                     <td>{{ $plan->id }}</td>
                                     <td>{{ $plan->name }}</td>
                                     <td>${{ $plan->price }}</td>
+                                    <td>
+                                        @if($plan->mealtimes->isNotEmpty())
+                                            {{ $plan->mealtimes->pluck('title')->implode(', ') }}
+                                        @else
+                                            <span class="text-muted">No Meal Time</span>
+                                        @endif
+                                    </td> 
                                     <td>{{ $plan->user->name }}</td>
                                     <td>
                                         <a href="{{ route('admin.plans.edit', $plan) }}" class="btn btn-warning btn-sm">Edit</a>

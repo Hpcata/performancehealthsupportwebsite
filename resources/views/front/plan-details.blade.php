@@ -95,7 +95,7 @@
                         <div class="nutrition-plan-box">
                             <figure>
                                 @if($category->image)
-                                    <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+                                    <img src="{{ asset('private/public/storage/' . $category->image) }}" alt="{{ $category->name }}">
                                 @endif
                             </figure>
                             <h5>{{ $category->title }}</h5>

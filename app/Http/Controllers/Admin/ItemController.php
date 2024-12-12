@@ -1,4 +1,4 @@
-<?php
+    <?php
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -28,6 +28,9 @@ class ItemController extends Controller
             'title' => 'required|string|max:255',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
+            'qty' => 'required|integer|min:0',
+            'alias' => 'nullable|string|max:255',
+            'is_swiped' => 'required|boolean',
             'meal_ids' => 'nullable|array',
             'meal_ids.*' => 'exists:meals,id',
             'swap_item_ids' => 'nullable|array',
@@ -43,8 +46,8 @@ class ItemController extends Controller
         // Create item
         $item = Item::create($data);
 
-        // Sync meals
-        if (isset($data['meal_ids'])) {
+        // Sync meals only if is_swiped is not 1
+        if (isset($data['meal_ids']) && $data['is_swiped'] != 1) {
             $item->meals()->sync($data['meal_ids']);
         }
 
@@ -69,6 +72,9 @@ class ItemController extends Controller
             'title' => 'required|string|max:255',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
+            'qty' => 'required|integer|min:0',
+            'alias' => 'nullable|string|max:255',
+            'is_swiped' => 'required|boolean',
             'meal_ids' => 'nullable|array',
             'meal_ids.*' => 'exists:meals,id',
             'swap_item_ids' => 'nullable|array',
@@ -88,9 +94,11 @@ class ItemController extends Controller
         // Update item
         $item->update($data);
 
-        // Sync meals
-        if (isset($data['meal_ids'])) {
+        // Sync meals only if is_swiped is not 1
+        if (isset($data['meal_ids']) && $data['is_swiped'] != 1) {
             $item->meals()->sync($data['meal_ids']);
+        } else {
+            $item->meals()->detach(); // Detach meals if is_swiped is 1
         }
 
         // Sync swap items

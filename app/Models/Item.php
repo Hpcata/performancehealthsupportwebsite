@@ -8,7 +8,7 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'price', 'image'];
+    protected $fillable = ['title', 'description', 'price', 'image', 'qty', 'alias', 'is_swiped'];
 
     public function meals()
     {

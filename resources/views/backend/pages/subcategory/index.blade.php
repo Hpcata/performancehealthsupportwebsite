@@ -49,10 +49,16 @@
                             <tr>
                                 <td><strong>{{ $category->id }}</strong></td>
                                 <td>{{ $category->title }}</td>
-                                <td>{{ $category->categories ?? 'N/A' }}</td>
+                                <td>
+                                    @if($category->categories->isNotEmpty())
+                                        {{ $category->categories->pluck('title')->implode(', ') }}
+                                    @else
+                                        <span class="text-muted">No Meal Time</span>
+                                    @endif
+                                </td> 
                                 <td>
                                     @if($category->image)
-                                    <img src="{{ asset('storage/' . $category->image) }}" alt="" width="50">
+                                    <img src="{{ asset('private/public/storage/' . $category->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif

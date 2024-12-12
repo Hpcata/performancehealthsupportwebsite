@@ -102,58 +102,6 @@ class FrontController extends Controller
         return view('front.index', compact('requirements','page', 'plans','disabledDay','organization','testimonials'));
     }
 
-    public function save(QueryRequest $request)
-    {
-        try {
-            $user = getUserBySlug($request->slug);
-            if (!$user) {
-                Session::flash('message', 'User not found.');
-            }
-            $postData = $request->only('name', 'email', 'mobile_number', 'message');
-            $postData['user_id'] = $user->id;
-
-            $query = Query::create($postData);
-
-            Session::flash('confirmmsg', 'Thank you for your message. We will get back to you soon.');
-
-            Mail::send(new QueryGenerated($user, $query));
-
-            return redirect(route('booking'));
-        } catch (Exception $e) {
-            Log::error(__METHOD__ . ' ' . $e->getMessage());
-            return redirect()->back()->withInput()->with('error', 'Whoops! something went wrong.');
-        }
-    }
-
-    public function blog()
-    {
-        // dd($slug);
-        // $user = getUserBySlug($slug);
-        // if (!$user) {
-        //     Session::flash('message', 'User not found.');
-        // }
-
-        $blogs = \App\Models\Blog::where('is_published', 1)->get();
-        return view('front.blog', compact('blogs'));
-    }
-
-    public function blogDetails($id)
-    {
-        $blog = Blog::findOrFail($id);
-
-        // $user = getUserBySlug($slug);
-        // if (!$user) {
-        //     Session::flash('message', 'User not found.');
-        // }
-
-        // Get related blogs based on tags
-        $relatedBlogs = Blog::whereHas('tags', function ($query) use ($blog) {
-            $query->whereIn('tags.id', $blog->tags->pluck('id'));
-        })->where('id', '!=', $blog->id)->limit(5)->get();
-
-        return view('front.blog-details', compact('blog', 'relatedBlogs'));
-    }
-
     public function subHomePage()
     {
         // $user = getUserBySlug($slug);
@@ -166,7 +114,7 @@ class FrontController extends Controller
         // $requirements = $this->requirement->getRequirementsByUser($user->id);
         $plans = \App\Models\Plan::all();
         //dd($plans);
-        $page = \App\Models\Page::with('sections')->where('slug', 'home')->first();
+        $page = \App\Models\Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
         //dd($page->sections);
         // if(!$requirements || !$plans){
         //     return $this->jsonService->sendRequest(false, [
@@ -219,5 +167,57 @@ class FrontController extends Controller
         $testimonials = [];
         // dd($testimonials);
         return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials'));
+    }
+
+    public function save(QueryRequest $request)
+    {
+        try {
+            $user = getUserBySlug($request->slug);
+            if (!$user) {
+                Session::flash('message', 'User not found.');
+            }
+            $postData = $request->only('name', 'email', 'mobile_number', 'message');
+            $postData['user_id'] = $user->id;
+
+            $query = Query::create($postData);
+
+            Session::flash('confirmmsg', 'Thank you for your message. We will get back to you soon.');
+
+            Mail::send(new QueryGenerated($user, $query));
+
+            return redirect(route('booking'));
+        } catch (Exception $e) {
+            Log::error(__METHOD__ . ' ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Whoops! something went wrong.');
+        }
+    }
+
+    public function blog()
+    {
+        // dd($slug);
+        // $user = getUserBySlug($slug);
+        // if (!$user) {
+        //     Session::flash('message', 'User not found.');
+        // }
+
+        $blogs = \App\Models\Blog::where('is_published', 1)->get();
+        return view('front.blog', compact('blogs'));
+    }
+
+    public function blogDetails($id)
+    {
+        $blog = Blog::findOrFail($id);
+
+        // $user = getUserBySlug($slug);
+        // if (!$user) {
+        //     Session::flash('message', 'User not found.');
+        // }
+
+        // Get related blogs based on tags
+        $relatedBlogs = Blog::whereHas('tags', function ($query) use ($blog) {
+            $query->whereIn('tags.id', $blog->tags->pluck('id'));
+        })->where('id', '!=', $blog->id)->limit(5)->get();
+
+        return view('front.blog-details', compact('blog', 'relatedBlogs'));
     }
 }

@@ -49,9 +49,11 @@ class MealTimeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MealTime $mealTime)
+    public function edit($id, MealTime $mealTime)
     {
-        return view('backend.pages.mealtime.form', compact('mealTime'));
+       // dd($id);
+       $mealTime = MealTime::findOrFail($id); // Fetch the MealTime record
+       return view('backend.pages.mealtime.form', compact('mealTime'));
     }
 
     /**
@@ -59,6 +61,8 @@ class MealTimeController extends Controller
      */
     public function update(Request $request, MealTime $mealTime)
     {
+        $mealTime = MealTime::findOrFail($request->id); // Manually fetch MealTime by ID
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',

@@ -2,12 +2,26 @@
 
 @section('content')
 <div class="container-xxl">
-    <div class="row align-items-center">
-        <div class="col">
-            <h3 class="fw-bold mb-0">Meal Times</h3>
+    <!-- Flash Messages -->
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <div class="col-auto">
-            <a href="{{ route('admin.meal-times.create') }}" class="btn btn-primary">Create Meal Time</a>
+    @elseif (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    <div class="row align-items-center">
+        <div class="border-0 mb-4">
+            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                <h3 class="fw-bold mb-0">Meal Times</h3>
+                <a href="{{ route('admin.meal-times.create') }}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100">
+                    <i class="icofont-plus-circle me-2 fs-6"></i> Add Meal Time
+                </a>
+            </div>
         </div>
     </div>
     <div class="card mt-3">
@@ -30,7 +44,7 @@
                         <td>{{ $mealTime->description }}</td>
                         <td>
                             @if ($mealTime->image)
-                                <img src="{{ asset('storage/' . $mealTime->image) }}" alt="Meal Time Image" style="max-height: 50px;">
+                                <img src="{{ asset('private/public/storage/' . $mealTime->image) }}" alt="Meal Time Image" style="max-height: 50px;">
                             @endif
                         </td>
                         <td>

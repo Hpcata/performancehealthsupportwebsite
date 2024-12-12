@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Mealtime;
+use App\Models\MealTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -71,7 +71,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $mealtimes = Mealtime::all();
+        $mealtimes = MealTime::all();
         return view('backend.pages.category.form', compact('category', 'mealtimes'));
     }
 

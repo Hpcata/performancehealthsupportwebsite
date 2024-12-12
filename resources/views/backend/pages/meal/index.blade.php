@@ -38,6 +38,7 @@
                                 <th>ID</th>
                                 <th>Title</th>
                                 <th>Image</th>
+                                <th>Sub Categories</th>
                                 <th>Description</th>
                                 <th>Created At</th>
                                 <th>Action</th>
@@ -50,11 +51,18 @@
                                 <td>{{ $item->title }}</td>
                                 <td>
                                     @if($item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}" alt="" width="50">
+                                    <img src="{{ asset('private/public/storage/' . $item->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif
                                 </td>
+                                <td>
+                                    @if($item->subCategories->isNotEmpty())
+                                        {{ $item->subCategories->pluck('title')->implode(', ') }}
+                                    @else
+                                        <span class="text-muted">No Subcategories</span>
+                                    @endif
+                                </td> 
                                 <td>{{ Str::limit($item->description, 50, '...') }}</td>
                                 <td>{{ $item->created_at->format('Y-m-d') }}</td>
                                 <td>

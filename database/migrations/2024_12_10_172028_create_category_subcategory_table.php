@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('sub_category_id')->references('id')->on('subcategories')->onDelete('cascade');
 
-            $table->primary(['category_id', 'sub_category_id']);
+            // $table->primary(['category_id', 'sub_category_id']);
         });
     }
 
