@@ -93,10 +93,21 @@
 </div>
 
 @endsection
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+@endpush
 @push('custom_scripts')
 <script>
 $(document).ready(function() {
-    $('.select2').select2({
+    $('#meal_times').select2({
+        placeholder: "Select meal times",
+        allowClear: true
+    });
+    $('#sub_plan_ids').select2({
         placeholder: "Select meal times",
         allowClear: true
     });

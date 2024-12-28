@@ -25,7 +25,7 @@
                             <!-- Mealtime Selection (Multiple Select) -->
                             <div class="col-md-12">
                                 <label for="mealtime_ids" class="form-label">Select Mealtimes</label>
-                                <select name="mealtime_ids[]" class="form-select select2" multiple required>
+                                <select name="mealtime_ids[]" class="form-select select2" id="mealtime_ids" multiple required>
                                     @foreach ($mealtimes as $mealtime)
                                         <option value="{{ $mealtime->id }}" 
                                                 {{ isset($category) && $category->mealtimes->contains($mealtime->id) ? 'selected' : '' }}>
@@ -70,15 +70,17 @@
 </div>
 
 <!-- Include Select2 CSS and JS -->
-@push('css')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
+@push('scripts')
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+@endpush
 @push('custom_scripts')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('.select2').select2({
+            $('#mealtime_ids').select2({
                 placeholder: "Select options",
                 allowClear: true,
                 width: '100%'

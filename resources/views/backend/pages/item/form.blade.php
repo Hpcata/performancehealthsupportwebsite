@@ -55,19 +55,19 @@
 
                             <!-- Is Swapped Field -->
                             <div class="col-md-12">
-    <label for="is_swiped" class="form-label">Is Swapped? &nbsp;</label>
-    <small class="form-text text-muted">(Is this item used in the swapped list?)</small>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_yes" value="1" 
-            {{ (isset($item) && $item->is_swiped == 1) ? 'checked' : '' }}>
-        <label class="form-check-label" for="is_swiped_yes">Yes</label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_no" value="0" 
-            {{ (!isset($item) || $item->is_swiped == 0) ? 'checked' : '' }}>
-        <label class="form-check-label" for="is_swiped_no">No</label>
-    </div>
-</div>
+                                <label for="is_swiped" class="form-label">Is Swapped? &nbsp;</label>
+                                <small class="form-text text-muted">(Is this item used in the swapped list?)</small>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_yes" value="1" 
+                                        {{ (isset($item) && $item->is_swiped == 1) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_swiped_yes">Yes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_no" value="0" 
+                                        {{ (!isset($item) || $item->is_swiped == 0) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_swiped_no">No</label>
+                                </div>
+                            </div>
 
                             <?php //dd($item->itemSwaps); ?>
                             <!-- Swap Items Selection (Visible only if 'Is Swapped' is Yes) -->
@@ -102,13 +102,15 @@
     </div>
 </div>
 
-<!-- Include Select2 CSS and JS -->
-@push('css')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 @endpush
 
 @push('custom_scripts')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
     <script>
             $(document).ready(function() {
             // Initially hide swap item dropdown if is_swiped is no

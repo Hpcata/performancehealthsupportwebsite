@@ -2,12 +2,15 @@
 <html class="no-js" lang="en" dir="ltr">
 
 <head>
-	<meta charset="utf-8">
+<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>::eBazar:: @yield('title')</title>
+	<title>Performance Health:: @yield('title')</title>
 	<link rel="icon" href="{{ url('/') }}/favicon.ico" type="image/x-icon"> <!-- Favicon-->
 
+	<link rel="stylesheet" href="{!! backendAssets('dist/assets/plugin/datatables/responsive.dataTables.min.css') !!}">
+	<link rel="stylesheet" href="{!! backendAssets('dist/assets/plugin/datatables/dataTables.bootstrap5.min.css') !!}">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" id="theme-styles">
 	@stack('styles')
 	<style>
 		.tawk-custom-color {	
@@ -16,11 +19,11 @@
 	</style>
 	<!-- project css file  -->
 	<link rel="stylesheet" href="{!! backendAssets('ebazar.style.min.css') !!}">
-
 	<link rel="stylesheet" href="{!! backendAssets('dist/assets/plugin/datatables/responsive.dataTables.min.css') !!}">
 	<link rel="stylesheet" href="{!! backendAssets('dist/assets/plugin/datatables/dataTables.bootstrap5.min.css') !!}">
 
 	@stack('custom_styles')
+
 </head>
 
 <body>
@@ -207,9 +210,13 @@
 	</div>
 <!-- jQuery -->
 	<!-- Jquery Core Js -->
+	<script src="https://cdn.tiny.cloud/1/o535leb8vnodazy5nobagicugtcgf1mt2tt4phm6pq5juq08/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 	<script src="{!! backendAssets('dist/assets/bundles/libscripts.bundle.js') !!}"></script>
 	<script src="{!! backendAssets('dist/assets/bundles/dataTables.bundle.js') !!}"></script>
-
+	<script src="{!! backendAssets('dist/assets/js/general.js') !!}"></script>
+	
 	<script>
 		$('#myDataTable')
 			.addClass('nowrap')
