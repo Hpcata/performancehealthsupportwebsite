@@ -53,13 +53,25 @@
                             </figure>
                             <div class="nutrition-athlete-box">
                                 <figure>
-                                    <img src="{!! frontAssets('images/kerry-oBryan.jpg') !!}" alt="">
+                                    @if(Auth::check() && Auth::user()->profile_image)
+                                        <img src="{{ asset('private/public/' . Auth::user()->profile_image) }}" alt="Profile Image">
+                                    @else
+                                        <img src="{{ frontAssets('images/kerry-oBryan.jpg') }}" alt="Default Profile Image">
+                                    @endif
                                 </figure>
+
                                 <div class="nutrition-athlete-info">
-                                    <h5>Ellie Shiloh</h5>
-                                    <p>National Athlete</p>
+                                    @if(Auth::check())
+                                        <h5>{{ Auth::user()->name }}</h5>
+                                        <p>National Athlete</p>
+                                        <button class="btn btn-primary edit-profile py-1 mt-1" data-profile-id="{{ Auth::user()->id }}">Edit Profile</button>
+                                    @else
+                                        <h5>Ellie Shiloh</h5>
+                                        <p>National Athlete</p>
+                                    @endif
                                 </div>
                             </div>
+
                             <figure class="bottom-corner">
                                 <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
                                     <path d="M0,5v45h47v-0.1h-2.1C20.1,49.9,0,29.8,0,5z" fill="#fafafa"/>
@@ -82,26 +94,35 @@
     </div>
 
     <div class="section">
-        <div class="container">
+    @foreach($userPlans as $userPlan)
+        <div class="container mb-5">
             <div class="d-md-flex align-items-center justify-content-between">
-                <h2>{{ $plan->name }}</h2>
+                <h2>{{ $userPlan->plan->name }}
+                @if(isset($userPlan->plan->subPlans) && $userPlan->plan->subPlans->count() > 0)
+                    ( 
+                    {{ $userPlan->plan->subPlans->pluck('name')->join(' + ') }} 
+                    ({{ $userPlan->plan->subPlans->count() }} plans)
+                    )
+                @endif
+                </h2>
                 <a href="#" class="mt-3 mt-md-0 btn btn-primary">Finalise Plan</a>
             </div>
             <div class="mt-4">
                 <div class="row g-4">
-                @if($plan->mealTimes->count())
-                    @foreach($plan->mealTimes as $category)
+                @if($userPlan->userMealTimes->count())
+                    @foreach($userPlan->userMealTimes as $plan)
+                    <?php //dd($plan); ?>
                     <div class="col-md-4">
                         <div class="nutrition-plan-box">
                             <figure>
-                                @if($category->image)
-                                    <img src="{{ asset('private/public/storage/' . $category->image) }}" alt="{{ $category->name }}">
+                                @if($plan->mealTime->image)
+                                    <img src="{{ asset('private/public/storage/' . $plan->mealTime->image) }}" alt="{{ $plan->mealTime->title }}">
                                 @endif
                             </figure>
-                            <h5>{{ $category->title }}</h5>
+                            <h5>{{ $plan->mealTime->title }} </h5>
                             <p>1024 Calories</p>
-                            <a href="{{ route('front.meal-time.details', ['id' => $category->id]) }}" class="btn btn-primary view-details-btn" data-category-id="{{ $category->id }}" 
-                                data-category-name="{{ $category->title }}">View Details</a>
+                            <a href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" class="btn btn-primary view-details-btn" data-category-id="{{ $plan->mealTime->id }}" 
+                                data-category-name="{{ $plan->mealTime->title }}">View Details</a>
                         </div>
                     </div>
                     @endforeach
@@ -109,6 +130,7 @@
                 </div>
             </div>
         </div>
+        @endforeach
     </div>
 
     <!-- Modal for Subcategories -->
@@ -156,6 +178,53 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" class="form-control" id="id" name="user_id" >
+
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" name="first_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" name="last_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                        <small class="form-text text-muted">Leave blank if you don't want to change the password.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profileImage" class="form-label">Profile Image</label>
+                        <input type="file" class="form-control" id="profileImage" name="profile_image">
+                    </div>
+                    <div class="mb-3 text-center">
+                        <img id="profileImagePreview" src="" alt="Profile Image" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function () {
@@ -294,7 +363,77 @@
             $('#categoryModal').modal('hide');
             $subcategoryItemsModal.modal('show');
         });
+
+        $(".print-plan-btn").click(function () {
+            let planId = $(this).data('plan-id');
+            //alert(planId);
+            window.location.href = "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId);
+
+        })
     });
+
+    const baseUrl = "{{ asset('private/public/storage') }}";
+
+    $(document).ready(function () {
+        // Open modal and populate user data
+        $('.edit-profile').on('click', function () {
+            const profileId = $(this).data('profile-id');
+
+            $.ajax({
+                url: '{{ route('front.profile', ':id') }}'.replace(':id', profileId),
+                method: 'GET',
+                success: function (data) {
+                    $('#id').val(data.id);
+                    $('#firstName').val(data.first_name);
+                    $('#lastName').val(data.last_name);
+                    $('#email').val(data.email);
+                    $('#phone').val(data.phone);
+                    // $('#email').val(data.email);
+                    // Set the profile image
+                    if (data.profile_image) {
+                        $('#profileImagePreview').attr('src', data.profile_image);
+                    }
+                    $('#profileModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching user details:', error);
+                    alert('Failed to load profile details. Please try again later.');
+                }
+            });
+        });
+
+        // Handle profile update form submission
+        $('#updateProfileBtn').on('click', function () {
+            let formData = new FormData($('#profileForm')[0]); // Get form data, including files
+            formData.append('_token', '{{ csrf_token() }}'); 
+            $.ajax({
+                url: '{{ route("front.profile.update") }}', // Endpoint to update user profile
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        alert('Profile updated successfully!');
+                        $('#profileModal').modal('hide');
+                        location.reload(); // Optionally reload the page
+                    } else {
+                        alert('Failed to update profile: ' + data.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error updating profile:', error);
+                    let errors = xhr.responseJSON.errors;
+                    if (errors) {
+                        alert('Validation errors: ' + Object.values(errors).join(', '));
+                    } else {
+                        alert('An error occurred while updating the profile. Please try again later.');
+                    }
+
+                }
+            });
+        });
+});
 
 </script>
 @endsection

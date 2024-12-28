@@ -84,8 +84,10 @@ class SubCategoryController extends Controller
      * @param  \App\Models\SubCategory  $subCategory
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SubCategory $subCategory)
+    public function update(Request $request, $id)
     {
+        $subCategory = SubCategory::find($id);
+
         $data = $request->validate([
             'category_ids' => 'required|array',
             'category_ids.*' => 'exists:categories,id',

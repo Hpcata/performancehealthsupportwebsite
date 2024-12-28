@@ -16,6 +16,7 @@ class Media extends Model
 
     public function getMediaPathByMediaID($id) {
         $media = Media::find($id);
+        // dd($media->path);
         $mediaImage = $media ? $media->path . '/' . $media->name : config('constant.DEFAULT_IMAGE_PATH');
         return Storage::disk('public')->url($mediaImage);
     }

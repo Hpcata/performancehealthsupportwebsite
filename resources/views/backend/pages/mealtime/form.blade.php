@@ -18,6 +18,9 @@
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
                     <input type="text" name="title" class="form-control" value="{{ $mealTime->title ?? '' }}" required>
+                    @error('title')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
@@ -26,11 +29,22 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="time" class="form-label">Time</label>
+                    <input type="time" name="time" class="form-control" value="{{ $mealTime->time ?? '' }}" required>
+                    @error('time')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
                     <label for="image" class="form-label">Image</label>
                     <input type="file" name="image" class="form-control">
                     @if (isset($mealTime) && $mealTime->image)
-                        <img src="{{ asset('storage/' . $mealTime->image) }}" class="img-thumbnail mt-3" style="max-height: 150px;">
+                        <img src="{{ asset('private/public/storage/' . $mealTime->image) }}" class="img-thumbnail mt-3" style="max-height: 150px;">
                     @endif
+                    @error('image')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <button type="submit" class="btn btn-primary">{{ isset($mealTime) ? 'Update' : 'Create' }}</button>

@@ -18,37 +18,11 @@
                 <div class="card-body">
                     <form action="{{ isset($item) ? route('admin.items.update', $item) : route('admin.items.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @if (isset($item)) @method('PUT') @endif
+                        @if (isset($item)) 
+                            @method('PUT') 
+                        @endif
 
                         <div class="row g-3 align-items-center">
-                            <div class="col-md-12">
-                                <label for="meal_ids" class="form-label">Meals</label>
-                                <select name="meal_ids[]" class="form-control select2" multiple required>
-                                    @foreach ($meals as $meal)
-                                        <option value="{{ $meal->id }}" 
-                                            {{ isset($item) && $item->meals->contains($meal->id) ? 'selected' : '' }}>
-                                            {{ $meal->title }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Swap Items Selection -->
-                            <div class="col-md-12">
-                                <label for="swap_item_ids" class="form-label">Swap Items</label>
-                                <select name="swap_item_ids[]" class="form-control select2" multiple>
-                                    @foreach ($allItems as $swapItem)
-                                        <option value="{{ $swapItem->id }}" 
-                                            {{ isset($item) && $item->swapItems->contains($swapItem->id) ? 'selected' : '' }}>
-                                            {{ $swapItem->title }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <div class="mt-2">
-                                    <a href="{{ route('admin.items.create') }}" class="btn btn-link">Create New Item</a>
-                                </div>
-                            </div>
-
                             <!-- Title Field -->
                             <div class="col-md-12">
                                 <label for="title" class="form-label">Title</label>
@@ -67,17 +41,61 @@
                                 <textarea name="description" class="form-control" rows="4">{{ $item->description ?? '' }}</textarea>
                             </div>
 
+                            <!-- Quantity Field -->
+                            <div class="col-md-12">
+                                <label for="qty" class="form-label">Quantity</label>
+                                <input type="text" name="qty" class="form-control" value="{{ $item->qty ?? ''}}" >
+                            </div>
+
+                            <!-- Alias Field -->
+                            <div class="col-md-12">
+                                <label for="alias" class="form-label">Alias</label>
+                                <input type="text" name="alias" class="form-control" value="{{ $item->alias ?? '' }}" placeholder="Enter alias">
+                            </div>
+
+                            <!-- Is Swapped Field -->
+                            <div class="col-md-12">
+    <label for="is_swiped" class="form-label">Is Swapped? &nbsp;</label>
+    <small class="form-text text-muted">(Is this item used in the swapped list?)</small>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_yes" value="1" 
+            {{ (isset($item) && $item->is_swiped == 1) ? 'checked' : '' }}>
+        <label class="form-check-label" for="is_swiped_yes">Yes</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_no" value="0" 
+            {{ (!isset($item) || $item->is_swiped == 0) ? 'checked' : '' }}>
+        <label class="form-check-label" for="is_swiped_no">No</label>
+    </div>
+</div>
+
+                            <?php //dd($item->itemSwaps); ?>
+                            <!-- Swap Items Selection (Visible only if 'Is Swapped' is Yes) -->
+                            <div class="col-md-12" id="swapItemsContainer" style="display: none;">
+                                <label for="swap_item_ids" class="form-label">Swap Items</label>
+                                <select name="swap_item_ids[]" class="form-control select2" multiple>
+                                    @foreach ($allItems as $swapItem)
+                                        <option value="{{ $swapItem->id }}" 
+                                            {{ isset($item) && $item->items->contains($swapItem->id) ? 'selected' : '' }}>
+                                            {{ $swapItem->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <!-- Image Field -->
                             <div class="col-md-12">
                                 <label for="image" class="form-label">Image</label>
                                 <input type="file" name="image" class="form-control">
                                 @if (isset($item) && $item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                    <img src="{{ asset('private/public/storage/' . $item->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
                                 @endif
                             </div>
+
                         </div>
                         <button type="submit" class="btn btn-primary mt-4">{{ isset($item) ? 'Update' : 'Create' }}</button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -92,6 +110,24 @@
 @push('custom_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
     <script>
+            $(document).ready(function() {
+            // Initially hide swap item dropdown if is_swiped is no
+            if ($('input[name="is_swiped"]:checked').val() == '1') {
+                $('#swapItemsContainer').show();
+            } else {
+                $('#swapItemsContainer').hide();
+            }
+
+            // Show/hide the swap item dropdown based on is_swiped selection
+            $('input[name="is_swiped"]').on('change', function() {
+                if ($(this).val() == '1') {
+                    $('#swapItemsContainer').show();
+                } else {
+                    $('#swapItemsContainer').hide();
+                }
+            });
+        });
+
         $(document).ready(function () {
             $('.select2').select2({
                 placeholder: "Select options",

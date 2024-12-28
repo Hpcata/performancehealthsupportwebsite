@@ -26,7 +26,8 @@ class PlanController extends Controller
     public function create()
     {
         $mealTimes = MealTime::all(); // Fetch all meal times
-        return view('backend.pages.plan.form', compact('mealTimes'));
+        $subPlans = Plan::all();
+        return view('backend.pages.plan.form', compact('mealTimes', 'subPlans'));
     }
 
     /**
@@ -53,6 +54,9 @@ class PlanController extends Controller
         if ($request->has('meal_times')) {
             $plan->mealTimes()->sync($request->meal_times); // Sync meal times
         }
+
+        // Sync Sub-Plans
+        $plan->subPlans()->sync($data['sub_plan_ids'] ?? []);
     
         return redirect()->route('admin.plans.index')->with('success', 'Plan created successfully.');
     }
@@ -60,7 +64,8 @@ class PlanController extends Controller
     public function edit(Plan $plan)
     {
         $mealTimes = MealTime::all(); // Fetch all meal times
-        return view('backend.pages.plan.form', compact('plan', 'mealTimes'));
+        $subPlans = Plan::where('id', '!=', $plan->id)->get();
+        return view('backend.pages.plan.form', compact('plan', 'mealTimes','subPlans'));
     }
     
     public function update(Request $request, Plan $plan)
@@ -74,7 +79,7 @@ class PlanController extends Controller
             'meal_times' => 'nullable|array',
             'meal_times.*' => 'exists:meal_times,id',
         ]);
-    
+        // dd($request->all());
         if ($request->hasFile('image')) {
             if ($plan->image) {
                 Storage::disk('public')->delete($plan->image);
@@ -87,7 +92,10 @@ class PlanController extends Controller
         if ($request->has('meal_times')) {
             $plan->mealTimes()->sync($request->meal_times); // Sync meal times
         }
-    
+
+        // Sync Sub-Plans
+        $plan->subPlans()->sync($request->sub_plan_ids ?? []);
+        
         return redirect()->route('admin.plans.index')->with('success', 'Plan updated successfully.');
     }
     

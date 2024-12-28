@@ -44,4 +44,14 @@ class Plan extends Model
         return $this->belongsToMany(MealTime::class, 'plan_meal_time');
     }
 
+
+    public function subPlans()
+    {
+        return $this->belongsToMany(Plan::class, 'plan_sub_plans', 'plan_id', 'sub_plan_id');
+    }
+
+    public function parentPlans()
+    {
+        return $this->belongsToMany(Plan::class, 'plan_sub_plans', 'sub_plan_id', 'plan_id');
+    }
 }

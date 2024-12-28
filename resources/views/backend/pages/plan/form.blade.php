@@ -58,13 +58,27 @@
                                 </select>
                             </div>
 
+                            <!-- Sub-Plans -->
+                            <div class="col-md-12">
+                                <label for="sub_plan_ids" class="form-label">Sub Plans(Child Plans)</label>
+                                <select id="sub_plan_ids" name="sub_plan_ids[]" class="form-select select2" multiple>
+                                    @foreach ($subPlans as $subPlan)
+                                        <option value="{{ $subPlan->id }}" 
+                                            {{ isset($plan) && $plan->subPlans->contains($subPlan->id) ? 'selected' : '' }}>
+                                            {{ $subPlan->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <!-- Image -->
                             <div class="col-md-12">
                                 <label for="image" class="form-label">Image</label>
                                 <input type="file" id="image" name="image" class="form-control">
+                                @include('backend.layouts.error', ['field' => 'image'])
+
                                 @if (isset($plan) && $plan->image)
                                     <div class="mt-2">
-                                        <img src="{{ asset('storage/' . $plan->image) }}" alt="Plan Image" width="100">
+                                        <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="Plan Image" width="100">
                                     </div>
                                 @endif
                             </div>

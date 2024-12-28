@@ -132,4 +132,19 @@ class User extends Authenticatable
 
         return $result;
     }
+
+    public function userPlans()
+    {
+        return $this->hasMany(UserPlan::class);
+    }
+
+    /**
+     * Check if the user is a superadmin
+     *
+     * @return bool
+     */
+    public function isSuperAdmin()
+    {
+        return $this->is_superadmin;  // Assuming 'is_superadmin' is a boolean column in the users table
+    }
 }

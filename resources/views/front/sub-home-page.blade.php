@@ -3,11 +3,35 @@
 @section('title', '$page->title')
 
 @section('content')
+<style>
+    #thankYouModal .modal-content {
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    #thankYouModal .icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #thankYouModal .modal-body {
+        padding: 2rem;
+    }
+    #thankYouModal .btn {
+        border-radius: 25px;
+        font-weight: 600;
+    }
+
+</style>
 @php
     $showHeader = !empty($user->front_logo) && 
                   !empty($user->front_title) && 
                   !empty($user->front_description) && 
                   !empty($user->about_us_image);
+
+    if($isAuthenticated){
+        $user = Auth::user();
+        $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->pluck('plan_id')->toArray();
+    }
 @endphp
 
     @if(isset($page->sections))
@@ -136,10 +160,30 @@
                             </div>
                             <!-- <a href="#" class="btn btn-primary">Purchase Now: $200</a> -->
                             <div data-aos="fade-up" class="aos-init aos-animate">
-                                <a href="{{ route('front.plans.details', ['id' => $plan->id]) }}" class="btn btn-primary mt-2 w-100">
-                                    <span class="me-1">Purchase Now:$ {{ $plan->price }} </span>
-                                    
-                                </a>
+                                @if($isAuthenticated && in_array($plan->id, $planIds))<?php
+                                    $userPlan = \App\Models\UserPlan::where('user_id', Auth::user()->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
+                                    $isPlanCreated = $userPlan ? true : false;
+                                ?>
+                                <a href="{{ route('front.plans.details', ['id' => $plan->id]) }}" class="btn btn-primary mt-2 w-100 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
+                                        <span class="me-1">View Details </span>
+                                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                                            <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
+
+                                            <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+
+                                        </svg>
+                                    </a>
+                                @else
+                                <div data-aos="fade-up" class="aos-init aos-animate">
+                                    <button type="button" class="btn btn-primary mt-2 w-100 purchase-now-btn" 
+                                            data-plan-id="{{ $plan->id }}" 
+                                            data-plan-name="{{ $plan->name }}" 
+                                            data-plan-price="{{ $plan->price }}">
+                                        Purchase Now: $ {{ $plan->price }}
+                                    </button>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -700,6 +744,306 @@
 
         </div>
     </div>
+
+    <!-- Purchase Modal -->
+    <!-- Sign-Up Modal (Purchase Modal) -->
+    <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- User info form -->
+                    <form id="payment-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phone" required>
+                        </div>
+
+                        <!-- New Password Field -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="my-4">
+
+                        <!-- Stripe Payment Card Section -->
+                        <h6 class="mb-3">Payment Details</h6>
+                        <div class="mb-3">
+                            <label for="card-element" class="form-label">Credit or Debit Card</label>
+                            <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
+                                <!-- A Stripe Element will be inserted here. -->
+                            </div>
+                            <div id="card-errors" role="alert" class="text-danger mt-2"></div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
+                            Purchase
+                        </button>
+                    </form>
+
+                    <!-- Sign In Link -->
+                    <div class="mt-3 text-center">
+                        <small>Already have an account? <a href="#" id="show-login-modal">Sign In</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign-In Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="login-error" class="text-danger"></div> <!-- This will display the error message -->
+                    <!-- Sign In Form -->
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="login-email" class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" id="login-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" id="login-password" required>
+                        </div>
+
+                        <!-- Sign In Button -->
+                        <button type="submit" id="login-submit" class="btn btn-primary w-100 mt-3">
+                            Sign In
+                        </button>
+                    </form>
+
+                    <!-- Sign Up Link -->
+                    <div class="mt-3 text-center">
+                        <small>Don't have an account? <a href="#" id="show-signup-modal">Sign Up</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thank You Modal -->
+    <div class="modal fade" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="icon-container mb-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
+                    <p class="mb-2">Your payment was successful.</p>
+                    <p class="mb-4">Your plan will be finalized and ready within the next 24 hours.</p>
+                    <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    // Add this JavaScript code to your page
+    $(document).ready(function() {
+        var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+        var elements = stripe.elements();
+        var style = {
+            base: {
+                color: '#32325d',
+                border:'1px solid #32325d',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        };
+
+        // Create card element
+        var card = elements.create('card', { style: style });
+        var cardErrors = document.getElementById('card-errors');
+        card.mount('#card-element');
+
+        // Handle card input changes
+        card.on('change', function(event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Event listener for the 'Purchase Now' button
+        $('body').on('click', '.purchase-now-btn', function () {
+            // alert('Payment button clicked');
+            // e.preventDefault();
+
+            var planId = $(this).data('plan-id');  // Get the plan ID
+            var price = $(this).data('plan-price');     // Get the plan price (if needed)
+            console.log(planId);
+            console.log(price);
+            // Update modal title with plan name (optional)
+            $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text());
+
+            // Show the modal
+            $('#purchaseModal').modal('show');
+
+            // Handle the form submission
+            $('#payment-form').submit(function(event) {
+                event.preventDefault();
+
+                // Disable the submit button to prevent multiple clicks
+                $('#submit').prop('disabled', true);
+
+                // Create a PaymentMethod with Stripe's API
+                
+                stripe.createPaymentMethod({
+                    type: 'card',
+                    card: card,
+                    billing_details: {
+                        name: $('#name').val(),
+                        email: $('#email').val(),
+                        phone: $('#phone').val(),
+                    },
+                }).then(function(result) {
+                    if (result.error) {
+                        // Display error in the card element
+                        cardErrors.textContent = result.error.message;
+                        $('#submit').prop('disabled', false);
+                    } else {
+                        // Call the server to create the PaymentIntent
+                        $.ajax({
+                            url: '{{ route("process.payment") }}', // Define the route to process the payment
+                            method: 'POST',
+                            data: {
+                                payment_method_id: result.paymentMethod.id,
+                                plan_id: planId,
+                                price: price,
+                                name: $('#name').val(),
+                                email: $('#email').val(),
+                                phone: $('#phone').val(),
+                                password: $('#password').val(),
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    // Handle successful payment
+                                    // alert('Payment successful!');
+                                    $('#purchaseModal').modal('hide');
+                                    // $('#thankYouModal').modal('show');
+
+                                    var user_id = response.data.user_id;  // Assuming the backend sends the user_id
+                                    var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
+
+                                    // Check if there's a redirect URL provided
+                                    if (response.redirect_url) {
+
+                                        var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
+                                        // Redirect the user to the provided URL after a delay (optional)
+                                        setTimeout(function() {
+                                            window.location.href = redirectUrlWithUserId;
+                                        }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                    }
+
+                                } else {
+                                    // Handle failed payment
+                                    alert('Payment failed: ' + response.message);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Payment error:', error);
+                                alert('An error occurred while processing the payment.');
+                                $('#submit').prop('disabled', false);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+
+    // Submit Login Form
+    $('#login-form').submit(function(event) {
+        event.preventDefault(); // Prevent the form from submitting the normal way
+
+        // Disable the Submit Button to avoid multiple clicks
+        $('#login-submit').prop('disabled', true);
+
+        // Get the form data
+        var email = $('#login-email').val();
+        var password = $('#login-password').val();
+
+        // Send the data to the backend for validation
+        $.ajax({
+            url: '{{ route("front.login") }}', // This is the route for handling login (update with your actual route if different)
+            method: 'POST',
+            data: {
+                email: email,
+                password: password,
+                _token: '{{ csrf_token() }}' // CSRF token for protection
+            },
+            success: function(response) {
+                if (response.success) {
+                    // If login is successful, redirect to the given URL
+                    window.location.href = response.redirect_url;
+                }
+            },error: function(xhr) {
+                var response = xhr.responseJSON;
+
+                // Show error messages for validation errors
+                if (response.message) {
+                    $('#login-error').text(response.message); // Display error message in #login-error div
+                } else {
+                    $('#login-error').text('An error occurred. Please try again.'); // General error message
+                }
+
+                $('#login-submit').prop('disabled', false); // Re-enable submit button
+            }
+        });
+    });
+
+    // Show Sign-In Modal when clicking "Sign In" link in the Sign-Up Modal
+    $('#show-login-modal').click(function(e) {
+        e.preventDefault(); // Prevent default link action
+        $('#purchaseModal').modal('hide'); // Hide the sign-up modal
+        $('#loginModal').modal('show'); // Show the sign-in modal
+    });
+
+    // Show Sign-Up Modal when clicking "Sign Up" link in the Sign-In Modal
+    $('#show-signup-modal').click(function(e) {
+        e.preventDefault(); // Prevent default link action
+        $('#loginModal').modal('hide'); // Hide the sign-in modal
+        $('#purchaseModal').modal('show'); // Show the sign-up modal
+    });
+
+</script>   
 @endsection
 
 @push('scripts')

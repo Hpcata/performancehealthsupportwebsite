@@ -14656,3 +14656,63 @@ span.border-heading:after {
     .category-item-swap.category-swap-list-box { flex-wrap: nowrap; }
     .category-item-swap.category-swap-list-box .category-swap-btn { max-width: 130px; }
 }
+
+
+.modal-body form .form-label { font-weight: 600; }
+.modal-body form .form-control { border-radius: 10px; border-color: #CCCCCC; }
+.modal-body form .form-control:focus { border-color: #2c3237; }
+.modal-body { padding: 1.5rem; }
+.modal-dialog .modal-content { border: 0; border-radius: 1rem; }
+.nutrition-plan-box figure { padding-top: 100%; }
+.nutrition-plan-box figure img { position: absolute; left: 0; right: 0; top: 0; bottom: 0; height: 100%; width: 100%; object-fit: cover; object-position: center center; }
+
+/* Pre plan form css*/
+.wizard-inner { position: relative; z-index: 1; display: flex; }
+.connecting-line { position: absolute; left: 35px; right: 35px; top: 20px; height: 3px; background: #ccc; z-index: -1; }
+.connecting-line span { position: absolute; top: 0; bottom: 0; left: 0; background: #649ef7; }
+.steps-list { display: flex; align-items: center; justify-content: center; }
+.round-tab { height: 40px; width: 40px; border: 1px solid #cccccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; background: #fafafa; transition: 0.35s all; }
+
+.wizard-inner a { display: flex; flex-direction: column; align-items: center; font-family: "Merriweather", serif; font-weight: 700; color: #3b3b3b; transition: 0.35s all; text-align: center; width: 80px; position: relative; z-index: 1; }
+.wizard-inner a:after { content: ""; position: absolute; top: 20px; right:0; height: 3px; width: 100%; background: #ccc; transition: 0.35s all; z-index: -1; }
+.wizard-inner a:first-child:after { width: 50%; }
+.wizard-inner a:last-child:after { width: 50%; left: 0; right: auto; }
+.wizard-inner a.active:after { background: #649ef7; }
+.wizard-inner a.active .round-tab, .wizard-inner a:hover .round-tab { background: #649ef7; border-color: #649ef7; color: #fff; }
+.wizard-inner a.active , .wizard-inner a:hover { color: #649ef7; }
+
+.step-tab-box + .step-tab-box { margin-top: 2rem; }
+.step-tab-box .card { border-radius: 1rem; }
+.step-tab-box .card-header:first-child { border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0; }
+.step-tab-box .card-footer:last-child { border-radius: 0 0 calc(1rem - 1px) calc(1rem - 1px); }
+
+.no-form-floating.form-floating > label { position: static; padding: 0; margin-bottom: 0.6rem; }
+.no-form-floating.form-floating .form-control { padding: 0.635rem 1rem; height: 48px; }
+.step-tab-box h5 { font-size: 1rem; margin-top: 1rem; }
+.tab-main-box { max-width: 1000px; margin: 0 auto; width: 100%; }
+
+.step-tab-box tr th { background: #dee2e6; border: 0; }
+.step-tab-box .table { border: 1px solid #dee2e6; }
+.step-tab-box table tbody:not(:first-child) { border-top: 0; }
+
+@media only screen and (max-width: 767px) {
+    .wizard-inner a { width: 60px; font-size: 14px; }
+    .round-tab { height: 35px; width: 35px; }
+    .wizard-inner a::after { top: 18px; }
+    .step-tab-box h5 { margin-top: 0; }
+}
+@media only screen and (max-width: 575px) {
+    .wizard-inner a { width: 50px; }
+    .wizard-inner a:after { top: 16px; }
+    .wizard-inner a i { display: none; }
+    .round-tab { margin-bottom: 0; }
+    .tab-main-box .btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
+    
+}
+
+@media only screen and (max-width: 479px) {
+    .wizard-inner a { width: auto; padding: 0 5px; }
+    .round-tab { height: 24px; width: 24px; font-size: 13px; }
+    .wizard-inner a::after { top: 12px; height: 2px; }
+    
+}

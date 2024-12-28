@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MealTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class MealTimeController extends Controller
 {
@@ -31,19 +32,49 @@ class MealTimeController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'title' => 'required|string|max:255',
+            'time' => 'required|date_format:H:i',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        ];
 
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('meal_times', 'public');
+        // Define custom error messages (optional)
+        $messages = [
+            'title.required' => 'The title is mandatory.',
+            'time.required' => 'The time field is required.',
+            'time.date_format' => 'The time must be in the format HH:mm.',
+            'image.image' => 'The uploaded file must be an image.',
+        ];
+
+        // Create the validator instance
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // Check for validation errors
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator) // Pass validation errors
+                ->withInput();          // Retain old input values
         }
 
-        MealTime::create($validated);
+        try {
+            // Handle image upload if a new file is provided
+            $validatedData = $validator->validated();
 
-        return redirect()->route('admin.meal-times.index')->with('success', 'Meal Time created successfully.');
+            if ($request->hasFile('image')) {
+                $validatedData['image'] = $request->file('image')->store('meal_times', 'public');
+            }
+    
+            MealTime::create($validatedData);
+
+            return redirect()->route('admin.meal-times.index')
+                ->with('success', 'Meal Time updated successfully.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+
     }
 
     /**
@@ -61,24 +92,58 @@ class MealTimeController extends Controller
      */
     public function update(Request $request, MealTime $mealTime)
     {
-        $mealTime = MealTime::findOrFail($request->id); // Manually fetch MealTime by ID
+        // Fetch the MealTime record by ID
+        $mealTime = MealTime::findOrFail($request->id);
 
-        $validated = $request->validate([
+        // Define validation rules
+        $rules = [
             'title' => 'required|string|max:255',
+            'time' => 'required|date_format:H:i',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        ];
 
-        if ($request->hasFile('image')) {
-            if ($mealTime->image) {
-                Storage::disk('public')->delete($mealTime->image);
-            }
-            $validated['image'] = $request->file('image')->store('meal_times', 'public');
+        // Define custom error messages (optional)
+        $messages = [
+            'title.required' => 'The title is mandatory.',
+            'time.required' => 'The time field is required.',
+            'time.date_format' => 'The time must be in the format HH:mm.',
+            'image.image' => 'The uploaded file must be an image.',
+        ];
+
+        // Create the validator instance
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // Check for validation errors
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator) // Pass validation errors
+                ->withInput();          // Retain old input values
         }
 
-        $mealTime->update($validated);
+        try {
+            // Handle image upload if a new file is provided
+            $validatedData = $validator->validated();
 
-        return redirect()->route('admin.meal-times.index')->with('success', 'Meal Time updated successfully.');
+            if ($request->hasFile('image')) {
+                // Delete the old image if it exists
+                if ($mealTime->image) {
+                    Storage::disk('public')->delete($mealTime->image);
+                }
+                // Store the new image
+                $validatedData['image'] = $request->file('image')->store('meal_times', 'public');
+            }
+
+            // Update the MealTime record with validated data
+            $mealTime->update($validatedData);
+
+            return redirect()->route('admin.meal-times.index')
+                ->with('success', 'Meal Time updated successfully.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
     }
 
     /**

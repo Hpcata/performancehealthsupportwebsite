@@ -37,7 +37,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Title</th>
-                                <th>Subcategories</th>
+                                <th>Meals</th>
                                 <th>Image</th>
                                 <th>Description</th>
                                 <th>Created At</th>

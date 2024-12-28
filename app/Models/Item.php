@@ -17,11 +17,19 @@ class Item extends Model
 
     public function swapItems()
     {
-        return $this->belongsToMany(Item::class, 'item_swaps', 'item_id', 'swap_item_id');
+        return $this->belongsToMany(Item::class, 'item_swaps', 'item_id', 'swap_item_id')
+        ->wherePivot('item_id', '<>', \DB::raw('swap_item_id'));
     }
 
-    public function subCategories()
+    public function items()
     {
-        return $this->belongsToMany(SubCategory::class, 'subcategories_items');
+        return $this->belongsToMany(Item::class, 'item_swaps', 'swap_item_id', 'item_id')
+        ->wherePivot('item_id', '<>', \DB::raw('swap_item_id'));
+    }
+
+    public function userItemSwaps()
+    {
+        return $this->belongsToMany(Item::class, 'user_item_swaps', 'item_id', 'swap_item_id')
+        ->wherePivot('item_id', '<>', \DB::raw('swap_item_id'));
     }
 }

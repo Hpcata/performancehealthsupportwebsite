@@ -19,13 +19,25 @@ class Meal extends Model
     }
 
     // Define the relationship with SubCategory
-    public function subCategories()
+    public function categories()
     {
-        return $this->belongsToMany(SubCategory::class, 'meal_subcategory'); // Assuming a pivot table
+        return $this->belongsToMany(Category::class, 'meal_category'); // Assuming a pivot table
     }
 
     public function items()
     {
-        return $this->belongsToMany(Item::class, 'item_meals');
+        return $this->belongsToMany(Item::class, 'item_meals', 'meal_id', 'item_id')->where('is_swiped', 0);
+    }
+
+    // Many-to-many relationship with Item through the user_items pivot table
+    public function userItems()
+    {
+        return $this->belongsToMany(Item::class, 'user_items', 'item_id', 'user_meal_id');
+    }
+
+    public function userMealItems()
+    {
+        return $this->belongsToMany(Item::class, 'user_item_meals', 'meal_id', 'item_id')
+        ->wherePivot('is_swiped',0);
     }
 }

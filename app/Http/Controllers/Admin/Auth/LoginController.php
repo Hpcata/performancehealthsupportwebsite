@@ -53,7 +53,7 @@ class LoginController extends Controller
 
     public function index()
     {
-        if (Auth::user() && Auth::user()->id) {
+        if (Auth::user() && Auth::user()->isSuperAdmin()) {
             return redirect()->route('backend.blogs.index');
         }
         return view('backend.pages.auth.login');
@@ -69,6 +69,10 @@ class LoginController extends Controller
         $admin = User::where('email', $request->get('email'))->first();
         if (!isset($admin) || $admin->id < 0) {
             return redirect()->route('login')->with('error', 'Invalid Credentials.');
+        }
+
+        if (!$admin->is_superadmin) {
+            return redirect()->route('login')->with('error', 'You do not have authorization to access this system.');
         }
 
         $rememberMe = $request->get('remember_me') ? true : false;
@@ -286,7 +290,6 @@ class LoginController extends Controller
             'copyright_text' => ['required'],
             'qualification_text' => ['required'],
         ]);
-// dd($request->all());
         $adminUser = User::findOrFail($request->id);
 
         // If a file is uploaded
@@ -339,7 +342,7 @@ class LoginController extends Controller
             // Save the new profile image path in the database
             $adminUser->about_us_image = $filePath;
         }
-        // dd($request->all());
+        
         $adminUser->update([
             'name' => $request->input('first_name') . ' ' . $request->input('last_name'),
             'first_name' => $request->input('first_name'),
@@ -355,20 +358,6 @@ class LoginController extends Controller
             'copyright_text'  => $request->input('copyright_text'),
             'qualification_text' => $request->input('qualification_text'),
         ]);
-
-        // $bookingConfig = BookingConfiguration::where('user_id', $adminUser->id)->first();
-        // if (!$bookingConfig) {
-        //     $bookingConfig = new BookingConfiguration();
-        //     $bookingConfig->user_id = $adminUser->id;
-        // }
-
-        $days = $request->input('day') ? $request->input('day') : [];
-        // $bookingConfig->selected_days = json_encode(array_values($days));
-        // $bookingConfig->selected_timerange = json_encode([
-        //     'startTime' => $request->input('startTime'),
-        //     'endTime' => $request->input('endTime'),
-        // ]);
-        // $bookingConfig->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully.');
 

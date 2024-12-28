@@ -9,7 +9,11 @@
 	<link rel="icon" href="{{ url('/') }}/favicon.ico" type="image/x-icon"> <!-- Favicon-->
 
 	@stack('styles')
-
+	<style>
+		.tawk-custom-color {	
+			display: none !important;
+		}
+	</style>
 	<!-- project css file  -->
 	<link rel="stylesheet" href="{!! backendAssets('ebazar.style.min.css') !!}">
 

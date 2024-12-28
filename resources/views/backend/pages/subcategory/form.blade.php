@@ -55,7 +55,7 @@
                                 <!-- Show current image if editing -->
                                 @if (isset($subCategory) && $subCategory->image)
                                 <div class="mt-3">
-                                    <img src="{{ asset('storage/' . $subCategory->image) }}" alt="SubCategory Image" class="img-thumbnail" style="max-height: 150px;">
+                                    <img src="{{ asset('private/public/storage/' . $subCategory->image) }}" alt="SubCategory Image" class="img-thumbnail" style="max-height: 150px;">
                                 </div>
                                 @endif
                             </div>

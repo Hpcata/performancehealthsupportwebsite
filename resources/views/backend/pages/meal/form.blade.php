@@ -34,6 +34,12 @@
                                 <label for="title" class="form-label">Title</label>
                                 <input type="text" name="title" class="form-control" value="{{ $meal->title ?? '' }}" required>
                             </div>
+                            
+                            <!-- Description Field -->
+                            <div class="col-md-12">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea name="description" class="form-control" rows="4">{{ $meal->description ?? '' }}</textarea>
+                            </div>
 
                             <!-- Meal Times -->
                          {{--  <div class="col-md-12">
@@ -50,28 +56,36 @@
                             --}}
                             <!-- Sub Categories -->
                             <div class="col-md-12">
-                                <label for="sub_categories" class="form-label">Sub Categories</label>
-                                <select name="sub_categories[]" id="sub_categories" class="form-control select2" multiple>
-                                    @foreach ($subCategories as $subcategory)
-                                    <option value="{{ $subcategory->id }}" 
-                                        {{ isset($meal) && $meal->subCategories->contains($subcategory->id) ? 'selected' : '' }}>
-                                        {{ $subcategory->title }}
+                                <label for="sub_categories" class="form-label">Categories</label>
+                                <select name="categories[]" id="categories" class="form-control select2" multiple>
+                                    @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}" 
+                                        {{ isset($meal) && $meal->categories->contains($category->id) ? 'selected' : '' }}>
+                                        {{ $category->title }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <!-- Description Field -->
-                            <div class="col-md-12">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="4">{{ $meal->description ?? '' }}</textarea>
-                            </div>
 
+                            <!-- Food Selection Dropdown -->
+                            <div class="col-md-12">
+                                <label for="food_ids" class="form-label">Select Foods</label>
+                                <select name="food_ids[]" id="food_ids" class="form-control select2" multiple required>
+                                    @foreach ($foods as $food)
+                                        <option value="{{ $food->id }}" 
+                                            {{ isset($meal) && $meal->items->contains($food->id) ? 'selected' : '' }}>
+                                            {{ $food->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
                             <!-- Image Field -->
                             <div class="col-md-12">
                                 <label for="image" class="form-label">Image</label>
                                 <input type="file" name="image" class="form-control">
                                 @if (isset($meal) && $meal->image)
-                                <img src="{{ asset('storage/' . $meal->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                <img src="{{ asset('private/public/storage/' . $meal->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
                                 @endif
                             </div>
                         </div>
@@ -87,8 +101,12 @@
 @push('custom_scripts')
 <script>
 $(document).ready(function() {
-    $('#sub_categories').select2({
-        placeholder: "Select subcategories",
+    $('#categories').select2({
+        placeholder: "Select categories",
+        allowClear: true
+    });
+    $('#food_ids').select2({
+        placeholder: "Select foods",
         allowClear: true
     });
 });

@@ -13,6 +13,7 @@ class MealTime extends Model
 
     protected $fillable = [
         'title',
+        'time',
         'description',
         'image',
     ];
@@ -28,5 +29,17 @@ class MealTime extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_mealtime');
+    }
+
+    // MealTime has many users through the user_meal_times pivot table
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_meal_times');
+    }
+
+    // Many-to-many relationship with Category through the user_categories pivot table
+    public function userCategories()
+    {
+        return $this->belongsToMany(Category::class, 'user_categories', 'meal_time_id', 'category_id');
     }
 }

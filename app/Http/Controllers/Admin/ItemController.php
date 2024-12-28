@@ -1,4 +1,4 @@
-    <?php
+<?php
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -10,7 +10,7 @@ class ItemController extends Controller
 {
     public function index()
     {
-        $items = Item::with('subcategories', 'swapItems')->get();
+        $items = Item::with('meals', 'swapItems')->get();
         return view('backend.pages.item.index', compact('items'));
     }
 
@@ -18,7 +18,7 @@ class ItemController extends Controller
     public function create()
     {
         $meals = Meal::all(); // Fetch all meals
-        $allItems = Item::all(); // Fetch all items for the swap dropdown
+        $allItems = Item::where('is_swiped',0)->get(); // Fetch all items for the swap dropdown
         return view('backend.pages.item.form', compact('meals', 'allItems'));
     }
 
@@ -28,7 +28,7 @@ class ItemController extends Controller
             'title' => 'required|string|max:255',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
-            'qty' => 'required|integer|min:0',
+            'qty' => 'nullable|string',
             'alias' => 'nullable|string|max:255',
             'is_swiped' => 'required|boolean',
             'meal_ids' => 'nullable|array',
@@ -46,14 +46,44 @@ class ItemController extends Controller
         // Create item
         $item = Item::create($data);
 
-        // Sync meals only if is_swiped is not 1
-        if (isset($data['meal_ids']) && $data['is_swiped'] != 1) {
-            $item->meals()->sync($data['meal_ids']);
-        }
-
         // Sync swap items
-        if (isset($data['swap_item_ids'])) {
-            $item->swapItems()->sync($data['swap_item_ids']);
+        if ($request->is_swiped == 1 && $request->has('swap_item_ids')) {
+            $item->swapItems()->sync($request->swap_item_ids);
+
+            $userIds = \DB::table('user_item_swaps')
+                            ->distinct()
+                            ->pluck('user_id');
+                            
+            if ($userIds->isNotEmpty()) {
+                foreach ($userIds as $userId) {
+                    // Check if the user has an active plan
+                    $hasActivePlan = \DB::table('user_plans')
+                        ->where('user_id', $userId)
+                        ->where('status', 'active') // Assuming 'status' indicates if the plan is active
+                        ->exists();
+        
+                    // Only proceed if the user has an active plan
+                    if ($hasActivePlan) {
+                        foreach ($request->swap_item_ids as $swapItemId) {
+                            $exists = \DB::table('user_item_swaps')
+                                ->where('user_id', $userId)
+                                ->where('item_id', $swapItemId)
+                                ->where('swap_item_id', $item->id)
+                                ->exists();
+            
+                            if (!$exists) {
+                                \DB::table('user_item_swaps')->insert([
+                                    'user_id' => $userId,
+                                    'item_id' => $swapItemId,
+                                    'swap_item_id' => $item->id,
+                                    'created_at' => now(),
+                                    'updated_at' => now(),
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return redirect()->route('admin.items.index')->with('success', 'Item created successfully.');
@@ -62,7 +92,7 @@ class ItemController extends Controller
     public function edit(Item $item)
     {
         $meals = Meal::all(); // Fetch all meals
-        $allItems = Item::all(); // Fetch all items for the swap dropdown
+        $allItems = Item::where('is_swiped',0)->get(); // Fetch all items for the swap dropdown
         return view('backend.pages.item.form', compact('item', 'meals', 'allItems'));
     }
 
@@ -72,7 +102,7 @@ class ItemController extends Controller
             'title' => 'required|string|max:255',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
-            'qty' => 'required|integer|min:0',
+            'qty' => 'nullable|string',
             'alias' => 'nullable|string|max:255',
             'is_swiped' => 'required|boolean',
             'meal_ids' => 'nullable|array',
@@ -94,16 +124,46 @@ class ItemController extends Controller
         // Update item
         $item->update($data);
 
-        // Sync meals only if is_swiped is not 1
-        if (isset($data['meal_ids']) && $data['is_swiped'] != 1) {
-            $item->meals()->sync($data['meal_ids']);
-        } else {
-            $item->meals()->detach(); // Detach meals if is_swiped is 1
-        }
+        if ($request->is_swiped == 1) {
+            // Sync the swap items (this will attach new ones and detach the old ones)
+            if ($request->has('swap_item_ids')) {
+                $item->swapItems()->sync($request->swap_item_ids);
 
-        // Sync swap items
-        if (isset($data['swap_item_ids'])) {
-            $item->swapItems()->sync($data['swap_item_ids']);
+                $userIds = \DB::table('user_item_swaps')
+                            ->distinct()
+                            ->pluck('user_id');
+
+                if ($userIds->isNotEmpty()) {
+                    foreach ($userIds as $userId) {
+                        // Check if the user has an active plan
+                        $hasActivePlan = \DB::table('user_plans')
+                            ->where('user_id', $userId)
+                            ->where('status', 'active') // Assuming 'status' indicates if the plan is active
+                            ->exists();
+            
+                        // Only proceed if the user has an active plan
+                        if ($hasActivePlan) {
+                            foreach ($request->swap_item_ids as $swapItemId) {
+                                $exists = \DB::table('user_item_swaps')
+                                    ->where('user_id', $userId)
+                                    ->where('item_id', $swapItemId)
+                                    ->where('swap_item_id', $item->id)
+                                    ->exists();
+            
+                                if (!$exists) {
+                                    \DB::table('user_item_swaps')->insert([
+                                        'user_id' => $userId,
+                                        'item_id' => $swapItemId,
+                                        'swap_item_id' => $item->id,
+                                        'created_at' => now(),
+                                        'updated_at' => now(),
+                                    ]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return redirect()->route('admin.items.index')->with('success', 'Item updated successfully.');

@@ -54,7 +54,7 @@
                                             <span class="text-muted">No Meal Time</span>
                                         @endif
                                     </td> 
-                                    <td>{{ $plan->user->name }}</td>
+                                    <td>{{ ($plan->user) ? $plan->user->name : '' }}</td>
                                     <td>
                                         <a href="{{ route('admin.plans.edit', $plan) }}" class="btn btn-warning btn-sm">Edit</a>
                                         <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" style="display:inline;">

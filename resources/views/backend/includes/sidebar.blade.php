@@ -45,12 +45,7 @@
 					<span>Categories</span>
 				</a>
 			</li>
-			<li>
-				<a class="m-link" href="{{ route('admin.subcategories.index') }}">
-					<i class="icofont-focus fs-5"></i>
-					<span>Sub Categories</span>
-				</a>
-			</li>
+			
 			<li>
 				<a class="m-link" href="{{ route('admin.meals.index') }}">
 					<i class="icofont-focus fs-5"></i>
@@ -71,7 +66,13 @@
 			<li>
 				<a class="m-link" href="{{ route('admin.items.index') }}">
 					<i class="icofont-focus fs-5"></i>
-					<span>Meal Items</span>
+					<span>Foods</span>
+				</a>
+			</li>
+			<li>
+				<a class="m-link" href="{{ route('admin.purchase-plans.index') }}">
+					<i class="icofont-focus fs-5"></i>
+					<span>Purchase Plans</span>
 				</a>
 			</li>
 			<li><?php

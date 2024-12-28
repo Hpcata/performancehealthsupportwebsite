@@ -14,9 +14,11 @@ use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Front\PlanController as FrontPlanController;
-use App\Http\Controllers\Front\CategoryController as FrontCategoryController;
 use App\Http\Controllers\Admin\MealTimeController;
 use App\Http\Controllers\Admin\MealController;
+use App\Http\Controllers\Front\PaymentController;
+use App\Http\Controllers\Admin\PurchasePlanController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +31,12 @@ use App\Http\Controllers\Admin\MealController;
 |
 */
 
+Route::get('/check-auth', function () {
+    return response()->json([
+        'authenticated' => \Auth::check(),
+        'user' => \Auth::user()
+    ]);
+});
 
 Route::get('/login', [AdminAuthController::class, 'index'])->name('index');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login');
@@ -126,9 +134,9 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('sub-categories', [SubCategoryController::class, 'index'])->name('admin.subcategories.index');
     	Route::get('sub-categories/create', [SubCategoryController::class, 'create'])->name('admin.subcategories.create');
     	Route::post('sub-categories', [SubCategoryController::class, 'store'])->name('admin.subcategories.store');
-    	Route::get('sub-categories/{subcategory}/edit', [SubCategoryController::class, 'edit'])->name('admin.subcategories.edit');
-    	Route::put('sub-categories/{subcategory}', [SubCategoryController::class, 'update'])->name('admin.subcategories.update');
-    	Route::delete('sub-categories/{subcategory}', [SubCategoryController::class, 'destroy'])->name('admin.subcategories.destroy');
+    	Route::get('sub-categories/{id}/edit', [SubCategoryController::class, 'edit'])->name('admin.subcategories.edit');
+    	Route::put('sub-categories/{id}', [SubCategoryController::class, 'update'])->name('admin.subcategories.update');
+    	Route::delete('sub-categories/{id}', [SubCategoryController::class, 'destroy'])->name('admin.subcategories.destroy');
 
 		// Items
 		Route::get('items', [ItemController::class, 'index'])->name('admin.items.index');
@@ -145,65 +153,64 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('plans/{plan}/edit', [PlanController::class, 'edit'])->name('admin.plans.edit');
 		Route::put('plans/{plan}', [PlanController::class, 'update'])->name('admin.plans.update');
 		Route::delete('plans/{plan}', [PlanController::class, 'destroy'])->name('admin.plans.destroy');
-	});
-});
 
-Route::prefix('admin')->middleware(['auth'])->group(function () {
-	Route::get('meals', [MealController::class, 'index'])->name('admin.meals.index');
-	Route::get('meals/create', [MealController::class, 'create'])->name('admin.meals.create');
-	Route::post('meals', [MealController::class, 'store'])->name('admin.meals.store');
-	Route::get('meals/{meal}/edit', [MealController::class, 'edit'])->name('admin.meals.edit');
-	Route::put('meals/{meal}', [MealController::class, 'update'])->name('admin.meals.update');
-	Route::delete('meals/{meal}', [MealController::class, 'destroy'])->name('admin.meals.destroy');
-
-	Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
-	Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
-	Route::post('meal-times', [MealTimeController::class, 'store'])->name('admin.meal-times.store');
-	Route::get('meal-times/{id}/edit', [MealTimeController::class, 'edit'])->name('admin.meal-times.edit');
-	Route::put('meal-times/{id}', [MealTimeController::class, 'update'])->name('admin.meal-times.update');
-	Route::delete('meal-times/{id}', [MealTimeController::class, 'destroy'])->name('admin.meal-times.destroy');
+		Route::get('meals', [MealController::class, 'index'])->name('admin.meals.index');
+		Route::get('meals/create', [MealController::class, 'create'])->name('admin.meals.create');
+		Route::post('meals', [MealController::class, 'store'])->name('admin.meals.store');
+		Route::get('meals/{meal}/edit', [MealController::class, 'edit'])->name('admin.meals.edit');
+		Route::put('meals/{meal}', [MealController::class, 'update'])->name('admin.meals.update');
+		Route::delete('meals/{meal}', [MealController::class, 'destroy'])->name('admin.meals.destroy');
 	
-    // Route::resource('meal-times', MealTimeController::class);
-	// Route::resource('meals', MealController::class);
+		Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
+		Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
+		Route::post('meal-times', [MealTimeController::class, 'store'])->name('admin.meal-times.store');
+		Route::get('meal-times/{id}/edit', [MealTimeController::class, 'edit'])->name('admin.meal-times.edit');
+		Route::put('meal-times/{id}', [MealTimeController::class, 'update'])->name('admin.meal-times.update');
+		Route::delete('meal-times/{id}', [MealTimeController::class, 'destroy'])->name('admin.meal-times.destroy');
+		
+		Route::get('/purchase-plans', [PurchasePlanController::class, 'index'])->name('admin.purchase-plans.index');
+		Route::get('/purchase-plans/{id}/create', [PurchasePlanController::class, 'create'])->name('admin.purchase-plans.create');
+		Route::post('/purchase-plans', [PurchasePlanController::class, 'store'])->name('admin.purchase-plans.store');
+		Route::get('/purchase-plans/{user}/edit/{plan}', [PurchasePlanController::class, 'edit'])->name('admin.purchase-plans.edit');
+		Route::put('/purchase-plans', [PurchasePlanController::class, 'update'])->name('admin.purchase-plans.update');
+		Route::get('/pre-plan-details/{id}', [PurchasePlanController::class, 'getPrePlanDetails'])->name('admin.pre-plan-details');
 
+		Route::post('/get-meal-items', [PurchasePlanController::class, 'getMealItems'])->name('admin.get-meal-items');
+		Route::post('/get-meals-by-mealtime', [PurchasePlanController::class, 'getMealsByMealTime'])->name('admin.get-meals-by-mealtime');
+	});
 });
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/blog', [FrontController::class, 'blog'])->name('front.blog');
 Route::get('blog/{id}', [FrontController::class, 'blogDetails'])->name('front.blog.detail');
 Route::POST('/save-query', [FrontController::class, 'save'])->name('save-query');
-Route::get('/sub-home-page', [FrontController::class, 'subHomePage'])->name('front.sub-home-page');
+Route::get('/action-sport-nutrition-plan', [FrontController::class, 'subHomePage'])->name('front.sub-home-page');
+Route::get('/pre-plan-details', [PaymentController::class, 'prePlanDetails'])->name('front.pre-plan-details');
+Route::post('/pre-plan-details-store', [PaymentController::class, 'prePlanDetailsSave'])->name('front.pre-plan-details.store');
+// Front auth
+Route::post('front/login', [FrontController::class, 'login'])->name('front.login');
+
+//Stripe payment
+Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
+Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
 
 // Plans
-Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
-Route::get('/meal-time/{id}', [FrontPlanController::class, 'mealTimeDetails'])->name('front.meal-time.details');
+Route::group(['middleware' => 'auth'], function () {
+	Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
+	Route::get('/meal-time/{id}/{plan_id}', [FrontPlanController::class, 'mealTimeDetails'])->name('front.meal-time.details');
 
-//categories
-Route::get('/subcategory/{id}/meals', [FrontPlanController::class, 'getMeals'])->name('front.subcategory.meals');
-Route::get('/category/{id}/subcategories', [FrontPlanController::class, 'getSubCategories'])->name('front.category.subcategories');
-Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
-Route::get('/meal/{id}/items', [FrontPlanController::class, 'getMealItems'])->name('front.meals.items');
-Route::get('/item/{id}/swap-items', [FrontPlanController::class, 'getSwapItems'])->name('front.items.swap-items');
+	//categories
+	Route::get('/subcategory/{id}/meals', [FrontPlanController::class, 'getMeals'])->name('front.subcategory.meals');
+	Route::get('/category/{id}/subcategories', [FrontPlanController::class, 'getSubCategories'])->name('front.category.subcategories');
+	Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
+	Route::get('/meal/{id}/items', [FrontPlanController::class, 'getMealItems'])->name('front.meals.items');
+	Route::get('/item/{id}/swap-items', [FrontPlanController::class, 'getSwapItems'])->name('front.items.swap-items');
 
-Route::get('item/swap', [FrontPlanController::class, 'applySwaps'])->name('front.items.swaps');
-// Route::get('/backend', function () {
-// 	return redirect()->route('backend.home');
-// });
+	Route::get('item/swap', [FrontPlanController::class, 'applySwaps'])->name('front.items.swaps');
+	Route::get('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
+	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
+	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
 
-Route::prefix('admin')->group(function () {
-	
-	//dd('backend');
-	// Route::get('/home', [BackendController::class, 'index'])->name('backend.home');
-
-	// Blog
-
-	// Route::prefix('')->group(function () {
-	// 	Route::get('blogs-list', [BackendController::class, 'index'])->name('backend.blogs-list');
-	// 	Route::get('blogs-add', [BackendController::class, 'create'])->name('backend.blogs-add');
-	// 	Route::post('blogs-store', [BackendController::class, 'store'])->name('backend.blogs-store');
-	// 	Route::get('blogs-edit', [BackendController::class, 'edit'])->name('backend.blogs-edit');
-	// 	Route::post('blogs-update', [BackendController::class, 'update'])->name('backend.blogs-update');
-	// 	Route::post('blogs-delete', [BackendController::class, 'delete'])->name('backend.blogs-delete');
-	// });
-	
 });
+
+

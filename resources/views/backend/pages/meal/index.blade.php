@@ -38,7 +38,7 @@
                                 <th>ID</th>
                                 <th>Title</th>
                                 <th>Image</th>
-                                <th>Sub Categories</th>
+                                <th>Categories</th>
                                 <th>Description</th>
                                 <th>Created At</th>
                                 <th>Action</th>
@@ -57,8 +57,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($item->subCategories->isNotEmpty())
-                                        {{ $item->subCategories->pluck('title')->implode(', ') }}
+                                    @if($item->categories->isNotEmpty())
+                                        {{ $item->categories->pluck('title')->implode(', ') }}
                                     @else
                                         <span class="text-muted">No Subcategories</span>
                                     @endif
