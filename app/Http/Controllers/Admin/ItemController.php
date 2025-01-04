@@ -29,13 +29,14 @@ class ItemController extends Controller
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
             'qty' => 'nullable|string',
-            'alias' => 'nullable|string|max:255',
             'is_swiped' => 'required|boolean',
             'meal_ids' => 'nullable|array',
             'meal_ids.*' => 'exists:meals,id',
             'swap_item_ids' => 'nullable|array',
             'swap_item_ids.*' => 'exists:items,id',
             'image' => 'nullable|image|max:2048',
+            'protein' => 'nullable|numeric',
+            'carbs' => 'nullable|numeric',
         ]);
 
         // Handle image upload
@@ -103,13 +104,14 @@ class ItemController extends Controller
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
             'qty' => 'nullable|string',
-            'alias' => 'nullable|string|max:255',
             'is_swiped' => 'required|boolean',
             'meal_ids' => 'nullable|array',
             'meal_ids.*' => 'exists:meals,id',
             'swap_item_ids' => 'nullable|array',
             'swap_item_ids.*' => 'exists:items,id',
             'image' => 'nullable|image|max:2048',
+            'protein' => 'nullable|numeric',
+            'carbs' => 'nullable|numeric',
         ]);
 
         // Handle image upload

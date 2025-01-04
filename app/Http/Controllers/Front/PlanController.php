@@ -99,7 +99,8 @@ class PlanController extends Controller
                 'user_item_id' => $userItem->id,
                 'id' => $userItem->item->id,
                 'name' => $userItem->item->title,
-                'price' => $userItem->item->price,
+                'protien' => $userItem->item->protien ?? 0,
+                'carbs' => $userItem->item->carbs ?? 0,
                 'qty' => $userItem->item->qty,
                 'description' => $userItem->item->description,
                 'image' => $userItem->item->image
@@ -291,5 +292,63 @@ class PlanController extends Controller
 
     }
 
+    public function getDefaultPlanDetails($id)
+    {
+        $plan = Plan::with([
+            'subPlans.mealTimes.categories.meals.items.swapItems',
+            'mealTimes.categories.meals.items.swapItems'
+        ])->find($id);
+
+        if (!$plan) {
+            return response()->json(['error' => 'Plan not found'], 404);
+        }
+
+        // Structure the main plan and subPlans data
+        $structurePlan = function ($plan) {
+            return [
+                'id' => $plan->id,
+                'name' => $plan->name,
+                'price' => $plan->price,
+                'mealTimes' => $plan->mealTimes->map(function ($mealTime) {
+                    return [
+                        'id' => $mealTime->id,
+                        'title' => $mealTime->title,
+                        'categories' => $mealTime->categories->map(function ($category) {
+                            return [
+                                'id' => $category->id,
+                                'name' => $category->title,
+                                'meals' => $category->meals->map(function ($meal) {
+                                    return [
+                                        'id' => $meal->id,
+                                        'name' => $meal->title,
+                                        'items' => $meal->items->map(function ($item) {
+                                            return [
+                                                'id' => $item->id,
+                                                'name' => $item->title,
+                                                'swapItems' => $item->swapItems->map(function ($swapItem) {
+                                                    return [
+                                                        'id' => $swapItem->id,
+                                                        'name' => $swapItem->title,
+                                                    ];
+                                                }),
+                                            ];
+                                        }),
+                                    ];
+                                }),
+                            ];
+                        }),
+                    ];
+                }),
+            ];
+        };
+
+        // Include subPlans in the response
+        $response = [
+            'mainPlan' => $structurePlan($plan),
+            'subPlans' => $plan->subPlans->map($structurePlan),
+        ];
+
+        return response()->json($response);
+    }
 
 }

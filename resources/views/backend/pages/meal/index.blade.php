@@ -39,38 +39,42 @@
                                 <th>Title</th>
                                 <th>Image</th>
                                 <th>Categories</th>
+                                <th>Total Protein (gm)</th>
+                                <th>Total Carbs (gm)</th>
                                 <th>Description</th>
                                 <th>Created At</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($meals as $item)
+                            @foreach ($meals as $meal)
                             <tr>
-                                <td><strong>{{ $item->id }}</strong></td>
-                                <td>{{ $item->title }}</td>
+                                <td><strong>{{ $meal->id }}</strong></td>
+                                <td>{{ $meal->title }}</td>
                                 <td>
-                                    @if($item->image)
-                                    <img src="{{ asset('private/public/storage/' . $item->image) }}" alt="" width="50">
+                                    @if($meal->image)
+                                    <img src="{{ asset('private/public/storage/' . $meal->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif
                                 </td>
                                 <td>
-                                    @if($item->categories->isNotEmpty())
-                                        {{ $item->categories->pluck('title')->implode(', ') }}
+                                    @if($meal->categories->isNotEmpty())
+                                        {{ $meal->categories->pluck('title')->implode(', ') }}
                                     @else
                                         <span class="text-muted">No Subcategories</span>
                                     @endif
                                 </td> 
-                                <td>{{ Str::limit($item->description, 50, '...') }}</td>
-                                <td>{{ $item->created_at->format('Y-m-d') }}</td>
+                                <td>{{ $meal->totalProtein() }}</td>
+                                <td>{{ $meal->totalCarbs() }}</td>
+                                <td>{{ Str::limit($meal->description, 50, '...') }}</td>
+                                <td>{{ $meal->created_at->format('Y-m-d') }}</td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                        <a href="{{ route('admin.meals.edit', $item->id) }}" class="btn btn-outline-secondary">
+                                        <a href="{{ route('admin.meals.edit', $meal->id) }}" class="btn btn-outline-secondary">
                                             <i class="icofont-edit text-success"></i>
                                         </a>
-                                        <form action="{{ route('admin.meals.destroy', $item->id) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('admin.meals.destroy', $meal->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-secondary">

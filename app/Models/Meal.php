@@ -40,4 +40,14 @@ class Meal extends Model
         return $this->belongsToMany(Item::class, 'user_item_meals', 'meal_id', 'item_id')
         ->wherePivot('is_swiped',0);
     }
+
+    public function totalProtein()
+    {
+        return $this->items()->sum('protein');
+    }
+
+    public function totalCarbs()
+    {
+        return $this->items()->sum('carbs');
+    }
 }

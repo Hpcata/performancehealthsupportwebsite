@@ -15,6 +15,7 @@ use Auth;
 use App\Models\UserPlan;
 use App\Mail\PlanPurchaseMail;
 use App\Mail\PrePlanDetailsSubmitMail;
+use GuzzleHttp\Client;
 
 class PaymentController extends Controller
 {
@@ -25,7 +26,7 @@ class PaymentController extends Controller
             'payment_method_id' => 'required|string',
             'plan_id' => 'required|integer',
             'price' => 'required|numeric',
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',            
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
             'password' => 'required|string|min:8', // New password validation
@@ -35,8 +36,7 @@ class PaymentController extends Controller
 
         try {
             // Initialize Stripe
-            Stripe::setApiKey('sk_test_51QI09cHWqn47bqTG2jBxRszIld9Jh0XITRvFvDLPCpmgQUjls75dfoSw5IBBZiqXZkVz7yVgHLYInFBHN76eeZ9W0071DUatdf');
-
+           
             // Create a PaymentIntent
             $paymentIntent = PaymentIntent::create([
                 'amount' => $validated['price'] * 100, // Amount in cents
@@ -133,6 +133,7 @@ class PaymentController extends Controller
         $paymentId = $request->id;
         return view('front.pre_plan_details', compact('userId', 'paymentId'));
     }
+
     public function prePlanDetailsSave(Request $request)
     {
 
@@ -206,5 +207,11 @@ class PaymentController extends Controller
             return response()->json(['success' => false, 'message' => 'Payment failed: ' . $e->getMessage()], 500);
         }
 
+    }
+
+    public function getRaceEthnicityCultureOptions(Request $request)
+    {
+       dd($request->all());
+            
     }
 }

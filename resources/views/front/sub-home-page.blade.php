@@ -31,6 +31,8 @@
     if($isAuthenticated){
         $user = Auth::user();
         $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->pluck('plan_id')->toArray();
+    }else {
+        $planIds = [];
     }
 @endphp
 
@@ -44,7 +46,7 @@
                         </div>
                         <div class="text-center banner-text mt-auto pt-5">
                             {!! $section->content !!}
-                            <a href="#" class="btn btn-primary">
+                            <a href="#" class="btn btn-primary" id="takeFreeTest">
                                 <span class="me-1">Take Free Test</span>
                                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
@@ -160,11 +162,12 @@
                             </div>
                             <!-- <a href="#" class="btn btn-primary">Purchase Now: $200</a> -->
                             <div data-aos="fade-up" class="aos-init aos-animate">
-                                @if($isAuthenticated && in_array($plan->id, $planIds))<?php
-                                    $userPlan = \App\Models\UserPlan::where('user_id', Auth::user()->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
-                                    $isPlanCreated = $userPlan ? true : false;
-                                ?>
-                                <a href="{{ route('front.plans.details', ['id' => $plan->id]) }}" class="btn btn-primary mt-2 w-100 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
+                                @if($isAuthenticated && in_array($plan->id, $planIds))
+                                    <?php
+                                        $userPlan = \App\Models\UserPlan::where('user_id', Auth::user()->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
+                                        $isPlanCreated = $userPlan ? true : false;
+                                    ?>
+                                    <a href="{{ route('front.plans.details', ['id' => $plan->id]) }}" class="btn btn-primary mt-2 w-100 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
                                         <span class="me-1">View Details </span>
                                         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
 
@@ -174,16 +177,26 @@
 
                                         </svg>
                                     </a>
-                                @else
-                                <div data-aos="fade-up" class="aos-init aos-animate">
-                                    <button type="button" class="btn btn-primary mt-2 w-100 purchase-now-btn" 
-                                            data-plan-id="{{ $plan->id }}" 
-                                            data-plan-name="{{ $plan->name }}" 
-                                            data-plan-price="{{ $plan->price }}">
-                                        Purchase Now: $ {{ $plan->price }}
-                                    </button>
-                                </div>
-                                @endif
+                                    @elseif(!$isAuthenticated && in_array($plan->id, $planIds))
+                                        <div data-aos="fade-up" class="aos-init aos-animate">
+                                            <button type="button" class="btn btn-primary mt-2 w-100" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#loginModal">
+                                                View Details
+                                            </button>
+                                        </div>
+                                    @else
+                                        <div data-aos="fade-up" class="aos-init aos-animate">
+                                            <button type="button" class="btn btn-primary mt-2 w-100 purchase-now-btn" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#purchaseModal"
+                                                    data-plan-id="{{ $plan->id }}" 
+                                                    data-plan-name="{{ $plan->name }}" 
+                                                    data-plan-price="{{ $plan->price }}">
+                                                Purchase Now: $ {{ $plan->price }}
+                                            </button>
+                                        </div>
+                                    @endif
                             </div>
                         </div>
                     </div>
@@ -790,6 +803,9 @@
                         </div>
 
                         <!-- Submit Button -->
+                        <button type="button" id="view-sample-plan" class="btn btn-primary w-100 mt-3">
+                            View Sample Plan
+                        </button>
                         <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
                             Purchase
                         </button>
@@ -841,8 +857,86 @@
         </div>
     </div>
 
+    <div class="modal fade" id="testLoginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="login-error" class="text-danger"></div> <!-- This will display the error message -->
+                    <!-- Sign In Form -->
+                    <form id="test-login-form">
+                        <div class="mb-3">
+                            <label for="login-email" class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" id="test-login-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" id="test-login-password" required>
+                        </div>
+
+                        <!-- Sign In Button -->
+                        <button type="submit" id="login-submit" class="btn btn-primary w-100 mt-3">
+                            Sign In
+                        </button>
+                    </form>
+
+                    <!-- Sign Up Link -->
+                    <div class="mt-3 text-center">
+                        <small>Don't have an account? <a href="#" class="register-link">Sign Up</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="purchaseModalLabel">Sign Up</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- User info form -->
+                    <form id="register-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" name="name" id="register-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="register-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" id="register-phone" required>
+                        </div>
+
+                        <!-- New Password Field -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" id="register-password" required>
+                        </div>
+
+                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
+                            Sign Up
+                        </button>
+                    </form>
+
+                    <!-- Sign In Link -->
+                    <div class="mt-3 text-center">
+                        <small>Already have an account? <a href="#" class="login-link">Sign In</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Thank You Modal -->
-    <div class="modal fade" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
+    <div class="modal show" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-center">
                 <div class="modal-header border-0">
@@ -853,17 +947,659 @@
                         <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
                     </div>
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
-                    <p class="mb-2">Your payment was successful.</p>
-                    <p class="mb-4">Your plan will be finalized and ready within the next 24 hours.</p>
-                    <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
+                    <p class="mb-2" id="thankYouMessage">Your payment was successful.</p>
+                    <a href="#" id="planUrlLink" class="btn btn-primary mt-2">Order Your Personalised Plan</a>
+
+                    <!-- <button type="button" class="btn btn-primary w-50 mt-3" data-bs-dismiss="modal">Close</button> -->
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="samplePlanModal" tabindex="-1" aria-labelledby="samplePlanModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="samplePlanModalLabel">Sample Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="samplePlanModalBody">
+                    <!-- Plan details will be injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="TakeTestModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="TakeTestModelLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header flex-column align-items-start pe-5">
+                <h4 class="modal-title mb-1" id="testModalLabel">Nutrition Knowledge Questions</h4>
+                <p>Answers to the 4 questions below will assist in providing targeted information. </p>
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="steps-list mb-4">
+                    <div class="wizard-inner">
+                        <a class="tab-steps active" href="#"><span class="round-tab">1</span> <i>Step 1</i></a>
+                        <a class="tab-steps" href="#"><span class="round-tab">2</span> <i>Step 2</i></a>
+                        <a class="tab-steps" href="#"><span class="round-tab">3</span> <i>Step 3</i></a>
+                        <a class="tab-steps" href="#"><span class="round-tab">4</span> <i>Step 4</i></a>
+                    </div>
+                </div>
+
+                <div class="tab-main-box">
+                    <div class="step-tab-box" id="div1" style="display: block;">
+                        <div class="card">
+                            <div class="p-3 card-header bg-white">
+                                <h5 class="m-0">1. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">carbohydrate</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
+                                <input type="hidden" name="questions[foods_carbohydrate]" value="Do you think these foods are high or low in carbohydrate?" />
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table m-0">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="text-center">High</th>
+                                                <th class="text-center">Low</th>
+                                                <th class="text-center">Unsure</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Chicken</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][chicken]" value="High" id="Chicken-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][chicken]" value="Low" id="Chicken-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][chicken]" value="Unsure" id="Chicken-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Baked beans</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][baked_beans]" value="High" id="Bakedbeans-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][baked_beans]" value="Low" id="Bakedbeans-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][baked_beans]" value="Unsure" id="Bakedbeans-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Grain bread</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][grain_bread]" value="High" id="GrainBread-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][grain_bread]" value="Low" id="GrainBread-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][grain_bread]" value="Unsure" id="GrainBread-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Avocado</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][avocado]" value="High" id="Avocado-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][avocado]" value="Low" id="Avocado-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][avocado]" value="Unsure" id="Avocado-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Weet-bix</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][weet_bix]" value="High" id="Weet-bix-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][weet_bix]" value="Low" id="Weet-bix-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][weet_bix]" value="Unsure" id="Weet-bix-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Fruit yoghurt</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][fruit_yoghurt]" value="High" id="FruitYoghurt-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][fruit_yoghurt]" value="Low" id="FruitYoghurt-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][fruit_yoghurt]" value="Unsure" id="FruitYoghurt-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Crumpets</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][crumpets]" value="High" id="Crumpets-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][crumpets]" value="Low" id="Crumpets-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][crumpets]" value="Unsure" id="Crumpets-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cream</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][cream]" value="High" id="Cream-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][cream]" value="Low" id="Cream-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][cream]" value="Unsure" id="Cream-3"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="2">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-tab-box" id="div2" style="display: block;">
+                        <div class="card">
+                            <div class="p-3 card-header bg-white">
+                                <h5 class="m-0">2. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">protein</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
+                                <input type="hidden" name="questions[foods_protein]" value="Do you think these foods are high or low in protein?" />
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="text-center">High</th>
+                                                <th class="text-center">Low</th>
+                                                <th class="text-center">Unsure</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Salmon</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][salmon]" value="High" id="Salmon-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][salmon]" value="Low" id="Salmon-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][salmon]" value="Unsure" id="Salmon-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Baked beans</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][baked_beans]" value="High" id="Bakedbeans-11"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][baked_beans]" value="Low" id="Bakedbeans-12"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][baked_beans]" value="Unsure" id="Bakedbeans-13"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Fruit</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][fruit]" value="High" id="Fruit-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][fruit]" value="Low" id="Fruit-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][fruit]" value="Unsure" id="Fruit-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Hummus</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][hummus]" value="High" id="Hummus-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][hummus]" value="Low" id="Hummus-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][hummus]" value="Unsure" id="Hummus-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cornflakes cereal</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][cornflakes_cereal]" value="High" id="CornflakesCereal-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][cornflakes_cereal]" value="Low" id="CornflakesCereal-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][cornflakes_cereal]" value="Unsure" id="CornflakesCereal-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Almonds</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almonds]" value="High" id="Almonds-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almonds]" value="Low" id="Almonds-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almonds]" value="Unsure" id="Almonds-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Flavoured milk</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][flavoured_milk]" value="High" id="FlavouredMilk-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][flavoured_milk]" value="Low" id="FlavouredMilk-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][flavoured_milk]" value="Unsure" id="FlavouredMilk-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Ice cream</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][ice_cream]" value="High" id="IceCream-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][ice_cream]" value="Low" id="IceCream-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][ice_cream]" value="Unsure" id="IceCream-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Almond/oat milk</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almond_oat_milk]" value="High" id="Almond-oat-milk-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almond_oat_milk]" value="Low" id="Almond-oat-milk-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almond_oat_milk]" value="Unsure" id="Almond-oat-milk-3"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="1" >Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="3">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-tab-box" id="div3" style="display: block;">
+                        <div class="card">
+                            <div class="p-3 card-header bg-white">
+                                <h5 class="m-0">3. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">fat</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
+                                <input type="hidden" name="questions[foods_fat]" value="Do you think these foods are high or low in fat?" />
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="text-center">High</th>
+                                                <th class="text-center">Low</th>
+                                                <th class="text-center">Unsure</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Avocado</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][avocado]" value="High" id="Avocado-11"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][avocado]" value="Low" id="Avocado-12"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][avocado]" value="Unsure" id="Avocado-13"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Baked beans</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][backed_beans]" value="High" id="BakedBeans-21"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][backed_beans]" value="Low" id="BakedBeans-22"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][backed_beans]" value="Unsure" id="BakedBeans-23"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cottage cheese</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cottage_cheese]" value="High" id="CottageCheese-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cottage_cheese]" value="Low" id="CottageCheese-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cottage_cheese]" value="Unsure" id="CottageCheese-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Peanut butter</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][peanut_butter]" value="High" id="PeanutButter-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][peanut_butter]" value="Low" id="PeanutButter-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][peanut_butter]" value="Unsure" id="PeanutButter-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Crumpets</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][crumpets]" value="High" id="Crumpets-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][crumpets]" value="Low" id="Crumpets-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][crumpets]" value="Unsure" id="Crumpets-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cheddar/Tatsy cheese</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cheddar_tatsy_cheese]" value="High" id="CheddarTatsyCheese-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cheddar_tatsy_cheese]" value="Low" id="CheddarTatsyCheese-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cheddar_tatsy_cheese]" value="Unsure" id="CheddarTatsyCheese-3"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="2" >Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="4">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-tab-box" id="div4" style="display: block;">
+                        <div class="card">
+                            <div class="p-3 card-header bg-white">
+                                <h5 class="m-0">4. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">healthy fats</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
+                                <input type="hidden" name="questions[foods_healthy_fat]" value="Do you think these foods are high or low in healthy fat?" />
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="text-center">High</th>
+                                                <th class="text-center">Low</th>
+                                                <th class="text-center">Unsure</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Butter</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][butter]" value="High" id="Butter-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][butter]" value="Low" id="Butter-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][butter]" value="Unsure" id="Butter-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Extra virgin olive oil</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][extra_virgin_olive_oil]" value="High" id="OliveOil-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][extra_virgin_olive_oil]" value="Low" id="OliveOil-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][extra_virgin_olive_oil]" value="Unsure" id="OliveOil-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Whole milk</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][whole_milk]" value="High" id="WholeMilk-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][whole_milk]" value="Low" id="WholeMilk-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][whole_milk]" value="Unsure" id="WholeMilk-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Potato crisps</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][potato_crisps]" value="High" id="PotatoCrisps-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][potato_crisps]" value="Low" id="PotatoCrisps-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][potato_crisps]" value="Unsure" id="PotatoCrisps-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Salmon</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][salmon]" value="High" id="Salmon-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][salmon]" value="Low" id="Salmon-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][salmon]" value="Unsure" id="Salmon-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Dark chocolate</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][dark_chocolate]" value="High" id="DarkChocolate-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][dark_chocolate]" value="Low" id="DarkChocolate-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][dark_chocolate]" value="Unsure" id="DarkChocolate-3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Macadamia nuts</td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][macadamia_nuts]" value="High" id="MacadamiaNuts-1"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][macadamia_nuts]" value="Low" id="MacadamiaNuts-2"></td>
+                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][macadamia_nuts]" value="Unsure" id="MacadamiaNuts-3"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="3" >Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto submit-free-test">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script>
+    
+    $(document).ready(function () {
+        $('#takeFreeTest').on('click', function () {
+            $('#TakeTestModel').modal('show');
+        });
+        // Initialize all the necessary variables
+        const stepCircles = document.querySelectorAll('.tab-steps');
+        const stepTabs = document.querySelectorAll(".step-tab-box");
+        const showStepButtons = document.querySelectorAll('.showStepTab');
+        const submitButton = document.querySelector(".submit-free-test"); // Submit button for final submission
+        const currentModal = $("#TakeTestModel"); // Current modal for test steps
+        const registerModal = $("#registerModal"); // Registration/Login modal
+        const loginModal = $("#testLoginModal"); // Registration/Login modal
+        const registerForm = $("#register-form"); // Registration form
+        const loginForm = $("#test-login-form"); // Login form
+        const loginLink = $(".login-link"); // Login link in Register modal
+        const registerLink = $(".register-link"); // Register link in Login modal
+        const stepsData = {}; // Object to store all steps data
+
+        let currentStep = 0; // Track the active step index
+
+        // Initially, show only the first step-tab-box
+        stepTabs.forEach((tab, index) => {
+            tab.style.display = index === 0 ? "block" : "none";
+        });
+
+        // Function to validate fields in the current step
+        function validateStep(stepIndex) {
+            const stepTab = stepTabs[stepIndex]; // Get current step tab
+            const inputs = stepTab.querySelectorAll('input, textarea, select');
+            let isValid = true;
+            const errorMessage = "* Please select an answer for this question.";
+
+            // Loop through each input to validate
+            inputs.forEach(input => {
+                // Reset border color before validation
+                input.style.border = "";
+
+                if (input.type === "radio" || input.type === "checkbox") {
+                    // Validation for radio/checkbox inputs
+                    if (input.name && !document.querySelector(`input[name="${input.name}"]:checked`)) {
+                        isValid = false;
+                        // Apply red border to all unchecked inputs in the group
+                        document.querySelectorAll(`input[name="${input.name}"]`).forEach(el => {
+                            el.style.border = "1px solid red";
+                        });
+                    } else {
+                        // Reset border for valid radio/checkbox group
+                        document.querySelectorAll(`input[name="${input.name}"]`).forEach(el => {
+                            el.style.border = "";
+                        });
+                    }
+                } else if (input.value.trim() === "") {
+                    // Validation for text fields, textarea, and select
+                    input.style.border = "1px solid red";
+                    isValid = false;
+                } else {
+                    // Reset border for valid inputs
+                    input.style.border = "";
+                }
+            });
+
+            // Display error message if validation fails
+            const cardBody = stepTab.querySelector('.card-body');
+            let errorMessageSpan = cardBody.querySelector('.general-error-message');
+
+            if (!errorMessageSpan) {
+                // Create error message span if not present
+                errorMessageSpan = document.createElement("span");
+                errorMessageSpan.className = "text-danger general-error-message m-3";
+                cardBody.appendChild(errorMessageSpan);
+            }
+
+            errorMessageSpan.textContent = errorMessage;
+            errorMessageSpan.style.display = isValid ? "none" : "block";
+
+            return isValid;
+        }
+
+        // Function to collect data for the current step
+        function collectStepData(currentStep) {
+            const form = document.querySelector(`#div${currentStep}`);
+            const stepData = {};
+            const questionInput = form.querySelector("input[type='hidden'][name^='questions']");
+            const questionText = questionInput ? questionInput.value : "";
+
+            if (questionText) {
+                stepData[questionText] = {};
+            }
+
+            const rows = form.querySelectorAll("tbody tr");
+            rows.forEach(row => {
+                const foodName = row.querySelector("td:first-child").textContent.trim();
+                const selectedAnswer = row.querySelector("input[type='radio']:checked");
+
+                if (foodName) {
+                    stepData[questionText][foodName] = selectedAnswer ? selectedAnswer.value : "No answer selected";
+                }
+            });
+
+            return stepData;
+        }
+
+        // Event listener for step navigation buttons (previous/next steps)
+        showStepButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetStep = parseInt(button.getAttribute('target'), 10) - 1;
+
+                // If moving forward, validate the current step
+                if (targetStep > currentStep && !validateStep(currentStep)) {
+                    return; // Stop progression if validation fails
+                }
+
+                // Update step tabs visibility and active step
+                stepCircles.forEach((step, index) => {
+                    step.classList.toggle('active', index <= targetStep);
+                });
+
+                stepTabs.forEach((tab, index) => {
+                    tab.style.display = index === targetStep ? "block" : "none";
+                });
+
+                currentStep = targetStep;
+            });
+        });
+
+        // Event listener for the Submit button (final submit after all steps)
+        submitButton.addEventListener("click", () => {
+            alert("Submit button clicked");
+            // Validate all steps before final submission
+            if (!validateStep(currentStep)) {
+                return; // Stop submission if validation fails
+            }
+
+            // Collect step data for all steps and store them in local storage
+            for (let step = 1; step <= 4; step++) {
+                const stepData = collectStepData(step);
+                localStorage.setItem(`step-${step}-data`, JSON.stringify(stepData));
+                Object.assign(stepsData, stepData);  // Merge collected data into stepsData object
+            }
+
+            // Save all the collected test data to localStorage
+            localStorage.setItem("testStepsData", JSON.stringify(stepsData));
+
+            // Close the current modal and open the registration/login modal
+            if (currentModal) {
+                currentModal.modal('hide'); // Close the current modal using jQuery
+            }
+
+            if (registerModal) {
+                registerModal.modal('show'); // Open the register modal using jQuery
+            }
+        });
+
+        // Registration form submit handler
+        registerForm.submit(function (event) {
+            event.preventDefault();
+
+            // Capture the registration form data (name, email, password)
+            const name = $("#register-name").val();
+            const email = $("#register-email").val();
+            const phone = $("#register-phone").val();
+            const password = $("#register-password").val();
+
+            // Get test data from localStorage
+            const testData = JSON.parse(localStorage.getItem("testStepsData"));
+
+            // Prepare data for submission
+            const registrationData = {
+                name,
+                email,
+                password,
+                phone
+            };
+
+            // Simulate API request to register the user
+            $.ajax({
+                url: "{{ route('front.register') }}",
+                method: "POST",
+                contentType: "application/json",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: JSON.stringify(registrationData),
+                success: function (data) {
+                    if (data.success) {
+                        const userId = data.user.id;
+
+                        // Now, associate the user ID with the test form data and save it to the database
+                        $.ajax({
+                            url: "{{ route('front.submit-free-test') }}",
+                            method: "POST",
+                            contentType: "application/json",
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            data: JSON.stringify({ userId, name, email, phone, testData }),
+                            success: function () {
+                                // alert("Registration and Test Data Submission Successful!");
+
+                                // Clear localStorage and close the modal
+                                localStorage.removeItem("testStepsData");
+                                registerModal.modal('hide'); // Close the register modal
+                                showThankYouModal();
+                            },
+                            error: function () {
+                                alert("Error submitting test data.");
+                            }
+                        });
+                    } else {
+                        alert("Registration failed.");
+                    }
+                },
+                error: function () {
+                    alert("Error registering.");
+                }
+            });
+        });
+
+        // Login form submit handler
+        loginForm.submit(function (event) {
+            event.preventDefault();
+
+            const testData = JSON.parse(localStorage.getItem("testStepsData"));
+
+            // Capture the login form data (email, password)
+            const email = $("#test-login-email").val();
+            const password = $("#test-login-password").val();
+            console.log(email);
+            console.log(password);
+            // Prepare data for login submission
+            const loginData = {
+                email,
+                password
+            };
+
+            // Simulate API request to log the user in
+            $.ajax({
+                url: "{{ route('front.login') }}",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(loginData),
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function (data) {
+                    if (data.success) {
+                        const userId = data.user.id;
+                        const name = data.user.name;
+                        // Handle success (store user data, etc.)
+                        $.ajax({
+                            url: "{{ route('front.submit-free-test') }}",
+                            method: "POST",
+                            contentType: "application/json",
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            data: JSON.stringify({ userId, name, email, testData }),
+                            success: function () {
+                                // alert("Registration and Test Data Submission Successful!");
+
+                                // Clear localStorage and close the modal
+                                localStorage.removeItem("testStepsData");
+                                loginModal.modal('hide'); // Close the register modal
+                                showThankYouModal();
+                            },
+                            error: function () {
+                                alert("Error submitting test data.");
+                            }
+                        });
+
+                        // Close the login modal
+                        loginModal.modal('hide');
+                    } else {
+                        alert("Login failed.");
+                    }
+                },
+                error: function () {
+                    alert("Error logging in.");
+                }
+            });
+        });
+
+        // Switch to the login modal from the register modal
+        loginLink.click(function () {
+            registerModal.modal('hide');
+            loginModal.modal('show');
+        });
+
+        // Switch to the register modal from the login modal
+        registerLink.click(function () {
+            loginModal.modal('hide');
+            registerModal.modal('show');
+        });
+
+        function showThankYouModal() {
+            // Set dynamic content
+            const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
+            const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
+            // Set the modal message
+            $('#thankYouMessage').text(thankYouMessage);
+            
+            // Set the URL for the plan button dynamically
+            $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
+            $('#thankYouModal').modal('show');
+        }
+    });
+
     // Add this JavaScript code to your page
     $(document).ready(function() {
         var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
@@ -907,8 +1643,7 @@
 
             var planId = $(this).data('plan-id');  // Get the plan ID
             var price = $(this).data('plan-price');     // Get the plan price (if needed)
-            console.log(planId);
-            console.log(price);
+            
             // Update modal title with plan name (optional)
             $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text());
 
@@ -986,6 +1721,84 @@
                     }
                 });
             });
+            
+            $('#view-sample-plan').click(function () {
+                // var planId = $(this).data('plan-id');
+                
+                $('#samplePlanModalLabel').text('Loading...');
+                $('#samplePlanModalBody').html('<p>Loading details...</p>');
+                $('#samplePlanModal').modal('show');
+
+                $.ajax({
+                    url: '{{ route("front.get-default-plan-details", ":id") }}'.replace(':id', planId),
+                    method: 'GET',
+                    success: function (response) {
+                        if (response.error) {
+                            $('#samplePlanModalBody').html('<p>' + response.error + '</p>');
+                            return;
+                        }
+
+                        // Build the modal content for main plan
+                        const mainPlan = response.mainPlan;
+                        let modalContent = `<h5>${mainPlan.name}</h5>`;
+                        // modalContent += `<p>Price: $${mainPlan.price}</p>`;
+                        modalContent += buildMealTimeHtml(mainPlan.mealTimes);
+
+                        // Build the modal content for subPlans
+                        if (response.subPlans.length > 0) {
+                            modalContent += `<h5></h5>`;
+                            response.subPlans.forEach(function (subPlan) {
+                                modalContent += `<div class="mt-3"><h6>Sub Plan: ${subPlan.name}</h6>`;
+                                modalContent += `<p>Price: $${subPlan.price}</p>`;
+                                modalContent += buildMealTimeHtml(subPlan.mealTimes);
+                                modalContent += `</div>`;
+                            });
+                        }
+
+                        $('#samplePlanModalLabel').text('Plan Details: ' + mainPlan.name);
+                        $('#samplePlanModalBody').html(modalContent);
+                    },
+                    error: function () {
+                        $('#samplePlanModalBody').html('<p>Error fetching plan details. Please try again later.</p>');
+                    }
+                });
+            });
+
+            // Function to build HTML for mealTimes, categories, meals, and items
+            function buildMealTimeHtml(mealTimes) {
+                let html = `<ul>`;
+                mealTimes.forEach(function (mealTime) {
+                    html += `<li><strong>${mealTime.title}</strong> (Meal Time)<ul>`;
+
+                    mealTime.categories.forEach(function (category) {
+                        html += `<li><strong>${category.name}</strong> (Category)<ul>`;
+
+                        category.meals.forEach(function (meal) {
+                            html += `<li><strong>${meal.name}</strong> (Meal)<ul>`;
+
+                            meal.items.forEach(function (item) {
+                                html += `<li>${item.name} (Food)<ul>`;
+
+                                item.swapItems.forEach(function (swapItem) {
+                                    html += `<li>${swapItem.name} (Swap Food)</li>`;
+                                });
+
+                                html += `</ul></li>`;
+                            });
+
+                            html += `</ul></li>`;
+                        });
+
+                        html += `</ul></li>`;
+                    });
+
+                    html += `</ul></li>`;
+                });
+                html += `</ul>`;
+                return html;
+            }
+
+
         });
     });
 
@@ -1040,10 +1853,12 @@
     $('#show-signup-modal').click(function(e) {
         e.preventDefault(); // Prevent default link action
         $('#loginModal').modal('hide'); // Hide the sign-in modal
+        $('#registerModal').modal('hide'); // Show the sign-up modal
         $('#purchaseModal').modal('show'); // Show the sign-up modal
     });
 
 </script>   
+
 @endsection
 
 @push('scripts')

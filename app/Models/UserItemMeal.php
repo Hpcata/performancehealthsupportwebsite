@@ -8,7 +8,7 @@ class UserItemMeal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['useer_id','item_id', 'meal_id'];
+    protected $fillable = ['useer_id','item_id', 'meal_id', 'qty'];
 
     public function meals()
     {

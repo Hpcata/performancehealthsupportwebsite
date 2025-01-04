@@ -784,17 +784,17 @@ class PurchasePlanController extends Controller
     public function getPrePlanDetails($id)
     {
         $userPrePlan = \App\Models\UserPrePlan::with('prePlanDetails')->where('payment_id', $id)->first();
-        $prePlanDetails = $userPrePlan->prePlanDetails;
+        $prePlanDetails = $userPrePlan->prePlanDetails ?? [];
 
         $userDetails = [
-            'name' => $userPrePlan->user->name,
-            'email' => $userPrePlan->user->email,
-            'phone' => $userPrePlan->user->phone,
-            'dob' => $userPrePlan->dob,
-            'address' => $userPrePlan->address,
-            'occupation' => $userPrePlan->occupation,
-            'referredBy' => $userPrePlan->referredBy,
-            'other' => $userPrePlan->other
+            'name' => isset($userPrePlan->user) ? $userPrePlan->user->name : '',
+            'email' => isset($userPrePlan->user) ? $userPrePlan->user->email : '',
+            'phone' => isset($userPrePlan->user) ? $userPrePlan->user->phone : '',
+            'dob' => $userPrePlan->dob ?? '',
+            'address' => $userPrePlan->address ?? '',
+            'occupation' => $userPrePlan->occupation ?? '',
+            'referredBy' => $userPrePlan->referredBy ?? '',
+            'other' => $userPrePlan->other ?? '',
         ];
          // Group questions and answers by form_name
         $groupedData = [];

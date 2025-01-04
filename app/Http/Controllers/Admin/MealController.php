@@ -14,7 +14,7 @@ class MealController extends Controller
 {
     public function index()
     {
-        $meals = Meal::with('categories')->get(); // Eager load subCategories
+        $meals = Meal::with('categories','items')->get(); // Eager load subCategories
         return view('backend.pages.meal.index', compact('meals'));
     }
 

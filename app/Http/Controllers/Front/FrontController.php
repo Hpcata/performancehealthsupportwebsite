@@ -21,6 +21,10 @@ use App\Models\Query;
 use App\Models\Blog;
 use Exception;
 use Hash;
+use App\Models\UserPlan;
+use Illuminate\Support\Facades\File;
+use Validator;
+use App\Models\Questionnaire;
 
 class FrontController extends Controller
 {
@@ -38,68 +42,16 @@ class FrontController extends Controller
 
     public function index()
     {
-        // $user = getUserBySlug($slug);
-        // if (!$user) {
-        //     return $this->jsonService->sendRequest(false, [
-        //         'message' => 'User Not found!',
-        //     ], 400);
-        //     // return redirect('/booking');
-        // }
-        // $requirements = $this->requirement->getRequirementsByUser($user->id);
         $plans = \App\Models\Plan::all();
         //dd($plans);
         $page = \App\Models\Page::with('sections')->where('slug', 'home')->first();
-        //dd($page->sections);
-        // if(!$requirements || !$plans){
-        //     return $this->jsonService->sendRequest(false, [
-        //         'message' => 'Requirements & Plans Not found!',
-        //     ], 400);
-        //     // return redirect('/booking');
-        // }
+       
         $requirements = [];
-       // $plans = [];
-        // $bookingConfiguration = BookingConfiguration::getBookingConfiguration($user->id);
-        // if(!$bookingConfiguration->selected_days 
-        // || !$bookingConfiguration->selected_timerange 
-        // || ($bookingConfiguration->selected_timerange 
-        // && (!$bookingConfiguration->selected_timerange->startTime || !$bookingConfiguration->selected_timerange->endTime))){
-        //     return $this->jsonService->sendRequest(false, [
-        //         'message' => 'Booking configuration failed!',
-        //     ], 400);
-        //     // return redirect('/booking');
-        // }
-        
-        // $days = [
-        //     1 => 'monday',
-        //     2 => 'tuesday',
-        //     3 => 'wednesday',
-        //     4 => 'thursday',
-        //     5 => 'friday',
-        //     6 => 'saturday',
-        //     0 => 'sunday',
-        // ];
-        
-        // $selectedDay = $bookingConfiguration->selected_days;
-        // $selectedDayCount = [];
-
-        // foreach($selectedDay as $day){
-        //     $selectedDayCount[] = array_search($day, $days);
-        // }
-
-        // $disabledDay = [];
-        // foreach($days as $key => $day){
-        //     if(!in_array($key, $selectedDayCount)){
-        //         $disabledDay[] = $key;
-        //     }
-        // }
-
-        // $disabledDay = json_encode($disabledDay);
+    
         $disabledDay = json_encode([]);
-        // $organization = $user->getOrganizationImages();
-        // $testimonials = $user->getTestimonials();
+       
         $organization = [];
         $testimonials = [];
-        // dd($testimonials);
         return view('front.index', compact('requirements','page', 'plans','disabledDay','organization','testimonials'));
     }
 
@@ -128,12 +80,6 @@ class FrontController extends Controller
 
     public function blog()
     {
-        // dd($slug);
-        // $user = getUserBySlug($slug);
-        // if (!$user) {
-        //     Session::flash('message', 'User not found.');
-        // }
-
         $blogs = \App\Models\Blog::where('is_published', 1)->get();
         return view('front.blog', compact('blogs'));
     }
@@ -157,71 +103,50 @@ class FrontController extends Controller
 
     public function subHomePage()
     {
-        // $user = getUserBySlug($slug);
-        // if (!$user) {
-        //     return $this->jsonService->sendRequest(false, [
-        //         'message' => 'User Not found!',
-        //     ], 400);
-        //     // return redirect('/booking');
-        // }
-        // $requirements = $this->requirement->getRequirementsByUser($user->id);
         $plans = \App\Models\Plan::all();
-        //dd($plans);
+        // dd($plans);
         $page = \App\Models\Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
-        //dd($page->sections);
-        // if(!$requirements || !$plans){
-        //     return $this->jsonService->sendRequest(false, [
-        //         'message' => 'Requirements & Plans Not found!',
-        //     ], 400);
-        //     // return redirect('/booking');
-        // }
+        
         $requirements = [];
-       // $plans = [];
-        // $bookingConfiguration = BookingConfiguration::getBookingConfiguration($user->id);
-        // if(!$bookingConfiguration->selected_days 
-        // || !$bookingConfiguration->selected_timerange 
-        // || ($bookingConfiguration->selected_timerange 
-        // && (!$bookingConfiguration->selected_timerange->startTime || !$bookingConfiguration->selected_timerange->endTime))){
-        //     return $this->jsonService->sendRequest(false, [
-        //         'message' => 'Booking configuration failed!',
-        //     ], 400);
-        //     // return redirect('/booking');
-        // }
-        
-        // $days = [
-        //     1 => 'monday',
-        //     2 => 'tuesday',
-        //     3 => 'wednesday',
-        //     4 => 'thursday',
-        //     5 => 'friday',
-        //     6 => 'saturday',
-        //     0 => 'sunday',
-        // ];
-        
-        // $selectedDay = $bookingConfiguration->selected_days;
-        // $selectedDayCount = [];
-
-        // foreach($selectedDay as $day){
-        //     $selectedDayCount[] = array_search($day, $days);
-        // }
-
-        // $disabledDay = [];
-        // foreach($days as $key => $day){
-        //     if(!in_array($key, $selectedDayCount)){
-        //         $disabledDay[] = $key;
-        //     }
-        // }
-
-        // $disabledDay = json_encode($disabledDay);
+       
         $disabledDay = json_encode([]);
-        // $organization = $user->getOrganizationImages();
-        // $testimonials = $user->getTestimonials();
+      
         $organization = [];
         $testimonials = [];
-        // dd($testimonials);
         $isAuthenticated = Auth::check(); // Returns true if the user is logged in
 
         return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated'));
+    }
+
+    public function register(Request $request)
+    {
+        // dd($request->all());
+        $firstName = explode(' ', $request->input('name'))[0]; // First name from full name
+        $lastName = explode(' ', $request->input('name'))[1] ?? ''; // Last name from full name
+
+        $existingUser = User::where('email', $request->input('email'))->first();
+
+        if ($existingUser) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User with this email already exists.',
+                'user' => $existingUser,
+            ]);
+        }
+
+        $user = User::create([
+            'name' => $request->input('name'), // Full name of the admin user.
+            'first_name' => $firstName, // First name of the admin user.
+            'last_name' => $lastName, // Last name of the admin user.
+            'email' => $request->input('email'), // Email of the admin user.
+            'password' => Hash::make($request->input('password')), // Hashed password of the admin user.
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Registration successful. Please login.',
+            'user' => $user,
+        ]);
     }
 
     // Handle Login Request
@@ -245,11 +170,13 @@ class FrontController extends Controller
             if ($planIds) {
                 if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                     if (!Auth::user()->isSuperAdmin()) {
-                        $redirectUrl = route('front.sub-home-page'); // Change this to the page you want
+                        $redirectUrl = route('front.competition-plan-details', ['id' => $user->id]); // Change this to the page you want
         
                         return response()->json([
                             'success' => true,
                             'redirect_url' => $redirectUrl,
+                            'message' => 'Login successful.',
+                            'user' => $user
                         ]);
                     }
             
@@ -295,35 +222,40 @@ class FrontController extends Controller
         $user = User::find($request->user_id);
 
         // Validate the request
-        $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:8',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image file
-        ]);
+        // $request->validate([
+        //     'first_name' => 'required|string|max:255',
+        //     'last_name' => 'required|string|max:255',
+        //     'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+        //     'password' => 'nullable|min:8',
+        //     'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image file
+        // ]);
 
-        // Update user details
-        $user->name = ucfirst($request->first_name) . ' ' . ucfirst($request->last_name);
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
+        // // Update user details
+        // $user->name = ucfirst($request->first_name) . ' ' . ucfirst($request->last_name);
+        // $user->first_name = $request->first_name;
+        // $user->last_name = $request->last_name;
+        // $user->email = $request->email;
 
-        // Check if password is provided and update it
-        if ($request->filled('password')) {
-            $user->password = \Hash::make($request->password);
-        }
+        // // Check if password is provided and update it
+        // if ($request->filled('password')) {
+        //     $user->password = \Hash::make($request->password);
+        // }
 
         // Handle profile image upload
-        if ($request->hasFile('profile_image')) {
-            // Delete the old profile image if it exists
-            if ($user->profile_image) {
-                \Storage::delete($user->profile_image);
-            }
+        // if ($request->hasFile('profile_image')) {
+        //     // Delete the old profile image if it exists
+        //     if ($user->profile_image) {
+        //         \Storage::delete($user->profile_image);
+        //     }
 
-            // Store the new image
-            $imagePath = $request->file('profile_image')->store('profile_images','public');
-            $user->profile_image = $imagePath;
+        //     // Store the new image
+        //     $imagePath = $request->file('profile_image')->store('profile_images','public');
+        //     $user->profile_image = $imagePath;
+        // }
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+            $user->first_name = explode(' ', $request->name)[0] ?? ('');
+            $user->last_name = explode(' ', $request->name)[1] ?? ('');
         }
 
         if ($request->hasFile('profile_image')) {
@@ -331,7 +263,13 @@ class FrontController extends Controller
             $file = $request->file('profile_image');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = 'uploads/profile_images/' . $fileName;
-            $file->move(public_path('uploads/profile_images'), $fileName);
+            $directoryPath = public_path('uploads/profile_images');
+            if (!File::exists($directoryPath)) {
+                File::makeDirectory($directoryPath, 0777, true, true);
+            }
+    
+            // Move the file to the directory
+            $file->move($directoryPath, $fileName);
         
             // Optionally delete the old image if it exists
             if ($user->profile_image && file_exists(public_path($user->profile_image))) {
@@ -349,6 +287,116 @@ class FrontController extends Controller
             'success' => true,
             'message' => 'Profile updated successfully!',
             'user' => $user,
+        ]);
+    }
+
+    public function getCompetitionPlanDetails($id)
+    {
+        $user = User::findOrFail($id);
+
+        $userPlans = UserPlan::with('plan', 
+            'userMealTimes.userCategories.userMeals.userItems')
+            ->where('user_id', $id) // Ensure user_id is always applied
+            ->get();
+        $prePlanDetails = [];
+        $preplan = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+            $query->where('form_slug', 'physical_measures');
+        }])->where('user_id', $id)->first();
+        //    dd($preplan->prePlanDetails);
+        return view('front.competition-plan.index', compact('userPlans', 'user'));
+
+    }
+
+    public function getAllMeals()
+    {
+        // Assuming you have a relationship `items` defined on the `Meal` model
+        
+        $meals = \App\Models\Meal::with('items')->get();
+
+        // $userPlans = UserPlan::with('plan', 
+        //     'userMealTimes.userCategories.userMeals.userItems')
+        //     ->where('user_id', Auth::user()->id) // Ensure user_id is always applied
+        //     ->get();
+        
+        // $selectedItems = []; // To store pre-selected user items
+        // foreach ($userPlans as $userPlan) {
+        //     foreach ($userPlan->userMealTimes as $mealTime) {
+        //         foreach ($mealTime->userMeals as $userMeal) {
+        //             $mealId = $userMeal->meal_id;
+        //             // Store user items
+        //             $selectedItems[$mealId] = $userMeal->userItems->pluck('item_id')->toArray();
+        //         }
+        //     }
+        // }
+
+        // Return JSON response
+        return response()->json([
+            'meals' => $meals,
+            // 'selectedItems' => $selectedItems,
+        ]);
+    }
+
+    public function freeTestSave(Request $request)
+    {
+        // Validate the incoming test data
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|exists:users,id', // Ensure user ID exists in the database
+            'testData' => 'required|array', // Test data should be an array
+            'email' => 'required', // Test data should be an array
+        ]);
+
+        // If validation fails, return a 422 error with validation messages
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        // Retrieve the user by ID
+        $user = User::find($request->userId);
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+        }
+
+        $existingSubmission = Questionnaire::where('email', $request->email)->first();
+
+        if ($existingSubmission) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You have already submitted the test.'
+            ], 400);
+        }
+
+        // Loop through the test data and insert each question and answer into the `questionnaire` table
+        foreach ($request->testData as $question => $answer) {
+            // dd($question);
+            $questionnaire = new Questionnaire();
+            $questionnaire->user_id = $user->id;
+            $questionnaire->name = $user->name;
+            $questionnaire->email = $user->email;
+            $questionnaire->phone = $request->phone;  // Assuming 'phone' is part of the user
+            $questionnaire->question = $question;  // Store the question text
+            $questionnaire->answer = json_encode($answer);      // Store the corresponding answer
+            $questionnaire->save(); // Save the data to the table
+        }
+
+        // Return success response
+        return response()->json(['success' => true, 'message' => 'Test data submitted successfully']);
+    
+    }
+
+    public function updateFoodQuantity(Request $request)
+    {
+        // dd($request->all());
+        $userItem = \App\Models\UserItem::where('id', $request->user_item_id)
+                                ->first();
+
+        $userItem->qty = $request->qty;
+        $userItem->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Food quantity updated successfully!',
+            'userItem' => $userItem,
         ]);
     }
 }

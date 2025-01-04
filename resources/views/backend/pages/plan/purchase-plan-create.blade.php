@@ -23,7 +23,7 @@
                 <h3 class="fw-bold mb-0">{{ 'Create Plan' }}</h3>
                 <div class="col-auto d-flex w-sm-100">
                     <a href="javascript:void(0);" class="btn btn-primary btn-set-task w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}" >View User Details</a>
-                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
+                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task w-sm-100 back-button">Back</a>
                 </div>
             </div>
         </div>
@@ -32,7 +32,7 @@
         <div class="col-md-12">
             <div class="">
                 <div class="card-body">
-                <form action="{{ route('admin.purchase-plans.store') }}" method="POST" class="bg-light">
+                <form action="{{ route('admin.purchase-plans.store') }}" method="POST" class="bg-light" id="createPlanForm">
                     @csrf
                     <div class="panel-group" id="accordion">
                         <!-- Main Plan -->
@@ -119,9 +119,133 @@
     </div>
 </div>
 
+<!-- Save Plan Modal -->
+<div class="modal" style="display:none;" id="savePlanModal" tabindex="-1" aria-labelledby="savePlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="savePlanModalLabel">Save Your Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>You have unsaved changes. Do you want to save your changes before you leave?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="leaveWithoutSaving" data-bs-dismiss="modal">No, Leave</button>
+                <button type="button" class="btn btn-primary" id="saveChanges">Yes, Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- jQuery CDN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Track whether there are unsaved changes
+    let hasUnsavedChanges = false;
 
+    // Detect changes in input fields
+    document.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('input', () => {
+            hasUnsavedChanges = true;
+        });
+    });
+
+    // Listen for beforeunload to show the custom modal
+    window.addEventListener('beforeunload', function (e) {
+        if (hasUnsavedChanges) {
+            // Prevent the page from unloading and suppress the browser's default dialog
+            e.preventDefault();
+
+            // Show your custom modal
+            document.getElementById('savePlanModal').style.display = 'block';
+
+            // Display a message for browsers that require it
+            e.returnValue = ''; // This is required for some browsers like Chrome
+
+            // Prevent the default dialog from appearing
+            return '';  // Returning an empty string triggers the custom modal instead of the default browser dialog
+        }
+    });
+
+    // Handle "Save Changes" button click
+    document.getElementById('saveChanges').addEventListener('click', function () {
+        // Code to save data (e.g., make an API call to save)
+        hasUnsavedChanges = false;  // Reset the flag
+        document.getElementById('createPlanForm').submit();
+        document.getElementById('savePlanModal').style.display = 'none';
+    });
+
+    // Handle "Leave Without Saving" button click
+    document.getElementById('leaveWithoutSaving').addEventListener('click', function () {
+        hasUnsavedChanges = false;  // Reset the flag
+        document.getElementById('savePlanModal').style.display = 'none';  // Hide modal
+    });
+</script>
+<script>
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     let hasUnsavedChanges = false;
+    //     // Detect changes in input fields
+    //     document.querySelectorAll('input, textarea').forEach(input => {
+    //         console.log('12333');
+    //         input.addEventListener('input', () => {
+    //             hasUnsavedChanges = true;
+    //         });
+    //     });
+
+    //     // Listen for beforeunload to show the custom modal
+    //     window.addEventListener('beforeunload', function (e) {
+    //         console.log('beforeunload event triggered');
+    //         console.log(hasUnsavedChanges);
+    //         if (hasUnsavedChanges) {
+    //             // Prevent the page from unloading
+    //             e.preventDefault();
+    //             e.returnValue = ''; // Some browsers need this for the dialog to show
+
+    //             // Show your custom modal instead
+    //             document.getElementById('savePlanModal').style.display = 'block';
+    //             return ''; // Some browsers need this to show the prompt
+    //         }
+    //     });
+
+    //     // Save changes and close the modal
+    //     document.getElementById('saveChanges').addEventListener('click', function () {
+    //         // Save data here
+    //         console.log('Saving changes...');
+    //         hasUnsavedChanges = false;  // Reset the flag
+    //         document.getElementById('savePlanModal').style.display = 'none';  // Hide modal
+    //     });
+
+    //     // Allow the user to leave without saving
+    //     document.getElementById('leaveWithoutSaving').addEventListener('click', function () {
+    //         console.log('Leaving without saving...');
+    //         hasUnsavedChanges = false;  // Reset the flag
+    //         document.getElementById('savePlanModal').style.display = 'none';  // Hide modal
+    //     });
+    // });
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     // Select the "Back" button
+    //     const backButton = document.querySelector('.back-button');
+
+    //     backButton.addEventListener('click', function (event) {
+    //         // Prevent default navigation
+    //         event.preventDefault();
+
+    //         // Show confirmation popup
+    //         const userConfirmed = confirm("You have unsaved changes. Do you want to save your current plan before leaving?");
+            
+    //         if (userConfirmed) {
+    //             // Optionally, trigger form submission here if you want to save
+    //             document.getElementById('createPlanForm').submit();
+    //             // Replace with form submission or saving logic
+    //         } else {
+    //             // Allow navigation to proceed
+    //             window.location.href = this.href;
+    //         }
+    //     });
+    // });
+</script>
 <script>
     $(document).ready(function () {
         // Use event delegation to handle dynamically added elements
@@ -238,168 +362,164 @@
 </script>
 <!-- JavaScript for Dynamic Checkbox Enabling/Disabling -->
 <script>
-$(document).ready(function () {
-    const previouslySelectedMeals = {};
+    $(document).ready(function () {
+        const previouslySelectedMeals = {};
 
-    // Handle meal time checkbox changes
-    $('.meal-time-checkbox').on('change', function () {
-        const checkbox = $(this);
-        const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
-        const mealTimeId = checkbox.data('mealtime-id');
+        // Handle meal time checkbox changes
+        $('.meal-time-checkbox').on('change', function () {
+            const checkbox = $(this);
+            const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
+            const mealTimeId = checkbox.data('mealtime-id');
 
-        // Construct unique IDs for the dropdown and selected meals container
-        const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
-        const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
-        const mealSelect = $(dropdownId).find('select');
+            // Construct unique IDs for the dropdown and selected meals container
+            const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
+            const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
+            const mealSelect = $(dropdownId).find('select');
 
-        console.log(`Toggling dropdown for: Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
-        console.log(`Dropdown ID: ${dropdownId}, Selected Meals ID: ${selectedMealsId}`);
+            console.log(`Toggling dropdown for: Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
+            console.log(`Dropdown ID: ${dropdownId}, Selected Meals ID: ${selectedMealsId}`);
 
-        // Check if checkbox is checked
-        if (checkbox.is(':checked')) {
-            $(dropdownId).show();          // Show Add Meal dropdown
-            $(selectedMealsId).show();     // Show Selected Meals container
+            // Check if checkbox is checked
+            if (checkbox.is(':checked')) {
+                $(dropdownId).show();          // Show Add Meal dropdown
+                $(selectedMealsId).show();     // Show Selected Meals container
 
-            // Load dynamic dropdown options via AJAX
-            $.ajax({
-                url: '{{ route("admin.get-meals-by-mealtime") }}', // Replace with your route to fetch meals dynamically
-                method: 'POST',
-                data: {
-                    meal_time_id: mealTimeId,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    if (response.success) {
-                        // Clear previous options
-                        mealSelect.empty();
-                        console.log(response.meals)
-                        // Populate new options
-                        response.meals.forEach(meal => {
-                            mealSelect.append(`
-                                <option value="${meal.id}">${meal.name}</option>
-                            `);
-                        });
-                    } else {
-                        alert('Failed to load meals for the selected meal time.');
+                // Load dynamic dropdown options via AJAX
+                $.ajax({
+                    url: '{{ route("admin.get-meals-by-mealtime") }}', // Replace with your route to fetch meals dynamically
+                    method: 'POST',
+                    data: {
+                        meal_time_id: mealTimeId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Clear previous options
+                            mealSelect.empty();
+                            console.log(response.meals)
+                            // Populate new options
+                            response.meals.forEach(meal => {
+                                mealSelect.append(`
+                                    <option value="${meal.id}">${meal.name}</option>
+                                `);
+                            });
+                        } else {
+                            alert('Failed to load meals for the selected meal time.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while loading meals.');
                     }
-                },
-                error: function () {
-                    alert('Error occurred while loading meals.');
-                }
-            });
-        } else {
-            $(dropdownId).hide();          // Hide dropdown
-            $(selectedMealsId).hide();     // Hide selected meals
-            $(dropdownId).find('select').val([]).trigger('change'); // Clear selected values
-            $(selectedMealsId).empty();    // Clear selected meals content
-        }
-    });
-
-    // Handle meal selection/unselection
-    $('.meal-items-select').on('change', function () {
-        const ids = $(this).attr('id').replace('mealItems', '').split('_');
-        const planId = ids[0];
-        const mealTimeId = ids[1];
-
-        const selectedMealsContainer = $(`#selectedMeals${planId}_${mealTimeId}`);
-        const currentSelectedMeals = $(this).val() || [];
-        const oldMeals = previouslySelectedMeals[`${planId}_${mealTimeId}`] || [];
-
-        // Find newly selected and unselected meals
-        const newMeals = currentSelectedMeals.filter(mealId => !oldMeals.includes(mealId));
-        const unselectedMeals = oldMeals.filter(mealId => !currentSelectedMeals.includes(mealId));
-        previouslySelectedMeals[`${planId}_${mealTimeId}`] = currentSelectedMeals;
-
-        // Remove unselected meals
-        unselectedMeals.forEach(mealId => {
-            $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+                });
+            } else {
+                $(dropdownId).hide();          // Hide dropdown
+                $(selectedMealsId).hide();     // Hide selected meals
+                $(dropdownId).find('select').val([]).trigger('change'); // Clear selected values
+                $(selectedMealsId).empty();    // Clear selected meals content
+            }
         });
 
-        // Fetch and display newly selected meals
-        newMeals.forEach(mealId => {
-    $.ajax({
-        url: '{{ route("admin.get-meal-items") }}',
-        method: 'POST',
-        data: {
-            meal_id: mealId,
-            _token: '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            if (response.success) {
-                const mealName = response.meal_name;
-                const mealId = response.meal_id;
-                const items = response.data;
+        // Handle meal selection/unselection
+        $('.meal-items-select').on('change', function () {
+            const ids = $(this).attr('id').replace('mealItems', '').split('_');
+            const planId = ids[0];
+            const mealTimeId = ids[1];
 
-                let mealContainer = $(`
-                    <div id="mealContainer_${planId}_${mealTimeId}_${mealId}" class="meal-container mt-3">
-                        <input type="hidden" name="meals[${planId}][${mealTimeId}][]" value="${response.meal_id}">
-                        <h5 style="color:#7258db;">${mealName} (Meal)</h5>
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
+            const selectedMealsContainer = $(`#selectedMeals${planId}_${mealTimeId}`);
+            const currentSelectedMeals = $(this).val() || [];
+            const oldMeals = previouslySelectedMeals[`${planId}_${mealTimeId}`] || [];
+
+            // Find newly selected and unselected meals
+            const newMeals = currentSelectedMeals.filter(mealId => !oldMeals.includes(mealId));
+            const unselectedMeals = oldMeals.filter(mealId => !currentSelectedMeals.includes(mealId));
+            previouslySelectedMeals[`${planId}_${mealTimeId}`] = currentSelectedMeals;
+
+            // Remove unselected meals
+            unselectedMeals.forEach(mealId => {
+                $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+            });
+
+            // Fetch and display newly selected meals
+            newMeals.forEach(mealId => {
+                $.ajax({
+                    url: '{{ route("admin.get-meal-items") }}',
+                    method: 'POST',
+                    data: {
+                        meal_id: mealId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            const mealName = response.meal_name;
+                            const mealId = response.meal_id;
+                            const items = response.data;
+
+                            let mealContainer = $(`
+                                <div id="mealContainer_${planId}_${mealTimeId}_${mealId}" class="meal-container mt-3">
+                                    <input type="hidden" name="meals[${planId}][${mealTimeId}][]" value="${response.meal_id}">
+                                    <h5 style="color:#7258db;">${mealName} (Meal)</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Swap Items</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="items-table-body">
+                                                <!-- Dynamic rows will be appended here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            `);
+
+                            // Populate table rows with items and their swap items
+                            const tableBody = mealContainer.find('.items-table-body');
+
+                            items.forEach(item => {
+                                let swapItemsHTML = '';
+
+                                if (item.swapItems && item.swapItems.length > 0) {
+                                    item.swapItems.forEach(swapItem => {
+                                        swapItemsHTML += `
+                                            <li>
+                                                <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]" value="${swapItem.id}" class="form-check-input">
+                                                <label class="form-check-label">${swapItem.name}</label>
+                                            </li>
+                                        `;
+                                    });
+                                } else {
+                                    swapItemsHTML = '<span class="text-muted">No swap items available</span>';
+                                }
+
+                                // Append a new row to the table
+                                tableBody.append(`
                                     <tr>
-                                        <th>Item</th>
-                                        <th>Swap Items</th>
+                                        <td>
+                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]" value="${item.id}" class="form-check-input">
+                                            <label class="form-check-label">${item.name}</label>
+                                        </td>
+                                        <td>
+                                            <ul class="list-unstyled">${swapItemsHTML}</ul>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody class="items-table-body">
-                                    <!-- Dynamic rows will be appended here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `);
+                                `);
+                            });
 
-                // Populate table rows with items and their swap items
-                const tableBody = mealContainer.find('.items-table-body');
-
-                items.forEach(item => {
-                    let swapItemsHTML = '';
-
-                    if (item.swapItems && item.swapItems.length > 0) {
-                        item.swapItems.forEach(swapItem => {
-                            swapItemsHTML += `
-                                <li>
-                                    <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]" value="${swapItem.id}" class="form-check-input">
-                                    <label class="form-check-label">${swapItem.name}</label>
-                                </li>
-                            `;
-                        });
-                    } else {
-                        swapItemsHTML = '<span class="text-muted">No swap items available</span>';
+                            selectedMealsContainer.append(mealContainer);
+                        } else {
+                            alert('Failed to fetch meal details.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error while fetching meal details.');
                     }
-
-                    // Append a new row to the table
-                    tableBody.append(`
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]" value="${item.id}" class="form-check-input">
-                                <label class="form-check-label">${item.name}</label>
-                            </td>
-                            <td>
-                                <ul class="list-unstyled">${swapItemsHTML}</ul>
-                            </td>
-                        </tr>
-                    `);
                 });
+            });
 
-                selectedMealsContainer.append(mealContainer);
-            } else {
-                alert('Failed to fetch meal details.');
-            }
-        },
-        error: function () {
-            alert('Error while fetching meal details.');
-        }
+        });
     });
-});
-
-
-    });
-});
-
-
-
 
     document.addEventListener('DOMContentLoaded', () => {
         const mealTimeCheckboxes = document.querySelectorAll('.meal-time-checkbox');

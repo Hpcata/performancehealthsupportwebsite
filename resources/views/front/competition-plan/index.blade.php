@@ -1,127 +1,161 @@
 @extends(frontView('layouts.app'))
 
-@section('title', $userMealTime->mealTime->name)
+@section('title', 'Competition Nutrition Plan')
 
 @section('content')
+<style>
+    .edit-icon {
+        background: rgba(255, 255, 255, 0.8);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+    .edit-icon i {
+        font-size: 1rem;
+        color: #000;
+    }
+    .site-footer{
+        margin-top: 0 !important;
+    }
+</style>
 
-    <div class="section nutrition-plan-hero">
-        <div class="container"> 
-            <div class="row align-items-center">
-                <div class="col-md-6 col-lg-5">
-                    <div class="nutrition-plan-text">
-                        <h1>Nutrition Supplements for a <span class="text-primary">Healthy {{ $userMealTime->mealTime->title }}</span></h1>
-                        <p>Boost your energy and health with the right supplements!</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-5 ms-lg-auto">
-                    <div class="nutrition-plan-img-box">
-                        <div class="go-bottom-link">
-                            <figure class="top-corner">
-                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-                                    <path d="M50,45V0H3v0.1h2.1C29.9,0.1,50,20.2,50,45z" fill="#fafafa"/>
-                                </svg>
-                            </figure>
-                            <a href="#nextSection" class="btn btn-primary">
-                                <svg width="71" height="72" viewBox="0 0 71 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M50.8233 17.2911C49.0555 17.2911 47.7297 18.6169 47.7297 20.3847L47.7297 43.6603L22.2444 18.175C20.9186 17.1438 18.8562 17.1438 17.6777 18.3223C16.4992 19.5008 16.4992 21.5632 17.6777 22.7417L43.3103 48.3744L20.0347 48.3744C18.2669 48.3744 16.9411 49.7002 16.9411 51.4679C16.9411 53.2357 18.2669 54.5615 20.0347 54.5615H50.9706C51.2653 54.5615 51.7072 54.4142 52.1491 54.2669C52.4438 54.2669 52.7384 53.9723 53.033 53.6777C53.3276 53.383 53.6223 53.0884 53.7696 52.6465C53.9169 52.2045 54.0642 51.7626 54.0642 51.4679L54.0642 20.532C53.9169 18.9116 52.4438 17.4384 50.8233 17.2911Z" fill="white"/>
-                                </svg>                                    
-                            </a>
-                            <figure class="bottom-corner">
-                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-                                    <path d="M50,45V0H3v0.1h2.1C29.9,0.1,50,20.2,50,45z" fill="#fafafa"/>
-                                </svg>
-                            </figure>
-                        </div>
-                        <div class="nutrition-plan-img">
-                            <figure>
-                                <img src="{!! frontAssets('images/nutrition-supplements.jpg') !!}"  alt="">
-                            </figure>
-                        </div>
-                        <div class="nutrition-bottom-box">
-                            <figure class="top-corner">
-                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-                                    <path d="M0,5v45h47v-0.1h-2.1C20.1,49.9,0,29.8,0,5z" fill="#fafafa"/>
-                                </svg>
-                            </figure>
-                            <div class="nutrition-athlete-box">
-                                <figure>
-                                <img src="{!! frontAssets('images/kerry-oBryan.jpg') !!}" alt="">
-                                </figure>
-                                @if(Auth::check())
-                                <div class="nutrition-athlete-info">
-                                    <h5>{{ Auth::user()->name }}</h5>
-                                    <p>National Athlete</p>
-                                    <button class="btn btn-primary print-plan-btn py-1 mt-1" data-user-id="{{ Auth::user()->id }}" data-plan-id="{{ $userPlan->plan_id }}">Print Plan</button>
-                                </div>
-                                @else
-                                <div class="nutrition-athlete-info">
-                                    <h5>Ellie Shiloh</h5>
-                                    <p>National Athlete</p>
-                                </div>
-                                @endif
-                            </div>
-                            <figure class="bottom-corner">
-                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-                                    <path d="M0,5v45h47v-0.1h-2.1C20.1,49.9,0,29.8,0,5z" fill="#fafafa"/>
-                                </svg>
-                            </figure>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="section bg-white" id="nextSection">
+    <div class="section py-5 bg-light">
         <div class="container">
-            <div class="d-flex flex-wrap align-items-center">
-                <h2 class="m-0 border-end pe-3">{{ $userMealTime->mealTime->title }}</h2>
+            <div class="heading-content">
+                <!-- <h3>Competition Nutrition Plan</h3> -->
+                <h3>{{ $userPlans->first()->plan->name }}</h3>
+                <p>This timeline guides your nutrition plan starting 12 hours before  competition. Based on your competition time, you’ll know what  meals/snacks to eat before and after to maximize performance and  recovery</p>
             </div>
-            @foreach($userMealTime->userCategories as $item)
-                <?php //dd($item->subcategory->id ); ?>
-                    <div class="main-category-list mt-4">
-                        <div class="row g-0">
-                            <div class="col-md-3">
-                                <div class="nutrition-plan-box h-100 d-flex flex-column">
-                                    <figure>
-                                        <img src="{!! asset('private/public/storage/' . $item->category->image) !!} " alt="">
-                                    </figure>
-                                    <h5 class="mb-3">{{ $item->category->title }}</h5>
-                                    <a href="javascript:void(0)" class="btn btn-primary view-details-btn mt-auto" data-category-id="{{ $item->category->id }}" data-user-category-id="{{ $item->id }}" data-category-name="{{ $item->category->title }}">View Details</a>
-                                    <!-- <button type="button" class="subcategoryItemsModalbtn btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal">View Details</button> -->
-                                </div>
+        </div>
+    </div>
+    <div class="section pt-0 pb-5 bg-light">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4 col-lg-3">
+                    <div class="card border-0 shadow-sm rounded-3">
+                        <div class="card-body nutrition-profile-info">
+                            <div class="nutrition-profile-img">
+                                <figure>
+                                    <img src="{{ asset('private/public/' . $user->profile_image) }}" alt="">
+                                </figure>
+                                <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editImageModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                             </div>
+                            <h4 class="text-center">{{ $user->name }} 
+                                <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editNameModal" style="margin-left: 10px;">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </h4>
+                            <ul>
+                                <li>Sport: Track & Field</li>
+                                <li>Weight: 60kg</li>
+                                <li>Height: 180cm</li>
+                                <li>Daily Calorie Goal: 3,200</li>
+                            </ul>
                         </div>
                     </div>
-            @endforeach
+                </div>
+                <div class="col-md-8 col-lg-9">
+                    <div class="nutrition-profile-top">
+                        <form action="#">
+                            <input type="text" class="form-control" placeholder="Enter your competition time (e.g., 10:00 AM)">
+                        </form>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TimelineModal">Summary</button>
+                        <button type="button" class="btn btn-primary" id="fetchAllMeals" data-bs-toggle="modal" data-bs-target="#ShippingModal">Shopping List</button>
+                    </div>
+                    <div class="nutrition-schedule-list">
+                    @foreach($userPlans as $userPlan)
+                        @if($userPlan->userMealTimes->count())
+                            @foreach($userPlan->userMealTimes as $userMealTime)
+                                <div class="card border-0 shadow-sm rounded-3 mt-4">
+                                    <div class="card-body">
+                                        <h4>{{ $userMealTime->mealtime->title }}</h4>
+                                        <div class="plan-list">
+                                            @foreach($userMealTime->userMeals as $userMeal)
+                                            <div class="plan-list-box">
+                                                <div class="plan-list-img">
+                                                    <figure>
+                                                        <img src="{{ asset('private/public/storage/' . $userMeal->meal->image) }}" alt="">
+                                                    </figure>
+                                                </div>
+                                                <div class="plan-list-info">
+                                                    <h5>{{ $userMeal->meal->title }}</h5>
+                                                    <ul>
+                                                        <li>Carbs: {{ $userMeal->meal->totalCarbs() }}g</li>
+                                                        <li>Protein: {{ $userMeal->meal->totalProtein() }}g</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="plan-list-btn">
+                                                    <button type="button" class="view-items-btn btn btn-primary mt-auto" data-user-meal-id="{{ $userMeal->id}}" data-meal-id="{{ $userMeal->meal->id}}" 
+                                                    data-meal-name="{{ $userMeal->meal->title}}" data-plan-id="{{ $userPlan->id}}">View Details</button>
+                                                    <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#swapModal">View details</button> -->
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>  
+                                </div>
+                            @endforeach
+                        @endif
+                    @endforeach
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="mealModel" tabindex="-1" aria-labelledby="subcategoryItemsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="mealModalLabel">Title</h5>
-                    <button type="button" class="btn-close meal-modal-close" aria-label="Close"></button>
+                    <h5 class="modal-title" id="editImageModalLabel">Edit Profile Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="mealModelLoadingSpinner" class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                    <form id="editImageForm" method="POST" enctype="multipart/form-data" action="">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-3 text-center">
+                            <img id="imagePreview" src="{{ asset('private/public/' . $user->profile_image) }}" alt="Current Profile Image" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                         </div>
-                    </div>
-
-                    <!-- Subcategories Content -->
-                    <div id="mealModelContainer" class="row g-4" style="display: none;"></div>
-                    
+                        <div class="mb-3">
+                            <label for="profileImageInput" class="form-label">Upload New Image</label>
+                            <input type="file" class="form-control" id="profileImageInput" name="profile_image" accept="image/*">
+                            <input type="hidden" class="form-control" id="profileId" name="id" value="{{ $user->id }}">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="submitProfileUpdate()">Save Changes</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="mealItemModel" tabindex="-1" aria-labelledby="mealItemsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editNameModal" tabindex="-1" aria-labelledby="editNameModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editNameModalLabel">Edit Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editNameForm" method="POST" action="">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-3">
+                            <label for="profileNameInput" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="profileNameInput" name="name" value="{{ $user->name }}">
+                            <input type="hidden" class="form-control" id="profileId" name="id" value="{{ $user->id }}">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="submitProfileUpdate()">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mealItemModel" tabindex="-1" aria-labelledby="subcategoryItemsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -168,12 +202,120 @@
             </div>
         </div>
     </div>
-<!-- </div>/#wrapper -->
+
+    <div class="modal fade" id="ShippingModal" tabindex="-1" aria-labelledby="ShippingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ShippingModalLabel">Shopping List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="ingredient-list">
+                        
+                    </div>
+                </div>
+                <div class="modal-footer p-0">
+                    <a href="#" class="btn btn-primary m-0 w-100 text-center rounded-0" data-bs-target="#ShippingPrintModal" data-bs-toggle="modal">Print Plan Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ShippingPrintModal" tabindex="-1" aria-labelledby="ShippingPrintModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ShippingPrintModalLabel">Shopping List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="print-list">
+                        <ul>
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer p-0">
+                    <button type="button" class="btn btn-primary m-0 w-100 text-center rounded-0" data-bs-dismiss="modal">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('body').on('click', '.meal-modal-close', function () {
-            $('#mealModel').modal('hide');
+    const user = @json($user);
+    const userId = user.id;
+    
+    document.getElementById('profileImageInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imagePreview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function submitProfileUpdate() {
+        const formData = new FormData();
+        const profileIdInput = document.getElementById('profileId');
+        // Add profile image if it exists
+        const profileImageInput = document.getElementById('profileImageInput');
+        if (profileImageInput.files[0]) {
+            formData.append('profile_image', profileImageInput.files[0]);
+        }
+
+        // Add name
+        const profileNameInput = document.getElementById('profileNameInput');
+        if (profileNameInput.value) {
+            formData.append('name', profileNameInput.value);
+        }
+
+        formData.append('user_id', profileIdInput.value);
+
+        // Send AJAX request
+        fetch("{{ route('front.profile.update') }}", {
+            method: 'POST', // or 'PUT' if using PUT method
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: formData
         })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update UI elements based on server response
+                if (data.new_image_url) {
+                    document.getElementById('currentProfileImage').src = data.new_image_url;
+                }
+                if (data.new_name) {
+                    document.querySelector('h4.text-center').textContent = data.new_name;
+                }
+                alert('Profile updated successfully!');
+                // Close all modals
+                // Close all modals
+                const modals = document.querySelectorAll('.modal.show');
+                modals.forEach(modal => {
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    if (modalInstance) modalInstance.hide();
+                });
+
+                // Reload the page to reflect all updates (optional)
+                setTimeout(() => {
+                    location.reload();
+                }, 500); 
+            } else {
+                alert('Error updating profile');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    $(document).ready(function () {
+     
         $('body').on('click', '.meal-item-model-close', function () {
             $('#mealItemModel').modal('hide');
             $('#mealModel').modal('show');
@@ -185,11 +327,6 @@
 
         })
 
-        const $mealModel = $('#mealModel');
-        const $mealModalLabel = $('#mealModalLabel');
-        const $mealModelContainer = $('#mealModelContainer');
-        const $mealModelLoadingSpinner = $('#mealModelLoadingSpinner');
-
         const $mealItemsModal = $('#mealItemModel');
         const $mealItemsModalLabel = $('#mealItemsModalLabel');
         const $mealItemsContainer = $('#mealItemsContainer');
@@ -200,70 +337,12 @@
         const $itemsSwapContainer = $('#itemsSwapContainer');
         const $itemsSwapLoadingSpinner = $('#itemsSwapLoadingSpinner');
 
-        // Handle click event to fetch subcategories
-        $('body').on('click', '.view-details-btn', function () {
-            const categoryId = $(this).data('category-id');
-            const categoryName = $(this).data('category-name');
-            const userCategoryId = $(this).data('user-category-id');
-            if (!categoryId || !categoryName) {
-                console.error('Invalid category data.');
-                return;
-            }
-
-            // Update modal title
-            $mealModalLabel.text(categoryName);
-
-            // Clear previous subcategories and show loading spinner
-            $mealModelContainer.empty().hide();
-            $mealModelLoadingSpinner.show();
-
-            // Fetch subcategories via AJAX
-            $.ajax({
-                url: '{{ route('front.category.meals', ':id') }}'.replace(':id', categoryId) + `?user_category_id=${userCategoryId}`,
-                method: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    if (data.meals && data.meals.length > 0) {
-                        // Populate subcategories into the modal
-                        $.each(data.meals, function (index, meal) {
-                            const mealCard = `
-                            <div class="col-sm-6 col-lg-4">
-                            <div class="nutrition-plan-box h-100 d-flex flex-column">
-                                <figure>
-                                    <img src="${meal.image}" alt="">
-                                </figure>
-                                <h5 class="mb-3">${meal.name}</h5>
-                                <button type="button" class="view-items-btn btn btn-primary mt-auto" data-user-meal-id="${meal.user_meal_id}" data-meal-id="${meal.id}" 
-                                data-meal-name="${meal.name}">View Details</button>
-                            </div>
-                        </div>`;
-                            $mealModelContainer.append(mealCard);
-                        });
-                    } else {
-                        $mealModelContainer.html('<p class="text-center">No meals available.</p>');
-                    }
-
-                    // Hide loading spinner and show subcategories
-                    $mealModelLoadingSpinner.hide();
-                    $mealModelContainer.show();
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching meals:', error);
-                    $mealModelContainer.html('<p class="text-center text-danger">Failed to load meals.</p>');
-                    $mealModelLoadingSpinner.hide();
-                    $mealModelContainer.show();
-                }
-            });
-
-            // Show the modal
-            $mealModel.modal('show');
-        });
-
         // Handle click event to fetch meal items
         $('body').on('click', '.view-items-btn', function () {
             const mealId = $(this).data('meal-id');
             const mealName = $(this).data('meal-name');
             const userMealId = $(this).data('user-meal-id');
+            const userPlanId = $(this).data('user-plan-id');
             // console.log(submealId, submealName);
             if (!mealId || !mealName) {
                 console.error('Invalid meal data.');
@@ -282,7 +361,7 @@
 
             // Fetch subcategory items via AJAX
             $.ajax({
-                url: '{{ route('front.meals.items', ':mealId') }}'.replace(':mealId', mealId) + `?user_meal_id=${userMealId}`,
+                url: '{{ route("front.meals.items", ":mealId") }}'.replace(':mealId', mealId) + `?user_meal_id=${userMealId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -290,13 +369,21 @@
                         // Populate items into the modal
                         $.each(data.items, function (index, item) {
                             const itemCard = `<div class="category-swap-list-box">
-                                    <figure>
-                                        <img class="img-thumbnail" src="${item.image}" alt="">
-                                    </figure>
+                                    <div class="category-swap-img">
+                                        <figure>
+                                            <img class="img-thumbnail" src="${item.image}" alt="">
+                                        </figure>
+                                        <div class="info-tootlip">
+                                            <p>Food Details</p>
+                                            <ul>
+                                                <li>Protien: ${item.protien}g</li>
+                                                <li>Carbs: ${item.carbs}g</li>
+                                            </ul>
+                                        </div>                                        
+                                    </div>
                                     <div class="category-swap-content">
                                         <h5 class="m-0">${item.name}</h5>
-                                        <p class="m-0"></p>
-                                        <p class="m-0"><strong>Qty : </strong>${item.qty}</p>
+                                        <p class="align-items-center d-flex m-0 mt-2"><strong class="me-2 text-nowrap">Qty : </strong><input type="text" class="form-control form-control-sm" value="${item.qty}" onchange="updateQuantity(this)" data-item-id="${item.id}"  data-user-item-id="${item.user_item_id}"/></p>
                                     </div>
                                     <div class="category-swap-btn">
                                         <button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}" data-item-id="${item.id}" data-item-name="${item.name}">
@@ -319,7 +406,7 @@
                             $mealItemsContainer.append(itemCard);
                         });
                     } else {
-                        $mealItemsContainer.html('<p class="text-center">No foods available in this meals.</p>');
+                        $mealItemsContainer.html('<p class="text-center">No items available in this meals.</p>');
                     }
 
                     // Hide loading spinner and show items
@@ -350,7 +437,6 @@
                 console.error('Invalid item data.');
                 return;
             }
-            
             $('.apply-changes-btn').attr('data-user-item-id', userItemId);
             $('.apply-changes-btn').attr('data-user-meal-id', userMealId);
 
@@ -363,7 +449,7 @@
 
             // Fetch subcategories via AJAX
             $.ajax({
-                url: '{{ route('front.items.swap-items', ':id') }}'.replace(':id', itemId) + `?user_meal_id=${userMealId}&user_item_id=${userItemId}`,
+                url: '{{ route("front.items.swap-items", ":id") }}'.replace(':id', itemId) + `?user_meal_id=${userMealId}&user_item_id=${userItemId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -418,51 +504,6 @@
             $itemSwapModel.modal('show');
         });
 
-        // Store the swaps in memory for applying changes
-
-        // // When the swap button is clicked
-        // $('body').on('click', '.swap-button', function () {
-
-        //     // Reset the swaps array to an empty array
-        //     swaps = [];
-        //     // Get the current container of the swap button
-        //     const categoryItemSwap = $(this).closest('.category-item-swap');
-            
-        //     // Extract the data attributes (main and swap item ids)
-        //     const mainItemId = categoryItemSwap.data('main-id');
-        //     const swapItemId = categoryItemSwap.data('swap-id');
-
-        //     // Displaying the current IDs for debugging (you can remove this later)
-        //     console.log('Main Item ID:', mainItemId);
-        //     console.log('Swap Item ID:', swapItemId);
-
-        //     // Assuming you're storing the item data in a swaps array or similar object for later use:
-        //     const existingSwapIndex = swaps.findIndex(swap => swap.main_id === mainItemId);
-        //     console.log('Existing Swap Index:', existingSwapIndex);
-        //     //If the swap exists, update it. Otherwise, push a new swap.
-        //     // if (existingSwapIndex !== -1) {
-        //     //     swaps[existingSwapIndex] = { main_id: swapItemId, swap_id: mainItemId };
-        //     // } else {
-        //     //     swaps.push({ main_id: swapItemId, swap_id: mainItemId });
-        //     // }
-        //     swaps.push({ main_id: swapItemId, swap_id: mainItemId });
-
-        //     // Update the UI (swap images and names)
-        //     const mainItemName = categoryItemSwap.find('figcaption:first').text();
-        //     const mainItemImage = categoryItemSwap.find('img:first').attr('src');
-        //     const swapItemName = categoryItemSwap.find('figcaption:last').text();
-        //     const swapItemImage = categoryItemSwap.find('img:last').attr('src');
-
-        //     // Swapping the content dynamically
-        //     categoryItemSwap.find('figcaption:first').text(swapItemName);
-        //     categoryItemSwap.find('img:first').attr('src', swapItemImage);
-        //     categoryItemSwap.find('figcaption:last').text(mainItemName);
-        //     categoryItemSwap.find('img:last').attr('src', mainItemImage);
-
-        //     // Optional: Close the modal if it's used for this action
-        // //    $('#swapModal').modal('hide');
-        // });
-
         // Store the current swap in memory
         let activeSwap = null;
         let swaps = [];
@@ -514,8 +555,6 @@
             categoryItemSwap.find('figcaption:last').text(mainItemName);
             categoryItemSwap.find('img:last').attr('src', mainItemImage);
 
-            console.log('New swap applied');
-
             // Store the current swap details for reversing later
             activeSwap = {
                 mainContainer: categoryItemSwap,
@@ -528,15 +567,12 @@
 
         });
 
-
         // Apply Changes functionality
         $('body').on('click', '.apply-changes-btn', function () {
             // Send all swaps to the server
             const userItemId = $(this).data('user-item-id');
             const userMealId = $(this).data('user-meal-id');
-            console.log(userItemId);
-            console.log('123');
-            console.log(swaps);
+           
             $.ajax({
                 url: "{{ route('front.items.swaps') }}", // Laravel route to handle the request
                 method: "GET",
@@ -581,7 +617,7 @@
 
             // Fetch subcategory items via AJAX
             $.ajax({
-                url: '{{ route('front.meals.items', ':mealId') }}'.replace(':mealId', meal_id) + `?user_meal_id=${userMealId}`,
+                url: '{{ route("front.meals.items", ":mealId") }}'.replace(':mealId', meal_id) + `?user_meal_id=${userMealId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -617,7 +653,7 @@
                             $mealItemsContainer.append(itemCard);
                         });
                     } else {
-                        $mealItemsContainer.html('<p class="text-center">No items available.</p>');
+                        $mealItemsContainer.html('<p class="text-center">No foods available.</p>');
                     }
 
                     // Hide loading spinner and show items
@@ -625,8 +661,8 @@
                     $mealItemsContainer.show();
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error fetching subcategory items:', error);
-                    $mealItemsContainer.html('<p class="text-center text-danger">Failed to load items.</p>');
+                    console.error('Error fetching meal foods:', error);
+                    $mealItemsContainer.html('<p class="text-center text-danger">Failed to load foods.</p>');
                     $mealItemsLoadingSpinner.hide();
                     $mealItemsContainer.show();
                 }
@@ -640,20 +676,146 @@
             swaps = [];
             console.log('Swaps array cleared on modal close:', swaps);
         });
+    })
 
-        // $('#swapModal').on('hidden.bs.modal', function () {
-        //     $('#mealModel').modal('show');
+    $(document).on('click', '#fetchAllMeals', function () {
+        // Show loader or clear previous content
+        $('#ShippingModal .modal-body').html('<p>Loading...</p>');
 
-        // });
-        $(".print-plan-btn").click(function () {
-            let planId = $(this).data('plan-id');
-            let userId = $(this).data('user-id');
-            //alert(planId);
-            window.location.href = "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId)+ `?user_id=${userId}`;
+        // Fetch all meals with items
+        $.ajax({
+            url: '{{ route("front.get.meals.items") }}', // Adjust URL if needed
+            method: 'GET',
+            success: function (response) {
+                let meals = response.meals;
+                // let selectedItems = response.selectedItems;
+                let modalContent = '';                
+                // Loop through each meal
+                meals.forEach(meal => {
+                    modalContent += `<div class="ingredient-list">
+                                        <h2>${meal.title}</h2>
+                                        <ul>`;
+                    
+                    // Loop through each item in the meal
+                    meal.items.forEach(item => {
+                        // let isChecked = selectedItems[meal.id] && selectedItems[meal.id].includes(item.id) ? 'checked' : '';
 
-        })
+                        modalContent += `<li>
+                                            <div class="ingredient-info">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="${item.id}" id="Check${item.id}">
+                                                    <label class="form-check-label" for="Check${item.id}">
+                                                        <div class="ingredient-img">
+                                                            <figure>
+                                                                <img src="{{ asset('private/public/storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
+                                                            </figure>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <span>${item.title}</span>
+                                            </div>
+                                            <span class="quantity"><strong>QTY:</strong> ${item.qty ? item.qty : 'N/A'}</span>
+                                        </li>`;
+                    });
+
+                    modalContent += `</ul></div>`;
+                });
+
+                // Update modal content
+                $('#ShippingModal .modal-body').html(modalContent);
+            },
+            error: function (xhr) {
+                console.error('Error fetching meals:', xhr);
+                $('#ShippingModal .modal-body').html('<p>Error loading data.</p>');
+            }
+        });
     });
 
-</script>
+    $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
+        let aggregatedItems = {};
 
+        // Collect all checked items
+        $('#ShippingModal .form-check-input:checked').each(function () {
+            const itemName = $(this).closest('.ingredient-info').find('span').text().trim();
+            const quantityText = $(this).closest('li').find('.quantity').text().trim();
+            let quantityMatch = quantityText.match(/QTY:\s*(\d+\.?\d*)\s*(.*)/i); // Match number and unit
+            let quantity = quantityMatch ? parseFloat(quantityMatch[1]) : 0;
+            let unit = quantityMatch ? quantityMatch[2].trim() : ''; // Get the unit (e.g., "bottles")
+
+            // Aggregate the quantities if the item already exists
+            if (aggregatedItems[itemName]) {
+                aggregatedItems[itemName].quantity += quantity;
+                aggregatedItems[itemName].unit = unit; // Assume same unit for aggregation
+            } else {
+                aggregatedItems[itemName] = { quantity, unit };
+            }
+        });
+
+        // Generate the HTML for the aggregated list
+        let printListContent = '';
+        for (let [itemName, data] of Object.entries(aggregatedItems)) {
+            printListContent += `<li>${itemName} <strong>| QTY</strong> : ${data.quantity} ${data.unit}</li>`;
+        }
+        
+        // Populate the print modal with the aggregated list
+        $('#ShippingPrintModal .print-list ul').html(printListContent);
+    });
+
+    $(document).on('click', '#ShippingPrintModal .btn-primary', function () {
+        // Get the content of the print list
+        const content = $('#ShippingPrintModal .print-list').html();
+        // Create a container to format the content for PDF
+        const pdfContainer = `
+            <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto;">
+                <h3 style="text-align: center;">Shopping List</h3><hr>
+                <ul style="list-style: number; padding: 0;">
+                    ${content}
+                </ul>
+            </div>
+        `;
+
+        // Use html2pdf to generate the PDF
+        const options = {
+            margin: 1,
+            filename: 'shopping_list.pdf',
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        html2pdf().set(options).from(pdfContainer).save();
+    });
+
+    function updateQuantity(inputElement) {
+        const newQty = inputElement.value; // Get the new quantity value
+        const itemId = inputElement.getAttribute('data-item-id'); // Get the item ID from the data attribute
+        const userItemId = inputElement.getAttribute('data-user-item-id'); // Get the item ID from the data attribute
+
+        // Make an AJAX request to update the quantity in the backend
+        fetch('{{ route("front.food-quantity-update") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({
+                item_id: itemId,
+                qty: newQty,
+                user_item_id: userItemId,
+                user_id: userId
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Quantity updated successfully!');
+            } else {
+                alert('Failed to update quantity. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating quantity:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
+</script>
 @endsection

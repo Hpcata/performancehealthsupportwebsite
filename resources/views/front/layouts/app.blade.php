@@ -25,7 +25,6 @@
     <link rel="stylesheet" href="{!! frontAssets('css/flatpickr.min.css') !!}">
     <link rel="stylesheet" href="{!! frontAssets('css/glightbox.min.css') !!}">
     <link rel="stylesheet" href="{!! frontAssets('css/style.css') !!}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 	<title>Kerry </title>
     <!-- Hotjar Tracking Code for Bookings PHS -->
@@ -45,7 +44,8 @@
             a.appendChild(r);
         })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
     </script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 
 	@stack('styles')
 	@stack('custom_styles')

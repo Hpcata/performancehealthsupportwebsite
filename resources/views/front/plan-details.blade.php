@@ -64,7 +64,7 @@
                                     @if(Auth::check())
                                         <h5>{{ Auth::user()->name }}</h5>
                                         <p>National Athlete</p>
-                                        <button class="btn btn-primary edit-profile py-1 mt-1" data-profile-id="{{ Auth::user()->id }}">Edit Profile</button>
+                                        <a  class="btn btn-primary edit-profile py-1 mt-1" href="{{ route('front.competition-plan-details', ['id' => Auth::user()->id]) }}" data-profile-id="{{ Auth::user()->id }}">View Profile</a>
                                     @else
                                         <h5>Ellie Shiloh</h5>
                                         <p>National Athlete</p>
@@ -120,7 +120,7 @@
                                 @endif
                             </figure>
                             <h5>{{ $plan->mealTime->title }} </h5>
-                            <p>1024 Calories</p>
+                            <p></p>
                             <a href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" class="btn btn-primary view-details-btn" data-category-id="{{ $plan->mealTime->id }}" 
                                 data-category-name="{{ $plan->mealTime->title }}">View Details</a>
                         </div>
@@ -133,51 +133,6 @@
         @endforeach
     </div>
 
-    <!-- Modal for Subcategories -->
-    <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="categoryModalLabel">Subcategories</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Loading Spinner -->
-                    <div id="subcategoriesLoadingSpinner" class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-
-                    <!-- Subcategories Content -->
-                    <div id="subcategoriesContainer" class="row" style="display: none;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Subcategory Items -->
-    <div class="modal fade" id="subcategoryItemsModal" tabindex="-1" aria-labelledby="subcategoryItemsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="subcategoryItemsModalLabel">Subcategory Items</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Loading Spinner -->
-                    <div id="itemsLoadingSpinner" class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-
-                    <!-- Items Content -->
-                    <div id="subcategoryItemsContainer" class="row" style="display: none;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal -->
 <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
@@ -227,150 +182,6 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        const $categoryModal = $('#categoryModal');
-        const $categoryModalLabel = $('#categoryModalLabel');
-        const $subcategoriesContainer = $('#subcategoriesContainer');
-        const $subcategoriesLoadingSpinner = $('#subcategoriesLoadingSpinner');
-
-        const $subcategoryItemsModal = $('#subcategoryItemsModal');
-        const $subcategoryItemsModalLabel = $('#subcategoryItemsModalLabel');
-        const $subcategoryItemsContainer = $('#subcategoryItemsContainer');
-        const $itemsLoadingSpinner = $('#itemsLoadingSpinner');
-
-        // Handle click event to fetch subcategories
-        $('body').on('click', '.view-details-btn', function () {
-            const categoryId = $(this).data('category-id');
-            const categoryName = $(this).data('category-name');
-
-            if (!categoryId || !categoryName) {
-                console.error('Invalid category data.');
-                return;
-            }
-
-            // Update modal title
-            $categoryModalLabel.text(categoryName);
-
-            // Clear previous subcategories and show loading spinner
-            $subcategoriesContainer.empty().hide();
-            $subcategoriesLoadingSpinner.show();
-
-            // Fetch subcategories via AJAX
-            $.ajax({
-                url: '{{ route('front.category.subcategories', ':categoryId') }}'.replace(':categoryId', categoryId),
-                method: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    if (data.subcategories && data.subcategories.length > 0) {
-                        // Populate subcategories into the modal
-                        $.each(data.subcategories, function (index, subcategory) {
-                            const subcategoryCard = `
-                                <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card h-100 shadow-sm">
-                                        <img src="${subcategory.image}" alt="${subcategory.name}" class="card-img-top" style="height: 150px; object-fit: cover;">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title">${subcategory.name}</h5>
-                                            <p class="text-muted">${subcategory.description || ''}</p>
-                                            <button 
-                                                class="btn btn-secondary w-100 view-items-btn" 
-                                                data-subcategory-id="${subcategory.id}" 
-                                                data-subcategory-name="${subcategory.name}">
-                                                View Items
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                            $subcategoriesContainer.append(subcategoryCard);
-                        });
-                    } else {
-                        $subcategoriesContainer.html('<p class="text-center">No subcategories available.</p>');
-                    }
-
-                    // Hide loading spinner and show subcategories
-                    $subcategoriesLoadingSpinner.hide();
-                    $subcategoriesContainer.show();
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching subcategories:', error);
-                    $subcategoriesContainer.html('<p class="text-center text-danger">Failed to load subcategories.</p>');
-                    $subcategoriesLoadingSpinner.hide();
-                    $subcategoriesContainer.show();
-                }
-            });
-
-            // Show the modal
-            $categoryModal.modal('show');
-        });
-
-        // Handle click event to fetch subcategory items
-        $('body').on('click', '.view-items-btn', function () {
-            const subcategoryId = $(this).data('subcategory-id');
-            const subcategoryName = $(this).data('subcategory-name');
-            console.log(subcategoryId, subcategoryName);
-            if (!subcategoryId || !subcategoryName) {
-                console.error('Invalid subcategory data.');
-                return;
-            }
-
-            // Update modal title
-            $subcategoryItemsModalLabel.text(subcategoryName);
-
-            // Clear previous items and show loading spinner
-            $subcategoryItemsContainer.empty().hide();
-            $itemsLoadingSpinner.show();
-
-            // Fetch subcategory items via AJAX
-            $.ajax({
-                url: '{{ route('front.subcategories.items', ':subcategoryId') }}'.replace(':subcategoryId', subcategoryId),
-                method: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    if (data.items && data.items.length > 0) {
-                        // Populate items into the modal
-                        $.each(data.items, function (index, item) {
-                            const itemCard = `
-                                <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card h-100 shadow-sm">
-                                        <img src="${item.image}" alt="${item.name}" class="card-img-top" style="height: 150px; object-fit: cover;">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title">${item.name}</h5>
-                                            <p class="text-muted">${item.description || ''}</p>
-                                            <p class="text-success fw-bold">${item.price ? `$${item.price}` : ''}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                            $subcategoryItemsContainer.append(itemCard);
-                        });
-                    } else {
-                        $subcategoryItemsContainer.html('<p class="text-center">No items available in this subcategory.</p>');
-                    }
-
-                    // Hide loading spinner and show items
-                    $itemsLoadingSpinner.hide();
-                    $subcategoryItemsContainer.show();
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching subcategory items:', error);
-                    $subcategoryItemsContainer.html('<p class="text-center text-danger">Failed to load items.</p>');
-                    $itemsLoadingSpinner.hide();
-                    $subcategoryItemsContainer.show();
-                }
-            });
-
-            // Show the modal
-            $('#categoryModal').modal('hide');
-            $subcategoryItemsModal.modal('show');
-        });
-
-        $(".print-plan-btn").click(function () {
-            let planId = $(this).data('plan-id');
-            //alert(planId);
-            window.location.href = "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId);
-
-        })
-    });
 
     const baseUrl = "{{ asset('private/public/storage') }}";
 
@@ -433,7 +244,7 @@
                 }
             });
         });
-});
+    });
 
 </script>
 @endsection

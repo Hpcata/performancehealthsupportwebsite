@@ -187,12 +187,21 @@ Route::POST('/save-query', [FrontController::class, 'save'])->name('save-query')
 Route::get('/action-sport-nutrition-plan', [FrontController::class, 'subHomePage'])->name('front.sub-home-page');
 Route::get('/pre-plan-details', [PaymentController::class, 'prePlanDetails'])->name('front.pre-plan-details');
 Route::post('/pre-plan-details-store', [PaymentController::class, 'prePlanDetailsSave'])->name('front.pre-plan-details.store');
+
+Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPlanDetails'])->name('front.competition-plan-details');
+Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
+Route::get('/get-default-plan-details/{id}', [FrontPlanController::class, 'getDefaultPlanDetails'])->name('front.get-default-plan-details');
+Route::get('/get-race-ethnicity-culture-options', [PaymentController::class, 'getRaceEthnicityCultureOptions'])->name('front.get-race-ethnicity-culture-options');
+
 // Front auth
+Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
 Route::post('front/login', [FrontController::class, 'login'])->name('front.login');
 
 //Stripe payment
 Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
 Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
+
+Route::post('/free-test-save', [FrontController::class, 'freeTestSave'])->name('front.submit-free-test');
 
 // Plans
 Route::group(['middleware' => 'auth'], function () {
@@ -200,9 +209,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/meal-time/{id}/{plan_id}', [FrontPlanController::class, 'mealTimeDetails'])->name('front.meal-time.details');
 
 	//categories
-	Route::get('/subcategory/{id}/meals', [FrontPlanController::class, 'getMeals'])->name('front.subcategory.meals');
-	Route::get('/category/{id}/subcategories', [FrontPlanController::class, 'getSubCategories'])->name('front.category.subcategories');
-	Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
+	Route::get('/category/{id}/meals', [FrontPlanController::class, 'getMeals'])->name('front.category.meals');
+	// Route::get('/category/{id}/subcategories', [FrontPlanController::class, 'getSubCategories'])->name('front.category.subcategories');
+	// Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
 	Route::get('/meal/{id}/items', [FrontPlanController::class, 'getMealItems'])->name('front.meals.items');
 	Route::get('/item/{id}/swap-items', [FrontPlanController::class, 'getSwapItems'])->name('front.items.swap-items');
 
@@ -210,6 +219,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
 	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
+	Route::post('/food/quantity/update', [FrontController::class, 'updateFoodQuantity'])->name('front.food-quantity-update');
 
 });
 

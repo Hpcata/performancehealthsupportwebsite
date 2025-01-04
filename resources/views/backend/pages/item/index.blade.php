@@ -39,6 +39,9 @@
                                 <th>Title</th>
                                 <th>Meals</th>
                                 <th>Image</th>
+                                <th>Quantity</th>
+                                <th>Protein (gm)</th>
+                                <th>Carbs (gm)</th>
                                 <th>Description</th>
                                 <th>Created At</th>
                                 <th>Action</th>
@@ -63,6 +66,9 @@
                                     <span class="text-muted">No Image</span>
                                     @endif
                                 </td>
+                                <td>{{ $item->qty }}</td>
+                                <td>{{ $item->protein }}</td>
+                                <td>{{ $item->carbs }}</td>
                                 <td>{{ Str::limit($item->description, 50, '...') }}</td>
                                 <td>{{ $item->created_at->format('Y-m-d') }}</td>
                                 <td>

@@ -44,13 +44,22 @@
                             <!-- Quantity Field -->
                             <div class="col-md-12">
                                 <label for="qty" class="form-label">Quantity</label>
-                                <input type="text" name="qty" class="form-control" value="{{ $item->qty ?? ''}}" >
+                                <input type="text" name="qty" class="form-control" value="{{ $item->qty ?? ''}}" placeholder="Enter quantity and unit (e.g., 200 ml, 1 cup, 100 g)">
+                            </div>
+                            <!-- <small class="text-muted">Please include both quantity and unit (e.g., 200 ml, 1 cup, 100 g).</small> -->
+
+                            <!-- Protein Field -->
+                            <div class="col-md-12">
+                                <label for="carbs" class="form-label">Protein</label>
+                                <input type="number" name="protein" class="form-control" value="{{ $item->protein ?? '' }}" step="0.01" min="0" placeholder="Enter Protein"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+
                             </div>
 
-                            <!-- Alias Field -->
+                            <!-- Carbohydrate Field -->
                             <div class="col-md-12">
-                                <label for="alias" class="form-label">Alias</label>
-                                <input type="text" name="alias" class="form-control" value="{{ $item->alias ?? '' }}" placeholder="Enter alias">
+                                <label for="carbs" class="form-label">Carbohydrate</label>
+                                <input type="number" name="carbs" class="form-control" value="{{ $item->carbs ?? '' }}" step="0.01" min="0" placeholder="Enter Carbohydrate"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+
                             </div>
 
                             <!-- Is Swapped Field -->
