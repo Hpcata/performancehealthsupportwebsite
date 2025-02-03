@@ -15,20 +15,22 @@ use Illuminate\Support\Facades\Auth;
 use PDF;
 use App\Models\UserPlan;
 use App\Models\UserMealTime;
+use App\Models\User;
 
 class PlanController extends Controller
 {
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $plan = Plan::find($id);
         // dd($plan);
         // dd(Auth::user()->id);
-        $subPlans = $plan->subPlans()->pluck('sub_plan_id')->toArray();
+        $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
         // dd($subPlans);
-        $userId = Auth::user()->id;
+        $user = User::find($request->user_id);
+
         $userPlans = UserPlan::with('plan', 
             'userMealTimes.userCategories.userMeals.userItems')
-            ->where('user_id', $userId) // Ensure user_id is always applied
+            ->where('user_id', $user->id) // Ensure user_id is always applied
             ->where(function ($query) use ($id, $subPlans) {
                 $query->where('plan_id', $id)
                     ->orWhereIn('plan_id', $subPlans);
@@ -36,12 +38,12 @@ class PlanController extends Controller
             ->get();
         // dd($userPlans);
         // $userPlan = Plan::with('mealTimes')->findOrFail($id);
-        return view('front.plan-details', compact('userPlans','plan'));
+        return view('front.plan-details', compact('userPlans','plan', 'user'));
     }
 
     public function mealTimeDetails(Request $request, $id, $plan_id)
     {
-        $userPlan = UserPlan::where('user_id', Auth::user()->id)->where('id', $plan_id)->first();
+        $userPlan = UserPlan::where('id', $plan_id)->first();
 
         $userMealTime = UserMealTime::with('userCategories.userMeals.userItems')->where('meal_time_id', $id)
         ->where('user_plan_id', $plan_id)
@@ -99,7 +101,7 @@ class PlanController extends Controller
                 'user_item_id' => $userItem->id,
                 'id' => $userItem->item->id,
                 'name' => $userItem->item->title,
-                'protien' => $userItem->item->protien ?? 0,
+                'protein' => $userItem->item->protein ?? 0,
                 'carbs' => $userItem->item->carbs ?? 0,
                 'qty' => $userItem->item->qty,
                 'description' => $userItem->item->description,
@@ -127,6 +129,8 @@ class PlanController extends Controller
                 'swap_item_name' => $swapItem->item->title,
                 'swap_item_price' => $swapItem->item->price,
                 'swap_item_qty' => $swapItem->item->qty,
+                'swap_item_protein' => $swapItem->item->protein,
+                'swap_item_carbs' => $swapItem->item->carbs,
                 'swap_item_description' => $swapItem->item->description,
                 'swap_item_image' => $swapItem->item->image
                     ? asset('private/public/storage/' . $swapItem->item->image)
@@ -137,7 +141,7 @@ class PlanController extends Controller
 
        $item_image = $userItem->item->image ? asset('private/public/storage/' . $userItem->item->image) : 'https://via.placeholder.com/300x200?text=No+Image';
         // Return the response
-        return response()->json(['item_id' => $userItem->item->id,'item_name' => $userItem->item->title, 'item_image' => $item_image, 'user_item_id' => $user_item_id, 'items' => $items]);
+        return response()->json(['item_id' => $userItem->item->id,'item_name' => $userItem->item->title, 'item_image' => $item_image, 'user_item_id' => $user_item_id, 'items' => $items, 'item'=> $userItem->item]);
     }
 
     public function applySwaps(Request $request)
@@ -167,7 +171,6 @@ class PlanController extends Controller
                     ->where('item_id', $swap['swap_id'])
                     ->where('user_id', $userId)
                     ->first();
-        // dd($userItemMeal);
                 if ($userItemMeal) {
                     // $userItemMeal->item_id = $swap['main_id'];
                     $userItemMeal->is_swiped = 1;
@@ -272,7 +275,7 @@ class PlanController extends Controller
         // ])->findOrFail($id);
         $plan = Plan::find($id);
         
-        $subPlans = $plan->subPlans()->pluck('sub_plan_id')->toArray();
+        $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
 
         $userPlans = UserPlan::with('plan', 
             'userMealTimes.userCategories.userMeals.userItems')
@@ -285,6 +288,7 @@ class PlanController extends Controller
 
         // Pass the plan data to the Blade view for rendering the PDF
         $pdf = PDF::loadView('front.plan-pdf', compact('userPlans'));
+        $pdf->setBasePath(public_path()); // Set the base path for assets
 
         // Download the generated PDF
         return $pdf->download('plan_' . $id . '.pdf');

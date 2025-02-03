@@ -17,6 +17,7 @@ class UserMeal extends Model
         'user_category_id',
         'user_subcategory_id',
         'meal_id',
+        'meal_name',
     ];
 
     public function userSubcategory()

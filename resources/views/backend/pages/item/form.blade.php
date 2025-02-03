@@ -5,9 +5,10 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">{{ isset($item) ? 'Edit Item' : 'Create Item' }}</h3>
+                <h3 class="fw-bold mb-0">{{ isset($item) ? 'Edit Food' : 'Create Food' }}</h3>
                 <div class="col-auto d-flex w-sm-100">
-                    <a href="{{ route('admin.items.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
+                    <a href="{{ route('woolworths-product-search') }}" class="btn btn-primary btn-set-task w-sm-100">Search Woolworths Shop</a>
+                    <a href="{{ route('admin.items.index') }}" class="btn btn-primary btn-set-task w-sm-100 mx-3">Back</a>
                 </div>
             </div>
         </div>
@@ -51,14 +52,14 @@
                             <!-- Protein Field -->
                             <div class="col-md-12">
                                 <label for="carbs" class="form-label">Protein</label>
-                                <input type="number" name="protein" class="form-control" value="{{ $item->protein ?? '' }}" step="0.01" min="0" placeholder="Enter Protein"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                                <input type="number" name="protein" class="form-control" value="{{ $item->protein ?? '0' }}" step="0.01" min="0" placeholder="Enter Protein"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
 
                             </div>
 
                             <!-- Carbohydrate Field -->
                             <div class="col-md-12">
                                 <label for="carbs" class="form-label">Carbohydrate</label>
-                                <input type="number" name="carbs" class="form-control" value="{{ $item->carbs ?? '' }}" step="0.01" min="0" placeholder="Enter Carbohydrate"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                                <input type="number" name="carbs" class="form-control" value="{{ $item->carbs ?? '0' }}" step="0.01" min="0" placeholder="Enter Carbohydrate"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
 
                             </div>
 

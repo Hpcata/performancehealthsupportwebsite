@@ -1,0 +1,140 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Storage;
+use App\Models\Item;
+use Illuminate\Support\Str;  // Make sure to import the Str class
+
+class ProductController extends Controller
+{
+
+    public function search(Request $request)
+    {
+        $results = [];
+        $query = $request->input('query');
+        $page = $request->input('page', 1); // Page number (adjust as needed)
+        $perPage = 20; // Items per page (if applicable in API)
+        $pagination = [];
+
+        if ($query) {
+            $client = new Client();
+            try {
+                // Request to the Woolworths API
+                $response = $client->request('GET', 'https://www.woolworths.com.au/apis/ui/Search/products/', [
+                    'query' => [
+                        'searchTerm' => $query,
+                    ],
+                    'headers' => [
+                        'Accept' => 'application/json',
+                    ],
+                ]);
+
+                $responseBody = json_decode($response->getBody(), true);
+
+                // Extract products from the response
+                $products = $responseBody['Products'] ?? [];
+
+                // Process products
+                foreach ($products as $productGroup) {
+                    // Loop through the `Products` array within each group
+                    $groupProducts = $productGroup['Products'] ?? [];
+                    foreach ($groupProducts as $product) {
+                        // Extract `AdditionalAttributes` (nutritional information)
+                        $additionalAttributes = $product['AdditionalAttributes'] ?? [];
+                        $nutrition = [];
+
+                        if (isset($additionalAttributes['nutritionalinformation'])) {
+                            $nutritionInfo = json_decode($additionalAttributes['nutritionalinformation'], true);
+                            $attributes = $nutritionInfo['Attributes'] ?? [];
+
+                            // Map specific nutritional attributes to simplified keys
+                            foreach ($attributes as $attribute) {
+                                if ($attribute['Name'] === 'Carbohydrate Quantity Per Serve - Total - NIP') {
+                                    $nutrition['carbohydrate'] = $attribute['Value'] ?? '';
+                                } elseif ($attribute['Name'] === 'Protein Quantity Per Serve - Total - NIP') {
+                                    $nutrition['protein'] = $attribute['Value'] ?? '';
+                                }
+                            }
+                        }
+
+                        // Add product details to results
+                        $results[] = [
+                            'name' => $product['Name'] ?? '',
+                            'barcode' => $product['Barcode'] ?? '',
+                            'size' => $product['PackageSize'] ?? '',
+                            'price' => $product['Price'] ?? '',
+                            'image' => $product['SmallImageFile'] ?? '',
+                            'nutrition' => $nutrition, // Extracted nutritional data
+                        ];
+                    }
+                }
+
+                // Total products in the current response
+                $total = count($products);
+
+                $pagination = [
+                    'current_page' => $page,
+                    'total_pages' => ceil($total / $perPage), // Assuming the API doesn't provide total pages
+                    'total' => $total,
+                    'per_page' => $perPage,
+                ];
+            } catch (\Exception $e) {
+                Log::error('Error fetching products: ' . $e->getMessage());
+            }
+        }
+
+        // Debug the results
+        // dd($results);
+
+        return view('product-with-image', compact('results', 'query', 'pagination'));
+    }
+
+    public function addFood(Request $request) 
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'required|url', // Ensure it's a valid URL
+            'protein' => 'nullable',
+            'carbs' => 'nullable',
+        ]);
+
+        try {
+            // Step 1: Download the image from the URL
+            $imageContent = file_get_contents($validated['image']);
+            if ($imageContent === false) {
+                return response()->json(['success' => false, 'message' => 'Unable to download the image.']);
+            }
+
+            // Step 2: Generate a unique filename and save to storage
+            $imageName = Str::random(32) . '.jpg';  // Generate a random 32-character string and append '.jpg'
+            // Full path to store the image in public storage
+            $imagePath = 'items/' . $imageName; // Define the folder and filename
+        
+            // Save the image to storage
+            Storage::disk('public')->put($imagePath, $imageContent);
+            
+            $protein = $validated['protein'] ? rtrim($validated['protein'], 'g') : 0;
+            $carbs = $validated['carbs'] ? rtrim($validated['carbs'], 'g') : 0;
+
+            // Step 3: Save food details in the database
+            $food = new Item(); // Assuming you have a Food model
+            $food->title = $validated['name'];
+            $food->protein = $protein;
+            $food->carbs = $carbs;
+            $food->image = 'items/' . $imageName; // Path to the stored image
+            $food->is_swiped = 0;
+            $food->save();
+
+            // Step 4: Redirect with success message
+            return response()->json(['success' => true, 'message' => 'Food added successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error adding food: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to add food ']);
+        }
+    }
+}

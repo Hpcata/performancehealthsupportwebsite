@@ -70,6 +70,12 @@
 				</a>
 			</li>
 			<li>
+				<a class="m-link {{request()->routeIs('admin.coupons.*') ? 'active' : '' }}" href="{{ route('admin.coupons.index') }}">
+					<i class="icofont-culinary fs-5"></i>
+					<span>Coupons</span>
+				</a>
+			</li>
+			<li>
 				<a class="m-link {{request()->routeIs('testimonials.*') ? 'active' : '' }}" href="{!! route('testimonials.index') !!}"><i class="icofont-users-alt-2 fs-5"></i> <span>Testimonials</span></a>
 			</li>
 			<li><a class="m-link {{request()->routeIs('organizations.*') ? 'active' : '' }}" href="{!! route('organizations') !!}"><i class="icofont-ui-rating fs-5"></i> <span>Associations</span></a>

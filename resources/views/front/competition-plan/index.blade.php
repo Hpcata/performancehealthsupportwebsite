@@ -49,7 +49,7 @@
                             </h4>
                             <ul>
                                 <li>Sport: Track & Field</li>
-                                <li>Weight: 60kg</li>
+                                <li>Weight: 60kg <a href="#" class="ms-auto text-decoration-underline" id="weight-tracking">Track Your Weight</a></li>
                                 <li>Height: 180cm</li>
                                 <li>Daily Calorie Goal: 3,200</li>
                             </ul>
@@ -58,10 +58,10 @@
                 </div>
                 <div class="col-md-8 col-lg-9">
                     <div class="nutrition-profile-top">
-                        <form action="#">
+                        <!-- <form action="#">
                             <input type="text" class="form-control" placeholder="Enter your competition time (e.g., 10:00 AM)">
-                        </form>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TimelineModal">Summary</button>
+                        </form> -->
+                        <button type="button" class="btn btn-primary print-plan-btn" data-user-id="{{ $user->id}}" data-plan-id="{{ $userPlans->first()->plan->id}}" >Print Plan</button>
                         <button type="button" class="btn btn-primary" id="fetchAllMeals" data-bs-toggle="modal" data-bs-target="#ShippingModal">Shopping List</button>
                     </div>
                     <div class="nutrition-schedule-list">
@@ -243,7 +243,93 @@
         </div>
     </div>
 
+    <!--Weight trak Modal -->
+    <div class="modal fade" id="WeightModal" tabindex="-1" aria-labelledby="WeightModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="WeightModalLabel">Record Weight</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="#">
+                        <div class="form-group mb-3">
+                            <label for="weightGoal">Current Weight</label>
+                            <input type="text" class="form-control" id="weight" placeholder="Weight">
+                            <input type="hidden" class="form-control" id="userId" value="{{ $user->id }}" placeholder="Weight">
+                        </div>   
+                        <div class="form-group mb-3">
+                            <label for="weightGoal">Weight Goal</label>
+                            <input type="text" class="form-control" id="weightGoal" placeholder="Weight Goal">
+                        </div>
+                        <div class="form-group">
+                            <label for="weightGoal">Date</label>
+                            <input type="date" class="form-control" id="date" placeholder="Date">
+                        </div>   
+                    </form>
+                </div>
+                <div class="modal-footer p-0">
+                    <a href="#" class="btn btn-primary m-0 w-100 text-center rounded-0" id="saveWeight">Save</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Weight chart Modal -->
+    <div class="modal fade" id="WeightGraphModal" tabindex="-1" aria-labelledby="WeightGraphModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="WeightGraphModalLabel">Weight Chart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-md-3 col-6">
+                            <div class="h-100 border px-3 py-2 weight-info">
+                                <p class="mb-1 text-black-50">Start</p>
+                                <h5 id="start-weight">95.1<span class="text-black-50">KG</span></h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="h-100 border px-3 py-2 weight-info">
+                                <p class="mb-1 text-black-50">Goal</p>
+                                <h5 id="weight-goal">88.0<span class="text-black-50">KG</span></h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="h-100 border px-3 py-2 weight-info">
+                                <p class="mb-1 text-black-50">Change</p>
+                                <h5 id="weight-diff">-3.0<span class="text-black-50">KG</span></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weight-filter">
+                        <ul>
+                            <li><a href="#">1W</a></li>
+                            <li><a href="#">2W</a></li>
+                            <li><a href="#">1M</a></li>
+                            <li><a href="#" class="active">3M</a></li>
+                            <li><a href="#">6M</a></li>
+                            <li><a href="#">1Y</a></li>
+                            <li><a href="#">ALL</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="graph-img mt-3">
+                        <canvas id="line-chart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="modal-footer p-0">
+                    <a href="#" class="btn btn-primary m-0 w-100 text-center rounded-0">close</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
 <script>
     const user = @json($user);
     const userId = user.id;
@@ -376,7 +462,7 @@
                                         <div class="info-tootlip">
                                             <p>Food Details</p>
                                             <ul>
-                                                <li>Protien: ${item.protien}g</li>
+                                                <li>Protein: ${item.protein}g</li>
                                                 <li>Carbs: ${item.carbs}g</li>
                                             </ul>
                                         </div>                                        
@@ -386,13 +472,16 @@
                                         <p class="align-items-center d-flex m-0 mt-2"><strong class="me-2 text-nowrap">Qty : </strong><input type="text" class="form-control form-control-sm" value="${item.qty}" onchange="updateQuantity(this)" data-item-id="${item.id}"  data-user-item-id="${item.user_item_id}"/></p>
                                     </div>
                                     <div class="category-swap-btn">
-                                        <button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}" data-item-id="${item.id}" data-item-name="${item.name}">
+                                        <button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-item-id="${item.id}" data-item-name="${item.name}">
                                             <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
                                                 <path d="M7.99999 7.79999C7.59999 7.79999 7.29999 8.09999 7.29999 8.49999V11.4C7.29999 11.8 7.59999 12.1 7.99999 12.1C8.39999 12.1 8.69999 11.8 8.69999 11.4V8.49999C8.69999 8.09999 8.39999 7.79999 7.99999 7.79999Z" fill="white"/>
                                                 <path d="M7.99999 4.89999C7.59999 4.89999 7.29999 5.19999 7.29999 5.59999C7.29999 5.99999 7.59999 6.29999 7.99999 6.29999C8.39999 6.29999 8.69999 5.99999 8.69999 5.59999C8.69999 5.19999 8.39999 4.89999 7.99999 4.89999Z" fill="white"/>
                                             </svg>
                                             Info
+                                            <div class="info-tootlip">
+                                                <p>${item.description}</p>
+                                            </div>
                                         </button>
                                         <button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1"  data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}">
                                             <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -460,14 +549,24 @@
                         var itemName = data.item_name
                         var itemImage = data.item_image
                         var userItemId = data.user_item_id
-
+                        var item = data.item
                         $.each(data.items, function (index, swapitem) {
                             const swapItemsCard = `
                                 <div class="category-item-swap category-swap-list-box" data-main-id="${itemId}" data-swap-id="${swapitem.swap_item_id}">
-                                    <figure>
-                                        <img class="img-thumbnail" src="${itemImage}" alt="">
+                                   <div class="category-swap-img">
+                                        <figure>
+                                            <img class="img-thumbnail" src="${itemImage}" alt="">
+                                            </figure>
                                         <figcaption>${itemName}</figcaption>
-                                    </figure>
+                                        <div class="info-tootlip">
+                                            <p>Food Details</p>
+                                            <ul>
+                                                <li>Protein: ${item.protein}g</li>
+                                                <li>Carbs: ${item.carbs}g</li>
+                                            </ul>
+                                        </div>                                        
+                                    </div>
+                                        
                                     <div class="category-swap-btn mx-auto">
                                         <button class="swap-button btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-user-item-id="${userItemId}">
                                             <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -477,10 +576,19 @@
                                             Swap
                                         </button>
                                     </div>
-                                    <figure>
-                                        <img class="img-thumbnail" src="${swapitem.swap_item_image}" alt="">
+                                    <div class="category-swap-img">
+                                        <figure>
+                                            <img class="img-thumbnail" src="${swapitem.swap_item_image}" alt="">
+                                        </figure>
                                         <figcaption>${swapitem.swap_item_name}</figcaption>
-                                    </figure>
+                                        <div class="info-tootlip tooltip-right">
+                                            <p>Food Details</p>
+                                            <ul>
+                                                <li>Protein: ${swapitem.swap_item_protein}g</li>
+                                                <li>Carbs: ${swapitem.swap_item_carbs}g</li>
+                                            </ul>
+                                        </div>                                        
+                                    </div>
                                 </div>`;
                             $itemsSwapContainer.append(swapItemsCard);
                         });
@@ -689,7 +797,11 @@
             success: function (response) {
                 let meals = response.meals;
                 // let selectedItems = response.selectedItems;
-                let modalContent = '';                
+                let modalContent = '';
+                modalContent += `<div class="form-check mb-2">
+                                        <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
+                                        <label class="form-check-label" for="printPlanCheckbox">Select All</label>
+                                    </div>`;                 
                 // Loop through each meal
                 meals.forEach(meal => {
                     modalContent += `<div class="ingredient-list">
@@ -703,7 +815,7 @@
                         modalContent += `<li>
                                             <div class="ingredient-info">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="${item.id}" id="Check${item.id}">
+                                                    <input class="form-check-input meal-item-checkbox" type="checkbox" value="${item.id}" id="Check${item.id}">
                                                     <label class="form-check-label" for="Check${item.id}">
                                                         <div class="ingredient-img">
                                                             <figure>
@@ -731,6 +843,23 @@
         });
     });
 
+    // Global "Select All" functionality
+    $(document).on('change', '#selectAllCheckbox', function () {
+        let isChecked = $(this).is(':checked'); // Check if "Select All" is checked
+
+        // Toggle all checkboxes based on the state of "Select All"
+        $('.meal-item-checkbox').prop('checked', isChecked);
+    });
+
+    // Update the global "Select All" checkbox when any item checkbox is changed
+    $(document).on('change', '.meal-item-checkbox', function () {
+        let allItems = $('.meal-item-checkbox'); // All item checkboxes
+        let allChecked = allItems.length === allItems.filter(':checked').length; // Check if all are selected
+
+        // Set the global "Select All" checkbox state
+        $('#selectAllCheckbox').prop('checked', allChecked);
+    });
+
     $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
         let aggregatedItems = {};
 
@@ -738,11 +867,23 @@
         $('#ShippingModal .form-check-input:checked').each(function () {
             const itemName = $(this).closest('.ingredient-info').find('span').text().trim();
             const quantityText = $(this).closest('li').find('.quantity').text().trim();
-            let quantityMatch = quantityText.match(/QTY:\s*(\d+\.?\d*)\s*(.*)/i); // Match number and unit
-            let quantity = quantityMatch ? parseFloat(quantityMatch[1]) : 0;
-            let unit = quantityMatch ? quantityMatch[2].trim() : ''; // Get the unit (e.g., "bottles")
+            
+            // Match quantity and unit, including fractions
+            let quantityMatch = quantityText.match(/QTY:\s*([\d\/.]+)\s*(.*)/i); // Match numbers, fractions, and unit
+            let rawQuantity = quantityMatch ? quantityMatch[1] : "0"; // Extract raw quantity
+            let unit = quantityMatch ? quantityMatch[2].trim() : ''; // Extract unit
 
-            // Aggregate the quantities if the item already exists
+            // Convert fraction to decimal if needed
+            let quantity = 0;
+            if (rawQuantity.includes('/')) {
+                // Evaluate the fraction (e.g., "1/2" -> 0.5)
+                let [numerator, denominator] = rawQuantity.split('/').map(Number);
+                quantity = numerator / denominator;
+            } else {
+                quantity = parseFloat(rawQuantity); // Parse as decimal number
+            }
+
+            // Aggregate the quantities if the item already exists  
             if (aggregatedItems[itemName]) {
                 aggregatedItems[itemName].quantity += quantity;
                 aggregatedItems[itemName].unit = unit; // Assume same unit for aggregation
@@ -817,5 +958,147 @@
             alert('An error occurred. Please try again.');
         });
     }
+
+    $(document).ready(function () {
+        $(".print-plan-btn").click(function () {
+            let planId = $(this).data('plan-id');
+            let userId = $(this).data('user-id');
+            console.log(planId);
+            //alert(planId);
+            window.open("{{ route('plans.generatePdf', ':id') }}".replace(':id', planId)+ `?user_id=${userId}`, '_blank');
+
+        })
+    });
+
+    $(document).ready(function () {
+        let chartInstance = null; // To hold the chart instance
+        // Open Weight Modal and Prefill Data
+        $('#weight-tracking').on('click', function(e) {
+            let userId = $('#userId').val(); // Get the user ID
+            let date = new Date().toISOString().slice(0, 10); // Default to today's date
+            $('#WeightModal').modal('show');
+
+            $.ajax({
+                url: "{{ route('front.fetch.weight.data') }}", // Endpoint to fetch existing data
+                method: 'GET',
+                data: { user_id: userId },
+                success: function (data) {
+                    // Prefill fields with fetched data or set defaults
+                    $('#weight').val(data?.weight || ''); // Prefill current weight
+                    $('#weightGoal').val(data?.weight_goal || ''); // Prefill weight goal
+                    $('#date').val(data?.date || date); // Prefill date or default to today
+                },
+                error: function () {
+                    alert('Error fetching existing data');
+                }
+            });
+        });
+
+        // Save or Update Weight
+        $('#saveWeight').on('click', function (e) {
+            e.preventDefault();
+
+            let weight = $('#weight').val();
+            let weightGoal = $('#weightGoal').val();
+            let date = $('#date').val();
+            let userId = $('#userId').val();
+
+            $.ajax({
+                url: "{{ route('front.save.weight') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    weight: weight,
+                    weight_goal: weightGoal,
+                    date: date,
+                    user_id: userId
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#WeightModal').modal('hide');
+                        $('#WeightGraphModal').modal('show');
+                        loadChart('3M', userId); // Default to 3 months
+                    }
+                },
+                error: function (xhr) {
+                    alert('Error: ' + xhr.responseJSON.message);
+                }
+            });
+        });
+
+        // Load chart data
+        function loadChart(filter, userId) {
+            $.ajax({
+                url: "{{ route('front.fetch.weights') }}",
+                method: 'GET',
+                data: {
+                    filter: filter,
+                    user_id: userId
+                },
+                success: function (data) {
+                    renderChart(data.weights);
+                    updateModalData(data); // Call the function to update modal values
+                },
+                error: function () {
+                    alert('Error fetching weight data');
+                }
+            });
+        }
+
+        // Render chart
+        function renderChart(data) {
+            let labels = data.map(item => item.date);
+            let weights = data.map(item => item.weight);
+
+            let ctx = document.getElementById('line-chart').getContext('2d');
+
+            // Destroy the existing chart instance, if any
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            // Create a new chart instance
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Weight',
+                        data: weights,
+                        borderColor: '#649ef7',
+                        // backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                    }]
+                }
+            });
+        }
+
+        // Update modal with start-weight, goal-weight and weight-diff
+        function updateModalData(data) {
+            // Set start-weight, goal-weight, and weight-diff values in the modal
+            $('#start-weight').text(data.start_weight + ' KG');
+            $('#weight-goal').text(data.goal_weight + ' KG');
+            $('#weight-diff').text(data.weight_diff.toFixed(1) + ' KG');
+
+            // Set the color of weight-diff based on the value (positive or negative)
+            if (data.weight_diff > 0) {
+                $('#weight-diff').addClass('text-success').removeClass('text-danger'); // Positive diff (weight gained)
+            } else {
+                $('#weight-diff').addClass('text-danger').removeClass('text-success'); // Negative diff (weight lost)
+            }
+        }
+
+        // Filter click event
+        $('.weight-filter ul li a').on('click', function (e) {
+            e.preventDefault();
+            let filter = $(this).text();
+            let userId = $('#userId').val();
+
+            loadChart(filter, userId);
+            $('.weight-filter ul li a').removeClass('active');
+            $(this).addClass('active');
+        });
+    
+    });
 </script>
 @endsection

@@ -53,7 +53,8 @@ class LoginController extends Controller
 
     public function index()
     {
-        if (Auth::user() && Auth::user()->isSuperAdmin()) {
+        // dd(Auth::user()->isSuperAdmin());
+        if (Auth::user() && Auth::user()->is_superadmin == 1) {
             return redirect()->route('backend.blogs.index');
         }
         return view('backend.pages.auth.login');
@@ -357,6 +358,8 @@ class LoginController extends Controller
             'front_description' => $request->input('front_description'),
             'copyright_text'  => $request->input('copyright_text'),
             'qualification_text' => $request->input('qualification_text'),
+            'profile_image' => $adminUser->profile_image, // Include this
+
         ]);
 
         return redirect()->back()->with('success', 'Profile updated successfully.');

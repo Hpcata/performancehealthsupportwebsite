@@ -135,10 +135,10 @@
                                             <p><strong>DOB:</strong> ${userDetails.dob || 'N/A'}</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p><strong>Address:</strong> ${userDetails.address || 'N/A'}</p>
+                                            <p><strong>Postcode:</strong> ${userDetails.address || 'N/A'}</p>
                                             <p><strong>Referred By:</strong> ${userDetails.referredBy || 'N/A'}</p>
                                             <p><strong>Occupation:</strong> ${userDetails.occupation || 'N/A'}</p>
-                                            <p><strong>Race/Ethnicity/Culture:</strong> ${userDetails.other || 'N/A'}</p>
+                                            <p><strong>Race/Ethnicity/Culture:</strong> ${userDetails.culture || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div><hr>`;

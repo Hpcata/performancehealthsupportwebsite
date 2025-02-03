@@ -25,6 +25,9 @@ use App\Models\UserPlan;
 use Illuminate\Support\Facades\File;
 use Validator;
 use App\Models\Questionnaire;
+use App\Models\WeightTracking;
+use App\Models\Payment;
+use App\Models\SportTracking;
 
 class FrontController extends Controller
 {
@@ -42,6 +45,7 @@ class FrontController extends Controller
 
     public function index()
     {
+        
         $plans = \App\Models\Plan::all();
         //dd($plans);
         $page = \App\Models\Page::with('sections')->where('slug', 'home')->first();
@@ -166,11 +170,11 @@ class FrontController extends Controller
         if ($user && Hash::check($validated['password'], $user->password)) {
             // The user is authenticated, log them in
 
-            $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->pluck('plan_id')->toArray();
+            $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->orWhere('status','discount_applied')->pluck('plan_id')->toArray();
             if ($planIds) {
                 if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                     if (!Auth::user()->isSuperAdmin()) {
-                        $redirectUrl = route('front.competition-plan-details', ['id' => $user->id]); // Change this to the page you want
+                        $redirectUrl = route('front.profile', ['id' => $user->id]); // Change this to the page you want
         
                         return response()->json([
                             'success' => true,
@@ -203,18 +207,49 @@ class FrontController extends Controller
         ], 401);
     }
 
-    public function getProfileDetails($id)
+    // Logout for admin users
+    public function logout(Request $request)
+    {
+        // Check if the user is an admin
+        if (Auth::user() && Auth::user()->is_superadmin == 0) {
+            // Logout the admin
+            Auth::logout();
+
+            // Invalidate the session
+            $request->session()->invalidate();
+
+            // Regenerate the CSRF token
+            $request->session()->regenerateToken();
+
+            // Redirect to the admin login page
+            return redirect()->route('front.index');
+        }
+
+        // If not admin, redirect to home
+        return redirect('/')->with('error', 'Unauthorized access.');
+    }
+
+    public function getProfileDetails(Request $request, $id)
     {
         $user = User::findOrFail($id);
 
-        return response()->json([
-            'id' => $user->id,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'profile_image' => $user->profile_image ? asset('private/public/'.$user->profile_image) : null,
-        ]);
+        if($request->ajax()) {
+
+            return response()->json([
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'profile_image' => $user->profile_image ? asset('private/public/'.$user->profile_image) : null,
+            ]);
+
+        } else {
+
+            $purchasedplans = Payment::where('user_id', $user->id)->pluck('plan_id')->toArray();
+            $plans = Plan::all();
+            return view ('front.profile', compact('user', 'purchasedplans', 'plans'));
+        }
     }
 
     public function updateProfile(Request $request)
@@ -292,6 +327,10 @@ class FrontController extends Controller
 
     public function getCompetitionPlanDetails($id)
     {
+        if (!Auth::user()) {
+            return redirect()->route('front.sub-home-page');
+        }
+
         $user = User::findOrFail($id);
 
         $userPlans = UserPlan::with('plan', 
@@ -343,6 +382,7 @@ class FrontController extends Controller
             'userId' => 'required|exists:users,id', // Ensure user ID exists in the database
             'testData' => 'required|array', // Test data should be an array
             'email' => 'required', // Test data should be an array
+            'totalAnswerCount' => 'required|array', // Ensure total counts are an array
         ]);
 
         // If validation fails, return a 422 error with validation messages
@@ -366,22 +406,66 @@ class FrontController extends Controller
             ], 400);
         }
 
+        $nutritionScore  = $request->totalAnswerCount['nutrition-form'] ?? 0;
+        $sportsScore     = $request->totalAnswerCount['sports-form'] ?? 0;
+        $supplementScore = $request->totalAnswerCount['supplement-form'] ?? 0;
+
+        // Generate feedback based on score ranges
+        $nutritionFeedback  = $this->getFeedbackMessage($nutritionScore, 'nutrition-form');
+        $sportsFeedback     = $this->getFeedbackMessage($sportsScore, 'sports-form');
+        $supplementFeedback = $this->getFeedbackMessage($supplementScore, 'supplement-form');
+
+        $user->nutrition_score      = $nutritionScore;
+        $user->nutrition_feedback   = $nutritionFeedback;
+        $user->sports_score         = $sportsScore;
+        $user->sports_feedback      = $sportsFeedback;
+        $user->supplement_score     = $supplementScore;
+        $user->supplement_feedback = $supplementFeedback;
+        $user->save();
+
         // Loop through the test data and insert each question and answer into the `questionnaire` table
         foreach ($request->testData as $question => $answer) {
             // dd($question);
             $questionnaire = new Questionnaire();
             $questionnaire->user_id = $user->id;
-            $questionnaire->name = $user->name;
-            $questionnaire->email = $user->email;
-            $questionnaire->phone = $request->phone;  // Assuming 'phone' is part of the user
+            $questionnaire->name    = $user->name;
+            $questionnaire->email   = $user->email;
+            $questionnaire->phone   = $request->phone;  // Assuming 'phone' is part of the user
             $questionnaire->question = $question;  // Store the question text
-            $questionnaire->answer = json_encode($answer);      // Store the corresponding answer
+            $questionnaire->answer   = json_encode($answer);      // Store the corresponding answer
             $questionnaire->save(); // Save the data to the table
         }
 
         // Return success response
         return response()->json(['success' => true, 'message' => 'Test data submitted successfully']);
     
+    }
+
+    private function getFeedbackMessage($score, $category)
+    {
+        switch ($category) {
+            case 'nutrition-form': // Score out of 35
+                if ($score <= 16) return 'Needs work';
+                if ($score <= 22) return 'Pretty ordinary';
+                if ($score <= 26) return 'Not bad';
+                // if ($score <= 35) return 'Good';
+                return 'Good';
+
+            case 'sports-form': // Score out of 9
+                if ($score <= 3) return 'Untapped potential';
+                if ($score <= 5) return 'Much to learn';
+                if ($score <= 7) return 'Ok';
+                return 'Good start';
+
+            case 'supplement-form': // Score out of 6
+                if ($score <= 2) return 'Likely at risk';
+                if ($score <= 4) return 'Pretty ordinary';
+                if ($score <= 6) return 'Decent';
+                return 'Nice';
+
+            default:
+                return 'No feedback available';
+        }
     }
 
     public function updateFoodQuantity(Request $request)
@@ -397,6 +481,336 @@ class FrontController extends Controller
             'success' => true,
             'message' => 'Food quantity updated successfully!',
             'userItem' => $userItem,
+        ]);
+    }
+
+    public function validateCouponCode(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|max:255',
+            'plan_id' => 'nullable|exists:plans,id',
+        ]);
+    
+        $promoCode = $request->input('code');
+        $planId = $request->input('plan_id'); // Get the plan ID
+        $currentDateTime = \Carbon\Carbon::now();
+    
+        // Fetch the coupon with active status and matching code
+        $coupon = \App\Models\Coupon::where('code', $promoCode)
+            ->where('status', 1) // Active status
+            ->first();
+    
+        if ($coupon) {
+            // Check if the coupon is within the valid date range
+            if ($currentDateTime->lt($coupon->start_date) || $currentDateTime->gt($coupon->end_date)) {
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'Coupon is not valid at this time.',
+                ]);
+            }
+            
+            // Check if the coupon is applicable to the selected plan
+            $isPlanApplicable = $coupon->plans()->where('plans.id', $planId)->exists();
+            if (!$isPlanApplicable) {
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'This coupon is not applicable to the selected plan.',
+                ]);
+            }
+            
+            // Check the max_uses limit
+            if ($coupon->max_uses > 0 && $coupon->max_uses <= $coupon->usage_count) {
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'Coupon usage limit has been reached.',
+                ]);
+            }
+    
+            // // Check uses_per_user limit
+            if(Auth::user() && !Auth::user()->isSuperAdmin()) {
+                $userUsageCount = \App\Models\CouponUsage::where('coupon_id', $coupon->id)
+                    ->where('user_id', $request->user()->id)
+                    ->count();
+        
+                if ($coupon->uses_per_user > 0 && $userUsageCount >= $coupon->uses_per_user) {
+                    return response()->json([
+                        'valid' => false,
+                        'message' => 'You have already used this coupon.',
+                    ]);
+                }
+            }
+    
+            // Coupon is valid
+            return response()->json([
+                'valid' => true,
+                'type' => $coupon->type,
+                'discount' => $coupon->value,
+            ]);
+        }
+    
+        // If no valid coupon was found
+        return response()->json([
+            'valid' => false,
+            'message' => 'Invalid coupon code.',
+        ]);
+    }
+    
+    public function fetchWeightData(Request $request)
+    {
+        $userId = $request->user_id;
+
+        $weightData = WeightTracking::where('user_id', $userId)
+            ->latest('date')
+            ->first(['weight', 'weight_goal', 'date']); // Fetch the latest entry
+
+        return response()->json($weightData);
+    }
+
+    public function saveWeight(Request $request)
+    {
+        $request->validate([
+            'weight' => 'required|numeric',
+            'date' => 'required|date',
+            'user_id' => 'required|integer',
+        ]);
+
+       // Check for an existing record
+        $existingRecord = WeightTracking::where('user_id', $request->user_id)
+        ->where('date', $request->date)
+        ->first();
+
+        if ($existingRecord) {
+            // Update the existing record
+            $existingRecord->update([
+                'weight' => $request->weight,
+                'weight_goal' => $request->weight_goal,
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'Weight updated successfully']);
+
+        } else {
+            // Create a new record if none exists
+            WeightTracking::create([
+                'user_id' => $request->user_id,
+                'weight' => $request->weight,
+                'weight_goal' => $request->weight_goal,
+                'date' => $request->date,
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'Weight recorded successfully']);
+        }
+    }
+
+    // public function fetchWeights(Request $request)
+    // {
+    //     $filter = $request->filter; // e.g., '1W', '1M', etc.
+    //     $userId = $request->user_id; 
+    //     $startDate = now(); // Current date as the end of the range
+    //     $endDate = null;    // To calculate the starting point of the range
+    
+    //     // Determine the date range based on the filter
+    //     switch ($filter) {
+    //         case '1W':
+    //             $endDate = now()->subWeek();
+    //             break;
+    //         case '2W':
+    //             $endDate = now()->subWeek(2);
+    //             break;
+    //         case '1M':
+    //             $endDate = now()->subMonth();
+    //             break;
+    //         case '3M':
+    //             $endDate = now()->subMonths(3);
+    //             break;
+    //         case '6M':
+    //             $endDate = now()->subMonths(6);
+    //             break;
+    //         case '1Y':
+    //             $endDate = now()->subYear();
+    //             break;
+    //         case 'ALL':
+    //             $endDate = null; // For "ALL", no end date filter is applied
+    //             break;
+    //         default:
+    //             return response()->json(['error' => 'Invalid filter'], 400);
+    //     }
+    
+    //     $weight = WeightTracking::where('user_id', $userId)
+    //         ->when($endDate, function ($query) use ($startDate, $endDate) {
+    //             return $query->whereBetween('date', [$endDate, $startDate]);
+    //         })
+    //         ->orderBy('date', 'asc')
+    //         ->get(['date', 'weight','weight_goal']);
+
+    //     // Fetch weights between the calculated date range
+    //     $weights = WeightTracking::where('user_id', $userId)
+    //     ->when($endDate, function ($query) use ($startDate, $endDate) {
+    //         return $query->whereBetween('date', [$endDate, $startDate]);
+    //     })
+    //     ->orderBy('date', 'asc')
+    //     ->get(['date', 'weight'])
+    //     ->groupBy(function ($item) {
+    //         return \Carbon\Carbon::parse($item->date)->format('F'); // Group by month name
+    //     })
+    //     ->map(function ($items, $month) {
+    //         return [
+    //             'month' => $month,
+    //             'weights' => $items->map(function ($item) {
+    //                 return [
+    //                     'date' => \Carbon\Carbon::parse($item->date)->format('d/m/Y'),
+    //                     'weight' => $item->weight,
+    //                 ];
+    //             }),
+    //             // 'average_weight' => $items->avg('weight'), // Average weight for the month
+    //         ];
+    //     })
+    //     ->values();
+    
+    //     // Get the start and goal weight
+    //     $startWeight = $weight->first()->weight;
+    //     $goalWeight = $weight->last()->weight_goal; // Use the 'weight_goal' field from the last record
+    //     if($goalWeight > $startWeight) {
+    //         $weightDiff = $startWeight - $goalWeight; // Calculate the difference
+    //     }else {
+    //         $weightDiff = $goalWeight - $startWeight; // Calculate the difference
+    //     }
+
+    //     // Return all the necessary data for the chart and modal
+    //     return response()->json([
+    //         'success' => true,
+    //         'filter' => $filter,
+    //         'weights' => $weights,
+    //         'start_weight' => $startWeight,
+    //         'goal_weight' => $goalWeight,
+    //         'weight_diff' => $weightDiff
+    //     ]);
+    // }
+    
+    public function fetchWeights(Request $request)
+    {
+        $filter = $request->filter; // e.g., '1W', '1M', etc.
+        $userId = $request->user_id; 
+        $startDate = now(); // Current date as the end of the range
+        $endDate = null;    // To calculate the starting point of the range
+        
+        // Determine the date range based on the filter
+        switch ($filter) {
+            case '1W':
+                $endDate = now()->subWeek();
+                break;
+            case '2W':
+                $endDate = now()->subWeeks(2);
+                break;
+            case '1M':
+                $endDate = now()->subMonth();
+                break;
+            case '3M':
+                $endDate = now()->subMonths(3);
+                break;
+            case '6M':
+                $endDate = now()->subMonths(6);
+                break;
+            case '1Y':
+                $endDate = now()->subYear();
+                break;
+            case 'ALL':
+                $endDate = WeightTracking::where('user_id', $userId)->orderBy('date', 'asc')->value('date'); // Earliest date for "ALL"
+                break;
+            default:
+                return response()->json(['error' => 'Invalid filter'], 400);
+        }
+    
+        // Generate a complete list of dates between $endDate and $startDate
+        $allDates = collect();
+        $currentDate = $endDate->copy();
+        while ($currentDate <= $startDate) {
+            $allDates->push($currentDate->format('Y-m-d')); // Format as 'Y-m-d' for consistency
+            $currentDate = $currentDate->addDay();
+        }
+    
+        // Fetch weights from the database
+        $weightsData = WeightTracking::where('user_id', $userId)
+            ->when($endDate, function ($query) use ($startDate, $endDate) {
+                return $query->whereBetween('date', [$endDate, $startDate]);
+            })
+            ->orderBy('date', 'asc')
+            ->get(['date', 'weight', 'weight_goal'])
+            ->keyBy('date'); // Key by date for easy lookup
+    
+        // Map weights to the complete list of dates
+        $allWeights = $allDates->map(function ($date) use ($weightsData) {
+            return [
+                'date' => \Carbon\Carbon::parse($date)->format('d/m/Y'), // Format for response
+                'weight' => $weightsData->has($date) ? $weightsData[$date]->weight : null // Use null if no weight exists for the date
+            ];
+        });
+    
+        // Group by month for the response
+        $groupedWeights = $allWeights->groupBy(function ($item) {
+            return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F'); // Group by month name
+        })->map(function ($items, $month) {
+            return [
+                'month' => $month,
+                'weights' => $items
+            ];
+        })->values();
+    
+        // Calculate start and goal weights
+        $startWeight = $weightsData->first() ? $weightsData->first()->weight : null;
+        $goalWeight = $weightsData->last() ? $weightsData->last()->weight_goal : null;
+    
+        // Calculate weight difference
+        $weightDiff = null;
+        if ($startWeight !== null && $goalWeight !== null) {
+            $weightDiff = abs($startWeight - $goalWeight);
+        }
+    
+        // Return all the necessary data for the chart and modal
+        return response()->json([
+            'success' => true,
+            'filter' => $filter,
+            'weights' => $groupedWeights,
+            'start_weight' => $startWeight,
+            'goal_weight' => $goalWeight,
+            'weight_diff' => $weightDiff
+        ]);
+    }
+    
+    public function getSportsGames(Request $request) 
+    {
+        $category = $request->input('category'); // Get selected sport category
+
+        if (!$category) {
+            return response()->json(['error' => 'Invalid category'], 400);
+        }
+
+        // Get sports games from config/sports.php
+        $sports = config('sports.' . $category, []);
+
+        return response()->json($sports);
+    }
+
+    public function sportSearch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'sport' => 'required|string',
+            'state' => 'required|string',
+            'sport_game' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        // Save data to database
+        $interest = new SportTracking();
+        $interest->sport = ucwords(str_replace('_', ' ', $request->sport));;
+        $interest->state = $request->state;
+        $interest->sport_game = $request->sport_game;
+        $interest->ip_address = $request->ip(); // Track user IP
+        $interest->save();
+
+        return response()->json(['success' => true, 'message' => 'Thank you for submitting your interest in ' . ucwords(str_replace('_', ' ', $request->sport)) . ' under the game ' . $request->sport_game . ' in ' . $request->state . '.'
         ]);
     }
 }

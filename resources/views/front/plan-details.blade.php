@@ -53,8 +53,8 @@
                             </figure>
                             <div class="nutrition-athlete-box">
                                 <figure>
-                                    @if(Auth::check() && Auth::user()->profile_image)
-                                        <img src="{{ asset('private/public/' . Auth::user()->profile_image) }}" alt="Profile Image">
+                                    @if(Auth::check() && $user->profile_image)
+                                        <img src="{{ asset('private/public/' . $user->profile_image) }}" alt="Profile Image">
                                     @else
                                         <img src="{{ frontAssets('images/kerry-oBryan.jpg') }}" alt="Default Profile Image">
                                     @endif
@@ -62,15 +62,15 @@
 
                                 <div class="nutrition-athlete-info">
                                     @if(Auth::check())
-                                        <h5>{{ Auth::user()->name }}</h5>
+                                        <h5>{{ $user->name }}</h5>
                                         <p>National Athlete</p>
-                                        <a  class="btn btn-primary edit-profile py-1 mt-1" href="{{ route('front.competition-plan-details', ['id' => Auth::user()->id]) }}" data-profile-id="{{ Auth::user()->id }}">View Profile</a>
+                                        <a  class="btn btn-primary py-1 px-3 mt-1" href="{{ route('front.profile', ['id' => $user->id]) }}" data-profile-id="{{ $user->id }}">View Profile</a>
                                     @else
                                         <h5>Ellie Shiloh</h5>
                                         <p>National Athlete</p>
                                     @endif
                                 </div>
-                            </div>
+                            </div>  
 
                             <figure class="bottom-corner">
                                 <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
@@ -105,14 +105,14 @@
                     )
                 @endif
                 </h2>
-                <a href="#" class="mt-3 mt-md-0 btn btn-primary">Finalise Plan</a>
+                <!-- <a href="#" class="mt-3 mt-md-0 btn btn-primary">Finalise Plan</a> -->
             </div>
             <div class="mt-4">
                 <div class="row g-4">
                 @if($userPlan->userMealTimes->count())
                     @foreach($userPlan->userMealTimes as $plan)
                     <?php //dd($plan); ?>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="nutrition-plan-box">
                             <figure>
                                 @if($plan->mealTime->image)

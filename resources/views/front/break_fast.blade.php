@@ -45,13 +45,17 @@
                             </figure>
                             <div class="nutrition-athlete-box">
                                 <figure>
-                                <img src="{!! frontAssets('images/kerry-oBryan.jpg') !!}" alt="">
+                                    @if(isset($userPlan->user) && $userPlan->user->profile_image)
+                                        <img src="{{ asset('private/public/' . $userPlan->user->profile_image) }}" alt="Profile Image">
+                                    @else
+                                        <img src="{{ frontAssets('images/kerry-oBryan.jpg') }}" alt="Default Profile Image">
+                                    @endif
                                 </figure>
-                                @if(Auth::check())
+                                @if(isset($userPlan->user))
                                 <div class="nutrition-athlete-info">
-                                    <h5>{{ Auth::user()->name }}</h5>
+                                    <h5>{{ $userPlan->user->name }}</h5>
                                     <p>National Athlete</p>
-                                    <button class="btn btn-primary print-plan-btn py-1 mt-1" data-user-id="{{ Auth::user()->id }}" data-plan-id="{{ $userPlan->plan_id }}">Print Plan</button>
+                                    <button class="btn btn-primary print-plan-btn py-1 mt-1" data-user-id="{{ $userPlan->user->id }}" data-plan-id="{{ $userPlan->plan_id }}">Print Plan</button>
                                 </div>
                                 @else
                                 <div class="nutrition-athlete-info">
@@ -290,22 +294,33 @@
                         // Populate items into the modal
                         $.each(data.items, function (index, item) {
                             const itemCard = `<div class="category-swap-list-box">
-                                    <figure>
-                                        <img class="img-thumbnail" src="${item.image}" alt="">
-                                    </figure>
+                                    <div class="category-swap-img">
+                                        <figure>
+                                            <img class="img-thumbnail" src="${item.image}" alt="">
+                                        </figure>
+                                        <div class="info-tootlip">
+                                            <p>Food Details</p>
+                                            <ul>
+                                                <li>Protein: ${item.protein}g</li>
+                                                <li>Carbs: ${item.carbs}g</li>
+                                            </ul>
+                                        </div>                                        
+                                    </div>
                                     <div class="category-swap-content">
                                         <h5 class="m-0">${item.name}</h5>
-                                        <p class="m-0"></p>
-                                        <p class="m-0"><strong>Qty : </strong>${item.qty}</p>
+                                        <p class="align-items-center d-flex m-0 mt-2"><strong class="me-2 text-nowrap">Qty : </strong><input type="text" class="form-control form-control-sm" value="${item.qty}" onchange="updateQuantity(this)" data-item-id="${item.id}"  data-user-item-id="${item.user_item_id}"/></p>
                                     </div>
                                     <div class="category-swap-btn">
-                                        <button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}" data-item-id="${item.id}" data-item-name="${item.name}">
+                                        <button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-item-id="${item.id}" data-item-name="${item.name}">
                                             <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
                                                 <path d="M7.99999 7.79999C7.59999 7.79999 7.29999 8.09999 7.29999 8.49999V11.4C7.29999 11.8 7.59999 12.1 7.99999 12.1C8.39999 12.1 8.69999 11.8 8.69999 11.4V8.49999C8.69999 8.09999 8.39999 7.79999 7.99999 7.79999Z" fill="white"/>
                                                 <path d="M7.99999 4.89999C7.59999 4.89999 7.29999 5.19999 7.29999 5.59999C7.29999 5.99999 7.59999 6.29999 7.99999 6.29999C8.39999 6.29999 8.69999 5.99999 8.69999 5.59999C8.69999 5.19999 8.39999 4.89999 7.99999 4.89999Z" fill="white"/>
                                             </svg>
                                             Info
+                                            <div class="info-tootlip">
+                                                <p>${item.description}</p>
+                                            </div>
                                         </button>
                                         <button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1"  data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}">
                                             <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -368,20 +383,29 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.items && data.items.length > 0) {
-                        console.log(data.items);
+                        // console.log(data.items);
                         // Populate subcategories into the modal
                         var itemId = data.item_id
                         var itemName = data.item_name
                         var itemImage = data.item_image
                         var userItemId = data.user_item_id
-
+                        var item = data.item
                         $.each(data.items, function (index, swapitem) {
                             const swapItemsCard = `
                                 <div class="category-item-swap category-swap-list-box" data-main-id="${itemId}" data-swap-id="${swapitem.swap_item_id}">
-                                    <figure>
-                                        <img class="img-thumbnail" src="${itemImage}" alt="">
+                                    <div class="category-swap-img">
+                                        <figure>
+                                            <img class="img-thumbnail" src="${itemImage}" alt="">
+                                        </figure>
                                         <figcaption>${itemName}</figcaption>
-                                    </figure>
+                                        <div class="info-tootlip">
+                                            <p>Food Details</p>
+                                            <ul>
+                                                <li>Protein: ${item.protein}g</li>
+                                                <li>Carbs: ${item.carbs}g</li>
+                                            </ul>
+                                        </div>                                        
+                                    </div>
                                     <div class="category-swap-btn mx-auto">
                                         <button class="swap-button btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-user-item-id="${userItemId}">
                                             <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -391,10 +415,19 @@
                                             Swap
                                         </button>
                                     </div>
-                                    <figure>
-                                        <img class="img-thumbnail" src="${swapitem.swap_item_image}" alt="">
+                                    <div class="category-swap-img">
+                                        <figure>
+                                            <img class="img-thumbnail" src="${swapitem.swap_item_image}" alt="">
+                                        </figure>
                                         <figcaption>${swapitem.swap_item_name}</figcaption>
-                                    </figure>
+                                        <div class="info-tootlip tooltip-right">
+                                            <p>Food Details</p>
+                                            <ul>
+                                                <li>Protein: ${swapitem.swap_item_protein}g</li>
+                                                <li>Carbs: ${swapitem.swap_item_carbs}g</li>
+                                            </ul>
+                                        </div>                                        
+                                    </div>
                                 </div>`;
                             $itemsSwapContainer.append(swapItemsCard);
                         });

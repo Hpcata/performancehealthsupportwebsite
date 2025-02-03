@@ -150,6 +150,7 @@ class MealController extends Controller
                     }
                 }
             }
+            $meal->items()->sync($request->food_ids);
         }
 
         if ($request->has('categories')) {
@@ -168,5 +169,36 @@ class MealController extends Controller
         $meal->delete();
 
         return redirect()->route('admin.meals.index')->with('success', 'Meal deleted successfully.');
+    }
+
+    public function updateMealName(Request $request)
+    {
+        $validated = $request->validate([
+            'meal_id' => 'required|integer',
+            'plan_id' => 'required|integer',
+            'user_id' => 'required|integer',
+            'meal_time_id' => 'required|integer',
+            // 'category_id' => 'required|integer',
+            'meal_name' => 'required|string|max:255',
+        ]);
+        
+        $userPlan = \App\Models\UserPlan::where('user_id', $validated['user_id'])->where('plan_id', $validated['plan_id'])->first();
+        // dd($userPlan);
+        $userMealTime = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
+                            ->where('meal_time_id', $validated['meal_time_id'])->first();
+        
+        $meal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTime->id)
+                        ->where('meal_id', $validated['meal_id'])
+                        ->where('user_plan_id', $userPlan->id)
+                        ->where('user_meal_time_id', $userMealTime->id)
+                        // ->where('user_category_id', $validated['category_id'])
+                        ->first();
+    
+        if ($meal) {
+            $meal->update(['meal_name' => $validated['meal_name']]);
+            return response()->json(['success' => true, 'message' => 'Meal name updated successfully.']);
+        }
+    
+        return response()->json(['success' => false, 'message' => 'Meal not found.']);
     }
 }

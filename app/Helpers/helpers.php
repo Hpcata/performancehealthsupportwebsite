@@ -1,6 +1,7 @@
 <?php
 
 // use Route;
+use Carbon\Carbon;
 
 // APP FUNCTIONS
 function appName() {
@@ -52,4 +53,25 @@ function getUserBySlug($slug) {
 
 function frontView($key) {
 	return 'front.' . $key;
+}
+
+if (!function_exists('formatDate')) {
+    /**
+     * Format a date to d-m-Y format.
+     *
+     * @param string|null $date
+     * @return string
+     */
+    function formatDate($date)
+    {
+        if (!$date) {
+            return '';
+        }
+
+        try {
+            return Carbon::parse($date)->format('d-m-Y');
+        } catch (\Exception $e) {
+            return ''; // Return empty if date parsing fails
+        }
+    }
 }

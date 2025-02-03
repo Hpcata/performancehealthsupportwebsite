@@ -34,23 +34,27 @@
                 <div class="card-body">
                 <form action="{{ route('admin.purchase-plans.store') }}" method="POST" class="bg-light" id="createPlanForm">
                     @csrf
-                    <div class="panel-group" id="accordion">
+                    <input type="hidden" name="foodSelections" id="foodSelectionsInput">
+                    <div class="row">
+                    <div class="panel-group col-7" id="accordion">
+                        
                         <!-- Main Plan -->
                         @foreach ($plans as $plan)
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseMainPlan">{{ $plan->name }}</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapsePlan{{$plan->id}}">{{ $plan->name }}</a>
                                 </h4>
                             </div>
-                            <div id="collapseMainPlan" class="panel-collapse collapse in">
+                            <div id="collapsePlan{{$plan->id}}" class="panel-collapse collapse in">
                                 <div class="panel-body">
                                     <input type="hidden" name="plan_id[]" value="{{ $plan->id }}">
                                     <input type="hidden" name="payment_id" value="{{ $payment->id }}">
+                                    <input type="hidden" name="user_id" id="user_id" value="{{ $payment->user_id }}">
 
                                     <!-- Meal Times (Checkboxes) -->
                                     <ul class="list-group mb-4">
-                                        @foreach ($mealTimes as $mealTime)
+                                        @foreach ($plan->mealTimes as $mealTime)
                                         <li class="list-group-item border rounded mb-3">
                                             <!-- Meal Time Checkbox -->
                                             <div class="form-check px-0">
@@ -89,15 +93,52 @@
                             </div>
                         </div>
                         @endforeach
-                        
                     </div>
+                    <div class="col-5">
+                        <h4>Foods</h4>
+                        @foreach ($step5Foods as $category => $foods)
+                            <div class="category-section mb-3">
+                                <h5 class="category-title">{{ $category ?: 'Uncategorized' }}</h5> <!-- Handle empty categories -->
 
+                                <div class="row">
+                                    @php
+                                        // Split the foods into 2 equal columns for better UI
+                                        $chunkedFoods = $foods->chunk(ceil($foods->count() / 2));
+                                    @endphp
+
+                                    @foreach ($chunkedFoods as $columnFoods)
+                                        <div class="col-md-6">
+                                            @foreach ($columnFoods as $food)
+                                                @php
+                                                    // Check if the food title exists in the prePlanSelectedFoods array
+                                                    $isMatched = in_array($food->title, $perPlanSelectedFoods);
+                                                @endphp
+
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="setp5_foods[]" value="{{ $food->id }}" 
+                                                        class="form-check-input food-checkbox" 
+                                                        id="setp5Food{{ $food->id }}" 
+                                                        data-food-id="{{ $food->id }}" 
+                                                        data-food-name="{{ $food->title }}">
+
+                                                        <label class="form-check-label @if($isMatched) text-primary @endif" 
+                                                            for="setp5Food{{ $food->id }}">
+                                                            {{ $food->title }}
+                                                        </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    </div>
                     <!-- Submit Button -->
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary">Create</button>
                     </div>
                 </form>
-
                 </div>
             </div>
         </div>
@@ -138,8 +179,58 @@
     </div>
 </div>
 
+<!-- Modal Popup for Swap Foods -->
+<div class="modal" style="display:none;" id="swapFoodsModal" tabindex="-1" aria-labelledby="swapFoodsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="swapFoodsModalLabel">Select Swap Foods</h5>
+                <button type="button" class="btn-close" id="closeSwapFoodsModal" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="swapFoodsForm">
+                    <div class="form-group">
+                        <div class="col-form-label">
+                            <label class="col-form-label" for="meals">Choose Meals:</label>
+                        </div>
+                        <div >
+                        <select name="meals[]" id="meals" class="form-control w-100 " multiple>
+                            @foreach ($meals as $meal)
+                                <option value="{{ $meal->id }}">{{ $meal->title }}</option>
+                            @endforeach
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-form-label">
+                        <label class="col-form-label" for="swapFoods">Choose Swap Foods:</label>
+                        </div>
+                        <div>
+                        <select name="swap_foods[]" id="swapFoods" class="form-control w-100" multiple>
+                            @foreach ($step5Foods as $category => $foods)
+                                @foreach ($foods as $food)
+                                <option value="{{ $food->id }}">{{ $food->title }}</option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="saveSwapFoods">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- jQuery CDN -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+@endpush
+
+@push('custom_scripts')
 <script>
     // Track whether there are unsaved changes
     let hasUnsavedChanges = false;
@@ -183,6 +274,140 @@
     });
 </script>
 <script>
+    $(document).ready(function () {
+        $('#meals').select2({
+            placeholder: "Select Meals",
+            allowClear: true
+        });
+
+        $('#swapFoods').select2({
+            placeholder: "Select Swap Foods",
+            allowClear: true
+        });
+        $('.meal-items-select').select2({
+            placeholder: "Select Mels",
+            allowClear: true
+        })
+
+
+        // $('#swapFoodsModal').on('hidden.bs.modal', function () {
+        //     // Clear the selected meals and swap foods when the modal is closed
+        //     $('#meals').val([]).trigger('change');
+        //     $('#swapFoods').val([]).trigger('change');
+        // })
+        // Handle checkbox click to open the modal
+        // Initialize an object in local storage to store food selections
+        // $('#foodSelectionsInput').val(); 
+        // var storedSelections = $('#foodSelectionsInput').val(); // Get from hidden field
+        // if (storedSelections) {
+        //     localStorage.setItem('foodSelections', storedSelections); 
+        // }
+
+        // localStorage.removeItem('foodSelections');
+        // $('#foodSelectionsInput').val('');
+
+        // if (!localStorage.getItem('foodSelections')) {
+        //     localStorage.setItem('foodSelections', JSON.stringify({}));
+        // }
+
+        // // Handle checkbox click to open the modal
+        // $('.food-checkbox').on('change', function () {
+        //     const foodId = $(this).data('food-id');
+
+        //     if ($(this).is(':checked')) {
+        //         // Clear modal selections
+        //         $('#meals').val([]).trigger('change');
+        //         $('#swapFoods').val([]).trigger('change');
+
+        //         // Populate modal if data exists in localStorage
+        //         const storedSelections = JSON.parse(localStorage.getItem('foodSelections')) || {};
+        //         Object.keys(storedSelections).forEach(mealId => {
+        //             if (storedSelections[mealId][foodId]) {
+        //                 $('#meals').val([mealId]).trigger('change');
+        //                 $('#swapFoods').val(storedSelections[mealId][foodId]).trigger('change');
+        //             }
+        //         });
+
+        //         // Store the current food ID in the modal
+        //         $('#swapFoodsModal').data('food-id', foodId);
+
+        //         // Open modal
+        //         $('#swapFoodsModal').modal('show');
+        //     } else {
+        //         // Remove food from all meals in localStorage
+        //         const storedSelections = JSON.parse(localStorage.getItem('foodSelections')) || {};
+        //         Object.keys(storedSelections).forEach(mealId => {
+        //             if (storedSelections[mealId][foodId]) {
+        //                 delete storedSelections[mealId][foodId];
+        //                 if (Object.keys(storedSelections[mealId]).length === 0) {
+        //                     delete storedSelections[mealId];
+        //                 }
+        //             }
+        //         });
+        //         localStorage.setItem('foodSelections', JSON.stringify(storedSelections));
+
+        //         // Remove food from form dynamically
+        //         $(`.meal-container input[value="${foodId}"]`).closest('.meal-container').remove();
+        //     }
+        // });
+
+        // $('#saveSwapFoods').on('click', function () {
+        //     const selectedMeals = $('#meals').val();
+        //     const selectedSwapFoods = $('#swapFoods').val();
+        //     const foodId = $('#swapFoodsModal').data('food-id');
+
+        //     if (selectedMeals && selectedMeals.length && selectedSwapFoods && selectedSwapFoods.length) {
+        //         const storedSelections = JSON.parse(localStorage.getItem('foodSelections')) || {};
+
+        //         // Save the selected meals and swap foods
+        //         selectedMeals.forEach(mealId => {
+        //             storedSelections[mealId] = storedSelections[mealId] || {};
+        //             storedSelections[mealId][foodId] = selectedSwapFoods;
+
+        //             // Update form dynamically
+        //             const mealDropdown = $(`#mealItems${mealId}`);
+        //             const mealContainer = $(`#selectedMeals${mealId}`);
+
+        //             // Add food ID to the dropdown if not already present
+        //             if (!mealDropdown.find(`option[value="${foodId}"]`).length) {
+        //                 mealDropdown.append(new Option(`Food ${foodId}`, foodId));
+        //             }
+
+        //             // Update meal items table dynamically
+        //             const foodRow = `
+        //                 <tr id="foodRow_${mealId}_${foodId}">
+        //                     <td>${foodId}</td>
+        //                     <td>${selectedSwapFoods.join(', ')}</td>
+        //                 </tr>
+        //             `;
+        //             if (!mealContainer.find(`#foodRow_${mealId}_${foodId}`).length) {
+        //                 mealContainer.find('tbody').append(foodRow);
+        //             }
+        //         });
+
+        //         // Update localStorage
+        //         localStorage.setItem('foodSelections', JSON.stringify(storedSelections));
+
+        //         // Close modal
+        //         $('#swapFoodsModal').modal('hide');
+        //     } else {
+        //         alert('Please select at least one meal and one swap food.');
+        //     }
+        // });
+
+
+        // $('#createPlanForm').on('submit', function() {
+        //     // Get the foodSelections data from localStorage
+        //     var foodSelections = localStorage.getItem('foodSelections');
+
+        //     // Populate the hidden input field with the data
+        //     $('#foodSelectionsInput').val(foodSelections); 
+
+        //     // localStorage.removeItem('foodSelections');
+
+        // });
+    });
+
     // document.addEventListener("DOMContentLoaded", function () {
     //     let hasUnsavedChanges = false;
     //     // Detect changes in input fields
@@ -279,10 +504,10 @@
                                             <p><strong>DOB:</strong> ${userDetails.dob || 'N/A'}</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p><strong>Address:</strong> ${userDetails.address || 'N/A'}</p>
+                                            <p><strong>Postcode:</strong> ${userDetails.address || 'N/A'}</p>
                                             <p><strong>Referred By:</strong> ${userDetails.referredBy || 'N/A'}</p>
                                             <p><strong>Occupation:</strong> ${userDetails.occupation || 'N/A'}</p>
-                                            <p><strong>Race/Ethnicity/Culture:</strong> ${userDetails.other || 'N/A'}</p>
+                                            <p><strong>Race/Ethnicity/Culture:</strong> ${userDetails.culture || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div><hr>`;
@@ -365,28 +590,23 @@
     $(document).ready(function () {
         const previouslySelectedMeals = {};
 
-        // Handle meal time checkbox changes
+        // Step 1: Handle meal time checkbox changes
         $('.meal-time-checkbox').on('change', function () {
             const checkbox = $(this);
             const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
             const mealTimeId = checkbox.data('mealtime-id');
 
-            // Construct unique IDs for the dropdown and selected meals container
             const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
             const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
             const mealSelect = $(dropdownId).find('select');
 
-            console.log(`Toggling dropdown for: Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
-            console.log(`Dropdown ID: ${dropdownId}, Selected Meals ID: ${selectedMealsId}`);
-
-            // Check if checkbox is checked
             if (checkbox.is(':checked')) {
-                $(dropdownId).show();          // Show Add Meal dropdown
-                $(selectedMealsId).show();     // Show Selected Meals container
+                $(dropdownId).show(); // Show Add Meal dropdown
+                $(selectedMealsId).show(); // Show Selected Meals container
 
-                // Load dynamic dropdown options via AJAX
+                // Load meals dynamically
                 $.ajax({
-                    url: '{{ route("admin.get-meals-by-mealtime") }}', // Replace with your route to fetch meals dynamically
+                    url: '{{ route("admin.get-meals-by-mealtime") }}',
                     method: 'POST',
                     data: {
                         meal_time_id: mealTimeId,
@@ -394,14 +614,9 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            // Clear previous options
-                            mealSelect.empty();
-                            console.log(response.meals)
-                            // Populate new options
+                            mealSelect.empty(); // Clear previous options
                             response.meals.forEach(meal => {
-                                mealSelect.append(`
-                                    <option value="${meal.id}">${meal.name}</option>
-                                `);
+                                mealSelect.append(`<option value="${meal.id}">${meal.name}</option>`);
                             });
                         } else {
                             alert('Failed to load meals for the selected meal time.');
@@ -412,35 +627,42 @@
                     }
                 });
             } else {
-                $(dropdownId).hide();          // Hide dropdown
-                $(selectedMealsId).hide();     // Hide selected meals
-                $(dropdownId).find('select').val([]).trigger('change'); // Clear selected values
-                $(selectedMealsId).empty();    // Clear selected meals content
+                $(dropdownId).hide();
+                $(selectedMealsId).hide();
+                mealSelect.val([]).trigger('change');
+                $(selectedMealsId).empty(); // Clear selected meals
             }
         });
-
-        // Handle meal selection/unselection
+        let userId = $('#user_id').val();
+        console.log(userId);
+        let planID = 0;
+        let mealtimeID = 0;
+        // Step 2: Handle meal selection changes
         $('.meal-items-select').on('change', function () {
             const ids = $(this).attr('id').replace('mealItems', '').split('_');
             const planId = ids[0];
             const mealTimeId = ids[1];
-
+            planID = planId;
+            mealtimeID = mealTimeId;
             const selectedMealsContainer = $(`#selectedMeals${planId}_${mealTimeId}`);
             const currentSelectedMeals = $(this).val() || [];
             const oldMeals = previouslySelectedMeals[`${planId}_${mealTimeId}`] || [];
 
-            // Find newly selected and unselected meals
             const newMeals = currentSelectedMeals.filter(mealId => !oldMeals.includes(mealId));
             const unselectedMeals = oldMeals.filter(mealId => !currentSelectedMeals.includes(mealId));
+            // console.log(newMeals);
             previouslySelectedMeals[`${planId}_${mealTimeId}`] = currentSelectedMeals;
 
             // Remove unselected meals
             unselectedMeals.forEach(mealId => {
+               
                 $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
             });
 
-            // Fetch and display newly selected meals
+            // Fetch and add new meals
             newMeals.forEach(mealId => {
+                
+                if ($(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).length) return;
                 $.ajax({
                     url: '{{ route("admin.get-meal-items") }}',
                     method: 'POST',
@@ -450,63 +672,7 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            const mealName = response.meal_name;
-                            const mealId = response.meal_id;
-                            const items = response.data;
-
-                            let mealContainer = $(`
-                                <div id="mealContainer_${planId}_${mealTimeId}_${mealId}" class="meal-container mt-3">
-                                    <input type="hidden" name="meals[${planId}][${mealTimeId}][]" value="${response.meal_id}">
-                                    <h5 style="color:#7258db;">${mealName} (Meal)</h5>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Item</th>
-                                                    <th>Swap Items</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="items-table-body">
-                                                <!-- Dynamic rows will be appended here -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            `);
-
-                            // Populate table rows with items and their swap items
-                            const tableBody = mealContainer.find('.items-table-body');
-
-                            items.forEach(item => {
-                                let swapItemsHTML = '';
-
-                                if (item.swapItems && item.swapItems.length > 0) {
-                                    item.swapItems.forEach(swapItem => {
-                                        swapItemsHTML += `
-                                            <li>
-                                                <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]" value="${swapItem.id}" class="form-check-input">
-                                                <label class="form-check-label">${swapItem.name}</label>
-                                            </li>
-                                        `;
-                                    });
-                                } else {
-                                    swapItemsHTML = '<span class="text-muted">No swap items available</span>';
-                                }
-
-                                // Append a new row to the table
-                                tableBody.append(`
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]" value="${item.id}" class="form-check-input">
-                                            <label class="form-check-label">${item.name}</label>
-                                        </td>
-                                        <td>
-                                            <ul class="list-unstyled">${swapItemsHTML}</ul>
-                                        </td>
-                                    </tr>
-                                `);
-                            });
-
+                            const mealContainer = createMealContainer(planId, mealTimeId, mealId, response);
                             selectedMealsContainer.append(mealContainer);
                         } else {
                             alert('Failed to fetch meal details.');
@@ -517,8 +683,294 @@
                     }
                 });
             });
-
         });
+
+        // Step 3: Modal popup for selecting swap foods
+        $('#saveSwapFoods').on('click', function () {
+            const selectedMeals = $('#meals').val(); // Get selected meal IDs
+            const selectedFoods = $('#swapFoods').val(); // Get selected food IDs
+            const foodId = $('#swapFoodsModal').data('food-id');
+            const foodName = $('#swapFoodsModal').data('food-name');
+
+            if (!selectedMeals || selectedMeals.length === 0) {
+                alert('Please select at least one meal.');
+                return;
+            }
+            // console.log(mealtimeID)
+            // console.log(planID)
+            
+            // Fetch stored swap foods from the database
+            $.ajax({
+                url: '{{ route("admin.get-swap-foods") }}', // API to fetch stored swap foods
+                method: 'POST',
+                data: { food_id: foodId, swap_food_ids: selectedFoods, _token: '{{ csrf_token() }}' },
+                success: function (response) {
+                    let swapFoods = response.swapFoods || []; // Database swap foods
+                    
+                    // Merge selected foods and stored swap foods (remove duplicates)
+                    // let mergedSwapFoods = [...new Set([...selectedFoods, ...storedSwapFoods])];
+
+                    // Loop through selected meals and add foods dynamically
+                    selectedMeals.forEach(mealId => {
+                        const mealContainerId = `#mealContainer_${planID}_${mealtimeID}_${mealId}`;
+                        const mealContainer = $(mealContainerId);
+
+                        if (mealContainer.length === 0) {
+                            alert(`Meal container for Meal ID ${mealId} not found.`);
+                            return;
+                        }
+
+                        const tableBody = mealContainer.find('.items-table-body');
+
+                        // Check if the food item is already in the meal container
+                        if (tableBody.find(`tr[data-food-id="${foodId}"]`).length === 0) {
+                            let swapItemsHTML = swapFoods.map(item => `
+                                <li>
+                                    <input type="checkbox" name="swap_items[${planID}][${mealtimeID}][${mealId}][${foodId}][]" value="${item.id}" class="form-check-input">
+                                    <label>${item.name}</label>
+                                </li>
+                            `).join('');
+
+                            tableBody.append(`
+                                <tr data-food-id="${foodId}">
+                                    <td>
+                                        <input type="checkbox" name="items[${planID}][${mealtimeID}][${mealId}][]" value="${foodId}" class="form-check-input">
+                                        <label class="form-check-label">${foodName}</label>
+                                    </td>
+                                    <td>
+                                        <ul class="list-unstyled">${swapItemsHTML}</ul>
+                                    </td>
+                                </tr>
+                            `);
+                        }
+                    });
+
+                    // Save data to the database
+                    $.ajax({
+                        url: '{{ route("admin.save-swap-food") }}',
+                        method: 'POST',
+                        data: {
+                            food_id: foodId,
+                            swap_foods: swapFoods, // Save combined swap foods
+                            meal_ids: selectedMeals,
+                            user_id: userId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                console.log('Swap foods saved successfully.');
+                                updateFoodCount(foodId);
+                            } else {
+                                alert('Failed to save swap foods.');
+                            }
+                        },
+                        error: function () {
+                            alert('Error occurred while saving swap foods.');
+                        }
+                    });
+
+                    // Uncheck all food checkboxes
+                    $('.food-checkbox').prop('checked', false);
+
+                    // Close modal & reset fields
+                    $('#swapFoodsModal').modal('hide');
+                    $('#swapFoods').val([]).trigger('change');
+                    $('#meals').val([]).trigger('change');
+                },
+                error: function () {
+                    alert('Error fetching stored swap foods.');
+                }
+            });
+        });
+        // $('#saveSwapFoods').on('click', function () {
+        //     const selectedMeals = $('#meals').val(); // Get selected meal IDs
+        //     const selectedFoods = $('#swapFoods').val(); // Get selected food IDs
+        //     const foodId = $('#swapFoodsModal').data('food-id');
+        //     const foodName = $('#swapFoodsModal').data('food-name');
+
+        //     if (!selectedMeals || selectedMeals.length === 0) {
+        //         alert('Please select at least one meal.');
+        //         return;
+        //     }
+        //     console.log(mealtimeID)
+        //     console.log(planID)
+            
+        //     // Loop through selected meals and add foods dynamically
+        //     selectedMeals.forEach(mealId => {
+        //         const mealContainerId = `#mealContainer_${planID}_${mealtimeID}_${mealId}`;
+        //         const mealContainer = $(mealContainerId);
+
+        //         if (mealContainer.length === 0) {
+        //             alert(`Meal container for Meal ID ${mealId} not found.`);
+        //             return;
+        //         }
+
+        //         const tableBody = mealContainer.find('.items-table-body');
+
+        //         // Loop through selected foods and add them dynamically
+        //         // Check if no swap foods are selected
+        //         if (!selectedFoods || selectedFoods.length === 0) {
+        //             if (tableBody.find(`tr[data-food-id="${foodId}"]`).length === 0) {
+        //                 tableBody.append(`
+        //                     <tr data-food-id="${foodId}">
+        //                         <td>
+        //                             <input type="checkbox" name="items[${planID}][${mealtimeID}][${mealId}][]" value="${foodId}" class="form-check-input">
+        //                             <label class="form-check-label">${foodName}</label>
+        //                         </td>
+        //                         <td>
+        //                             <span class="text-muted">No swap items available</span>
+        //                         </td>
+        //                     </tr>
+        //                 `);
+        //             }
+        //         } else {
+        //             // Loop through selected foods and add them dynamically
+        //             selectedFoods.forEach(swapfoodId => {
+        //                 if (tableBody.find(`tr[data-food-id="${foodId}"]`).length === 0) {
+        //                     const swapFoodName = $(`#swapFoods option[value="${swapfoodId}"]`).text();
+
+        //                     const swapItemsHTML = selectedFoods.map(swapItemId => `
+        //                         <li>
+        //                             <input type="checkbox" name="swap_items[${planID}][${mealtimeID}][${mealId}][${foodId}][]" value="${swapItemId}" class="form-check-input">
+        //                             <label>${$(`#swapFoods option[value="${swapItemId}"]`).text()}</label>
+        //                         </li>
+        //                     `).join('');
+
+        //                     tableBody.append(`
+        //                         <tr data-food-id="${foodId}">
+        //                             <td>
+        //                                 <input type="checkbox" name="items[${planID}][${mealtimeID}][${mealId}][]" value="${foodId}" class="form-check-input">
+        //                                 <label class="form-check-label">${foodName}</label>
+        //                             </td>
+        //                             <td>
+        //                                 <ul class="list-unstyled">${swapItemsHTML}</ul>
+        //                             </td>
+        //                         </tr>
+        //                     `);
+        //                 }
+        //             });
+        //         }
+
+        //         $.ajax({
+        //             url: '{{ route("admin.save-swap-food") }}',
+        //             method: 'POST',
+        //             data: {
+        //                 food_id: foodId,
+        //                 swap_food_ids : selectedFoods,
+        //                 meal_ids: selectedMeals,
+        //                 user_id: userId,
+        //                 _token: '{{ csrf_token() }}'
+        //             },
+        //             success: function (response) {
+        //                 if (response.success) {
+        //                     console.log('Swap foods saved successfully.');
+        //                 } else {
+        //                     alert('Failed to save swap foods.');
+        //                 }
+        //             },
+        //             error: function () {
+        //                 alert('Error occurred while saving swap foods.');
+        //             }
+        //         });
+                
+        //     });
+
+        //     // **Uncheck all food-checkbox elements**
+        //     $('.food-checkbox').prop('checked', false);
+
+        //     // Close the modal after saving
+        //     $('#swapFoodsModal').modal('hide');
+        //     $('#swapFoods').val([]).trigger('change');
+        //     $('#meals').val([]).trigger('change');
+        // });
+
+        // Show/Hide modal
+        $('.food-checkbox').on('change', function () {
+            const foodId = $(this).data('food-id');
+            const foodName = $(this).data('food-name');
+
+            if ($(this).is(':checked')) {
+                $('#swapFoodsModal').data('food-id', foodId);
+                $('#swapFoodsModal').data('food-name', foodName);
+
+                // Open the modal
+                $('#swapFoodsModal').modal('show');
+            }
+        });
+
+        $('#closeSwapFoodsModal').on('click', function () { 
+            $('#swapFoodsModal').modal('hide');
+        });
+    
+        $(window).on('click', function (event) {
+            if ($(event.target).is('#swapFoodsModal')) {
+                $('#swapFoodsModal').hide();
+            }
+        });
+
+        function createMealContainer(planId, mealTimeId, uniqueMealId, response) {
+            const mealName = response.meal_name;
+            const items = response.data;
+
+            let mealContainer = $(`
+                <div id="mealContainer_${planId}_${mealTimeId}_${uniqueMealId}" class="meal-container mt-3">
+                    <input type="hidden" name="meals[${planId}][${mealTimeId}][]" value="${uniqueMealId}">
+                    <h5 style="color:#7258db;">${mealName} (Meal)</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Swap Items</th>
+                                </tr>
+                            </thead>
+                            <tbody class="items-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            `);
+
+            const tableBody = mealContainer.find('.items-table-body');
+            items.forEach(item => {
+                const swapItemsHTML = item.swapItems.length
+                    ? item.swapItems.map(swapItem => `
+                        <li>
+                            <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${uniqueMealId}][${item.id}][]" value="${swapItem.id}" class="form-check-input">
+                            <label>${swapItem.name}</label>
+                        </li>
+                    `).join('')
+                    : '<span class="text-muted">No swap items available</span>';
+
+                tableBody.append(`
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${uniqueMealId}][]" value="${item.id}" class="form-check-input">
+                            <label class="form-check-label">${item.name}</label>
+                        </td>
+                        <td>
+                            <ul class="list-unstyled">${swapItemsHTML}</ul>
+                        </td>
+                    </tr>
+                `);
+            });
+
+            return mealContainer;
+        }
+
+        function updateFoodCount(foodId) {
+            let countLabel = $(`#setp5Food${foodId}`).siblings('.form-check-label');
+            let countText = countLabel.text();
+
+            // Extract current count from label text (if any)
+            let match = countText.match(/\((\d+)\)$/);
+            let currentCount = match ? parseInt(match[1]) : 0;
+
+            // Increment the count
+            let newCount = currentCount + 1;
+
+            // Update the label with new count
+            countLabel.text(countText.replace(/\(\d+\)$/, '') + ` (${newCount})`);
+        }
     });
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -539,5 +991,5 @@
         });
     });
 </script>
-
+@endpush
 @endsection

@@ -54,4 +54,9 @@ class Plan extends Model
     {
         return $this->belongsToMany(Plan::class, 'plan_sub_plans', 'sub_plan_id', 'plan_id');
     }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_plans');
+    }
 }

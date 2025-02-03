@@ -18,7 +18,9 @@ use App\Http\Controllers\Admin\MealTimeController;
 use App\Http\Controllers\Admin\MealController;
 use App\Http\Controllers\Front\PaymentController;
 use App\Http\Controllers\Admin\PurchasePlanController;
-
+use App\Http\Controllers\Admin\ProductController;
+use GuzzleHttp\Client;
+use App\Http\Controllers\Admin\CouponController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,9 +40,197 @@ Route::get('/check-auth', function () {
     ]);
 });
 
+// Route::get('/test-woolworths-api', function () {
+//     // Woolworths API URL
+//     $apiUrl = 'https://www.woolworths.com.au/apis/ui/Search/products/';
+
+//     // Search term to test with
+//     $searchTerm = 'apple';
+
+//     // Guzzle HTTP Client
+//     $client = new Client();
+
+//     try {
+//         // Make the GET request
+//         $response = $client->get($apiUrl, [
+//             'query' => [
+//                 'searchTerm' => $searchTerm,
+//             ],
+//             'headers' => [
+//                 'Accept' => 'application/json',
+//             ],
+//         ]);
+
+//         // Parse the response
+//         $data = json_decode($response->getBody(), true);
+
+//         // Return the response to view or JSON format
+//         return response()->json($data);
+
+//     } catch (\Exception $e) {
+//         // Handle errors
+//         return response()->json(['error' => $e->getMessage()], 500);
+//     }
+// });
+
+// Route::get('/product-search-api', function (Illuminate\Http\Request $request) {
+//     $results = [];
+//     $query = $request->input('query');
+//     $page = $request->input('page', 1);  // Get current page, default to 1 if not provided
+//     $perPage = 20;  // Set items per page, you can adjust this number
+// 	$pagination = [];
+//     if ($query) {
+//         $client = new Client();
+
+//         // Make the request to the API with pagination parameters
+//         $response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/woolworths/product-search', [
+//             'headers' => [
+//                 'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+//                 'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+//             ],
+//             'query' => [
+//                 'query' => $query,
+//                 'page' => $page,  // Page number
+//                 'size' => $perPage,  // Items per page
+//             ],
+//         ]);
+
+//         // Decode the response
+//         $responseBody = json_decode($response->getBody(), true);
+        
+//         // Assuming 'results' contains the product data, and 'total' is the total number of results
+//         $products = $responseBody['results'] ?? [];
+//         $total = $responseBody['total_results'] ?? 0;  // Total number of products in the API response
+//         // dd($products);
+//         // Pagination: Calculate the total number of pages
+//         $totalPages = $responseBody['total_pages'];
+
+//         // Paginate the results in Laravel
+//         $results = collect($products);
+
+//         // Prepare pagination metadata to send to the view
+//         $pagination = [
+//             'current_page' => $page,
+//             'total_pages' => $totalPages,
+//             'total' => $total,
+//             'per_page' => $perPage,
+//         ];
+//     }
+
+//     return view('search', compact('results', 'query', 'pagination'));
+// })->name('search-product');
+
+// Route::post('/add-to-cart', function (Request $request) {
+//     $productId = $request->input('product_id');
+// 	try {
+// 		$client = new Client();
+
+// 		$response = $client->request('POST', 'https://woolworths-products-api.p.rapidapi.com/cart/add', [
+// 			'headers' => [
+// 				'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+// 				'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+// 				'Content-Type' => 'application/json',
+// 			],
+// 			'json' => [
+// 				'product_id' => $productId,
+// 				'quantity' => 1,
+// 			],
+// 		]);
+
+// 		$cartResponse = json_decode($response->getBody(), true);
+// 	} catch (RequestException $e) {
+// 		dd($e->getMessage());
+// 	}
+
+//     return redirect()->route('cart');
+// })->name('add-to-cart');
+
+// Route::get('/cart', function () {
+// 	try {
+// 		$client = new Client();
+// 		$response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/cart', [
+// 			'headers' => [
+// 				'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+// 				'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+// 			],
+// 		]);
+
+// 		$cart = json_decode($response->getBody(), true);
+// 	} catch (RequestException $e) {
+// 		dd($e->getMessage());
+// 	}
+
+//     return view('cart', compact('cart'));
+// })->name('cart');
+
+// Route::get('/product-search', function (Illuminate\Http\Request $request) {
+//     $results = [];
+//     $query = $request->input('query');
+// 	$page = $request->input('page', 1);  // Get current page, default to 1 if not provided
+//     $perPage = 20; 
+// 	$pagination = [];
+//     if ($query) {
+//         $client = new Client();
+// 		// Get the products from the API
+//         $response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/woolworths/product-search', [
+//             'headers' => [
+//                 'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+//                 'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+//             ],
+//             'query' => [
+//                 'query' => $query,
+//                 'page' => $page,  // Page number
+//                 'size' => $perPage,  // Items per page
+//             ],
+//         ]);
+//         $responseBody = json_decode($response->getBody(), true);
+//         $products = $responseBody['results'] ?? [];
+
+//         // Loop through products to get images from each product page
+//         foreach ($products as $key => $product) {
+//             $productUrl = $product['url'];
+            
+// 			if (isset($product['url']) && !empty($product['url'])) {
+// 				try {
+// 					$detailResponse = $client->request('GET', $product['url']);
+// 					$detailHtml = (string) $detailResponse->getBody();
+					
+// 					if (preg_match('/<img[^>]+class="[^"]*main-image-v2[^"]*"[^>]+src="([^"]+)"/i', $detailHtml, $matches)) {
+// 						$products[$key]['image_url'] = $matches[1]; // Image URL extracted from the page
+// 					} else {
+// 						$products[$key]['image_url'] = null; // Default if no image found
+// 					}
+// 				} catch (\Exception $e) {
+// 					\Log::error('Error fetching product details: ' . $e->getMessage());
+// 					$products[$key]['image_url'] = null;
+// 				}
+// 			}
+//         }
+
+//         $total = $responseBody['total_results'] ?? 0;  // Total number of products in the API response
+//         $totalPages = $responseBody['total_pages'];
+
+//         $results = collect($products);
+
+//         $pagination = [
+//             'current_page' => $page,
+//             'total_pages' => $totalPages,
+//             'total' => $total,
+//             'per_page' => $perPage,
+//         ];
+
+//     }
+// 	// echo '<pre>';
+// 	// print_r($results);
+
+//    return view('product-with-image', compact('results', 'query', 'pagination'));
+// })->name('search');
+
+
 Route::get('/login', [AdminAuthController::class, 'index'])->name('index');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login');
 Route::match(['get', 'post'], '/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
 
 // Register
 Route::get('register', [AdminAuthController::class, 'register'])->name('register');
@@ -58,9 +248,12 @@ Route::post('/reset-password', [AdminAuthController::class, 'resetPasswordPost']
 Route::get('/change-password', [AdminAuthController::class, 'changePassword'])->name('change-password');
 Route::post('/change-password', [AdminAuthController::class, 'changePasswordPost'])->name('change-password-post');
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth', 'admin']], function () {
+	Route::get('/woolworths-product-search', [ProductController::class, 'search'])->name('woolworths-product-search');
+	Route::post('/add-food', [ProductController::class, 'addFood'])->name('add-food');
+
 	Route::prefix('admin')->group(function () {
-		Route::get('/', [AdminAuthController::class, 'dashboard'])->name('dashboard');
+		Route::get('/', [AdminAuthController::class, 'index'])->name('dashboard');
 		Route::get('/profile/{id}', [AdminAuthController::class, 'profile'])->name('backend.admin-profile');
     	Route::get('/remove-profile-image/{id}', [AdminAuthController::class, 'removeProfileImage'])->name('remove-profile-image');
     	Route::get('/remove-front-logo/{id}', [AdminAuthController::class, 'removeFrontLogo'])->name('remove-front-logo');
@@ -75,18 +268,6 @@ Route::group(['middleware' => 'auth'], function () {
 			Route::post('/sort-order', [OrganizationController::class, 'sorting'])->name('sort-order');
 		});
 
-    	// Integration Routes
-		// Route::group(['prefix' => 'integrations', 'as' => 'integrations.'], function () {
-		// 	// Route to display the integrations index page
-		// 	Route::get('/', [IntegrationController::class, 'index'])->name('index');
-
-		// 	// Route to handle the integration process (POST request)
-		// 	Route::post('/integration', [IntegrationController::class, 'integrate'])->name('integrate');
-
-		// 	// Route to handle callback
-		// 	Route::get('/callback', [IntegrationController::class, 'handleZoomCallback'])->name('callback');
-		// });
-		
 		// Testimonial routes
 		Route::group(['prefix' => 'testimonials', 'as' => 'testimonials.'], function () {
 			Route::get('/', [TestimonialController::class, 'index'])->name('index');
@@ -99,6 +280,10 @@ Route::group(['middleware' => 'auth'], function () {
 		
 		Route::as('backend.')->group(function () {
 			Route::resource('blogs', BlogController::class);
+		});
+
+		Route::as('admin.')->group(function () {
+			Route::resource('coupons', CouponController::class);
 		});
 
 		Route::get('/site-settings/{slug}', [SiteSettingsController::class, 'index'])->name('site-settings');
@@ -160,7 +345,8 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('meals/{meal}/edit', [MealController::class, 'edit'])->name('admin.meals.edit');
 		Route::put('meals/{meal}', [MealController::class, 'update'])->name('admin.meals.update');
 		Route::delete('meals/{meal}', [MealController::class, 'destroy'])->name('admin.meals.destroy');
-	
+		Route::post('update-meal-name', [MealController::class, 'updateMealName'])->name('admin.update-meal-name');
+
 		Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
 		Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
 		Route::post('meal-times', [MealTimeController::class, 'store'])->name('admin.meal-times.store');
@@ -177,6 +363,12 @@ Route::group(['middleware' => 'auth'], function () {
 
 		Route::post('/get-meal-items', [PurchasePlanController::class, 'getMealItems'])->name('admin.get-meal-items');
 		Route::post('/get-meals-by-mealtime', [PurchasePlanController::class, 'getMealsByMealTime'])->name('admin.get-meals-by-mealtime');
+
+		Route::get('/get-items', [PurchasePlanController::class, 'getItems'])->name('admin.get-items');
+		Route::post('/add-food', [PurchasePlanController::class, 'addFood'])->name('admin.add-food');
+		Route::post('/save-swap-food', [PurchasePlanController::class, 'saveSwapFood'])->name('admin.save-swap-food');
+		Route::post('/get-swap-foods', [PurchasePlanController::class, 'getSwapFoods'])->name('admin.get-swap-foods');
+
 	});
 });
 
@@ -196,16 +388,21 @@ Route::get('/get-race-ethnicity-culture-options', [PaymentController::class, 'ge
 // Front auth
 Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
 Route::post('front/login', [FrontController::class, 'login'])->name('front.login');
+Route::post('front/logout', [FrontController::class, 'logout'])->name('front.logout');
 
 //Stripe payment
 Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
 Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
 
 Route::post('/free-test-save', [FrontController::class, 'freeTestSave'])->name('front.submit-free-test');
+Route::post('/validate-coupon-code', [FrontController::class, 'validateCouponCode'])->name('validate.coupon.code');
 
+Route::get('/get-sports-games', [FrontController::class, 'getSportsGames'])->name('front.get-sports-games');
+Route::post('/sport-search', [FrontController::class, 'sportSearch'])->name('front.sport-search');
 // Plans
 Route::group(['middleware' => 'auth'], function () {
-	Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
+	// Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
+	Route::get('/plans/{id}/details/{user_id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
 	Route::get('/meal-time/{id}/{plan_id}', [FrontPlanController::class, 'mealTimeDetails'])->name('front.meal-time.details');
 
 	//categories
@@ -220,6 +417,10 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
 	Route::post('/food/quantity/update', [FrontController::class, 'updateFoodQuantity'])->name('front.food-quantity-update');
+
+	Route::post('/save-weight', [FrontController::class, 'saveWeight'])->name('front.save.weight');
+    Route::get('/fetch-weights', [FrontController::class, 'fetchWeights'])->name('front.fetch.weights');
+	Route::get('/fetch/weight/data', [FrontController::class, 'fetchWeightData'])->name('front.fetch.weight.data');
 
 });
 

@@ -40,10 +40,10 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseMainPlan">{{ $userPlan->plan->name }}</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapsePlan{{$plan->id}}">{{ $userPlan->plan->name }}</a>
                                     </h4>
                                 </div>
-                                <div id="collapseMainPlan" class="panel-collapse collapse in">
+                                <div id="collapsePlan{{$plan->id}}" class="panel-collapse collapse in">
                                     <div class="panel-body">
                                         <input type="hidden" name="plan_id[]" value="{{ $plan->id }}">
                                         <input type="hidden" name="payment_id" value="{{ $payment->id }}">
@@ -51,7 +51,7 @@
 
                                         <!-- Meal Times (Checkboxes) -->
                                         <ul class="list-group mb-4">
-                                            @foreach ($mealTimes as $mealTime)
+                                            @foreach ($userPlan->plan->mealTimes as $mealTime)
                                             <li class="list-group-item border rounded mb-3">
                                                 <!-- Meal Time Checkbox -->
                                                 <div class="form-check px-0">
@@ -120,10 +120,130 @@
     </div>
 </div>
 
+<div class="modal" id="foodModal" tabindex="-1" aria-labelledby="foodModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="foodModalLabel">Add Food</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form -->
+                    <form id="addFoodForm">
+                        <div class="row g-3 align-items-center">
+                            <input type="hidden" name="plan_id" id="planId" value="">
+                            <input type="hidden" name="meal_time_id" id="mealTimeId" value="">
+                            <input type="hidden" name="user_id" id="userId" value="">
+                            <input type="hidden" name="meal_id" id="mealId" value="">
+
+                            <!-- Title Field -->
+                            <div class="col-md-12">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" name="title" class="form-control" value="" required>
+                            </div>
+
+                            <!-- Short Description Field -->
+                            <div class="col-md-12">
+                                <label for="short_description" class="form-label">Short Description</label>
+                                <textarea name="short_description" class="form-control" rows="2"></textarea>
+                            </div>
+
+                            <!-- Full Description Field -->
+                            <div class="col-md-12">
+                                <label for="description" class="form-label">Full Description</label>
+                                <textarea name="description" class="form-control" rows="4"></textarea>
+                            </div>
+
+                            <!-- Quantity Field -->
+                            <div class="col-md-12">
+                                <label for="qty" class="form-label">Quantity</label>
+                                <input type="text" name="qty" class="form-control" value="{{ $item->qty ?? ''}}" 
+                                    placeholder="Enter quantity and unit (e.g., 200 ml, 1 cup, 100 g)">
+                            </div>
+
+                            <!-- Protein Field -->
+                            <div class="col-md-12">
+                                <label for="carbs" class="form-label">Protein</label>
+                                <input type="number" name="protein" class="form-control" value="{{ $item->protein ?? '0' }}" 
+                                    step="0.01" min="0" placeholder="Enter Protein">
+                                <small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                            </div>
+
+                            <!-- Carbohydrate Field -->
+                            <div class="col-md-12">
+                                <label for="carbs" class="form-label">Carbohydrate</label>
+                                <input type="number" name="carbs" class="form-control" value="{{ $item->carbs ?? '0' }}" 
+                                    step="0.01" min="0" placeholder="Enter Carbohydrate">
+                                <small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                            </div>
+
+                            <!-- Is Swapped Field -->
+                            <div class="col-md-12">
+                                <label for="is_swiped" class="form-label">Is Swapped? &nbsp;</label>
+                                <small class="form-text text-muted">(Is this item used in the swapped list?)</small>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_yes" value="1" 
+                                        {{ (isset($item) && $item->is_swiped == 1) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_swiped_yes">Yes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_no" value="0" 
+                                        {{ (!isset($item) || $item->is_swiped == 0) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_swiped_no">No</label>
+                                </div>
+                            </div>
+
+                            <!-- Swap Items Selection -->
+                            <div class="col-md-12" id="swapItemsContainer" style="display: none;">
+                                <label for="swap_item_ids" class="form-label">Swap Items</label>
+                                <select name="swap_item_ids[]" class="form-control select2" id="swapItemsSelect" multiple>
+                                    
+                                </select>
+                            </div>
+
+                            <!-- Image Field -->
+                            <div class="col-md-12">
+                                <label for="image" class="form-label">Image</label>
+                                <input type="file" name="image" class="form-control">
+                                
+                            </div>
+
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+@endpush
+
 <!-- jQuery CDN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    $(document).ready(function () {
+        $.ajax({
+                url: '{{ route("admin.get-items") }}',
+                method: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        $('#swapItemsSelect').empty();
+
+                        response.items.forEach(function (item) {
+                            $('#swapItemsSelect').append('<option value="' + item.id + '">' + item.title + '</option>');
+                        });
+                    } else {
+                        alert('Failed to load items.');
+                    }
+                }
+            });
+    });
     $(document).ready(function () {
         // Use event delegation to handle dynamically added elements
         $(document).on('click', '.user-pre-plan-details', function () {
@@ -156,10 +276,10 @@
                                             <p><strong>DOB:</strong> ${userDetails.dob || 'N/A'}</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p><strong>Address:</strong> ${userDetails.address || 'N/A'}</p>
+                                            <p><strong>Postcode:</strong> ${userDetails.address || 'N/A'}</p>
                                             <p><strong>Referred By:</strong> ${userDetails.referredBy || 'N/A'}</p>
                                             <p><strong>Occupation:</strong> ${userDetails.occupation || 'N/A'}</p>
-                                            <p><strong>Race/Ethnicity/Culture:</strong> ${userDetails.other || 'N/A'}</p>
+                                            <p><strong>Race/Ethnicity/Culture:</strong> ${userDetails.culture || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div><hr>`;
@@ -251,12 +371,12 @@
         const checkbox = $(this);
         const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
         const mealTimeId = checkbox.data('mealtime-id');
-
+        const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
         const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
         const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
         const mealSelect = $(dropdownId).find('select');
 
-        if (preSelectedMeals[mealTimeId]) {
+        if (preSelectedMeals[planId][mealTimeId]) {
             checkbox.prop('checked', true);
             $(dropdownId).show();
             $(selectedMealsId).show();
@@ -265,7 +385,9 @@
                 url: '{{ route("admin.get-meals-by-mealtime") }}',
                 method: 'POST',
                 data: {
+                    plan_id: planId,
                     meal_time_id: mealTimeId,
+                    user_id: userId,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function (response) {
@@ -273,7 +395,7 @@
                         mealSelect.empty();
                         response.meals.forEach(meal => {
                              // If preSelectedMeals[mealTimeId] is an object, we check if the meal.id exists in it
-                        const selectedMeal = preSelectedMeals[mealTimeId][meal.id];
+                        const selectedMeal = preSelectedMeals[planId][mealTimeId][meal.id];
                         const isSelected = selectedMeal ? true : false;
 
                         // Get the user_meal_id if the meal is selected
@@ -323,6 +445,8 @@
                 url: '{{ route("admin.get-meals-by-mealtime") }}', // Replace with your route to fetch meals dynamically
                 method: 'POST',
                 data: {
+                    plan_id: planId,
+                    user_id: userId,
                     meal_time_id: mealTimeId,
                     _token: '{{ csrf_token() }}'
                 },
@@ -383,6 +507,8 @@
                 data: {
                     meal_id: mealId,
                     user_id: userId,
+                    plan_id: planId,
+                    meal_time_id: mealTimeId,
                     type:'edit',
                     _token: '{{ csrf_token() }}'
                 },
@@ -395,7 +521,12 @@
                         let mealContainer = $(`
                             <div id="mealContainer_${planId}_${mealTimeId}_${mealId}" class="meal-container mt-3">
                                 <input type="hidden" name="meals[${planId}][${mealTimeId}][]" value="${response.meal_id}">
-                                <h5 style="color:#7258db;">${mealName} (Meal)</h5>
+                               <div class="meal-name-edit">
+                                    <input type="text" value="${mealName}" class="editable-meal-name" data-meal-time-id="${mealTimeId}"
+                                    data-meal-id="${mealId}" data-category-id="" data-plan-id="${planId}" data-user-id="${userId}" style="border: none; font-weight: bold; font-size: 14px; color: #6610f2; width: 50%;" title="Click to edit"/>
+                            
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#foodModal" data-meal-id="${mealId}" data-meal-time-id="${mealTimeId}" data-plan-id="${planId}" data-user-id="${userId}">Add Food</button>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <thead>
@@ -466,6 +597,121 @@
         });
     });
 });
+
+    $(document).on('change', '.editable-meal-name', function () {
+        const mealId = $(this).data('meal-id');
+        const planId = $(this).data('plan-id');
+        const userId = $(this).data('user-id');
+        const categoryId = $(this).data('category-id');
+        const mealTimeId = $(this).data('meal-time-id');
+        const newMealName = $(this).val().trim();
+
+        $.ajax({
+            url: '{{ route("admin.update-meal-name") }}',
+            method: 'POST',
+            data: {
+                meal_id: mealId,
+                user_id: userId,
+                plan_id: planId,
+                meal_name: newMealName,
+                meal_time_id: mealTimeId,
+                category_id: categoryId,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response.success) {
+                    console.log(response.message);
+                    alert('Meal name updated successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Failed to update meal name.');
+                }
+            },
+            error: function () {
+                alert('Error while updating meal name.');
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        // Event triggered when the modal is about to be shown
+        $('#foodModal').on('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            var button = $(event.relatedTarget);
+
+            // Extract info from data-* attributes
+            var mealId = button.data('meal-id');
+            var mealTimeId = button.data('meal-time-id');
+            var planId = button.data('plan-id');
+            var userId = button.data('user-id');
+
+            // Update the modal's content
+            var modal = $(this);
+            modal.find('#mealId').val(mealId);
+            modal.find('#mealTimeId').val(mealTimeId);
+            modal.find('#planId').val(planId);
+            modal.find('#userId').val(userId);
+        });
+    });
+
+    $(document).ready(function() {
+        // Initially hide swap item dropdown if is_swiped is no
+        if ($('input[name="is_swiped"]:checked').val() == '1') {
+            $('#swapItemsContainer').show();
+        } else {
+            $('#swapItemsContainer').hide();
+        }
+
+        // Show/hide the swap item dropdown based on is_swiped selection
+        $('input[name="is_swiped"]').on('change', function() {
+            if ($(this).val() == '1') {
+                $('#swapItemsContainer').show();
+            } else {
+                $('#swapItemsContainer').hide();
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        // Handle form submission
+        $('#addFoodForm').on('submit', function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            let formData = new FormData(this); // Gather form data
+
+            $.ajax({
+                url: "{{ route('admin.add-food') }}",
+                method: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                processData: false, // Prevent jQuery from processing data
+                contentType: false, // Prevent jQuery from setting content type
+                success: function (response) {
+                    // Handle success response
+                    if (response.success) {
+                        alert('Food added successfully!');
+                        window.location.reload();
+                    } else {
+                        alert('Failed to add food. Please try again.'); 
+                    }
+                },
+                error: function () {
+                    // Handle error response
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+    
+    $(document).ready(function () {
+        $('.select2').select2({
+            placeholder: "Select options",
+            allowClear: true,
+            width: '100%'
+        });
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
         const mealTimeCheckboxes = document.querySelectorAll('.meal-time-checkbox');

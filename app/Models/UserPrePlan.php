@@ -18,6 +18,8 @@ class UserPrePlan extends Model
         'occupation',
         'address',
         'other',
+        'referredBy',
+        'culture',
         
     ];
 

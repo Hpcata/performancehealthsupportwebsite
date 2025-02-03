@@ -179,7 +179,7 @@ class ItemController extends Controller
         }
 
         // Detach subcategories and swap items
-        $item->subcategories()->detach();
+        $item->meals()->detach();
         $item->swapItems()->detach();
 
         // Delete item

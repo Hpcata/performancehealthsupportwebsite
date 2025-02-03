@@ -3,46 +3,62 @@
 @section('title', '$page->title')
 
 @section('content')
-<style>
-    #thankYouModal .modal-content {
-        border-radius: 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-    #thankYouModal .icon-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    #thankYouModal .modal-body {
-        padding: 2rem;
-    }
-    #thankYouModal .btn {
-        border-radius: 25px;
-        font-weight: 600;
-    }
+    <style>
+        #thankYouModal .modal-content {
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        #thankYouModal .icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #thankYouModal .modal-body {
+            padding: 2rem;
+        }
+        #thankYouModal .btn {
+            border-radius: 25px;
+            font-weight: 600;
+        }
 
-</style>
-@php
-    $showHeader = !empty($user->front_logo) && 
-                  !empty($user->front_title) && 
-                  !empty($user->front_description) && 
-                  !empty($user->about_us_image);
+        /* Blur the background when the modal is open */
+        .modal-backdrop {
+            backdrop-filter: blur(5px); /* Blur the backdrop */
+            background-color: rgba(0, 0, 0, 0.3); /* Add slight transparency */
+        }
 
-    if($isAuthenticated){
-        $user = Auth::user();
-        $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->pluck('plan_id')->toArray();
-    }else {
-        $planIds = [];
-    }
-@endphp
+        /* Ensure the modal and its content are not blurred */
+        .modal-content {
+            filter: none !important;
+        }
+        
+        /* Blur the rest of the page when the modal is open */
+        .blur-background {
+            filter: blur(5px); /* Adjust the blur value */
+            transition: filter 0.3s ease-in-out;
+        }
+    </style>
+    @php
+        $showHeader = !empty($user->front_logo) && 
+                    !empty($user->front_title) && 
+                    !empty($user->front_description) && 
+                    !empty($user->about_us_image);
 
+        if($isAuthenticated){
+            $user = Auth::user();
+            $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->pluck('plan_id')->toArray();
+        }else {
+            $planIds = [];
+        }
+    @endphp
+    <?php // dd($page); ?>
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->type == 'section-1' && $section->enabled == 1)
-                <div class="section nutrition-page-banner" style="background-image: url(private/public/front/images/banner-img.jpg);">
+                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(private/public/front/images/hero-img-03.jpg);">
                     <div class="container">
                         <div class="text-center">
-                            <h1 class="text-white">{{ $section->title }}</h1>
+                            <h1 class="text-white mt-md-3">Sport Nutrition Plans</h1>
                         </div>
                         <div class="text-center banner-text mt-auto pt-5">
                             {!! $section->content !!}
@@ -85,29 +101,45 @@
         <div class="container">
             <div class="h1 text-center text-white">Find Your Sport</div>
             <div class="spot-search">
-                <form action="#">
+            <form action="#" id="sport-form">
                     <div class="row">
-                        <div class="col-lg-5 col-md-4">
+                        <div class="col-lg-3 col-md-4">
                             <div class="form-select-box">
-                                <select class="form-control">
-                                    <option>Select Your Sport</option>
-                                    <option>Sport Name 1</option>
-                                    <option>Sport Name 2</option>
-                                    <option>Sport Name 3</option>
-                                    <option>Sport Name 4</option>
-                                    <option>Sport Name 5</option>
+                                <select class="form-control" name="sport" id="sport" required>
+                                    <option value="">Select Your Sport</option>
+                                    <option value="action_sports">Action Sports</option>
+                                    <option value="contact_sports">Contact Sports</option>
+                                    <option value="endurance_sports">Endurance Sports</option>
+                                    <option value="ball_sports">Ball Sports</option>
+                                    <option value="combat_sports">Combat Sports</option>
+                                    <option value="equestrian_sports">Equestrian Sports</option>
+                                    <option value="motor_sports">Motor Sports</option>
+                                    <option value="target_sports">Target Sports</option>
+                                    <option value="water_sports">Water Sports</option>
+                                    <option value="winter_sports">Winter Sports</option>
+                                    <option value="disability_sports">Disability Sports</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-5 col-md-4 select-middle">
+                         <div class="col-lg-4 col-md-4 select-middle">
                             <div class="form-select-box">
-                                <select class="form-control">
-                                    <option>Choose Your State</option>
-                                    <option>State Location 1</option>
-                                    <option>State Location 2</option>
-                                    <option>State Location 3</option>
-                                    <option>State Location 4</option>
-                                    <option>State Location 5</option>
+                                <select class="form-control" name="state" required>
+                                    <option value="">Choose Your State</option>
+                                    <option value="New South Wales">New South Wales (NSW)</option>
+                                    <option value="Victoria">Victoria (VIC)</option>
+                                    <option value="Queensland">Queensland (QLD)</option>
+                                    <option value="South Australia">South Australia (SA)</option>
+                                    <option value="Western Australia">Western Australia (WA)</option>
+                                    <option value="Tasmania">Tasmania (TAS)</option>
+                                    <option value="Australian Capital Territory">Australian Capital Territory (ACT)</option>
+                                    <option value="Northern Territory">Northern Territory (NT)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-4 select-middle">
+                            <div class="form-select-box">
+                                <select class="form-control" name="sport_game" id="sport_game" required>
+                                    <option value="">Select Your Sport Game</option>
                                 </select>
                             </div>
                         </div>
@@ -127,10 +159,12 @@
         </div>
     </div>
 
-    <div class="section">
+    <div class="section" id="#sport-plans">
         <div class="container">
             <h2 class="heading mb-5 d-flex">
-                <div class="mt-2 h2">Plan's Build by a Sports Nutrition Expert, Kerry O’Bryan</div>
+                <div class="mt-2 h2 text-nowrap">Nutrition plans built by <br> Sports Nutrition expert, <br>
+                    Kerry O’Bryan
+                </div>
                 <span class="border-heading"></span>
             </h2>
             <div class="spot-plan-row">
@@ -139,9 +173,14 @@
                     <div class="col-lg-3 col-md-6">
                         <div class="spot-plan-box">
                             <h5>{{ $plan->name }}</h5>
+                            <h6 class="text-center mb-3">{{ $plan->subtitle }}</h6>
                             <div class="spot-plan-img-box">
                                 <figure>
+                                    @if($plan->image)
+                                    <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="">
+                                    @else
                                     <img src="{!! frontAssets('images/about-new.png') !!}" alt="">
+                                    @endif
                                 </figure>
                                 <div class="spot-plan-info-box">
                                     <h6>Bundle 1:</h6>
@@ -167,7 +206,7 @@
                                         $userPlan = \App\Models\UserPlan::where('user_id', Auth::user()->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
                                         $isPlanCreated = $userPlan ? true : false;
                                     ?>
-                                    <a href="{{ route('front.plans.details', ['id' => $plan->id]) }}" class="btn btn-primary mt-2 w-100 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
+                                    <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => Auth::user()->id]) }}" class="btn btn-primary mt-2 w-100 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
                                         <span class="me-1">View Details </span>
                                         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
 
@@ -205,7 +244,6 @@
             </div>
         </div>
     </div>
-
     
     <div class="section section-3 pt-3 pb-0" data-aos="fade-up" data-aos-delay="100">
        
@@ -226,101 +264,11 @@
         </div>
         <div class="col-12 mx-auto">
             <div class="row">
-                <!--<div class="col-3 d-none">-->
-                <!--	<div class="wide-slider-testimonial-wrap-one">-->
-                <!--		<div class="wide-slider-testimonial-one">-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex justify-content-end align-items-center" id="using-three">-->
-                <!--					<div class="mx-2 blue-bg-add">-->
-                <!--						<img src="images/testi-three.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex justify-content-end align-items-center" id="using-one">-->
-                <!--					<div class="mx-2 blue-bg-add">-->
-                <!--						<img src="images/testi-one.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex justify-content-end align-items-center" id="using-two">-->
-                <!--					<div class="mx-2 blue-bg-add">-->
-                <!--						<img src="images/testi-two.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--		</div>-->
-                <!--	</div>-->
-                <!--</div>-->
+                
                 <div class="col-xl-6 col-lg-8 col-md-10 px-md-0 px-4 mx-auto position-relative">
                     <div class="wide-slider-testimonial-wrap-two">
                         <div class="wide-slider-testimonial-two">
-                            <!--<div class="">-->
-                            <!--	<div class="d-flex flex-sm-row flex-column align-items-center" id="using-one">-->
-                            <!--		<div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">-->
-                            <!--			<img src="images/testi-one.jfif" alt="" class="slider-added-imges" style="">-->
-                            <!--		</div>-->
-                            <!--		<div class="no-display-half-part">-->
-                            <!--			<div class="quote-using">-->
-                            <!--				<i class="fa-solid fa-quote-left"></i>-->
-                            <!--			</div>-->
-                            <!--			<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                            <!--			<h5 class="mb-0">Cohen Crispin</h5>-->
-                            <!--			<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                            <!--				Bachelor of sport & exercise science</p>-->
-                            <!--		</div>-->
-                            <!--	</div>-->
-                            <!--</div>-->
-                            <!--<div class="">-->
-                            <!--	<div class="d-flex flex-sm-row flex-column align-items-center" id="using-two">-->
-                            <!--		<div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">-->
-                            <!--			<img src="images/testi-two.jfif" alt="" class="slider-added-imges" style="">-->
-                            <!--		</div>-->
-                            <!--		<div class="no-display-half-part">-->
-                            <!--			<div class="quote-using">-->
-                            <!--				<i class="fa-solid fa-quote-left"></i>-->
-                            <!--			</div>-->
-                            <!--			<p>Working with Kerry has been amazing. His wealth of nutrition knowledge has given us so many options with easy to follow recommendations. Being able to adjust nutrition easily to best suit our son’s training schedule for performance, recovery and physical development has been great.</p>-->
-                            <!--			<h5 class="mb-0">Rhondda Dunne</h5>-->
-                            <!--			<p class="position mb-0">Mother of Olympian Breaking Athlete</p>-->
-                            <!--		</div>-->
-                            <!--	</div>-->
-                            <!--</div>-->
-                            <!--<div class="">-->
-                            <!--	<div class="d-flex flex-sm-row flex-column align-items-center" id="using-three">-->
-                            <!--		<div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">-->
-                            <!--			<img src="images/testi-three.jfif" alt="" class="slider-added-imges" style="">-->
-                            <!--		</div>-->
-                            <!--		<div class="no-display-half-part">-->
-                            <!--			<div class="quote-using">-->
-                            <!--				<i class="fa-solid fa-quote-left"></i>-->
-                            <!--			</div>-->
-                            <!--			<p class="mb-1">Kerry has been instrumental in helping me to achieve gains during my off season. I have seen huge strides with how I feel, perform and recover both on the volleyball court and in the weight room.</p>-->
-                            <!--			<p class="">Kerry’s wealth of knowledge paired with his friendly and accessible nature has made it an absolute pleasure working with him. I would highly recommend consulting with Kerry for anyone looking to create sustained performance results.</p>-->
-                            <!--			<h5 class="mb-0">Enis Besirevic</h5>-->
-                            <!--			<p class="position mb-0">AUS Senior National Volleyball Athlete</p>-->
-                            <!--		</div>-->
-                            <!--	</div>-->
-                            <!--</div>-->
+                           
                         </div>
                     </div>
                     <div id="prevnext-testimonial-one">
@@ -342,53 +290,55 @@
                         </span>
                     </div>
                 </div>
-                <!--<div class="col-3  d-none">-->
-                <!--	<div class="wide-slider-testimonial-wrap-three">-->
-                <!--		<div class="wide-slider-testimonial-three">-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex align-items-center" id="using-two">-->
-                <!--					<div class="ms-3 blue-bg-add">-->
-                <!--						<img src="images/testi-two.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex align-items-center" id="using-three">-->
-                <!--					<div class="ms-3 blue-bg-add">-->
-                <!--						<img src="images/testi-three.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex align-items-center" id="using-one">-->
-                <!--					<div class="ms-3 blue-bg-add">-->
-                <!--						<img src="images/testi-one.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--		</div>-->
-                <!--	</div>-->
-                <!--</div>-->
+               
                 <div class="col-12 text-center mt-5" style="text-align: center !important;">
 
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="section pb-3 pt-4 my-3 testimonial-section-main-div">
+        <div class="col-lg-12 text-center mb-5" data-aos="fade-up" style="text-align: center !important;">
+            <h2 class="heading mb-5 d-flex align-items-center justify-content-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="border-heading-top position-relative"></div>
+                <div class="text-nowrap">LinkedIn Feed</div>
+                <div class="border-heading d-block position-relative using-my-heading mt-0"></div>
+            </h2>
+        </div>
+        <div class="col-12 mx-auto">
+            <div class="row">
+                <div class="col-xl-6 col-lg-8 col-md-10 px-md-0 px-4 mx-auto position-relative">
+                    <div class="wide-slider-testimonial-wrap-two">
+                        <!-- Bootstrap Carousel for Multiple LinkedIn Feeds -->
+                        <div id="linkedin-carousel" class="carousel slide linkedin-carousel" data-bs-ride="carousel">
+                            <div class="carousel-inner justify-content-center align-items-center w-100">
+                                <!-- LinkedIn Feed 1 -->
+                                <div class="carousel-item active">
+                                    <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312" 
+                                        height="867" 
+                                        width="504" 
+                                        allowfullscreen="" 
+                                        title="LinkedIn Feed 1">
+                                    </iframe>
+                                </div>
+                                <!-- LinkedIn Feed 2 -->
+                                <div class="carousel-item">
+                                    <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360" height="729" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
+                                </div>
+                                <!-- LinkedIn Feed 3 -->
+                            </div>
+                            <!-- Carousel Controls -->
+                            <button class="carousel-control-prev" type="button" data-bs-target="#linkedin-carousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#linkedin-carousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -405,297 +355,11 @@
                     <span class="border-heading"></span>
                 </h2>
             </div>
-            <!--<div class="client-slider-wrap mb-3 mt-5">-->
-            <!--	<div class="client-slider-marque  d-flex justify-content-between my-3">-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-3.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-3.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-3.web" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-
-            <!--	</div>-->
-            <!--	<div class="client-slider-marque-rev  d-flex justify-content-center  my-3">-->
-
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-6.webp" alt="client" class="img-fluid " height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-11.webp" alt="client" class="img-fluid" height="150" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-6.webp" alt="client" class="img-fluid " height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-
-            <!--	</div>-->
-
-            <!--</div>-->
+           
         </div>
         <article class="wrapper">
             <div class="marquee-main">
-                <!--<div class="marquee">-->
-                <!--    <div class="marquee__group">-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" /></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-3.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--<div>-->
-                <!--    <span>6</span>-->
-                <!--</div>-->
-                <!--<div>-->
-                <!--    <span>7</span>-->
-                <!--</div>-->
-                <!--<div>-->
-                <!--    <span>8</span>-->
-                <!--</div>-->
-                <!--    </div>-->
-
-                <!--    <div aria-hidden="true" class="marquee__group">-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" /></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-3.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--    </div>-->
-                <!--</div>-->
-
-                <!--<div class="marquee marquee--reverse">-->
-                <!--    <div class="marquee__group">-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-6.webp" alt="client" class="img-fluid " height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--<div>-->
-                <!--    <span>7</span>-->
-                <!--</div>-->
-                <!--<div>-->
-                <!--    <span>8</span>-->
-                <!--</div>-->
-                <!--    </div>-->
-
-                <!--    <div aria-hidden="true" class="marquee__group">-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-6.webp" alt="client" class="img-fluid " height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--    </div>-->
-                <!--</div>-->
+               
                 <div class="marquee" id="marquee-top">
                     <div class="marquee__group"></div>
                     <div aria-hidden="true" class="marquee__group"></div>
@@ -770,36 +434,52 @@
                 <div class="modal-body">
                     <!-- User info form -->
                     <form id="payment-form">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" id="phone" required>
-                        </div>
-
-                        <!-- New Password Field -->
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" required>
-                        </div>
-
-                        <!-- Divider -->
-                        <hr class="my-4">
-
-                        <!-- Stripe Payment Card Section -->
-                        <h6 class="mb-3">Payment Details</h6>
-                        <div class="mb-3">
-                            <label for="card-element" class="form-label">Credit or Debit Card</label>
-                            <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                <!-- A Stripe Element will be inserted here. -->
+                        <div id="registration-details">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" >
                             </div>
-                            <div id="card-errors" role="alert" class="text-danger mt-2"></div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="phone" >
+                            </div>
+
+                            <!-- New Password Field -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" >
+                            </div>
+
+                            <!-- Divider -->
+                            <hr class="my-4">
+                        </div>
+                        <!-- Promo Code Section -->
+                        <div id="coupon-details">
+                            <div class="mb-3">
+                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
+                                    <input type="hidden" class="form-control" id="discount">
+                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
+                                </div>
+                                <small id="promo-message" class="form-text "></small>
+                            </div>
+                        </div>
+                        <div id="payment-details">
+                            
+                            <!-- Stripe Payment Card Section -->
+                            <h6 class="mb-3">Payment Details</h6>
+                            <div class="mb-3">
+                                <label for="card-element" class="form-label">Credit or Debit Card</label>
+                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
+                                    <!-- A Stripe Element will be inserted here. -->
+                                </div>
+                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
+                            </div>
                         </div>
 
                         <!-- Submit Button -->
@@ -973,814 +653,2573 @@
         </div>
     </div>
 
-    <div class="modal fade" id="TakeTestModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="TakeTestModelLabel" aria-hidden="true">
+    <div class="modal fade" id="TakeTestModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"         aria-labelledby="TakeTestModelLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header flex-column align-items-start pe-5">
-                <h4 class="modal-title mb-1" id="testModalLabel">Nutrition Knowledge Questions</h4>
-                <p>Answers to the 4 questions below will assist in providing targeted information. </p>
-                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="steps-list mb-4">
-                    <div class="wizard-inner">
-                        <a class="tab-steps active" href="#"><span class="round-tab">1</span> <i>Step 1</i></a>
-                        <a class="tab-steps" href="#"><span class="round-tab">2</span> <i>Step 2</i></a>
-                        <a class="tab-steps" href="#"><span class="round-tab">3</span> <i>Step 3</i></a>
-                        <a class="tab-steps" href="#"><span class="round-tab">4</span> <i>Step 4</i></a>
-                    </div>
+            <div class="modal-content">
+                <div class="modal-header flex-column align-items-start pe-5">
+                    <h4 class="modal-title mb-1" id="testModalLabel">Nutrition Knowledge Questions</h4>
+                    <!-- <p>Answers to the 4 questions below will assist in providing targeted information. </p> -->
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="modal-body">
+                    <div class="steps-list mb-4">
+                        <div class="wizard-inner">
+                            <a class="tab-steps active" href="#"><span class="round-tab">1</span> <i>Step 1</i></a>
+                            <a class="tab-steps" href="#"><span class="round-tab">2</span> <i>Step 2</i></a>
+                            <a class="tab-steps" href="#"><span class="round-tab">3</span> <i>Step 3</i></a>
+                            <a class="tab-steps" href="#"><span class="round-tab">4</span> <i>Step 4</i></a>
+                            <a class="tab-steps" href="#" id="step-5"><span class="round-tab">5</span> <i>Step 5</i></a>
+                            <a class="tab-steps" href="#" id="step-6"><span class="round-tab">6</span> <i>Step 6</i></a>
+                            <a class="tab-steps" href="#" id="step-7"><span class="round-tab">7</span> <i>Step 7</i></a>
+                            <a class="tab-steps" href="#" id="step-8"><span class="round-tab">8</span> <i>Step 8</i></a>
+                            <a class="tab-steps" href="#" id="step-9"><span class="round-tab">9</span> <i>Step 9</i></a>
+                        </div>
+                    </div>
 
-                <div class="tab-main-box">
-                    <div class="step-tab-box" id="div1" style="display: block;">
-                        <div class="card">
-                            <div class="p-3 card-header bg-white">
-                                <h5 class="m-0">1. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">carbohydrate</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
-                                <input type="hidden" name="questions[foods_carbohydrate]" value="Do you think these foods are high or low in carbohydrate?" />
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table m-0">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th class="text-center">High</th>
-                                                <th class="text-center">Low</th>
-                                                <th class="text-center">Unsure</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Chicken</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][chicken]" value="High" id="Chicken-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][chicken]" value="Low" id="Chicken-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][chicken]" value="Unsure" id="Chicken-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Baked beans</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][baked_beans]" value="High" id="Bakedbeans-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][baked_beans]" value="Low" id="Bakedbeans-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][baked_beans]" value="Unsure" id="Bakedbeans-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Grain bread</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][grain_bread]" value="High" id="GrainBread-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][grain_bread]" value="Low" id="GrainBread-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][grain_bread]" value="Unsure" id="GrainBread-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Avocado</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][avocado]" value="High" id="Avocado-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][avocado]" value="Low" id="Avocado-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][avocado]" value="Unsure" id="Avocado-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Weet-bix</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][weet_bix]" value="High" id="Weet-bix-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][weet_bix]" value="Low" id="Weet-bix-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][weet_bix]" value="Unsure" id="Weet-bix-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Fruit yoghurt</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][fruit_yoghurt]" value="High" id="FruitYoghurt-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][fruit_yoghurt]" value="Low" id="FruitYoghurt-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][fruit_yoghurt]" value="Unsure" id="FruitYoghurt-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Crumpets</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][crumpets]" value="High" id="Crumpets-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][crumpets]" value="Low" id="Crumpets-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][crumpets]" value="Unsure" id="Crumpets-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Cream</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][cream]" value="High" id="Cream-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][cream]" value="Low" id="Cream-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_carbohydrate][cream]" value="Unsure" id="Cream-3"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                    <div class="tab-main-box">
+                        <div class="step-tab-box nutrition-form" id="div1" style="display: block;">
+                            <div class="card">
+                                <div class="p-3 card-header bg-white">
+                                    <h5 class="m-0">1. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">carbohydrate</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
+                                    <input type="hidden" name="questions[nutrition-Q-1]" value="Do you think these foods are high or low in carbohydrate?" />
                                 </div>
-                            </div>
-                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="2">Next</button>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table m-0">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th class="text-center">High</th>
+                                                    <th class="text-center">Low</th>
+                                                    <th class="text-center">Unsure</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Chicken</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][chicken]" value="0" id="Chicken-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][chicken]" value="1" id="Chicken-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][chicken]" value="0" id="Chicken-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Baked beans</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="1" id="Bakedbeans-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="0" id="Bakedbeans-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="0" id="Bakedbeans-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Grain bread</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="1" id="GrainBread-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="0" id="GrainBread-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="0" id="GrainBread-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Avocado</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][avocado]" value="0" id="Avocado-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][avocado]" value="1" id="Avocado-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][avocado]" value="0" id="Avocado-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Weet-bix</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="1" id="Weet-bix-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="0" id="Weet-bix-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="0" id="Weet-bix-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Fruit yoghurt</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="1" id="FruitYoghurt-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="0" id="FruitYoghurt-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="0" id="FruitYoghurt-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Crumpets</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][crumpets]" value="1" id="Crumpets-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][crumpets]" value="0" id="Crumpets-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][crumpets]" value="0" id="Crumpets-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cream</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][cream]" value="0" id="Cream-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][cream]" value="1" id="Cream-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][cream]" value="0" id="Cream-3"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="2">Next</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="step-tab-box" id="div2" style="display: block;">
-                        <div class="card">
-                            <div class="p-3 card-header bg-white">
-                                <h5 class="m-0">2. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">protein</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
-                                <input type="hidden" name="questions[foods_protein]" value="Do you think these foods are high or low in protein?" />
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th class="text-center">High</th>
-                                                <th class="text-center">Low</th>
-                                                <th class="text-center">Unsure</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Salmon</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][salmon]" value="High" id="Salmon-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][salmon]" value="Low" id="Salmon-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][salmon]" value="Unsure" id="Salmon-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Baked beans</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][baked_beans]" value="High" id="Bakedbeans-11"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][baked_beans]" value="Low" id="Bakedbeans-12"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][baked_beans]" value="Unsure" id="Bakedbeans-13"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Fruit</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][fruit]" value="High" id="Fruit-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][fruit]" value="Low" id="Fruit-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][fruit]" value="Unsure" id="Fruit-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Hummus</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][hummus]" value="High" id="Hummus-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][hummus]" value="Low" id="Hummus-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][hummus]" value="Unsure" id="Hummus-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Cornflakes cereal</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][cornflakes_cereal]" value="High" id="CornflakesCereal-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][cornflakes_cereal]" value="Low" id="CornflakesCereal-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][cornflakes_cereal]" value="Unsure" id="CornflakesCereal-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Almonds</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almonds]" value="High" id="Almonds-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almonds]" value="Low" id="Almonds-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almonds]" value="Unsure" id="Almonds-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Flavoured milk</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][flavoured_milk]" value="High" id="FlavouredMilk-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][flavoured_milk]" value="Low" id="FlavouredMilk-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][flavoured_milk]" value="Unsure" id="FlavouredMilk-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Ice cream</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][ice_cream]" value="High" id="IceCream-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][ice_cream]" value="Low" id="IceCream-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][ice_cream]" value="Unsure" id="IceCream-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Almond/oat milk</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almond_oat_milk]" value="High" id="Almond-oat-milk-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almond_oat_milk]" value="Low" id="Almond-oat-milk-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_protein][almond_oat_milk]" value="Unsure" id="Almond-oat-milk-3"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                        <div class="step-tab-box nutrition-form" id="div2" style="display: block;">
+                            <div class="card">
+                                <div class="p-3 card-header bg-white">
+                                    <h5 class="m-0">2. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">protein</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
+                                    <input type="hidden" name="questions[nutrition-Q-2]" value="Do you think these foods are high or low in protein?" />
                                 </div>
-                            </div>
-                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="1" >Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="3">Next</button>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th class="text-center">High</th>
+                                                    <th class="text-center">Low</th>
+                                                    <th class="text-center">Unsure</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Salmon</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][salmon]" value="1" id="Salmon-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][salmon]" value="0" id="Salmon-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][salmon]" value="0" id="Salmon-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Baked beans</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="1" id="Bakedbeans-11"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="0" id="Bakedbeans-12"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="0" id="Bakedbeans-13"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Fruit</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][fruit]" value="0" id="Fruit-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][fruit]" value="1" id="Fruit-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][fruit]" value="0" id="Fruit-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Hummus</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][hummus]" value="0" id="Hummus-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][hummus]" value="1" id="Hummus-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][hummus]" value="0" id="Hummus-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cornflakes cereal</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="0" id="CornflakesCereal-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="1" id="CornflakesCereal-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="0" id="CornflakesCereal-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Almonds</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almonds]" value="1" id="Almonds-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almonds]" value="0" id="Almonds-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almonds]" value="0" id="Almonds-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Flavoured milk</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="1" id="FlavouredMilk-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="0" id="FlavouredMilk-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="0" id="FlavouredMilk-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ice cream</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="0" id="IceCream-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="1" id="IceCream-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="0" id="IceCream-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Almond/oat milk</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="0" id="Almond-oat-milk-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="1" id="Almond-oat-milk-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="0" id="Almond-oat-milk-3"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="1" >Back</button>
+                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="3">Next</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="step-tab-box" id="div3" style="display: block;">
-                        <div class="card">
-                            <div class="p-3 card-header bg-white">
-                                <h5 class="m-0">3. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">fat</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
-                                <input type="hidden" name="questions[foods_fat]" value="Do you think these foods are high or low in fat?" />
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th class="text-center">High</th>
-                                                <th class="text-center">Low</th>
-                                                <th class="text-center">Unsure</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Avocado</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][avocado]" value="High" id="Avocado-11"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][avocado]" value="Low" id="Avocado-12"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][avocado]" value="Unsure" id="Avocado-13"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Baked beans</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][backed_beans]" value="High" id="BakedBeans-21"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][backed_beans]" value="Low" id="BakedBeans-22"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][backed_beans]" value="Unsure" id="BakedBeans-23"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Cottage cheese</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cottage_cheese]" value="High" id="CottageCheese-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cottage_cheese]" value="Low" id="CottageCheese-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cottage_cheese]" value="Unsure" id="CottageCheese-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Peanut butter</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][peanut_butter]" value="High" id="PeanutButter-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][peanut_butter]" value="Low" id="PeanutButter-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][peanut_butter]" value="Unsure" id="PeanutButter-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Crumpets</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][crumpets]" value="High" id="Crumpets-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][crumpets]" value="Low" id="Crumpets-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][crumpets]" value="Unsure" id="Crumpets-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Cheddar/Tatsy cheese</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cheddar_tatsy_cheese]" value="High" id="CheddarTatsyCheese-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cheddar_tatsy_cheese]" value="Low" id="CheddarTatsyCheese-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_fat][cheddar_tatsy_cheese]" value="Unsure" id="CheddarTatsyCheese-3"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                        <div class="step-tab-box nutrition-form" id="div3" style="display: block;">
+                            <div class="card">
+                                <div class="p-3 card-header bg-white">
+                                    <h5 class="m-0">3. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">fat</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
+                                    <input type="hidden" name="questions[nutrition-Q-3]" value="Do you think these foods are high or low in fat?" />
                                 </div>
-                            </div>
-                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="2" >Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="4">Next</button>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th class="text-center">High</th>
+                                                    <th class="text-center">Low</th>
+                                                    <th class="text-center">Unsure</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Avocado</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][avocado]" value="1" id="Avocado-11"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][avocado]" value="0" id="Avocado-12"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][avocado]" value="0" id="Avocado-13"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Baked beans</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][backed_beans]" value="0" id="BakedBeans-21"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][backed_beans]" value="1" id="BakedBeans-22"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][backed_beans]" value="0" id="BakedBeans-23"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cottage cheese</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cottage_cheese]" value="0" id="CottageCheese-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cottage_cheese]" value="1" id="CottageCheese-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cottage_cheese]" value="0" id="CottageCheese-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Peanut butter</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][peanut_butter]" value="1" id="PeanutButter-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][peanut_butter]" value="0" id="PeanutButter-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][peanut_butter]" value="0" id="PeanutButter-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Crumpets</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][crumpets]" value="0" id="Crumpets-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][crumpets]" value="1" id="Crumpets-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][crumpets]" value="0" id="Crumpets-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cheddar/Tatsy cheese</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="1" id="CheddarTatsyCheese-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="0" id="CheddarTatsyCheese-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="0" id="CheddarTatsyCheese-3"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="2" >Back</button>
+                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="4">Next</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="step-tab-box" id="div4" style="display: block;">
-                        <div class="card">
-                            <div class="p-3 card-header bg-white">
-                                <h5 class="m-0">4. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">healthy fats</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
-                                <input type="hidden" name="questions[foods_healthy_fat]" value="Do you think these foods are high or low in healthy fat?" />
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th class="text-center">High</th>
-                                                <th class="text-center">Low</th>
-                                                <th class="text-center">Unsure</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Butter</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][butter]" value="High" id="Butter-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][butter]" value="Low" id="Butter-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][butter]" value="Unsure" id="Butter-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Extra virgin olive oil</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][extra_virgin_olive_oil]" value="High" id="OliveOil-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][extra_virgin_olive_oil]" value="Low" id="OliveOil-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][extra_virgin_olive_oil]" value="Unsure" id="OliveOil-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Whole milk</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][whole_milk]" value="High" id="WholeMilk-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][whole_milk]" value="Low" id="WholeMilk-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][whole_milk]" value="Unsure" id="WholeMilk-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Potato crisps</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][potato_crisps]" value="High" id="PotatoCrisps-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][potato_crisps]" value="Low" id="PotatoCrisps-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][potato_crisps]" value="Unsure" id="PotatoCrisps-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Salmon</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][salmon]" value="High" id="Salmon-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][salmon]" value="Low" id="Salmon-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][salmon]" value="Unsure" id="Salmon-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Dark chocolate</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][dark_chocolate]" value="High" id="DarkChocolate-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][dark_chocolate]" value="Low" id="DarkChocolate-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][dark_chocolate]" value="Unsure" id="DarkChocolate-3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Macadamia nuts</td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][macadamia_nuts]" value="High" id="MacadamiaNuts-1"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][macadamia_nuts]" value="Low" id="MacadamiaNuts-2"></td>
-                                                <td class="text-center"><input class="form-check-input" type="radio" name="ans[foods_healthy_fat][macadamia_nuts]" value="Unsure" id="MacadamiaNuts-3"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                        <div class="step-tab-box nutrition-form" id="div4" style="display: none;">
+                            <div class="card">
+                                <div class="p-3 card-header bg-white">
+                                    <h5 class="m-0">4. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">healthy fats</strong>? (click on <strong class="text-primary">one</strong> box per food)</h5>
+                                    <input type="hidden" name="questions[nutrition-Q-4]" value="Do you think these foods are high or low in healthy fat?" />
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th class="text-center">High</th>
+                                                    <th class="text-center">Low</th>
+                                                    <th class="text-center">Unsure</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Butter</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="0" id="Butter-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="1" id="Butter-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="0" id="Butter-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Extra virgin olive oil</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="1" id="OliveOil-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="0" id="OliveOil-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="0" id="OliveOil-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Whole milk</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="0" id="WholeMilk-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="1" id="WholeMilk-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="0" id="WholeMilk-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Potato crisps</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="0" id="PotatoCrisps-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="1" id="PotatoCrisps-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="0" id="PotatoCrisps-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Salmon</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="1" id="Salmon-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="0" id="Salmon-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="0" id="Salmon-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Dark chocolate</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="0" id="DarkChocolate-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="1" id="DarkChocolate-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="0" id="DarkChocolate-3"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Macadamia nuts</td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="1" id="MacadamiaNuts-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="0" id="MacadamiaNuts-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="0" id="MacadamiaNuts-3"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="3" >Back</button>
+                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="5" >Next</button>
                                 </div>
                             </div>
-                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="3" >Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto submit-free-test">Submit</button>
+                        </div>
+                        <div class="step-tab-box nutrition-form" id="div5" style="display: none;">
+                            <div class="card">
+                                <div class="card">
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">5. Which of these foods has the most iron?</h5>
+                                        <input type="hidden" name="questions[nutrition-Q-5]" value="Which of these foods has the most iron?" />
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="row px-2">
+                                            <!-- First Row -->
+                                            <div class="col-md-4">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="bloodTest1">
+                                                    <label class="form-check-label" for="bloodTest1">
+                                                        Spinach, cooked, 1/2 cup
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="bloodTest2">
+                                                    <label class="form-check-label" for="bloodTest2">
+                                                        Brown rice, cooked, 1 cup
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="1" id="bloodTest3">
+                                                    <label class="form-check-label" for="bloodTest3">
+                                                        Grilled steak, 130g
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row px-2">
+                                            <!-- Second Row -->
+                                            <div class="col-md-4">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="bloodTest4">
+                                                    <label class="form-check-label" for="bloodTest4">
+                                                        Tuna, small tin, 90g
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="bloodTest5">
+                                                    <label class="form-check-label" for="bloodTest5">
+                                                        Almonds/cashews, ~30 nuts
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="bloodTest6">
+                                                    <label class="form-check-label" for="bloodTest6">
+                                                        Not sure
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">6. Approximately how many decisions do we make every day about what we eat? </h5>
+                                        <input type="hidden" name="questions[nutrition-Q-6]" value="Approximately how many decisions do we make every day about what we eat?" />
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="row px-2 align-items-center">
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="0" id="carbTest1">
+                                                    <label class="form-check-label" for="carbTest1">
+                                                    50-100
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="0" id="carbTest2">
+                                                    <label class="form-check-label" for="carbTest2">
+                                                    100-150
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="0" id="carbTest3">
+                                                    <label class="form-check-label" for="carbTest3">
+                                                    150-200
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="1" id="carbTest4">
+                                                    <label class="form-check-label" for="carbTest4">
+                                                    Over 200
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="0" id="carbTest5">
+                                                    <label class="form-check-label" for="carbTest5">
+                                                        Not sure
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">7. Which of the following is NOT a 'Macronutrient'? </h5>
+                                        <input type="hidden" name="questions[nutrition-Q-7]" value="Which of the following is NOT a 'Macronutrient'?" />
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="row px-2 align-items-center">
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="1" id="carbTest1">
+                                                    <label class="form-check-label" for="carbTest1">
+                                                    Iron 
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="carbTest2">
+                                                    <label class="form-check-label" for="carbTest2">
+                                                    Carbohydrate
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="carbTest3">
+                                                    <label class="form-check-label" for="carbTest3">
+                                                    Protein 
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="carbTest4">
+                                                    <label class="form-check-label" for="carbTest4">
+                                                    Alcohol 
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="carbTest4">
+                                                    <label class="form-check-label" for="carbTest4">
+                                                    Fat 
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="carbTest5">
+                                                    <label class="form-check-label" for="carbTest5">
+                                                        Not sure
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">8. Which of these foods has the most calcium? </h5>
+                                        <input type="hidden" name="questions[nutrition-Q-8]" value="Which of these foods has the most calcium?" />
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="row px-2 align-items-center">
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="0" id="carbTest1">
+                                                    <label class="form-check-label" for="carbTest1">
+                                                    Baby spinach, 1 cup
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="1" id="carbTest2">
+                                                    <label class="form-check-label" for="carbTest2">
+                                                    Firm tofu, 100g
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="0" id="carbTest3">
+                                                    <label class="form-check-label" for="carbTest3">
+                                                    Tuna, small tin, 90 g  
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="0" id="carbTest4">
+                                                    <label class="form-check-label" for="carbTest4">
+                                                    Almonds, 1/2 cup  
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="0" id="carbTest5">
+                                                    <label class="form-check-label" for="carbTest5">
+                                                        Not sure
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">9. Which of these foods has the most fibre? </h5>
+                                        <input type="hidden" name="questions[nutrition-Q-9]" value="Which of these foods has the most fibre?" />
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="row px-2 align-items-center">
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="0" id="carbTest1">
+                                                    <label class="form-check-label" for="carbTest1">
+                                                    Banana, 1 large
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="1" id="carbTest2">
+                                                    <label class="form-check-label" for="carbTest2">
+                                                    Raw oats, 1/2 cup
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="0" id="carbTest3">
+                                                    <label class="form-check-label" for="carbTest3">
+                                                    Cashews, 1 handful 
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="0" id="carbTest4">
+                                                    <label class="form-check-label" for="carbTest4">
+                                                    Broccoli, 1/2 cup 
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating my-3 col">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="0" id="carbTest5">
+                                                    <label class="form-check-label" for="carbTest5">
+                                                        Not sure
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                        <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="4">Back</button>
+                                        <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="6">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-tab-box sports-form" id="div6" style="display: none;">
+                            <div class="card">
+                                <div class="p-3 card-header bg-white">
+                                    <h5 class="m-0">1. Compared to a non-athlete, how much total protein (per day) can an athlete need?</h5>
+                                    <input type="hidden" name="questions[sports-nutrition-Q-1]" value="Compared to a non-athlete, how much total protein (per day) can an athlete need?" />
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="row px-2">
+                                        <div class="col-md-6">
+                                            <!-- Left Column -->
+                                            <div class="form-floating my-3">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="bloodTest1">
+                                                    <label class="form-check-label" for="bloodTest1">
+                                                        A very similar amount
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="1" id="bloodTest2">
+                                                    <label class="form-check-label" for="bloodTest2">
+                                                        Up to 2 times (2x) more
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="bloodTest3">
+                                                    <label class="form-check-label" for="bloodTest3">
+                                                        3-4 times (3-4x) more
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <!-- Right Column -->
+                                            <div class="form-floating my-3">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="bloodTest4">
+                                                    <label class="form-check-label" for="bloodTest4">
+                                                        5 times (5x) more
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="bloodTest5">
+                                                    <label class="form-check-label" for="bloodTest5">
+                                                        Not sure
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">2. Which of the following are signs that you are not eating enough to meet your training needs? </h5>
+                                        <input type="hidden" name="questions[sports-nutrition-Q-2]" value="Which of the following are signs that you are not eating enough to meet your training needs?" />
+                                    </div>
+                                    <div class="row px-2">
+                                        <!-- Left Column -->
+                                        <div class="col-md-6">
+                                            <div class="form-floating my-3">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed1">
+                                                    <label class="form-check-label" for="diagnosed1">
+                                                        Loss of appetite
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed2">
+                                                    <label class="form-check-label" for="diagnosed2">
+                                                        More injuries and/or illness
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed3">
+                                                    <label class="form-check-label" for="diagnosed3">
+                                                        Poor performance or recovery
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Right Column -->
+                                        <div class="col-md-6">
+                                            <div class="form-floating my-3">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed4">
+                                                    <label class="form-check-label" for="diagnosed4">
+                                                        Weight loss
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed5">
+                                                    <label class="form-check-label" for="diagnosed5">
+                                                        Menstrual cycle changes (if not on the pill)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="checkbox" value="0" name="ans[sports-nutrition-Q-2][]" id="diagnosed6">
+                                                    <label class="form-check-label" for="diagnosed6">
+                                                        Not sure
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">3. On a heavy training day (training twice a day or high-intensity workouts) which foods should be increased? </h5>
+                                        <input type="hidden" name="questions[sports-nutrition-Q-3]" value="On a heavy training day (training twice a day or high-intensity workouts) which foods should be increased?" />
+                                    </div>
+                                    <div class="row px-2">
+                                        <!-- Left Column -->
+                                        <div class="col-md-6">
+                                            <div class="form-floating my-3">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest1">
+                                                    <label class="form-check-label" for="bloodTest1">
+                                                        Protein-based foods like dairy, eggs, meat, tofu
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest2">
+                                                    <label class="form-check-label" for="bloodTest2">
+                                                        Take away foods
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest3">
+                                                    <label class="form-check-label" for="bloodTest3">
+                                                        Lollies, chips and chocolate bars
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Right Column -->
+                                        <div class="col-md-6">
+                                            <div class="form-floating my-3">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="1" id="bloodTest4">
+                                                    <label class="form-check-label" for="bloodTest4">
+                                                        Carbohydrate-based foods like rice, pasta, bread
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest5">
+                                                    <label class="form-check-label" for="bloodTest5">
+                                                        Fat-containing foods like avocado, nuts
+                                                    </label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest6">
+                                                    <label class="form-check-label" for="bloodTest6">
+                                                        Not sure
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="5" >Back</button>
+                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="7" >Next</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-tab-box sports-form" id="div7" style="display: none;">
+                            <div class="card">
+                                <div class="card">
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">4. What is the most important role for 'Protein' in the body?</h5>
+                                        <input type="hidden" name="questions[sports-nutrition-Q-4]" value="What is the most important role for 'Protein' in the body?" />
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="row px-2">
+                                            <!-- Left Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bloodTest1">
+                                                        <label class="form-check-label" for="bloodTest1">
+                                                            Fuel for low to moderate intensity exercise
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bloodTest2">
+                                                        <label class="form-check-label" for="bloodTest2">
+                                                            Fuel for moderate to high intensity exercise
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bloodTest3">
+                                                        <label class="form-check-label" for="bloodTest3">
+                                                            Delivery of oxygen to muscles
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="1" id="bloodTest4">
+                                                        <label class="form-check-label" for="bloodTest4">
+                                                            Muscle growth and repair
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Right Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bloodTest5">
+                                                        <label class="form-check-label" for="bloodTest5">
+                                                            A healthy digestive system
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bloodTest6">
+                                                        <label class="form-check-label" for="bloodTest6">
+                                                            Strong bones
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bloodTest7">
+                                                        <label class="form-check-label" for="bloodTest7">
+                                                            Hydration
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bloodTest8">
+                                                        <label class="form-check-label" for="bloodTest8">
+                                                            Not sure
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-3 card-header bg-white">
+                                            <h5 class="m-0">5. Which of the following statements about the role of carbohydrates is NOT correct?</h5>
+                                            <input type="hidden" name="questions[sports-nutrition-Q-5]" value="Which of the following statements about the role of carbohydrates is NOT correct?" />
+                                        </div>
+                                        <div class="row px-2">
+                                            <!-- Left Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="-1" id="carbTest1">
+                                                        <label class="form-check-label" for="carbTest1">
+                                                            Support decision making
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="-1" id="carbTest2">
+                                                        <label class="form-check-label" for="carbTest2">
+                                                            Helping maintain competition performance levels
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="-1" id="carbTest3">
+                                                        <label class="form-check-label" for="carbTest3">
+                                                        Assists fuelling and recovery from training sessions 
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Right Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="1" id="carbTest4">
+                                                        <label class="form-check-label" for="carbTest4">
+                                                        Major factor for gaining body fat
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="1" id="carbTest4">
+                                                        <label class="form-check-label" for="carbTest4">
+                                                        Increases inflammation in the body
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="0" id="carbTest5">
+                                                        <label class="form-check-label" for="carbTest5">
+                                                            Not sure
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-3 card-header bg-white">
+                                            <h5 class="m-0">6. What main fuels do muscles use during training?</h5>
+                                            <input type="hidden" name="questions[sports-nutrition-Q-6]" value="What main fuels do muscles use during training?" />
+                                        </div>
+                                        <div class="row px-2">
+                                            <!-- Left Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="carbTest1">
+                                                        <label class="form-check-label" for="carbTest1">
+                                                        Protein
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="1" id="carbTest2">
+                                                        <label class="form-check-label" for="carbTest2">
+                                                        Carbs
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="1" id="carbTest3">
+                                                        <label class="form-check-label" for="carbTest3">
+                                                        Fat
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Right Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="carbTest4">
+                                                        <label class="form-check-label" for="carbTest4">
+                                                        Iron
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="carbTest4">
+                                                        <label class="form-check-label" for="carbTest4">
+                                                        Water
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="0" id="carbTest5">
+                                                        <label class="form-check-label" for="carbTest5">
+                                                            Not sure
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-3 card-header bg-white">
+                                            <h5 class="m-0">7. Which statements about iron are correct? </h5>
+                                            <input type="hidden" name="questions[sports-nutrition-Q-7]" value="What main fuels do muscles use during training?" />
+                                        </div>
+                                        <div class="row px-2">
+                                            <!-- Left Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="carbTest1">
+                                                        <label class="form-check-label" for="carbTest1">
+                                                        Females need over twice the amount of iron per day as men
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="carbTest2">
+                                                        <label class="form-check-label" for="carbTest2">
+                                                        Vegetarian athletes are higher risk of low iron as plants less iron in the food and it's harder to absorb
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="carbTest3">
+                                                        <label class="form-check-label" for="carbTest3">
+                                                        Female athletes are higher risk of low iron due to losing extra iron through periods
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Right Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="-1" id="carbTest4">
+                                                        <label class="form-check-label" for="carbTest4">
+                                                        Iron deficiency improves over time as the athletete matures
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="0" id="carbTest5">
+                                                        <label class="form-check-label" for="carbTest5">
+                                                            Not sure
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                        <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="6">Back</button>
+                                        <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="8">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-tab-box supplement-form" id="div8" style="display: none;">
+                            <div class="card">
+                                <div class="card">
+                                    <div class="p-3 card-header bg-white">
+                                        <h5 class="m-0">1. Which of the following statements about 'supplements' are true?  </h5>
+                                        <input type="hidden" name="questions[supplements-Q-1]" value="Which of the following statements about 'supplements' are true?" />
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="row px-2">
+                                            <!-- Left Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="diagnosed1">
+                                                        <label class="form-check-label" for="diagnosed1">
+                                                        All athletes should use supplements to perform at their best 
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="diagnosed2">
+                                                        <label class="form-check-label" for="diagnosed2">
+                                                        It is not possible to consume enough nutrients through eating food alone (without supplements)
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="diagnosed3">
+                                                        <label class="form-check-label" for="diagnosed3">
+                                                        Check with a Sports Dietitian before taking supplements                                                    
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Right Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="diagnosed4">
+                                                        <label class="form-check-label" for="diagnosed4">
+                                                        Eating a wide range of foods provides most athletes with the vitamins and minerals they need 
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="diagnosed5">
+                                                        <label class="form-check-label" for="diagnosed5">
+                                                        Most supplements available in Australia are safe for athletes to use 
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" value="0" name="ans[supplements-Q-1][]" id="diagnosed6">
+                                                        <label class="form-check-label" for="diagnosed6">
+                                                            Not sure
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-3 card-header bg-white">
+                                            <h5 class="m-0">2. When choosing a supplement, you should? </h5>
+                                            <input type="hidden" name="questions[supplements-Q-2]" value="When choosing a supplement, you should?" />
+                                        </div>
+                                        <div class="row px-2">
+                                            <!-- Left Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="carbTest1">
+                                                        <label class="form-check-label" for="carbTest1">
+                                                        Use supplements used by professional athletes
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="carbTest2">
+                                                        <label class="form-check-label" for="carbTest2">
+                                                        Check with a mate for their opinion                                                     </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="1" id="carbTest3">
+                                                        <label class="form-check-label" for="carbTest3">
+                                                        Choose a product that has had third party batch testing                                                     
+                                                    </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Right Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="carbTest3">
+                                                        <label class="form-check-label" for="carbTest3">
+                                                        Check with a naturopath 
+                                                        </label>
+                                                    </div>
+                                                    <!-- <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="0.5" id="carbTest4">
+                                                        <label class="form-check-label" for="carbTest4">
+                                                        Check with a Sports Dietitian 
+                                                        </label>
+                                                    </div> -->
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="carbTest5">
+                                                        <label class="form-check-label" for="carbTest5">
+                                                        Ask staff at the local supplement store 
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="0" id="carbTest5">
+                                                        <label class="form-check-label" for="carbTest5">
+                                                        Unsure 
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-3 card-header bg-white">
+                                            <h5 class="m-0">3. Regarding vitamin and minerals supplements, which statements are true? </h5>
+                                            <input type="hidden" name="questions[supplements-Q-3]" value="When choosing a supplement, you should?" />
+                                        </div>
+                                        <div class="row px-2">
+                                            <!-- Left Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="carbTest1">
+                                                        <label class="form-check-label" for="carbTest1">
+                                                            They are safe for all athletes to use 
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="1" id="carbTest2">
+                                                        <label class="form-check-label" for="carbTest2">
+                                                        Can assist athletes to correct a deficiency diagnosed by a Medical professional
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="carbTest3">
+                                                        <label class="form-check-label" for="carbTest3">
+                                                        Vegetarians and vegans are not at risk of vitamin and mineral deficiences                                                    
+                                                    </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Right Column -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating my-3">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="1" id="carbTest3">
+                                                        <label class="form-check-label" for="carbTest3">
+                                                        May be recommended for international competition where food variety is limited 
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="0" id="carbTest5">
+                                                        <label class="form-check-label" for="carbTest5">
+                                                        Unsure 
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                        <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="7">Back</button>
+                                        <button id="next" type="button" class="btn btn-primary ms-auto submit-free-test">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-tab-box" id="div9" style="display: none;">
+                            <div class="">
+                                <div class="row mb-4">
+                                    <div class="col-lg-6">
+                                        <div class="score-meter-box">
+                                            <div class="score-meter-text">
+                                                <span class="meter-text-01">Needs work </span>
+                                                <span class="meter-text-02">Pretty ordinary</span>
+                                                <span class="meter-text-03">Not bad</span>
+                                                <span class="meter-text-04">Good</span>
+                                            </div>
+                                            <div class="score-meter-box-frame">
+                                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 500 243" style="enable-background:new 0 0 500 243;" xml:space="preserve">
+                                                    <path d="M0,0v243h500V0H0z M474.7,233.7h-79.1c-4.9,0-9.2-3.6-9.9-8.5c-9.6-65.5-66.1-115.9-134.3-115.9s-124.6,50.3-134.3,115.9c-0.7,4.9-4.9,8.5-9.9,8.5H28.2c-5.9,0-10.5-5.1-10-11c11.3-119,111.4-212,233.2-212s221.9,93.1,233.2,212C485.2,228.6,480.6,233.7,474.7,233.7z" fill="#ffffff"/>
+                                                </svg>
+                                                <div class="bgradient-bg" style="background: conic-gradient(from -1.65deg at 48.15% 84.72%, #FF9500 -33.16deg, #FFDE48 31.45deg, #03741B 91.78deg, #CF080A 265.07deg, #FF9500 326.84deg, #FFDE48 391.45deg);"></div>
+                                            </div>
+                                            <span class="meter-arrow nutrition-result" style="transform: rotate(75deg);">
+                                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 133 22" style="enable-background:new 0 0 133 22;" xml:space="preserve">
+                                                    <path d="M91.8,0.4L3.4,8.7c-2.5,0.2-2.5,3.8,0,4.1l88.4,8.9c20.5-0.4,12.7-0.4,20.5-0.4c11.8,0,19.2,1.6,19.2-10.1c0-11.8-10-10.2-21.7-10.3C101.9,0.8,112,0.9,91.8,0.4z"/>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <h4 class="text-center mt-4">General Nutrition <br>Knowledge</h4>
+                                        <h3 class="text-center mt-1 text-black nutrition-percentage">40%</h3>
+                                        <div class="text-center mt-4">
+                                            <!-- <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p> -->
+                                            <a href="#sport-plans" class="btn btn-primary">View Nutrition Plans</a>
+                                        </div>
+                                        <ul class="list-group mt-4">
+                                            <li class="list-group-item">Height/Low</li>
+                                            <li class="list-group-item">Comp</li>
+                                            <li class="list-group-item">Inquery</li>
+                                            <li class="list-group-item">Bundle</li>
+                                        </ul>
+                                        <div class="card mt-4">
+                                            <div class="card-header bg-white px-4 py-3">
+                                                <h5 class="card-title m-0">Book a consultation to get expert performance support.</h5>
+                                            </div>
+                                            <div class="border-0 card-footer p-0">
+                                                <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary rounded-bottom rounded-0 w-100">Book Here</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="score-meter-box score-meter-out score-meter-box-2">
+                                            <div class="score-meter-text">
+                                                <span class="meter-text-01">Untapped <br>potetion</span>
+                                                <span class="meter-text-02">Much to <br>learn</span>
+                                                <span class="meter-text-03">Ok</span>
+                                                <span class="meter-text-04">Good <br>start</span>
+                                            </div>
+                                            <div class="score-meter-box-frame">
+                                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 500 243" style="enable-background:new 0 0 500 243;" xml:space="preserve">
+                                                    <path d="M0,0v243h500V0H0z M474.7,233.7h-79.1c-4.9,0-9.2-3.6-9.9-8.5c-9.6-65.5-66.1-115.9-134.3-115.9s-124.6,50.3-134.3,115.9c-0.7,4.9-4.9,8.5-9.9,8.5H28.2c-5.9,0-10.5-5.1-10-11c11.3-119,111.4-212,233.2-212s221.9,93.1,233.2,212C485.2,228.6,480.6,233.7,474.7,233.7z" fill="#ffffff"/>
+                                                </svg>
+                                                <div class="bgradient-bg" style="background: conic-gradient(from -1.65deg at 48.15% 84.72%, #FF9500 -33.16deg, #FFDE48 31.45deg, #03741B 91.78deg, #CF080A 265.07deg, #FF9500 326.84deg, #FFDE48 391.45deg);"></div>
+                                            </div>
+                                            <span class="meter-arrow sport-result" style="transform: rotate(120deg);">
+                                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 133 22" style="enable-background:new 0 0 133 22;" xml:space="preserve">
+                                                    <path d="M91.8,0.4L3.4,8.7c-2.5,0.2-2.5,3.8,0,4.1l88.4,8.9c20.5-0.4,12.7-0.4,20.5-0.4c11.8,0,19.2,1.6,19.2-10.1c0-11.8-10-10.2-21.7-10.3C101.9,0.8,112,0.9,91.8,0.4z"/>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <h4 class="text-center mt-4">Sports Nutrition</h4>
+                                        <div class="text-center mt-4">
+                                            <a href="javascript:void(0);" class="btn btn-primary unlock-result">Unlock Results</a>
+                                        </div>
+                                    
+                                        <div class="score-meter-box score-meter-out score-meter-box-3">
+                                            <div class="score-meter-text">
+                                                <span class="meter-text-01">Likely at risk</span>
+                                                <span class="meter-text-02">Pretty ordinary</span>
+                                                <span class="meter-text-03">Decent</span>
+                                                <span class="meter-text-04">Nice</span>
+                                            </div>
+                                            <div class="score-meter-box-frame">
+                                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 500 243" style="enable-background:new 0 0 500 243;" xml:space="preserve">
+                                                    <path d="M0,0v243h500V0H0z M474.7,233.7h-79.1c-4.9,0-9.2-3.6-9.9-8.5c-9.6-65.5-66.1-115.9-134.3-115.9s-124.6,50.3-134.3,115.9c-0.7,4.9-4.9,8.5-9.9,8.5H28.2c-5.9,0-10.5-5.1-10-11c11.3-119,111.4-212,233.2-212s221.9,93.1,233.2,212C485.2,228.6,480.6,233.7,474.7,233.7z" fill="#ffffff"/>
+                                                </svg>
+                                                <div class="bgradient-bg" style="background: conic-gradient(from -1.65deg at 48.15% 84.72%, #FF9500 -33.16deg, #FFDE48 31.45deg, #03741B 91.78deg, #CF080A 265.07deg, #FF9500 326.84deg, #FFDE48 391.45deg);"></div>
+                                            </div>
+                                            <span class="meter-arrow suppliment-result" style="transform: rotate(120deg);">
+                                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 133 22" style="enable-background:new 0 0 133 22;" xml:space="preserve">
+                                                    <path d="M91.8,0.4L3.4,8.7c-2.5,0.2-2.5,3.8,0,4.1l88.4,8.9c20.5-0.4,12.7-0.4,20.5-0.4c11.8,0,19.2,1.6,19.2-10.1c0-11.8-10-10.2-21.7-10.3C101.9,0.8,112,0.9,91.8,0.4z"/>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <h4 class="text-center mt-4">Supplement Knowledge</h4>
+                                        <div class="text-center mt-4">
+                                            <a href="javascript:void(0);" class="btn btn-primary unlock-result" >Unlock Results</a>
+                                        </div>
+                                    </div>
+                                </div>  
+                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
+                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="8">Back</button>
+                                    <button id="next" type="button" class="btn btn-primary ms-auto last-step">Next</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Enter Your Details</h5>
+                    <button type="button" class="btn-close detail-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="detailsForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name:</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mainSport" class="form-label">Main Sport:</label>
+                            <input type="text" class="form-control" id="mainSport" name="mainSport" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mobile" class="form-label">Mobile:</label>
+                            <input type="text" class="form-control" id="mobile" name="mobile" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        $(document).ready(function () {
+            $("#sport").change(function () {
+                let selectedSport = $(this).val();
+                let sportGameSelect = $("#sport_game");
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-    
-    $(document).ready(function () {
-        $('#takeFreeTest').on('click', function () {
-            $('#TakeTestModel').modal('show');
-        });
-        // Initialize all the necessary variables
-        const stepCircles = document.querySelectorAll('.tab-steps');
-        const stepTabs = document.querySelectorAll(".step-tab-box");
-        const showStepButtons = document.querySelectorAll('.showStepTab');
-        const submitButton = document.querySelector(".submit-free-test"); // Submit button for final submission
-        const currentModal = $("#TakeTestModel"); // Current modal for test steps
-        const registerModal = $("#registerModal"); // Registration/Login modal
-        const loginModal = $("#testLoginModal"); // Registration/Login modal
-        const registerForm = $("#register-form"); // Registration form
-        const loginForm = $("#test-login-form"); // Login form
-        const loginLink = $(".login-link"); // Login link in Register modal
-        const registerLink = $(".register-link"); // Register link in Login modal
-        const stepsData = {}; // Object to store all steps data
+                if (selectedSport) {
+                    $.ajax({
+                        url: "{{ route('front.get-sports-games') }}", // Replace with your actual route URL to,
+                        type: "GET",
+                        data: { category: selectedSport },
+                        dataType: "json",
+                        success: function (response) {
+                            sportGameSelect.html('<option value="">Select Your Sport Game</option>'); // Reset dropdown
 
-        let currentStep = 0; // Track the active step index
-
-        // Initially, show only the first step-tab-box
-        stepTabs.forEach((tab, index) => {
-            tab.style.display = index === 0 ? "block" : "none";
-        });
-
-        // Function to validate fields in the current step
-        function validateStep(stepIndex) {
-            const stepTab = stepTabs[stepIndex]; // Get current step tab
-            const inputs = stepTab.querySelectorAll('input, textarea, select');
-            let isValid = true;
-            const errorMessage = "* Please select an answer for this question.";
-
-            // Loop through each input to validate
-            inputs.forEach(input => {
-                // Reset border color before validation
-                input.style.border = "";
-
-                if (input.type === "radio" || input.type === "checkbox") {
-                    // Validation for radio/checkbox inputs
-                    if (input.name && !document.querySelector(`input[name="${input.name}"]:checked`)) {
-                        isValid = false;
-                        // Apply red border to all unchecked inputs in the group
-                        document.querySelectorAll(`input[name="${input.name}"]`).forEach(el => {
-                            el.style.border = "1px solid red";
-                        });
-                    } else {
-                        // Reset border for valid radio/checkbox group
-                        document.querySelectorAll(`input[name="${input.name}"]`).forEach(el => {
-                            el.style.border = "";
-                        });
-                    }
-                } else if (input.value.trim() === "") {
-                    // Validation for text fields, textarea, and select
-                    input.style.border = "1px solid red";
-                    isValid = false;
+                            if (Array.isArray(response)) {
+                                $.each(response, function (index, game) {
+                                    sportGameSelect.append(`<option value="${game}">${game}</option>`);
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error("Error fetching sports games:", xhr.responseText);
+                        }
+                    });
                 } else {
-                    // Reset border for valid inputs
+                    sportGameSelect.html('<option value="">Select Your Sport Game</option>');
+                }
+            });
+
+            $("#sport-form").submit(function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                $.ajax({
+                    url: "{{ route('front.sport-search') }}", // Laravel route
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        sport: $("#sport").val(),
+                        state: $("select[name='state']").val(),
+                        sport_game: $("#sport_game").val(),
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            console.log(response.message);
+                            alert(response.message);
+                            $("#sport-form")[0].reset();  // Resets all form fields
+
+                        } else {
+                            alert("Error submitting interest.");
+                        }
+                    },
+                    error: function(xhr) {
+                        let errors = xhr.responseJSON.errors;
+                        let errorMsg = Object.values(errors).flat().join("\n");
+                        alert(errorMsg);
+                    }
+                });
+                
+            });
+        });
+
+        $(document).ready(function () {
+            // Show the modal on clicking the start test button
+            $('#takeFreeTest').on('click', function () {
+                $('#TakeTestModel').modal('show');
+            });
+
+            $('.unlock-result').on('click', function () {
+                $('#TakeTestModel').addClass('blur-background'); // Add blur to the body
+                $('#detailsModal').modal('show');
+
+            });
+
+            $('.detail-modal-close').on('click', function () {
+                $('#detailsModal').modal('hide');
+                $('#TakeTestModel').removeClass('blur-background'); // Remove blur
+            })
+            let totalAnswerCount = 0;  // Initialize totalAnswerCount to 0 globally for the entire script
+
+            // Initialize all the necessary variables
+            const stepCircles = document.querySelectorAll('.tab-steps');
+            const stepTabs = document.querySelectorAll(".step-tab-box");
+            const showStepButtons = document.querySelectorAll('.showStepTab');
+            const submitButton = document.querySelector(".submit-free-test"); // Submit button for final submission
+            const registerModal = $("#registerModal"); // Registration/Login modal
+            const loginModal = $("#testLoginModal"); // Registration/Login modal
+            const registerForm = $("#register-form"); // Registration form
+            const loginForm = $("#test-login-form"); // Login form
+            const loginLink = $(".login-link"); // Login link in Register modal
+            const registerLink = $(".register-link"); // Register link in Login modal
+            const currentModal = $("#TakeTestModel"); // Current modal for test steps
+
+            // Initialize totalAnswerCounts for each form with default values of 0
+            // let totalAnswerCounts = {
+            //     'nutrition-form': 0,
+            //     'sports-form': 0,
+            //     'supplement-form': 0
+            // };
+
+            let currentStep = 0;  // Track the active step index
+            const stepsData = {};  // Object to store all steps data
+
+            // Initially, show only the first step-tab-box
+            stepTabs.forEach((tab, index) => {
+                tab.style.display = index === 0 ? "block" : "none";
+            });
+
+            // Function to validate fields in the current step
+            function validateStep(stepIndex) {
+                const stepTab = stepTabs[stepIndex]; // Get current step tab
+                const inputs = stepTab.querySelectorAll('input, textarea, select');
+                let isValid = true;
+                const errorMessage = "* Please select an answer for this question.";
+
+                // Loop through each input to validate
+                inputs.forEach(input => {
+                    // Reset border color before validation
                     input.style.border = "";
-                }
-            });
 
-            // Display error message if validation fails
-            const cardBody = stepTab.querySelector('.card-body');
-            let errorMessageSpan = cardBody.querySelector('.general-error-message');
+                    if (input.type === "radio" || input.type === "checkbox") {
+                        // Validation for radio/checkbox inputs
+                        const groupName = input.name;
+                        const checkedInput = document.querySelector(`input[name="${groupName}"]:checked`);
 
-            if (!errorMessageSpan) {
-                // Create error message span if not present
-                errorMessageSpan = document.createElement("span");
-                errorMessageSpan.className = "text-danger general-error-message m-3";
-                cardBody.appendChild(errorMessageSpan);
-            }
-
-            errorMessageSpan.textContent = errorMessage;
-            errorMessageSpan.style.display = isValid ? "none" : "block";
-
-            return isValid;
-        }
-
-        // Function to collect data for the current step
-        function collectStepData(currentStep) {
-            const form = document.querySelector(`#div${currentStep}`);
-            const stepData = {};
-            const questionInput = form.querySelector("input[type='hidden'][name^='questions']");
-            const questionText = questionInput ? questionInput.value : "";
-
-            if (questionText) {
-                stepData[questionText] = {};
-            }
-
-            const rows = form.querySelectorAll("tbody tr");
-            rows.forEach(row => {
-                const foodName = row.querySelector("td:first-child").textContent.trim();
-                const selectedAnswer = row.querySelector("input[type='radio']:checked");
-
-                if (foodName) {
-                    stepData[questionText][foodName] = selectedAnswer ? selectedAnswer.value : "No answer selected";
-                }
-            });
-
-            return stepData;
-        }
-
-        // Event listener for step navigation buttons (previous/next steps)
-        showStepButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const targetStep = parseInt(button.getAttribute('target'), 10) - 1;
-
-                // If moving forward, validate the current step
-                if (targetStep > currentStep && !validateStep(currentStep)) {
-                    return; // Stop progression if validation fails
-                }
-
-                // Update step tabs visibility and active step
-                stepCircles.forEach((step, index) => {
-                    step.classList.toggle('active', index <= targetStep);
+                        if (!checkedInput) {
+                            isValid = false;
+                            // Apply red border to all unchecked inputs in the group
+                            document.querySelectorAll(`input[name="${groupName}"]`).forEach(el => {
+                                el.style.border = "1px solid red";
+                            });
+                        } else {
+                            // Reset border for valid radio/checkbox group
+                            document.querySelectorAll(`input[name="${groupName}"]`).forEach(el => {
+                                el.style.border = "";
+                            });
+                        }
+                    } else if (input.type === "text" || input.type === "textarea" || input.tagName === "SELECT") {
+                        // Validation for text inputs, textarea, and select elements
+                        if (input.value.trim() === "") {
+                            input.style.border = "1px solid red";
+                            isValid = false;
+                        } else {
+                            input.style.border = "";
+                        }
+                    }
                 });
 
-                stepTabs.forEach((tab, index) => {
-                    tab.style.display = index === targetStep ? "block" : "none";
+                // Display error message if validation fails
+                const cardBody = stepTab.querySelector('.card-body');
+                if(cardBody) {
+                    let errorMessageSpan = cardBody.querySelector('.general-error-message');
+                    if (!errorMessageSpan) {
+                        // Create error message span if not present
+                        errorMessageSpan = document.createElement("span");
+                        errorMessageSpan.className = "text-danger general-error-message m-3";
+                        cardBody.appendChild(errorMessageSpan);
+                    }
+
+                    errorMessageSpan.textContent = errorMessage;
+                    errorMessageSpan.style.display = isValid ? "none" : "block";
+                }
+                return isValid;
+            }
+
+            function collectStepData(currentStep) {
+                const form = document.querySelector(`#div${currentStep}`);
+                if (!form) return {};
+
+                const stepData = JSON.parse(localStorage.getItem("testStepsData")) || {};
+                const formClass = Array.from(form.classList).find(cls => cls.endsWith('-form'));
+
+                if (!formClass) {
+                    console.error('Form class not found for step:', currentStep);
+                    return {};
+                }
+
+                if (!stepData[formClass]) {
+                    stepData[formClass] = {};
+                }
+
+                const questionInputs = form.querySelectorAll("input[type='hidden'][name^='questions']");
+                
+                questionInputs.forEach(questionInput => {
+                    const questionText = questionInput.value;
+                    if (!questionText) return;
+
+                    stepData[formClass][questionText] = {};
+
+                    // Handle Table-based Questions
+                    const cardContainer = questionInput.closest(".card");
+                    if (cardContainer) {
+                        const table = cardContainer.querySelector("table");
+                        if (table) {
+                            const rows = table.querySelectorAll("tbody tr");
+
+                            rows.forEach(row => {
+                                const foodNameElem = row.querySelector("td:first-child");
+                                const selectedAnswer = row.querySelector("input[type='radio']:checked");
+
+                                if (foodNameElem) {
+                                    const foodName = foodNameElem.textContent.trim();
+                                    const answerValue = parseFloat(selectedAnswer ? selectedAnswer.value : "0") || 0;
+
+                                    stepData[formClass][questionText][foodName] = answerValue;
+                                    updateAnswerCount(formClass, answerValue);
+                                }
+                            });
+                        }
+                    }
+
+                    // Handle Non-Table Radio Button Questions
+                    form.querySelectorAll(`input[type="radio"][name^='ans[${questionInput.name.replace("questions[", "").replace("]", "")}]']:checked`)
+                        .forEach(radio => {
+                            const labelElem = radio.closest(".form-check")?.querySelector("label") || form.querySelector(`label[for="${radio.id}"]`);
+                            if (!labelElem) return;
+
+                            const label = labelElem.textContent.trim();
+                            const answerValue = parseFloat(radio.value) || 0;
+
+                            stepData[formClass][questionText][label] = answerValue;
+                            updateAnswerCount(formClass, answerValue);
+                        });
+
+                    // Handle Checkboxes
+                    form.querySelectorAll(`input[type="checkbox"][name^='ans[${questionInput.name.replace("questions[", "").replace("]", "")}]']:checked`)
+                        .forEach(checkbox => {
+                            const labelElem = checkbox.closest("label") || form.querySelector(`label[for="${checkbox.id}"]`);
+                            if (!labelElem) return;
+
+                            const labelText = labelElem.textContent.trim();
+                            const checkboxValue = parseFloat(checkbox.value) || 0;
+
+                            if (!stepData[formClass][questionText][labelText]) {
+                                stepData[formClass][questionText][labelText] = checkboxValue;
+                            } else {
+                                stepData[formClass][questionText][labelText] += checkboxValue;
+                            }
+
+                            updateAnswerCount(formClass, checkboxValue);
+                        });
                 });
 
-                currentStep = targetStep;
-            });
-        });
+                localStorage.setItem("testStepsData", JSON.stringify(stepData));
 
-        // Event listener for the Submit button (final submit after all steps)
-        submitButton.addEventListener("click", () => {
-            alert("Submit button clicked");
-            // Validate all steps before final submission
-            if (!validateStep(currentStep)) {
-                return; // Stop submission if validation fails
+                console.log(`Step Data Collected for ${formClass}:`, stepData);
+                return stepData;
             }
 
-            // Collect step data for all steps and store them in local storage
-            for (let step = 1; step <= 4; step++) {
-                const stepData = collectStepData(step);
-                localStorage.setItem(`step-${step}-data`, JSON.stringify(stepData));
-                Object.assign(stepsData, stepData);  // Merge collected data into stepsData object
+            const totalAnswerCounts = {}; 
+
+            // Helper function to update totalAnswerCount based on selected answer value (radio or checkbox)
+            function updateAnswerCount(formClass, value) {
+                if (!totalAnswerCounts[formClass]) {
+                    totalAnswerCounts[formClass] = 0; // Initialize if not set
+                }
+
+                console.log(`Before Update: ${formClass} =`, totalAnswerCounts[formClass], `Value =`, value);
+
+                if (value === 1 || value === 0.5 || value === -1) {
+                    totalAnswerCounts[formClass] += value;
+                }
+
+                console.log(`After Update: ${formClass} =`, totalAnswerCounts[formClass]);
             }
 
-            // Save all the collected test data to localStorage
-            localStorage.setItem("testStepsData", JSON.stringify(stepsData));
-
-            // Close the current modal and open the registration/login modal
-            if (currentModal) {
-                currentModal.modal('hide'); // Close the current modal using jQuery
-            }
-
-            if (registerModal) {
-                registerModal.modal('show'); // Open the register modal using jQuery
-            }
-        });
-
-        // Registration form submit handler
-        registerForm.submit(function (event) {
-            event.preventDefault();
-
-            // Capture the registration form data (name, email, password)
-            const name = $("#register-name").val();
-            const email = $("#register-email").val();
-            const phone = $("#register-phone").val();
-            const password = $("#register-password").val();
-
-            // Get test data from localStorage
-            const testData = JSON.parse(localStorage.getItem("testStepsData"));
-
-            // Prepare data for submission
-            const registrationData = {
-                name,
-                email,
-                password,
-                phone
-            };
-
-            // Simulate API request to register the user
-            $.ajax({
-                url: "{{ route('front.register') }}",
-                method: "POST",
-                contentType: "application/json",
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                data: JSON.stringify(registrationData),
-                success: function (data) {
-                    if (data.success) {
-                        const userId = data.user.id;
-
-                        // Now, associate the user ID with the test form data and save it to the database
-                        $.ajax({
-                            url: "{{ route('front.submit-free-test') }}",
-                            method: "POST",
-                            contentType: "application/json",
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            data: JSON.stringify({ userId, name, email, phone, testData }),
-                            success: function () {
-                                // alert("Registration and Test Data Submission Successful!");
-
-                                // Clear localStorage and close the modal
-                                localStorage.removeItem("testStepsData");
-                                registerModal.modal('hide'); // Close the register modal
-                                showThankYouModal();
-                            },
-                            error: function () {
-                                alert("Error submitting test data.");
-                            }
-                        });
-                    } else {
-                        alert("Registration failed.");
+            function updateModalTitle(stepIndex) {
+                const titles = [
+                    "Nutrition Knowledge Questions",  // Step 0
+                    "Sports Nutrition Principles",   // Step 1
+                    "Supplement Knowledge",          // Step 2
+                ];
+                console.log('step - ',stepIndex);
+                const modalTitle = document.getElementById('testModalLabel');
+                if (modalTitle) {
+                    if (stepIndex < 5) {
+                        modalTitle.textContent = "Nutrition Knowledge Questions";
+                    }else if (stepIndex == 5 ){
+                        modalTitle.textContent = "Sports Nutrition Principles";
+                    }else if(stepIndex == 6){
+                        modalTitle.textContent = "Sports Nutrition Principles";
+                    } else if (stepIndex == 7 ) {
+                        modalTitle.textContent = "Supplement Knowledge";
+                    } else if (stepIndex == 8 ) {
+                        modalTitle.textContent = "Your Results";  // Default title for other steps
                     }
-                },
-                error: function () {
-                    alert("Error registering.");
                 }
-            });
-        });
+            }
 
-        // Login form submit handler
-        loginForm.submit(function (event) {
-            event.preventDefault();
+            // Function to update meter-arrow rotation dynamically based on the answer count
+            function updateMeterArrows() {
+                // Calculate the degree of rotation for each form based on the total count
+                // const nutritionDegree = totalAnswerCounts['nutrition-form'] * 6; // Rotate 6 degrees per answer
+                // const sportsDegree = totalAnswerCounts['sports-form'] * 6;
+                // const supplementDegree = totalAnswerCounts['supplement-form'] * 6;
 
-            const testData = JSON.parse(localStorage.getItem("testStepsData"));
+                // Update the rotation of the meter arrows in real-time
+                // document.querySelector('.meter-arrow.nutrition-result').style.transform = `rotate(${nutritionDegree}deg)`;
+                // document.querySelector('.meter-arrow.sport-result').style.transform = `rotate(${sportsDegree}deg)`;
+                // document.querySelector('.meter-arrow.suppliment-result').style.transform = `rotate(${supplementDegree}deg)`;
 
-            // Capture the login form data (email, password)
-            const email = $("#test-login-email").val();
-            const password = $("#test-login-password").val();
-            console.log(email);
-            console.log(password);
-            // Prepare data for login submission
-            const loginData = {
-                email,
-                password
-            };
+                let degree = 5.14285714;
+                let totalDegree = totalAnswerCounts['nutrition-form'] * degree;
+                const maxTotal = 35;
+                const percentage = (totalAnswerCounts['nutrition-form'] / maxTotal) * 100;
+                console.log("Degree:", totalDegree);
+                console.log(Math.round(percentage));
+                $('.nutrition-percentage').text(Math.round(percentage) + "%");
+                $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + totalDegree + 'deg)');
 
-            // Simulate API request to log the user in
-            $.ajax({
-                url: "{{ route('front.login') }}",
-                method: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(loginData),
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function (data) {
-                    if (data.success) {
-                        const userId = data.user.id;
-                        const name = data.user.name;
-                        // Handle success (store user data, etc.)
-                        $.ajax({
-                            url: "{{ route('front.submit-free-test') }}",
-                            method: "POST",
-                            contentType: "application/json",
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            data: JSON.stringify({ userId, name, email, testData }),
-                            success: function () {
-                                // alert("Registration and Test Data Submission Successful!");
+                // Reset the totalAnswerCount for future submissions
+            }
 
-                                // Clear localStorage and close the modal
-                                localStorage.removeItem("testStepsData");
-                                loginModal.modal('hide'); // Close the register modal
-                                showThankYouModal();
-                            },
-                            error: function () {
-                                alert("Error submitting test data.");
-                            }
-                        });
+            // Event listener for step navigation buttons (previous/next steps)
+            showStepButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetStep = parseInt(button.getAttribute('target'), 10) - 1;
 
-                        // Close the login modal
-                        loginModal.modal('hide');
-                    } else {
-                        alert("Login failed.");
+                    if (targetStep > currentStep && !validateStep(currentStep)) {
+                        console.log("Validation failed for step:", currentStep);
+                        return; // Stop progression if validation fails
                     }
-                },
-                error: function () {
-                    alert("Error logging in.");
-                }
+                    // Collect data for the current step
+                    collectStepData(currentStep);
+
+                    // Update the meter arrows dynamically as the user progresses
+                    updateMeterArrows();
+
+                    // Update modal title dynamically based on the step
+                    updateModalTitle(targetStep);
+
+                    // Update active step indicators
+                    stepCircles.forEach((step, index) => {
+                        step.classList.toggle('active', index <= targetStep);
+                    });
+
+                    // Toggle the visibility of step tabs
+                    stepTabs.forEach((tab, index) => {
+                        tab.style.display = index === targetStep ? "block" : "none";
+                    });
+
+                    currentStep = targetStep;
+                });
             });
-        });
 
-        // Switch to the login modal from the register modal
-        loginLink.click(function () {
-            registerModal.modal('hide');
-            loginModal.modal('show');
-        });
+            submitButton.addEventListener("click", () => {
+                currentStep = 8;
+                updateModalTitle(currentStep);
 
-        // Switch to the register modal from the login modal
-        registerLink.click(function () {
-            loginModal.modal('hide');
-            registerModal.modal('show');
-        });
-
-        function showThankYouModal() {
-            // Set dynamic content
-            const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
-            const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
-            // Set the modal message
-            $('#thankYouMessage').text(thankYouMessage);
-            
-            // Set the URL for the plan button dynamically
-            $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
-            $('#thankYouModal').modal('show');
-        }
-    });
-
-    // Add this JavaScript code to your page
-    $(document).ready(function() {
-        var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
-        var elements = stripe.elements();
-        var style = {
-            base: {
-                color: '#32325d',
-                border:'1px solid #32325d',
-                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': {
-                    color: '#aab7c4'
+                if (!validateStep(currentStep)) {
+                    return; // Stop submission if validation fails
                 }
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        };
 
-        // Create card element
-        var card = elements.create('card', { style: style });
-        var cardErrors = document.getElementById('card-errors');
-        card.mount('#card-element');
+                const stepsData = {};
+                Object.keys(totalAnswerCounts).forEach(form => totalAnswerCounts[form] = 0); // Reset total counts per form
 
-        // Handle card input changes
-        card.on('change', function(event) {
-            var displayError = document.getElementById('card-errors');
-            if (event.error) {
-                displayError.textContent = event.error.message;
-            } else {
-                displayError.textContent = '';
-            }
-        });
+                // Collect step data for all steps
+                for (let step = 1; step <= 8; step++) {
+                    const stepData = collectStepData(step);
 
-        // Event listener for the 'Purchase Now' button
-        $('body').on('click', '.purchase-now-btn', function () {
-            // alert('Payment button clicked');
-            // e.preventDefault();
+                    localStorage.setItem(`step-${step}-data`, JSON.stringify(stepData));
+                    stepsData[`step-${step}`] = stepData;
+                }
 
-            var planId = $(this).data('plan-id');  // Get the plan ID
-            var price = $(this).data('plan-price');     // Get the plan price (if needed)
-            
-            // Update modal title with plan name (optional)
-            $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text());
+                // Save all data to local storage
+                localStorage.setItem("testStepsData", JSON.stringify(stepsData));
+                localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
 
-            // Show the modal
-            $('#purchaseModal').modal('show');
+                console.log("Total Answer Counts by Form: ", totalAnswerCounts);
 
-            // Handle the form submission
-            $('#payment-form').submit(function(event) {
+                $('#div9').css('display', 'block');
+                $('#div8').css('display', 'none');
+                $('#step-9').addClass('active');
+
+                updateMeterArrows();
+            });
+
+            // submitButton.addEventListener("click", () => {
+
+            //     currentStep = 8;
+            //     updateModalTitle(currentStep);
+
+            //     if (!validateStep(currentStep)) {
+            //         return; // Stop submission if validation fails
+            //     }
+
+            //     // Collect step data for all steps and store them in local storage
+            //     const stepsData = {}; // Object to store all steps data
+            //     totalAnswerCounts = 0; // Reset the total count before collecting new data
+
+            //     // Collect step data for all steps and store them in local storage
+            //     for (let step = 1; step <= 8; step++) {
+            //         const stepData = collectStepData(step);
+
+            //         // Store step data in local storage
+            //         localStorage.setItem(`step-${step}-data`, JSON.stringify(stepData));
+            //         stepsData[`step-${step}`] = stepData;  // Merge collected data into stepsData object
+            //     }
+            //     console.log(stepsData);
+            //     // Save all the collected test data to localStorage
+            //     localStorage.setItem("testStepsData", JSON.stringify(stepsData));
+            //     localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
+
+            //     console.log("Total Answer Count: ", totalAnswerCounts);
+
+            //     // Save the total answer count to localStorage (can be used for final processing or API call)
+            //     $('#div9').css('display', 'block');
+            //     $('#div8').css('display', 'none');
+            //     $('#step-9').addClass('active');
+                
+
+            //     // Update meter arrows one last time
+            //     updateMeterArrows();
+
+            //     totalAnswerCounts = 0;
+               
+            // });
+
+            $('.last-step').click(function () {
+                if (currentModal) {
+                    currentModal.modal('hide'); // Close the current modal using jQuery
+                }
+
+                if (registerModal) {
+                    registerModal.modal('show'); // Open the register modal using jQuery
+                }
+            })
+            // Registration form submit handler
+            registerForm.submit(function (event) {
                 event.preventDefault();
 
-                // Disable the submit button to prevent multiple clicks
-                $('#submit').prop('disabled', true);
+                // Capture the registration form data (name, email, password)
+                const name = $("#register-name").val();
+                const email = $("#register-email").val();
+                const phone = $("#register-phone").val();
+                const password = $("#register-password").val();
 
-                // Create a PaymentMethod with Stripe's API
-                
-                stripe.createPaymentMethod({
-                    type: 'card',
-                    card: card,
-                    billing_details: {
-                        name: $('#name').val(),
-                        email: $('#email').val(),
-                        phone: $('#phone').val(),
+                // Get test data from localStorage
+                const testData = JSON.parse(localStorage.getItem("testStepsData"));
+                const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
+
+                // Prepare data for submission
+                const registrationData = {
+                    name,
+                    email,
+                    password,
+                    phone
+                };
+
+                // Simulate API request to register the user
+                $.ajax({
+                    url: "{{ route('front.register') }}",
+                    method: "POST",
+                    contentType: "application/json",
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                }).then(function(result) {
-                    if (result.error) {
-                        // Display error in the card element
-                        cardErrors.textContent = result.error.message;
-                        $('#submit').prop('disabled', false);
-                    } else {
-                        // Call the server to create the PaymentIntent
+                    data: JSON.stringify(registrationData),
+                    success: function (data) {
+                        if (data.success) {
+                            const userId = data.user.id;
+
+                            // Now, associate the user ID with the test form data and save it to the database
+                            $.ajax({
+                                url: "{{ route('front.submit-free-test') }}",
+                                method: "POST",
+                                contentType: "application/json",
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                data: JSON.stringify({ userId, name, email, phone, testData, totalAnswerCount }),
+                                success: function () {
+                                    // alert("Registration and Test Data Submission Successful!");
+
+                                    // Clear localStorage and close the modal
+                                    localStorage.removeItem("testStepsData");
+                                    localStorage.removeItem("totalAnswerCounts");
+                                    registerModal.modal('hide'); // Close the register modal
+                                    showThankYouModal();
+                                },
+                                error: function () {
+                                    alert("Error submitting test data.");
+                                }
+                            });
+                        } else {
+                            alert("Registration failed.");
+                        }
+                    },
+                    error: function () {
+                        alert("Error registering.");
+                    }
+                });
+            });
+
+            // Login form submit handler
+            loginForm.submit(function (event) {
+                event.preventDefault();
+
+                const testData = JSON.parse(localStorage.getItem("testStepsData"));
+                const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
+
+                // Capture the login form data (email, password)
+                const email = $("#test-login-email").val();
+                const password = $("#test-login-password").val();
+                console.log(email);
+                console.log(password);
+                // Prepare data for login submission
+                const loginData = {
+                    email,
+                    password
+                };
+
+                // Simulate API request to log the user in
+                $.ajax({
+                    url: "{{ route('front.login') }}",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(loginData),
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            const userId = data.user.id;
+                            const name = data.user.name;
+                            // Handle success (store user data, etc.)
+                            $.ajax({
+                                url: "{{ route('front.submit-free-test') }}",
+                                method: "POST",
+                                contentType: "application/json",
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                data: JSON.stringify({ userId, name, email, testData ,totalAnswerCount}),
+                                success: function () {
+                                    // alert("Registration and Test Data Submission Successful!");
+
+                                    // Clear localStorage and close the modal
+                                    localStorage.removeItem("testStepsData");
+                                    localStorage.removeItem("totalAnswerCounts");
+
+                                    loginModal.modal('hide'); // Close the register modal
+                                    showThankYouModal();
+                                },
+                                error: function () {
+                                    alert("Error submitting test data.");
+                                }
+                            });
+
+                            // Close the login modal
+                            loginModal.modal('hide');
+                        } else {
+                            alert("Login failed.");
+                        }
+                    },
+                    error: function () {
+                        alert("Error logging in.");
+                    }
+                });
+            });
+
+            // Switch to the login modal from the register modal
+            loginLink.click(function () {
+                registerModal.modal('hide');
+                loginModal.modal('show');
+            });
+
+            // Switch to the register modal from the login modal
+            registerLink.click(function () {
+                loginModal.modal('hide');
+                registerModal.modal('show');
+            });
+
+            function showThankYouModal() {
+                // Set dynamic content
+                const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
+                const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
+                // Set the modal message
+                $('#thankYouMessage').text(thankYouMessage);
+                
+                // Set the URL for the plan button dynamically
+                $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
+                $('#thankYouModal').modal('show');
+            }
+        });
+
+        // $(document).ready(function () {
+        //     $('#TakeTestModel').removeClass('blur-background');
+        //     $('#takeFreeTest').on('click', function () {
+        //         $('#TakeTestModel').modal('show');
+        //     });
+
+        //     $('.unlock-result').on('click', function () {
+        //         $('#TakeTestModel').addClass('blur-background'); // Add blur to the body
+        //         $('#detailsModal').modal('show');
+
+        //     });
+
+        //     $('.detail-modal-close').on('click', function () {
+        //         $('#detailsModal').modal('hide');
+        //         $('#TakeTestModel').removeClass('blur-background'); // Remove blur
+        //     })
+            
+        //     // Initialize all the necessary variables
+        //     const stepCircles = document.querySelectorAll('.tab-steps');
+        //     const stepTabs = document.querySelectorAll(".step-tab-box");
+        //     const showStepButtons = document.querySelectorAll('.showStepTab');
+        //     const submitButton = document.querySelector(".submit-free-test"); // Submit button for final submission
+        //     const registerModal = $("#registerModal"); // Registration/Login modal
+        //     const loginModal = $("#testLoginModal"); // Registration/Login modal
+        //     const registerForm = $("#register-form"); // Registration form
+        //     const loginForm = $("#test-login-form"); // Login form
+        //     const loginLink = $(".login-link"); // Login link in Register modal
+        //     const registerLink = $(".register-link"); // Register link in Login modal
+        //     const stepsData = {}; // Object to store all steps data
+        //     const currentModal = $("#TakeTestModel"); // Current modal for test steps
+
+        //     let currentStep = 0; // Track the active step index
+        //     let totalAnswerCount = 0; // To store the total count of selected answers
+
+        //     // Initially, show only the first step-tab-box
+        //     stepTabs.forEach((tab, index) => {
+        //         tab.style.display = index === 0 ? "block" : "none";
+        //     });
+
+        //     // Function to validate fields in the current step
+        //     function validateStep(stepIndex) {
+        //         const stepTab = stepTabs[stepIndex]; // Get current step tab
+        //         const inputs = stepTab.querySelectorAll('input, textarea, select');
+        //         let isValid = true;
+        //         const errorMessage = "* Please select an answer for this question.";
+
+        //         // Loop through each input to validate
+        //         inputs.forEach(input => {
+        //             // Reset border color before validation
+        //             input.style.border = "";
+
+        //             if (input.type === "radio" || input.type === "checkbox") {
+        //                 // Validation for radio/checkbox inputs
+        //                 const groupName = input.name;
+        //                 const checkedInput = document.querySelector(`input[name="${groupName}"]:checked`);
+
+        //                 if (!checkedInput) {
+        //                     isValid = false;
+        //                     // Apply red border to all unchecked inputs in the group
+        //                     document.querySelectorAll(`input[name="${groupName}"]`).forEach(el => {
+        //                         el.style.border = "1px solid red";
+        //                     });
+        //                 } else {
+        //                     // Reset border for valid radio/checkbox group
+        //                     document.querySelectorAll(`input[name="${groupName}"]`).forEach(el => {
+        //                         el.style.border = "";
+        //                     });
+        //                 }
+        //             } else if (input.type === "text" || input.type === "textarea" || input.tagName === "SELECT") {
+        //                 // Validation for text inputs, textarea, and select elements
+        //                 if (input.value.trim() === "") {
+        //                     input.style.border = "1px solid red";
+        //                     isValid = false;
+        //                 } else {
+        //                     input.style.border = "";
+        //                 }
+        //             }
+        //         });
+
+        //         // Display error message if validation fails
+        //         const cardBody = stepTab.querySelector('.card-body');
+        //         if(cardBody) {
+        //             let errorMessageSpan = cardBody.querySelector('.general-error-message');
+        //             if (!errorMessageSpan) {
+        //                 // Create error message span if not present
+        //                 errorMessageSpan = document.createElement("span");
+        //                 errorMessageSpan.className = "text-danger general-error-message m-3";
+        //                 cardBody.appendChild(errorMessageSpan);
+        //             }
+
+        //             errorMessageSpan.textContent = errorMessage;
+        //             errorMessageSpan.style.display = isValid ? "none" : "block";
+        //         }
+        //         return isValid;
+        //     }
+
+        //     // Function to collect data for the current step and calculate the total answers (0 or 1)
+        //     // function collectStepData(currentStep) {
+        //     //     const form = document.querySelector(`#div${currentStep}`);
+        //     //     const stepData = {};
+        //     //     const questionInput = form.querySelector("input[type='hidden'][name^='questions']");
+        //     //     const questionText = questionInput ? questionInput.value : "";
+
+        //     //     if (questionText) {
+        //     //         stepData[questionText] = {};
+        //     //     }
+
+        //     //     const rows = form.querySelectorAll("tbody tr");
+        //     //     rows.forEach(row => {
+        //     //         const foodName = row.querySelector("td:first-child").textContent.trim();
+        //     //         const selectedAnswer = row.querySelector("input[type='radio']:checked");
+
+        //     //         if (foodName) {
+        //     //             const answerValue = selectedAnswer ? selectedAnswer.value : "No answer selected";
+        //     //             stepData[questionText][foodName] = answerValue;
+
+        //     //             // Increment totalAnswerCount based on the answer value
+        //     //             if (answerValue === '1' || answerValue === '0.5') {
+        //     //                 totalAnswerCount += parseFloat(answerValue); // Increment the total count
+        //     //                 console.log('answerValue - ',totalAnswerCount);
+        //     //             }else if(answerValue === '-1'){
+        //     //                 totalAnswerCount -= parseFloat(answerValue); // Decrement the total count
+        //     //             }
+        //     //         }
+        //     //     });
+
+        //     //     return stepData;
+        //     // }
+
+        //     function collectStepData(currentStep) {
+        //         const form = document.querySelector(`#div${currentStep}`);
+        //         const stepData = {};
+
+        //         if (!form || !form.classList.contains("nutrition-form")) return stepData; // Only process if it's a nutrition-form
+
+        //         // Loop through all hidden question inputs in the step
+        //         const questionInputs = form.querySelectorAll("input[type='hidden'][name^='questions']");
+                
+        //         questionInputs.forEach(questionInput => {
+        //             const questionText = questionInput.value;
+        //             if (!questionText) return; // Skip if no question text
+
+        //             stepData[questionText] = {}; // Initialize question object
+
+        //             // Get the closest card container (if it exists)
+        //             const cardContainer = questionInput.closest(".card");
+
+        //             // 1️⃣ **Handle Table-based Questions**
+        //             if (cardContainer) {
+        //                 const table = cardContainer.querySelector("table");
+        //                 if (table) {
+        //                     const rows = table.querySelectorAll("tbody tr");
+
+        //                     rows.forEach(row => {
+        //                         const foodNameElem = row.querySelector("td:first-child");
+        //                         const selectedAnswer = row.querySelector("input[type='radio']:checked");
+
+        //                         if (foodNameElem) {
+        //                             const foodName = foodNameElem.textContent.trim();
+        //                             const answerValue = selectedAnswer ? selectedAnswer.value : "No answer selected";
+        //                             stepData[questionText][foodName] = answerValue;
+
+        //                             // Increment/Decrement totalAnswerCount
+        //                             if (answerValue === '1' || answerValue === '0.5') {
+        //                                 totalAnswerCount += parseFloat(answerValue);
+        //                             } else if (answerValue === '-1') {
+        //                                 totalAnswerCount -= parseFloat(answerValue);
+        //                             }
+        //                         }
+        //                     });
+        //                 }
+        //             }
+
+        //             // 2️⃣ **Handle Non-Table Radio Button Questions**
+        //             const radioOptions = form.querySelectorAll(`input[type="radio"][name^='ans[${questionInput.name.replace("questions[", "").replace("]", "")}]']:checked`);
+                    
+        //             radioOptions.forEach(radio => {
+        //                 const labelElem = radio.closest(".form-check")?.querySelector("label");
+        //                 if (!labelElem) return; // Skip if label is not found
+
+        //                 const label = labelElem.textContent.trim();
+        //                 const answerValue = radio.value;
+
+        //                 stepData[questionText][label] = answerValue;
+
+        //                 // Increment/Decrement totalAnswerCount
+        //                 if (answerValue === '1' || answerValue === '0.5') {
+        //                     totalAnswerCount += parseFloat(answerValue);
+        //                 } else if (answerValue === '-1') {
+        //                     totalAnswerCount -= parseFloat(answerValue);
+        //                 }
+        //             });
+        //         });
+        //         console.log(stepData);
+        //         return stepData;
+        //     }
+
+        //     // Function to update the modal title dynamically based on the current step
+        //     function updateModalTitle(stepIndex) {
+        //         const titles = [
+        //             "Nutrition Knowledge Questions",  // Step 0
+        //             "Sports Nutrition Principles",   // Step 1
+        //             "Supplement Knowledge",          // Step 2
+        //         ];
+        //         console.log('step - ',stepIndex);
+        //         const modalTitle = document.getElementById('testModalLabel');
+        //         if (modalTitle) {
+        //             if (stepIndex < 5) {
+        //                 modalTitle.textContent = "Nutrition Knowledge Questions";
+        //             }else if (stepIndex == 5 ){
+        //                 modalTitle.textContent = "Sports Nutrition Principles";
+        //             }else if(stepIndex == 6){
+        //                 modalTitle.textContent = "Sports Nutrition Principles";
+        //             } else if (stepIndex == 7 ) {
+        //                 modalTitle.textContent = "Supplement Knowledge";
+        //             } else if (stepIndex == 8 ) {
+        //                 modalTitle.textContent = "Your Results";  // Default title for other steps
+        //             }
+        //         }
+        //     }
+
+        //     // Event listener for step navigation buttons (previous/next steps)
+        //     showStepButtons.forEach(button => {
+        //         button.addEventListener('click', () => {
+        //             const targetStep = parseInt(button.getAttribute('target'), 10) - 1;
+
+        //             // If moving forward, validate the current step
+        //             if (targetStep > currentStep && !validateStep(currentStep)) {
+        //                 return; // Stop progression if validation fails
+        //             }
+        //             console.log(targetStep);
+        //             // Update the modal title dynamically based on the target step
+        //             updateModalTitle(targetStep);
+
+        //             // Update step tabs visibility and active step
+        //             stepCircles.forEach((step, index) => {
+        //                 step.classList.toggle('active', index <= targetStep);
+        //             });
+
+        //             stepTabs.forEach((tab, index) => {
+        //                 tab.style.display = index === targetStep ? "block" : "none";
+        //             });
+
+        //             currentStep = targetStep;
+        //         });
+        //     });
+
+        //     // Event listener for the Submit button (final submit after all steps)
+        //     submitButton.addEventListener("click", () => {
+        //         // Validate all steps before final submission
+        //         // console.log(currentStep);
+        //         currentStep = 8;
+        //         updateModalTitle(currentStep);
+        //         if (!validateStep(currentStep)) {
+        //             return; // Stop submission if validation fails
+        //         }
+
+        //         // Collect step data for all steps and store them in local storage
+        //         const stepsData = {}; // Object to store all steps data
+        //         totalAnswerCount = 0; // Reset the total count before collecting new data
+
+        //         for (let step = 1; step <= 8; step++) {
+        //             const stepData = collectStepData(step);
+        //             localStorage.setItem(`step-${step}-data`, JSON.stringify(stepData));
+        //             Object.assign(stepsData, stepData);  // Merge collected data into stepsData object
+        //         }
+        //         // console.log(stepsData);
+        //         // Save all the collected test data to localStorage
+        //         localStorage.setItem("testStepsData", JSON.stringify(stepsData));
+        //         localStorage.setItem("totalAnswerCount", totalAnswerCount); // Save the total answer count
+        //         console.log("Total Answer Count: ", totalAnswerCount);
+
+        //         // Save the total answer count to localStorage (can be used for final processing or API call)
+        //         $('#div9').css('display', 'block');
+        //         $('#div8').css('display', 'none');
+        //         $('#step-9').addClass('active');
+        //         let degree = 5.14285714;
+        //         let totalDegree = totalAnswerCount * degree;
+        //         const maxTotal = 35;
+        //         const percentage = (totalAnswerCount / maxTotal) * 100;
+        //         console.log("Degree:", totalDegree);
+        //         console.log(Math.round(percentage));
+        //         $('.nutrition-percentage').text(Math.round(percentage) + "%");
+        //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + totalDegree + 'deg)');
+
+        //         // Reset the totalAnswerCount for future submissions
+        //         totalAnswerCount = 0;
+        //     });
+
+        //     $('.last-step').click(function () {
+        //         if (currentModal) {
+        //             currentModal.modal('hide'); // Close the current modal using jQuery
+        //         }
+
+        //         if (registerModal) {
+        //             registerModal.modal('show'); // Open the register modal using jQuery
+        //         }
+        //     })
+        //     // Registration form submit handler
+        //     registerForm.submit(function (event) {
+        //         event.preventDefault();
+
+        //         // Capture the registration form data (name, email, password)
+        //         const name = $("#register-name").val();
+        //         const email = $("#register-email").val();
+        //         const phone = $("#register-phone").val();
+        //         const password = $("#register-password").val();
+
+        //         // Get test data from localStorage
+        //         const testData = JSON.parse(localStorage.getItem("testStepsData"));
+
+        //         // Prepare data for submission
+        //         const registrationData = {
+        //             name,
+        //             email,
+        //             password,
+        //             phone
+        //         };
+
+        //         // Simulate API request to register the user
+        //         $.ajax({
+        //             url: "{{ route('front.register') }}",
+        //             method: "POST",
+        //             contentType: "application/json",
+        //             headers: {
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //             data: JSON.stringify(registrationData),
+        //             success: function (data) {
+        //                 if (data.success) {
+        //                     const userId = data.user.id;
+
+        //                     // Now, associate the user ID with the test form data and save it to the database
+        //                     $.ajax({
+        //                         url: "{{ route('front.submit-free-test') }}",
+        //                         method: "POST",
+        //                         contentType: "application/json",
+        //                         headers: {
+        //                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                         },
+        //                         data: JSON.stringify({ userId, name, email, phone, testData }),
+        //                         success: function () {
+        //                             // alert("Registration and Test Data Submission Successful!");
+
+        //                             // Clear localStorage and close the modal
+        //                             localStorage.removeItem("testStepsData");
+        //                             registerModal.modal('hide'); // Close the register modal
+        //                             showThankYouModal();
+        //                         },
+        //                         error: function () {
+        //                             alert("Error submitting test data.");
+        //                         }
+        //                     });
+        //                 } else {
+        //                     alert("Registration failed.");
+        //                 }
+        //             },
+        //             error: function () {
+        //                 alert("Error registering.");
+        //             }
+        //         });
+        //     });
+
+        //     // Login form submit handler
+        //     loginForm.submit(function (event) {
+        //         event.preventDefault();
+
+        //         const testData = JSON.parse(localStorage.getItem("testStepsData"));
+
+        //         // Capture the login form data (email, password)
+        //         const email = $("#test-login-email").val();
+        //         const password = $("#test-login-password").val();
+        //         console.log(email);
+        //         console.log(password);
+        //         // Prepare data for login submission
+        //         const loginData = {
+        //             email,
+        //             password
+        //         };
+
+        //         // Simulate API request to log the user in
+        //         $.ajax({
+        //             url: "{{ route('front.login') }}",
+        //             method: "POST",
+        //             contentType: "application/json",
+        //             data: JSON.stringify(loginData),
+        //             headers: {
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //             success: function (data) {
+        //                 if (data.success) {
+        //                     const userId = data.user.id;
+        //                     const name = data.user.name;
+        //                     // Handle success (store user data, etc.)
+        //                     $.ajax({
+        //                         url: "{{ route('front.submit-free-test') }}",
+        //                         method: "POST",
+        //                         contentType: "application/json",
+        //                         headers: {
+        //                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                         },
+        //                         data: JSON.stringify({ userId, name, email, testData }),
+        //                         success: function () {
+        //                             // alert("Registration and Test Data Submission Successful!");
+
+        //                             // Clear localStorage and close the modal
+        //                             localStorage.removeItem("testStepsData");
+        //                             loginModal.modal('hide'); // Close the register modal
+        //                             showThankYouModal();
+        //                         },
+        //                         error: function () {
+        //                             alert("Error submitting test data.");
+        //                         }
+        //                     });
+
+        //                     // Close the login modal
+        //                     loginModal.modal('hide');
+        //                 } else {
+        //                     alert("Login failed.");
+        //                 }
+        //             },
+        //             error: function () {
+        //                 alert("Error logging in.");
+        //             }
+        //         });
+        //     });
+
+        //     // Switch to the login modal from the register modal
+        //     loginLink.click(function () {
+        //         registerModal.modal('hide');
+        //         loginModal.modal('show');
+        //     });
+
+        //     // Switch to the register modal from the login modal
+        //     registerLink.click(function () {
+        //         loginModal.modal('hide');
+        //         registerModal.modal('show');
+        //     });
+
+        //     function showThankYouModal() {
+        //         // Set dynamic content
+        //         const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
+        //         const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
+        //         // Set the modal message
+        //         $('#thankYouMessage').text(thankYouMessage);
+                
+        //         // Set the URL for the plan button dynamically
+        //         $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
+        //         $('#thankYouModal').modal('show');
+        //     }
+        // });
+
+        // Add this JavaScript code to your page
+        $(document).ready(function() {
+            var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+            // var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
+            var elements = stripe.elements();
+            var style = {
+                base: {
+                    color: '#32325d',
+                    border:'1px solid #32325d',
+                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '16px',
+                    '::placeholder': {
+                        color: '#aab7c4'
+                    }
+                },
+                invalid: {
+                    color: '#fa755a',
+                    iconColor: '#fa755a'
+                }
+            };
+
+            // Create card element
+            var card = elements.create('card', { style: style });
+            var cardErrors = document.getElementById('card-errors');
+            card.mount('#card-element');
+
+            // Handle card input changes
+            card.on('change', function(event) {
+                var displayError = document.getElementById('card-errors');
+                if (event.error) {
+                    displayError.textContent = event.error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+
+            // Event listener for the 'Purchase Now' button
+            $('body').on('click', '.purchase-now-btn', function () {
+                // alert('Payment button clicked');
+                // e.preventDefault();
+
+                var planId = $(this).data('plan-id');  // Get the plan ID
+                var price = $(this).data('plan-price');     // Get the plan price (if needed)
+                
+                // Update modal title with plan name (optional)
+                $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text());
+
+                // Check if the user is authenticated
+                var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }}; // Use Laravel's Auth system to check if the user is authenticated
+                var isAdmin = {{ isset(Auth::user()->is_superadmin) ? 'true' : 'false' }};
+                if (isAuthenticated && !isAdmin) {
+                    // If authenticated, show only the payment details in the modal and remove registration details
+                    // Hide the registration form fields in the modal
+                    $('#registration-details').hide();  // Assuming you have a div with ID 'registration-details' for registration form
+                    $('#payment-details').show();  // Show the payment form section in the modal
+
+                    @if(Auth::check())
+                        $('#name').val('{{ Auth::user()->first_name }} {{Auth::user()->last_name }}');  // Pre-fill name field
+                        $('#email').val('{{ Auth::user()->email }}');  // Pre-fill email field
+                        $('#phone').val('{{ Auth::user()->phone ?? "" }}');  // Pre-fill phone field, use empty string if null
+                    @endif
+                    // Show the modal
+                }
+
+                // Show the modal
+                $('#purchaseModal').modal('show');
+
+                // Handle the form submission
+                $('#payment-form').submit(function(event) {
+                    event.preventDefault();
+
+                    // Disable the submit button to prevent multiple clicks
+                    $('#submit').prop('disabled', true);
+
+                    // Create a PaymentMethod with Stripe's API
+                    let discountCode = $('#promo-code').val();
+                    console.log(discountCode);
+                    let discount = $('#discount').val();
+                    console.log(discount);
+                    if(discount == 100.00) {
                         $.ajax({
-                            url: '{{ route("process.payment") }}', // Define the route to process the payment
+                            url: '{{ route("process.payment") }}',
                             method: 'POST',
                             data: {
-                                payment_method_id: result.paymentMethod.id,
                                 plan_id: planId,
                                 price: price,
                                 name: $('#name').val(),
                                 email: $('#email').val(),
                                 phone: $('#phone').val(),
                                 password: $('#password').val(),
+                                coupon_code: discountCode,
                                 _token: '{{ csrf_token() }}'
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 if (response.success) {
-                                    // Handle successful payment
-                                    // alert('Payment successful!');
+                                    // Close the modal
                                     $('#purchaseModal').modal('hide');
-                                    // $('#thankYouModal').modal('show');
 
-                                    var user_id = response.data.user_id;  // Assuming the backend sends the user_id
-                                    var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
+                                    var user_id = response.data.user_id;
+                                    var payment_id = response.data.payment_id;
 
-                                    // Check if there's a redirect URL provided
+                                    // Redirect the user if a URL is provided
                                     if (response.redirect_url) {
-
-                                        var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
-                                        // Redirect the user to the provided URL after a delay (optional)
-                                        setTimeout(function() {
+                                        var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                        setTimeout(function () {
                                             window.location.href = redirectUrlWithUserId;
-                                        }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                        }, 3000);
                                     }
-
                                 } else {
-                                    // Handle failed payment
+                                    // Show error message for failed payment
                                     alert('Payment failed: ' + response.message);
+                                    $('#submit').prop('disabled', false);
                                 }
                             },
-                            error: function(xhr, status, error) {
+                            error: function (xhr, status, error) {
                                 console.error('Payment error:', error);
                                 alert('An error occurred while processing the payment.');
                                 $('#submit').prop('disabled', false);
                             }
                         });
+                    }else {
+                        stripe.createPaymentMethod({
+                            type: 'card',
+                            card: card,
+                            billing_details: {
+                                name: $('#name').val(),
+                                email: $('#email').val(),
+                                phone: $('#phone').val(),
+                            },
+                        }).then(function(result) {
+                            if (result.error) {
+                                // Display error in the card element
+                                cardErrors.textContent = result.error.message;
+                                $('#submit').prop('disabled', false);
+                            } else {
+                                // Call the server to create the PaymentIntent
+                                $.ajax({
+                                    url: '{{ route("process.payment") }}', // Define the route to process the payment
+                                    method: 'POST',
+                                    data: {
+                                        payment_method_id: result.paymentMethod.id,
+                                        plan_id: planId,
+                                        price: price,
+                                        name: $('#name').val(),
+                                        email: $('#email').val(),
+                                        phone: $('#phone').val(),
+                                        password: $('#password').val(),
+                                        coupon_code: dicountCode,
+                                        _token: '{{ csrf_token() }}'
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            // Handle successful payment
+                                            // alert('Payment successful!');
+                                            $('#purchaseModal').modal('hide');
+                                            // $('#thankYouModal').modal('show');
+
+                                            var user_id = response.data.user_id;  // Assuming the backend sends the user_id
+                                            var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
+
+                                            // Check if there's a redirect URL provided
+                                            if (response.redirect_url) {
+
+                                                var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
+                                                // Redirect the user to the provided URL after a delay (optional)
+                                                setTimeout(function() {
+                                                    window.location.href = redirectUrlWithUserId;
+                                                }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                            }
+
+                                        } else {
+                                            // Handle failed payment
+                                            alert('Payment failed: ' + response.message);
+                                        }
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Payment error:', error);
+                                        alert('An error occurred while processing the payment.');
+                                        $('#submit').prop('disabled', false);
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
-            });
-            
-            $('#view-sample-plan').click(function () {
-                // var planId = $(this).data('plan-id');
                 
-                $('#samplePlanModalLabel').text('Loading...');
-                $('#samplePlanModalBody').html('<p>Loading details...</p>');
-                $('#samplePlanModal').modal('show');
+                $('#view-sample-plan').click(function () {
+                    // var planId = $(this).data('plan-id');
+                    
+                    $('#samplePlanModalLabel').text('Loading...');
+                    $('#samplePlanModalBody').html('<p>Loading details...</p>');
+                    $('#samplePlanModal').modal('show');
 
-                $.ajax({
-                    url: '{{ route("front.get-default-plan-details", ":id") }}'.replace(':id', planId),
-                    method: 'GET',
-                    success: function (response) {
-                        if (response.error) {
-                            $('#samplePlanModalBody').html('<p>' + response.error + '</p>');
-                            return;
+                    $.ajax({
+                        url: '{{ route("front.get-default-plan-details", ":id") }}'.replace(':id', planId),
+                        method: 'GET',
+                        success: function (response) {
+                            if (response.error) {
+                                $('#samplePlanModalBody').html('<p>' + response.error + '</p>');
+                                return;
+                            }
+
+                            // Build the modal content for main plan
+                            const mainPlan = response.mainPlan;
+                            let modalContent = `<h5>${mainPlan.name}</h5>`;
+                            // modalContent += `<p>Price: $${mainPlan.price}</p>`;
+                            modalContent += buildMealTimeHtml(mainPlan.mealTimes);
+
+                            // Build the modal content for subPlans
+                            if (response.subPlans.length > 0) {
+                                modalContent += `<h5></h5>`;
+                                response.subPlans.forEach(function (subPlan) {
+                                    modalContent += `<div class="mt-3"><h6>Sub Plan: ${subPlan.name}</h6>`;
+                                    modalContent += `<p>Price: $${subPlan.price}</p>`;
+                                    modalContent += buildMealTimeHtml(subPlan.mealTimes);
+                                    modalContent += `</div>`;
+                                });
+                            }
+
+                            $('#samplePlanModalLabel').text('Plan Details: ' + mainPlan.name);
+                            $('#samplePlanModalBody').html(modalContent);
+                        },
+                        error: function () {
+                            $('#samplePlanModalBody').html('<p>Error fetching plan details. Please try again later.</p>');
                         }
-
-                        // Build the modal content for main plan
-                        const mainPlan = response.mainPlan;
-                        let modalContent = `<h5>${mainPlan.name}</h5>`;
-                        // modalContent += `<p>Price: $${mainPlan.price}</p>`;
-                        modalContent += buildMealTimeHtml(mainPlan.mealTimes);
-
-                        // Build the modal content for subPlans
-                        if (response.subPlans.length > 0) {
-                            modalContent += `<h5></h5>`;
-                            response.subPlans.forEach(function (subPlan) {
-                                modalContent += `<div class="mt-3"><h6>Sub Plan: ${subPlan.name}</h6>`;
-                                modalContent += `<p>Price: $${subPlan.price}</p>`;
-                                modalContent += buildMealTimeHtml(subPlan.mealTimes);
-                                modalContent += `</div>`;
-                            });
-                        }
-
-                        $('#samplePlanModalLabel').text('Plan Details: ' + mainPlan.name);
-                        $('#samplePlanModalBody').html(modalContent);
-                    },
-                    error: function () {
-                        $('#samplePlanModalBody').html('<p>Error fetching plan details. Please try again later.</p>');
-                    }
+                    });
                 });
-            });
 
-            // Function to build HTML for mealTimes, categories, meals, and items
-            function buildMealTimeHtml(mealTimes) {
-                let html = `<ul>`;
-                mealTimes.forEach(function (mealTime) {
-                    html += `<li><strong>${mealTime.title}</strong> (Meal Time)<ul>`;
+                // Function to build HTML for mealTimes, categories, meals, and items
+                function buildMealTimeHtml(mealTimes) {
+                    let html = `<ul>`;
+                    mealTimes.forEach(function (mealTime) {
+                        html += `<li><strong>${mealTime.title}</strong> (Meal Time)<ul>`;
 
-                    mealTime.categories.forEach(function (category) {
-                        html += `<li><strong>${category.name}</strong> (Category)<ul>`;
+                        mealTime.categories.forEach(function (category) {
+                            html += `<li><strong>${category.name}</strong> (Category)<ul>`;
 
-                        category.meals.forEach(function (meal) {
-                            html += `<li><strong>${meal.name}</strong> (Meal)<ul>`;
+                            category.meals.forEach(function (meal) {
+                                html += `<li><strong>${meal.name}</strong> (Meal)<ul>`;
 
-                            meal.items.forEach(function (item) {
-                                html += `<li>${item.name} (Food)<ul>`;
+                                meal.items.forEach(function (item) {
+                                    html += `<li>${item.name} (Food)<ul>`;
 
-                                item.swapItems.forEach(function (swapItem) {
-                                    html += `<li>${swapItem.name} (Swap Food)</li>`;
+                                    item.swapItems.forEach(function (swapItem) {
+                                        html += `<li>${swapItem.name} (Swap Food)</li>`;
+                                    });
+
+                                    html += `</ul></li>`;
                                 });
 
                                 html += `</ul></li>`;
@@ -1791,76 +3230,121 @@
 
                         html += `</ul></li>`;
                     });
+                    html += `</ul>`;
+                    return html;
+                }
 
-                    html += `</ul></li>`;
+                document.getElementById('apply-promo-code').addEventListener('click', function () {
+                    const promoCode = document.getElementById('promo-code').value.trim();
+
+                    if (promoCode === '') {
+                        // Show error if promo code is empty
+                        document.getElementById('promo-message').textContent = 'Please enter a coupon code.';
+                        document.getElementById('promo-message').classList.add('text-danger');
+                        document.getElementById('promo-message').classList.remove('text-success');
+                        return;
+                    }
+
+                    // AJAX request to validate promo code
+                    fetch('{{ route("validate.coupon.code") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ code: promoCode, plan_id: planId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        let msg = ''; // Declare the message variable outside the conditional blocks
+
+                        if (data.valid) {
+                            if(data.type == 'percentage') {
+                                msg = `Coupon code applied! ${data.discount}% discount.`;
+                                if(data.discount === "100.00" || data.discount == 100.00) {
+                                    $('#discount').val(data.discount);
+                                    $('#payment-details').hide();
+                                }
+                            }else {
+                                msg = `Coupon code applied! $${data.discount} discount.`;
+                            }
+                            $('#discount').val(data.discount);
+                            // Promo code is valid
+                            document.getElementById('promo-message').textContent = msg;
+                            document.getElementById('promo-message').classList.add('text-success');
+                            document.getElementById('promo-message').classList.remove('text-danger');
+                        } else {
+                            // Promo code is invalid or expired
+                            document.getElementById('promo-message').textContent = data.message;
+                            document.getElementById('promo-message').classList.add('text-danger');
+                            document.getElementById('promo-message').classList.remove('text-success');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('promo-message').textContent = 'An error occurred. Please try again.';
+                        document.getElementById('promo-message').classList.add('text-danger');
+                        document.getElementById('promo-message').classList.remove('text-success');
+                    });
                 });
-                html += `</ul>`;
-                return html;
-            }
-
-
+            });
         });
-    });
 
-    // Submit Login Form
-    $('#login-form').submit(function(event) {
-        event.preventDefault(); // Prevent the form from submitting the normal way
+        // Submit Login Form
+        $('#login-form').submit(function(event) {
+            event.preventDefault(); // Prevent the form from submitting the normal way
 
-        // Disable the Submit Button to avoid multiple clicks
-        $('#login-submit').prop('disabled', true);
+            // Disable the Submit Button to avoid multiple clicks
+            $('#login-submit').prop('disabled', true);
 
-        // Get the form data
-        var email = $('#login-email').val();
-        var password = $('#login-password').val();
+            // Get the form data
+            var email = $('#login-email').val();
+            var password = $('#login-password').val();
 
-        // Send the data to the backend for validation
-        $.ajax({
-            url: '{{ route("front.login") }}', // This is the route for handling login (update with your actual route if different)
-            method: 'POST',
-            data: {
-                email: email,
-                password: password,
-                _token: '{{ csrf_token() }}' // CSRF token for protection
-            },
-            success: function(response) {
-                if (response.success) {
-                    // If login is successful, redirect to the given URL
-                    window.location.href = response.redirect_url;
+            // Send the data to the backend for validation
+            $.ajax({
+                url: '{{ route("front.login") }}', // This is the route for handling login (update with your actual route if different)
+                method: 'POST',
+                data: {
+                    email: email,
+                    password: password,
+                    _token: '{{ csrf_token() }}' // CSRF token for protection
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // If login is successful, redirect to the given URL
+                        window.location.href = response.redirect_url;
+                    }
+                },error: function(xhr) {
+                    var response = xhr.responseJSON;
+
+                    // Show error messages for validation errors
+                    if (response.message) {
+                        $('#login-error').text(response.message); // Display error message in #login-error div
+                    } else {
+                        $('#login-error').text('An error occurred. Please try again.'); // General error message
+                    }
+
+                    $('#login-submit').prop('disabled', false); // Re-enable submit button
                 }
-            },error: function(xhr) {
-                var response = xhr.responseJSON;
-
-                // Show error messages for validation errors
-                if (response.message) {
-                    $('#login-error').text(response.message); // Display error message in #login-error div
-                } else {
-                    $('#login-error').text('An error occurred. Please try again.'); // General error message
-                }
-
-                $('#login-submit').prop('disabled', false); // Re-enable submit button
-            }
+            });
         });
-    });
 
-    // Show Sign-In Modal when clicking "Sign In" link in the Sign-Up Modal
-    $('#show-login-modal').click(function(e) {
-        e.preventDefault(); // Prevent default link action
-        $('#purchaseModal').modal('hide'); // Hide the sign-up modal
-        $('#loginModal').modal('show'); // Show the sign-in modal
-    });
+        // Show Sign-In Modal when clicking "Sign In" link in the Sign-Up Modal
+        $('#show-login-modal').click(function(e) {
+            e.preventDefault(); // Prevent default link action
+            $('#purchaseModal').modal('hide'); // Hide the sign-up modal
+            $('#loginModal').modal('show'); // Show the sign-in modal
+        });
 
-    // Show Sign-Up Modal when clicking "Sign Up" link in the Sign-In Modal
-    $('#show-signup-modal').click(function(e) {
-        e.preventDefault(); // Prevent default link action
-        $('#loginModal').modal('hide'); // Hide the sign-in modal
-        $('#registerModal').modal('hide'); // Show the sign-up modal
-        $('#purchaseModal').modal('show'); // Show the sign-up modal
-    });
+        // Show Sign-Up Modal when clicking "Sign Up" link in the Sign-In Modal
+        $('#show-signup-modal').click(function(e) {
+            e.preventDefault(); // Prevent default link action
+            $('#loginModal').modal('hide'); // Hide the sign-in modal
+            $('#registerModal').modal('hide'); // Show the sign-up modal
+            $('#purchaseModal').modal('show'); // Show the sign-up modal
+        });
 
-</script>   
+    </script>   
 
 @endsection
-
-@push('scripts')
-<script type="text/javascript" src="{{ url('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
-@endpush

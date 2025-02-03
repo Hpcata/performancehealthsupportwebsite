@@ -1,6 +1,6 @@
 @extends('backend.layouts.app')
 
-@section('title', 'Items List')
+@section('title', 'Foods List')
 
 @section('content')
 <div class="container-xxl">
@@ -20,9 +20,9 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">Items List</h3>
+                <h3 class="fw-bold mb-0">Foods List</h3>
                 <a href="{{ route('admin.items.create') }}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100">
-                    <i class="icofont-plus-circle me-2 fs-6"></i> Add Item
+                    <i class="icofont-plus-circle me-2 fs-6"></i> Add Food
                 </a>
             </div>
         </div>
