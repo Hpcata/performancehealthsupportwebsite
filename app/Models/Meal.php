@@ -26,7 +26,9 @@ class Meal extends Model
 
     public function items()
     {
-        return $this->belongsToMany(Item::class, 'item_meals', 'meal_id', 'item_id')->where('is_swiped', 0);
+        return $this->belongsToMany(Item::class, 'item_meals', 'meal_id', 'item_id')
+                    ->withPivot('item_qty')
+                    ->where('is_swiped', 0);
     }
 
     // Many-to-many relationship with Item through the user_items pivot table
@@ -38,7 +40,8 @@ class Meal extends Model
     public function userMealItems()
     {
         return $this->belongsToMany(Item::class, 'user_item_meals', 'meal_id', 'item_id')
-        ->wherePivot('is_swiped',0);
+                    ->withPivot('qty')
+                    ->wherePivot('is_swiped',0);
     }
 
     public function totalProtein()

@@ -3,9 +3,13 @@
 @section('content')
 <div class="container-xxl">
     <div class="row align-items-center">
-        <h3 class="fw-bold">{{ isset($mealTime) ? 'Edit Meal Time' : 'Create Meal Time' }}</h3>
-        <div class="col-auto">
-            <a href="{{ route('admin.meal-times.index') }}" class="btn btn-primary">Back</a>
+        <div class="border-0 mb-4">
+            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                <h3 class="fw-bold">{{ isset($mealTime) ? 'Edit Meal Time' : 'Create Meal Time' }}</h3>
+                <div class="col-auto">
+                    <a href="{{ route('admin.meal-times.index') }}" class="btn btn-primary">Back</a>
+                </div>
+            </div>
         </div>
     </div>
     <div class="card mt-3">

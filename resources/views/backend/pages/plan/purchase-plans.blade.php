@@ -47,6 +47,7 @@
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Status</th>
+                                <th>Purchase Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -68,6 +69,7 @@
                                 <td>{{ $payment->email }}</td>
                                 <td>{{ $payment->phone }}</td>
                                 <td>{{ $payment->status }}</td>
+                                <td>{{ formatDate($payment->created_at) }}</td>
                                 <td>
                                     <!-- Action link to show payment details -->
                                     <a href="javascript:void(0);" class="btn btn-primary btn-set-task w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}" >User Details</a>

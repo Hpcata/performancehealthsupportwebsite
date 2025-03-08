@@ -41,7 +41,7 @@
 							<div class="form-label">
 								<span class="d-flex justify-content-between align-items-center">
 									Password
-									<a class="text-secondary" href="{!! backendRoutePut('forgot-password') !!}">Forgot Password?</a>
+									<a class="text-secondary" href="{!! route('forgot-password') !!}">Forgot Password?</a>
 								</span>
 							</div>
 							<input type="password" name="password" class="form-control form-control-lg" placeholder="***************">
@@ -61,7 +61,7 @@
 					<div class="col-12 text-center mt-4">
 						<p class="text-center use-font-14 font-weight-500">
 							Don't have an Account?
-							<a class="text-secondary" href="{!! backendRoutePut('register') !!}">Sign up</a>
+							<a class="text-secondary" href="{!! route('register') !!}">Sign up</a>
 						</p>
 					</div>
 				</form>

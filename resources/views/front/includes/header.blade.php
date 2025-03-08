@@ -78,7 +78,8 @@ $headerData = json_decode($setting['meta_value'], true);
                         <label for="login-password" class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" id="login-password" required>
                     </div>
-
+                    
+                    <a href="#" id="forgot-password">Forgot Password?</a>
                     <!-- Sign In Button -->
                     <button type="submit" id="login-submit" class="btn btn-primary w-100 mt-3">
                         Sign In
@@ -92,6 +93,27 @@ $headerData = json_decode($setting['meta_value'], true);
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="forgotPasswordForm">
+          <div class="mb-3">
+            <label for="email" class="form-label">Enter your email address</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -134,6 +156,32 @@ $headerData = json_decode($setting['meta_value'], true);
                     }
 
                     $('#login-submit').prop('disabled', false); // Re-enable submit button
+                }
+            });
+        });
+
+        $('#forgot-password').on('click', function(e) {
+            e.preventDefault();
+            $('#loginModal').modal('hide');
+            $('#forgotPasswordModal').modal('show'); // Show the modal
+        });
+
+        $('#forgotPasswordForm').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "{{ route('front.password.request') }}",
+                method: 'POST',
+                data: {
+                    email: $('#email').val(),
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    alert('Password reset link has been sent to your email.');
+                    $('#forgotPasswordModal').modal('hide');
+                },
+                error: function(xhr) {
+                    alert('Failed to send reset link. Please check your email address.');
                 }
             });
         });

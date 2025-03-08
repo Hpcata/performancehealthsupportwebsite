@@ -19,8 +19,8 @@
 	</style>
 	<!-- project css file  -->
 	<link rel="stylesheet" href="{!! backendAssets('ebazar.style.min.css') !!}">
-	<link rel="stylesheet" href="{!! backendAssets('dist/assets/plugin/datatables/responsive.dataTables.min.css') !!}">
-	<link rel="stylesheet" href="{!! backendAssets('dist/assets/plugin/datatables/dataTables.bootstrap5.min.css') !!}">
+	<!-- <link rel="stylesheet" href="{!! backendAssets('dist/assets/plugin/datatables/responsive.dataTables.min.css') !!}"> -->
+	<!-- <link rel="stylesheet" href="{!! backendAssets('dist/assets/plugin/datatables/dataTables.bootstrap5.min.css') !!}"> -->
 
 	@stack('custom_styles')
 
@@ -220,34 +220,34 @@
 	<script>
 		$('#myDataTable')
 			.addClass('nowrap')
-			.dataTable({
+			.DataTable({
 				responsive: true,
+				stateSave: true,
 				columnDefs: [{
 					targets: [-1, -3],
-					className: 'dt-body-right'
 				}]
 			});
-		$('.deleterow').on('click', function() {
-			var tablename = $(this).closest('table').DataTable();
-			tablename
-				.row($(this)
-					.parents('tr'))
-				.remove()
-				.draw();
+		// $('.deleterow').on('click', function() {
+		// 	var tablename = $(this).closest('table').DataTable();
+		// 	tablename
+		// 		.row($(this)
+		// 			.parents('tr'))
+		// 		.remove()
+		// 		.draw();
 
-		});
-		// Flash message auto-hide logic
-		window.onload = function() {
-			// Select all alert messages
-			const alerts = document.querySelectorAll('.alert');
-			alerts.forEach(function(alert) {
-				// Set timeout to fade out the alert after 5 seconds (5000ms)
-				setTimeout(function() {
-					alert.classList.add('fade');
-					alert.classList.remove('show');
-				}, 5000);
-			});
-		}
+		// });
+		// // Flash message auto-hide logic
+		// window.onload = function() {
+		// 	// Select all alert messages
+		// 	const alerts = document.querySelectorAll('.alert');
+		// 	alerts.forEach(function(alert) {
+		// 		// Set timeout to fade out the alert after 5 seconds (5000ms)
+		// 		setTimeout(function() {
+		// 			alert.classList.add('fade');
+		// 			alert.classList.remove('show');
+		// 		}, 5000);
+		// 	});
+		// }
 	</script>
 	@stack('scripts')
 	<!-- Jquery Page Js -->

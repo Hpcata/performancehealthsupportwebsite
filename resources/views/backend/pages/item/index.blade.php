@@ -37,13 +37,14 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Title</th>
-                                <th>Meals</th>
                                 <th>Image</th>
-                                <th>Quantity</th>
-                                <th>Protein (gm)</th>
-                                <th>Carbs (gm)</th>
+                                <th>Protein (g)</th>
+                                <th>Carbs (g)</th>
+                                <th>Fat (g)</th>
                                 <th>Description</th>
-                                <th>Created At</th>
+                                <!-- <th>Meals</th> -->
+                                <!-- <th>Quantity</th> -->
+                                <!-- <th>Created At</th> -->
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -53,24 +54,26 @@
                                 <td><strong>{{ $item->id }}</strong></td>
                                 <td>{{ $item->title }}</td>
                                 <td>
-                                    @if($item->meals->isNotEmpty())
-                                        {{ $item->meals->pluck('title')->implode(', ') }}
-                                    @else
-                                        <span class="text-muted">No Melas</span>
-                                    @endif
-                                </td>
-                                <td>
                                     @if($item->image)
                                     <img src="{{ asset('private/public/storage/' . $item->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif
                                 </td>
-                                <td>{{ $item->qty }}</td>
                                 <td>{{ $item->protein }}</td>
                                 <td>{{ $item->carbs }}</td>
+                                <td>{{ $item->fat }}</td>
                                 <td>{{ Str::limit($item->description, 50, '...') }}</td>
+                           {{-- <td>
+                                    @if($item->meals->isNotEmpty())
+                                        {{ $item->meals->pluck('title')->implode(', ') }}
+                                    @else
+                                        <span class="text-muted">No Melas</span>
+                                    @endif
+                                </td>
+                                <td>{{ $item->qty }}</td>
                                 <td>{{ $item->created_at->format('Y-m-d') }}</td>
+                            --}}
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic outlined example">
                                         <a href="{{ route('admin.items.edit', $item->id) }}" class="btn btn-outline-secondary">

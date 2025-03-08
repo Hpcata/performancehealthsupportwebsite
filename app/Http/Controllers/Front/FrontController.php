@@ -28,6 +28,10 @@ use App\Models\Questionnaire;
 use App\Models\WeightTracking;
 use App\Models\Payment;
 use App\Models\SportTracking;
+use App\Models\UserPrePlan;
+use App\Models\PrePlanDetail;
+use App\Models\GoalHistory;
+use App\Mail\SportInterestMail;
 
 class FrontController extends Controller
 {
@@ -107,7 +111,12 @@ class FrontController extends Controller
 
     public function subHomePage()
     {
-        $plans = \App\Models\Plan::all();
+        // Step 1: Get all sub_plan_ids from plan_sub_plans table
+        $subPlanIds = \DB::table('plan_sub_plans')->pluck('sub_plan_id')->toArray();
+
+        // Step 2: Retrieve all plans that are NOT sub-plans
+        $plans = \App\Models\Plan::whereNotIn('id', $subPlanIds)->get();
+
         // dd($plans);
         $page = \App\Models\Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
         
@@ -131,6 +140,14 @@ class FrontController extends Controller
         $existingUser = User::where('email', $request->input('email'))->first();
 
         if ($existingUser) {
+            $freeTest = Questionnaire::where('email', $request->input('email'))->first();
+            if ($freeTest) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You have already submitted the test.',
+                    'user' => $existingUser,
+                ]);
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'User with this email already exists.',
@@ -175,7 +192,11 @@ class FrontController extends Controller
                 if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                     if (!Auth::user()->isSuperAdmin()) {
                         $redirectUrl = route('front.profile', ['id' => $user->id]); // Change this to the page you want
-        
+                        $freeTest = Questionnaire::where('email', $validated['email'])->first();
+
+                        if($freeTest) {
+                            \Mail::to($validated['email'])->send(new \App\Mail\FreeTestResultMail($user));
+                        }
                         return response()->json([
                             'success' => true,
                             'redirect_url' => $redirectUrl,
@@ -226,7 +247,7 @@ class FrontController extends Controller
         }
 
         // If not admin, redirect to home
-        return redirect('/')->with('error', 'Unauthorized access.');
+        return redirect()->route('front.index')->with('error', 'Unauthorized access.');
     }
 
     public function getProfileDetails(Request $request, $id)
@@ -247,8 +268,117 @@ class FrontController extends Controller
         } else {
 
             $purchasedplans = Payment::where('user_id', $user->id)->pluck('plan_id')->toArray();
+            if(!$purchasedplans) {
+                $purchasedplans = [];
+            }
             $plans = Plan::all();
-            return view ('front.profile', compact('user', 'purchasedplans', 'plans'));
+            $payment = Payment::where('user_id', $user->id)->first();
+            $preplanDetails = [];
+
+            if(!$payment) {
+                return redirect()->back()->with('error', 'You have not purchased any plan yet. Please purchase a plan first.');
+            }
+
+            $userPrePlan = UserPrePlan::where('user_id', $user->id)->where('payment_id', $payment->id)->first();
+
+            $prePlans = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) { 
+                $query->where('form_slug', 'physical_measures')
+                        ->whereIn('question', ['Height (cm):', 'Current body weight (kg) (if known):']); 
+            }])->where('user_id', $user->id)->get();
+
+           // Extracting prePlanDetails (Height and Current body weight)
+            $preplanDetails = [];
+
+            foreach ($prePlans as $prePlan) {
+                foreach ($prePlan->prePlanDetails as $detail) {
+                    $preplanDetails[] = [
+                        $detail->question => $detail->answer ,
+                    ];
+                }
+            }
+            
+            $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) { 
+                $query->where('form_slug', 'physical_measures')
+                        ->whereIn('question', ['Height (cm):', 'Current body weight (kg) (if known):']); 
+            }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
+    
+            // Extracting prePlanDetails (Height and Current body weight)
+            $profileDetails = [
+                'Name' => $user->name,
+                'Profile Image' => $user->profile_image ?? '', // Ensure there's a fallback image
+            ];
+        
+            foreach ($physicalMeasures as $prePlan) {
+                foreach ($prePlan->prePlanDetails as $detail) {
+                    $profileDetails[$detail->question] = trim($detail->answer, '"');
+                }
+            }
+    
+            $nutritionGoals = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+                $query->where('form_slug', 'nutrition_goals')
+                        ->whereIn('question', ['Which of the following nutrition related goals are you interested in working on?','What is your biggest nutrition challenge?']); 
+            }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
+    
+            $nutritionGoalsDetails = [];
+            foreach ($nutritionGoals as $prePlan) {
+                foreach ($prePlan->prePlanDetails as $detail) {
+                    $decodedAnswer = json_decode($detail->answer, true); // Convert JSON string to array
+                    if (is_array($decodedAnswer)) {
+                        $nutritionGoalsDetails[$detail->question] = implode(', ', $decodedAnswer); // Convert array to string
+                    } else {
+                        $nutritionGoalsDetails[$detail->question] = trim($detail->answer, '"'); // Keep as it is if not an array
+                    }
+                }
+            }
+    
+            $intakeDetails = [];
+            $medicalHistories = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+                $query->where('form_slug', 'medical_history')
+                        ->whereIn('question', ['List any dietary vitamins or supplements you are currently taking (if any):', 'Provide details of any prescription medications (if taking any):']);
+            }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
+    
+            foreach ($medicalHistories as $prePlan) {
+                foreach ($prePlan->prePlanDetails as $detail) {
+                    $intakeDetails[$detail->question] = trim($detail->answer, '"');
+                }
+            }
+    
+            $diateryDetails = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+                $query->where('form_slug', 'dietary_information')
+                        ->whereIn('question', ['List your favourite foods?', 'Do you avoid/dislike any foods? List below']);
+            }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
+    
+            foreach ($diateryDetails as $prePlan) {
+                foreach ($prePlan->prePlanDetails as $detail) {
+                    $intakeDetails[$detail->question] = trim($detail->answer, '"');
+                }
+            }
+
+            $trainingIntencity = [];
+            $trainingDetails = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+                $query->where('form_slug', 'physical_activity_and_exercise')
+                        ->where('question', 'How many days per week and at what intensity do you normally train for your sport?');
+            }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
+            foreach($trainingDetails as $prePlan) {
+                foreach ($prePlan->prePlanDetails as $detail) {
+                    $trainingIntencity[] = json_decode($detail->answer,true);
+                }
+            }
+
+            $reports = [];
+
+            $prePlanReports = \App\Models\UserPrePlan::with(['PrePlanQuesionFile' => function($query) {
+                $query->whereIn('form_slug', ['physical_measures','medical_history']);
+            }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
+            // dd($trainingIntencity);
+
+            foreach($prePlanReports as $prePlan) {
+                foreach ($prePlan->PrePlanQuesionFile as $detail) {
+                    $reports[$detail->form_slug][] = $detail->file_path;
+                }
+            }
+            // dd($medicalHistories);
+            return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan'));
         }
     }
 
@@ -350,7 +480,7 @@ class FrontController extends Controller
     {
         // Assuming you have a relationship `items` defined on the `Meal` model
         
-        $meals = \App\Models\Meal::with('items')->get();
+        $meals = \App\Models\Meal::with('items','items.category')->get();
 
         // $userPlans = UserPlan::with('plan', 
         //     'userMealTimes.userCategories.userMeals.userItems')
@@ -381,7 +511,7 @@ class FrontController extends Controller
         $validator = Validator::make($request->all(), [
             'userId' => 'required|exists:users,id', // Ensure user ID exists in the database
             'testData' => 'required|array', // Test data should be an array
-            'email' => 'required', // Test data should be an array
+            // 'email' => 'required', // Test data should be an array
             'totalAnswerCount' => 'required|array', // Ensure total counts are an array
         ]);
 
@@ -397,7 +527,7 @@ class FrontController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found.'], 404);
         }
 
-        $existingSubmission = Questionnaire::where('email', $request->email)->first();
+        $existingSubmission = Questionnaire::where('email', $user->email)->first();
 
         if ($existingSubmission) {
             return response()->json([
@@ -793,6 +923,8 @@ class FrontController extends Controller
     public function sportSearch(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'email' => 'required|email',
             'sport' => 'required|string',
             'state' => 'required|string',
             'sport_game' => 'nullable|string',
@@ -804,13 +936,275 @@ class FrontController extends Controller
 
         // Save data to database
         $interest = new SportTracking();
+        $interest->name = $request->name;
+        $interest->email = $request->email;
         $interest->sport = ucwords(str_replace('_', ' ', $request->sport));;
         $interest->state = $request->state;
         $interest->sport_game = $request->sport_game;
         $interest->ip_address = $request->ip(); // Track user IP
         $interest->save();
 
-        return response()->json(['success' => true, 'message' => 'Thank you for submitting your interest in ' . ucwords(str_replace('_', ' ', $request->sport)) . ' under the game ' . $request->sport_game . ' in ' . $request->state . '.'
+        // Send email with sport-specific nutrition info
+        Mail::to($request->email)->send(new SportInterestMail($interest));
+
+        return response()->json(['message' => 'Thank you! We will send you relevant nutrition information.'], 200);
+    }
+
+    public function samplePlan(Request $request)
+    {
+        $isAuthenticated = "";
+
+        $page = \App\Models\Page::with('sections')->where('slug', 'sample-plan')->first();
+        
+        if (!$page) {
+            return redirect()->route('front.index')->with('error', 'Page not found.');
+        }
+
+        // $intakeDetails = array_merge($intakeDetails, $diateryDetail);
+        return view('front.sample-plan', compact('page', 'isAuthenticated'));
+    }
+
+    public function updateSamplePlanDetails(Request $request)
+    {
+        $formName = $request->form_name;
+        $answer = $request->answer;
+        $question = $request->question;
+        $userId = $request->user_id;
+        // dd($userId);
+        $payment = Payment::where('user_id', $userId)->first();
+        $prePlan = \App\Models\UserPrePlan::where('payment_id', $payment->id)
+        ->where('user_id', $userId)
+        ->first();
+        // dd($prePlan);
+        $prePlanDetail =  \App\Models\PrePlanDetail::where('form_slug', $formName)
+                ->where('question', $question)
+                ->where('user_pre_plan_id', $prePlan->id)
+                ->first(); 
+        // dd($prePlanDetail);
+        // Ensure answer is stored as valid JSON
+        if (is_array($answer)) {
+            $prePlanDetail->answer = json_encode([$answer], JSON_UNESCAPED_UNICODE);
+        } else {
+            $prePlanDetail->answer = json_encode($answer, JSON_UNESCAPED_UNICODE);
+        }
+
+        $prePlanDetail->save();
+    
+        return response()->json(['success' => true, 'message' => 'Answer updated successfully']);
+    }
+
+    public function updateGoals(Request $request)
+    {
+        $userId = $request->user_id;
+        $type = $request->input('type'); // "goal" or "challenge"
+        $question = $type == "goal" ? 
+            "Which of the following nutrition related goals are you interested in working on?" : 
+            "What is your biggest nutrition challenge?";
+        
+        $answer = $request->input('answer'); // New answer input
+        $payment = \App\Models\Payment::where('user_id', $userId)->first();
+
+        // Find the latest record
+        $prePlanDetail = PrePlanDetail::where('form_slug', 'nutrition_goals')
+            ->where('question', $question)
+            ->whereHas('userPrePlan', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->first();
+
+        // Move old record to history if exists
+        if ($prePlanDetail) {
+            GoalHistory::create([
+                'user_id' => $userId,
+                'payment_id' => $payment->id,
+                'type' => $type,
+                'question' => $prePlanDetail->question,
+                'answer' => $prePlanDetail->answer,
+            ]);
+
+            // Update with new record
+            $prePlanDetail->update(['answer' => json_encode($answer)]);
+        } else {
+            // Create a new record if none exists
+            $userPrePlan = UserPrePlan::firstOrCreate([
+                'user_id' => $userId,
+                'payment_id' => $payment->id,
+            ]);
+
+            PrePlanDetail::create([
+                'user_pre_plan_id' => $userPrePlan->id,
+                'form_slug' => 'nutrition_goals',
+                'question' => $question,
+                'answer' => json_encode($answer),
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => ucfirst($type) . ' updated successfully']);
+    }
+
+    public function getPastGoals(Request $request)
+    {
+        $userId = $request->user_id;
+        $type = $request->input('type'); // "goal" or "challenge"
+        $pastItems = GoalHistory::where('user_id', $userId)
+            ->where('type', $type)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($pastItems);
+    }
+
+    public function submitQuery(Request $request)
+    {
+        // Validate request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'message' => 'required|string',
         ]);
+
+        // Save to database
+        $query = new Query();
+        $query->name = $request->name;
+        $query->email = $request->email;
+        $query->mobile_number = $request->phone;
+        $query->message = $request->message;
+        $query->save();
+
+        // Return JSON response
+        return response()->json(['status' => 'success', 'message' => 'Query submitted successfully!']);
+    }
+
+    public function uploadReport(Request $request)
+    {
+        $request->validate([
+            'file.*' => 'required|mimes:jpg,jpeg,png,pdf|max:2048', // Validate multiple files
+            'report_type' => 'required',
+            'user_pre_plan_id' => 'required',
+        ]);
+
+        $reportType = $request->input('report_type');
+        $userPrePlanId = $request->input('user_pre_plan_id');
+
+        // Define the question based on report type
+        $question = ($reportType == 'medical_history') 
+            ? 'Have you recently had a blood test?' 
+            : 'Have you recently undertaken a body composition assessment (measure of muscle, body fat)?';
+
+        $uploadedFiles = []; // To store uploaded file details
+
+        if ($request->hasFile('file')) {
+            foreach ($request->file('file') as $file) {
+                // Store the file
+                $path = $file->store('preplan_files', 'public');
+
+                // Save to database
+                $prePlanFile = \App\Models\PrePlanQuesionFile::create([
+                    'user_pre_plan_id' => $userPrePlanId,
+                    'form_slug' => $reportType,
+                    'question' => $question,
+                    'file_path' => $path,
+                ]);
+
+                // Add to response array
+                $uploadedFiles[] = [
+                    'file_path' => $path,
+                    'data' => $prePlanFile,
+                ];
+            }
+        }
+
+        return response()->json([
+            "message" => "Files uploaded successfully!",
+            "uploaded_files" => $uploadedFiles
+        ]);
+    }
+
+    public function deleteReport(Request $request)
+    {
+        $file = $request->input('file');
+        
+        // Path to the file in storage
+        $filePath = storage_path('app/public/' . $file);
+
+        // Check if file exists
+        if (file_exists($filePath)) {
+            // Delete the file
+            unlink($filePath);
+
+            // Optionally, delete the file record from the database
+            DB::table('pre_plan_question_files')->where('file_path', 'like', '%'.$file)->delete();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
+    public function checkGoogleLogin(Request $request) 
+    {
+        $token = $request->input('token');
+
+        if (!$token) {
+            return response()->json(['error' => 'Token is missing']);
+        }
+    
+        // Verify token using Google's OAuth2 API
+        $response = Http::get('https://oauth2.googleapis.com/tokeninfo', [
+            'id_token' => $token
+        ]);
+    
+        if ($response->successful()) {
+            $userData = $response->json();
+
+            // Extract User Data
+            $name = $userData['name'];
+            $email = $userData['email'];
+           
+            $firstName = explode(' ', $name)[0]; // First name from full name
+            $lastName = explode(' ', $name)[1]; // Last name from full name
+
+            // Example: Storing in "users" table
+            $user = \App\Models\User::updateOrCreate(
+                ['email' => $email], // Search by email
+                [
+                    'name' => $name,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email
+                ]
+            );
+
+            return response()->json([
+                'status' => 'logged_in',
+                'user_id' => $user->id
+            ]);
+
+        } else {
+            return response()->json(['status' => 'not_logged_in', 'user_id' => null]);
+        }
+    }
+
+    public function unlockFreeTestResult(Request $request) 
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = \App\Models\User::where('email', $request->email)->first();
+
+        if ($user) {
+            return response()->json([
+                'status' => 'success',
+                'user_id' => $user->id,
+                'message' => 'User found'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'user_id' => null,
+                'message' => 'Your email is not registered'
+            ]);
+        }
     }
 }

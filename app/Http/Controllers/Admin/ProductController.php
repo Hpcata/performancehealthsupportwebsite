@@ -17,34 +17,24 @@ class ProductController extends Controller
     {
         $results = [];
         $query = $request->input('query');
-        $page = $request->input('page', 1); // Page number (adjust as needed)
-        $perPage = 20; // Items per page (if applicable in API)
+        $page = $request->input('page', 1);
+        $perPage = 20;
         $pagination = [];
 
         if ($query) {
             $client = new Client();
             try {
-                // Request to the Woolworths API
                 $response = $client->request('GET', 'https://www.woolworths.com.au/apis/ui/Search/products/', [
-                    'query' => [
-                        'searchTerm' => $query,
-                    ],
-                    'headers' => [
-                        'Accept' => 'application/json',
-                    ],
+                    'query' => ['searchTerm' => $query],
+                    'headers' => ['Accept' => 'application/json'],
                 ]);
 
                 $responseBody = json_decode($response->getBody(), true);
-
-                // Extract products from the response
                 $products = $responseBody['Products'] ?? [];
 
-                // Process products
                 foreach ($products as $productGroup) {
-                    // Loop through the `Products` array within each group
                     $groupProducts = $productGroup['Products'] ?? [];
                     foreach ($groupProducts as $product) {
-                        // Extract `AdditionalAttributes` (nutritional information)
                         $additionalAttributes = $product['AdditionalAttributes'] ?? [];
                         $nutrition = [];
 
@@ -52,34 +42,33 @@ class ProductController extends Controller
                             $nutritionInfo = json_decode($additionalAttributes['nutritionalinformation'], true);
                             $attributes = $nutritionInfo['Attributes'] ?? [];
 
-                            // Map specific nutritional attributes to simplified keys
                             foreach ($attributes as $attribute) {
                                 if ($attribute['Name'] === 'Carbohydrate Quantity Per Serve - Total - NIP') {
                                     $nutrition['carbohydrate'] = $attribute['Value'] ?? '';
                                 } elseif ($attribute['Name'] === 'Protein Quantity Per Serve - Total - NIP') {
                                     $nutrition['protein'] = $attribute['Value'] ?? '';
+                                } elseif ($attribute['Name'] === 'Fat Total Quantity Per Serve - Total - NIP') {
+                                    $nutrition['fat'] = $attribute['Value'] ?? '';
                                 }
                             }
                         }
 
-                        // Add product details to results
                         $results[] = [
                             'name' => $product['Name'] ?? '',
                             'barcode' => $product['Barcode'] ?? '',
                             'size' => $product['PackageSize'] ?? '',
                             'price' => $product['Price'] ?? '',
                             'image' => $product['SmallImageFile'] ?? '',
-                            'nutrition' => $nutrition, // Extracted nutritional data
+                            'category' => !empty($additionalAttributes) ? $additionalAttributes['sapdepartmentname'] : '',
+                            'nutrition' => $nutrition,
                         ];
                     }
                 }
 
-                // Total products in the current response
                 $total = count($products);
-
                 $pagination = [
                     'current_page' => $page,
-                    'total_pages' => ceil($total / $perPage), // Assuming the API doesn't provide total pages
+                    'total_pages' => ceil($total / $perPage),
                     'total' => $total,
                     'per_page' => $perPage,
                 ];
@@ -88,11 +77,13 @@ class ProductController extends Controller
             }
         }
 
-        // Debug the results
-        // dd($results);
+        if ($request->ajax()) {
+            return response()->json(['results' => $results, 'pagination' => $pagination]);
+        }
 
         return view('product-with-image', compact('results', 'query', 'pagination'));
     }
+
 
     public function addFood(Request $request) 
     {
@@ -101,6 +92,8 @@ class ProductController extends Controller
             'image' => 'required|url', // Ensure it's a valid URL
             'protein' => 'nullable',
             'carbs' => 'nullable',
+            'fat' => 'nullable',
+            'category' => 'nullable',
         ]);
 
         try {
@@ -120,21 +113,53 @@ class ProductController extends Controller
             
             $protein = $validated['protein'] ? rtrim($validated['protein'], 'g') : 0;
             $carbs = $validated['carbs'] ? rtrim($validated['carbs'], 'g') : 0;
+            $fat = $validated['fat'] ? rtrim($validated['fat'], 'g') : 0;
+            // dd($protein, $carbs, $fat);
+
+            if(isDecimal($protein)){
+                $protein = floatval($protein);
+            }else {
+                $protein = formatDecimal($protein);
+            }
+
+            if(isDecimal($carbs)){
+                $carbs = floatval($carbs);
+            }else {
+                $carbs = formatDecimal($carbs);
+            }
+
+            if(isDecimal($fat)){
+                $fat = floatval($fat);
+            }else {
+                $fat = formatDecimal($fat);
+            }
+
+            $keywords = explode(" ", strtolower($validated['category']));
+
+            // Search for any matching keyword in the database
+            $foodCategory = \App\Models\FoodCategory::where(function ($query) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $query->orWhereRaw("LOWER(name) LIKE ?", ["%$keyword%"]);
+                }
+            })->first();
 
             // Step 3: Save food details in the database
             $food = new Item(); // Assuming you have a Food model
             $food->title = $validated['name'];
             $food->protein = $protein;
             $food->carbs = $carbs;
+            $food->fat = $fat;
             $food->image = 'items/' . $imageName; // Path to the stored image
             $food->is_swiped = 0;
+            $food->category_id = isset($foodCategory) ? $foodCategory->id : null;
             $food->save();
 
             // Step 4: Redirect with success message
             return response()->json(['success' => true, 'message' => 'Food added successfully.']);
         } catch (\Exception $e) {
+            dd($e->getMessage());
             Log::error('Error adding food: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Failed to add food ']);
+            return response()->json(['error' => false, 'message' => 'Failed to add food ']);
         }
     }
 }

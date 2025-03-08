@@ -69,6 +69,41 @@
 
                             <!-- Food Selection Dropdown -->
                             <div class="col-md-12">
+                                <label for="food_selection" class="form-label">Select Foods</label>
+                                <div id="food-container">
+                                    @if(isset($meal) && $meal->items->count() > 0)
+                                        @foreach ($meal->items as $item)
+                                            <div class="food-row d-flex mb-2">
+                                                <select name="food_ids[]" class="form-control select2 food-select" required>
+                                                    <option value="">Select Food</option>
+                                                    @foreach ($foods as $food)
+                                                        <option value="{{ $food->id }}" 
+                                                            {{ $food->id == $item->id ? 'selected' : '' }}>
+                                                            {{ $food->title }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="text" name="food_qty[]" class="form-control ms-2 food-qty" 
+                                                    placeholder="Qty" value="{{ $item->pivot->item_qty ?? '' }}" required>
+                                                <button type="button" class="btn btn-danger ms-2 remove-food">X</button>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="food-row d-flex mb-2">
+                                            <select name="food_ids[]" class="form-control select2 food-select" required>
+                                                <option value="">Select Food</option>
+                                                @foreach ($foods as $food)
+                                                    <option value="{{ $food->id }}">{{ $food->title }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="text" name="food_qty[]" class="form-control ms-2 food-qty" placeholder="Qty" required>
+                                            <button type="button" class="btn btn-danger ms-2 remove-food">X</button>
+                                        </div>
+                                    @endif
+                                </div>
+                                <button type="button" id="add-food" class="btn btn-primary mt-2">Add More</button>
+                            </div>
+                            <!-- <div class="col-md-12">
                                 <label for="food_ids" class="form-label">Select Foods</label>
                                 <select name="food_ids[]" id="food_ids" class="form-control select2" multiple required>
                                     @foreach ($foods as $food)
@@ -78,7 +113,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> -->
                             
                             <!-- Image Field -->
                             <div class="col-md-12">
@@ -103,20 +138,88 @@
 @endpush
 
 @push('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 @endpush
 
 @push('custom_scripts')
 <script>
-$(document).ready(function() {
-    $('#categories').select2({
-        placeholder: "Select categories",
-        allowClear: true
+    $(document).ready(function() {
+        $('#categories').select2({
+            placeholder: "Select categories",
+            allowClear: true
+        });
+
+        // Preload selected foods for Edit Mode
+        @if (isset($meal))
+            const preselectedFoods = @json($meal->items->pluck('id'));
+            $('#food_ids').val(preselectedFoods).trigger('change');
+        @endif
     });
-    $('#food_ids').select2({
-        placeholder: "Select foods",
-        allowClear: true
+    $(document).ready(function () {
+        function initializeSelect2() {
+            $('.food-select').select2({
+                placeholder: "Search and select foods",
+                minimumInputLength: 1,
+                width: '100%',
+                allowClear: true,
+                ajax: {
+                    url: '{{ route("admin.items.index") }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return { query: params.term };
+                    },
+                    processResults: function(response) {
+                        return {
+                            results: response.items.map(function(item) {
+                                return { id: item.id, text: item.title };
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+        }
+        
+        initializeSelect2();
+
+        $(document).on('click', '#add-food', function () {
+            let foodRow = `<div class="food-row d-flex mb-2">
+                <select name="food_ids[]" class="form-control select2 food-select " required>
+                    <option value="">Select Food</option>
+                </select>
+                <input type="text" name="food_qty[]" class="form-control ms-2 food-qty" placeholder="Qty" required>
+                <button type="button" class="btn btn-danger ms-2 remove-food">X</button>
+            </div>`;
+            let newElement = $(foodRow).appendTo('#food-container');
+            newElement.find('.food-select').select2({
+                placeholder: "Search and select foods",
+                minimumInputLength: 1,
+                width: '100%',
+                allowClear: true,
+                ajax: {
+                    url: '{{ route("admin.items.index") }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return { query: params.term };
+                    },
+                    processResults: function(response) {
+                        return {
+                            results: response.items.map(function(item) {
+                                return { id: item.id, text: item.title };
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+        });
+
+        $(document).on('click', '.remove-food', function () {
+            $(this).closest('.food-row').remove();
+        });
     });
-});
 </script>
 @endpush

@@ -12,6 +12,15 @@ class Query extends Model
 
     protected $guarded = [];
 
+    protected $fillable = [
+        'user_id',
+        'name',
+        'email',
+        'mobile_number',
+        'message',
+        'status',
+    ];
+    
     /**
      * Get the query's created_at.
      *

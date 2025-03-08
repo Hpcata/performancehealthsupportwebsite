@@ -31,15 +31,26 @@
                             </div>
 
                             <!-- Short Description Field -->
-                            <div class="col-md-12">
+                        {{--<div class="col-md-12">
                                 <label for="short_description" class="form-label">Short Description</label>
                                 <textarea name="short_description" class="form-control" rows="2">{{ $item->short_description ?? '' }}</textarea>
                             </div>
-
+                        --}}
                             <!-- Full Description Field -->
                             <div class="col-md-12">
-                                <label for="description" class="form-label">Full Description</label>
+                                <label for="description" class="form-label">Description</label>
                                 <textarea name="description" class="form-control" rows="4">{{ $item->description ?? '' }}</textarea>
+                            </div>
+
+                            <!-- category Field -->
+                            <div class="col-md-12">
+                                <label for="category" class="form-label">Category</label>
+                                <select name="category_id" class="form-control">
+                                    <option value="">Select Category</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" {{ isset($item) && $item->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <!-- Quantity Field -->
@@ -53,14 +64,18 @@
                             <div class="col-md-12">
                                 <label for="carbs" class="form-label">Protein</label>
                                 <input type="number" name="protein" class="form-control" value="{{ $item->protein ?? '0' }}" step="0.01" min="0" placeholder="Enter Protein"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
-
                             </div>
 
                             <!-- Carbohydrate Field -->
                             <div class="col-md-12">
                                 <label for="carbs" class="form-label">Carbohydrate</label>
                                 <input type="number" name="carbs" class="form-control" value="{{ $item->carbs ?? '0' }}" step="0.01" min="0" placeholder="Enter Carbohydrate"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                            </div>
 
+                             <!-- Fat Field -->
+                             <div class="col-md-12">
+                                <label for="fat" class="form-label">Fat</label>
+                                <input type="number" name="fat" class="form-control" value="{{ $item->fat ?? '0' }}" step="0.01" min="0" placeholder="Enter Fat"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
                             </div>
 
                             <!-- Is Swapped Field -->
@@ -83,7 +98,7 @@
                             <!-- Swap Items Selection (Visible only if 'Is Swapped' is Yes) -->
                             <div class="col-md-12" id="swapItemsContainer" style="display: none;">
                                 <label for="swap_item_ids" class="form-label">Swap Items</label>
-                                <select name="swap_item_ids[]" class="form-control select2" multiple>
+                                <select name="swap_item_ids[]" class="form-control" id="swap_item_ids" multiple>
                                     @foreach ($allItems as $swapItem)
                                         <option value="{{ $swapItem->id }}" 
                                             {{ isset($item) && $item->items->contains($swapItem->id) ? 'selected' : '' }}>
@@ -146,6 +161,38 @@
                 allowClear: true,
                 width: '100%'
             });
+
+            $('#swap_item_ids').select2({
+                placeholder: "Search and select swap items",
+                minimumInputLength: 1,  // Trigger API call after typing 1 character
+                width: '100%',
+                ajax: {
+                    url: '{{ route("admin.items.index") }}',  // API endpoint to fetch items
+                    dataType: 'json',
+                    delay: 250,  // Delay to optimize API calls
+                    data: function(params) {
+                        return {
+                            query: params.term  // Send the search term as 'query'
+                        };
+                    },
+                    processResults: function(response) {
+                        return {
+                            results: response.items.map(function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.title
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+
+            @if (isset($item))
+                const preselectedFoods = @json($item->items->pluck('id'));
+                $('#swap_item_ids').val(preselectedFoods).trigger('change');
+            @endif
         });
     </script>
 @endpush

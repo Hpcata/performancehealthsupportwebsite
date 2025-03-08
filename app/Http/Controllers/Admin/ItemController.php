@@ -2,15 +2,31 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\FoodCategory;
 use App\Models\Item;
 use App\Models\Meal;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Item::with('meals', 'swapItems')->get();
+
+        if ($request->ajax()) {
+            $query = $request->input('query');
+
+            $items = Item::with('category')
+                ->where('title', 'LIKE', '%' . $query . '%')
+                ->orWhereHas('category', function ($q) use ($query) {
+                    $q->where('name', 'LIKE', '%' . $query . '%');
+                })
+                ->orderBy('updated_at', 'DESC')
+                ->get();
+
+            return response()->json(['items' => $items]);
+        }
+
+        $items = Item::with('meals', 'swapItems')->orderBy('updated_at', 'DESC')->get();
         return view('backend.pages.item.index', compact('items'));
     }
 
@@ -19,7 +35,8 @@ class ItemController extends Controller
     {
         $meals = Meal::all(); // Fetch all meals
         $allItems = Item::where('is_swiped',0)->get(); // Fetch all items for the swap dropdown
-        return view('backend.pages.item.form', compact('meals', 'allItems'));
+        $categories = FoodCategory::all();
+        return view('backend.pages.item.form', compact('meals', 'allItems', 'categories'));
     }
 
     public function store(Request $request)
@@ -37,6 +54,8 @@ class ItemController extends Controller
             'image' => 'nullable|image|max:2048',
             'protein' => 'nullable|numeric',
             'carbs' => 'nullable|numeric',
+            'fat' => 'nullable|numeric',
+            'category_id' => 'required|exists:food_categories,id',
         ]);
 
         // Handle image upload
@@ -94,7 +113,8 @@ class ItemController extends Controller
     {
         $meals = Meal::all(); // Fetch all meals
         $allItems = Item::where('is_swiped',0)->get(); // Fetch all items for the swap dropdown
-        return view('backend.pages.item.form', compact('item', 'meals', 'allItems'));
+        $categories = FoodCategory::all();
+        return view('backend.pages.item.form', compact('item', 'meals', 'allItems', 'categories'));
     }
 
     public function update(Request $request, Item $item)
@@ -112,6 +132,9 @@ class ItemController extends Controller
             'image' => 'nullable|image|max:2048',
             'protein' => 'nullable|numeric',
             'carbs' => 'nullable|numeric',
+            'fat' => 'nullable|numeric',
+            'category_id' => 'nullable',
+            // 'category_id' => 'required|exists:food_categories,id',
         ]);
 
         // Handle image upload

@@ -38,11 +38,11 @@
                                 <th>ID</th>
                                 <th>Title</th>
                                 <th>Image</th>
-                                <th>Categories</th>
-                                <th>Total Protein (gm)</th>
-                                <th>Total Carbs (gm)</th>
+                                <th>Total Protein (g)</th>
+                                <th>Total Carbs (g)</th>
                                 <th>Description</th>
-                                <th>Created At</th>
+                                <!-- <th>Created At</th> -->
+                                <th>Categories</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -58,6 +58,9 @@
                                     <span class="text-muted">No Image</span>
                                     @endif
                                 </td>
+                                <td>{{ $meal->totalProtein() }}</td>
+                                <td>{{ $meal->totalCarbs() }}</td>
+                                <td>{{ Str::limit($meal->description, 50, '...') }}</td>
                                 <td>
                                     @if($meal->categories->isNotEmpty())
                                         {{ $meal->categories->pluck('title')->implode(', ') }}
@@ -65,10 +68,7 @@
                                         <span class="text-muted">No Subcategories</span>
                                     @endif
                                 </td> 
-                                <td>{{ $meal->totalProtein() }}</td>
-                                <td>{{ $meal->totalCarbs() }}</td>
-                                <td>{{ Str::limit($meal->description, 50, '...') }}</td>
-                                <td>{{ $meal->created_at->format('Y-m-d') }}</td>
+                                <!-- <td>{{ $meal->created_at->format('Y-m-d') }}</td> -->
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic outlined example">
                                         <a href="{{ route('admin.meals.edit', $meal->id) }}" class="btn btn-outline-secondary">

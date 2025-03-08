@@ -111,7 +111,7 @@
 
 
     <!-- Pagination controls -->
-    <div class="pagination">
+    <!-- <div class="pagination">
         @if(isset($pagination['current_page']))
         @if($pagination['current_page'] > 1)
             <a href="{{ route('search-product') }}?query={{ $query }}&page={{ $pagination['current_page'] - 1 }}">Previous</a>
@@ -123,7 +123,7 @@
             <a href="{{ route('search-product') }}?query={{ $query }}&page={{ $pagination['current_page'] + 1 }}">Next</a>
         @endif
         @endif
-    </div>
+    </div> -->
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {

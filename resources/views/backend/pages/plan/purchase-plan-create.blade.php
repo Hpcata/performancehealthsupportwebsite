@@ -15,6 +15,12 @@
         border-top : 1px solid black !important;
     }
 
+    .meal-name-edit {
+        display: flex;
+        margin-bottom: 1rem;
+        justify-content: space-between;
+    }
+
   </style>
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -36,103 +42,106 @@
                     @csrf
                     <input type="hidden" name="foodSelections" id="foodSelectionsInput">
                     <div class="row">
-                    <div class="panel-group col-7" id="accordion">
-                        
-                        <!-- Main Plan -->
-                        @foreach ($plans as $plan)
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapsePlan{{$plan->id}}">{{ $plan->name }}</a>
-                                </h4>
-                            </div>
-                            <div id="collapsePlan{{$plan->id}}" class="panel-collapse collapse in">
-                                <div class="panel-body">
-                                    <input type="hidden" name="plan_id[]" value="{{ $plan->id }}">
-                                    <input type="hidden" name="payment_id" value="{{ $payment->id }}">
-                                    <input type="hidden" name="user_id" id="user_id" value="{{ $payment->user_id }}">
-
-                                    <!-- Meal Times (Checkboxes) -->
-                                    <ul class="list-group mb-4">
-                                        @foreach ($plan->mealTimes as $mealTime)
-                                        <li class="list-group-item border rounded mb-3">
-                                            <!-- Meal Time Checkbox -->
-                                            <div class="form-check px-0">
-                                                <input type="checkbox" 
-                                                    name="meal_times[{{$plan->id}}][]" 
-                                                    value="{{ $mealTime->id }}" 
-                                                    class="form-check-input meal-time-checkbox hidden-checkbox" 
-                                                    id="mealTime{{$plan->id}}_{{$mealTime->id}}"
-                                                    data-mealtime-id="{{$mealTime->id}}">
-
-                                                <label class="form-check-label fw-bold" for="mealTime{{$plan->id}}_{{$mealTime->id}}">
-                                                    {{ $mealTime->title }} (Meal Time)
-                                                </label>
-                                            </div>
-
-                                            <!-- Add Meal Dropdown (Multiple Select) -->
-                                            <div class="add-meal-dropdown mt-3" id="addMealDropdown{{$plan->id}}_{{$mealTime->id}}" style="display: none;">
-                                                <label for="mealItems{{$plan->id}}_{{$mealTime->id}}" class="form-label">Add Meal</label>
-                                                <select name="selected_meals[{{$plan->id}}][{{$mealTime->id}}][]" 
-                                                        id="mealItems{{$plan->id}}_{{$mealTime->id}}" 
-                                                        class="form-select meal-items-select" 
-                                                        multiple>
-                                                   
-                                                </select>
-                                            </div>
-
-                                            <!-- Selected Meals and Swap Items -->
-                                            <div class="selected-meals mt-3" id="selectedMeals{{$plan->id}}_{{$mealTime->id}}" style="display: none;">
-                                                <h6 class="fw-bold">Selected Meals and Swap Items:</h6>
-                                                <ul class="list-group"></ul>
-                                            </div>
-                                        </li>
-                                        @endforeach
-                                    </ul>
+                        <div class="panel-group col-7" id="accordion">
+                            
+                            <!-- Main Plan -->
+                            @foreach ($plans as $plan)
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapsePlan{{$plan->id}}">{{ $plan->name }}</a>
+                                    </h4>
                                 </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                    <div class="col-5">
-                        <h4>Foods</h4>
-                        @foreach ($step5Foods as $category => $foods)
-                            <div class="category-section mb-3">
-                                <h5 class="category-title">{{ $category ?: 'Uncategorized' }}</h5> <!-- Handle empty categories -->
+                                <div id="collapsePlan{{$plan->id}}" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <input type="hidden" name="plan_id[]" value="{{ $plan->id }}">
+                                        <input type="hidden" name="payment_id" value="{{ $payment->id }}">
+                                        <input type="hidden" name="user_id" id="user_id" value="{{ $payment->user_id }}">
 
-                                <div class="row">
-                                    @php
-                                        // Split the foods into 2 equal columns for better UI
-                                        $chunkedFoods = $foods->chunk(ceil($foods->count() / 2));
-                                    @endphp
+                                        <!-- Meal Times (Checkboxes) -->
+                                        <ul class="list-group mb-4">
+                                            @foreach ($plan->mealTimes as $mealTime)
+                                            <li class="list-group-item border rounded mb-3">
+                                                <!-- Meal Time Checkbox -->
+                                                <div class="form-check px-0">
+                                                    <input type="checkbox" 
+                                                        name="meal_times[{{$plan->id}}][]" 
+                                                        value="{{ $mealTime->id }}" 
+                                                        class="form-check-input meal-time-checkbox hidden-checkbox" 
+                                                        id="mealTime{{$plan->id}}_{{$mealTime->id}}"
+                                                        data-mealtime-id="{{$mealTime->id}}">
 
-                                    @foreach ($chunkedFoods as $columnFoods)
-                                        <div class="col-md-6">
-                                            @foreach ($columnFoods as $food)
-                                                @php
-                                                    // Check if the food title exists in the prePlanSelectedFoods array
-                                                    $isMatched = in_array($food->title, $perPlanSelectedFoods);
-                                                @endphp
-
-                                                <div class="form-check">
-                                                    <input type="checkbox" name="setp5_foods[]" value="{{ $food->id }}" 
-                                                        class="form-check-input food-checkbox" 
-                                                        id="setp5Food{{ $food->id }}" 
-                                                        data-food-id="{{ $food->id }}" 
-                                                        data-food-name="{{ $food->title }}">
-
-                                                        <label class="form-check-label @if($isMatched) text-primary @endif" 
-                                                            for="setp5Food{{ $food->id }}">
-                                                            {{ $food->title }}
-                                                        </label>
+                                                    <label class="form-check-label fw-bold" for="mealTime{{$plan->id}}_{{$mealTime->id}}">
+                                                        {{ $mealTime->title }} (Meal Time)
+                                                    </label>
                                                 </div>
+
+                                                <!-- Add Meal Dropdown (Multiple Select) -->
+                                                <div class="add-meal-dropdown mt-3" id="addMealDropdown{{$plan->id}}_{{$mealTime->id}}" style="display: none;">
+                                                    <label for="mealItems{{$plan->id}}_{{$mealTime->id}}" class="form-label">Add Meal</label>
+                                                    <select name="selected_meals[{{$plan->id}}][{{$mealTime->id}}][]" 
+                                                            id="mealItems{{$plan->id}}_{{$mealTime->id}}" 
+                                                            class="form-select meal-items-select" 
+                                                            multiple>
+                                                    
+                                                    </select>
+                                                </div>
+
+                                                <!-- Selected Meals and Swap Items -->
+                                                <div class="selected-meals mt-3" id="selectedMeals{{$plan->id}}_{{$mealTime->id}}" style="display: none;">
+                                                    <h6 class="fw-bold">Selected Meals and Swap Items:</h6>
+                                                    <ul class="list-group"></ul>
+                                                </div>
+                                            </li>
                                             @endforeach
-                                        </div>
-                                    @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
+                            @endforeach
+                        </div>
+                        <div class="col-5">
+                            <h4>Foods</h4>
+                            @foreach ($step5Foods as $category => $foods)
+                                @php 
+                                    $category = \App\Models\FoodCategory::find($category);
+                                @endphp
+                                <div class="category-section mb-3">
+                                    <h5 class="category-title">{{ isset($category) ? $category->name : 'Uncategorized' }}</h5> <!-- Handle empty categories -->
+
+                                    <div class="row">
+                                        @php
+                                            // Split the foods into 2 equal columns for better UI
+                                            $chunkedFoods = $foods->chunk(ceil($foods->count() / 2));
+                                        @endphp
+
+                                        @foreach ($chunkedFoods as $columnFoods)
+                                            <div class="col-md-6">
+                                                @foreach ($columnFoods as $food)
+                                                    @php
+                                                        // Check if the food title exists in the prePlanSelectedFoods array
+                                                        $isMatched = in_array($food->title, $perPlanSelectedFoods);
+                                                    @endphp
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="setp5_foods[]" value="{{ $food->id }}" 
+                                                            class="form-check-input food-checkbox" 
+                                                            id="setp5Food{{ $food->id }}" 
+                                                            data-food-id="{{ $food->id }}" 
+                                                            data-food-name="{{ $food->title }}">
+
+                                                            <label class="form-check-label @if($isMatched) text-primary @endif" 
+                                                                for="setp5Food{{ $food->id }}">
+                                                                {{ $food->title }}
+                                                            </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                     <!-- Submit Button -->
                     <div class="mt-4">
@@ -190,15 +199,16 @@
             <div class="modal-body">
                 <form id="swapFoodsForm">
                     <div class="form-group">
+                        <label class="col-form-label" for="meals">Choose Meals:</label>
+                        <select name="meals[]" id="meals" class="form-control meal-select w-100" multiple>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <div class="col-form-label">
-                            <label class="col-form-label" for="meals">Choose Meals:</label>
+                            <label class="col-form-label" for="foodQuantity">Food Quantity:</label>
                         </div>
                         <div >
-                        <select name="meals[]" id="meals" class="form-control w-100 " multiple>
-                            @foreach ($meals as $meal)
-                                <option value="{{ $meal->id }}">{{ $meal->title }}</option>
-                            @endforeach
-                        </select>
+                            <input type="text" name="food_qty" id="foodQuantity" class="form-control w-100" placeholder="Enter quantity and unit (e.g., 2 slices, 1 cup, 100 g, 1 nos)">
                         </div>
                     </div>
                     <div class="form-group">
@@ -216,6 +226,36 @@
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary" id="saveSwapFoods">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Item Modal -->
+<div class="modal" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editItemForm">
+                    <div class="mb-3">
+                        <label for="itemName" class="form-label">Item Name</label>
+                        <input type="text" class="form-control" id="itemName" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemQty" class="form-label">Item Quantity</label>
+                        <input type="text" class="form-control" id="itemQty">
+                    </div>
+                    <div class="mb-3">
+                        <label for="swapItems" class="form-label">Select Swap Items</label>
+                        <select class="form-select select2" id="swapItems" multiple>
+                            <!-- Options will be added dynamically -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
             </div>
         </div>
@@ -277,17 +317,42 @@
     $(document).ready(function () {
         $('#meals').select2({
             placeholder: "Select Meals",
-            allowClear: true
+            allowClear: true,
+            width: '100%',
         });
 
-        $('#swapFoods').select2({
-            placeholder: "Select Swap Foods",
-            allowClear: true
-        });
         $('.meal-items-select').select2({
             placeholder: "Select Mels",
             allowClear: true
         })
+        
+        $('#swapFoods').select2({
+            placeholder: "Search for swap foods",
+            minimumInputLength: 1,  // Trigger API call after 1 character
+            width: '100%',
+            ajax: {
+                url: '{{ route("admin.items.index") }}',  // Use your index API route
+                dataType: 'json',
+                delay: 250,  // Delay for better performance
+                data: function(params) {
+                    return {
+                        query: params.term  // Send the search term as 'query' to the API
+                    };
+                },
+                processResults: function(response) {
+                    // Map API response to Select2 format
+                    return {
+                        results: response.items.map(function(item) {
+                            return {
+                                id: item.id,
+                                text: item.title
+                            };
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
 
 
         // $('#swapFoodsModal').on('hidden.bs.modal', function () {
@@ -598,41 +663,49 @@
 
             const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
             const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
-            const mealSelect = $(dropdownId).find('select');
+
+            const mealSelect = $(`#mealItems${planId}_${mealTimeId}`);
 
             if (checkbox.is(':checked')) {
-                $(dropdownId).show(); // Show Add Meal dropdown
-                $(selectedMealsId).show(); // Show Selected Meals container
-
-                // Load meals dynamically
-                $.ajax({
-                    url: '{{ route("admin.get-meals-by-mealtime") }}',
-                    method: 'POST',
-                    data: {
-                        meal_time_id: mealTimeId,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            mealSelect.empty(); // Clear previous options
-                            response.meals.forEach(meal => {
-                                mealSelect.append(`<option value="${meal.id}">${meal.name}</option>`);
-                            });
-                        } else {
-                            alert('Failed to load meals for the selected meal time.');
-                        }
-                    },
-                    error: function () {
-                        alert('Error occurred while loading meals.');
-                    }
-                });
+                $(dropdownId).show(); // Show the dropdown
+                $(selectedMealsId).show(); 
+                initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
             } else {
                 $(dropdownId).hide();
-                $(selectedMealsId).hide();
-                mealSelect.val([]).trigger('change');
-                $(selectedMealsId).empty(); // Clear selected meals
+                mealSelect.val(null).trigger('change'); // Clear selection
             }
         });
+
+        // Function to initialize Select2 with AJAX search
+        function initializeSelect2(mealSelect, mealTimeId) {
+            mealSelect.select2({
+                placeholder: 'Search meals...',
+                allowClear: true,
+                ajax: {
+                    url: '{{ route("admin.get-meals-by-mealtime") }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            meal_time_id: mealTimeId,
+                            search: params.term || '', // Search keyword
+                            _token: '{{ csrf_token() }}'
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.meals.map(meal => ({
+                                id: meal.id,
+                                text: meal.name
+                            }))
+                        };
+                    },
+                    cache: true
+                }
+            });
+        }
+
         let userId = $('#user_id').val();
         console.log(userId);
         let planID = 0;
@@ -691,6 +764,7 @@
             const selectedFoods = $('#swapFoods').val(); // Get selected food IDs
             const foodId = $('#swapFoodsModal').data('food-id');
             const foodName = $('#swapFoodsModal').data('food-name');
+            const foodQty = $('#foodQuantity').val();
 
             if (!selectedMeals || selectedMeals.length === 0) {
                 alert('Please select at least one meal.');
@@ -727,7 +801,7 @@
                             let swapItemsHTML = swapFoods.map(item => `
                                 <li>
                                     <input type="checkbox" name="swap_items[${planID}][${mealtimeID}][${mealId}][${foodId}][]" value="${item.id}" class="form-check-input">
-                                    <label>${item.name}</label>
+                                    <label>${item.name} (${item.qty})</label>
                                 </li>
                             `).join('');
 
@@ -735,7 +809,7 @@
                                 <tr data-food-id="${foodId}">
                                     <td>
                                         <input type="checkbox" name="items[${planID}][${mealtimeID}][${mealId}][]" value="${foodId}" class="form-check-input">
-                                        <label class="form-check-label">${foodName}</label>
+                                        <label class="form-check-label">${foodName} (${foodQty})</label>
                                     </td>
                                     <td>
                                         <ul class="list-unstyled">${swapItemsHTML}</ul>
@@ -754,6 +828,7 @@
                             swap_foods: swapFoods, // Save combined swap foods
                             meal_ids: selectedMeals,
                             user_id: userId,
+                            food_qty: foodQty,
                             _token: '{{ csrf_token() }}'
                         },
                         success: function (response) {
@@ -888,18 +963,67 @@
         $('.food-checkbox').on('change', function () {
             const foodId = $(this).data('food-id');
             const foodName = $(this).data('food-name');
-
+            $('#swapFoodsModalLabel').text(`Add ${foodName} to Meals`);
             if ($(this).is(':checked')) {
                 $('#swapFoodsModal').data('food-id', foodId);
                 $('#swapFoodsModal').data('food-name', foodName);
 
                 // Open the modal
                 $('#swapFoodsModal').modal('show');
+                fetchMeals();
             }
         });
 
+        $('.meal-select').select2({
+            width: '100%',
+            placeholder: "Search for meals...",
+            allowClear: true,
+            ajax: {
+                url: '{{ route("admin.meals.index") }}', // API route to get meals dynamically
+                dataType: 'json',
+                delay: 250, // Delay for better search performance
+                data: function (params) {
+                    return {
+                        search: params.term, // Send search keyword
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.meals.map(meal => ({
+                            id: meal.id,
+                            text: meal.name
+                        }))
+                    };
+                },
+                cache: true
+            }
+        });
+        
+        // Function to fetch meals dynamically
+        function fetchMeals() {
+            $.ajax({
+                url: '{{ route("admin.meals.index") }}',
+                method: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        let mealsSelect = $('#meals');
+                        mealsSelect.empty();
+                        response.meals.forEach(meal => {
+                            mealsSelect.append(new Option(meal.name, meal.id, false, false));
+                        });
+                    }
+                },
+                error: function () {
+                    alert('Error loading meals.');
+                }
+            });
+        }
+
         $('#closeSwapFoodsModal').on('click', function () { 
             $('#swapFoodsModal').modal('hide');
+            $('#swapFoods').val([]).trigger('change');
+            $('#meals').val([]).trigger('change');
+            $('.food-checkbox').prop('checked', false);
         });
     
         $(window).on('click', function (event) {
@@ -936,7 +1060,7 @@
                     ? item.swapItems.map(swapItem => `
                         <li>
                             <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${uniqueMealId}][${item.id}][]" value="${swapItem.id}" class="form-check-input">
-                            <label>${swapItem.name}</label>
+                            <label>${swapItem.name} (${swapItem.qty})</label>
                         </li>
                     `).join('')
                     : '<span class="text-muted">No swap items available</span>';
@@ -945,7 +1069,7 @@
                     <tr>
                         <td>
                             <input type="checkbox" name="items[${planId}][${mealTimeId}][${uniqueMealId}][]" value="${item.id}" class="form-check-input">
-                            <label class="form-check-label">${item.name}</label>
+                            <label class="form-check-label">${item.name} (${item.qty})</label>
                         </td>
                         <td>
                             <ul class="list-unstyled">${swapItemsHTML}</ul>

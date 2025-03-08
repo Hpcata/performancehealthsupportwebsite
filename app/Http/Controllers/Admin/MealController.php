@@ -35,6 +35,8 @@ class MealController extends Controller
             'categories.*' => 'exists:categories,id', // Validate subcategory IDs
             'food_ids' => 'nullable|array', // Ensure food items are selected
             'food_ids.*' => 'integer|exists:items,id', // Ensure food items exist
+            'food_qty' => 'nullable|array',
+            'food_qty.*' => 'string|max:50',
         ]);
 
         if ($request->hasFile('image')) {
@@ -43,7 +45,14 @@ class MealController extends Controller
 
         $meal = Meal::create($data);
 
-        $meal->items()->sync($request->food_ids);
+        if (!empty($request->food_ids)) {
+            // Attach food items with their respective text-based quantities
+            $foodItems = [];
+            foreach ($request->food_ids as $index => $foodId) {
+                $foodItems[$foodId] = ['item_qty' => $request->food_qty[$index] ?? '']; 
+            }
+            $meal->items()->sync($foodItems);
+        }
 
         // Get all unique user IDs
         $userIds = UserItemMeal::getUniqueUserIds();
@@ -104,6 +113,8 @@ class MealController extends Controller
             'categories.*' => 'exists:categories,id', // Validate subcategory IDs
             'food_ids' => 'nullable|array', // Ensure food items are selected
             'food_ids.*' => 'integer|exists:items,id', // Ensure food items exist
+            'food_qty' => 'nullable|array',
+            'food_qty.*' => 'string|max:50',
         ]);
         // dd($request->all());
         if ($request->hasFile('image')) {
@@ -118,6 +129,18 @@ class MealController extends Controller
         // }
         
         $meal->update($data);
+
+        // ✅ Clear old food items before adding new ones to prevent duplicates
+        $meal->items()->detach();
+
+        // ✅ Sync food items with quantities in the pivot table
+        if ($request->has('food_ids') && !empty($request->food_ids)) {
+            $foodItems = [];
+            foreach ($request->food_ids as $index => $foodId) {
+                $foodItems[$foodId] = ['item_qty' => $request->food_qty[$index]];
+            }
+            $meal->items()->sync($foodItems);
+        }
 
         if ($request->has('food_ids')) {
             $userIds = UserItemMeal::getUniqueUserIds();
@@ -150,7 +173,7 @@ class MealController extends Controller
                     }
                 }
             }
-            $meal->items()->sync($request->food_ids);
+            // $meal->items()->sync($request->food_ids);
         }
 
         if ($request->has('categories')) {

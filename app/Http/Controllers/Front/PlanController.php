@@ -48,6 +48,7 @@ class PlanController extends Controller
         $userMealTime = UserMealTime::with('userCategories.userMeals.userItems')->where('meal_time_id', $id)
         ->where('user_plan_id', $plan_id)
         ->first();
+        // dd($userMealTime);
         // $mealtime = MealTime::with('categories','categories.subcategories')->findOrFail($id);
         return view('front.break_fast', compact('userMealTime','userPlan'));
     }
@@ -63,7 +64,7 @@ class PlanController extends Controller
             return [
                 'user_meal_id' => $userMeal->id,
                 'id' => $userMeal->meal->id,
-                'name' => $userMeal->meal->title,
+                'name' => ($userMeal->meal_name) ? $userMeal->meal_name : $userMeal->meal->title,
                 'description' => $userMeal->meal->description,
                 'image' => $userMeal->meal->image
                     ? asset('private/public/storage/' . $userMeal->meal->image)
@@ -104,6 +105,7 @@ class PlanController extends Controller
                 'protein' => $userItem->item->protein ?? 0,
                 'carbs' => $userItem->item->carbs ?? 0,
                 'qty' => $userItem->item->qty,
+                // 'category' => ($userItem->item->category) ? $userItem->item->category->name : null,
                 'description' => $userItem->item->description,
                 'image' => $userItem->item->image
                     ? asset('private/public/storage/' . $userItem->item->image)

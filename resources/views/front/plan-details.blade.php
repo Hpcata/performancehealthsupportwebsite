@@ -4,12 +4,12 @@
 
 @section('content')
 
-    <div class="section nutrition-plan-hero">
+    <div class="section nutrition-plan-hero py-md-5">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 col-lg-5">
                     <div class="nutrition-plan-text">
-                        <h1>We Take Care About Your <span class="text-primary">Health</span></h1>
+                        <h1>We Take Care Of Your <span class="text-primary">Health</span></h1>
                         <p>Make sure your daily nutrition is sufficient. Consult your Nutrition Supplements Products about nutrition with us.</p>
                         <a href="#" class="btn btn-primary">
                             <span class="me-1">Get Started</span>
@@ -93,7 +93,7 @@
         </div>
     </div>
 
-    <div class="section">
+    <div class="section pt-md-5">
     @foreach($userPlans as $userPlan)
         <div class="container mb-5">
             <div class="d-md-flex align-items-center justify-content-between">

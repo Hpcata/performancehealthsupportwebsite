@@ -382,36 +382,41 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
+                    const $itemsSwapContainer = $('#itemsSwapContainer'); // Ensure correct reference
+
+                    $itemsSwapContainer.empty(); // Clear previous content
+
                     if (data.items && data.items.length > 0) {
-                        // console.log(data.items);
-                        // Populate subcategories into the modal
-                        var itemId = data.item_id
-                        var itemName = data.item_name
-                        var itemImage = data.item_image
-                        var userItemId = data.user_item_id
-                        var item = data.item
-                        $.each(data.items, function (index, swapitem) {
-                            const swapItemsCard = `
-                                <div class="category-item-swap category-swap-list-box" data-main-id="${itemId}" data-swap-id="${swapitem.swap_item_id}">
-                                    <div class="category-swap-img">
-                                        <figure>
-                                            <img class="img-thumbnail" src="${itemImage}" alt="">
-                                        </figure>
-                                        <figcaption>${itemName}</figcaption>
-                                        <div class="info-tootlip">
-                                            <p>Food Details</p>
-                                            <ul>
-                                                <li>Protein: ${item.protein}g</li>
-                                                <li>Carbs: ${item.carbs}g</li>
-                                            </ul>
-                                        </div>                                        
+                        var mainItemHTML = `
+                            <div class="main-item-box category-swap-list-box">
+                                <div class="category-swap-img">
+                                    <figure>
+                                        <img class="img-thumbnail main-item-img" data-main-id="${data.item_id}" src="${data.item_image}" alt="">
+                                    </figure>
+                                    <figcaption>${data.item_name}</figcaption>
+                                    <div class="info-tootlip">
+                                        <p>Food Details</p>
+                                        <ul>
+                                            <li class="main-item-protein">Protein: ${data.item.protein}g</li>
+                                            <li class="main-item-carbs">Carbs: ${data.item.carbs}g</li>
+                                        </ul>
                                     </div>
+                                </div>
+                            </div>`;
+
+                        var swapItemsHTML = `<div class="swap-items-container">`;
+
+                        $.each(data.items, function (index, swapitem) {
+                            swapItemsHTML += `
+                                <div class="category-item-swap category-swap-list-box swap-item" data-swap-id="${swapitem.swap_item_id}">
                                     <div class="category-swap-btn mx-auto">
-                                        <button class="swap-button btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-user-item-id="${userItemId}">
-                                            <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
-                                                <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
-                                            </svg>
+                                        <button class="swap-button btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" 
+                                            data-swap-item-id="${swapitem.swap_item_id}" 
+                                            data-swap-item-name="${swapitem.swap_item_name}" 
+                                            data-swap-item-img="${swapitem.swap_item_image}" 
+                                            data-swap-item-protein="${swapitem.swap_item_protein}" 
+                                            data-swap-item-carbs="${swapitem.swap_item_carbs}"
+                                            data-user-item-id="${userItemId}">
                                             Swap
                                         </button>
                                     </div>
@@ -429,14 +434,22 @@
                                         </div>                                        
                                     </div>
                                 </div>`;
-                            $itemsSwapContainer.append(swapItemsCard);
                         });
+
+                        swapItemsHTML += `</div>`;
+
+                        // Append to modal
+                        $itemsSwapContainer.append(`
+                            <div class="d-flex justify-content-between row">
+                                <div class="col-4 p-2">${mainItemHTML}</div>
+                                <div class="col-8 p-2">${swapItemsHTML}</div>
+                            </div>
+                        `);
                     } else {
                         $itemsSwapContainer.html('<p class="text-center">No swap items available.</p>');
                     }
 
-                    // Hide loading spinner and show subcategories
-                    $itemsSwapLoadingSpinner.hide();
+                    $('#itemsSwapLoadingSpinner').hide();
                     $itemsSwapContainer.show();
                 },
                 error: function (xhr, status, error) {
@@ -500,67 +513,112 @@
         let activeSwap = null;
         let swaps = [];
 
-        // When the swap button is clicked
         $('body').on('click', '.swap-button', function () {
             swaps = [];
-            // Get the current container of the swap button
-            const categoryItemSwap = $(this).closest('.category-item-swap');
-            
-            // Extract the data attributes (main and swap item IDs)
-            const mainItemId = categoryItemSwap.data('main-id');
-            const swapItemId = categoryItemSwap.data('swap-id');
 
-            let user_item_id = $(this).data('user-item-id');
-            // Debugging logs
-            console.log('Main Item ID:', mainItemId);
-            console.log('Swap Item ID:', swapItemId);
-            console.log('user Item ID:', user_item_id);
-
-            // Reverse the previous swap if there is one
-            if (activeSwap && activeSwap.mainContainer && activeSwap.swapContainer) {
-                const { mainContainer, swapContainer } = activeSwap;
-
-                // Restore the original content
-                const prevMainItemName = swapContainer.find('figcaption:last').text();
-                const prevMainItemImage = swapContainer.find('img:last').attr('src');
-                const prevSwapItemName = mainContainer.find('figcaption:first').text();
-                const prevSwapItemImage = mainContainer.find('img:first').attr('src');
-
-                // Reverse the swap in the DOM
-                mainContainer.find('figcaption:first').text(prevMainItemName);
-                mainContainer.find('img:first').attr('src', prevMainItemImage);
-                swapContainer.find('figcaption:last').text(prevSwapItemName);
-                swapContainer.find('img:last').attr('src', prevSwapItemImage);
-
-                console.log('Previous swap reversed');
+            // Reset previous swap if exists
+            if (activeSwap) {
+                resetPreviousSwap(activeSwap);
+                activeSwap = null; // Clear active swap after reset
             }
 
-            // Perform the new swap
-            const mainItemName = categoryItemSwap.find('figcaption:first').text();
-            const mainItemImage = categoryItemSwap.find('img:first').attr('src');
-            const swapItemName = categoryItemSwap.find('figcaption:last').text();
-            const swapItemImage = categoryItemSwap.find('img:last').attr('src');
+            // Get the clicked swap item container
+            const swapItemContainer = $(this).closest('.category-item-swap');
 
-            // Swap the content dynamically
-            categoryItemSwap.find('figcaption:first').text(swapItemName);
-            categoryItemSwap.find('img:first').attr('src', swapItemImage);
-            categoryItemSwap.find('figcaption:last').text(mainItemName);
-            categoryItemSwap.find('img:last').attr('src', mainItemImage);
+            // Extract swap item details
+            const swapItemId = $(this).data('swap-item-id');
+            const swapItemName = $(this).data('swap-item-name');
+            const swapItemImage = $(this).data('swap-item-img');
+            const swapItemProtein = $(this).data('swap-item-protein');
+            const swapItemCarbs = $(this).data('swap-item-carbs');
 
-            console.log('New swap applied');
+            let user_item_id = $(this).data('user-item-id');
 
-            // Store the current swap details for reversing later
+            // Get the main item container
+            const mainItemContainer = $('.main-item-box');
+            const mainItemImageElem = mainItemContainer.find('.main-item-img');
+            const mainItemNameElem = mainItemContainer.find('figcaption');
+            const mainItemProteinElem = mainItemContainer.find('.main-item-protein');
+            const mainItemCarbsElem = mainItemContainer.find('.main-item-carbs');
+
+            // Store current main item details
+            const mainItemId = mainItemImageElem.attr('data-main-id');
+            const mainItemName = mainItemNameElem.text();
+            const mainItemImage = mainItemImageElem.attr('src');
+            const mainItemProtein = mainItemProteinElem.text();
+            const mainItemCarbs = mainItemCarbsElem.text();
+
+            // console.log('Main Item Before Swap:', mainItemName, mainItemImage);
+            // console.log('Swap Item Before Swap:', swapItemName, swapItemImage);
+
+            // Swap main item with the selected swap item
+            mainItemImageElem.attr('src', swapItemImage);
+            mainItemNameElem.text(swapItemName);
+            mainItemProteinElem.text(`Protein: ${swapItemProtein}g`);
+            mainItemCarbsElem.text(`Carbs: ${swapItemCarbs}g`);
+
+            // Store original swap item details before replacing it
+            const originalSwapItemImage = swapItemContainer.find('img').attr('src');
+            const originalSwapItemName = swapItemContainer.find('figcaption').text();
+            const originalSwapItemProtein = swapItemContainer.find('.info-tootlip ul li:nth-child(1)').text();
+            const originalSwapItemCarbs = swapItemContainer.find('.info-tootlip ul li:nth-child(2)').text();
+
+            // Swap the selected swap item with the previous main item
+            swapItemContainer.find('img').attr('src', mainItemImage);
+            swapItemContainer.find('figcaption').text(mainItemName);
+            swapItemContainer.find('.info-tootlip ul').html(`
+                <li>${mainItemProtein}</li>
+                <li>${mainItemCarbs}</li>
+            `);
+
+            // console.log('Main Item After Swap:', swapItemName, swapItemImage);
+            // console.log('Swap Item After Swap:', mainItemName, mainItemImage);
+
+            // Store swap data for tracking & reset handling
             activeSwap = {
-                mainContainer: categoryItemSwap,
-                swapContainer: categoryItemSwap,
-                mainId: mainItemId,
-                swapId: swapItemId
+                mainContainer: mainItemContainer,
+                swapContainer: swapItemContainer,
+                mainItemId: mainItemId,
+                swapItemId: swapItemId,
+                mainItemName: mainItemName,
+                mainItemImage: mainItemImage,
+                mainItemProtein: mainItemProtein,
+                mainItemCarbs: mainItemCarbs,
+                originalSwapItemImage: originalSwapItemImage,
+                originalSwapItemName: originalSwapItemName,
+                originalSwapItemProtein: originalSwapItemProtein,
+                originalSwapItemCarbs: originalSwapItemCarbs
             };
 
-           swaps.push({ main_id: swapItemId, swap_id: mainItemId, user_item_id:user_item_id});
+            swaps.push({
+                main_id: swapItemId,
+                swap_id: mainItemId,
+                user_item_id: user_item_id
+            });
 
+            // console.log('Swaps:', swaps);
         });
 
+        // Function to reset previous swap properly
+        function resetPreviousSwap(swapData) {
+            if (!swapData) return;
+
+            // console.log('Resetting previous swap:', swapData);
+
+            // Restore original main item details
+            swapData.mainContainer.find('.main-item-img').attr('src', swapData.mainItemImage);
+            swapData.mainContainer.find('figcaption').text(swapData.mainItemName);
+            swapData.mainContainer.find('.main-item-protein').text(swapData.mainItemProtein);
+            swapData.mainContainer.find('.main-item-carbs').text(swapData.mainItemCarbs);
+
+            // Restore original swap item details
+            swapData.swapContainer.find('img').attr('src', swapData.originalSwapItemImage);
+            swapData.swapContainer.find('figcaption').text(swapData.originalSwapItemName);
+            swapData.swapContainer.find('.info-tootlip ul').html(`
+                <li>${swapData.originalSwapItemProtein}</li>
+                <li>${swapData.originalSwapItemCarbs}</li>
+            `);
+        }
 
         // Apply Changes functionality
         $('body').on('click', '.apply-changes-btn', function () {

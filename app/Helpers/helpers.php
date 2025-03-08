@@ -75,3 +75,23 @@ if (!function_exists('formatDate')) {
         }
     }
 }
+
+function formatDecimal($value) {
+    // Remove known unwanted text
+    $cleanedValue = str_replace(['Approx.', '<', 'g'], '', $value);
+
+    // Convert to float
+    $numericValue = is_numeric($cleanedValue) ? (float) $cleanedValue : 0;
+
+    // If value is "<1", assume 0.9 (or change as needed)
+    if (strpos($value, '<') !== false) {
+        return $numericValue > 0 ? $numericValue : 0.9;
+    }
+
+    return $numericValue;
+}
+
+// Check if the value is a decimal
+function isDecimal($value) {
+    return is_float($value) || (is_numeric($value) && strpos($value, '.') !== false);
+}

@@ -34,7 +34,7 @@ class MealTimeController extends Controller
     {
         $rules = [
             'title' => 'required|string|max:255',
-            'time' => 'required|date_format:H:i',
+            'time' => 'required',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
@@ -98,7 +98,7 @@ class MealTimeController extends Controller
         // Define validation rules
         $rules = [
             'title' => 'required|string|max:255',
-            'time' => 'required|date_format:H:i',
+            'time' => 'required',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
@@ -149,14 +149,20 @@ class MealTimeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MealTime $mealTime)
+    public function destroy(MealTime $mealTime, $id)
     {
-        if ($mealTime->image) {
-            Storage::disk('public')->delete($mealTime->image);
+        
+        try {
+            $mealTime = MealTime::findOrFail($id);
+            if ($mealTime->image) {
+                Storage::disk('public')->delete($mealTime->image);
+            }
+            $mealTime->delete();
+            return redirect()->route('admin.meal-times.index')->with('success', 'Meal Time deleted.');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            \Log::error('Delete Error: ' . $e->getMessage());
+            return back()->with('error', 'Deletion failed!');
         }
-
-        $mealTime->delete();
-
-        return redirect()->route('admin.meal-times.index')->with('success', 'Meal Time deleted successfully.');
     }
 }

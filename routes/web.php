@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\PurchasePlanController;
 use App\Http\Controllers\Admin\ProductController;
 use GuzzleHttp\Client;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Front\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -365,10 +366,12 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 		Route::post('/get-meals-by-mealtime', [PurchasePlanController::class, 'getMealsByMealTime'])->name('admin.get-meals-by-mealtime');
 
 		Route::get('/get-items', [PurchasePlanController::class, 'getItems'])->name('admin.get-items');
+		Route::post('/get-swap-items', [PurchasePlanController::class, 'getSwapItems'])->name('admin.get-swap-items');
 		Route::post('/add-food', [PurchasePlanController::class, 'addFood'])->name('admin.add-food');
 		Route::post('/save-swap-food', [PurchasePlanController::class, 'saveSwapFood'])->name('admin.save-swap-food');
 		Route::post('/get-swap-foods', [PurchasePlanController::class, 'getSwapFoods'])->name('admin.get-swap-foods');
-
+		Route::post('/update-swap-foods', [PurchasePlanController::class, 'updateFoodSwapFoods'])->name('admin.update-food-swap-foods');
+		Route::post('/delete-purchase-plan-food', [PurchasePlanController::class, 'deletePurchasePlanFood'])->name('admin.delete-purchase-plan-food');
 	});
 });
 
@@ -379,6 +382,8 @@ Route::POST('/save-query', [FrontController::class, 'save'])->name('save-query')
 Route::get('/action-sport-nutrition-plan', [FrontController::class, 'subHomePage'])->name('front.sub-home-page');
 Route::get('/pre-plan-details', [PaymentController::class, 'prePlanDetails'])->name('front.pre-plan-details');
 Route::post('/pre-plan-details-store', [PaymentController::class, 'prePlanDetailsSave'])->name('front.pre-plan-details.store');
+Route::get('/sample-plan', [FrontController::class, 'samplePlan'])->name('front.sample-plan');
+Route::post('/sample-plan-details-update', [FrontController::class, 'updateSamplePlanDetails'])->name('front.sample-plan-details-update');
 
 Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPlanDetails'])->name('front.competition-plan-details');
 Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
@@ -388,6 +393,9 @@ Route::get('/get-race-ethnicity-culture-options', [PaymentController::class, 'ge
 // Front auth
 Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
 Route::post('front/login', [FrontController::class, 'login'])->name('front.login');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('front.password.request');
+Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('front.password.reset');
+Route::post('password/reset', [ForgotPasswordController::class, 'reset'])->name('front.password.update');
 Route::post('front/logout', [FrontController::class, 'logout'])->name('front.logout');
 
 //Stripe payment
@@ -399,6 +407,9 @@ Route::post('/validate-coupon-code', [FrontController::class, 'validateCouponCod
 
 Route::get('/get-sports-games', [FrontController::class, 'getSportsGames'])->name('front.get-sports-games');
 Route::post('/sport-search', [FrontController::class, 'sportSearch'])->name('front.sport-search');
+
+Route::post('/query', [FrontController::class, 'submitQuery'])->name('front.submit-query');
+
 // Plans
 Route::group(['middleware' => 'auth'], function () {
 	// Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
@@ -422,6 +433,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/fetch-weights', [FrontController::class, 'fetchWeights'])->name('front.fetch.weights');
 	Route::get('/fetch/weight/data', [FrontController::class, 'fetchWeightData'])->name('front.fetch.weight.data');
 
+	Route::post('/update-goal', [FrontController::class, 'updateGoals'])->name('front.update.goal');
+    Route::post('/past-goals', [FrontController::class, 'getPastGoals'])->name('front.past.goals');
+
+	Route::post('/upload-report', [FrontController::class, 'uploadReport'])->name('front.upload.report');
+	Route::post('/delete-report', [FrontController::class, 'deleteReport'])->name('front.delete.report');
+
 });
 
-
+Route::post('/google/check-login', [FrontController::class, 'checkGoogleLogin'])->name('front.google.check-login');
+Route::post('/unlock-result', [FrontController::class, 'unlockFreeTestResult'])->name('front.unlock-result');

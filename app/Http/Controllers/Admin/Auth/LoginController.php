@@ -114,6 +114,7 @@ class LoginController extends Controller
             'last_name' => $request->input('last_name'), // Last name of the admin user.
             'email' => $request->input('email'), // Email of the admin user.
             'password' => Hash::make($request->input('password')), // Hashed password of the admin user.
+            
         ]);
 
         return redirect()->route('login')->with('success', 'Registration successful. Please login.');

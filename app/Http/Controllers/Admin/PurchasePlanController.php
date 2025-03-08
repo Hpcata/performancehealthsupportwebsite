@@ -18,6 +18,8 @@ use App\Mail\ActivePlanMail;
 use Mail;
 use App\Models\UserItemMeal;
 use PHPUnit\TextUI\Help;
+use Storage;
+use Illuminate\Support\Str;
 
 class PurchasePlanController extends Controller
 {
@@ -51,7 +53,7 @@ class PurchasePlanController extends Controller
         $categories = Category::all();
         $meals = Meal::all();
         $items = Item::where('is_swiped',0)->get();
-        $step5Foods = Item::where('is_extra', 1)->get()->groupBy('category');
+        $step5Foods = Item::where('is_extra', 0)->get()->groupBy('category_id');
         $userPrePlan = \App\Models\UserPrePlan::with(['prePlanDetails' => function ($query) {
             $query->where('form_slug', 'food_preference')
                   ->whereIn('question', ['Grains', 'Legumes, beans and pulses','Eggs','Meat','Meat Alternatives','Seafood','Dairy','Non-Dairy','Fruit','Vegetable','Oils / Butter']); // Add your condition here
@@ -348,7 +350,6 @@ class PurchasePlanController extends Controller
     {
         // Fetch the user's plan with all necessary relationships
         $payment = Payment::find($planId);
-        // dd($user->id);
         $plan = Plan::find($payment->plan_id);
         // dd($plan);
         $subPlanIds = $plan->subPlans->pluck('id')->toArray();
@@ -407,8 +408,24 @@ class PurchasePlanController extends Controller
         ->where('plan_id', $payment->plan_id)
         ->orderBy('updated_at', 'desc') // Order by updated_at in descending order
         ->first();
+
+        $step5Foods = Item::where('is_extra', 0)->get()->groupBy('category');
+
+        $userPrePlan = \App\Models\UserPrePlan::with(['prePlanDetails' => function ($query) {
+            $query->where('form_slug', 'food_preference')
+                  ->whereIn('question', ['Grains', 'Legumes, beans and pulses','Eggs','Meat','Meat Alternatives','Seafood','Dairy','Non-Dairy','Fruit','Vegetable','Oils / Butter']); // Add your condition here
+        }])->where('payment_id', $payment->id)->first();       
+
+        if(isset($userPrePlan->prePlanDetails)){
+            $prePlanDetails = $userPrePlan->prePlanDetails;
+            $perPlanSelectedFoods = $prePlanDetails->map(function ($detail) {
+                return json_decode($detail->answer, true); // Decode JSON into an array
+            })->flatten()->toArray();
+        }else {
+            $perPlanSelectedFoods = [];
+        }
         return view('backend.pages.plan.purchase-plan-edit', compact(
-            'userPlans', 'mealTimes', 'categories', 'meals', 'items', 'selectedMeals', 'selectedItems', 'selectedSwapItems', 'activity', 'payment'
+            'userPlans', 'mealTimes', 'categories', 'meals', 'items', 'selectedMeals', 'selectedItems', 'selectedSwapItems', 'activity', 'payment', 'step5Foods', 'perPlanSelectedFoods'
         ));
     }   
     
@@ -693,35 +710,45 @@ class PurchasePlanController extends Controller
             // dd('12');
             $meal = \App\Models\UserItemMeal::where('meal_id', $request->meal_id)->where('user_id',$request->user_id)->first();
             // dd($meal);
-            if(!$meal) {
-                $meal = Meal::with('items.swapItems')->where('id', $request->meal_id)->first();
+            // if(!$meal) {
+            //     $meal = Meal::with('items.swapItems')->where('id', $request->meal_id)->first();
 
-                // Check if meal exists
-                if (!$meal) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Meal not found.'
-                    ], 404);
-                }
+            //     // Check if meal exists
+            //     if (!$meal) {
+            //         return response()->json([
+            //             'success' => false,
+            //             'message' => 'Meal not found.'
+            //         ], 404);
+            //     }
 
-                $mealName = $meal->title;
-                $mealId = $meal->id;
+            //     $mealName = $meal->title;
+            //     $mealId = $meal->id;
 
-                // Prepare the data array
-                $data = $meal->items->map(function ($item) {
-                    return [
-                        'id' => $item->id,
-                        'name' => $item->title,
-                        'swapItems' => $item->swapItems->map(function ($swapItem) {
-                            return [
-                                'id' => $swapItem->id,
-                                'name' => $swapItem->title
-                            ];
-                        })
-                    ];
-                });
-            }else {
-                $meal = Meal::where('id', $meal->meal_id)
+            //     // Prepare the data array
+            //     $data = $meal->items->map(function ($item) {
+            //         return [
+            //             'id' => $item->id,
+            //             'name' => $item->title,
+            //             'qty'  => $item->pivot->item_qty,
+            //             'swapItems' => $item->swapItems->map(function ($swapItem) {
+            //                 return [
+            //                     'id' => $swapItem->id,
+            //                     'name' => $swapItem->title
+            //                 ];
+            //             })
+            //         ];
+            //     });
+            // }else {
+            //     $meal = Meal::where('id', $meal->meal_id)
+            //         ->with(['userMealItems' => function ($query) use ($userId) {
+            //             $query->where('user_id', $userId) // Filter userMealItems by user_id
+            //             ->with(['userItemSwaps' => function ($subQuery) use($userId){
+            //                 $subQuery->where('user_id', $userId); // Add condition to filter userItemSwaps
+            //             }]);
+            //         }])
+            //         ->first();
+            // }
+            $meal = Meal::where('id', $meal->meal_id)
                     ->with(['userMealItems' => function ($query) use ($userId) {
                         $query->where('user_id', $userId) // Filter userMealItems by user_id
                         ->with(['userItemSwaps' => function ($subQuery) use($userId){
@@ -729,12 +756,14 @@ class PurchasePlanController extends Controller
                         }]);
                     }])
                     ->first();
-            }
             $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)->where('plan_id', $request->plan_id)->first();
-            $userMealTimes = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
-                            ->where('meal_time_id', $request->meal_time_id)->first();
-            if($userMealTimes) {
-                $userMeal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTimes->id)->where('meal_id', $request->meal_id)->first();
+            $userMeal = null;
+            if($userPlan) {
+                $userMealTimes = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
+                                ->where('meal_time_id', $request->meal_time_id)->first();
+                if($userMealTimes) {
+                    $userMeal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTimes->id)->where('meal_id', $request->meal_id)->first();
+                }
             }
 
             // Check if meal exists
@@ -754,10 +783,12 @@ class PurchasePlanController extends Controller
                 return [
                     'id' => $item->id,
                     'name' => $item->title,
+                    'qty'  => $item->pivot->qty,
                     'swapItems' => $item->userItemSwaps->map(function ($swapItem) {
                         return [
                             'id' => $swapItem->id,
-                            'name' => $swapItem->title
+                            'name' => $swapItem->title,
+                            'qty' => $swapItem->qty
                         ];
                     })
                 ];
@@ -781,10 +812,12 @@ class PurchasePlanController extends Controller
                 return [
                     'id' => $item->id,
                     'name' => $item->title,
+                    'qty'  => $item->pivot->item_qty,
                     'swapItems' => $item->swapItems->map(function ($swapItem) {
                         return [
                             'id' => $swapItem->id,
-                            'name' => $swapItem->title
+                            'name' => $swapItem->title,
+                            'qty' => $swapItem->qty
                         ];
                     })
                 ];
@@ -915,7 +948,8 @@ class PurchasePlanController extends Controller
 
     }
 
-    public function getItems(Request $request) {
+    public function getItems(Request $request) 
+    {
         $items = Item::where('is_swiped',0)->get();
 
         return response()->json([
@@ -924,74 +958,263 @@ class PurchasePlanController extends Controller
         ]);
     }
 
-    public function addFood(Request $request) 
+    public function getSwapitems(Request $request) 
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'short_description' => 'nullable|string',
-            'description' => 'nullable|string',
-            'qty' => 'nullable|string',
-            'is_swiped' => 'required|boolean',
-            'meal_ids' => 'nullable|array',
-            'meal_ids.*' => 'exists:meals,id',
-            'swap_item_ids' => 'nullable|array',
-            'swap_item_ids.*' => 'exists:items,id',
-            'image' => 'nullable|image|max:2048',
-            'protein' => 'nullable|numeric',
-            'carbs' => 'nullable|numeric',
+        // dd($request->all());
+        $items = Item::where('is_swiped',1)->get();
+        $item = Item::find($request->item_id);
+        $selectedSwapItems = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->pluck('swap_item_id')->toArray();
+        
+        $selectedSwapItems = Item::whereIn('id', $selectedSwapItems)->get();
+        $selectedItemArr = [];
+        foreach ($selectedSwapItems as $swapItem) {
+            $selectedItemArr[] = [
+                'id' => $swapItem->id,
+                'name' => $swapItem->title,
+                'qty' => $swapItem->qty
+            ];
+        }
+        return response()->json([
+            'success' => true,
+            'item'      => $item,
+            'swapItems' => $items,
+            'selectedSwapItems' => $selectedItemArr
         ]);
+    }
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('items', 'public');
+    public function updateFoodSwapFoods(Request $request) 
+    {
+        // dd($request->all());
+        $userItemSwap = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->delete();
+
+        $userItemMeal = \DB::table('user_item_meals')->where('user_id', $request->user_id)->where('meal_id', $request->meal_id)->where('item_id', $request->item_id)->first();
+
+        if($userItemMeal) {
+            \DB::table('user_item_meals')->where('user_id', $request->user_id)->where('meal_id', $request->meal_id)->where('item_id', $request->item_id)->update([
+                'qty' => $request->item_qty
+            ]);
         }
 
-        // Create item
-        $item = Item::create($data);
-
-        $userItemMeal = new UserItemMeal();
-        $userItemMeal->user_id = $request->user_id;
-        $userItemMeal->meal_id = $request->meal_id;
-        $userItemMeal->is_swiped = $request->is_swiped;
-        // $userItemMeal->qty = $request->qty;
-        $userItemMeal->item_id = $item->id;
-        $userItemMeal->save();
-
-        // $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)->where('plan_id', $request->plan_id)->first();
-
-        // $userMealTime = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)->where('meal_time_id', $request->meal_time_id)->first();
-        // // $userCategories = $userMealTime->userCategories->pluck('id')->toArray();
-
-        // $userMeal = \App\Models\UserMeal::where('user_plan_id', $userPlan->id)->where('user_meal_time_id', $userMealTime->id)
-        //                    ->where('meal_id', $request->meal_id)->first();
-
-        // Sync swap items
-        if ($request->is_swiped == 1 && $request->has('swap_item_ids')) {
-            $item->swapItems()->sync($request->swap_item_ids);
-            foreach ($request->swap_item_ids as $swapItemId) {
-                $exists = \DB::table('user_item_swaps')
-                    ->where('user_id', $request->user_id)
-                    ->where('item_id', $swapItemId)
-                    ->where('swap_item_id', $item->id)
-                    ->exists();
-
-                if (!$exists) {
-                    \DB::table('user_item_swaps')->insert([
-                        'user_id' => $request->user_id,
-                        'item_id' => $swapItemId,
-                        'swap_item_id' => $item->id,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
+        $swapFoods = $request->swap_items;
+        if($swapFoods) {
+            foreach ($swapFoods as $swapFood) {
+                $userItemSwap = \DB::table('user_item_swaps')->insert([
+                    'user_id' => $request->user_id,
+                    'item_id' => $request->item_id,
+                    'swap_item_id' => $swapFood
+                ]);
             }
         }
+        $foods = Item::whereIn('id', $swapFoods)->get();
 
         return response()->json([
             'success' => true,
-            'item' => $item,
-            'message' => 'Food added successfully.'
+            'foods' => $foods,
+            'message' => 'Swap foods updated successfully!'
         ]);
+
+    }
+
+    public function deletePurchasePlanFood(Request $request)
+    {
+        try {
+            
+            $userItemMealDeleted = \DB::table('user_item_meals')->where('user_id', $request->user_id)->where('meal_id', $request->meal_id)->where('item_id', $request->item_id)->delete();
+
+            $userItemSwapDeleted = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->delete();
+                // Check if at least one deletion was successful
+            if ($userItemMealDeleted > 0 || $userItemSwapDeleted > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Food deleted successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No matching food items found to delete.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function addFood(Request $request) 
+    {
+        // Validate the request
+        if($request->type == 'woolworths') {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'image' => 'nullable|url',
+                'protein' => 'nullable',
+                'carbs' => 'nullable',
+                'meal_id' => 'required|exists:meals,id',
+                'user_id' => 'required|exists:users,id',
+            ]);
+
+            try {
+                // Step 1: Download the image from the URL
+                $imageContent = file_get_contents($validated['image']);
+                if ($imageContent === false) {
+                    return response()->json(['success' => false, 'message' => 'Unable to download the image.']);
+                }
+    
+                // Step 2: Generate a unique filename and save to storage
+                $imageName = Str::random(32) . '.jpg';  // Generate a random 32-character string and append '.jpg'
+                // Full path to store the image in public storage
+                $imagePath = 'items/' . $imageName; // Define the folder and filename
+            
+                // Save the image to storage
+                Storage::disk('public')->put($imagePath, $imageContent);
+                
+                $protein = $validated['protein'] ? rtrim($validated['protein'], 'g') : 0;
+                $carbs = $validated['carbs'] ? rtrim($validated['carbs'], 'g') : 0;
+    
+                // Step 3: Save food details in the database
+                $food = new Item(); // Assuming you have a Food model
+                $food->title = $validated['name'];
+                $food->protein = $protein;
+                $food->carbs = $carbs;
+                $food->image = 'items/' . $imageName; // Path to the stored image
+                $food->is_swiped = 0;
+                if($food->save()) {
+                    $userItemMeal = new UserItemMeal();
+                    $userItemMeal->user_id = $request->user_id;
+                    $userItemMeal->meal_id = $request->meal_id;
+                    $userItemMeal->is_swiped = $food->is_swiped;
+                    $userItemMeal->item_id = $food->id;
+                    $userItemMeal->save();
+                }
+
+                // Step 4: Redirect with success message
+                return response()->json(['success' => true, 'data' => $food, 'message' => 'Food added successfully.']);
+            } catch (\Exception $e) {
+                Log::error('Error adding food: ' . $e->getMessage());
+                return response()->json(['success' => false, 'message' => 'Failed to add food ']);
+            }
+        }else {
+
+            $data = $request->validate([
+                'item_id' => 'required|exists:items,id',
+                'user_id' => 'required|exists:users,id',
+                'meal_id' => 'required|exists:meals,id',
+            ]);
+
+            $item = Item::with('swapItems')->find($data['item_id']);
+
+            if (!$item) {
+                return response()->json(['success' => false, 'message' => 'Item not found.']);
+            }
+            
+            $userItemMeal = UserItemMeal::where('user_id', $data['user_id'])
+            ->where('meal_id', $data['meal_id'])
+            ->where('item_id', $data['item_id'])
+            ->first();
+
+            if ($userItemMeal) {
+                return response()->json(['success' => false, 'message' => 'Food already added.']);
+            } else {
+                $userItemMeal = new UserItemMeal();
+                $userItemMeal->user_id = $data['user_id'];
+                $userItemMeal->meal_id = $data['meal_id'];
+                $userItemMeal->is_swiped = $item->is_swiped;
+                $userItemMeal->item_id = $data['item_id'];
+                $userItemMeal->qty = $item->qty;
+                $userItemMeal->save();
+                
+                $swapItems = $item->swapItems;
+                // dd($swapItems);
+                foreach ($swapItems as $swapItem) {
+                    
+                    $exists = \DB::table('user_item_swaps')
+                        ->where('user_id', $request->user_id)
+                        ->where('item_id', $item->id)
+                        ->where('swap_item_id', $swapItem->id)
+                        ->exists();
+
+                    if (!$exists) {
+                        \DB::table('user_item_swaps')->insert([
+                            'user_id' => $request->user_id,
+                            'item_id' => $item->id,
+                            'swap_item_id' => $swapItem->id,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+
+               // Prepare simplified swapItems array
+                $simplifiedSwapItems = $swapItems->map(function ($swapItem) {
+                    return [
+                        'id' => $swapItem->id,      // Swap item ID
+                        'name' => $swapItem->title,  // Swap item name (assuming 'title' holds the name)
+                        'qty' => $swapItem->qty
+                    ];
+                });
+
+                // Include simplified swapItems in response
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'id' => $item->id,
+                        'title' => $item->title,
+                        'swapItems' => $simplifiedSwapItems  // Pass simplified swap items here
+                    ],
+                    'message' => 'Food added successfully.'
+                ]);
+            }
+        }
+        // }
+        //     }
+        //     // Create item
+
+        //     $userItemMeal = new UserItemMeal();
+        //     $userItemMeal->user_id = $request->user_id;
+        //     $userItemMeal->meal_id = $request->meal_id;
+        //     $userItemMeal->is_swiped = $request->is_swiped;
+        //     // $userItemMeal->qty = $request->qty;
+        //     $userItemMeal->item_id = $item->id;
+        //     $userItemMeal->save();
+
+        //     // $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)->where('plan_id', $request->plan_id)->first();
+
+        //     // $userMealTime = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)->where('meal_time_id', $request->meal_time_id)->first();
+        //     // // $userCategories = $userMealTime->userCategories->pluck('id')->toArray();
+
+        //     // $userMeal = \App\Models\UserMeal::where('user_plan_id', $userPlan->id)->where('user_meal_time_id', $userMealTime->id)
+        //     //                    ->where('meal_id', $request->meal_id)->first();
+
+        //     // Sync swap items
+        //     if ($request->is_swiped == 1 && $request->has('swap_item_ids')) {
+        //         $item->swapItems()->sync($request->swap_item_ids);
+        //         foreach ($request->swap_item_ids as $swapItemId) {
+        //             $exists = \DB::table('user_item_swaps')
+        //                 ->where('user_id', $request->user_id)
+        //                 ->where('item_id', $swapItemId)
+        //                 ->where('swap_item_id', $item->id)
+        //                 ->exists();
+
+        //             if (!$exists) {
+        //                 \DB::table('user_item_swaps')->insert([
+        //                     'user_id' => $request->user_id,
+        //                     'item_id' => $swapItemId,
+        //                     'swap_item_id' => $item->id,
+        //                     'created_at' => now(),
+        //                     'updated_at' => now(),
+        //                 ]);
+        //             }
+        //         }
+        //     }
+
+        //     return response()->json([
+        //         'success' => true,
+        //         'item' => $item,
+        //         'message' => 'Food added successfully.'
+        //     ]);
+        // } catch (\Exception $e) {
     }
 
     public function getSwapFoods(Request $request)
@@ -1012,7 +1235,8 @@ class PurchasePlanController extends Controller
         $swapFoods = $food->swapItems->map(function ($item) {
             return [
                 'id' => $item->id,
-                'name' => $item->title // Assuming 'name' is the column for food name
+                'name' => $item->title, // Assuming 'name' is the column for food name
+                'qty' => $item->qty
             ];
         })->toArray();
     
@@ -1025,7 +1249,8 @@ class PurchasePlanController extends Controller
                     if ($item) {
                         $swapFoods[] = [
                             'id' => $item->id,
-                            'name' => $item->title
+                            'name' => $item->title,
+                            'qty' => $item->qty
                         ];
                     }
                 }
@@ -1043,6 +1268,7 @@ class PurchasePlanController extends Controller
         $foodId = $request->food_id;
         $swapFoodIds = $request->swap_foods;
         $mealIds = $request->meal_ids;
+        $foodQty = $request->food_qty ?? null;
 
         foreach ($mealIds as $mealId) {
             // Check if the meal already exists
@@ -1055,6 +1281,7 @@ class PurchasePlanController extends Controller
                 'item_id' => $foodId,
                 'meal_id' => $mealId,
                 'user_id' => $request->user_id,
+                'qty' => $foodQty,
                 'is_swiped' => 0, // Assuming 'is_swiped' exists in the items table
             ]);
         }

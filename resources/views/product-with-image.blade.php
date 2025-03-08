@@ -91,6 +91,8 @@
                                         <th>Size</th>
                                         <th>Carbohydrate</th>
                                         <th>Protein</th>
+                                        <th>Fat</th>
+                                        <th>Category</th>
                                         <th>Image</th>
                                         <th>Add Food</th>
                                     </tr>
@@ -104,6 +106,8 @@
                                             <td>{{ $product['size'] }}</td>
                                             <td>{{ $product['nutrition']['carbohydrate'] ?? 'N/A' }}</td>
                                             <td>{{ $product['nutrition']['protein'] ?? 'N/A' }}</td>
+                                            <td>{{ $product['nutrition']['fat'] ?? 'N/A' }}</td>
+                                            <td>{{ $product['category'] }}</td>
                                             <td>
                                                 <img src="{{ $product['image'] }}" alt="Product Image" width="50" height="50">
                                             </td>
@@ -113,7 +117,8 @@
                                                     data-name="{{ $product['name'] }}" 
                                                     data-image="{{ $product['image'] }}" 
                                                     data-protein="{{ $product['nutrition']['protein'] ?? '0' }}" 
-                                                    data-carbs="{{ $product['nutrition']['carbohydrate'] ?? '0' }}">
+                                                    data-carbs="{{ $product['nutrition']['carbohydrate'] ?? '0' }}"
+                                                    data-fat="{{ $product['nutrition']['fat'] ?? '0' }}">
                                                     Add Food
                                                 </button>
                                             </td>
@@ -185,6 +190,8 @@
                 const image = $(this).data('image');
                 const protein = $(this).data('protein');
                 const carbs = $(this).data('carbs');
+                const fat = $(this).data('fat');
+                const category = $(this).data('category');
                 // Show loader
                 loader.show();
 
@@ -197,6 +204,8 @@
                         image: image,
                         protein: protein,
                         carbs: carbs,
+                        fat: fat,
+                        category: category,
                         _token: '{{ csrf_token() }}' // Include CSRF token
                     },
                     success: function (response) {
