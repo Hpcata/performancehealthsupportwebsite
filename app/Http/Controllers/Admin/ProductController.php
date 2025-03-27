@@ -37,7 +37,7 @@ class ProductController extends Controller
                     foreach ($groupProducts as $product) {
                         $additionalAttributes = $product['AdditionalAttributes'] ?? [];
                         $nutrition = [];
-
+                        //dd($product);
                         if (isset($additionalAttributes['nutritionalinformation'])) {
                             $nutritionInfo = json_decode($additionalAttributes['nutritionalinformation'], true);
                             $attributes = $nutritionInfo['Attributes'] ?? [];
@@ -50,6 +50,23 @@ class ProductController extends Controller
                                 } elseif ($attribute['Name'] === 'Fat Total Quantity Per Serve - Total - NIP') {
                                     $nutrition['fat'] = $attribute['Value'] ?? '';
                                 }
+                                elseif ($attribute['Name'] === 'Servings Per Pack - Total - NIP') {
+                                    $nutrition['serving_per_pack'] = $attribute['Value'] ?? '';
+                                }
+                                elseif ($attribute['Name'] === 'Serving Size - Total - NIP') {
+                                    $nutrition['serving_size'] = $attribute['Value'] ?? '';
+                                }
+                            }
+                        }
+
+                        $category = '';
+                        if (!empty($additionalAttributes['piesdepartmentnamesjson'])) {
+                            $decodedPiesDept = json_decode($additionalAttributes['piesdepartmentnamesjson'], true);
+                
+                            if (is_array($decodedPiesDept) && count($decodedPiesDept) >= 2) {
+                                $category = $decodedPiesDept[1]; // Set second index as category
+                            }else {
+                                $category = $decodedPiesDept;
                             }
                         }
 
@@ -94,8 +111,9 @@ class ProductController extends Controller
             'carbs' => 'nullable',
             'fat' => 'nullable',
             'category' => 'nullable',
+            'serving_per_pack' => 'nullable',
+            'serving_size' => 'nullable',
         ]);
-
         try {
             // Step 1: Download the image from the URL
             $imageContent = file_get_contents($validated['image']);
@@ -114,6 +132,7 @@ class ProductController extends Controller
             $protein = $validated['protein'] ? rtrim($validated['protein'], 'g') : 0;
             $carbs = $validated['carbs'] ? rtrim($validated['carbs'], 'g') : 0;
             $fat = $validated['fat'] ? rtrim($validated['fat'], 'g') : 0;
+            $serving_size = $validated['serving_size'] ? rtrim($validated['serving_size'], 'G') : 0;
             // dd($protein, $carbs, $fat);
 
             if(isDecimal($protein)){
@@ -134,6 +153,12 @@ class ProductController extends Controller
                 $fat = formatDecimal($fat);
             }
 
+            if(isDecimal($serving_size)){
+                $serving_size = floatval($serving_size);
+            }else {
+                $serving_size = formatDecimal($serving_size);
+            }
+
             $keywords = explode(" ", strtolower($validated['category']));
 
             // Search for any matching keyword in the database
@@ -143,12 +168,21 @@ class ProductController extends Controller
                 }
             })->first();
 
+            if(!$foodCategory){
+
+                $foodCategory = new \App\Models\FoodCategory();
+                $foodCategory->name = ucwords($validated['category']);
+                $foodCategory->save();
+            }
+
             // Step 3: Save food details in the database
             $food = new Item(); // Assuming you have a Food model
             $food->title = $validated['name'];
             $food->protein = $protein;
             $food->carbs = $carbs;
             $food->fat = $fat;
+            $food->serving_per_pack = $validated['serving_per_pack'];
+            $food->serving_size = $serving_size;
             $food->image = 'items/' . $imageName; // Path to the stored image
             $food->is_swiped = 0;
             $food->category_id = isset($foodCategory) ? $foodCategory->id : null;

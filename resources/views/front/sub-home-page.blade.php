@@ -189,20 +189,7 @@
                                     @endif
                                 </figure>
                                 <div class="spot-plan-info-box">
-                                    <h6>Bundle 1:</h6>
-                                    <ul>
-                                        <li>High Training Day Plan</li>
-                                        <li>Low Training Day Plan</li>
-                                        <li>Comp Day Plan</li>
-                                    </ul>
-                                    <p>Bonus: Life in the day of Pro Plan</p>
-                                    <h6>Bundle 2:</h6>
-                                    <ul>
-                                        <li>High Training Day Plan </li>
-                                        <li>Low Training Day Plan</li>
-                                        <li>Injury/ Post Surgery Plan</li>
-                                    </ul>
-                                    <p>Bonus: Life in the day of Pro Plan</p>
+                                    {!! htmlspecialchars_decode($plan->description) !!}
                                 </div>
                             </div>
                             <!-- <a href="#" class="btn btn-primary">Purchase Now: $200</a> -->
@@ -871,6 +858,7 @@
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" >
+                                <small class="form-text text-muted">Password must be at least 8 characters long.</small>
                             </div>
 
                             <!-- Divider -->
@@ -1019,6 +1007,7 @@
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control" name="password" id="register-password" required>
+                            <small class="form-text text-muted">Password must be at least 8 characters long.</small>
                         </div>
 
                         <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
@@ -2302,7 +2291,7 @@
                                                 </svg>
                                             </span>
                                             <h4 class="text-center mt-4">Supplement Nutrition Knowledge</h4>
-                                            <h3 class="text-center mt-1 text-black supplement-percentage">40%</h3>
+                                            <h3 class="text-center mt-1 text-black supplement-percentage d-none">40%</h3>
 
                                             <div class="text-center mt-4">
                                                 <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="supplement">
@@ -2321,7 +2310,7 @@
                                         <div class="score-meter-main score-meter-locked sport-plan">
                                             <div class="score-meter-box score-meter-out score-meter-box-2">
                                                 <div class="score-meter-text">
-                                                    <span class="meter-text-01">Untapped <br>potetion</span>
+                                                    <span class="meter-text-01">Untapped <br>potential</span>
                                                     <span class="meter-text-02">Much to <br>learn</span>
                                                     <span class="meter-text-03">Ok</span>
                                                     <span class="meter-text-04">Good <br>start</span>
@@ -2353,7 +2342,7 @@
                                                 </svg>
                                             </span>
                                             <h4 class="text-center mt-4">Sports Nutrition Knowledge</h4>
-                                            <h3 class="text-center mt-1 text-black sports-percentage">40%</h3>
+                                            <h3 class="text-center mt-1 text-black sports-percentage d-none">40%</h3>
 
                                             <div class="text-center mt-4">
                                                 <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="sport">
@@ -2394,7 +2383,7 @@
                                                         <img src="https://booking.biohealthpassport.com.au/public/uploads/front_logo/1727981512_1727875441_logo.png" alt="">
                                                     </figure> -->
                                                     <p>Displays the nutrition or fitness plan a subscribed to, including details on duration, customization options, and renewal status. Helps manage their plan effectively.</p>
-                                                    <a href="{{ route('front.sub-home-page') }}#sport-plans" class="btn btn-white">Purchase Plan
+                                                    <a href="{{ route('front.sub-home-page') }}#sport-plans" class="btn btn-white" target="_blank">Purchase Plan
                                                         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M6.4165 15.5827L15.5832 6.41602M15.5832 6.41602H6.4165M15.5832 6.41602V15.5827" stroke="#124E4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                                         </svg>
@@ -2426,7 +2415,7 @@
                                                         <img src="https://booking.biohealthpassport.com.au/public/uploads/front_logo/1727981512_1727875441_logo.png" alt="">
                                                     </figure> -->
                                                     <p>Personalised nutrition and fitness plans to help you stay strong, energised, and at your best every day.</p>
-                                                    <a href="{{ route('front.sub-home-page') }}#sample-plan-section" class="btn btn-white">Sample Plan
+                                                    <a href="{{ route('front.sub-home-page') }}#sample-plan-section" class="btn btn-white" target="_blank">Sample Plan
                                                         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M6.4165 15.5827L15.5832 6.41602M15.5832 6.41602H6.4165M15.5832 6.41602V15.5827" stroke="#124E4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                                         </svg>
@@ -2458,7 +2447,7 @@
                                                         <img src="https://booking.biohealthpassport.com.au/public/uploads/front_logo/1727981512_1727875441_logo.png" alt="">
                                                     </figure>
                                                     <h3>Get answers from a real-life expert. Not a chat bot.</h3>
-                                                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-white">Book Now 
+                                                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-white" target="_blank">Book Now 
                                                         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M6.4165 15.5827L15.5832 6.41602M15.5832 6.41602H6.4165M15.5832 6.41602V15.5827" stroke="#124E4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                                         </svg>
@@ -3068,6 +3057,9 @@
                         const modalBody = $('#TakeTestModel .modal-body');  // Target the modal body specifically
                         modalBody.scrollTop(0); // Scroll to the top of the modal body
                     }, 100);// Adjust the delay as needed  
+
+                    $('.supplement-plan .unlock-result').removeClass('d-none');
+                    $('.sport-plan .unlock-result').removeClass('d-none');
                 });
             });
 
@@ -3224,16 +3216,19 @@
 
                             // if(type == "sport") {
                                 $('.sport-plan .score-lock').addClass('d-none');
+                                $('.sports-percentage').removeClass('d-none');
 
                                 // Hide sport-lock and show sport-unlock
                                 $('.sport-plan .sport-lock').addClass('d-none');
                                 $('.sport-plan .sport-unlock').removeClass('d-none');
-
-                                $('.supplement-plan .score-lock').addClass('d-none');
+                                $('.sport-plan .unlock-result').addClass('d-none');
 
                                 // Hide supplement-lock and show supplement-unlock
                                 $('.supplement-plan .supplement-lock').addClass('d-none');
+                                $('.supplement-plan .score-lock').addClass('d-none');
                                 $('.supplement-plan .supplement-unlock').removeClass('d-none');
+                                $('.supplement-percentage').removeClass('d-none');
+                                $('.supplement-plan .unlock-result').addClass('d-none');
                             // }
                             // if(type == "supplement") {
                             //     $('.supplement-plan .score-lock').addClass('d-none');
@@ -3246,11 +3241,15 @@
                             $('#detailsForm')[0].reset();
                         }else {
                             alert(response.message);
+                            $('.supplement-plan .unlock-result').removeClass('d-none');
+                            $('.sport-plan .unlock-result').removeClass('d-none');
                         }
                     },
                     error: function (xhr, status, error) {
-                        alert("An error occurred while submitting the form.");
+                        alert("Something went wrong. Please try again.");
                         console.log("Error submitting form:", error);
+                        $('.supplement-plan .unlock-result').removeClass('d-none');
+                        $('.sport-plan .unlock-result').removeClass('d-none');
                     }
                 });
             });
@@ -3661,9 +3660,22 @@
                                 }
                             },
                             error: function (xhr, status, error) {
-                                console.error('Payment error:', error);
-                                alert('An error occurred while processing the payment.');
                                 $('#submit').prop('disabled', false);
+
+                                if (xhr.status === 422) {
+                                    // Display Laravel validation errors
+                                    let errors = xhr.responseJSON.errors;
+                                    let errorMessage = 'Please correct the following errors:\n';
+
+                                    $.each(errors, function(key, value) {
+                                        errorMessage += `- ${value[0]}\n`;
+                                    });
+
+                                    alert(errorMessage);
+                                } else {
+                                    // For other errors (500, 403, etc.)
+                                    alert('Something went wrong. Please try again.');
+                                }
                             }
                         });
                     }else {
@@ -3732,9 +3744,22 @@
                                         }
                                     },
                                     error: function(xhr, status, error) {
-                                        console.error('Payment error:', error);
-                                        alert('An error occurred while processing the payment.');
                                         $('#submit').prop('disabled', false);
+
+                                        if (xhr.status === 422) {
+                                            // Display Laravel validation errors
+                                            let errors = xhr.responseJSON.errors;
+                                            let errorMessage = 'Please correct the following errors:\n';
+
+                                            $.each(errors, function(key, value) {
+                                                errorMessage += `- ${value[0]}\n`;
+                                            });
+
+                                            alert(errorMessage);
+                                        } else {
+                                            // For other errors (500, 403, etc.)
+                                            alert('Something went wrong. Please try again.');
+                                        }
                                     }
                                 });
                             }
@@ -3866,7 +3891,7 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        document.getElementById('promo-message').textContent = 'An error occurred. Please try again.';
+                        document.getElementById('promo-message').textContent = 'Something went wrong. Please try again.';
                         document.getElementById('promo-message').classList.add('text-danger');
                         document.getElementById('promo-message').classList.remove('text-success');
                     });
@@ -3906,7 +3931,7 @@
                     if (response.message) {
                         $('#login-error').text(response.message); // Display error message in #login-error div
                     } else {
-                        $('#login-error').text('An error occurred. Please try again.'); // General error message
+                        $('#login-error').text('Something went wrong. Please try again.'); // General error message
                     }
 
                     $('#login-submit').prop('disabled', false); // Re-enable submit button
@@ -3938,7 +3963,7 @@
                     if (response.message) {
                         alert(response.message);
                     } else {
-                        alert('An error occurred. Please try again.');
+                        alert('Something went wrong. Please try again.');
                     }
                 }
             });

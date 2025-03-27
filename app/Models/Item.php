@@ -8,7 +8,7 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'price', 'image', 'qty', 'alias', 'is_swiped', 'protein', 'carbs', 'fat', 'category_id'];
+    protected $fillable = ['title', 'description', 'price', 'image', 'qty', 'unit', 'is_swiped', 'protein', 'carbs', 'fat', 'category_id', 'serving_per_pack', 'serving_size', 'serving_size_unit'];
 
     protected $hidden = ['created_at', 'updated_at'];
 

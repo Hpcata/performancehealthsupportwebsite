@@ -22,6 +22,8 @@ use App\Http\Controllers\Admin\ProductController;
 use GuzzleHttp\Client;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Front\ForgotPasswordController;
+use App\Http\Controllers\Admin\NutritionAIController;
+use App\Http\Controllers\Admin\ImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +43,18 @@ Route::get('/check-auth', function () {
     ]);
 });
 
+
+Route::get('/chat', function () {
+    return view('image_form');
+});
+
+Route::post('/chat', [ImageController::class, 'chat'])->name('chat');
+Route::get('/generate-image', [ImageController::class, 'generateImageForm']);
+Route::post('/generate-image', [ImageController::class, 'generateImage'])->name('generate-image');
+
+
+Route::post('/calculate-nutrition', [NutritionAIController::class, 'calculateNutrition'])->name('nutrition.calculate');
+Route::get('/calculate-nutrition-form', [NutritionAIController::class, 'form'])->name('view.form');
 // Route::get('/test-woolworths-api', function () {
 //     // Woolworths API URL
 //     $apiUrl = 'https://www.woolworths.com.au/apis/ui/Search/products/';

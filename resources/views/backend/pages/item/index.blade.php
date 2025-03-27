@@ -49,8 +49,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($items as $item)
+                            @foreach ($items as $index => $item)
                             <tr>
+                                <!-- <td><strong>{{ $index + 1 }}</strong></td> -->
                                 <td><strong>{{ $item->id }}</strong></td>
                                 <td>{{ $item->title }}</td>
                                 <td>

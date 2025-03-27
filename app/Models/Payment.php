@@ -22,6 +22,7 @@ class Payment extends Model
         'phone',
         'payment_intent_id',
         'status',
+        'coupon_code'
     ];
 
     // Optionally, you can define relationships if needed

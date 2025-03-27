@@ -3,26 +3,25 @@
 @section('title', 'Profile Page')
 
 @section('content')
-    <div class="section nutrition-plan-hero bg-white">
+    <div class="nutrition-plan-hero bg-white py-4">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 col-lg-5">
                     <div class="nutrition-plan-text">
                         <h1>We Take Care Of Your <span class="text-primary">Health</span></h1>
                         <p>Make sure your daily nutrition is sufficient. Consult your Nutrition Supplements Products about nutrition with us.</p>
-                        <a href="#" class="btn btn-primary">
+                        <!-- <a href="#" class="btn btn-primary">
                             <span class="me-1">Get Started</span>
                             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
                                 <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
-        
-                        </a>
+                        </a> -->
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-5 ms-lg-auto">
                     <div class="nutrition-plan-img-box">
-                        <div class="go-bottom-link">
+                        <div class="go-bottom-link d-none">
                             <figure class="top-corner">
                                 <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
                                     <path d="M50,45V0H3v0.1h2.1C29.9,0.1,50,20.2,50,45z" fill="#fafafa"/>
@@ -40,47 +39,56 @@
                             </figure>
                         </div>
                         <div class="nutrition-plan-img">
-                            <figure>
+                            <figure style="padding-top:80%">
                                 <img src="{!! frontAssets('images/nutrition-supplements.jpg') !!}" alt="images/nutrition-supplements.jpg" alt="">
                             </figure>
                         </div>
-                        <!-- <div class="nutrition-bottom-box">
+                        <div class="nutrition-bottom-box ">
                             <figure class="top-corner">
                                 <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
                                     <path d="M0,5v45h47v-0.1h-2.1C20.1,49.9,0,29.8,0,5z" fill="#fafafa"/>
                                 </svg>
-                            </figure> -->
-                            <!-- <div class="nutrition-athlete-box">
+                            </figure>
+                            <div class="nutrition-athlete-box">
                                 <figure>
-                                    <img src="images/kerry-oBryan.jpg" alt="">
+                                    @if(isset($user->profile_image))
+                                    <img src="{{ asset('private/public/' . $user->profile_image) }}">
+                                    @else
+                                    <img src="{{ frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
+                                    @endif
+                                    <!-- <img src="{{ frontAssets('images/kerry-oBryan.jpg') }}" alt=""> -->
                                 </figure>
                                 <div class="nutrition-athlete-info">
-                                    <h5>Ellie Shiloh</h5>
-                                    <p>National Athlete</p>
+                                    <h5>{{ $user->name }} </h5>
+                                    <p>{{ $user->designation }}</p>
                                 </div>
-                            </div> -->
-                            <!-- <figure class="bottom-corner">
+                                <!-- <div class="nutrition-athlete-info">
+                                    <h5>Kerry O'Bryan </h5>
+                                    <p>MNutr&Diet, B.Sp.Ex.Sc, IOC Dip Nut</p>
+                                </div> -->
+                            </div>
+                            <figure class="bottom-corner">
                                 <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
                                     <path d="M0,5v45h47v-0.1h-2.1C20.1,49.9,0,29.8,0,5z" fill="#fafafa"/>
                                 </svg>
                             </figure> 
-                        </div> -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="plan-buttons-link">
-            <div class="container">
+            <!-- <div class="container">
                 <div class="d-flex flex-wrap align-items-center">
                     <a href="#">Tracker</a>
                     <a href="#">Plan</a>
                     <a href="#">Treatment</a>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     
-    <div class="section bg-lighter pb-1" id="nextSection">
+    <div class="section bg-lighter pb-1 pt-0" id="nextSection">
         <div class="container">
             <div class="mt-4">
                 <div class="row g-4">
@@ -91,7 +99,11 @@
                             <div class="profile-box h-100">
                                 <figure>
                                     <!-- <img src="{{ asset('private/public/front/images/athlete-sport.jpg') }}" alt=""> -->
-                                    <img src="{{ asset('private/public/' . $user->profile_image) }}" alt="">
+                                    @if(isset($user->profile_image))
+                                    <img src="{{ asset('private/public/' . $user->profile_image) ?? frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
+                                    @else
+                                    <img src="{{ frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
+                                    @endif
                                 </figure>
                                 <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editImageModal"
                                     data-form-name="profile_image" data-question="Profile Image" data-answer="{{ asset('private/public/storage/' . isset($profileDetails) ? $profileDetails['Profile Image'] : '') }}">
@@ -99,11 +111,12 @@
                                 </button>
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body nutrition-profile-info">
-                                        <h4 class="text-center">{{ $profileDetails['Name'] ?? 'Nill' }}
-                                        <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editNameModal"
-                                            data-form-name="profile_name" data-question="Name" data-answer="{{ $profileDetails['Name'] ?? 'Nill' }}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
+                                        <h4 class="text-center">
+                                            <span class="mx-auto">{{ $profileDetails['Name'] ?? 'Nill' }}</span>
+                                            <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editNameModal"
+                                                data-form-name="profile_name" data-question="Name" data-answer="{{ $profileDetails['Name'] ?? 'Nill' }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
                                         </h4>
                                         <ul>
                                             <li>Sport: N/A
@@ -112,14 +125,14 @@
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                             </li>
-                                            <li>Weight: {{ !empty($profileDetails['Current body weight (kg) (if known):']) ? $profileDetails['Current body weight (kg) (if known):'] . ' kg' : 'N/A' }}
+                                            <li>Weight: {{ !empty($profileDetails['Current body weight (kg) (if known):']) ? $profileDetails['Current body weight (kg) (if known):'] : 'N/A' }}
                                                 <!-- <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
                                                     data-form-name="physical_measures" data-question="Current body weight (kg) (if known):" data-answer="{{ $profileDetails['Current body weight (kg) (if known):'] ?? 'Nill' }}">
                                                     <i class="fas fa-edit"></i>
                                                 </button> -->
                                             </li>
                                             <li><a href="#" class="text-decoration-underline" id="weight-tracking">Track Your Weight</a></li>
-                                            <li>Height: {{ !empty($profileDetails['Height (cm):']) ? $profileDetails['Height (cm):']. ' cm' : 'N/A' }}
+                                            <li>Height: {{ !empty($profileDetails['Height (cm):']) ? $profileDetails['Height (cm):'] : 'N/A' }}
                                                 <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
                                                     data-form-name="physical_measures" data-question="Height (cm):" data-answer="{{ $profileDetails['Height (cm):'] ?? 'Nill' }}">
                                                     <i class="fas fa-edit"></i>
@@ -144,7 +157,8 @@
                                 <div class="p-4 card-body goal-card">
                                     <ul>
                                         <li><strong>Nutrition Goals:</strong> {{ $nutritionGoalsDetails['Which of the following nutrition related goals are you interested in working on?'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon add-goal" title="Add Goal" data-type="goal"
+                                        <div class="btn-list">
+                                            <button class="btn btn-light edit-icon add-goal " title="Add Goal" data-type="goal"
                                                 data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of the following nutrition related goals are you interested in working on?'] ?? 'Nill' }}">
                                                 <i class="fas fa-plus"></i>
                                             </button>
@@ -152,8 +166,10 @@
                                                 data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of the following nutrition related goals are you interested in working on?'] ?? 'Nill' }}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+                                            </div>
                                         </li>
                                         <li><strong>Nutrition Challenge:</strong> {{ $nutritionGoalsDetails['What is your biggest nutrition challenge?'] ?? 'Nill' }}
+                                        <div class="btn-list">
                                             <button class="btn btn-light edit-icon add-goal" title="Add Challenge" data-type="challenge"
                                                 data-form-name="nutrition_goals" data-question="What is your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails['What is your biggest nutrition challenge?'] ?? 'Nill' }}">
                                                 <i class="fas fa-plus"></i>
@@ -162,6 +178,7 @@
                                                 data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of the following nutrition related goals are you interested in working on?'] ?? 'Nill' }}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+                                        </div>
                                         </li> 
                                     </ul>
                                     <div class="goal-list mt-4 mt-md-5">
@@ -180,22 +197,36 @@
                             <div class="card h-100 border-0 shadow-sm">
                                 <div class="p-0 card-body intake-card">
                                     <div class="px-4 py-3 border-bottom">
-                                        <strong>Supplements: </strong>
-                                        <p>{{ $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
+                                        <div class="position-relative">
+                                            <strong>Supplements: </strong>
+                                            <p>{{ $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? 'Nill' }}</p>
+                                            <div class="btn-list">
+                                                <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                    data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? 'Nill' }}" data-type="supplement">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                                <button class="btn btn-light edit-icon view-past-history" title="View Past Supplements" data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? 'Nill' }}" data-type="supplement">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="px-4 py-3 border-bottom">
-                                        <strong>Medications:</strong>
-                                        <p>{{ $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
+                                        <div class="position-relative">
+                                            <strong>Medications:</strong>
+                                            <p>{{ $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? 'Nill' }} </p>
+                                            <div class="btn-list">
+                                                <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                    data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? 'Nill' }}" data-type="medication">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                                <button class="btn btn-light edit-icon view-past-history" title="View Past Medications" 
+                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? 'Nill' }}" data-type="medication">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                           
+                                        </div>
                                     </div>
                             {{--    <div class="px-4 py-3 border-bottom">
                                         <strong>Favourite Food:</strong>
@@ -358,48 +389,6 @@
         </div>
     </div>
 
-    <!--Shoping list Modal -->
-    <div class="modal fade" id="ShoppingModal" tabindex="-1" aria-labelledby="ShippingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ShippingModalLabel">Shopping List</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="ingredient-list">
-                        
-                    </div>
-                </div>
-                <div class="modal-footer p-0">
-                    <a href="javascript:void(0);" class="btn btn-primary m-0 w-100 text-center rounded-0" data-bs-target="#ShippingPrintModal" data-bs-toggle="modal">Print Shopping List Now</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!--Shoping print Modal -->
-    <div class="modal fade" id="ShippingPrintModal" tabindex="-1" aria-labelledby="ShippingPrintModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ShippingPrintModalLabel">Shopping List</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="print-list">
-                        <ul>
-
-                        </ul>
-                    </div>
-                </div>
-                <div class="modal-footer p-0">
-                    <button type="button" class="btn btn-primary m-0 w-100 text-center rounded-0" data-bs-dismiss="modal">Print</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!--Weight trak Modal -->
     <div class="modal fade" id="WeightModal" tabindex="-1" aria-labelledby="WeightModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
@@ -543,7 +532,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit</h5>
+                    <h5 class="modal-title" id="editModalLabel">Add</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -551,11 +540,13 @@
                         <!-- Hidden Field to Store Form Name -->
                         <input type="hidden" id="formName" name="form_name">
                         <input type="hidden" id="formQuestion" name="question">
+                        <input type="hidden" id="type" name="type">
                         
                         <!-- Display Question -->
                         <div class="mb-3">
                             <label class="form-label">Question</label>
-                            <input type="text" id="question" class="form-control" readonly>
+                            <p id="questionText"></p>
+                            <input type="hidden" id="question" class="form-control" readonly>
                         </div>
 
                         <!-- Answer Input -->
@@ -649,14 +640,22 @@
 
     <!-- Report File Upload Modal -->
     <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
+                
                 <div class="modal-header">
                     <h5 class="modal-title" id="reportModalLabel">Upload Report</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="file" id="fileUpload" class="form-control" multiple>
+                    <div class="mb-3">
+                        <label for="sportNameInput" class="form-label">Report Name</label>
+                        <input type="text" class="form-control" id="file_name" name="file_name" value="" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sportImageInput" class="form-label">Upload Report</label>
+                        <input type="file" class="form-control" id="fileUpload" name="file" multiple>
+                    </div>
                     <input type="hidden" id="report_type" value="">
                     <br>
                     <h6>Existing Reports:</h6>
@@ -746,61 +745,19 @@
         .catch(error => console.error('Error:', error));
     }
 
-    $(document).on('click', '#fetchAllMeals', function () {
-        // Show loader or clear previous content
-        $('#ShoppingModal .modal-body').html('<p>Loading...</p>');
+    $(document).on('change', '.meal-item-checkbox', function () {
+        let allItems = $('.meal-item-checkbox'); // All item checkboxes
+        let allChecked = allItems.length === allItems.filter(':checked').length; // Check if all are selected
 
-        // Fetch all meals with items
-        $.ajax({
-            url: '{{ route("front.get.meals.items") }}', // Adjust URL if needed
-            method: 'GET',
-            success: function (response) {
-                let meals = response.meals;
-                // let selectedItems = response.selectedItems;
-                let modalContent = '';
-                modalContent += `<div class="form-check mb-2">
-                                        <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
-                                        <label class="form-check-label" for="printPlanCheckbox">Select All</label>
-                                    </div>`;                
-                // Loop through each meal
-                meals.forEach(meal => {
-                    modalContent += `<div class="ingredient-list">
-                                        <h2>${meal.title}</h2>
-                                        <ul>`;
-                    
-                    // Loop through each item in the meal
-                    meal.items.forEach(item => {
-                        // let isChecked = selectedItems[meal.id] && selectedItems[meal.id].includes(item.id) ? 'checked' : '';
+        // Set the global "Select All" checkbox state
+        $('#selectAllCheckbox').prop('checked', allChecked);
+    });
+    
+    $(document).on('change', '#selectAllCheckbox', function () {
+        let isChecked = $(this).is(':checked'); // Check if "Select All" is checked
 
-                        modalContent += `<li>
-                                            <div class="ingredient-info">
-                                                <div class="form-check">
-                                                    <input class="form-check-input meal-item-checkbox" type="checkbox" value="${item.id}" id="Check${item.id}">
-                                                    <label class="form-check-label" for="Check${item.id}">
-                                                        <div class="ingredient-img">
-                                                            <figure>
-                                                                <img src="{{ asset('private/public/storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
-                                                            </figure>
-                                                        </div>
-                                                    </label>
-                                                </div>
-                                                <span>${item.title}</span>
-                                            </div>
-                                            <span class="quantity"><strong>QTY:</strong> ${item.qty ? item.qty : 'N/A'}</span>
-                                        </li>`;
-                    });
-
-                    modalContent += `</ul></div>`;
-                });
-
-                // Update modal content
-                $('#ShoppingModal .modal-body').html(modalContent);
-            },
-            error: function (xhr) {
-                console.error('Error fetching meals:', xhr);
-                $('#ShoppingModal .modal-body').html('<p>Error loading data.</p>');
-            }
-        });
+        // Toggle all checkboxes based on the state of "Select All"
+        $('.meal-item-checkbox').prop('checked', isChecked);
     });
 
     $(document).on('click', '#fetchAllMeals', function () {
@@ -822,7 +779,9 @@
                 // Loop through each meal
                 meals.forEach(meal => {
                     modalContent += `<div class="ingredient-list">
-                                        <h2>${meal.title}</h2>
+                                        <input type="checkbox" class="form-check-input mt-3 mx-3 meal-checkbox" id="id="mealCheckbox${meal.id}"">
+                                        <h2 class="d-inline-block px-0" style="border-bottom:none;">${meal.title}</h2>
+                                        <hr class="m-0">
                                         <ul>`;
                     
                     // Loop through each item in the meal
@@ -844,7 +803,7 @@
                                                 </div>
                                                 <span>${item.title}</span>
                                             </div>
-                                            <span class="quantity"><strong>QTY:</strong> ${item.qty ? item.qty : 'N/A'}</span>
+                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty ? item.pivot.item_qty : 'N/A'}</span>
                                         </li>`;
                     });
 
@@ -861,39 +820,33 @@
         });
     });
 
-    $(document).on('change', '#selectAllCheckbox', function () {
-        let isChecked = $(this).is(':checked'); // Check if "Select All" is checked
+    $(document).on('change', '.meal-checkbox', function () {
+        const mealContainer = $(this).closest('.ingredient-list'); // Find the relevant meal container
+        const isChecked = $(this).is(':checked'); // Check if "Meal Checkbox" is selected
 
-        // Toggle all checkboxes based on the state of "Select All"
-        $('.meal-item-checkbox').prop('checked', isChecked);
+        // Select/Deselect all meal items within this meal's container
+        mealContainer.find('.meal-item-checkbox').prop('checked', isChecked);
     });
-
-    $(document).on('change', '.meal-item-checkbox', function () {
-        let allItems = $('.meal-item-checkbox'); // All item checkboxes
-        let allChecked = allItems.length === allItems.filter(':checked').length; // Check if all are selected
-
-        // Set the global "Select All" checkbox state
-        $('#selectAllCheckbox').prop('checked', allChecked);
-    });
-    
+   
     $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
         let aggregatedItems = {};
 
         // Collect all checked items
-        $('#ShoppingModal .form-check-input:checked').each(function () {
-            const itemName = $(this).closest('.ingredient-info').find('span').text().trim();
-            const quantityText = $(this).closest('li').find('.quantity').text().trim();
-            const category = $(this).closest('li').find('input[type="hidden"]#category').val().trim(); // Get category
+        $('#ShoppingModal .meal-item-checkbox:checked').each(function () {
+            const listItem = $(this).closest('li');  // Correct reference for each item
+            const itemName = listItem.find('.ingredient-info span').text().trim() || "Unknown Item";
+            const quantityText = listItem.find('.quantity').text().trim() || "QTY: 0";
+            const category = listItem.find('input[type="hidden"]#category').val().trim() || "Uncategorized";
 
-            // Match quantity and unit, including fractions
-            let quantityMatch = quantityText.match(/QTY:\s*([\d\/.]+)\s*(.*)/i);
-            let rawQuantity = quantityMatch ? quantityMatch[1] : "0";
-            let unit = quantityMatch ? quantityMatch[2].trim() : '';
+            // Extract quantity and unit with better regex logic
+            const quantityMatch = quantityText.match(/QTY:\s*([\d\/.]+)\s*([a-zA-Z]*)/i);
+            let rawQuantity = quantityMatch && quantityMatch[1] ? quantityMatch[1] : "0";
+            let unit = quantityMatch && quantityMatch[2] ? quantityMatch[2].trim() : '';
 
-            // Convert fraction to decimal if needed
+            // Correct conversion for fractional values
             let quantity = 0;
             if (rawQuantity.includes('/')) {
-                let [numerator, denominator] = rawQuantity.split('/').map(Number);
+                const [numerator, denominator] = rawQuantity.split('/').map(Number);
                 quantity = numerator / denominator;
             } else {
                 quantity = parseFloat(rawQuantity);
@@ -918,7 +871,7 @@
         for (let [category, items] of Object.entries(aggregatedItems)) {
             printListContent += `<h6>${category}</h6><ul>`;
             for (let [itemName, data] of Object.entries(items)) {
-                printListContent += `<li>${itemName} <strong>| QTY</strong>: ${data.quantity} ${data.unit}</li>`;
+                printListContent += `<li>${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}</li>`;
             }
             printListContent += `</ul></br>`;
         }
@@ -1451,14 +1404,18 @@
             let formName = $(this).data('form-name');
             let question = $(this).data('question');
             let answer = $(this).data('answer');
-
+            let type = $(this).data('type');
             // Set values in modal
             $('#formName').val(formName);
             $('#formQuestion').val(question);
             $('#question').val(question);
-            $('#answer').val(answer);
+            // $('#answer').val(answer);
+            $('#questionText').text(question);
+            $('#type').val(type);
 
             // Show modal
+            $("#editModalLabel").text(type === "supplement" ? "Add Supplement" : "Add Medication");
+
             $('#editModal').modal('show');
         });
 
@@ -1470,6 +1427,7 @@
                 form_name: $('#formName').val(),
                 question: $('#question').val(),
                 answer: $('#answer').val(),
+                type: $('#type').val(),
                 user_id: userId,
                 _token: '{{ csrf_token() }}' // CSRF protection
             };
@@ -1545,7 +1503,6 @@
         // View Past Goals or Challenges via AJAX
         $(".view-past-goals").click(function () {
             let type = $(this).attr("data-type");
-
             $.ajax({
                 url: "{{ route('front.past.goals') }}",
                 type: "POST",
@@ -1576,56 +1533,90 @@
                 }
             });
         });
+
+        $(".view-past-history").click(function () {
+            let type = $(this).attr("data-type");
+            console.log(type);
+
+            $.ajax({
+                url: "{{ route('front.past.goals') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    type: type,
+                    user_id: userId
+                },
+                success: function (data) {
+                    let modalTitle = type === "supplement" ? "Past Supplements" : "Past Medications";
+                    $("#viewPastItemsModalLabel").text(modalTitle);
+
+                    let pastList = $("#pastItemsList");
+                    pastList.html(""); // Clear existing list
+
+                    if (data.length > 0) {
+                        $.each(data, function (index, item) {
+                            pastList.append("<li>" + item.answer + " <small>(Added on: " + new Date(item.created_at).toLocaleDateString() + ")</small></li>");
+                        });
+                    } else {
+                        pastList.append("<li>No past records found.</li>");
+                    }
+
+                    $("#viewPastItemsModal").modal("show"); // Show modal with past data
+                },
+                error: function () {
+                    alert("Error fetching past " + type + "s!");
+                }
+            });
+        });
     });
 
     document.addEventListener("DOMContentLoaded", function () {
         const ctx = document.getElementById('trainingChart').getContext('2d');
-        let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-
-        // X-Axis: Days per week
+        let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null); 
+        // Define X-axis labels (Days per week)
         let daysLabels = ["1-2", "3-4", "5+"];
 
-        // Y-Axis: Intensity levels
+        // Define intensity levels (Y-axis)
         let intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
 
-        // Initialize dataset (each intensity is a separate dataset)
-        let datasets = intensityLabels.map((intensity, index) => {
-            return {
-                label: intensity,
-                data: daysLabels.map(day => response[day] && response[day].includes(intensity) ? 1 : 0), // 1 if selected, else 0
-                backgroundColor: index === 0 ? "rgba(75, 192, 192, 0.6)" : index === 1 ? "rgba(255, 159, 64, 0.6)" : "rgba(255, 99, 132, 0.6)",
-                borderColor: index === 0 ? "rgba(75, 192, 192, 1)" : index === 1 ? "rgba(255, 159, 64, 1)" : "rgba(255, 99, 132, 1)",
-                borderWidth: 1
-            };
-        });
+        // Define colors for each intensity
+        let colors = {
+            "Low intensity": "rgba(75, 192, 192, 0.6)",
+            "Moderate intensity": "rgba(255, 159, 64, 0.6)",
+            "High intensity": "rgba(255, 99, 132, 0.6)"
+        };
 
-        // Create Bar Chart
+        // Initialize dataset for each intensity level
+        let datasets = intensityLabels.map(intensity => ({
+            label: intensity,
+            data: daysLabels.map(day => response[day]?.includes(intensity) ? 1 : 0), // If selected, show 1, else 0
+            backgroundColor: colors[intensity],
+            borderColor: colors[intensity].replace('0.6', '1'), // Darker border color
+            borderWidth: 1
+        }));
+
+        // Create the stacked vertical bar chart
         new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: daysLabels, // X-axis: Days per week
-                datasets: datasets // Y-axis: Intensity levels
+                datasets: datasets  // Y-axis: Intensity levels stacked
             },
             options: {
                 responsive: true,
+                plugins: {
+                    tooltip: { enabled: true },
+                    legend: { display: true } // Show legend for intensity types
+                },
                 scales: {
                     x: {
-                        title: {
-                            display: true,
-                            text: "Days per Week"
-                        }
+                        title: { display: true, text: "Days per Week" },
+                        stacked: true // Enable stacking
                     },
                     y: {
-                        title: {
-                            display: true,
-                            text: "Training Intensity"
-                        },
-                        ticks: {
-                            stepSize: 1,
-                            callback: function (value, index) {
-                                return intensityLabels[index]; // Display intensity labels
-                            }
-                        }
+                        title: { display: true, text: "Training Intensity" },
+                        stacked: true, // Enable stacking
+                        ticks: { stepSize: 1, beginAtZero: true }
                     }
                 }
             }
@@ -1655,45 +1646,76 @@
         // Function to Display Reports
         function displayReports(reportsData, reportType) {
             var reports = reportsData[reportType];
-            var html = "<table class='table table-bordered'><thead><tr><th>Sr. No.</th><th>File</th><th>Action</th></tr></thead><tbody>";
+            var html = `
+                <table class='table table-bordered'>
+                    <thead>
+                        <tr>
+                            <th>Sr. No.</th>
+                            <th>Report Name</th>
+                            <th>Date</th>
+                            <th>File</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
             if (!reports || reports.length === 0) {
-                html += "<tr><td colspan='3'>No reports available.</td></tr>";
+                html += "<tr><td colspan='5' class='text-center'>No reports available.</td></tr>";
             } else {
                 reports.forEach(function (file, index) {
-                    let fileUrl = "{{ asset('private/storage/app/public') }}/" + file;
-                    html += "<tr data-filename='" + file + "'>";
-                    html += `<td>${index + 1}</td>`; // Display serial number
+                    if (!file || !file.file_path) return; // Safeguard against undefined entries
 
-                    // For image files (PNG, JPG, JPEG)
-                    if (file.endsWith(".png") || file.endsWith(".jpg") || file.endsWith(".jpeg")) {
-                        html += `<td><img src="${fileUrl}" class="img-thumbnail" width="100" onclick="previewImage('${fileUrl}')"></td>`;
-                        html += `<td><button class="btn btn-primary py-2 px-3" onclick="previewImage('${fileUrl}')"><i class="fa-solid fa-eye text-white"></i></button><button class="btn btn-danger py-2 px-3" onclick="deleteFile('${file}')"><i class="fa-solid fa-trash text-white"></i> </button></td>`;
+                    let fileUrl = file.file_path;
+                    let fileTypeIcon = '';
 
-                    } 
-                    // For PDF files
-                    else if (file.endsWith(".pdf")) {
-                        html += `<td><i class="fa-solid fa-file-pdf"></i></td>`;
-                        html += `<td><a href="${fileUrl}" download class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-download "></i></a><button class="btn btn-danger py-2 px-3" onclick="deleteFile('${file}')"><i class="fa-solid fa-trash text-white"></i> </button></td>`;
+                    if (fileUrl.toLowerCase().endsWith(".png") || 
+                        fileUrl.toLowerCase().endsWith(".jpg") || 
+                        fileUrl.toLowerCase().endsWith(".jpeg")) {
+                        fileTypeIcon = `<img src="${fileUrl}" class="img-thumbnail" width="100" onclick="previewImage('${fileUrl}')">`;
+                    } else if (fileUrl.toLowerCase().endsWith(".pdf")) {
+                        fileTypeIcon = `<i class="fa-solid fa-file-pdf text-danger" style="font-size: 1.5rem;"></i>`;
+                    } else {
+                        fileTypeIcon = `<i class="fa-solid fa-file text-primary" style="font-size: 1.5rem;"></i>`;
+                    }
 
-                    } 
-                    // For other files (such as text, docs, etc.), provide a download link
-                    else {
-                        html += `<td><i class="fa-solid fa-file "></i></td>`;
-                        html += `<td><a href="${fileUrl}" download class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-download "></i> </a><button class="btn btn-danger py-2 px-3" onclick="deleteFile('${file}')"><i class="fa-solid fa-trash text-white"></i> </button></td>`;
-                    }   
-                    html += "</tr>";
+                    html += `
+                        <tr data-filename='${file.report_name}'>
+                            <td>${index + 1}</td>
+                            <td>${file.report_name || 'N/A'}</td>
+                            <td>${file.date || 'N/A'}</td>
+                            <td>${fileTypeIcon}</td>
+                            <td>
+                                ${fileUrl.toLowerCase().endsWith(".png") || 
+                                fileUrl.toLowerCase().endsWith(".jpg") || 
+                                fileUrl.toLowerCase().endsWith(".jpeg")
+                                    ? `<button class="btn btn-primary py-2 px-3" onclick="previewImage('${fileUrl}')">
+                                        <i class="fa-solid fa-eye text-white"></i>
+                                    </button>`
+                                    : `<a href="${fileUrl}" download class="btn btn-secondary py-2 px-3">
+                                        <i class="fa-solid fa-download"></i>
+                                    </a>`
+                                }
+                                <button class="btn btn-danger py-2 px-3" onclick="deleteFile('${file.report_name}')">
+                                    <i class="fa-solid fa-trash text-white"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                 });
             }
+
             html += "</tbody></table>";
             $("#report_type").val(reportType);
             $("#existingReports").html(html);
         }
 
+
         $("#uploadBtn").click(function () {
             var files = $("#fileUpload")[0].files; // Get all selected files
             var formData = new FormData();
             var reportType = $('#report_type').val();
+            var reportName = $('#file_name').val();
             console.log(reportType);
             if (files.length === 0) {
                 alert("Please select at least one file to upload.");
@@ -1704,6 +1726,7 @@
                 formData.append("file[]", files[i]); // Append each file to FormData
             }
 
+            formData.append("report_name", reportName);
             formData.append("report_type", reportType);
             formData.append("_token", "{{ csrf_token() }}");
             formData.append("user_pre_plan_id", userPrePlan.id);
@@ -1718,6 +1741,7 @@
                     alert("Files uploaded successfully!");
                     $("#fileUpload").val(""); // Clear file input
                     $("#report_type").val(""); // Clear file input
+                    $('#file_name').val('');
                     $("#reportModal").modal("hide");
                     // displayReports(response, reportType); // Refresh the report list dynamically
                     window.location.reload(); // Reload page to show uploaded files

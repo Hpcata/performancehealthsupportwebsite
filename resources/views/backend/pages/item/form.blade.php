@@ -1,6 +1,25 @@
 @extends('backend.layouts.app')
 
 @section('content')
+<style>
+#loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+}
+#loader img {
+    width: 50px; /* Adjust size */
+    height: 50px;
+}
+
+</style>
+
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
@@ -22,6 +41,7 @@
                         @if (isset($item)) 
                             @method('PUT') 
                         @endif
+                        <input type="hidden" name="id" class="form-control" id="id" value="{{ $item->id ?? '' }}" >
 
                         <div class="row g-3 align-items-center">
                             <!-- Title Field -->
@@ -54,28 +74,93 @@
                             </div>
 
                             <!-- Quantity Field -->
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <label for="qty" class="form-label">Quantity</label>
-                                <input type="text" name="qty" class="form-control" value="{{ $item->qty ?? ''}}" placeholder="Enter quantity and unit (e.g., 200 ml, 1 cup, 100 g)">
+                                <input type="number" name="qty" id="qty" class="form-control" value="{{ $item->qty ?? ''}}"  placeholder="Enter quantity" step="0.01" min="0">
                             </div>
-                            <!-- <small class="text-muted">Please include both quantity and unit (e.g., 200 ml, 1 cup, 100 g).</small> -->
+                            <div class="col-md-4">
+                                <label for="qty" class="form-label">Measurement</label>
+                                <select name="unit" class="form-control" id="measurement">
+                                    <option value="">Select Measurement</option>
+                                    <option value="g"{{ $item->measurement == 'g' ? 'selected' : ''}}>gm</option>
+                                    <option value="ml"{{ $item->measurement == 'ml' ? 'selected' : ''}}>ml</option>
+                                    <!-- <option value="cup"{{ $item->measurement == 'g' ? 'selected' : ''}}>cup</option> -->
+                                    <option value="tbsp"{{ $item->measurement == 'tbsp' ? 'selected' : ''}}>tbsp</option>
+                                    <option value="piece"{{ $item->measurement == 'piece' ? 'selected' : ''}}>piece</option> 
 
-                            <!-- Protein Field -->
-                            <div class="col-md-12">
-                                <label for="carbs" class="form-label">Protein</label>
-                                <input type="number" name="protein" class="form-control" value="{{ $item->protein ?? '0' }}" step="0.01" min="0" placeholder="Enter Protein"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                                    <!-- <option value="bar">bar</option> -->
+                                    <!-- <option value="reguler">measurement</option>  -->
+                                </select>
                             </div>
 
-                            <!-- Carbohydrate Field -->
-                            <div class="col-md-12">
-                                <label for="carbs" class="form-label">Carbohydrate</label>
-                                <input type="number" name="carbs" class="form-control" value="{{ $item->carbs ?? '0' }}" step="0.01" min="0" placeholder="Enter Carbohydrate"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
-                            </div>
+                            <div id="nutritionResult"></div>
+                           <!-- Nutrition Information Section -->
+                           <div class="col-md-12 border rounded p-3">
+                                <h5 class="mb-3">Nutrition Information :</h5>
 
-                             <!-- Fat Field -->
-                             <div class="col-md-12">
-                                <label for="fat" class="form-label">Fat</label>
-                                <input type="number" name="fat" class="form-control" value="{{ $item->fat ?? '0' }}" step="0.01" min="0" placeholder="Enter Fat"><small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                                <div class="row">
+                                    <!-- Protein Field -->
+                                    <div class="col-md-6">
+                                        <label for="protein" class="form-label">Protein</label>
+                                        <input type="number" name="protein" class="form-control" id="protein"
+                                            value="{{ $item->protein ?? '0' }}" 
+                                            step="0.01" min="0" 
+                                            placeholder="Enter Protein">
+                                        <small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                                    </div>
+
+                                   <!-- Serving Size Field -->
+                                   <div class="col-md-2 mt-3">
+                                        <label for="serving_size" class="form-label">Serving Size</label>
+                                        <input type="number" name="serving_size" class="form-control" id="serving_size"
+                                            value="{{ $item->serving_size ?? '0' }}" 
+                                            step="0.01" min="0" 
+                                            placeholder="Enter Serving Size">
+                                        <small class="text-muted">Please enter the serving size in grams or milliliters.</small>
+                                    </div>
+
+                                    <div class="col-md-2 mt-3">
+                                        <label for="serving_size" class="form-label">Serving Size Unit</label>
+                                        <select name="serving_size_unit" class="form-control" id="serving_size_unit">
+                                            <option value="">Select unit</option>
+                                            <option value="g" @if(isset($item) && $item->serving_size_unit == 'g' ? 'selected' : '')@endif>gm</option>
+                                            <option value="ml" @if(isset($item) && $item->serving_size_unit == 'ml' ? 'selected' : '')@endif>ml</option>
+                                            <!-- <option value="piece"{{ $item->serving_size_unit == 'piece' ? 'selected' : ''}}>piece</option> -->
+                                        </select>
+                                        <!-- <input type="text" name="serving_size_unit" class="form-control d-inline-block d-flex" id="serving_size_unit" value="{{ $item->serving_size_unit ?? 'gm' }}" placeholder="Enter Serving Size"> -->
+                                    </div>
+
+                                    <!-- Fat Field -->
+                                    <div class="col-md-6 mt-3">
+                                        <label for="fat" class="form-label">Fat</label>
+                                        <input type="number" name="fat" class="form-control" id="fat"
+                                            value="{{ $item->fat ?? '0' }}" 
+                                            step="0.01" min="0" 
+                                            placeholder="Enter Fat">
+                                        <small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                                    </div>
+
+                                    <!-- Serving Per Pack Field -->
+                                    <div class="col-md-6 mt-3">
+                                        <label for="serving_per_pack" class="form-label">Serving Per Pack</label>
+                                        <input type="number" name="serving_per_pack" class="form-control" id="serving_per_pack"
+                                            value="{{ $item->serving_per_pack ?? '0' }}" 
+                                            step="1" min="1" 
+                                            placeholder="Enter Serving Per Pack">
+                                        <small class="text-muted">Please enter the total number of servings per pack.</small>
+                                    </div>
+                                     <!-- Carbohydrate Field -->
+                                     <div class="col-md-6">
+                                        <label for="carbs" class="form-label">Carbohydrate</label>
+                                        <input type="number" name="carbs" class="form-control" id="carbs"
+                                            value="{{ $item->carbs ?? '0' }}" 
+                                            step="0.01" min="0" 
+                                            placeholder="Enter Carbohydrate">
+                                        <small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
+                                    </div>
+
+                                    
+                                </div>
                             </div>
 
                             <!-- Is Swapped Field -->
@@ -83,13 +168,13 @@
                                 <label for="is_swiped" class="form-label">Is Swapped? &nbsp;</label>
                                 <small class="form-text text-muted">(Is this item used in the swapped list?)</small>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_yes" value="1" 
-                                        {{ (isset($item) && $item->is_swiped == 1) ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_yes" value="1"
+                                        {{ (isset($item) && $item->is_swiped == 1) || !isset($item) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="is_swiped_yes">Yes</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_no" value="0" 
-                                        {{ (!isset($item) || $item->is_swiped == 0) ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="is_swiped" id="is_swiped_no" value="0"
+                                        {{ (isset($item) && $item->is_swiped == 0) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="is_swiped_no">No</label>
                                 </div>
                             </div>
@@ -108,6 +193,9 @@
                                 </select>
                             </div>
 
+                            <div class="col-md-12" id="swapFoods">
+
+                            </div>
                             <!-- Image Field -->
                             <div class="col-md-12">
                                 <label for="image" class="form-label">Image</label>
@@ -125,6 +213,10 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="loader" style="display: none;">
+    <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" alt="Loading..." />
 </div>
 
 @push('styles')
@@ -193,6 +285,113 @@
                 const preselectedFoods = @json($item->items->pluck('id'));
                 $('#swap_item_ids').val(preselectedFoods).trigger('change');
             @endif
+
+            $('#qty').on('input', function () {
+                $('#measurement').val(''); // Reset measurement dropdown
+            });
+            const loader = $('#loader');
+            $('#measurement').on('change', function (e) {
+                e.preventDefault();
+                const data = {
+                    id: $('input[name="id"]').val(),
+                    title: $('input[name="title"]').val(),
+                    carbs: $('input[name="carbs"]').val(),
+                    protein: $('input[name="protein"]').val(),
+                    fat: $('input[name="fat"]').val(),
+                    qty: $('input[name="qty"]').val(),
+                    measurement: $('select[name="unit"]').val(),
+                    serving_size : $('input[name="serving_size"]').val(),
+                    serving_per_pack : $('input[name="serving_per_pack"]').val(),
+                };
+
+                const resultDiv = $('#nutritionResult');
+                
+                loader.show();
+
+                $.ajax({
+                    url: "{{ route('nutrition.calculate') }}",
+                    type: 'POST',
+                    data: data,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function (data) {
+                        if (data) {
+                            $('#carbs').val(data.carbs);
+                            $('#protein').val(data.protein);
+                            $('#fat').val(data.fat);
+                            // $('#serving_per_pack').val(data.servings_per_pack);
+                            // $('#serving_size').val(data.serving_size);
+
+                            let alternateSizesHtml = '';
+                            if (data.alternate_serving_sizes && Object.keys(data.alternate_serving_sizes).length > 0) {
+                                alternateSizesHtml = `<p><strong>Alternate Serving Sizes:</strong></p><ul>`;
+                                Object.values(data.alternate_serving_sizes).forEach(size => {
+                                    alternateSizesHtml += `<li>${size}</li>`;
+                                });
+                                alternateSizesHtml += `</ul>`;
+                            }
+                            resultDiv
+                            .html(`
+                                ${alternateSizesHtml}
+                            `)
+                            .removeClass('error')
+                            .show();
+                            
+                            // Update swapFoods div with a table
+                            // if (data.swaps && data.swaps.length > 0) {
+                            //     let swapsTable = `
+                            //         <p><strong>Swap Foods:</strong></p>
+                            //         <table border="1" cellpadding="5" cellspacing="0" class="table">
+                            //             <thead>
+                            //                 <tr>
+                            //                     <th>Food</th>
+                            //                     <th>Protein (g)</th>
+                            //                     <th>Carbs (g)</th>
+                            //                     <th>Fat (g)</th>
+                            //                 </tr>
+                            //             </thead>
+                            //             <tbody>`;
+
+                            //     data.swaps.forEach(swap => {
+                            //         swapsTable += `
+                            //             <tr>
+                            //                 <td>${swap.food}</td>
+                            //                 <td>${swap.protein.toFixed(2)}</td>
+                            //                 <td>${swap.carbs.toFixed(2)}</td>
+                            //                 <td>${swap.fat.toFixed(2)}</td>
+                            //             </tr>`;
+                            //     });
+
+                            //     swapsTable += `</tbody></table>`;
+
+                            //     $('#swapFoods').html(swapsTable).show();
+                            // } else {
+                            //     $('#swapFoods').html(`<p>No swap foods available.</p>`).show();
+                            // }
+                            
+                            loader.hide();
+                        } else {
+                            resultDiv
+                                .html(`<p class="error">Error: Could not calculate.</p>`)
+                                .addClass('error')
+                                .show();
+                                loader.hide();
+                        }
+                    },
+                    error: function () {
+                        resultDiv
+                            .html(`<p class="error">Error: Unable to connect to the server.</p>`)
+                            .addClass('error')
+                            .show();
+                            loader.hide();
+                    },
+                    complete: function () {
+                        loader.hide();
+                    }
+                });
+            });
+
         });
     </script>
 @endpush

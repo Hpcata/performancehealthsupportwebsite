@@ -46,7 +46,8 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Status</th>
+                                <!-- <th>Status</th>
+                                <th>Discount Code</th> -->
                                 <th>Purchase Date</th>
                                 <th>Action</th>
                             </tr>
@@ -68,15 +69,16 @@
                                 <td>{{ $payment->name }}</td>
                                 <td>{{ $payment->email }}</td>
                                 <td>{{ $payment->phone }}</td>
-                                <td>{{ $payment->status }}</td>
+                                <!-- <td>{{ $payment->status }}</td>
+                                <td>{{ $payment->coupon_code }}</td> -->
                                 <td>{{ formatDate($payment->created_at) }}</td>
                                 <td>
                                     <!-- Action link to show payment details -->
-                                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}" >User Details</a>
+                                    <a href="javascript:void(0);" class="btn btn-set-task btn-outline-primary w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}" ><i class="icofont-eye text-primary"></i></a>
                                     @if($isPlanCreated)
-                                    <a href="{{ route('admin.purchase-plans.edit', ['user' => $payment->user_id,'plan' => $payment->id]) }}" class="btn btn-warning btn-sm">Edit Plan</a>
+                                    <a href="{{ route('admin.purchase-plans.edit', ['user' => $payment->user_id,'plan' => $payment->id]) }}" class="btn btn-sm btn-outline-success"><i class="icofont-edit text-success"></i></a>
                                     @else
-                                    <a href="{{ route('admin.purchase-plans.create', $payment->id) }}" class="btn btn-primary btn-sm">Create Plan</a>
+                                    <a href="{{ route('admin.purchase-plans.create', $payment->id) }}" class="btn btn-sm btn-outline-success"><i class="icofont-plus text-success"></i></a>
                                     @endif
                                 </td>
                             </tr>

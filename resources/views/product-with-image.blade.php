@@ -99,6 +99,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($results as $product)
+                                    @php  //dd($product['category']); @endphp
                                         <tr>
                                             <td>{{ $product['name'] }}</td>
                                             <td>{{ $product['barcode'] }}</td>
@@ -118,7 +119,10 @@
                                                     data-image="{{ $product['image'] }}" 
                                                     data-protein="{{ $product['nutrition']['protein'] ?? '0' }}" 
                                                     data-carbs="{{ $product['nutrition']['carbohydrate'] ?? '0' }}"
-                                                    data-fat="{{ $product['nutrition']['fat'] ?? '0' }}">
+                                                    data-serving-pack="{{ $product['nutrition']['serving_per_pack'] ?? '0' }}"
+                                                    data-serving-size="{{ $product['nutrition']['serving_size'] ?? '0' }}"
+                                                    data-fat="{{ $product['nutrition']['fat'] ?? '0' }}"
+                                                    data-category="{{ $product['category'] ?? '' }}">
                                                     Add Food
                                                 </button>
                                             </td>
@@ -192,9 +196,11 @@
                 const carbs = $(this).data('carbs');
                 const fat = $(this).data('fat');
                 const category = $(this).data('category');
+                const serving_per_pack = $(this).data('serving-pack');
+                const serving_size = $(this).data('serving-size');
                 // Show loader
                 loader.show();
-
+                console.log(serving_per_pack);
                 // Make AJAX POST request
                 $.ajax({
                     url: '{{ route("add-food") }}',
@@ -206,6 +212,8 @@
                         carbs: carbs,
                         fat: fat,
                         category: category,
+                        serving_per_pack: serving_per_pack,
+                        serving_size: serving_size,
                         _token: '{{ csrf_token() }}' // Include CSRF token
                     },
                     success: function (response) {

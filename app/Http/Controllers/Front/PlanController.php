@@ -12,10 +12,11 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use PDF;
+// use PDF;
 use App\Models\UserPlan;
 use App\Models\UserMealTime;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PlanController extends Controller
 {
@@ -43,7 +44,8 @@ class PlanController extends Controller
 
     public function mealTimeDetails(Request $request, $id, $plan_id)
     {
-        $userPlan = UserPlan::where('id', $plan_id)->first();
+        $userPlan = UserPlan::with('plan', 
+        'userMealTimes.userCategories.userMeals.userItems')->where('id', $plan_id)->first();
 
         $userMealTime = UserMealTime::with('userCategories.userMeals.userItems')->where('meal_time_id', $id)
         ->where('user_plan_id', $plan_id)
@@ -94,9 +96,15 @@ class PlanController extends Controller
     {
         // Fetch the meal with its items
         $userMeal = \App\Models\UserMeal::with('userItems')->where('id',$request->user_meal_id)->first();
+        // dd($userMeal);
         // $meal = Meal::with('items')->findOrFail($id);
         // Map the items into a response-friendly structure
-        $items = $userMeal->userItems->map(function ($userItem) {
+        $userPlan = \App\Models\UserPlan::where('id', $userMeal->user_plan_id)->where('status', 'active')->first();
+
+        $items = $userMeal->userItems->map(function ($userItem) use($userPlan, $userMeal) {
+            // dd($userItem);
+            $userItemMeal = \App\Models\UserItemMeal::where('user_id', $userPlan->user_id)->where('meal_id', $userMeal->meal_id)->where('item_id', $userItem->item_id)->first();
+            // dd($userItemMeal);
             return [
                 'user_meal_id' => $userItem->userMeal->id,
                 'user_item_id' => $userItem->id,
@@ -104,7 +112,9 @@ class PlanController extends Controller
                 'name' => $userItem->item->title,
                 'protein' => $userItem->item->protein ?? 0,
                 'carbs' => $userItem->item->carbs ?? 0,
-                'qty' => $userItem->item->qty,
+                'qty' => isset($userItem->qty) ? $userItem->qty : (isset($userItemMeal->qty) 
+                        ? $userItemMeal->qty 
+                        : 0),               
                 // 'category' => ($userItem->item->category) ? $userItem->item->category->name : null,
                 'description' => $userItem->item->description,
                 'image' => $userItem->item->image
@@ -156,12 +166,12 @@ class PlanController extends Controller
             'swaps.*.main_id' => 'required|exists:items,id',
             'swaps.*.user_item_id' => 'required|exists:user_items,id',
         ]);
-        $userId = \Auth::user()->id;
+        $userId = $request->user_id;
         $mealId = $request['meal_id'];
         $swaps = $request['swaps'];
         $meal = Meal::findOrFail($mealId);
         $mealName = $meal->title;
-        //dd($request->all());
+        // dd($mealId);
         try {
             \DB::beginTransaction();
     
@@ -173,9 +183,15 @@ class PlanController extends Controller
                     ->where('item_id', $swap['swap_id'])
                     ->where('user_id', $userId)
                     ->first();
+
+                $qty = $userItemMeal->qty;
+
+                $userItemSwaps = \DB::table('user_item_swaps')->where('item_id', $swap['swap_id'])->where('swap_item_id', $swap['main_id'])->where('user_id', $userId)->first();
+
                 if ($userItemMeal) {
-                    // $userItemMeal->item_id = $swap['main_id'];
+                    $userItemMeal->item_id = $swap['main_id'];
                     $userItemMeal->is_swiped = 1;
+                    $userItemMeal->qty = $userItemSwaps->qty;
                     $userItemMeal->save();
                 }
                 
@@ -186,12 +202,14 @@ class PlanController extends Controller
                     \DB::table('user_item_swaps')->where('id', $userSwapItem)
                             ->update([
                                 'item_id' => $swap['main_id'],
+                                // 'swap_item_id' => $swap['swap_id']
                             ]);
                 }
 
                 $userItemSwaps = \DB::table('user_item_swaps')->where('swap_item_id', $swap['main_id'])->where('user_id', $userId)
                                     ->update([
-                                        'swap_item_id' => $swap['swap_id']
+                                        'swap_item_id' => $swap['swap_id'],
+                                        'qty' => $qty
                                     ]);
 
                 // // Update the `user_item_swaps` table for `swap_item_id`
@@ -287,10 +305,12 @@ class PlanController extends Controller
                     ->orWhereIn('plan_id', $subPlans);
             })
             ->get();
-
+        // dd($userPlans);
         // Pass the plan data to the Blade view for rendering the PDF
-        $pdf = PDF::loadView('front.plan-pdf', compact('userPlans'));
-        $pdf->setBasePath(public_path()); // Set the base path for assets
+        // $pdf = PDF::loadView('front.plan-pdf', compact('userPlans'));
+        // $pdf->setOption('enable-local-file-access', true);
+        $pdf = Pdf::loadView('front.plan-pdf', compact('userPlans'))
+        ->setPaper('A4', 'portrait'); // Set page size and layout
 
         // Download the generated PDF
         return $pdf->download('plan_' . $id . '.pdf');

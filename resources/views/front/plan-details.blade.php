@@ -3,115 +3,58 @@
 @section('title', $plan->name)
 
 @section('content')
-
+ <?php
+            $userPlan = \App\Models\UserPlan::where('user_id', $user->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
+            $isPlanCreated = $userPlan ? true : false;
+        ?>
     <div class="section nutrition-plan-hero py-md-5">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 col-lg-5">
                     <div class="nutrition-plan-text">
-                        <h1>We Take Care Of Your <span class="text-primary">Health</span></h1>
-                        <p>Make sure your daily nutrition is sufficient. Consult your Nutrition Supplements Products about nutrition with us.</p>
-                        <a href="#" class="btn btn-primary">
+                        @foreach($userPlans as $userPlan)
+                        <h1>{{ $userPlan->plan->name }} 
+                            @if(isset($userPlan->plan->subPlans) && $userPlan->plan->subPlans->count() > 0)
+                                ( 
+                                {{ $userPlan->plan->subPlans->pluck('name')->join(' + ') }} 
+                                ({{ $userPlan->plan->subPlans->count() }} plans)
+                                )
+                            @endif
+                        </h1>
+                        @endforeach
+                        <!-- <p>Make sure your daily nutrition is sufficient. Consult your Nutrition Supplements Products about nutrition with us.</p> -->
+                        <!-- <a href="#" class="btn btn-primary">
                             <span class="me-1">Get Started</span>
                             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
                                 <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
-        
-                        </a>
+                        </a> -->
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-5 ms-lg-auto">
-                    <div class="nutrition-plan-img-box">
-                        <div class="go-bottom-link">
-                            <figure class="top-corner">
-                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-                                    <path d="M50,45V0H3v0.1h2.1C29.9,0.1,50,20.2,50,45z" fill="#fafafa"/>
-                                </svg>
-                            </figure>
-                            <a href="#" class="btn btn-primary">
-                                <svg width="71" height="72" viewBox="0 0 71 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M50.8233 17.2911C49.0555 17.2911 47.7297 18.6169 47.7297 20.3847L47.7297 43.6603L22.2444 18.175C20.9186 17.1438 18.8562 17.1438 17.6777 18.3223C16.4992 19.5008 16.4992 21.5632 17.6777 22.7417L43.3103 48.3744L20.0347 48.3744C18.2669 48.3744 16.9411 49.7002 16.9411 51.4679C16.9411 53.2357 18.2669 54.5615 20.0347 54.5615H50.9706C51.2653 54.5615 51.7072 54.4142 52.1491 54.2669C52.4438 54.2669 52.7384 53.9723 53.033 53.6777C53.3276 53.383 53.6223 53.0884 53.7696 52.6465C53.9169 52.2045 54.0642 51.7626 54.0642 51.4679L54.0642 20.532C53.9169 18.9116 52.4438 17.4384 50.8233 17.2911Z" fill="white"/>
-                                </svg>                                    
-                            </a>
-                            <figure class="bottom-corner">
-                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-                                    <path d="M50,45V0H3v0.1h2.1C29.9,0.1,50,20.2,50,45z" fill="#fafafa"/>
-                                </svg>
-                            </figure>
-                        </div>
-                        <div class="nutrition-plan-img">
-                            <figure>
-                                <img src="{!! frontAssets('images/nutrition-supplements.jpg') !!}"  alt="">
-                            </figure>
-                        </div>
-                        <div class="nutrition-bottom-box">
-                            <figure class="top-corner">
-                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-                                    <path d="M0,5v45h47v-0.1h-2.1C20.1,49.9,0,29.8,0,5z" fill="#fafafa"/>
-                                </svg>
-                            </figure>
-                            <div class="nutrition-athlete-box">
-                                <figure>
-                                    @if(Auth::check() && $user->profile_image)
-                                        <img src="{{ asset('private/public/' . $user->profile_image) }}" alt="Profile Image">
-                                    @else
-                                        <img src="{{ frontAssets('images/kerry-oBryan.jpg') }}" alt="Default Profile Image">
-                                    @endif
-                                </figure>
-
-                                <div class="nutrition-athlete-info">
-                                    @if(Auth::check())
-                                        <h5>{{ $user->name }}</h5>
-                                        <p>National Athlete</p>
-                                        <a  class="btn btn-primary py-1 px-3 mt-1" href="{{ route('front.profile', ['id' => $user->id]) }}" data-profile-id="{{ $user->id }}">View Profile</a>
-                                    @else
-                                        <h5>Ellie Shiloh</h5>
-                                        <p>National Athlete</p>
-                                    @endif
-                                </div>
-                            </div>  
-
-                            <figure class="bottom-corner">
-                                <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-                                    <path d="M0,5v45h47v-0.1h-2.1C20.1,49.9,0,29.8,0,5z" fill="#fafafa"/>
-                                </svg>
-                            </figure>
+                    <div class="plan-buttons-link">
+                        <div class="d-flex flex-wrap align-items-center">
+                            <!-- <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}">View Plan</a> -->
+                            <a href="javascript:void(0);" class="ms-0 print-plan-btn @if(!$isPlanCreated) disabled @endif" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}">Print Plan</a>
+                            <a href="#" class="" data-bs-toggle="modal" data-bs-target="#ShoppingModal" id="fetchAllMeals">Shopping List</a>
+                            <a href="{{ route('front.profile', ['id' => $user->id]) }}" class="btn btn-primary ms-auto text-white border-0">Back</a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="plan-buttons-link">
-            <div class="container">
-                <div class="d-flex flex-wrap align-items-center">
-                    <a href="#">Tracker</a>
-                    <a href="#">Plan</a>
-                    <a href="#">Treatment</a>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="section pt-md-5">
+    <!-- <div class="container mb-2 text-end">
+       <a href="{{ route('front.profile', ['id' => $user->id]) }}" class="btn btn-primary">Back</a> 
+    </div> -->
+    <div class="section pt-md-3">
     @foreach($userPlans as $userPlan)
         <div class="container mb-5">
-            <div class="d-md-flex align-items-center justify-content-between">
-                <h2>{{ $userPlan->plan->name }}
-                @if(isset($userPlan->plan->subPlans) && $userPlan->plan->subPlans->count() > 0)
-                    ( 
-                    {{ $userPlan->plan->subPlans->pluck('name')->join(' + ') }} 
-                    ({{ $userPlan->plan->subPlans->count() }} plans)
-                    )
-                @endif
-                </h2>
-                <!-- <a href="#" class="mt-3 mt-md-0 btn btn-primary">Finalise Plan</a> -->
-            </div>
             <div class="mt-4">
                 <div class="row g-4">
                 @if($userPlan->userMealTimes->count())
                     @foreach($userPlan->userMealTimes as $plan)
-                    <?php //dd($plan); ?>
                     <div class="col-md-3">
                         <div class="nutrition-plan-box">
                             <figure>
@@ -133,53 +76,53 @@
         @endforeach
     </div>
 
-
     <!-- Modal -->
-<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="profileModalLabel">Edit Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="profileForm" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" class="form-control" id="id" name="user_id" >
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" class="form-control" id="id" name="user_id" >
 
-                    <div class="mb-3">
-                        <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstName" name="first_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="lastName" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" name="last_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password">
-                        <small class="form-text text-muted">Leave blank if you don't want to change the password.</small>
-                    </div>
-                    <div class="mb-3">
-                        <label for="profileImage" class="form-label">Profile Image</label>
-                        <input type="file" class="form-control" id="profileImage" name="profile_image">
-                    </div>
-                    <div class="mb-3 text-center">
-                        <img id="profileImagePreview" src="" alt="Profile Image" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                            <small class="form-text text-muted">Leave blank if you don't want to change the password.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profileImage" class="form-label">Profile Image</label>
+                            <input type="file" class="form-control" id="profileImage" name="profile_image">
+                        </div>
+                        <div class="mb-3 text-center">
+                            <img id="profileImagePreview" src="" alt="Profile Image" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
 <script>
 
@@ -246,5 +189,173 @@
         });
     });
 
+    $(document).ready(function () {
+        $(".print-plan-btn").click(function () {
+            let planId = $(this).data('plan-id');
+            let userId = $(this).data('user-id');
+            //alert(planId);
+            window.open("{{ route('plans.generatePdf', ':id') }}".replace(':id', planId)+ `?user_id=${userId}`, '_blank');
+
+        })
+    });
+
+    $(document).on('change', '#selectAllCheckbox', function () {
+        let isChecked = $(this).is(':checked'); // Check if "Select All" is checked
+
+        // Toggle all checkboxes based on the state of "Select All"
+        $('.meal-item-checkbox').prop('checked', isChecked);
+    });
+
+    $(document).on('change', '.meal-item-checkbox', function () {
+        let allItems = $('.meal-item-checkbox'); // All item checkboxes
+        let allChecked = allItems.length === allItems.filter(':checked').length; // Check if all are selected
+
+        // Set the global "Select All" checkbox state
+        $('#selectAllCheckbox').prop('checked', allChecked);
+    });
+
+    $(document).on('click', '#fetchAllMeals', function () {
+        // Show loader or clear previous content
+        $('#ShoppingModal .modal-body').html('<p>Loading...</p>');
+
+        // Fetch all meals with items
+        $.ajax({
+            url: '{{ route("front.get.meals.items") }}', // Adjust URL if needed
+            method: 'GET',
+            success: function (response) {
+                let meals = response.meals;
+                // let selectedItems = response.selectedItems;
+                let modalContent = '';
+                modalContent += `<div class="form-check mb-2">
+                                        <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
+                                        <label class="form-check-label" for="printPlanCheckbox">Select All</label>
+                                    </div>`;                
+                // Loop through each meal
+                meals.forEach(meal => {
+                    modalContent += `<div class="ingredient-list">
+                                        <input type="checkbox" class="form-check-input mt-3 mx-3 meal-checkbox" id="id="mealCheckbox${meal.id}"">
+                                        <h2 class="d-inline-block px-0" style="border-bottom:none;">${meal.title}</h2>
+                                        <hr class="m-0">
+                                        <ul>`;
+                    
+                    // Loop through each item in the meal
+                    meal.items.forEach(item => {
+                        // let isChecked = selectedItems[meal.id] && selectedItems[meal.id].includes(item.id) ? 'checked' : '';
+
+                        modalContent += `<li>
+                                            <div class="ingredient-info">
+                                                <div class="form-check">
+                                                    <input class="form-check-input meal-item-checkbox" type="checkbox" value="${item.id}" id="Check${item.id}">
+                                                    <input type="hidden" id="category" value="${item.category?.name || ''}">
+                                                    <label class="form-check-label" for="Check${item.id}">
+                                                        <div class="ingredient-img">
+                                                            <figure>
+                                                                <img src="{{ asset('private/public/storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
+                                                            </figure>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <span>${item.title}</span>
+                                            </div>
+                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty ? item.pivot.item_qty : 'N/A'}</span>
+                                        </li>`;
+                    });
+
+                    modalContent += `</ul></div>`;
+                });
+
+                // Update modal content
+                $('#ShoppingModal .modal-body').html(modalContent);
+            },
+            error: function (xhr) {
+                console.error('Error fetching meals:', xhr);
+                $('#ShoppingModal .modal-body').html('<p>Error loading data.</p>');
+            }
+        });
+    });
+
+    $(document).on('change', '.meal-checkbox', function () {
+        const mealContainer = $(this).closest('.ingredient-list'); // Find the relevant meal container
+        const isChecked = $(this).is(':checked'); // Check if "Meal Checkbox" is selected
+
+        // Select/Deselect all meal items within this meal's container
+        mealContainer.find('.meal-item-checkbox').prop('checked', isChecked);
+    });
+   
+    $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
+        let aggregatedItems = {};
+
+        // Collect all checked items
+        $('#ShoppingModal .meal-item-checkbox:checked').each(function () {
+            const listItem = $(this).closest('li');  // Correct reference for each item
+            const itemName = listItem.find('.ingredient-info span').text().trim() || "Unknown Item";
+            const quantityText = listItem.find('.quantity').text().trim() || "QTY: 0";
+            const category = listItem.find('input[type="hidden"]#category').val().trim() || "Uncategorized";
+
+            // Extract quantity and unit with better regex logic
+            const quantityMatch = quantityText.match(/QTY:\s*([\d\/.]+)\s*([a-zA-Z]*)/i);
+            let rawQuantity = quantityMatch && quantityMatch[1] ? quantityMatch[1] : "0";
+            let unit = quantityMatch && quantityMatch[2] ? quantityMatch[2].trim() : '';
+
+            // Correct conversion for fractional values
+            let quantity = 0;
+            if (rawQuantity.includes('/')) {
+                const [numerator, denominator] = rawQuantity.split('/').map(Number);
+                quantity = numerator / denominator;
+            } else {
+                quantity = parseFloat(rawQuantity);
+            }
+
+            // Ensure category exists in the aggregated structure
+            if (!aggregatedItems[category]) {
+                aggregatedItems[category] = {};
+            }
+
+            // Aggregate quantities within the category
+            if (aggregatedItems[category][itemName]) {
+                aggregatedItems[category][itemName].quantity += quantity;
+                aggregatedItems[category][itemName].unit = unit;
+            } else {
+                aggregatedItems[category][itemName] = { quantity, unit };
+            }
+        });
+
+        // Generate the HTML for the aggregated list by category
+        let printListContent = '';
+        for (let [category, items] of Object.entries(aggregatedItems)) {
+            printListContent += `<h6>${category}</h6><ul>`;
+            for (let [itemName, data] of Object.entries(items)) {
+                printListContent += `<li>${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}</li>`;
+            }
+            printListContent += `</ul></br>`;
+        }
+
+        // Populate the print modal with the aggregated list
+        $('#ShippingPrintModal .print-list').html(printListContent);
+    });
+
+    $(document).on('click', '#ShippingPrintModal .btn-primary', function () {
+        // Get the content of the print list
+        const content = $('#ShippingPrintModal .print-list').html();
+        // Create a container to format the content for PDF
+        const pdfContainer = `
+            <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto;">
+                <h3 style="text-align: center;">Shopping List</h3><hr>
+                <ul style="list-style: number; padding: 0;">
+                    ${content}
+                </ul>
+            </div>
+        `;
+
+        // Use html2pdf to generate the PDF
+        const options = {
+            margin: 1,
+            filename: 'shopping_list.pdf',
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        html2pdf().set(options).from(pdfContainer).save();
+    });
 </script>
 @endsection

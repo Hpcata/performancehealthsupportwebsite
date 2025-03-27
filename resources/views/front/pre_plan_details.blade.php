@@ -56,14 +56,14 @@
                                             <label>Referred by</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-lg-4">
+                                    <!-- <div class="col-md-6 col-lg-4">
                                         <div class="form-floating my-3">
                                             <select class="form-select select2" name="race_ethnicity_culture" id="raceEthnicityCulture">
                                                 <option value="" disabled selected>Select or search</option>
                                             </select>
                                             <label for="raceEthnicityCulture">Race/ethnicity/culture</label>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
@@ -108,12 +108,6 @@
 
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" value="No" name="ans[medical_history][diagnosed][]" id="diagnosed1">
-                                                <label class="form-check-label" for="diagnosed1">
-                                                    No
-                                                </label>
-                                            </div>  
-                                            <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" value="Sports-related injury" name="ans[medical_history][diagnosed][]" id="diagnosed1">
                                                 <label class="form-check-label" for="diagnosed1">
                                                     Sports-related injury
@@ -149,6 +143,12 @@
                                                     Surgery
                                                 </label>
                                             </div>
+                                            <div class="form-check my-2">
+                                                <input class="form-check-input" type="checkbox" value="No" name="ans[medical_history][diagnosed][]" id="diagnosed1">
+                                                <label class="form-check-label" for="diagnosed1">
+                                                    No
+                                                </label>
+                                            </div>  
                                         </div>
                                     </div>
                                     
@@ -364,6 +364,12 @@
                                         <input type="hidden" name="questions[social_information][cookinghome]" value="Who does most of the cooking at home?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
+                                                <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="Me" id="cookinghome3">
+                                                <label class="form-check-label" for="lcookinghome3">
+                                                    Me
+                                                </label>
+                                            </div>
+                                            <div class="form-check my-2">
                                                 <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="Mum" id="cookinghome1">
                                                 <label class="form-check-label" for="cookinghome1">
                                                     Mum
@@ -373,12 +379,6 @@
                                                 <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="Dad" id="cookinghome2">
                                                 <label class="form-check-label" for="cookinghome2">
                                                     Dad
-                                                </label>
-                                            </div>
-                                            <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="You" id="cookinghome3">
-                                                <label class="form-check-label" for="lcookinghome3">
-                                                    You
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
@@ -467,15 +467,10 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>Do you tend to follow any particular way of eating</h5>
+                                        <h5>Do you have any allergies or intolerances?</h5><span>(more than 1 box can be checked)</span>
                                         <input type="hidden" name="questions[dietary_information][dietaryneeds]" value="Do you have any special dietary needs (e.g. Coeliac  - Gluten free)" />
                                         <div class="form-floating my-3">
-                                            <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="No" id="dietaryneeds1">
-                                                <label class="form-check-label" for="dietaryneeds1">
-                                                    No
-                                                </label>
-                                            </div>
+                                            
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Coeliac / Gluten Free" id="dietaryneeds2">
                                                 <label class="form-check-label" for="dietaryneeds2">
@@ -506,16 +501,25 @@
                                                     Soy allergy
                                                 </label>
                                             </div>
+                                            <div class="form-check my-2">
+                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="No" id="dietaryneeds1">
+                                                <label class="form-check-label" for="dietaryneeds1">
+                                                    No
+                                                </label>
+                                            </div>
+                                            <div class="form-check my-2">
+                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Other" id="dietaryneeds4">
+                                                <label class="form-check-label" for="dietaryneeds4">
+                                                    Other
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>Do you tend to follow any particular way of eating? (more than 1 box can be checked)</h5>
+                                        <h5>Do you tend to follow any particular way of eating? </h5><span>(more than 1 box can be checked)</span>
                                         <input type="hidden" name="questions[dietary_information][wayofeating]" value="Do you have any special dietary needs (e.g. Coeliac  - Gluten free)" />
                                         <div class="form-floating my-3">
-                                            <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][wayofeating][]" value="No" id="wayofeating1">
-                                                <label class="form-check-label" for="wayofeating1">No</label>
-                                            </div>
+                                            
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[dietary_information][wayofeating][]" value="Paleo" id="wayofeating2">
                                                 <label class="form-check-label" for="wayofeating2">Paleo</label>
@@ -536,10 +540,14 @@
                                                 <input class="form-check-input" type="checkbox" name="ans[dietary_information][wayofeating][]" value="Keto" id="wayofeating6">
                                                 <label class="form-check-label" for="wayofeating6">Keto</label>
                                             </div>
-                                            <!-- <div class="form-check my-2">
+                                            <div class="form-check my-2">
+                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][wayofeating][]" value="No" id="wayofeating1">
+                                                <label class="form-check-label" for="wayofeating1">No</label>
+                                            </div>
+                                            <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[dietary_information][wayofeating][]" value="Other" id="wayofeating7">
-                                                <label class="form-check-label" for="wayofeating7">Other:</label>
-                                            </div> -->
+                                                <label class="form-check-label" for="wayofeating7">Other</label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-12">
@@ -599,12 +607,12 @@
                                                         <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][dinner]" value="Starving" id="Dinner-5"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Supper</td>
-                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][supper]" value="Not hungry" id="Supper-1"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][supper]" value="Beginning to feel hungry" id="Supper-2"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][supper]" value="Pretty hungry" id="Supper-3"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][supper]" value="Very hungry" id="Supper-4"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][supper]" value="Starving" id="Supper-5"></td>
+                                                        <td>Dessert</td>
+                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][dessert]" value="Not hungry" id="Supper-1"></td>
+                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][dessert]" value="Beginning to feel hungry" id="Supper-2"></td>
+                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][dessert]" value="Pretty hungry" id="Supper-3"></td>
+                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][dessert]" value="Very hungry" id="Supper-4"></td>
+                                                        <td class="text-center"><input class="form-check-input" type="radio" name="ans[dietary_information][hunger][dessert]" value="Starving" id="Supper-5"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -1773,7 +1781,7 @@
                             <div class="card-body px-4">
                                 <div class="row">
                                     <div class="col-md-6">
-                                    <h5>Which of the following nutrition related goals are you CURRENTLY interested in working on?</h5>
+                                    <h5>Which of the following nutrition related goals are you <strong class="text-primary">CURRENTLY</strong> interested in working on?</h5>
                                         <input type="hidden" name="questions[nutrition_goals][related_goals]" value="Which of the following nutrition related goals are you interested in working on?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -2101,8 +2109,8 @@
                         <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
                     </div>
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
-                    <p class="mb-2">Your form submit successful.</p>
-                    <p class="mb-4">Your plan will be finalized and ready within the next 24 hours.</p>
+                    <p class="mb-2">Your form is submitted.</p>
+                    <p class="mb-4">Kerry will now create your plan and let you know as soon as it’s ready (48-72hrs).</p>
                     <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -2112,6 +2120,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
+    // localStorage.clear();
+
     document.addEventListener("DOMContentLoaded", function () {
         const rankOptions = document.querySelectorAll(".rank-option");
 
@@ -2129,66 +2139,187 @@
             });
         });
     });
-    document.addEventListener('DOMContentLoaded', function () {
-        // Listen for changes on checkboxes with "Other" value
-        document.querySelectorAll('input[type="checkbox"][value="Other"]').forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                let otherInputId = `${this.id}-input`;
-                let otherInput = document.getElementById(otherInputId);
 
-                if (this.checked) {
-                    // Create and add a text input field with the original name
-                    if (!otherInput) {
-                        otherInput = document.createElement('input');
-                        otherInput.type = 'text';
-                        otherInput.className = 'form-control mt-2';
-                        otherInput.name = this.name; // Use the checkbox name
-                        otherInput.id = otherInputId;
-                        otherInput.placeholder = 'Please specify...';
-                        this.parentNode.appendChild(otherInput);
+    document.addEventListener('DOMContentLoaded', function () {
+        function saveFormData() {
+            const formData = {};
+
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                if (input.type === 'checkbox') {
+                    if (!formData[input.name]) {
+                        formData[input.name] = [];
+                    }
+
+                    if (input.checked) {
+                        if (input.value === 'Other') {
+                            formData[input.name].push('Other');
+
+                            const otherInput = document.getElementById(`${input.id}-input`);
+                            if (otherInput) {
+                                formData[`${input.name}_other`] = otherInput.value;
+                            }
+                        } else {
+                            formData[input.name].push(input.value);
+                        }
+                    }
+                } else if (input.type === 'radio') {
+                    if (input.checked) {
+                        if (input.value === 'Other') {
+                            formData[input.name] = 'Other';
+
+                            const otherInput = document.getElementById(`${input.id}-input`);
+                            if (otherInput) {
+                                formData[`${input.name}_other`] = otherInput.value;
+                            }
+                        } else {
+                            formData[input.name] = input.value;
+                        }
                     }
                 } else {
-                    // Remove the input field if it exists
-                    if (otherInput) {
-                        otherInput.remove();
-                    }
+                    formData[input.name] = input.value;
                 }
             });
+
+            console.log('🟢 Saved Form Data:', formData);
+            localStorage.setItem('nutritionFormData', JSON.stringify(formData));
+        }
+
+        function restoreFormData() {
+            const savedData = JSON.parse(localStorage.getItem('nutritionFormData'));
+            console.log('🔵 Restoring Form Data:', savedData);
+
+            if (savedData) {
+                document.querySelectorAll('input, select, textarea').forEach(input => {
+                    if (input.type === 'checkbox') {
+                        if (savedData[input.name]?.includes(input.value)) {
+                            input.checked = true;
+                        }
+
+                        if (input.value === 'Other' && savedData[input.name]?.includes('Other')) {
+                            input.checked = true;
+                            input.dispatchEvent(new Event('change'));
+
+                            const otherInputValue = savedData[`${input.name}_other`];
+                            if (otherInputValue) {
+                                createOtherInput(input, otherInputValue);
+                            }
+                        }
+                    } else if (input.type === 'radio') {
+                        if (savedData[input.name] === 'Other' && input.value === 'Other') {
+                            input.checked = true;
+                            input.dispatchEvent(new Event('change'));
+
+                            const otherInputValue = savedData[`${input.name}_other`];
+                            if (otherInputValue) {
+                                createOtherInput(input, otherInputValue);
+
+                                // Handle TrackingDetails visibility
+                                handleTrackingDetailsVisibility(otherInputValue);
+                            }
+                        } else if (input.value === savedData[input.name]) {
+                            input.checked = true;
+                        }
+                    } else {
+                        input.value = savedData[input.name] || '';
+                    }
+                });
+            }
+        }
+
+        function createOtherInput(input, value = '') {
+            let otherInputId = `${input.id}-input`;
+            let otherInput = document.getElementById(otherInputId);
+
+            const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+            const trackingDetailsInput = trackingDetailsField.querySelector('input');
+
+            if (!otherInput) {
+                otherInput = document.createElement('input');
+                otherInput.type = 'text';
+                otherInput.className = 'form-control mt-2';
+                otherInput.name = `${input.name}_other`;
+                otherInput.id = otherInputId;
+                otherInput.placeholder = 'Please specify...';
+                input.parentNode.appendChild(otherInput);
+
+                console.log(`🟠 Created "Other" Input for [${input.name}]`);
+
+                otherInput.addEventListener('keyup', function () {
+                    const inputValue = this.value.trim().toLowerCase();
+                    handleTrackingDetailsVisibility(inputValue);
+                    saveFormData();
+                });
+            }
+
+            otherInput.value = value;
+        }
+
+        function handleTrackingDetailsVisibility(inputValue) {
+            const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+            const trackingDetailsInput = trackingDetailsField.querySelector('input');
+
+            if (inputValue === 'no') {
+                trackingDetailsField.style.display = 'none';
+                trackingDetailsInput.disabled = true;
+                trackingDetailsInput.removeAttribute('required');
+            } else {
+                trackingDetailsField.style.display = 'block';
+                trackingDetailsInput.disabled = false;
+                trackingDetailsInput.setAttribute('required', 'required');
+            }
+        }
+
+        // Restore data on page load
+        restoreFormData();
+
+        document.querySelector('form').addEventListener('submit', function () {
+            console.log('✅ Form submitted — Clearing LocalStorage');
+            localStorage.removeItem('nutritionFormData');
         });
 
-        // Listen for changes on radio buttons with "Other" value
         document.querySelectorAll('input[type="radio"][value="Other"]').forEach(function (radio) {
             radio.addEventListener('change', function () {
                 let otherInputId = `${this.id}-input`;
                 let otherInput = document.getElementById(otherInputId);
 
                 if (this.checked) {
-                    // Create and add a text input field with the original name
                     if (!otherInput) {
-                        otherInput = document.createElement('input');
-                        otherInput.type = 'text';
-                        otherInput.className = 'form-control mt-2';
-                        otherInput.name = this.name; // Use the radio button name
-                        otherInput.id = otherInputId;
-                        otherInput.placeholder = 'Please specify...';
-                        this.parentNode.appendChild(otherInput);
+                        createOtherInput(this);
                     }
                 } else {
-                    // Remove the input field if it exists
                     if (otherInput) {
                         otherInput.remove();
                     }
+
+                    const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+                    const trackingDetailsInput = trackingDetailsField.querySelector('input');
+
+                    trackingDetailsField.style.display = 'block';
+                    trackingDetailsInput.disabled = false;
+                    trackingDetailsInput.setAttribute('required', 'required');
                 }
+
+                saveFormData();
             });
         });
 
-        // Listen for changes on other radio buttons (not the "Other" option)
+        // Handle checkbox changes
+        document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+            checkbox.addEventListener('change', saveFormData);
+        });
+
+        // Handle radio button changes
         document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
             radio.addEventListener('change', function () {
-                // Find the radio button group (same name attribute)
                 let radioName = this.name;
 
-                // If another radio button is selected, remove any "Other" input field created
+                const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+                const trackingDetailsInput = trackingDetailsField.querySelector('input');
+
+                trackingDetailsField.style.display = 'block';
+                trackingDetailsInput.disabled = false;
+                trackingDetailsInput.setAttribute('required', 'required');
+
                 document.querySelectorAll(`input[type="radio"][name="${radioName}"]`).forEach(function (otherRadio) {
                     if (otherRadio !== radio) {
                         let otherInputId = `${otherRadio.id}-input`;
@@ -2199,9 +2330,13 @@
                         }
                     }
                 });
+
+                saveFormData();
             });
         });
     });
+
+
 
     document.addEventListener("DOMContentLoaded", () => {
         const stepCircles = document.querySelectorAll('.tab-steps');
@@ -2245,6 +2380,12 @@
 
                 if (input.name === "referredBy") {
                     return; // Skip validation for this field
+                }
+                
+                const isHidden = input.offsetParent === null || getComputedStyle(input).display === 'none';
+
+                if (input.disabled || isHidden) {
+                    return; 
                 }
                 
                 // Reset border color for input before applying red borders
@@ -2322,6 +2463,7 @@
             });
         });
 
+        let redirectUrl = null;
         // Handle form submission
         submitButton.addEventListener('click', (event) => {
             event.preventDefault(); // Prevent default form submission
@@ -2350,11 +2492,11 @@
                 success: function (response) {
                     // Show thank you modal
                     $('#thankYouModal').modal('show');
-
+                    redirectUrl = response.redirect_url;
                     // Optional: Redirect after showing modal
-                    setTimeout(function () {
-                        window.location.href = response.redirect_url;
-                    }, 3000); // Redirect after 3 seconds
+                    // setTimeout(function () {
+                    //     window.location.href = response.redirect_url;
+                    // }, 3000); // Redirect after 3 seconds
                 },
                 error: function (xhr, status, error) {
                     console.error('Form submission failed:', xhr.responseText);
@@ -2362,6 +2504,12 @@
                 }
             });
         });
+
+        $('#thankYouModal').on('hidden.bs.modal', function () {
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+            }
+        })
     });
 
     // Initialize the dropdown with Select2 for search functionality

@@ -14583,12 +14583,12 @@ span.border-heading:after {
 .bottom-corner { right: 0; top: 100%; }
 .nutrition-plan-text .text-primary { color: #649ef7 !important; display: block; }
 
-.nutrition-bottom-box { position: absolute; bottom: 0; left: 0; background: #fafafa; padding: 30px 30px 0 0; border-radius: 0 80px 0 0; }
+.nutrition-bottom-box { position: absolute; bottom: 0; left: 0; background: #fafafa; padding: 15px 15px 0 0; border-radius: 0 50px 0 0; z-index:1; }
 .nutrition-bottom-box .top-corner, .nutrition-bottom-box .bottom-corner { position: absolute; width: 35px; margin: 0; }
 .nutrition-bottom-box .top-corner { bottom: 100%; left: 0; right: auto; top: auto; }
 .nutrition-bottom-box .bottom-corner { right: auto; top: auto; left: 100%; bottom: 0; }
-.nutrition-athlete-box { display: flex; align-items: center; background: #F0F4F8; padding: 16px; border-radius: 100px; }
-.nutrition-athlete-box figure { margin: 0 0.6rem 0 0; width: 70px; height: 70px; max-width: 70px; min-width: 70px; border-radius: 100px; position: relative; overflow: hidden; border: 5px solid #fff; }
+.nutrition-athlete-box { display: flex; align-items: center; background: #F0F4F8; padding: 12px; border-radius: 100px; }
+.nutrition-athlete-box figure { margin: 0 0.6rem 0 0; width: 50px; height: 50px; max-width: 50px; min-width: 50px; border-radius: 100px; position: relative; overflow: hidden; border: 5px solid #fff; }
 .nutrition-athlete-box figure img { width: 100%; height: 100%; object-fit: cover; object-position: center center;}
 .nutrition-athlete-info { font-size: 0.9rem; padding-right: 0.9rem; }
 .nutrition-athlete-box h5 { font-size: 1.1rem; }
@@ -14970,8 +14970,10 @@ div#linkedin-carousel .carousel-inner {
 .profile-box .card {position: relative;bottom: 0;left: 0;right: 0;z-index: 2;margin: -1.5rem 1rem 1rem 1rem;}
 .top-main-box { display: flex; flex-direction: column; }
 .top-main-box .card { border-radius: 10px; }
-.top-main-box ul li { color: #60748D; margin-bottom: 0.8rem; }
-.top-main-box ul li strong { color: #3B3B3B; }
+.top-main-box ul li { color: #60748D; margin-bottom: 1rem; position: relative;}
+.top-main-box ul li strong { color: #3B3B3B; display: block; padding-right: 85px; margin-bottom: 0.2rem;}
+.btn-list { display: inline-flex; margin-left: auto; position: absolute; right: 0; top: -7px; }
+.btn-list .btn + .btn { margin-left: 0.4rem; }
 .goal-card ul { padding-left: 0.9rem; }
 .top-main-box .nutrition-profile-info ul li { margin: 0.6rem 0; }
 .profile-box .card ul li:last-child { margin-bottom: 0; }
@@ -14980,7 +14982,7 @@ div#linkedin-carousel .carousel-inner {
 .progress-box .progress { background: #E4EAF5; border-radius: 50px; }
 .progress-box .progress .progress-bar { border-radius: 50px; background-color: #649EF7; }
 .intake-card { color: #60748D; font-size: 1.1rem; }
-.intake-card strong { color: #3B3B3B; display: block; margin-bottom: 0.4rem; }
+.intake-card strong { color: #3B3B3B; display: block; margin-bottom: 0.4rem; padding-right: 85px;}
 .intake-card p:last-child { margin-bottom: 0; }
 .sample-list { max-width: 1300px; margin: 0 auto; width: 100%; }
 .sample-list .sample-list-box { margin-bottom: 3rem; }
@@ -15054,4 +15056,15 @@ div#linkedin-carousel .carousel-inner {
 .modal-body .accordion-button:not(.collapsed):after { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e"); }
 .modal-body .accordion-item { border: 1px solid rgba(0, 0, 0, 0.125) !important; margin: 1rem 0; border-radius: 0.5rem; overflow: hidden; }
     
+.mealtime-btn-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.mealtime-btn-list ul a {
+  font-size:1rem;
+  padding:0.5rem 1.2rem;
 }

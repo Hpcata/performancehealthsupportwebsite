@@ -131,7 +131,7 @@
                                         <td>
                                             <ul>
                                                 @foreach ($userMeal->userItems as $userItem)
-                                                    <li>{{ $userItem->item->title }} | QTY : {{ $userItem->item->qty ?? '0' }}</li>
+                                                    <li>{{ ($userItem->item) ? $userItem->item->title : '' }} | QTY : {{ $userItem->item->qty ?? '0' }}</li>
                                                 @endforeach
                                             </ul>
                                         </td>

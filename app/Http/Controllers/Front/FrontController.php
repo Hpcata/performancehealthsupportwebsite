@@ -32,6 +32,7 @@ use App\Models\UserPrePlan;
 use App\Models\PrePlanDetail;
 use App\Models\GoalHistory;
 use App\Mail\SportInterestMail;
+use Carbon\Carbon;
 
 class FrontController extends Controller
 {
@@ -224,7 +225,7 @@ class FrontController extends Controller
         // If user doesn't exist or password doesn't match
         return response()->json([
             'success' => false,
-            'message' => 'Invalid credentials.',
+            'message' => 'Oops! Your email or password is incorrect. Please try again.',
         ], 401);
     }
 
@@ -368,15 +369,21 @@ class FrontController extends Controller
             $reports = [];
 
             $prePlanReports = \App\Models\UserPrePlan::with(['PrePlanQuesionFile' => function($query) {
-                $query->whereIn('form_slug', ['physical_measures','medical_history']);
-            }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
-            // dd($trainingIntencity);
+                $query->whereIn('form_slug', ['physical_measures', 'medical_history']);
+            }])->where('user_id', $user->id)
+            ->where('payment_id', $payment->id)
+            ->get();
 
             foreach($prePlanReports as $prePlan) {
                 foreach ($prePlan->PrePlanQuesionFile as $detail) {
-                    $reports[$detail->form_slug][] = $detail->file_path;
+                    $reports[$detail->form_slug][] = [
+                        'file_path' => asset('private/storage/app/public/' . $detail->file_path),
+                        'report_name' => $detail->file_name,
+                        'date' => \Carbon\Carbon::parse($detail->created_at)->format('d-m-Y')
+                    ];
                 }
             }
+
             // dd($medicalHistories);
             return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan'));
         }
@@ -606,6 +613,13 @@ class FrontController extends Controller
 
         $userItem->qty = $request->qty;
         $userItem->save();
+
+        $userMeal = \App\Models\UserMeal::with('userItems')->where('id',$userItem->user_meal_id)->first();
+        $userPlan = \App\Models\UserPlan::where('id', $userMeal->user_plan_id)->where('status', 'active')->first();
+        $userItemMeal = \App\Models\UserItemMeal::where('user_id', $userPlan->user_id)->where('meal_id', $userMeal->meal_id)->where('item_id', $userItem->item_id)->first();
+
+        $userItemMeal->qty = $request->qty;
+        $userItemMeal->save();
 
         return response()->json([
             'success' => true,
@@ -844,7 +858,8 @@ class FrontController extends Controller
                 $endDate = now()->subYear();
                 break;
             case 'ALL':
-                $endDate = WeightTracking::where('user_id', $userId)->orderBy('date', 'asc')->value('date'); // Earliest date for "ALL"
+                $endDate = WeightTracking::where('user_id', $userId)->orderBy('date', 'asc')->value('date');
+                $endDate = Carbon::parse($endDate);
                 break;
             default:
                 return response()->json(['error' => 'Invalid filter'], 400);
@@ -852,6 +867,7 @@ class FrontController extends Controller
     
         // Generate a complete list of dates between $endDate and $startDate
         $allDates = collect();
+        // dd($endDate);
         $currentDate = $endDate->copy();
         while ($currentDate <= $startDate) {
             $allDates->push($currentDate->format('Y-m-d')); // Format as 'Y-m-d' for consistency
@@ -874,13 +890,22 @@ class FrontController extends Controller
                 'weight' => $weightsData->has($date) ? $weightsData[$date]->weight : null // Use null if no weight exists for the date
             ];
         });
-    
+        
+        // dd($allWeights);
         // Group by month for the response
+        // $groupedWeights = $allWeights->groupBy(function ($item) {
+        //     return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F'); // Group by month name
+        // })->map(function ($items, $month) {
+        //     return [
+        //         'month' => $month,
+        //         'weights' => $items
+        //     ];
+        // })->values();
         $groupedWeights = $allWeights->groupBy(function ($item) {
-            return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F'); // Group by month name
-        })->map(function ($items, $month) {
+            return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F Y'); // Group by "Month Year"
+        })->map(function ($items, $monthYear) {
             return [
-                'month' => $month,
+                'month' => $monthYear, // Now includes both month and year
                 'weights' => $items
             ];
         })->values();
@@ -895,6 +920,7 @@ class FrontController extends Controller
             $weightDiff = abs($startWeight - $goalWeight);
         }
     
+        // dd($groupedWeights);
         // Return all the necessary data for the chart and modal
         return response()->json([
             'success' => true,
@@ -970,6 +996,7 @@ class FrontController extends Controller
         $answer = $request->answer;
         $question = $request->question;
         $userId = $request->user_id;
+        $type = $request->type;
         // dd($userId);
         $payment = Payment::where('user_id', $userId)->first();
         $prePlan = \App\Models\UserPrePlan::where('payment_id', $payment->id)
@@ -980,15 +1007,40 @@ class FrontController extends Controller
                 ->where('question', $question)
                 ->where('user_pre_plan_id', $prePlan->id)
                 ->first(); 
-        // dd($prePlanDetail);
-        // Ensure answer is stored as valid JSON
-        if (is_array($answer)) {
-            $prePlanDetail->answer = json_encode([$answer], JSON_UNESCAPED_UNICODE);
-        } else {
-            $prePlanDetail->answer = json_encode($answer, JSON_UNESCAPED_UNICODE);
-        }
 
-        $prePlanDetail->save();
+        if($prePlanDetail){
+            GoalHistory::create([
+                'user_id' => $userId,
+                'payment_id' => $payment->id,
+                'type' => $type,
+                'question' => $prePlanDetail->question,
+                'answer' => $prePlanDetail->answer,
+            ]);
+            
+            $prePlanDetail->update(['answer' => json_encode($answer)]);
+
+        } else {
+            // Create a new record if none exists
+            $userPrePlan = UserPrePlan::firstOrCreate([
+                'user_id' => $userId,
+                'payment_id' => $payment->id,
+            ]);
+
+            PrePlanDetail::create([
+                'user_pre_plan_id' => $userPrePlan->id,
+                'form_slug' => 'nutrition_goals',
+                'question' => $question,
+                'answer' => json_encode($answer),
+            ]);
+        }
+        // // Ensure answer is stored as valid JSON
+        // if (is_array($answer)) {
+        //     $prePlanDetail->answer = json_encode([$answer], JSON_UNESCAPED_UNICODE);
+        // } else {
+        //     $prePlanDetail->answer = json_encode($answer, JSON_UNESCAPED_UNICODE);
+        // }
+
+        // $prePlanDetail->save();
     
         return response()->json(['success' => true, 'message' => 'Answer updated successfully']);
     }
@@ -1081,9 +1133,11 @@ class FrontController extends Controller
             'file.*' => 'required|mimes:jpg,jpeg,png,pdf|max:2048', // Validate multiple files
             'report_type' => 'required',
             'user_pre_plan_id' => 'required',
+            'report_name' => 'required',
         ]);
 
         $reportType = $request->input('report_type');
+        $reportName = $request->input('report_name');
         $userPrePlanId = $request->input('user_pre_plan_id');
 
         // Define the question based on report type
@@ -1104,6 +1158,7 @@ class FrontController extends Controller
                     'form_slug' => $reportType,
                     'question' => $question,
                     'file_path' => $path,
+                    'file_name' => $reportName,
                 ]);
 
                 // Add to response array
@@ -1113,7 +1168,7 @@ class FrontController extends Controller
                 ];
             }
         }
-
+        
         return response()->json([
             "message" => "Files uploaded successfully!",
             "uploaded_files" => $uploadedFiles

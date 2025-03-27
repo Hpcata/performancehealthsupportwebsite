@@ -12,8 +12,26 @@ use Illuminate\Support\Facades\Storage;
 
 class MealController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $query = Meal::with('categories', 'items');
+    
+            // Apply search filter if a search term is provided
+            if ($request->has('search') && !empty($request->search)) {
+                $query->whereHas('categories', function ($q) use ($request) {
+                    $q->where('title', 'LIKE', '%' . $request->search . '%'); // Search by category name
+                });
+            }
+    
+            // Get filtered meals
+            $meals = $query->select('id', 'title as name')->get();
+    
+            return response()->json([
+                'success' => true,
+                'meals' => $meals
+            ]);
+        }
         $meals = Meal::with('categories','items')->get(); // Eager load subCategories
         return view('backend.pages.meal.index', compact('meals'));
     }
@@ -67,7 +85,7 @@ class MealController extends Controller
     
                 // Only proceed if the user has an active plan
                 if ($hasActivePlan) {
-                    foreach ($request->food_ids as $foodId) {
+                    foreach ($request->food_ids as $index => $foodId) {
                         $exists = UserItemMeal::where('user_id', $userId)
                             ->where('meal_id', $meal->id)
                             ->where('item_id', $foodId)
@@ -79,6 +97,7 @@ class MealController extends Controller
                                 'user_id' => $userId,
                                 'item_id' => $foodId,
                                 'meal_id' => $meal->id,
+                                'qty' => $request->food_qty[$index] ?? '',
                                 'is_swiped' => isset($item->is_swiped) ? $item->is_swiped : 0,
                             ]);
                         }
@@ -155,7 +174,7 @@ class MealController extends Controller
         
                     // Only proceed if the user has an active plan
                     if ($hasActivePlan) {
-                        foreach ($request->food_ids as $foodId) {
+                        foreach ($request->food_ids as $index => $foodId) {
                             $exists = UserItemMeal::where('user_id', $userId)
                                 ->where('meal_id', $meal->id)
                                 ->where('item_id', $foodId)
@@ -166,6 +185,7 @@ class MealController extends Controller
                                     'user_id' => $userId,
                                     'item_id' => $foodId,
                                     'meal_id' => $meal->id,
+                                    'qty' => $request->food_qty[$index] ?? '',
                                     'is_swiped' => isset($item->is_swiped) ? $item->is_swiped : 0,
                                 ]);
                             }

@@ -16,10 +16,11 @@ use App\Models\User;
 use Log;
 use App\Mail\ActivePlanMail;
 use Mail;
-use App\Models\UserItemMeal;
 use PHPUnit\TextUI\Help;
 use Storage;
 use Illuminate\Support\Str;
+use App\Models\UserItemMeal;
+use App\Models\UserItemSwap;
 
 class PurchasePlanController extends Controller
 {
@@ -83,7 +84,7 @@ class PurchasePlanController extends Controller
         //     'items.*.*' => 'required|array',
         //     'items.*.*' => 'exists:items,id',
         // ]);
-    
+        // dd('23');
         try {
             $payment = Payment::findOrFail($request->payment_id);
             \DB::beginTransaction();
@@ -93,21 +94,40 @@ class PurchasePlanController extends Controller
             ->get();
         
             foreach ($mealItems as $mealItem) {
-                \DB::table('user_item_meals')->insert([
-                    'item_id' => $mealItem->item_id,
-                    'meal_id' => $mealItem->meal_id,
-                    'user_id' => $payment->user_id,
-                    'is_swiped' => $mealItem->item->is_swiped ?? 0, // Assuming 'is_swiped' exists in the items table
-                ]);
+                $existingMealItem = \DB::table('user_item_meals')
+                    ->where('item_id', $mealItem->item_id)
+                    ->where('meal_id', $mealItem->meal_id)
+                    ->where('user_id', $payment->user_id)
+                    ->exists();
+            
+                if (!$existingMealItem) {
+                    \DB::table('user_item_meals')->insert([
+                        'item_id' => $mealItem->item_id,
+                        'meal_id' => $mealItem->meal_id,
+                        'user_id' => $payment->user_id,
+                        'qty'     => $mealItem->item_qty,
+                        'is_swiped' => $mealItem->item->is_swiped ?? 0, // Assuming 'is_swiped' exists
+                    ]);
+                }
             }
+            
             $swapItems = \DB::table('item_swaps')->get();
-            foreach($swapItems as $swapItem) {
-                \DB::table('user_item_swaps')->insert([
-                    'item_id' => $swapItem->item_id,
-                    'swap_item_id' => $swapItem->swap_item_id,
-                    'user_id' => $payment->user_id
-                ]);
+            foreach ($swapItems as $swapItem) {
+                $existingSwapItem = \DB::table('user_item_swaps')
+                    ->where('item_id', $swapItem->item_id)
+                    ->where('swap_item_id', $swapItem->swap_item_id)
+                    ->where('user_id', $payment->user_id)
+                    ->exists();
+            
+                if (!$existingSwapItem) {
+                    \DB::table('user_item_swaps')->insert([
+                        'item_id' => $swapItem->item_id,
+                        'swap_item_id' => $swapItem->swap_item_id,
+                        'user_id' => $payment->user_id
+                    ]);
+                }
             }
+            
             $meals = [];
             $categories = [];
             $items = [];
@@ -345,18 +365,16 @@ class PurchasePlanController extends Controller
                 ->with('error', 'Failed to create User Plan. Error: ' . $e->getMessage());
         }
     }
-    
+
     public function edit(User $user, $planId)
     {
-        // Fetch the user's plan with all necessary relationships
         $payment = Payment::find($planId);
         $plan = Plan::find($payment->plan_id);
-        // dd($plan);
         $subPlanIds = $plan->subPlans->pluck('id')->toArray();
-        // dd($subPlanIds);
+
         $userPlans = UserPlan::with([
             'plan', 
-            'userMealTimes.userCategories.userMeals.userItems.userSwapItems', // Correctly load subcategories through pivot table
+            'userMealTimes.userCategories.userMeals.userItems.userSwapItems',
         ])
         ->where('user_id', $user->id)
         ->where('plan_id', $plan->id)
@@ -364,70 +382,185 @@ class PurchasePlanController extends Controller
             return $query->orWhereIn('plan_id', $subPlanIds);
         })
         ->get();
-        
-        // dd($userPlans);
-        // Redirect if the plan doesn't exist
+
         if (!$userPlans) {
             return redirect()->route('admin.purchase-plans.index')
-                             ->with('error', 'User Plan not found.');
+                            ->with('error', 'User Plan not found.');
         }
 
         $selectedMeals = [];
-        $selectedItems = []; // To store pre-selected user items
-        $selectedSwapItems = []; // To store pre-selected swap items
+        $selectedItems = [];
+        $selectedSwapItems = [];
+
+        // Initialize Nutrition Totals
+        $totalCarbs = 0;
+        $totalFat = 0;
+        $totalProtein = 0;
 
         foreach ($userPlans as $userPlan) {
             foreach ($userPlan->userMealTimes as $mealTime) {
-                $selectedMeals[$userPlan->plan_id][$mealTime->meal_time_id] = $mealTime->userMeals->pluck('id','meal_id')->toArray();
+                $selectedMeals[$userPlan->plan_id][$mealTime->meal_time_id] = 
+                    $mealTime->userMeals->pluck('id','meal_id')->toArray();
 
                 foreach ($mealTime->userMeals as $userMeal) {
                     $mealId = $userMeal->meal_id;
 
                     // Store user items
-                    $selectedItems[$mealTime->meal_time_id][$mealId] = $userMeal->userItems->pluck('item_id')->toArray();
+                    $selectedItems[$mealTime->meal_time_id][$mealId] = 
+                        $userMeal->userItems->pluck('item_id')->toArray();
 
-                    // Store user swap items
+                    // Calculate Nutritional Values for Items
                     foreach ($userMeal->userItems as $userItem) {
-                        $selectedSwapItems[$mealTime->meal_time_id][$mealId][$userItem->item_id] = $userItem->userSwapItems->pluck('swap_item_id')->toArray();
+                        $item = Item::find($userItem->item_id); // Assuming Item contains nutritional data
+                        if ($item) {
+                            $totalCarbs += $item->carbs ?? 0;
+                            $totalFat += $item->fat ?? 0;
+                            $totalProtein += $item->protein ?? 0;
+                        }
+
+                        // Store user swap items
+                        $selectedSwapItems[$mealTime->meal_time_id][$mealId][$userItem->item_id] = 
+                            $userItem->userSwapItems->pluck('swap_item_id')->toArray();
+
+                        // Calculate Nutritional Values for Swap Items
+                        foreach ($userItem->userSwapItems as $swapItem) {
+                            $swap = Item::find($swapItem->swap_item_id); // Assuming Item model stores nutrition data
+                            if ($swap) {
+                                $totalCarbs += $swap->carbs ?? 0;
+                                $totalFat += $swap->fat ?? 0;
+                                $totalProtein += $swap->protein ?? 0;
+                            }
+                        }
                     }
                 }
             }
         }
-        // dd($selectedSwapItems);
+
         $mealTimes = MealTime::all();
         $categories = Category::all();
-        
         $meals = Meal::all();
-        $items = Item::where('is_swiped',0)->get();
-        // dd($selectedItems);
+        $items = Item::where('is_swiped', 0)->get();
 
         $activity = UserPlan::with([
-            'modifiedBy', 
+            'modifiedBy',
         ])
         ->where('user_id', $payment->user_id)
         ->where('plan_id', $payment->plan_id)
-        ->orderBy('updated_at', 'desc') // Order by updated_at in descending order
+        ->orderBy('updated_at', 'desc')
         ->first();
 
-        $step5Foods = Item::where('is_extra', 0)->get()->groupBy('category');
+        $step5Foods = Item::with('category')
+                        ->where('is_extra', 0)
+                        ->get()
+                        ->groupBy('category_id');
 
         $userPrePlan = \App\Models\UserPrePlan::with(['prePlanDetails' => function ($query) {
             $query->where('form_slug', 'food_preference')
-                  ->whereIn('question', ['Grains', 'Legumes, beans and pulses','Eggs','Meat','Meat Alternatives','Seafood','Dairy','Non-Dairy','Fruit','Vegetable','Oils / Butter']); // Add your condition here
-        }])->where('payment_id', $payment->id)->first();       
+                ->whereIn('question', [
+                    'Grains', 'Legumes, beans and pulses',
+                    'Eggs', 'Meat', 'Meat Alternatives',
+                    'Seafood', 'Dairy', 'Non-Dairy',
+                    'Fruit', 'Vegetable', 'Oils / Butter'
+                ]);
+        }])->where('payment_id', $payment->id)->first();
 
-        if(isset($userPrePlan->prePlanDetails)){
-            $prePlanDetails = $userPrePlan->prePlanDetails;
-            $perPlanSelectedFoods = $prePlanDetails->map(function ($detail) {
-                return json_decode($detail->answer, true); // Decode JSON into an array
-            })->flatten()->toArray();
-        }else {
-            $perPlanSelectedFoods = [];
-        }
+        $perPlanSelectedFoods = $userPrePlan->prePlanDetails
+            ? $userPrePlan->prePlanDetails->map(function ($detail) {
+                return json_decode($detail->answer, true);
+            })->flatten()->toArray()
+            : [];
+        // dd($totalCarbs, $totalFat, $totalProtein);
         return view('backend.pages.plan.purchase-plan-edit', compact(
-            'userPlans', 'mealTimes', 'categories', 'meals', 'items', 'selectedMeals', 'selectedItems', 'selectedSwapItems', 'activity', 'payment', 'step5Foods', 'perPlanSelectedFoods'
+            'userPlans', 'mealTimes', 'categories', 'meals', 'items',
+            'selectedMeals', 'selectedItems', 'selectedSwapItems',
+            'activity', 'payment', 'step5Foods', 'perPlanSelectedFoods',
+            'totalCarbs', 'totalFat', 'totalProtein' // Include total values in the view
         ));
-    }   
+    }
+
+    
+    // public function edit(User $user, $planId)
+    // {
+    //     // Fetch the user's plan with all necessary relationships
+    //     $payment = Payment::find($planId);
+    //     $plan = Plan::find($payment->plan_id);
+    //     // dd($plan);
+    //     $subPlanIds = $plan->subPlans->pluck('id')->toArray();
+    //     // dd($subPlanIds);
+    //     $userPlans = UserPlan::with([
+    //         'plan', 
+    //         'userMealTimes.userCategories.userMeals.userItems.userSwapItems', // Correctly load subcategories through pivot table
+    //     ])
+    //     ->where('user_id', $user->id)
+    //     ->where('plan_id', $plan->id)
+    //     ->when($subPlanIds, function ($query) use ($subPlanIds) {
+    //         return $query->orWhereIn('plan_id', $subPlanIds);
+    //     })
+    //     ->get();
+        
+    //     // dd($userPlans);
+    //     // Redirect if the plan doesn't exist
+    //     if (!$userPlans) {
+    //         return redirect()->route('admin.purchase-plans.index')
+    //                          ->with('error', 'User Plan not found.');
+    //     }
+
+    //     $selectedMeals = [];
+    //     $selectedItems = []; // To store pre-selected user items
+    //     $selectedSwapItems = []; // To store pre-selected swap items
+
+    //     foreach ($userPlans as $userPlan) {
+    //         foreach ($userPlan->userMealTimes as $mealTime) {
+    //             $selectedMeals[$userPlan->plan_id][$mealTime->meal_time_id] = $mealTime->userMeals->pluck('id','meal_id')->toArray();
+
+    //             foreach ($mealTime->userMeals as $userMeal) {
+    //                 $mealId = $userMeal->meal_id;
+
+    //                 // Store user items
+    //                 $selectedItems[$mealTime->meal_time_id][$mealId] = $userMeal->userItems->pluck('item_id')->toArray();
+
+    //                 // Store user swap items
+    //                 foreach ($userMeal->userItems as $userItem) {
+    //                     $selectedSwapItems[$mealTime->meal_time_id][$mealId][$userItem->item_id] = $userItem->userSwapItems->pluck('swap_item_id')->toArray();
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     // dd($selectedSwapItems);
+    //     $mealTimes = MealTime::all();
+    //     $categories = Category::all();
+        
+    //     $meals = Meal::all();
+    //     $items = Item::where('is_swiped',0)->get();
+    //     // dd($selectedItems);
+
+    //     $activity = UserPlan::with([
+    //         'modifiedBy', 
+    //     ])
+    //     ->where('user_id', $payment->user_id)
+    //     ->where('plan_id', $payment->plan_id)
+    //     ->orderBy('updated_at', 'desc') // Order by updated_at in descending order
+    //     ->first();
+
+    //     $step5Foods = Item::with('category')->where('is_extra', 0)->get()->groupBy('category_id');
+
+    //     $userPrePlan = \App\Models\UserPrePlan::with(['prePlanDetails' => function ($query) {
+    //         $query->where('form_slug', 'food_preference')
+    //               ->whereIn('question', ['Grains', 'Legumes, beans and pulses','Eggs','Meat','Meat Alternatives','Seafood','Dairy','Non-Dairy','Fruit','Vegetable','Oils / Butter']); // Add your condition here
+    //     }])->where('payment_id', $payment->id)->first();       
+
+    //     if(isset($userPrePlan->prePlanDetails)){
+    //         $prePlanDetails = $userPrePlan->prePlanDetails;
+    //         $perPlanSelectedFoods = $prePlanDetails->map(function ($detail) {
+    //             return json_decode($detail->answer, true); // Decode JSON into an array
+    //         })->flatten()->toArray();
+    //     }else {
+    //         $perPlanSelectedFoods = [];
+    //     }
+    //     return view('backend.pages.plan.purchase-plan-edit', compact(
+    //         'userPlans', 'mealTimes', 'categories', 'meals', 'items', 'selectedMeals', 'selectedItems', 'selectedSwapItems', 'activity', 'payment', 'step5Foods', 'perPlanSelectedFoods'
+    //     ));
+    // }   
     
     public function update(Request $request)
     {
@@ -701,102 +834,142 @@ class PurchasePlanController extends Controller
 
     public function getMealItems(Request $request)
     {
-        // Fetch the meal with related items and their swap items
-        // $meal = Meal::with('items.swapItems')->where('id', $request->meal_id)->first();
-        // dd(\Auth::user()->id);
         $userId = $request->user_id;
-        // dd($request->all());
-        if($request->type == 'edit') {
-            // dd('12');
-            $meal = \App\Models\UserItemMeal::where('meal_id', $request->meal_id)->where('user_id',$request->user_id)->first();
-            // dd($meal);
-            // if(!$meal) {
-            //     $meal = Meal::with('items.swapItems')->where('id', $request->meal_id)->first();
 
-            //     // Check if meal exists
-            //     if (!$meal) {
-            //         return response()->json([
-            //             'success' => false,
-            //             'message' => 'Meal not found.'
-            //         ], 404);
-            //     }
+        if ($request->type == 'edit') {
+            $userMeal = \App\Models\UserItemMeal::where('meal_id', $request->meal_id)
+                ->where('user_id', $userId)
+                ->get();
 
-            //     $mealName = $meal->title;
-            //     $mealId = $meal->id;
+            if (!$userMeal) {
+                $meal = Meal::with('items.swapItems')->find($request->meal_id);
 
-            //     // Prepare the data array
-            //     $data = $meal->items->map(function ($item) {
-            //         return [
-            //             'id' => $item->id,
-            //             'name' => $item->title,
-            //             'qty'  => $item->pivot->item_qty,
-            //             'swapItems' => $item->swapItems->map(function ($swapItem) {
-            //                 return [
-            //                     'id' => $swapItem->id,
-            //                     'name' => $swapItem->title
-            //                 ];
-            //             })
-            //         ];
-            //     });
-            // }else {
-            //     $meal = Meal::where('id', $meal->meal_id)
-            //         ->with(['userMealItems' => function ($query) use ($userId) {
-            //             $query->where('user_id', $userId) // Filter userMealItems by user_id
-            //             ->with(['userItemSwaps' => function ($subQuery) use($userId){
-            //                 $subQuery->where('user_id', $userId); // Add condition to filter userItemSwaps
-            //             }]);
-            //         }])
-            //         ->first();
-            // }
-            $meal = Meal::where('id', $meal->meal_id)
-                    ->with(['userMealItems' => function ($query) use ($userId) {
-                        $query->where('user_id', $userId) // Filter userMealItems by user_id
-                        ->with(['userItemSwaps' => function ($subQuery) use($userId){
-                            $subQuery->where('user_id', $userId); // Add condition to filter userItemSwaps
-                        }]);
-                    }])
-                    ->first();
-            $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)->where('plan_id', $request->plan_id)->first();
-            $userMeal = null;
-            if($userPlan) {
-                $userMealTimes = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
-                                ->where('meal_time_id', $request->meal_time_id)->first();
-                if($userMealTimes) {
-                    $userMeal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTimes->id)->where('meal_id', $request->meal_id)->first();
+                if (!$meal) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Meal not found.'
+                    ], 404);
                 }
-            }
 
-            // Check if meal exists
-            if (!$meal) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Meal not found.'
-                ], 404);
-            }
+                $mealName = $meal->title;
+                $mealId = $meal->id;
 
-            $mealName = isset($userMeal->meal_name) ? $userMeal->meal_name : $meal->title;
-            $mealId = $meal->id;
+                $totalCarbs = 0;
+                $totalProtein = 0;
+                $totalFat = 0;
 
-            // Prepare the data array
-            $data = $meal->userMealItems->map(function ($item) {
-                // dd($item->userItemSwaps);
-                return [
-                    'id' => $item->id,
-                    'name' => $item->title,
-                    'qty'  => $item->pivot->qty,
-                    'swapItems' => $item->userItemSwaps->map(function ($swapItem) {
+                $data = $meal->userMealItems->map(function ($item) use ($userId, &$totalCarbs, &$totalProtein, &$totalFat) {
+                    $userSwapItem = \DB::table('user_item_swaps')
+                        ->where('user_id', $userId)
+                        ->where('item_id', $item->id)
+                        ->first();
+
+                    $swapItems = $item->userItemSwaps->map(function ($swapItem) use ($userSwapItem, &$totalCarbs, &$totalProtein, &$totalFat) {
+                        $totalCarbs += $swapItem->carbs;
+                        $totalProtein += $swapItem->protein;
+                        $totalFat += $swapItem->fat;
+
                         return [
                             'id' => $swapItem->id,
                             'name' => $swapItem->title,
-                            'qty' => $swapItem->qty
+                            'qty' => $swapItem->qty ?? 0,
+                            'carbs' => $swapItem->carbs,
+                            'protein' => $swapItem->protein,
+                            'fat' => $swapItem->fat,
                         ];
-                    })
-                ];
-            });
+                    });
+
+                    $totalCarbs += $item->carbs;
+                    $totalProtein += $item->protein;
+                    $totalFat += $item->fat;
+
+                    return [
+                        'id' => $item->id,
+                        'name' => $item->title,
+                        'qty'  => $item->pivot->qty 
+                            ?? optional(\App\Models\ItemMeal::where('item_id', $item->id)->first())->item_qty 
+                            ?? optional($userSwapItem)->qty 
+                            ?? 0,
+                        'carbs' => $item->carbs,
+                        'protein' => $item->protein,
+                        'fat' => $item->fat,
+                        'swapItems' => $swapItems
+                    ];
+                });
+            } else {
+                $meal = Meal::where('id', $request->meal_id)
+                    ->with(['userMealItems' => function ($query) use ($userId) {
+                        $query->where('user_id', $userId)
+                            ->with(['userItemSwaps' => function ($subQuery) use ($userId) {
+                                $subQuery->where('user_id', $userId);
+                            }]);
+                    }])
+                    ->first();
+
+                $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)
+                    ->where('plan_id', $request->plan_id)
+                    ->first();
+
+                $userMealTimes = null;
+                $userUpdateMeal = null;
+                if ($userPlan) {
+                    $userMealTimes = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
+                        ->where('meal_time_id', $request->meal_time_id)
+                        ->first();
+
+                    if ($userMealTimes) {
+                        $userUpdateMeal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTimes->id)
+                            ->where('meal_id', $request->meal_id)
+                            ->first();
+                    }
+                }
+
+                $mealName = $userUpdateMeal->meal_name ?? $meal->title;
+                $mealId = $meal->id;
+
+                $totalCarbs = 0;
+                $totalProtein = 0;
+                $totalFat = 0;
+
+                $data = $userMeal->map(function ($item) use($userId, &$totalCarbs, &$totalProtein, &$totalFat) {
+                    $swapItems = \App\Models\UserItemSwap::with('item')
+                        ->where('item_id', $item->item_id)
+                        ->where('user_id', $userId)
+                        ->get();
+                    // dd($item);
+                    $totalCarbs += isset($item->carbs) ? $item->carbs : $item->items->carbs;
+                    $totalProtein += isset($item->protein) ? $item->protein : $item->items->protein;
+                    $totalFat += isset($item->fat) ? $item->fat : $item->items->fat;
+
+                    return [
+                        'id' => $item->items->id,
+                        'name' => $item->items->title,
+                        'qty' => $item->qty ?? 0,
+                        'unit' => $item->unit ?? '',
+                        'carbs' => isset($item->carbs) ? $item->carbs : $item->items->carbs,
+                        'protein' =>  isset($item->protein) ? $item->protein : $item->items->protein,
+                        'fat' => isset($item->fat) ? $item->fat : $item->items->fat,
+                        'swapItems' => $swapItems->map(function ($swapFood) use (&$totalCarbs, &$totalProtein, &$totalFat) {
+                            $totalCarbs += isset($swapFood->carbs) ? $swapFood->carbs : $swapFood->swapItem->carbs;
+                            $totalProtein += isset($swapFood->protein) ? $swapFood->protein : $swapFood->swapItem->protein;
+                            $totalFat += isset($swapFood->fat) ? $swapFood->fat : $swapFood->swapItem->fat;
+
+                            return [
+                                'id' => $swapFood->swapItem->id,
+                                'name' => $swapFood->swapItem->title,
+                                'qty' => $swapFood->qty,
+                                'unit' => $swapFood->unit ?? '',
+                                'carbs' => isset($swapFood->carbs) ? $swapFood->carbs : $swapFood->swapItem->carbs,
+                                'protein' => isset($swapFood->protein) ? $swapFood->protein : $swapFood->swapItem->protein,
+                                'fat' => isset($swapFood->fat) ? $swapFood->fat : $swapFood->swapItem->fat,
+                            ];
+                        })
+                    ];
+                });
+            }
         } else {
-            $meal = Meal::with('items.swapItems')->where('id', $request->meal_id)->first();
-            
-            // Check if meal exists
+            $meal = Meal::with('items.swapItems')->find($request->meal_id);
+
             if (!$meal) {
                 return response()->json([
                     'success' => false,
@@ -807,32 +980,384 @@ class PurchasePlanController extends Controller
             $mealName = $meal->title;
             $mealId = $meal->id;
 
-            // Prepare the data array
-            $data = $meal->items->map(function ($item) {
+            $totalCarbs = 0;
+            $totalProtein = 0;
+            $totalFat = 0;
+
+            $data = $meal->items->map(function ($item) use (&$totalCarbs, &$totalProtein, &$totalFat) {
+                $totalCarbs += $item->carbs;
+                $totalProtein += $item->protein;
+                $totalFat += $item->fat;
+
+                $swapItems = $item->swapItems->map(function ($swapItem) use (&$totalCarbs, &$totalProtein, &$totalFat) {
+                    $totalCarbs += $swapItem->carbs;
+                    $totalProtein += $swapItem->protein;
+                    $totalFat += $swapItem->fat;
+
+                    return [
+                        'id' => $swapItem->id,
+                        'name' => $swapItem->title,
+                        'qty' => $swapItem->qty ?? 0,
+                        'carbs' => $swapItem->carbs,
+                        'protein' => $swapItem->protein,
+                        'fat' => $swapItem->fat,
+                    ];
+                });
+
                 return [
                     'id' => $item->id,
                     'name' => $item->title,
-                    'qty'  => $item->pivot->item_qty,
-                    'swapItems' => $item->swapItems->map(function ($swapItem) {
-                        return [
-                            'id' => $swapItem->id,
-                            'name' => $swapItem->title,
-                            'qty' => $swapItem->qty
-                        ];
-                    })
+                    'qty'  => $item->pivot->item_qty ?? 0,
+                    'carbs' => $item->carbs,
+                    'protein' => $item->protein,
+                    'fat' => $item->fat,
+                    'swapItems' => $swapItems
                 ];
             });
         }
-        
 
-        // Return the response
         return response()->json([
             'success' => true,
             'meal_id' => $mealId,
             'meal_name' => $mealName,
-            'data' => $data
+            'data' => $data,
+            'total_carbs' => number_format($totalCarbs, 2),
+            'total_protein' => number_format($totalProtein, 2),
+            'total_fat' => number_format($totalFat, 2)
         ]);
     }
+
+
+    // public function getMealItems(Request $request)
+    // {
+    //     $userId = $request->user_id;
+
+    //     if ($request->type == 'edit') {
+    //         $userMeal = \App\Models\UserItemMeal::where('meal_id', $request->meal_id)
+    //             ->where('user_id', $userId)
+    //             ->get();
+
+    //         if (!$userMeal) {
+    //             $meal = Meal::with('items.swapItems')->find($request->meal_id);
+
+    //             if (!$meal) {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'Meal not found.'
+    //                 ], 404);
+    //             }
+
+    //             $mealName = $meal->title;
+    //             $mealId = $meal->id;
+
+    //             $data = $meal->userMealItems->map(function ($item) use ($userId) {
+    //                 $userSwapItem = \DB::table('user_item_swaps')
+    //                     ->where('user_id', $userId)
+    //                     ->where('item_id', $item->id)
+    //                     ->first();
+
+    //                 return [
+    //                     'id' => $item->id,
+    //                     'name' => $item->title,
+    //                     'qty'  => $item->pivot->qty 
+    //                         ?? optional(\App\Models\ItemMeal::where('item_id', $item->id)->first())->item_qty 
+    //                         ?? optional($userSwapItem)->qty 
+    //                         ?? 0,
+    //                     'carbs' => $item->carbs,
+    //                     'protein' => $item->protein,
+    //                     'fat' => $item->fat,
+    //                     'swapItems' => $item->userItemSwaps->map(function ($swapItem) use ($userSwapItem) {
+    //                         return [
+    //                             'id' => $swapItem->id,
+    //                             'name' => $swapItem->title,
+    //                             'qty' => $swapItem->qty 
+    //                                 ?? optional(\App\Models\ItemMeal::where('item_id', $swapItem->id)->first())->item_qty 
+    //                                 ?? optional($userSwapItem)->qty 
+    //                                 ?? 0,
+    //                             'carbs' => $swapItem->carbs,
+    //                             'protein' => $swapItem->protein,
+    //                             'fat' => $swapItem->fat,
+    //                         ];
+    //                     })
+    //                 ];
+    //             });
+    //         } else {
+    //             // dd('23');
+    //             $meal = Meal::where('id', $request->meal_id)
+    //                 ->with(['userMealItems' => function ($query) use ($userId) {
+    //                     $query->where('user_id', $userId)
+    //                         ->with(['userItemSwaps' => function ($subQuery) use ($userId) {
+    //                             $subQuery->where('user_id', $userId);
+    //                         }]);
+    //                 }])
+    //                 ->first();
+
+    //             $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)
+    //                 ->where('plan_id', $request->plan_id)
+    //                 ->first();
+
+    //             $userMealTimes = null;
+    //             $userUpdateMeal = null;
+    //             if ($userPlan) {
+    //                 $userMealTimes = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
+    //                     ->where('meal_time_id', $request->meal_time_id)
+    //                     ->first();
+    //                     if($userMealTimes) {
+    //                         $userUpdateMeal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTimes->id)->where('meal_id', $request->meal_id)->first();
+    //                     }
+    //             }
+
+    //             $mealName = $userUpdateMeal->meal_name ?? $meal->title;
+    //             $mealId = $meal->id;
+
+    //             $data = $userMeal->map(function ($item) use($userId) {
+    //                 $swapItems = \App\Models\UserItemSwap::with('item')
+    //                 ->where('item_id', $item->item_id)
+    //                 ->where('user_id', $userId)
+    //                 ->get();
+    //                 return [
+    //                     'id' => $item->items->id,
+    //                     'name' => $item->items->title,
+    //                     'qty' => $item->qty ?? 0,
+    //                     'carbs' => $item->items->carbs,
+    //                     'protein' => $item->items->protein,
+    //                     'fat' => $item->items->fat,
+    //                     'swapItems' => $swapItems->map(function ($swapFood) {
+    //                         return [
+    //                             'id' => $swapFood->swapItem->id,
+    //                             'name' => $swapFood->swapItem->title,
+    //                             'qty' => $swapFood->qty,
+    //                             'carbs' => $swapFood->swapItem->carbs,
+    //                             'protein' => $swapFood->swapItem->protein,
+    //                             'fat' => $swapFood->swapItem->fat,
+    //                         ];
+    //                     })
+    //                 ];
+    //             });
+    //         }
+    //     } else {
+    //         $meal = Meal::with('items.swapItems')->find($request->meal_id);
+
+    //         if (!$meal) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Meal not found.'
+    //             ], 404);
+    //         }
+
+    //         $mealName = $meal->title;
+    //         $mealId = $meal->id;
+
+    //         $data = $meal->items->map(function ($item) {
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->title,
+    //                 'qty'  => $item->pivot->item_qty ?? 0,
+    //                 'carbs' => $item->carbs,
+    //                 'protein' => $item->protein,
+    //                 'fat' => $item->fat,
+    //                 'swapItems' => $item->swapItems->map(function ($swapItem) {
+    //                     return [
+    //                         'id' => $swapItem->id,
+    //                         'name' => $swapItem->title,
+    //                         'qty' => $swapItem->qty 
+    //                             ?? optional(\App\Models\ItemMeal::where('item_id', $swapItem->id)->first())->item_qty 
+    //                             ?? 0,
+    //                         'carbs' => $swapItem->carbs,
+    //                         'protein' => $swapItem->protein,
+    //                         'fat' => $swapItem->fat,
+    //                     ];
+    //                 })
+    //             ];
+    //         });
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'meal_id' => $mealId,
+    //         'meal_name' => $mealName,
+    //         'data' => $data
+    //     ]);
+    // }
+
+
+    // public function getMealItems(Request $request)
+    // {
+    //     // Fetch the meal with related items and their swap items
+    //     // $meal = Meal::with('items.swapItems')->where('id', $request->meal_id)->first();
+    //     // dd(\Auth::user()->id);
+    //     $userId = $request->user_id;
+    //     // dd($request->all());
+    //     if($request->type == 'edit') {
+    //         // dd('12');
+    //         $userMeal = \App\Models\UserItemMeal::where('meal_id', $request->meal_id)->where('user_id',$request->user_id)->first();
+    //         // $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)->where('plan_id', $request->plan_id)->first();
+    //         // $userMeal = \App\Models\UserMeal::where('meal_id', $request->meal_id)->where('user_plan_id',$userPlan->id)->first();
+
+    //         if(!$userMeal) {
+    //             $meal = Meal::with('items.swapItems')->where('id', $request->meal_id)->first();
+
+    //             // Check if meal exists
+    //             if (!$meal) {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'Meal not found.'
+    //                 ], 404);
+    //             }
+
+    //             $mealName = $meal->title;
+    //             $mealId = $meal->id;
+
+    //             $data = $meal->userMealItems->map(function ($item) use ($userId) {
+    //                 $userSwapItem = \DB::table('user_item_swaps')->where('user_id', $userId)->where('item_id', $item->id)->first();
+    //                 return [
+    //                     'id' => $item->id,
+    //                     'name' => $item->title,
+    //                     'qty'  => $item->pivot->qty ?? \App\Models\ItemMeal::where('item_id',$item->id)->first()->item_qty,
+    //                     'swapItems' => $item->userItemSwaps->map(function ($swapItem) use ($userSwapItem) {
+    //                         return [
+    //                             'id' => $swapItem->id,
+    //                             'name' => $swapItem->title,
+    //                             'qty' => $swapItem->qty 
+    //                                 ?? optional(\App\Models\ItemMeal::where('item_id', $swapItem->id)->first())->item_qty 
+    //                                 ?? optional($userSwapItem)->qty 
+    //                                 ?? 0
+    //                         ];
+    //                     })
+    //                 ];
+    //             });
+    //             // Prepare the data array
+    //             // $data = $meal->items->map(function ($item) {
+    //             //     return [
+    //             //         'id' => $item->id,
+    //             //         'name' => $item->title,
+    //             //         'qty'  => $item->pivot->item_qty,
+    //             //         'swapItems' => $item->swapItems->map(function ($swapItem) {
+    //             //             return [
+    //             //                 'id' => $swapItem->id,
+    //             //                 'name' => $swapItem->title
+    //             //             ];
+    //             //         })
+    //             //     ];
+    //             // });
+    //         }else {
+    //                 $meal = Meal::where('id', $request->meal_id)
+    //                     ->with(['userMealItems' => function ($query) use ($userId) {
+    //                         $query->where('user_id', $userId) // Filter userMealItems by user_id
+    //                         ->with(['userItemSwaps' => function ($subQuery) use($userId){
+    //                             $subQuery->where('user_id', $userId); // Add condition to filter userItemSwaps
+    //                         }]);
+    //                     }])
+    //                     ->first();
+    //             // }
+    //             // $meal = Meal::where('id', $meal->meal_id)
+    //             //     ->with(['userMealItems' => function ($query) use ($userId) {
+    //             //         $query->where('user_id', $userId) // Filter userMealItems by user_id
+    //             //         ->with(['userItemSwaps' => function ($subQuery) use($userId){
+    //             //             $subQuery->where('user_id', $userId); // Add condition to filter userItemSwaps
+    //             //         }]);
+    //             //     }])
+    //             //     ->first();
+           
+    //             $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)->where('plan_id', $request->plan_id)->first();
+    //             // $userMeal = null;
+    //             if($userPlan) {
+    //                 $userMealTimes = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
+    //                                 ->where('meal_time_id', $request->meal_time_id)->first();
+    //                 if($userMealTimes) {
+    //                     // $userMeal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTimes->id)->where('meal_id', $request->meal_id)->first();
+    //                 }
+    //             }
+
+    //             $mealName = isset($userMeal->meal_name) ? $userMeal->meal_name : $meal->title;
+    //             $mealId = $meal->id;
+    //             // $meal = $userMeal;
+    //             // dd($userMeal);
+    //             // Prepare the data array
+    //             // $data = $meal->userMealItems->map(function ($userItem) use ($userId, $userMeal) {
+    //                 // dd($userItem);
+    //                 // $userSwapItem = \DB::table('user_item_swaps')->where('user_id', $userId)->where('item_id', $userItem->item_id)->first();
+    //                 // $itemQty = \App\Models\UserItemMeal::where('item_id',$userItem->item_id)->where('meal_id', $userMeal->meal_id)->where('user_id', $userId)->first();
+    //                 $swapItems = \App\Models\UserItemSwap::with('item')->where('item_id',$userMeal->item_id)->where('user_id', $userId)->get();
+    //                 // dd($swapItems);
+    //                 $data =  [
+    //                     'id' => $userMeal->items->id,
+    //                     'name' => $userMeal->items->title,
+    //                     'qty'  => isset($userItem->qty) ? $userItem->qty : 0,
+    //                     'swapItems' => $swapItems->map(function ($swapItem) {
+    //                         return [
+    //                             'id' => $swapItem->item->id,
+    //                             'name' => $swapItem->item->title,
+    //                             'qty' => $swapItem->qty,
+    //                         ];
+    //                     })
+    //                 ];
+    //             // });
+    //             // $data = $meal->userMealItems->map(function ($userItem) use ($userId, $userMeal) {
+    //             //     // dd($userItem);
+    //             //     $userSwapItem = \DB::table('user_item_swaps')->where('user_id', $userId)->where('item_id', $userItem->pivot->item_id)->first();
+    //             //     $itemQty = \App\Models\UserItemMeal::where('item_id',$userItem->pivot->item_id)->where('meal_id', $userMeal->meal_id)->where('user_id', $userId)->first();
+    //             //     $swapItems = \App\Models\UserItemSwap::with('item')->where('item_id',$userItem->pivot->item_id)->where('user_id', $userId)->get();
+    //             //     // dd($swapItems);
+    //             //     return [
+    //             //         'ID' => $userItem->pivot->item_id,
+    //             //         'id' => $userItem->id,
+    //             //         'name' => $userItem->title,
+    //             //         'qty'  => isset($userItem->pivot->qty) ? $userItem->pivot->qty : 0,
+    //             //         'swapItems' => $swapItems->map(function ($swapItem) use ($userSwapItem) {
+    //             //             return [
+    //             //                 'ID' => $swapItem->id,
+    //             //                 'id' => $swapItem->item->id,
+    //             //                 'name' => $swapItem->item->title,
+    //             //                 'qty' => $swapItem->qty,
+    //             //             ];
+    //             //         })
+    //             //     ];
+    //             // });
+    //         }
+           
+
+    //         // dd($data);
+    //     } else {
+            
+    //         $meal = Meal::with('items.swapItems')->where('id', $request->meal_id)->first();
+            
+    //         // Check if meal exists
+    //         if (!$meal) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Meal not found.'
+    //             ], 404);
+    //         }
+
+    //         $mealName = $meal->title;
+    //         $mealId = $meal->id;
+
+    //         // Prepare the data array
+    //         $data = $meal->items->map(function ($item) {
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->title,
+    //                 'qty'  => $item->pivot->item_qty,
+    //                 'swapItems' => $item->swapItems->map(function ($swapItem) {
+    //                     return [
+    //                         'id' => $swapItem->id,
+    //                         'name' => $swapItem->title,
+    //                         'qty' => $swapItem->qty ?? (\App\Models\ItemMeal::where('item_id',$swapItem->id)->first() ? \App\Models\ItemMeal::where('item_id',$swapItem->id)->first()->item_qty : 0) ?? 0
+    //                     ];
+    //                 })
+    //             ];
+    //         });
+    //     }
+
+    //     // Return the response
+    //     return response()->json([
+    //         'success' => true,
+    //         'meal_id' => $mealId,
+    //         'meal_name' => $mealName,
+    //         'data' => $data
+    //     ]);
+    // }
 
     public function getMealsByMealTime(Request $request)
     {
@@ -961,57 +1486,241 @@ class PurchasePlanController extends Controller
     public function getSwapitems(Request $request) 
     {
         // dd($request->all());
-        $items = Item::where('is_swiped',1)->get();
-        $item = Item::find($request->item_id);
-        $selectedSwapItems = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->pluck('swap_item_id')->toArray();
-        
-        $selectedSwapItems = Item::whereIn('id', $selectedSwapItems)->get();
-        $selectedItemArr = [];
-        foreach ($selectedSwapItems as $swapItem) {
-            $selectedItemArr[] = [
-                'id' => $swapItem->id,
-                'name' => $swapItem->title,
-                'qty' => $swapItem->qty
-            ];
+        if($request->has('type') && $request->type == "edit") {
+            $item = \App\Models\UserItemMeal::with('items')
+            ->where('user_id', $request->user_id)
+            ->where('meal_id', $request->meal_id)
+            ->where('item_id', $request->item_id)
+            ->first();
+            if(!$item) {
+                $userPlan = \App\Models\UserPlan::where('plan_id',$request->plan_id)->where('user_id', $request->user_id)->first();
+                $userMeal = \App\Models\UserMeal::where('user_plan_id',$userPlan->id)->where('meal_id', $request->meal_id)->first();
+                $item = \App\Models\UserItem::where('user_meal_id', $userMeal->id)->where('user_plan_id', $userPlan->id)->first();
+            }
+
+            $items = Item::where('is_swiped',1)->get();
+
+            $selectedSwapItems = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->pluck('swap_item_id')->toArray();
+            
+            $selectedSwapItems = Item::whereIn('id', $selectedSwapItems)->get();
+            $selectedItemArr = [];
+            foreach ($selectedSwapItems as $swapItem) {
+                $Item = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->first();
+                $selectedItemArr[] = [
+                    'id' => $swapItem->id,
+                    'name' => $swapItem->title,
+                    'qty' => $Item->qty,
+                    'unit' => $Item->unit
+                ];
+            }
+            return response()->json([
+                'success' => true,
+                'item'      => $item,
+                'swapItems' => $items,
+                'selectedSwapItems' => $selectedItemArr
+            ]);
+        }else {
+            // dd('22');
+            $item = Item::find($request->item_id);
+       
+            $items = $item->swapItems;
+
+            $selectedSwapItems = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->pluck('swap_item_id')->toArray();
+            
+            $selectedSwapItems = Item::whereIn('id', $selectedSwapItems)->get();
+            $selectedItemArr = [];
+            foreach ($selectedSwapItems as $swapItem) {
+                $Item = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->first();
+                $selectedItemArr[] = [
+                    'id' => $swapItem->id,
+                    'name' => $swapItem->title,
+                    'qty' => $Item->qty,
+                    'unit' => $Item->unit
+                ];
+            }
+            return response()->json([
+                'success' => true,
+                'item'      => $item,
+                'swapItems' => $items,
+                'selectedSwapItems' => $selectedItemArr
+            ]);
         }
-        return response()->json([
-            'success' => true,
-            'item'      => $item,
-            'swapItems' => $items,
-            'selectedSwapItems' => $selectedItemArr
-        ]);
     }
 
     public function updateFoodSwapFoods(Request $request) 
     {
         // dd($request->all());
-        $userItemSwap = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->delete();
+        // if($request->has('type') && $request->type == 'add') {
+        //     $itemMeal = \App\Models\ItemMeal::with('item')->where('item_id', $request->item_id)->where('meal_id', $request->meal_id)->first();
+        //     if($itemMeal) {
+        //         \App\Models\ItemMeal::with('item')->where('id', $itemMeal->id)->where('item_id', $request->item_id)->where('meal_id', $request->meal_id)->update([
+        //             'item_qty' => $request->item_qty,
+        //             'created_at' => now(),
+        //             'updated_at' => now(),
+        //         ]);
+        //     }
 
-        $userItemMeal = \DB::table('user_item_meals')->where('user_id', $request->user_id)->where('meal_id', $request->meal_id)->where('item_id', $request->item_id)->first();
+        //     $swapFoods = $request->swap_items;
+        //     if($request->has('swap_items') && is_array($request->swap_items)) {
 
-        if($userItemMeal) {
-            \DB::table('user_item_meals')->where('user_id', $request->user_id)->where('meal_id', $request->meal_id)->where('item_id', $request->item_id)->update([
-                'qty' => $request->item_qty
-            ]);
-        }
+        //         foreach ($swapFoods as $swapFood) {
+        //             $swapItem = \DB::table('item_swaps')->where('item_id', $request->item_id)->where('swap_item_id', $swapFood)->first();
+        //             if($swapItem) {
+        //                 \DB::table('item_swaps')->where('item_id', $request->item_id)->where('swap_item_id', $swapFood)->update([
+        //                     'swap_item_qty' => $request->swap_item_qty,
+        //                     'created_at' => now(),
+        //                     'updated_at' => now(),
+        //                 ]);
+        //             }else {
+        //                 $swapItem = \DB::table('item_swaps')->insert([
+        //                     'item_id' => $request->item_id,
+        //                     'swap_item_qty' => $request->swap_item_qty,
+        //                     'swap_item_id' => $swapFood,
+        //                     'created_at' => now(),
+        //                     'updated_at' => now(),
+        //                 ]); 
+        //             }
+        //         }
+        //         $foods = Item::whereIn('id', $swapFoods)->get();
+        //     } else {
+        //         $swapItem = \DB::table('item_swaps')->where('item_id', $request->item_id)->where('swap_item_id', $request->swap_item_id)->first();
+        //         if($swapItem) {
+        //             \DB::table('item_swaps')->where('item_id', $request->item_id)->where('swap_item_id', $request->swap_item_id)->update([
+        //                 'swap_item_qty' => $request->swap_item_qty,
+        //                 'created_at' => now(),
+        //                 'updated_at' => now(),
+        //             ]);
+        //         }else {
+        //             $swapItem = \DB::table('item_swaps')->insert([
+        //                 'item_id' => $request->item_id,
+        //                 'swap_item_qty' => $request->swap_item_qty,
+        //                 'swap_item_id' => $request->swap_items,
+        //                 'created_at' => now(),
+        //                 'updated_at' => now(),
+        //             ]); 
+        //         }
+        //         $foods = Item::where('id', $swapFoods)->get();
+        //     }
+        //     $swapItem = \DB::table('item_swaps')->where('item_id', $request->item_id)->where('swap_item_id', $request->swap_item_id)->first();
+        //     return response()->json([
+        //         'success' => true,
+        //         'foods' => $foods,
+        //         'item' => $itemMeal,
+        //         'swapItem' => $swapItem,
+        //         'message' => 'Swap foods updated successfully!'
+        //     ]);
+        // } else {
 
-        $swapFoods = $request->swap_items;
-        if($swapFoods) {
-            foreach ($swapFoods as $swapFood) {
-                $userItemSwap = \DB::table('user_item_swaps')->insert([
+            $userItemSwap = \DB::table('user_item_swaps')->where('user_id', $request->user_id)->where('item_id', $request->item_id)->delete();
+
+            $userItemMeal = \App\Models\UserItemMeal::with('items')->where('user_id', $request->user_id)->where('meal_id', $request->meal_id)->where('item_id', $request->item_id)->first();
+
+            $savedItem = null;
+            $savedSwapItems = [];
+
+            if($userItemMeal) {
+                $userItemMeal->update([
+                    'qty' => $request->item_qty,
+                    'unit' => $request->item_unit,
+                    'carbs' => $request->food_carbs,
+                    'protein' => $request->food_protein,
+                    'fat' => $request->food_fat,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $savedItem = $userItemMeal->load('items');
+
+            }else {
+                $savedItem = \App\Models\UserItemMeal::create([
                     'user_id' => $request->user_id,
                     'item_id' => $request->item_id,
-                    'swap_item_id' => $swapFood
+                    'qty' => $request->item_qty,
+                    'unit' => $request->item_unit,
+                    'carbs' => $request->food_carbs,
+                    'protein' => $request->food_protein,
+                    'fat' => $request->food_fat,
+                    'meal_id' => $request->meal_id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
-            }
-        }
-        $foods = Item::whereIn('id', $swapFoods)->get();
 
-        return response()->json([
-            'success' => true,
-            'foods' => $foods,
-            'message' => 'Swap foods updated successfully!'
-        ]);
+                $savedItem->load('items');
+
+            }
+
+            $swapFoods = $request->swap_items;
+            if($request->has('swap_items') && is_array($request->swap_items)) {
+                foreach ($swapFoods as $swapFood) {
+                    // dd($swapFood);
+                    $existingSwap = UserItemSwap::with('swapItem')
+                        ->where('item_id', $request->item_id)
+                        ->where('swap_item_id', $swapFood)
+                        ->first();
+    
+                    if ($existingSwap) {
+                        // ✅ Update swap item quantity if record exists
+                        $existingSwap->update([
+                            'qty' => $request->swap_item_qty,
+                            'carbs'=> $request->swap_food_carbs,
+                            'protein' => $request->swap_food_protein,
+                            'fat' => $request->swap_food_fat,
+                            'unit' => $request->swap_item_unit,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+
+                        ]);
+    
+                        // Load related `swapItem` after updating
+                        $savedSwapItems[] = $existingSwap->load('swapItem');
+                    } else {
+                        $deleteSwapFood = UserItemSwap::with('swapItem')
+                        ->where('item_id', $request->item_id)
+                        ->where('user_id', $request->user_id)
+                        ->delete();
+
+                        $swapItem = UserItemSwap::create([
+                            'item_id' => $request->item_id,
+                            'swap_item_id' => $swapFood,
+                            'user_id' => $request->user_id,
+                            'qty' => $request->swap_item_qty,
+                            'carbs'=> $request->swap_food_carbs,
+                            'protein' => $request->swap_food_protein,
+                            'fat' => $request->swap_food_fat,
+                            'unit' => $request->swap_item_unit,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+    
+                        // Load related `swapItem` after saving
+                        $savedSwapItems[] = $swapItem->load('swapItem');
+                    }
+                }
+                // $foods = Item::whereIn('id', $swapFoods)->get();
+            } else {
+                $swapItem = UserItemSwap::create([
+                    'user_id' => $request->user_id,
+                    'item_id' => $request->item_id,
+                    'qty' => $request->swap_item_qty,
+                    'unit' => $request->swap_item_unit,
+                    'carbs' => $request->swap_food_carbs,
+                    'protein' => $request->swap_food_protein,
+                    'fat' => $request->swap_food_fat,
+                    'swap_item_id' => $swapFoods,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                
+                $savedSwapItems[] = $swapItem->load('swapItem');
+            }
+            
+            return response()->json([
+                'success' => true,
+                // 'foods' => $foods,
+                'item' => $savedItem,
+                'swapItem' => $savedSwapItems,
+                'message' => 'Swap foods updated successfully!'
+            ]);
+        // }
 
     }
 
@@ -1050,7 +1759,9 @@ class PurchasePlanController extends Controller
                 'name' => 'required|string|max:255',
                 'image' => 'nullable|url',
                 'protein' => 'nullable',
+                'fat' => 'nullable',
                 'carbs' => 'nullable',
+                'category' => 'nullable',
                 'meal_id' => 'required|exists:meals,id',
                 'user_id' => 'required|exists:users,id',
             ]);
@@ -1072,14 +1783,52 @@ class PurchasePlanController extends Controller
                 
                 $protein = $validated['protein'] ? rtrim($validated['protein'], 'g') : 0;
                 $carbs = $validated['carbs'] ? rtrim($validated['carbs'], 'g') : 0;
+                $fat = $validated['fat'] ? rtrim($validated['fat'], 'g') : 0;
     
+                if(isDecimal($protein)){
+                    $protein = floatval($protein);
+                }else {
+                    $protein = formatDecimal($protein);
+                }
+    
+                if(isDecimal($carbs)){
+                    $carbs = floatval($carbs);
+                }else {
+                    $carbs = formatDecimal($carbs);
+                }
+    
+                if(isDecimal($fat)){
+                    $fat = floatval($fat);
+                }else {
+                    $fat = formatDecimal($fat);
+                }
+
+                $keywords = explode(" ", strtolower($validated['category']));
+
+                // Search for any matching keyword in the database
+                $foodCategory = \App\Models\FoodCategory::where(function ($query) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $query->orWhereRaw("LOWER(name) LIKE ?", ["%$keyword%"]);
+                    }
+                })->first();
+
+                if(!$foodCategory){
+
+                    $foodCategory = new \App\Models\FoodCategory();
+                    $foodCategory->name = ucwords($validated['category']);
+                    $foodCategory->save();
+                }
+            
                 // Step 3: Save food details in the database
                 $food = new Item(); // Assuming you have a Food model
                 $food->title = $validated['name'];
                 $food->protein = $protein;
                 $food->carbs = $carbs;
+                $food->fat = $fat;
                 $food->image = 'items/' . $imageName; // Path to the stored image
                 $food->is_swiped = 0;
+                $food->category_id = isset($foodCategory) ? $foodCategory->id : null;
+
                 if($food->save()) {
                     $userItemMeal = new UserItemMeal();
                     $userItemMeal->user_id = $request->user_id;
@@ -1136,6 +1885,11 @@ class PurchasePlanController extends Controller
                         ->exists();
 
                     if (!$exists) {
+                        $deleteSwapFood = UserItemSwap::with('swapItem')
+                        ->where('item_id', $item->id)
+                        ->where('user_id', $request->user_id)
+                        ->delete();
+
                         \DB::table('user_item_swaps')->insert([
                             'user_id' => $request->user_id,
                             'item_id' => $item->id,
@@ -1161,6 +1915,10 @@ class PurchasePlanController extends Controller
                     'data' => [
                         'id' => $item->id,
                         'title' => $item->title,
+                        'qty'  => $item->qty,
+                        'carbs' => $item->carbs,
+                        'protein' => $item->protein,
+                        'fat'     => $item->fat,
                         'swapItems' => $simplifiedSwapItems  // Pass simplified swap items here
                     ],
                     'message' => 'Food added successfully.'
@@ -1221,7 +1979,7 @@ class PurchasePlanController extends Controller
     {
         $foodId = $request->food_id;
         $food = \App\Models\Item::with('swapItems')->where('id', $foodId)->first();
-    
+        
         if (!$food) {
             return response()->json([
                 'success' => false,
@@ -1242,17 +2000,30 @@ class PurchasePlanController extends Controller
     
         // If request contains additional swap food IDs, merge them
         if ($swapFoodIds) {
-            foreach ($swapFoodIds as $swapId) {
-                // Ensure the food is not already in the swap list
-                if (!in_array($swapId, array_column($swapFoods, 'id'))) {
-                    $item = \App\Models\Item::find($swapId);
-                    if ($item) {
-                        $swapFoods[] = [
-                            'id' => $item->id,
-                            'name' => $item->title,
-                            'qty' => $item->qty
-                        ];
+            if ($request->has('swap_food_ids') && is_array($request->swap_food_ids)) {
+
+                foreach ($swapFoodIds as $swapId) {
+                    // Ensure the food is not already in the swap list
+                    if (!in_array($swapId, array_column($swapFoods, 'id'))) {
+                        $item = \App\Models\Item::find($swapId);
+                        if ($item) {
+                            $swapFoods[] = [
+                                'id' => $item->id,
+                                'name' => $item->title,
+                                'qty' => $item->qty
+                            ];
+                        }
                     }
+                }
+            }else {
+                $swapId = $request->swap_food_ids;
+                $item = \App\Models\Item::find($swapId);
+                if ($item) {
+                    $swapFoods[] = [
+                        'id' => $item->id,
+                        'name' => $item->title,
+                        'qty' => $item->qty
+                    ];
                 }
             }
         }
@@ -1269,42 +2040,234 @@ class PurchasePlanController extends Controller
         $swapFoodIds = $request->swap_foods;
         $mealIds = $request->meal_ids;
         $foodQty = $request->food_qty ?? null;
-
+        $swapFoodQty = $request->swap_food_qty ?? null;
+    
+        // Initialize response data
+        $savedItem = null;
+        $savedSwapItems = [];
+    
+        // Handle UserItemMeal entries
         foreach ($mealIds as $mealId) {
-            // Check if the meal already exists
-            $existingMeal = \DB::table('user_item_meals')->where('item_id', $foodId)->where('meal_id', $mealId)->first();
-
+            $existingMeal = UserItemMeal::with('items')
+                ->where('item_id', $foodId)
+                ->where('meal_id', $mealId)
+                ->first();
+    
             if ($existingMeal) {
-                continue;
-            }
-            \DB::table('user_item_meals')->insert([
-                'item_id' => $foodId,
-                'meal_id' => $mealId,
-                'user_id' => $request->user_id,
-                'qty' => $foodQty,
-                'is_swiped' => 0, // Assuming 'is_swiped' exists in the items table
-            ]);
-        }
-        
-        if($swapFoodIds) {
-            foreach ($swapFoodIds as $swapFood) {
-                // Check if the swap food already exists
-                $existingSwap = \DB::table('user_item_swaps')->where('item_id', $foodId)->where('swap_item_id', $swapFood['id'])->first();
-
-                if ($existingSwap) {
-                    continue;
-                } 
-                \DB::table('user_item_swaps')->insert([
-                    'item_id' => $foodId,
-                    'swap_item_id' => $swapFood['id'],
-                    'user_id' => $request->user_id
+                // ✅ Update item quantity if record exists
+                $existingMeal->update([
+                    'qty' => $foodQty,
+                    'unit' => $request->food_unit,
+                    'carbs' => $request->carbs,
+                    'protein' => $request->protein,
+                    'fat' => $request->fat,
+                    'updated_at' => now(),
                 ]);
+                $savedItem = $existingMeal->load('items');
+            } else {
+                $savedItem = UserItemMeal::create([
+                    'item_id' => $foodId,
+                    'meal_id' => $mealId,
+                    'user_id' => $request->user_id,
+                    'qty' => $foodQty,
+                    'unit' => $request->food_unit,
+                    'carbs' => $request->carbs,
+                    'protein' => $request->protein,
+                    'fat' => $request->fat,
+                    'created_at' => now(),
+                    'is_swiped' => 0,
+                    'updated_at' => now(),
+                ]);
+    
+                // Load related `items` after saving
+                $savedItem->load('items');
             }
         }
+    
+        // Handle swap food entries (array or single entry)
+        if ($swapFoodIds) {
+            if (is_array($swapFoodIds)) {
+                foreach ($swapFoodIds as $swapFood) {
+                    if (!isset($swapFood['id'])) continue;
+    
+                    $existingSwap = UserItemSwap::with('swapItem')
+                        ->where('item_id', $foodId)
+                        ->where('swap_item_id', $swapFood['id'])
+                        ->first();
+    
+                    if ($existingSwap) {
+                        // ✅ Update swap item quantity if record exists
+                        $existingSwap->update([
+                            'qty' => $swapFoodQty,
+                            'carbs'=> $request->swap_food_carbs,
+                            'protein' => $request->swap_food_protein,
+                            'fat' => $request->swap_food_fat,
+                            'unit' => $request->swap_food_unit,
+                            'updated_at' => now(),
 
+                        ]);
+                        $savedSwapItems[] = $existingSwap->load('swapItem');
+                    } else {
+                        $deleteSwapFood = UserItemSwap::with('swapItem')
+                        ->where('item_id', $foodId)
+                        ->where('user_id', $request->user_id)
+                        ->delete();
+
+                        $swapItem = UserItemSwap::create([
+                            'item_id' => $foodId,
+                            'swap_item_id' => $swapFood['id'],
+                            'user_id' => $request->user_id,
+                            'qty' => $swapFoodQty,
+                            'carbs'=> $request->swap_food_carbs,
+                            'protein' => $request->swap_food_protein,
+                            'fat' => $request->swap_food_fat,
+                            'unit' => $request->swap_food_unit,
+                        ]);
+    
+                        // Load related `swapItem` after saving
+                        $swapItem->load('swapItem');
+                        $savedSwapItems[] = $swapItem;
+                    }
+                }
+            } else {
+                $existingSwap = UserItemSwap::with('swapItem')
+                    ->where('item_id', $foodId)
+                    ->where('swap_item_id', $swapFoodIds)
+                    ->first();
+    
+                if ($existingSwap) {
+                    // ✅ Update swap item quantity if record exists
+                    $existingSwap->update([
+                        'qty' => $swapFoodQty,
+                        'carbs'=> $request->swap_food_carbs,
+                        'protein' => $request->swap_food_protein,
+                        'fat' => $request->swap_food_fat,
+                        'unit' => $request->swap_food_unit,
+                        'updated_at' => now(),
+                    ]);
+                    $savedSwapItems[] = $existingSwap->load('swapItem');
+                } else {
+                    $deleteSwapFood = UserItemSwap::with('swapItem')
+                        ->where('item_id', $foodId)
+                        ->where('user_id', $request->user_id)
+                        ->delete();
+
+                    $swapItem = UserItemSwap::create([
+                        'item_id' => $foodId,
+                        'swap_item_id' => $swapFoodIds,
+                        'user_id' => $request->user_id,
+                        'qty' => $swapFoodQty,
+                        'carbs'=> $request->swap_food_carbs,
+                        'protein' => $request->swap_food_protein,
+                        'fat' => $request->swap_food_fat,
+                        'unit' => $request->swap_food_unit,
+                        'created_at' => now(),
+                    ]);
+    
+                    // Load related `swapItem` after saving
+                    $swapItem->load('swapItem');
+                    $savedSwapItems[] = $swapItem;
+                }
+            }
+        }
+    
         return response()->json([
-            'success' => true
+            'success' => true,
+            'item' => $savedItem,
+            'swapItems' => $savedSwapItems
         ]);
     }
+    
+
+    // public function saveSwapFood(Request $request) 
+    // {
+    //     $foodId = $request->food_id;
+    //     $swapFoodIds = $request->swap_foods;
+    //     $mealIds = $request->meal_ids;
+    //     $foodQty = $request->food_qty ?? null;
+    //     $swapFoodQty = $request->swap_food_qty ?? null;
+
+    //     // Initialize response data
+    //     $savedItem = null;
+    //     $savedSwapItems = [];
+
+    //     foreach ($mealIds as $mealId) {
+    //         $existingMeal = \DB::table('user_item_meals')
+    //             ->where('item_id', $foodId)
+    //             ->where('meal_id', $mealId)
+    //             ->first();
+
+    //         if (!$existingMeal) {
+    //             \DB::table('user_item_meals')->insert([
+    //                 'item_id' => $foodId,
+    //                 'meal_id' => $mealId,
+    //                 'user_id' => $request->user_id,
+    //                 'qty' => $foodQty,
+    //                 'is_swiped' => 0,
+    //             ]);
+
+    //             // Capture saved item
+    //             $savedItem = \DB::table('user_item_meals')
+    //                 ->where('item_id', $foodId)
+    //                 ->where('meal_id', $mealId)
+    //                 ->first();
+    //         }
+    //     }
+
+    //     // Handle swap food entries (array or single entry)
+    //     if ($swapFoodIds) {
+    //         if (is_array($swapFoodIds)) {
+    //             foreach ($swapFoodIds as $swapFood) {
+    //                 if (!isset($swapFood['id'])) continue;
+
+    //                 $existingSwap = \DB::table('user_item_swaps')
+    //                     ->where('item_id', $foodId)
+    //                     ->where('swap_item_id', $swapFood['id'])
+    //                     ->first();
+
+    //                 if (!$existingSwap) {
+    //                     \DB::table('user_item_swaps')->insert([
+    //                         'item_id' => $foodId,
+    //                         'swap_item_id' => $swapFood['id'],
+    //                         'user_id' => $request->user_id,
+    //                         'qty' => $swapFoodQty,
+    //                     ]);
+
+    //                     // Capture saved swap item
+    //                     $savedSwapItems[] = \DB::table('user_item_swaps')
+    //                         ->where('item_id', $foodId)
+    //                         ->where('swap_item_id', $swapFood['id'])
+    //                         ->first();
+    //                 }
+    //             }
+    //         } else {
+    //             $existingSwap = \DB::table('user_item_swaps')
+    //                 ->where('item_id', $foodId)
+    //                 ->where('swap_item_id', $swapFoodIds)
+    //                 ->first();
+
+    //             if (!$existingSwap) {
+    //                 \DB::table('user_item_swaps')->insert([
+    //                     'item_id' => $foodId,
+    //                     'swap_item_id' => $swapFoodIds,
+    //                     'user_id' => $request->user_id,
+    //                     'qty' => $swapFoodQty,
+    //                 ]);
+
+    //                 // Capture saved swap item
+    //                 $savedSwapItems[] = \DB::table('user_item_swaps')
+    //                     ->where('item_id', $foodId)
+    //                     ->where('swap_item_id', $swapFoodIds)
+    //                     ->first();
+    //             }
+    //         }
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'item' => $savedItem,
+    //         'swapItems' => $savedSwapItems
+    //     ]);
+    // }
 
 }

@@ -15,14 +15,20 @@ class ItemController extends Controller
         if ($request->ajax()) {
             $query = $request->input('query');
 
-            $items = Item::with('category')
-                ->where('title', 'LIKE', '%' . $query . '%')
-                ->orWhereHas('category', function ($q) use ($query) {
-                    $q->where('name', 'LIKE', '%' . $query . '%');
-                })
-                ->orderBy('updated_at', 'DESC')
-                ->get();
-
+            $foodId = $request->input('food_id') ?? null;
+            if($foodId){
+                $items = Item::where('id', $foodId)
+                    ->orderBy('updated_at', 'DESC')
+                    ->first();
+            }else {
+                $items = Item::with('category')
+                    ->where('title', 'LIKE', '%' . $query . '%')
+                    ->orWhereHas('category', function ($q) use ($query) {
+                        $q->where('name', 'LIKE', '%' . $query . '%');
+                    })
+                    ->orderBy('updated_at', 'DESC')
+                    ->get();
+            }
             return response()->json(['items' => $items]);
         }
 
@@ -55,7 +61,11 @@ class ItemController extends Controller
             'protein' => 'nullable|numeric',
             'carbs' => 'nullable|numeric',
             'fat' => 'nullable|numeric',
+            'serving_per_pack' => 'nullable|numeric',
+            'serving_size' => 'nullable|numeric',
             'category_id' => 'required|exists:food_categories,id',
+            'unit' => 'nullable',
+            'serving_size_unit' => 'nullable'
         ]);
 
         // Handle image upload
@@ -133,7 +143,11 @@ class ItemController extends Controller
             'protein' => 'nullable|numeric',
             'carbs' => 'nullable|numeric',
             'fat' => 'nullable|numeric',
+            'serving_per_pack' => 'nullable|numeric',
+            'serving_size' => 'nullable|numeric',
             'category_id' => 'nullable',
+            'unit' => 'nullable',
+            'serving_size_unit' => 'nullable'
             // 'category_id' => 'required|exists:food_categories,id',
         ]);
 

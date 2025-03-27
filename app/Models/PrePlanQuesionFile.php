@@ -16,5 +16,6 @@ class PrePlanQuesionFile extends Model
         'form_slug',
         'question',
         'file_path',
+        'file_name'
     ];
 }
