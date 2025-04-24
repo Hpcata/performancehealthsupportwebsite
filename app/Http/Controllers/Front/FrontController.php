@@ -340,7 +340,11 @@ class FrontController extends Controller
     
             foreach ($medicalHistories as $prePlan) {
                 foreach ($prePlan->prePlanDetails as $detail) {
-                    $intakeDetails[$detail->question] = trim($detail->answer, '"');
+                    $intakeDetails[$detail->question] = [
+                        'answer'     => trim($detail->answer, '"'),
+                        'start_date' => $detail->start_date ?? null,
+                        'end_date'   => $detail->end_date ?? null,
+                    ];
                 }
             }
     
@@ -351,7 +355,11 @@ class FrontController extends Controller
     
             foreach ($diateryDetails as $prePlan) {
                 foreach ($prePlan->prePlanDetails as $detail) {
-                    $intakeDetails[$detail->question] = trim($detail->answer, '"');
+                    $intakeDetails[$detail->question] = [
+                        'answer'     => trim($detail->answer, '"'),
+                        'start_date' => $detail->start_date ?? null,
+                        'end_date'   => $detail->end_date ?? null,
+                    ];
                 }
             }
 
@@ -703,11 +711,22 @@ class FrontController extends Controller
     {
         $userId = $request->user_id;
 
+        $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+            $query->where('form_slug', 'physical_measures')
+                ->where('question', 'Current body weight (kg) (if known):');
+        }])->where('user_id', $userId)->first();
+
+        // Extract the answer if available
+        $prePlanWeight = optional($physicalMeasures->prePlanDetails->first())->answer ?? null;
+
         $weightData = WeightTracking::where('user_id', $userId)
             ->latest('date')
             ->first(['weight', 'weight_goal', 'date']); // Fetch the latest entry
-
-        return response()->json($weightData);
+       
+        return response()->json([
+            'latest_weight_tracking' => $weightData,
+            'current_weight' => $prePlanWeight,
+        ]);    
     }
 
     public function saveWeight(Request $request)
@@ -836,11 +855,15 @@ class FrontController extends Controller
         $userId = $request->user_id; 
         $startDate = now(); // Current date as the end of the range
         $endDate = null;    // To calculate the starting point of the range
-        
+
+        // Set the timezone to ensure consistency (you can replace 'UTC' with your local timezone if needed)
+        $timezone = 'UTC'; // Change this to your desired timezone if necessary
+        $startDate = $startDate->setTimezone($timezone)->startOfDay(); // Set timezone and strip time
+
         // Determine the date range based on the filter
         switch ($filter) {
             case '1W':
-                $endDate = now()->subWeek();
+                $endDate = now()->subWeek();  // 1 week ago from today
                 break;
             case '2W':
                 $endDate = now()->subWeeks(2);
@@ -859,21 +882,22 @@ class FrontController extends Controller
                 break;
             case 'ALL':
                 $endDate = WeightTracking::where('user_id', $userId)->orderBy('date', 'asc')->value('date');
-                $endDate = Carbon::parse($endDate);
+                $endDate = Carbon::parse($endDate)->setTimezone($timezone)->startOfDay(); // Ensure endDate has the correct timezone
                 break;
             default:
                 return response()->json(['error' => 'Invalid filter'], 400);
         }
-    
-        // Generate a complete list of dates between $endDate and $startDate
+
+        // Set the timezone for the endDate to ensure proper comparison
+        $currentDate = $endDate->copy()->setTimezone($timezone)->startOfDay(); // Ensure $currentDate is in the same timezone and start of the day
         $allDates = collect();
-        // dd($endDate);
-        $currentDate = $endDate->copy();
+
+        // Generate a complete list of dates between $endDate and $startDate
         while ($currentDate <= $startDate) {
-            $allDates->push($currentDate->format('Y-m-d')); // Format as 'Y-m-d' for consistency
-            $currentDate = $currentDate->addDay();
+            $allDates->push($currentDate->format('Y-m-d')); // Add date in 'Y-m-d' format
+            $currentDate = $currentDate->addDay(); // Move to the next day
         }
-    
+
         // Fetch weights from the database
         $weightsData = WeightTracking::where('user_id', $userId)
             ->when($endDate, function ($query) use ($startDate, $endDate) {
@@ -882,7 +906,6 @@ class FrontController extends Controller
             ->orderBy('date', 'asc')
             ->get(['date', 'weight', 'weight_goal'])
             ->keyBy('date'); // Key by date for easy lookup
-    
         // Map weights to the complete list of dates
         $allWeights = $allDates->map(function ($date) use ($weightsData) {
             return [
@@ -891,7 +914,6 @@ class FrontController extends Controller
             ];
         });
         
-        // dd($allWeights);
         // Group by month for the response
         // $groupedWeights = $allWeights->groupBy(function ($item) {
         //     return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F'); // Group by month name
@@ -909,7 +931,7 @@ class FrontController extends Controller
                 'weights' => $items
             ];
         })->values();
-    
+        // dd($groupedWeights );
         // Calculate start and goal weights
         $startWeight = $weightsData->first() ? $weightsData->first()->weight : null;
         $goalWeight = $weightsData->last() ? $weightsData->last()->weight_goal : null;
@@ -997,6 +1019,8 @@ class FrontController extends Controller
         $question = $request->question;
         $userId = $request->user_id;
         $type = $request->type;
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
         // dd($userId);
         $payment = Payment::where('user_id', $userId)->first();
         $prePlan = \App\Models\UserPrePlan::where('payment_id', $payment->id)
@@ -1009,15 +1033,23 @@ class FrontController extends Controller
                 ->first(); 
 
         if($prePlanDetail){
-            GoalHistory::create([
-                'user_id' => $userId,
-                'payment_id' => $payment->id,
-                'type' => $type,
-                'question' => $prePlanDetail->question,
-                'answer' => $prePlanDetail->answer,
-            ]);
+            if($type != "height") {
+                GoalHistory::create([
+                    'user_id' => $userId,
+                    'payment_id' => $payment->id,
+                    'type' => $type,
+                    'question' => $prePlanDetail->question,
+                    'answer' => $prePlanDetail->answer,
+                    'start_date'=> $prePlanDetail->start_date,
+                    'end_date' => $prePlanDetail->end_date
+                ]);
+            }
             
-            $prePlanDetail->update(['answer' => json_encode($answer)]);
+            $prePlanDetail->update([
+                'answer' => json_encode($answer),
+                'start_date' => $startDate,
+                'end_date' => $endDate                     
+            ]);
 
         } else {
             // Create a new record if none exists
@@ -1031,6 +1063,8 @@ class FrontController extends Controller
                 'form_slug' => 'nutrition_goals',
                 'question' => $question,
                 'answer' => json_encode($answer),
+                'start_date' => $startDate,
+                'end_date' => $endDate   
             ]);
         }
         // // Ensure answer is stored as valid JSON

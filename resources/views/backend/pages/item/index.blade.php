@@ -56,7 +56,7 @@
                                 <td>{{ $item->title }}</td>
                                 <td>
                                     @if($item->image)
-                                    <img src="{{ asset('private/public/storage/' . $item->image) }}" alt="" width="50">
+                                    <img src="{{ adminAssets('storage/' . $item->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif

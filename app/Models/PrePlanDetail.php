@@ -17,6 +17,8 @@ class PrePlanDetail extends Model
         'form_slug',
         'question',
         'answer',
+        'start_date',
+        'end_date',
     ];
 
     // Relationship with the UserPrePlan model (belongsTo)

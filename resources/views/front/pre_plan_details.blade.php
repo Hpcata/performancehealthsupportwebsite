@@ -1182,8 +1182,8 @@
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Apple (green)" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Apple (green)</label>
+                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Blackberry" id="protein4">
+                                                        <label class="form-check-label" for="protein4">Blackberry</label>
                                                     </div>
                                                 </div>
                                                 <div class="col">
@@ -1260,16 +1260,16 @@
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Capsicum (red)" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Capsicum (red)</label>
+                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Capsicum" id="protein4">
+                                                        <label class="form-check-label" for="protein4">Capsicum</label>
                                                     </div>
                                                 </div>
-                                                <div class="col">
+                                                <!-- <div class="col">
                                                     <div class="form-check ">
                                                         <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Capsicum (green)" id="protein4">
                                                         <label class="form-check-label" for="protein4">Capsicum (green)</label>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 <div class="col">
                                                     <div class="form-check ">
                                                         <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Zucchini" id="protein4">
@@ -1954,8 +1954,14 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Other" id="getnutrition4">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="TikTok" id="getnutrition4">
                                                 <label class="form-check-label" for="getnutrition4">
+                                                    TikTok
+                                                </label>
+                                            </div>
+                                            <div class="form-check my-2">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Other" id="getnutrition5">
+                                                <label class="form-check-label" for="getnutrition5">
                                                     Other:
                                                 </label>
                                             </div>
@@ -2060,8 +2066,8 @@
                                                 <label class="form-check-label" for="trackingDevices-1">Garmin or similar watch</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-2" value="Oura ring">
-                                                <label class="form-check-label" for="trackingDevices-2">Oura ring</label>
+                                                <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-2" value="Oura ring or similar">
+                                                <label class="form-check-label" for="trackingDevices-2">Oura ring or similar</label>
                                             </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-3" value="Whoop band">
@@ -2121,7 +2127,9 @@
 
 <script>
     // localStorage.clear();
-
+    // window.addEventListener("beforeunload", function () {
+    //     localStorage.clear();
+    // });
     document.addEventListener("DOMContentLoaded", function () {
         const rankOptions = document.querySelectorAll(".rank-option");
 
@@ -2305,8 +2313,26 @@
 
         // Handle checkbox changes
         document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
-            checkbox.addEventListener('change', saveFormData);
+            checkbox.addEventListener('change', function () {
+                if (this.value === 'Other') {
+                    let otherInputId = `${this.id}-input`;
+                    let otherInput = document.getElementById(otherInputId);
+
+                    if (this.checked) {
+                        if (!otherInput) {
+                            createOtherInput(this);
+                        }
+                    } else {
+                        if (otherInput) {
+                            otherInput.remove();
+                        }
+                    }
+                }
+
+                saveFormData();
+            });
         });
+
 
         // Handle radio button changes
         document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
@@ -2335,8 +2361,6 @@
             });
         });
     });
-
-
 
     document.addEventListener("DOMContentLoaded", () => {
         const stepCircles = document.querySelectorAll('.tab-steps');

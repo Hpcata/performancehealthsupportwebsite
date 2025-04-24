@@ -53,8 +53,13 @@ Route::get('/generate-image', [ImageController::class, 'generateImageForm']);
 Route::post('/generate-image', [ImageController::class, 'generateImage'])->name('generate-image');
 
 
-Route::post('/calculate-nutrition', [NutritionAIController::class, 'calculateNutrition'])->name('nutrition.calculate');
+Route::post('/nutrition-calculation', [NutritionAIController::class, 'nutritionCalculation'])->name('nutrition.calculate');
+Route::post('/calculate-nutrition', [NutritionAIController::class, 'calculateNutrition'])->name('calculate.nutrition');
+
 Route::get('/calculate-nutrition-form', [NutritionAIController::class, 'form'])->name('view.form');
+
+Route::post('/meal-food-nutrition-calculate', [NutritionAIController::class, 'mealFoodNutritionCalculation'])->name('meal.food.nutrition.calculate');
+
 // Route::get('/test-woolworths-api', function () {
 //     // Woolworths API URL
 //     $apiUrl = 'https://www.woolworths.com.au/apis/ui/Search/products/';
@@ -361,6 +366,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 		Route::put('meals/{meal}', [MealController::class, 'update'])->name('admin.meals.update');
 		Route::delete('meals/{meal}', [MealController::class, 'destroy'])->name('admin.meals.destroy');
 		Route::post('update-meal-name', [MealController::class, 'updateMealName'])->name('admin.update-meal-name');
+		Route::post('meals/generate-image', [MealController::class, 'generateImage'])->name('admin.meals.generate-image');
 
 		Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
 		Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
@@ -438,7 +444,10 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/item/{id}/swap-items', [FrontPlanController::class, 'getSwapItems'])->name('front.items.swap-items');
 
 	Route::get('item/swap', [FrontPlanController::class, 'applySwaps'])->name('front.items.swaps');
-	Route::get('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
+	// Route::get('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
+	Route::post('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
+	Route::get('/plans/preview/{id}', [FrontPlanController::class, 'preview'])->name('plans.preview');
+
 	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
 	Route::post('/food/quantity/update', [FrontController::class, 'updateFoodQuantity'])->name('front.food-quantity-update');

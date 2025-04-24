@@ -119,14 +119,14 @@
 					</div>
 					<a class="nav-link dropdown-toggle pulse p-0" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
 					<img class="avatar lg rounded-circle img-thumbnail"
-					src="{{ isset(Auth::user()->profile_image) ? asset('private/public/' . Auth::user()->profile_image) : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}" 
+					src="{{ isset(Auth::user()->profile_image) ? asset(Auth::user()->profile_image) : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}" 
 					alt="profile">
 					</a>
 					<div class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
 						<div class="card border-0 w280">
 							<div class="card-body pb-0">
 								<div class="d-flex py-1">
-									<img class="avatar rounded-circle" src="{{ isset(Auth::user()->profile_image) ? asset('private/public/' . Auth::user()->profile_image) : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}" alt="profile">
+									<img class="avatar rounded-circle" src="{{ isset(Auth::user()->profile_image) ? asset(Auth::user()->profile_image) : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}" alt="profile">
 									<div class="flex-fill ms-3">
 										<p class="mb-0"><span class="font-weight-bold">{{ Auth::user()->name }}</span></p>
 										<small class="d-block text-truncate" style="max-width: 170px;" data-bs-toggle="tooltip" title="{{ Auth::user()->email }}">{{ Auth::user()->email }}</small>

@@ -39,12 +39,12 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $mealTime->title }}</td>
-                        <td>    {{ $mealTime->time ? \Carbon\Carbon::createFromFormat('H:i:s', $mealTime->time)->format('h:i A') : 'N/A' }}
+                        <td>{{ $mealTime->time ? \Carbon\Carbon::createFromFormat('H:i:s', $mealTime->time)->format('h:i A') : 'N/A' }}
                         </td>
                         <td>{{ $mealTime->description }}</td>
                         <td>
                             @if ($mealTime->image)
-                                <img src="{{ asset('private/public/storage/' . $mealTime->image) }}" alt="Meal Time Image" style="max-height: 50px;">
+                                <img src="{{ adminAssets('storage/' . $mealTime->image) }}" alt="Meal Time Image" style="max-height: 50px;">
                             @endif
                         </td>
                         <td>

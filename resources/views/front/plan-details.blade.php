@@ -59,7 +59,7 @@
                         <div class="nutrition-plan-box">
                             <figure>
                                 @if($plan->mealTime->image)
-                                    <img src="{{ asset('private/public/storage/' . $plan->mealTime->image) }}" alt="{{ $plan->mealTime->title }}">
+                                    <img src="{{ asset('storage/' . $plan->mealTime->image) }}" alt="{{ $plan->mealTime->title }}">
                                 @endif
                             </figure>
                             <h5>{{ $plan->mealTime->title }} </h5>
@@ -122,11 +122,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Plan Preview Modal -->
+    <div class="modal" id="planPreviewModal" tabindex="-1" aria-labelledby="planPreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Customise your meals before you PRINT plan.</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="plan-preview-body">
+                    <div class="text-center">Loading preview...</div>
+                </div>
+                <div class="modal-footer">
+                    <form id="downloadPdfForm" method="POST" target="_blank">
+                        @csrf
+                        <input type="hidden" name="user_id" value="">
+                        <button type="submit" class="btn btn-success">Download PDF</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
 <script>
 
-    const baseUrl = "{{ asset('private/public/storage') }}";
+    const baseUrl = "{{ asset('storage') }}";
 
     $(document).ready(function () {
         // Open modal and populate user data
@@ -191,12 +214,27 @@
 
     $(document).ready(function () {
         $(".print-plan-btn").click(function () {
-            let planId = $(this).data('plan-id');
-            let userId = $(this).data('user-id');
-            //alert(planId);
-            window.open("{{ route('plans.generatePdf', ':id') }}".replace(':id', planId)+ `?user_id=${userId}`, '_blank');
+            const planId = $(this).data("plan-id");
+            const userId = $(this).data("user-id");
+            // Set form action for download button
+            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
 
-        })
+            $("#downloadPdfForm input[name='user_id']").val(userId);
+
+            // Load the preview content from the controller
+            $("#plan-preview-body").html('<div class="text-center">Loading preview...</div>');
+            fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
+            .then(res => res.text())
+                .then(html => {
+                    console.log(html);
+                    $("#plan-preview-body").html(html);
+                    $("#planPreviewModal").modal("show"); // ✅ show modal
+                    console.log('modal show');
+                })
+                .catch(err => {
+                    $("#plan-preview-body").html('<div class="text-danger">Error loading preview</div>');
+                });
+        });
     });
 
     $(document).on('change', '#selectAllCheckbox', function () {
@@ -250,14 +288,14 @@
                                                     <label class="form-check-label" for="Check${item.id}">
                                                         <div class="ingredient-img">
                                                             <figure>
-                                                                <img src="{{ asset('private/public/storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
+                                                                <img src="{{ asset('storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
                                                             </figure>
                                                         </div>
                                                     </label>
                                                 </div>
                                                 <span>${item.title}</span>
                                             </div>
-                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty ? item.pivot.item_qty : 'N/A'}</span>
+                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty} ${item.pivot.item_qty_unit}</span>
                                         </li>`;
                     });
 

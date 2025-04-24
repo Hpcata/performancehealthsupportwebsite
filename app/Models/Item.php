@@ -8,12 +8,16 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'price', 'image', 'qty', 'unit', 'is_swiped', 'protein', 'carbs', 'fat', 'category_id', 'serving_per_pack', 'serving_size', 'serving_size_unit'];
+    protected $fillable = ['title', 'description', 'price', 'image', 'qty', 'unit', 'is_swiped', 'protein', 'carbs', 'fat', 'category_id', 'serving_per_pack', 'serving_size', 'serving_size_unit', 'selected_qty_unit','is_locked'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
     public $timestamps = true;  // Ensure timestamps are enabled
 
+    protected $casts = [
+        'selected_qty_unit' => 'array',
+    ];
+    
     public function meals()
     {
         return $this->belongsToMany(Meal::class, 'item_meals', 'item_id', 'meal_id');
@@ -21,8 +25,8 @@ class Item extends Model
 
     public function swapItems()
     {
-        return $this->belongsToMany(Item::class, 'item_swaps', 'item_id', 'swap_item_id')
-        ->wherePivot('item_id', '<>', \DB::raw('swap_item_id'));
+        return $this->belongsToMany(Item::class, 'item_swaps', 'item_id', 'swap_item_id');
+        // ->wherePivot('item_id', '<>', \DB::raw('swap_item_id'));
     }
 
     public function items()

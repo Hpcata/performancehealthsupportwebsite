@@ -8,7 +8,7 @@ class Meal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'image'];
+    protected $fillable = ['title', 'description', 'image', 'user_id'];
 
     protected $table = 'meals';
 
@@ -27,8 +27,8 @@ class Meal extends Model
     public function items()
     {
         return $this->belongsToMany(Item::class, 'item_meals', 'meal_id', 'item_id')
-                    ->withPivot('item_qty')
-                    ->where('is_swiped', 0);
+                    ->withPivot(['item_qty', 'item_qty_unit', 'carbs', 'protein', 'fat', 'selected_qty_unit']);
+                    // ->where('is_swiped', 0);
     }
 
     // Many-to-many relationship with Item through the user_items pivot table
@@ -40,7 +40,7 @@ class Meal extends Model
     public function userMealItems()
     {
         return $this->belongsToMany(Item::class, 'user_item_meals', 'meal_id', 'item_id')
-                    ->withPivot('qty')
+                    ->withPivot(['qty', 'unit'])
                     ->wherePivot('is_swiped',0);
     }
 

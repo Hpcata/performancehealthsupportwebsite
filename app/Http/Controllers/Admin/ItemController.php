@@ -14,7 +14,6 @@ class ItemController extends Controller
 
         if ($request->ajax()) {
             $query = $request->input('query');
-
             $foodId = $request->input('food_id') ?? null;
             if($foodId){
                 $items = Item::where('id', $foodId)
@@ -29,6 +28,7 @@ class ItemController extends Controller
                     ->orderBy('updated_at', 'DESC')
                     ->get();
             }
+
             return response()->json(['items' => $items]);
         }
 
@@ -48,7 +48,7 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:items',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
             'qty' => 'nullable|string',
@@ -64,15 +64,41 @@ class ItemController extends Controller
             'serving_per_pack' => 'nullable|numeric',
             'serving_size' => 'nullable|numeric',
             'category_id' => 'required|exists:food_categories,id',
-            'unit' => 'nullable',
-            'serving_size_unit' => 'nullable'
+            'serving_size_unit' => 'nullable',
+            'unit'  => 'nullable',
+            'selected_qty_unit' => 'nullable|array',
+            // 'is_locked' => 'nullable|boolean'
         ]);
-
+        
         // Handle image upload
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('items', 'public');
         }
 
+        if ($request->has('is_locked')){
+            $data['is_locked'] = $request->is_locked;
+        }else {
+            $data['is_locked'] = 0;
+        }
+        
+        if ($request->has('selected_qty_unit') && $request->selected_qty_unit != null) {
+            $rawSelectedUnit = $request->selected_qty_unit;
+
+            if (is_string($rawSelectedUnit)) {
+                // Clean and decode the string in case it's escaped
+
+                $cleaned = trim($rawSelectedUnit, '"'); // remove outer quotes
+                $decoded = json_decode(stripslashes($cleaned), true);
+
+            } elseif (is_array($rawSelectedUnit)) {
+                $decoded = $rawSelectedUnit;
+
+            } else {
+                $decoded = [];
+            }
+
+            $data['selected_qty_unit'] = ($decoded);
+        }
         // Create item
         $item = Item::create($data);
 
@@ -95,17 +121,26 @@ class ItemController extends Controller
                     // Only proceed if the user has an active plan
                     if ($hasActivePlan) {
                         foreach ($request->swap_item_ids as $swapItemId) {
+
+                            $swapItem = Item::find($swapItemId);
+
                             $exists = \DB::table('user_item_swaps')
                                 ->where('user_id', $userId)
-                                ->where('item_id', $swapItemId)
-                                ->where('swap_item_id', $item->id)
+                                ->where('item_id', $item->id)
+                                ->where('swap_item_id', $swapItemId)
                                 ->exists();
-            
+                            
                             if (!$exists) {
                                 \DB::table('user_item_swaps')->insert([
                                     'user_id' => $userId,
-                                    'item_id' => $swapItemId,
-                                    'swap_item_id' => $item->id,
+                                    'item_id' => $item->id,
+                                    'swap_item_id' => $swapItemId,
+                                    'qty' => $swapItem->qty,
+                                    'unit' => $swapItem->unit,
+                                    'carbs' => $swapItem->carbs,
+                                    'fat' => $swapItem->fat,
+                                    'protein' => $swapItem->protein,
+                                    'selected_qty_unit' => $swapItem->selected_qty_unit,
                                     'created_at' => now(),
                                     'updated_at' => now(),
                                 ]);
@@ -129,8 +164,9 @@ class ItemController extends Controller
 
     public function update(Request $request, Item $item)
     {
+        // dd($request->all());
         $data = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:items,title,' . $item->id,
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
             'qty' => 'nullable|string',
@@ -146,28 +182,63 @@ class ItemController extends Controller
             'serving_per_pack' => 'nullable|numeric',
             'serving_size' => 'nullable|numeric',
             'category_id' => 'nullable',
-            'unit' => 'nullable',
-            'serving_size_unit' => 'nullable'
+            'serving_size_unit' => 'nullable',
+            'unit'  => 'nullable',
+            // 'selected_qty_unit' => 'nullable',
+            // 'is_locked' => 'nullable|boolean'
             // 'category_id' => 'required|exists:food_categories,id',
         ]);
-
+        
+        // dd($request->all());
+        
+        // dd($data);
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if it exists
             if ($item->image) {
                 \Storage::delete('public/' . $item->image);
             }
-            $data['image'] = $request->file('image')->store('items', 'public');
+            //  dd($request->file('image'));
+            $path = $request->file('image')->store('items', 'public'); // Store image
+
+            $data['image'] = $path;
         }
 
+        if ($request->has('selected_qty_unit') && $request->selected_qty_unit != null) {
+            $rawSelectedUnit = $request->selected_qty_unit;
+        
+            if (is_string($rawSelectedUnit)) {
+                // Clean and decode the string in case it's escaped
+                $cleaned = trim($rawSelectedUnit, '"'); // remove outer quotes
+                $decoded = json_decode(stripslashes($cleaned), true);
+            } elseif (is_array($rawSelectedUnit)) {
+                $decoded = $rawSelectedUnit;
+            } else {
+                $decoded = [];
+            }
+        
+            // Re-encode to proper JSON format to store in DB
+            $data['selected_qty_unit'] = ($decoded);
+        }
+        
+        
+        // dd($data);
+        if ($request->has('is_locked')){
+            $data['is_locked'] = $request->is_locked;
+        }else {
+            $data['is_locked'] = 0;
+        }
+        
+        // dd($request->is_swiped);
         // Update item
         $item->update($data);
-
+        // dd($item);
         if ($request->is_swiped == 1) {
+            // dd('11');
             // Sync the swap items (this will attach new ones and detach the old ones)
             if ($request->has('swap_item_ids')) {
                 $item->swapItems()->sync($request->swap_item_ids);
-
+                // dd($item->swapItems()->get());
                 $userIds = \DB::table('user_item_swaps')
                             ->distinct()
                             ->pluck('user_id');
@@ -183,20 +254,38 @@ class ItemController extends Controller
                         // Only proceed if the user has an active plan
                         if ($hasActivePlan) {
                             foreach ($request->swap_item_ids as $swapItemId) {
-                                $exists = \DB::table('user_item_swaps')
-                                    ->where('user_id', $userId)
-                                    ->where('item_id', $swapItemId)
-                                    ->where('swap_item_id', $item->id)
-                                    ->exists();
-            
+                                $swapItem = Item::find($swapItemId);
+
+                                $exists = \App\Models\UserItemSwap::where('user_id', $userId)
+                                    ->where('item_id', $item->id)
+                                    ->where('swap_item_id', $swapItemId)
+                                    ->first();
+                                
                                 if (!$exists) {
                                     \DB::table('user_item_swaps')->insert([
                                         'user_id' => $userId,
-                                        'item_id' => $swapItemId,
-                                        'swap_item_id' => $item->id,
+                                        'item_id' => $item->id,
+                                        'swap_item_id' => $swapItemId,
+                                        'qty' => $swapItem->qty,
+                                        'unit' => $swapItem->unit,
+                                        'carbs' => $swapItem->carbs,
+                                        'fat' => $swapItem->fat,
+                                        'protein' => $swapItem->protein,
+                                        'selected_qty_unit' => is_array($swapItem->selected_qty_unit)
+                                            ? json_encode($swapItem->selected_qty_unit)
+                                            : $swapItem->selected_qty_unit,
+                                        // 'protein' => $item->protein,
                                         'created_at' => now(),
                                         'updated_at' => now(),
                                     ]);
+                                }else {
+                                    $exists->qty = $swapItem->qty;
+                                    $exists->unit = $swapItem->unit;
+                                    $exists->carbs = $swapItem->carbs;
+                                    $exists->fat = $swapItem->fat;
+                                    $exists->protein = $swapItem->protein;
+                                    $exists->selected_qty_unit = $swapItem->selected_qty_unit;
+                                    $exists->save();
                                 }
                             }
                         }
@@ -204,7 +293,7 @@ class ItemController extends Controller
                 }
             }
         }
-
+        // dd('33');
         return redirect()->route('admin.items.index')->with('success', 'Item updated successfully.');
     }
 
@@ -223,5 +312,44 @@ class ItemController extends Controller
         $item->delete();
 
         return redirect()->route('admin.items.index')->with('success', 'Item deleted successfully.');
+    }
+
+    public function searchForm()
+    {
+        return view('search');
+    }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string',
+        ]);
+
+        $query = strtolower($request->query('query'));
+
+        // Extract nutritional values from query
+        $searchValues = [
+            'protein' => $this->extractValue($query, 'protein'),
+            'carbohydrate' => $this->extractValue($query, 'carbs|carbohydrate'),
+            'fat' => $this->extractValue($query, 'fat'),
+        ];
+
+        // Dynamic Search Conditions
+        $foods = Item::where(function ($q) use ($searchValues) {
+            foreach ($searchValues as $key => $value) {
+                if ($value !== null) {
+                    $q->where($key, '=', $value);
+                }
+            }
+        })->get();
+
+        return response()->json(['foods' => $foods]);
+    }
+
+    // Extract value from query string using pattern matching
+    private function extractValue($query, $term)
+    {
+        preg_match("/{$term}\s*[-:]?\s*([\d.]+)\s*g?/i", $query, $matches);
+        return isset($matches[1]) ? (float)$matches[1] : null;
     }
 }

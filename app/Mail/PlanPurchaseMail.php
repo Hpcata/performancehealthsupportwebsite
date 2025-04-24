@@ -28,7 +28,7 @@ class PlanPurchaseMail extends Mailable
     public function build()
     {
         return $this->view('front.emails.plan_purchase')
-                    ->subject('Thank you for purchasing the ' . $this->planName . ' plan!')
+                    ->subject('Thank you for purchasing the ' . $this->planName . '!')
                     ->with([
                         'user' => $this->user,
                         'planName' => $this->planName

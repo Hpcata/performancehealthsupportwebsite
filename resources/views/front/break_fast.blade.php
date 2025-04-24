@@ -17,7 +17,7 @@
         <div class="row align-items-top">
             <div class="col-md-6 col-lg-5">
                 <div class="nutrition-plan-text">
-                    <h1>Nutrition Supplements for a <span class="text-primary">Healthy {{ $userMealTime->mealTime->title }}</span></h1>
+                    <h1> <span class="text-primary">Healthy {{ $userMealTime->mealTime->title }} Meals</span></h1>
                     <p>Boost your energy and health with the right supplements!</p>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                 <div class="col-md-3">
                     <div class="nutrition-plan-box h-100 d-flex flex-column">
                         <figure>
-                            <img src="{!! asset('private/public/storage/' . $item->category->image) !!} " alt="">
+                            <img src="{!! asset('storage/' . $item->category->image) !!} " alt="">
                         </figure>
                         <h5 class="mb-3">{{ $item->category->title }}</h5>
                         <a href="javascript:void(0)" class="btn btn-primary view-details-btn mt-auto" data-category-id="{{ $item->category->id }}" data-user-category-id="{{ $item->id }}" data-category-name="{{ $item->category->title }}">View Details</a>
@@ -138,6 +138,29 @@
                 </div>
                 <div class="modal-footer justify-content-center">
                     <button type="button" class="apply-changes-btn btn btn-primary" data-user-item-id="" data-user-meal-id="">Apply Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plan Preview Modal -->
+    <div class="modal" id="planPreviewModal" tabindex="-1" aria-labelledby="planPreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Customise your meals before you PRINT plan.</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="plan-preview-body">
+                    <div class="text-center">Loading preview...</div>
+                </div>
+                <div class="modal-footer">
+                    <form id="downloadPdfForm" method="POST" target="_blank">
+                        @csrf
+                        <input type="hidden" name="user_id" value="">
+                        <button type="submit" class="btn btn-success">Download PDF</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -267,7 +290,59 @@
                     if (data.items && data.items.length > 0) {
                         // Populate items into the modal
                         $.each(data.items, function (index, item) {
-                            const itemCard = `<div class="category-swap-list-box">
+                            const unit = item.unit ? item.unit.toString() : '';
+                            const needsSpace = !["g", "ml"].includes(unit.toLowerCase());
+                            let displayQty = `${item.qty}${needsSpace ? ' ' : ''}${unit}`;
+
+                            if (item.selected_qty_unit && Array.isArray(item.selected_qty_unit)) {
+                                // const checkedUnits = item.selected_qty_unit.filter(q => q.checked === "true");
+
+                                // if (checkedUnits.length) {
+                                    const formattedUnits = item.selected_qty_unit.map(unit => {
+                                        const parsedQty = (unit.qty);
+                                        const qtyFormatted = (!isNaN(parsedQty) && parsedQty % 1 === 0)
+                                            ? (parsedQty)
+                                            : unit.qty;
+
+                                        const innerUnit = unit.unit ? unit.unit.toString().toLowerCase() : '';
+                                        const space = ["g", "ml"].includes(innerUnit) ? '' : ' ';
+                                        return `${qtyFormatted}${space}${unit.unit}`;
+                                    });
+
+                                    displayQty = formattedUnits.join(' or ');
+                                // }
+                            }
+
+                            console.log("displayQty:", displayQty);
+                            let infoButton = '';
+
+                            if (item.description) {
+                                infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" 
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="${item.description}" 
+                                    data-item-id="${item.id}" 
+                                    data-item-name="${item.name}">
+                                    <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
+                                        <path d="M7.99999 7.79999C7.59999 7.79999 7.29999 8.09999 7.29999 8.49999V11.4C7.29999 11.8 7.59999 12.1 7.99999 12.1C8.39999 12.1 8.69999 11.8 8.69999 11.4V8.49999C8.69999 8.09999 8.39999 7.79999 7.99999 7.79999Z" fill="white"/>
+                                        <path d="M7.99999 4.89999C7.59999 4.89999 7.29999 5.19999 7.29999 5.59999C7.29999 5.99999 7.59999 6.29999 7.99999 6.29999C8.39999 6.29999 8.69999 5.99999 8.69999 5.59999C8.69999 5.19999 8.39999 4.89999 7.99999 4.89999Z" fill="white"/>
+                                    </svg>
+                                    Info
+                                </button>`;
+                            }
+                            const swapButton = item.swapItems && item.swapItems.length > 0
+                                ? `
+                                    <button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}">
+                                        <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
+                                            <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
+                                        </svg>
+                                        Swap
+                                    </button>`
+                                : '';
+                            const itemCard = `
+                                <div class="category-swap-list-box">
                                     <div class="category-swap-img">
                                         <figure>
                                             <img class="img-thumbnail" src="${item.image}" alt="">
@@ -278,31 +353,18 @@
                                                 <li>Protein: ${item.protein}g</li>
                                                 <li>Carbs: ${item.carbs}g</li>
                                             </ul>
-                                        </div>                                        
+                                        </div>
                                     </div>
                                     <div class="category-swap-content">
                                         <h5 class="m-0">${item.name}</h5>
-                                        <p class="align-items-center d-flex m-0 mt-2"><strong class="me-2 text-nowrap">Qty : </strong><input type="text" class="form-control form-control-sm" value="${item.qty}" onchange="updateQuantity(this)" data-item-id="${item.id}"  data-user-item-id="${item.user_item_id}"/></p>
+                                        <p class="align-items-center d-flex m-0 mt-2">
+                                            <strong class="me-2 text-nowrap">Qty :</strong>
+                                            <span class="m-0">${displayQty}</span>
+                                        </p>
                                     </div>
                                     <div class="category-swap-btn">
-                                        <button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-item-id="${item.id}" data-item-name="${item.name}">
-                                            <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
-                                                <path d="M7.99999 7.79999C7.59999 7.79999 7.29999 8.09999 7.29999 8.49999V11.4C7.29999 11.8 7.59999 12.1 7.99999 12.1C8.39999 12.1 8.69999 11.8 8.69999 11.4V8.49999C8.69999 8.09999 8.39999 7.79999 7.99999 7.79999Z" fill="white"/>
-                                                <path d="M7.99999 4.89999C7.59999 4.89999 7.29999 5.19999 7.29999 5.59999C7.29999 5.99999 7.59999 6.29999 7.99999 6.29999C8.39999 6.29999 8.69999 5.99999 8.69999 5.59999C8.69999 5.19999 8.39999 4.89999 7.99999 4.89999Z" fill="white"/>
-                                            </svg>
-                                            Info
-                                            <div class="info-tootlip">
-                                                <p>${item.description}</p>
-                                            </div>
-                                        </button>
-                                        <button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1"  data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}">
-                                            <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
-                                                <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
-                                            </svg>
-                                            Swap
-                                        </button>
+                                        ${infoButton}
+                                        ${swapButton}
                                     </div>
                                 </div>`;
                             $mealItemsContainer.append(itemCard);
@@ -327,6 +389,17 @@
             $('#mealModel').modal('hide');
             $mealItemsModal.modal('show');
         });
+
+        function formatQty(qty) {
+            if (typeof qty === 'string' && /^\d+\/\d+$/.test(qty)) {
+                return qty; // keep fraction as-is
+            }
+
+            const floatVal = parseFloat(qty);
+            if (isNaN(floatVal)) return qty;
+
+            return floatVal % 1 === 0 ? floatVal.toFixed(0) : floatVal.toFixed(1);
+        }
 
         // Handle click event to feth swap items
         $('body').on('click', '.item-swap-btn', function () {
@@ -356,29 +429,39 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                    const $itemsSwapContainer = $('#itemsSwapContainer'); // Ensure correct reference
-
-                    $itemsSwapContainer.empty(); // Clear previous content
+                    const $itemsSwapContainer = $('#itemsSwapContainer');
+                    $itemsSwapContainer.empty();
 
                     if (data.items && data.items.length > 0) {
-                        var mainItemHTML = `
+                        // MAIN ITEM HTML
+                        let mainItemHTML = `
                             <div class="main-item-box category-swap-list-box">
                                 <div class="category-swap-img">
                                     <figure>
                                         <img class="img-thumbnail main-item-img" data-main-id="${data.item_id}" src="${data.item_image}" alt="">
                                     </figure>
                                     <figcaption>${data.item_name}</figcaption>
-                                    <div class="info-tootlip">
-                                        <p>Food Details</p>
-                                        <ul>
-                                            <li class="main-item-protein">Protein: ${data.item.protein}g</li>
-                                            <li class="main-item-carbs">Carbs: ${data.item.carbs}g</li>
-                                        </ul>
-                                    </div>
-                                </div>
+                               
+                                    ${data.item.description ? `
+                                            <button class="btn btn-primary rounded-pill py-1 px-4 d-flex align-items-center m-1"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="${data.item.description}"
+                                                data-item-id="${data.item_id}"
+                                                data-item-name="${data.item_name}">
+                                                <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
+                                                    <path d="M8 7.8C7.6 7.8 7.3 8.1 7.3 8.5V11.4C7.3 11.8 7.6 12.1 8 12.1C8.4 12.1 8.7 11.8 8.7 11.4V8.5C8.7 8.1 8.4 7.8 8 7.8Z" fill="white"/>
+                                                    <path d="M8 4.9C7.6 4.9 7.3 5.2 7.3 5.6C7.3 6 7.6 6.3 8 6.3C8.4 6.3 8.7 6 8.7 5.6C8.7 5.2 8.4 4.9 8 4.9Z" fill="white"/>
+                                                </svg>
+                                                Info
+                                            </button>
+                                    ` : ''
+                                    } </div>
                             </div>`;
 
-                        var swapItemsHTML = `<div class="swap-items-container">`;
+                        // SWAP ITEMS HTML
+                        let swapItemsHTML = `<div class="swap-items-container">`;
 
                         $.each(data.items, function (index, swapitem) {
                             swapItemsHTML += `
@@ -391,6 +474,10 @@
                                             data-swap-item-protein="${swapitem.swap_item_protein}" 
                                             data-swap-item-carbs="${swapitem.swap_item_carbs}"
                                             data-user-item-id="${userItemId}">
+                                            <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
+                                            <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
+                                        </svg>
                                             Swap
                                         </button>
                                     </div>
@@ -399,20 +486,28 @@
                                             <img class="img-thumbnail" src="${swapitem.swap_item_image}" alt="">
                                         </figure>
                                         <figcaption>${swapitem.swap_item_name}</figcaption>
-                                        <div class="info-tootlip tooltip-right">
-                                            <p>Food Details</p>
-                                            <ul>
-                                                <li>Protein: ${swapitem.swap_item_protein}g</li>
-                                                <li>Carbs: ${swapitem.swap_item_carbs}g</li>
-                                            </ul>
-                                        </div>                                        
-                                    </div>
+                                   
+                                    ${swapitem.swap_item_description ? `
+                                            <button class="btn btn-primary rounded-pill py-1 px-4 d-flex align-items-center m-1"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="${swapitem.swap_item_description}"
+                                                data-item-id="${swapitem.swap_item_id}"
+                                                data-item-name="${swapitem.swap_item_name}">
+                                                <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
+                                                    <path d="M8 7.8C7.6 7.8 7.3 8.1 7.3 8.5V11.4C7.3 11.8 7.6 12.1 8 12.1C8.4 12.1 8.7 11.8 8.7 11.4V8.5C8.7 8.1 8.4 7.8 8 7.8Z" fill="white"/>
+                                                    <path d="M8 4.9C7.6 4.9 7.3 5.2 7.3 5.6C7.3 6 7.6 6.3 8 6.3C8.4 6.3 8.7 6 8.7 5.6C8.7 5.2 8.4 4.9 8 4.9Z" fill="white"/>
+                                                </svg>
+                                                Info
+                                            </button>
+                                        ` : ''
+                                    } </div>
                                 </div>`;
                         });
 
                         swapItemsHTML += `</div>`;
 
-                        // Append to modal
                         $itemsSwapContainer.append(`
                             <div class="d-flex justify-content-between row">
                                 <div class="col-4 p-2">${mainItemHTML}</div>
@@ -425,11 +520,12 @@
 
                     $('#itemsSwapLoadingSpinner').hide();
                     $itemsSwapContainer.show();
+                    $('[data-bs-toggle="tooltip"]').tooltip(); // Initialize Bootstrap tooltip
                 },
                 error: function (xhr, status, error) {
                     console.error('Error fetching swap items:', error);
                     $itemsSwapContainer.html('<p class="text-center text-danger">Failed to load swap items.</p>');
-                    $itemsSwapLoadingSpinner.hide();
+                    $('#itemsSwapLoadingSpinner').hide();
                     $itemsSwapContainer.show();
                 }
             });
@@ -609,7 +705,8 @@
                     swaps: swaps,
                     meal_id: currentMealId,
                     user_item_id: userItemId,
-                    user_meal_id: userMealId
+                    user_meal_id: userMealId,
+                    user_id: userId,
                     // headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
                 },
                 success: function (response) {
@@ -639,7 +736,7 @@
             console.log(meal_id, meal_name);
             // Update modal title
             $mealItemsModalLabel.text(meal_name);
-
+            console.log('122');
             // Clear previous items and show loading spinner
             $mealItemsContainer.empty().hide();
             $mealItemsLoadingSpinner.show();
@@ -653,7 +750,59 @@
                     if (data.items && data.items.length > 0) {
                         // Populate items into the modal
                         $.each(data.items, function (index, item) {
-                            const itemCard = `<div class="category-swap-list-box">
+                            const unit = item.unit ? item.unit.toString() : '';
+                            const needsSpace = !["g", "ml"].includes(unit.toLowerCase());
+                            let displayQty = `${item.qty}${needsSpace ? ' ' : ''}${unit}`;
+
+                            if (item.selected_qty_unit && Array.isArray(item.selected_qty_unit)) {
+                                // const checkedUnits = item.selected_qty_unit.filter(q => q.checked === "true");
+
+                                // if (checkedUnits.length) {
+                                    const formattedUnits = item.selected_qty_unit.map(unit => {
+                                        const parsedQty = (unit.qty);
+                                        const qtyFormatted = (!isNaN(parsedQty) && parsedQty % 1 === 0)
+                                            ? (parsedQty)
+                                            : unit.qty;
+
+                                        const innerUnit = unit.unit ? unit.unit.toString().toLowerCase() : '';
+                                        const space = ["g", "ml"].includes(innerUnit) ? '' : ' ';
+                                        return `${qtyFormatted}${space}${unit.unit}`;
+                                    });
+
+                                    displayQty = formattedUnits.join(' or ');
+                                // }
+                            }
+
+                            console.log("displayQty:", displayQty);
+                            let infoButton = '';
+
+                            if (item.description) {
+                                infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" 
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="${item.description}" 
+                                    data-item-id="${item.id}" 
+                                    data-item-name="${item.name}">
+                                    <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
+                                        <path d="M7.99999 7.79999C7.59999 7.79999 7.29999 8.09999 7.29999 8.49999V11.4C7.29999 11.8 7.59999 12.1 7.99999 12.1C8.39999 12.1 8.69999 11.8 8.69999 11.4V8.49999C8.69999 8.09999 8.39999 7.79999 7.99999 7.79999Z" fill="white"/>
+                                        <path d="M7.99999 4.89999C7.59999 4.89999 7.29999 5.19999 7.29999 5.59999C7.29999 5.99999 7.59999 6.29999 7.99999 6.29999C8.39999 6.29999 8.69999 5.99999 8.69999 5.59999C8.69999 5.19999 8.39999 4.89999 7.99999 4.89999Z" fill="white"/>
+                                    </svg>
+                                    Info
+                                </button>`;
+                            }
+                            const swapButton = item.swapItems && item.swapItems.length > 0
+                                ? `
+                                    <button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}">
+                                        <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
+                                            <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
+                                        </svg>
+                                        Swap
+                                    </button>`
+                                : '';
+                            const itemCard = `
+                                <div class="category-swap-list-box">
                                     <div class="category-swap-img">
                                         <figure>
                                             <img class="img-thumbnail" src="${item.image}" alt="">
@@ -664,34 +813,24 @@
                                                 <li>Protein: ${item.protein}g</li>
                                                 <li>Carbs: ${item.carbs}g</li>
                                             </ul>
-                                        </div>                                        
+                                        </div>
                                     </div>
                                     <div class="category-swap-content">
                                         <h5 class="m-0">${item.name}</h5>
-                                        <p class="align-items-center d-flex m-0 mt-2"><strong class="me-2 text-nowrap">Qty : </strong><input type="text" class="form-control form-control-sm" value="${item.qty}" onchange="updateQuantity(this)" data-item-id="${item.id}"  data-user-item-id="${item.user_item_id}"/></p>
+                                        <p class="align-items-center d-flex m-0 mt-2">
+                                            <strong class="me-2 text-nowrap">Qty :</strong>
+                                            <span class="m-0">${displayQty}</span>
+                                        </p>
                                     </div>
                                     <div class="category-swap-btn">
-                                        <button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}" data-item-id="${item.id}" data-item-name="${item.name}">
-                                            <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
-                                                <path d="M7.99999 7.79999C7.59999 7.79999 7.29999 8.09999 7.29999 8.49999V11.4C7.29999 11.8 7.59999 12.1 7.99999 12.1C8.39999 12.1 8.69999 11.8 8.69999 11.4V8.49999C8.69999 8.09999 8.39999 7.79999 7.99999 7.79999Z" fill="white"/>
-                                                <path d="M7.99999 4.89999C7.59999 4.89999 7.29999 5.19999 7.29999 5.59999C7.29999 5.99999 7.59999 6.29999 7.99999 6.29999C8.39999 6.29999 8.69999 5.99999 8.69999 5.59999C8.69999 5.19999 8.39999 4.89999 7.99999 4.89999Z" fill="white"/>
-                                            </svg>
-                                            Info
-                                        </button>
-                                        <button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1"  data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}">
-                                            <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
-                                                <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
-                                            </svg>
-                                            Swap
-                                        </button>
+                                        ${infoButton}
+                                        ${swapButton}
                                     </div>
                                 </div>`;
                             $mealItemsContainer.append(itemCard);
                         });
                     } else {
-                        $mealItemsContainer.html('<p class="text-center">No items available.</p>');
+                        $mealItemsContainer.html('<p class="text-center">No foods available in this meals.</p>');
                     }
 
                     // Hide loading spinner and show items
@@ -723,12 +862,27 @@
 
     $(document).ready(function () {
         $(".print-plan-btn").click(function () {
-            let planId = $(this).data('plan-id');
-            let userId = $(this).data('user-id');
-            //alert(planId);
-            window.open("{{ route('plans.generatePdf', ':id') }}".replace(':id', planId)+ `?user_id=${userId}`, '_blank');
+            const planId = $(this).data("plan-id");
+            const userId = $(this).data("user-id");
+            // Set form action for download button
+            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
 
-        })
+            $("#downloadPdfForm input[name='user_id']").val(userId);
+
+            // Load the preview content from the controller
+            $("#plan-preview-body").html('<div class="text-center">Loading preview...</div>');
+            fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
+            .then(res => res.text())
+                .then(html => {
+                    console.log(html);
+                    $("#plan-preview-body").html(html);
+                    $("#planPreviewModal").modal("show"); // ✅ show modal
+                    console.log('modal show');
+                })
+                .catch(err => {
+                    $("#plan-preview-body").html('<div class="text-danger">Error loading preview</div>');
+                });
+        });
     });
 
     $(document).on('change', '#selectAllCheckbox', function () {
@@ -782,14 +936,14 @@
                                                     <label class="form-check-label" for="Check${item.id}">
                                                         <div class="ingredient-img">
                                                             <figure>
-                                                                <img src="{{ asset('private/public/storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
+                                                                <img src="{{ asset('storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
                                                             </figure>
                                                         </div>
                                                     </label>
                                                 </div>
                                                 <span>${item.title}</span>
                                             </div>
-                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty ? item.pivot.item_qty : 'N/A'}</span>
+                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty} ${item.pivot.item_qty_unit}</span>
                                         </li>`;
                     });
 
@@ -855,11 +1009,17 @@
         // Generate the HTML for the aggregated list by category
         let printListContent = '';
         for (let [category, items] of Object.entries(aggregatedItems)) {
-            printListContent += `<h6>${category}</h6><ul>`;
+            printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;  // Removed dot style
             for (let [itemName, data] of Object.entries(items)) {
-                printListContent += `<li>${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}</li>`;
+                printListContent += `
+                    <li style="margin: 0;">
+                        <!-- Right tick mark icon added here -->
+                        <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>  
+                        ${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}
+                    </li>
+                `;
             }
-            printListContent += `</ul></br>`;
+            printListContent += `</ul><br/>`;
         }
 
         // Populate the print modal with the aggregated list
@@ -871,9 +1031,9 @@
         const content = $('#ShippingPrintModal .print-list').html();
         // Create a container to format the content for PDF
         const pdfContainer = `
-            <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto;">
+            <div style="font-family: Arial, sans-serif; padding: 10px; max-width: 600px; margin: auto;">
                 <h3 style="text-align: center;">Shopping List</h3><hr>
-                <ul style="list-style: number; padding: 0;">
+                <ul style="list-style: none; padding: 0;">
                     ${content}
                 </ul>
             </div>
@@ -889,6 +1049,7 @@
 
         html2pdf().set(options).from(pdfContainer).save();
     });
+
 
     function updateQuantity(inputElement) {
         const newQty = inputElement.value; // Get the new quantity value

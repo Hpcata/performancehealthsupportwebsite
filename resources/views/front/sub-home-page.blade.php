@@ -61,10 +61,10 @@
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->type == 'section-1' && $section->enabled == 1)
-                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(private/public/front/images/hero-img-03.jpg);">
+                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(front/images/hero-img-03.jpg);">
                     <div class="container">
                         <div class="text-center">
-                            <h1 class="text-white mt-md-3">Sport Nutrition Plans</h1>
+                            <h1 class="text-white mt-md-3">Sports Nutrition Plans</h1>
                         </div>
                         <div class="text-center banner-text mt-auto pt-5">
                             {!! $section->content !!}
@@ -103,7 +103,7 @@
         @endforeach 
     @endif
 
-    <div class="section find-spot-row" style="background-image: url(private/public/front/images/female-athlete.jpg);">
+    <div class="section find-spot-row" style="background-image: url(front/images/female-athlete.jpg);">
         <div class="container">
             <div class="h1 text-center text-white">Find Your Sport</div>
             <div class="spot-search">
@@ -183,7 +183,7 @@
                             <div class="spot-plan-img-box">
                                 <figure>
                                     @if($plan->image)
-                                    <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="">
+                                    <img src="{{ asset('storage/' . $plan->image) }}" alt="">
                                     @else
                                     <img src="{!! frontAssets('images/about-new.png') !!}" alt="">
                                     @endif
@@ -255,12 +255,12 @@
                                 <div class="nutrition-login-images p-0">
                                     <div class="nutrition-login-big">
                                         <figure class="w-100">
-                                            <img src="{{ asset('private/public/front/images/your-purchased-plan-0001.png') }}" alt="">
+                                            <img src="{{ frontAssets('images/your-purchased-plan-0001.png') }}" alt="">
                                         </figure>
                                     </div>
                                     <!-- <div class="nutrition-login-small">
                                         <figure>
-                                            <img src="{{ asset('private/public/front/images/nutrition-login-plans-small.png') }}" alt="">
+                                            <img src="{{ frontAssets('images/nutrition-login-plans-small.png') }}" alt="">
                                         </figure>
                                     </div> -->
                                 </div>
@@ -301,7 +301,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/create-profile-img-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/create-profile-img-01.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -327,7 +327,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/goal-img-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/goal-img-01.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -356,7 +356,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/intake-img-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/intake-img-01.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -382,7 +382,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/food-preferences-img-001.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/food-preferences-img-001.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -408,7 +408,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/your-purchased-plan-0001.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/your-purchased-plan-0001.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -434,7 +434,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/customise-your-plan-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/customise-your-plan-01.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -460,7 +460,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/select-shopping-list-001.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/select-shopping-list-001.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -486,7 +486,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/print-shopping-list-001.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/print-shopping-list-001.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -512,7 +512,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/print-your-summery-plan-002.jpeg') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/print-your-summery-plan-002.jpeg') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -538,7 +538,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ asset('private/public/front/images/competition-plan-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/competition-plan-01.png') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -576,12 +576,12 @@
                                 <div class="nutrition-login-images p-0">
                                     <div class="nutrition-login-big">
                                         <figure class="w-100">
-                                            <img src="{{ asset('private/public/front/images/nutrition-login-plans-big.png') }}" alt="">
+                                            <img src="{{ frontAssets('images/nutrition-login-plans-big.png') }}" alt="">
                                         </figure>
                                     </div>
                                     <!-- <div class="nutrition-login-small">
                                         <figure>
-                                            <img src="{{ asset('private/public/front/images/nutrition-login-plans-small.png') }}" alt="">
+                                            <img src="{{ frontAssets('front/images/nutrition-login-plans-small.png') }}" alt="">
                                         </figure>
                                     </div> -->
                                 </div>
@@ -1908,19 +1908,19 @@
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="-1" id="carbTest1">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest1">
                                                         <label class="form-check-label" for="carbTest1">
                                                             Support decision making
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="-1" id="carbTest2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest2">
                                                         <label class="form-check-label" for="carbTest2">
                                                             Helping maintain competition performance levels
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="-1" id="carbTest3">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest3">
                                                         <label class="form-check-label" for="carbTest3">
                                                         Assists fuelling and recovery from training sessions 
                                                         </label>
@@ -1931,20 +1931,20 @@
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="1" id="carbTest4">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="1" id="carbTest4">
                                                         <label class="form-check-label" for="carbTest4">
                                                         Major factor for gaining body fat
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="1" id="carbTest5">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="1" id="carbTest5">
                                                         <label class="form-check-label" for="carbTest5">
                                                         Increases inflammation in the body
                                                         </label>
                                                     </div>
 
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-5]" value="0" id="carbTest6">
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="0" id="carbTest6">
                                                         <label class="form-check-label" for="carbTest6">
                                                             Unsure
                                                         </label>
@@ -2007,7 +2007,7 @@
                                         </div>
                                         <div class="p-3 card-header bg-white">
                                             <h5 class="m-0">7. Which statements about iron are correct? </h5>
-                                            <input type="hidden" name="questions[sports-nutrition-Q-7]" value="What main fuels do muscles use during training?" />
+                                            <input type="hidden" name="questions[sports-nutrition-Q-7]" value="Which statements about iron are correct?" />
                                         </div>
                                         <div class="row px-2">
                                             <!-- Left Column -->
@@ -2089,7 +2089,7 @@
                                                     <div class="form-check my-2">
                                                         <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements3">
                                                         <label class="form-check-label" for="supplements3">
-                                                        Check with a Sports Dietitian before taking supplements                                                    
+                                                        Athletes should check with a Sports Dietitian before taking supplements                                                
                                                         </label>
                                                     </div>
                                                 </div>
@@ -2378,7 +2378,7 @@
                                         <div class="card-body p-4">
                                             <div class="p-md-3 row align-items-center">
                                                 <div class="col-lg-7">
-                                                    <h3>Sport Nutrition Plans</h3>
+                                                    <h3>Sports Nutrition Plans</h3>
                                                     <!-- <figure>
                                                         <img src="https://booking.biohealthpassport.com.au/public/uploads/front_logo/1727981512_1727875441_logo.png" alt="">
                                                     </figure> -->
@@ -2967,7 +2967,7 @@
                 }
 
                 if (type == 'sport') {
-                    const maxTotal = 9;
+                    const maxTotal = 15;
                     const degree = 180 / maxTotal;
                     let totalDegree = Math.max(0, totalAnswerCounts['sports-form'] * degree); // Ensure non-negative
                     const percentage = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal) * 100);
@@ -2979,8 +2979,8 @@
                     $('.score-meter-box-2').removeClass('score-meter-out');
                     $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree + 'deg)');
 
-                    const maxTotal1 = 6;
-                    const degree1 = 180 / maxTotal;
+                    const maxTotal1 = 5;
+                    const degree1 = 180 / maxTotal1;
                     let totalDegree1 = Math.max(0, totalAnswerCounts['supplement-form'] * degree1); // Ensure non-negative
                     const percentage1 = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal1) * 100);
                     
@@ -2993,7 +2993,7 @@
                 }
 
                 if (type == 'supplement') {
-                    const maxTotal = 6;
+                    const maxTotal = 5;
                     const degree = 180 / maxTotal;
                     let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
                     const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
@@ -3005,7 +3005,7 @@
                     $('.score-meter-box-3').removeClass('score-meter-out');
                     $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
 
-                    const maxTotal2 = 9;
+                    const maxTotal2 = 15;
                     const degree2 = 180 / maxTotal2;
                     let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
                     const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
@@ -3564,6 +3564,11 @@
                 }
             });
 
+            $('#purchaseModal').on('hidden.bs.modal', function () {
+                $('#payment-form')[0].reset(); // Reset the form
+                $('#card-errors').text('');    // Clear Stripe errors
+            });
+            
             // Event listener for the 'Purchase Now' button
             $('body').on('click', '.purchase-now-btn', function () {
                 // alert('Payment button clicked');
@@ -3598,7 +3603,7 @@
                 $('#purchaseModal').modal('show');
 
                 // Handle the form submission
-                $('#payment-form').submit(function(event) {
+                $('#payment-form').off('submit').on('submit', function(event) {
                     event.preventDefault();
 
                     // Disable the submit button to prevent multiple clicks
@@ -3633,6 +3638,7 @@
                                 if (response.success) {
                                     // Close the modal
                                     $('#purchaseModal').modal('hide');
+                                    $('#submit').prop('disabled', false);
 
                                     var user_id = response.data.user_id;
                                     var payment_id = response.data.payment_id;
@@ -3657,6 +3663,8 @@
                                         alert('Payment failed: ' + response.message);
                                         $('#submit').prop('disabled', false);
                                     }
+                                    $('#submit').prop('disabled', false);
+
                                 }
                             },
                             error: function (xhr, status, error) {
@@ -3672,9 +3680,10 @@
                                     });
 
                                     alert(errorMessage);
+                                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    alert(`Error: ${xhr.responseJSON.message}`);
                                 } else {
-                                    // For other errors (500, 403, etc.)
-                                    alert('Something went wrong. Please try again.');
+                                    alert(`Unexpected Error (${xhr.status}): ${error}`);
                                 }
                             }
                         });
@@ -3714,6 +3723,7 @@
                                             // alert('Payment successful!');
                                             $('#purchaseModal').modal('hide');
                                             // $('#thankYouModal').modal('show');
+                                            $('#submit').prop('disabled', false);
 
                                             var user_id = response.data.user_id;  // Assuming the backend sends the user_id
                                             var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
@@ -3741,6 +3751,8 @@
                                                 alert('Payment failed: ' + response.message);
                                                 $('#submit').prop('disabled', false);
                                             }
+                                            $('#submit').prop('disabled', false);
+
                                         }
                                     },
                                     error: function(xhr, status, error) {
@@ -3756,9 +3768,10 @@
                                             });
 
                                             alert(errorMessage);
+                                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                            alert(`Error: ${xhr.responseJSON.message}`);
                                         } else {
-                                            // For other errors (500, 403, etc.)
-                                            alert('Something went wrong. Please try again.');
+                                            alert(`Unexpected Error (${xhr.status}): ${error}`);
                                         }
                                     }
                                 });

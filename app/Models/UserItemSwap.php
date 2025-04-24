@@ -13,13 +13,19 @@ class UserItemSwap extends Model
 
     protected $fillable = [
         'user_id',
+        'meal_id',
         'item_id',
         'swap_item_id',
         'qty',
         'carbs',
         'protein',
         'fat',
-        'unit'
+        'unit',
+        'selected_qty_unit'
+    ];
+
+    protected $casts = [
+        'selected_qty_unit' => 'array',
     ];
 
     // Relationships
