@@ -224,7 +224,7 @@
                                 <label class="col-form-label" for="foodQuantity">Food Quantity:</label>
                             </div>
                             <div >
-                                <input type="number" name="food_qty" id="foodQuantity" class="form-control w-100" placeholder="Enter quantity">
+                                <input type="number" name="food_qty" id="foodQuantity" class="form-control w-100" placeholder="Enter quantity" step="0.01" min="0">
                             </div>
                         </div>
                         <div class="form-group col-md-6">
@@ -271,7 +271,7 @@
                                 <label class="col-form-label" for="swapFoodQuantity">Swap Food Quantity:</label>
                             </div>
                             <div>
-                                <input type="number" name="swap_food_qty" id="swapFoodQty" class="form-control w-100" placeholder="Enter quantity">
+                                <input type="number" name="swap_food_qty" id="swapFoodQty" class="form-control w-100" placeholder="Enter quantity" step="0.01" min="0">
                             </div>
                         </div>
                         <div class="form-group col-md-6">
@@ -332,7 +332,7 @@
                     <div class="row">
                         <div class="form-group col-md-6 mb-3">
                             <label for="itemQty" class="form-label">Food Quantity</label>
-                            <input type="number" class="form-control" id="itemQty">
+                            <input type="number" class="form-control" id="itemQty" step="0.01" min="0">
                         </div>
                         <div class="form-group col-md-6 mb-3">
                             <label for="itemQty" class="form-label">Food Quantity Unit</label>
@@ -367,7 +367,7 @@
                     <div class="row">
                         <div class="mb-3 col-md-6">
                             <label for="swapItemQty" class="form-label">Swap Food Quantity</label>
-                            <input type="number" class="form-control" id="swapItemQty">
+                            <input type="number" class="form-control" id="swapItemQty" step="0.01" min="0">
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="swapItemUnit" class="form-label">Swap Food Quantity Unit</label>
@@ -689,6 +689,7 @@
             });
         });
     });
+    // $('#swapFoods').val(null).trigger('change');
 
     $(document).ready(function () {
         // $('.select2').select2({
@@ -722,14 +723,50 @@
                         results: response.items.map(function(item) {
                             return {
                                 id: item.id,
-                                text: item.title
+                                text: item.title,
+                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '{{ asset("default.png") }}' // Fix image path
                             };
                         })
                     };
                 },
                 cache: true
-            }
+            },
+            templateResult: formatFood,   // Customize dropdown appearance
+            templateSelection: formatFoodSelection // Customize selected item
         });
+
+        // **🔥 Function to Show Image in Dropdown**
+        function formatFood(food) {
+            if (!food.id) {
+                return food.text;
+            }
+
+            var $foodItem = $(
+                `<div style="display: flex; align-items: center;">
+                    <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px; object-fit: cover;">
+                    <span>${food.text}</span>
+                </div>`
+            );
+
+            return $foodItem;
+        }
+
+        // **🔥 Function to Show Image in Selected Item**
+        function formatFoodSelection(food) {
+            if (!food.id) {
+                return food.text;
+            }
+
+            // ✅ **Fix: Ensure image URL is available when selecting**
+            let imageUrl = food.image || (food.element ? $(food.element).data('image') : '{{ asset("default.png") }}');
+
+            return $(
+                `<div style="display: flex; align-items: center;">
+                    <img src="${imageUrl}" style="width: 25px; height: 25px; margin-right: 5px; object-fit: cover;">
+                    <span>${food.text}</span>
+                </div>`
+            );
+        }
     });
     
     $(document).ready(function () {
@@ -1459,8 +1496,8 @@
                 type: 'GET',
                 success: function(response) {
                     const swapFoodsSelect = $('#swapFoods');
-                    swapFoodsSelect.empty(); // Clear existing options
-                    
+                    swapFoodsSelect.empty().append('<option></option>'); // Ensure an empty option for the placeholder
+
                     if (response.items.length > 0) {
                         response.items.forEach(item => {
                             const option = new Option(item.title, item.id, false, false);
@@ -1478,6 +1515,32 @@
                 }
             });
         });
+
+        // $('#swapFoodsModal').on('show.bs.modal', function () {
+        //     $.ajax({
+        //         url: '{{ route("admin.items.index") }}',
+        //         type: 'GET',
+        //         success: function(response) {
+        //             const swapFoodsSelect = $('#swapFoods');
+        //             swapFoodsSelect.empty(); // Clear existing options
+                    
+        //             if (response.items.length > 0) {
+        //                 response.items.forEach(item => {
+        //                     const option = new Option(item.title, item.id, false, false);
+        //                     swapFoodsSelect.append(option);
+        //                 });
+        //             } else {
+        //                 swapFoodsSelect.append('<option disabled>No swap foods available</option>');
+        //             }
+
+        //             // Reinitialize Select2 to update the options
+        //             swapFoodsSelect.trigger('change');
+        //         },
+        //         error: function() {
+        //             alert('Error fetching swap foods. Please try again.');
+        //         }
+        //     });
+        // });
         
         $('#closeSwapFoodsModal').on('click', function () { 
             $('#swapFoodsModal').modal('hide');
@@ -1693,7 +1756,7 @@
             $('.food-checkbox').prop('checked', false);
             $('#swapFoodsModal').modal('hide').removeData();
             $('#swapFoodsModal').removeData('edit-mode').removeData('meal-id');
-            $('#swapFoods').val([]).trigger('change');
+            $('#swapFoods').val().trigger('change');
             $('#meals').val([]).trigger('change').closest('.form-group').show();
         });
 
@@ -2059,22 +2122,33 @@
                                 processResults: function(data) {
                                     return {
                                         results: data.items.map(function(item) {
-                                            return { id: item.id, text: item.title };
+                                            return { 
+                                                id: item.id, 
+                                                text: item.title,
+                                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '{{ asset("default.png") }}' // Fix image path
+                                            };
                                         })
                                     };
                                 },
                                 cache: true
-                            }
+                            },
+                            templateResult: formatFood,   // Customize dropdown appearance
+                            templateSelection: formatFoodSelection // Customize selected item
                         });
 
                         selectedSwapItems.forEach(function(swapItem) {
+                            const imageUrl = swapItem.image ? `{{ asset('private/public/storage/') }}/${swapItem.image}` : '{{ asset("default.png") }}';
+                            console.log("Image URL:", imageUrl);
                             const option = new Option(swapItem.name, swapItem.id, true, true);
+                            $(option).data('image', imageUrl); // Store image data
+
                             $('#swapItems').append(option);
-                            $('#swapItemQty').val(swapItem.qty);
-                            $('#swapItemUnit').val(swapItem.unit).change();
                         });
 
                         $('#swapItems').trigger('change');
+
+                        $('#swapItemQty').val(selectedSwapItems[0]?.qty || '');
+                        $('#swapItemUnit').val(selectedSwapItems[0]?.unit || '').change();
 
                         // Save the selected swap items in modal data for comparison
                         $('#editItemForm').data({
@@ -2096,6 +2170,32 @@
                     alert('Error fetching item details.');
                 }
             });
+        }
+
+        function formatFood(item) {
+            if (!item.id) return item.text; // Handle empty selection
+            
+            let imageUrl = item.image || ($(item.element).data('image') || '{{ asset("default.png") }}');
+
+            return $(`
+                <div style="display: flex; align-items: center;">
+                    <img src="${imageUrl}" style="width: 40px; height: 40px; margin-right: 10px;" />
+                    <span>${item.text}</span>
+                </div>
+            `);
+        }
+
+        function formatFoodSelection(item) {
+            if (!item.id) return item.text;
+
+            let imageUrl = item.image || ($(item.element).data('image') || '{{ asset("default.png") }}');
+
+            return $(`
+                <div style="display: flex; align-items: center;">
+                    <img src="${imageUrl}" style="width: 25px; height: 25px; margin-right: 5px;" />
+                    <span>${item.text}</span>
+                </div>
+            `);
         }
 
         // Save changes when the modal form is submitted

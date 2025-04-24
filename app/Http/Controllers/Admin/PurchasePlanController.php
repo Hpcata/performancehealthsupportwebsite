@@ -464,7 +464,7 @@ class PurchasePlanController extends Controller
                 ]);
         }])->where('payment_id', $payment->id)->first();
 
-        $perPlanSelectedFoods = $userPrePlan->prePlanDetails
+        $perPlanSelectedFoods = !empty($userPrePlan) && $userPrePlan->prePlanDetails
             ? $userPrePlan->prePlanDetails->map(function ($detail) {
                 return json_decode($detail->answer, true);
             })->flatten()->toArray()
@@ -1510,7 +1510,8 @@ class PurchasePlanController extends Controller
                     'id' => $swapItem->id,
                     'name' => $swapItem->title,
                     'qty' => $Item->qty,
-                    'unit' => $Item->unit
+                    'unit' => $Item->unit,
+                    'image' => $swapItem->image
                 ];
             }
             return response()->json([
@@ -1535,7 +1536,8 @@ class PurchasePlanController extends Controller
                     'id' => $swapItem->id,
                     'name' => $swapItem->title,
                     'qty' => $Item->qty,
-                    'unit' => $Item->unit
+                    'unit' => $Item->unit,
+                    'image' => $swapItem->image
                 ];
             }
             return response()->json([

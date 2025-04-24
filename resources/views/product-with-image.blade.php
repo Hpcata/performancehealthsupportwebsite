@@ -89,8 +89,8 @@
                                         <th>Barcode</th>
                                         <th>Price</th>
                                         <th>Size</th>
-                                        <th>Carbohydrate</th>
                                         <th>Protein</th>
+                                        <th>Carbohydrate</th>
                                         <th>Fat</th>
                                         <th>Category</th>
                                         <th>Image</th>
@@ -105,8 +105,8 @@
                                             <td>{{ $product['barcode'] }}</td>
                                             <td>${{ $product['price'] }}</td>
                                             <td>{{ $product['size'] }}</td>
-                                            <td>{{ $product['nutrition']['carbohydrate'] ?? 'N/A' }}</td>
                                             <td>{{ $product['nutrition']['protein'] ?? 'N/A' }}</td>
+                                            <td>{{ $product['nutrition']['carbohydrate'] ?? 'N/A' }}</td>
                                             <td>{{ $product['nutrition']['fat'] ?? 'N/A' }}</td>
                                             <td>{{ $product['category'] }}</td>
                                             <td>

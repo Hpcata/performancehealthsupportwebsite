@@ -98,7 +98,7 @@
                                 <label for="meal_times" class="form-label">Select Plan</label>
                                 <select name="plans[]" id="plans" class="form-control select2" multiple>
                                     @foreach ($plans as $plan)
-                                    <option value="{{ $plan->id }}" @if($coupon->plans->contains($plan->id)) selected @endif>
+                                    <option value="{{ $plan->id }}" @if(isset($coupon) && $coupon->plans->contains($plan->id)) selected @endif>
                                         {{ $plan->name }}
                                     </option>
                                     @endforeach

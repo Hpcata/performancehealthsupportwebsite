@@ -82,11 +82,11 @@
                                 <label for="qty" class="form-label">Measurement</label>
                                 <select name="unit" class="form-control" id="measurement">
                                     <option value="">Select Measurement</option>
-                                    <option value="g"{{ $item->measurement == 'g' ? 'selected' : ''}}>gm</option>
-                                    <option value="ml"{{ $item->measurement == 'ml' ? 'selected' : ''}}>ml</option>
-                                    <!-- <option value="cup"{{ $item->measurement == 'g' ? 'selected' : ''}}>cup</option> -->
-                                    <option value="tbsp"{{ $item->measurement == 'tbsp' ? 'selected' : ''}}>tbsp</option>
-                                    <option value="piece"{{ $item->measurement == 'piece' ? 'selected' : ''}}>piece</option> 
+                                    <option value="g"{{ isset($item) && $item->measurement == 'g' ? 'selected' : ''}}>gm</option>
+                                    <option value="ml"{{ isset($item) && $item->measurement == 'ml' ? 'selected' : ''}}>ml</option>
+                                    <!-- <option value="cup"{{ isset($item) && $item->measurement == 'g' ? 'selected' : ''}}>cup</option> -->
+                                    <option value="tbsp"{{ isset($item) && $item->measurement == 'tbsp' ? 'selected' : ''}}>tbsp</option>
+                                    <option value="piece"{{ isset($item) && $item->measurement == 'piece' ? 'selected' : ''}}>piece</option> 
 
                                     <!-- <option value="bar">bar</option> -->
                                     <!-- <option value="reguler">measurement</option>  -->
@@ -123,11 +123,11 @@
                                         <label for="serving_size" class="form-label">Serving Size Unit</label>
                                         <select name="serving_size_unit" class="form-control" id="serving_size_unit">
                                             <option value="">Select unit</option>
-                                            <option value="g" @if(isset($item) && $item->serving_size_unit == 'g' ? 'selected' : '')@endif>gm</option>
-                                            <option value="ml" @if(isset($item) && $item->serving_size_unit == 'ml' ? 'selected' : '')@endif>ml</option>
-                                            <!-- <option value="piece"{{ $item->serving_size_unit == 'piece' ? 'selected' : ''}}>piece</option> -->
+                                            <option value="g" {{ isset($item) && $item->serving_size_unit == 'g' ? 'selected' : ''}}>gm</option>
+                                            <option value="ml" {{ isset($item) && $item->serving_size_unit == 'ml' ? 'selected' : ''}}>ml</option>
+                                            <!-- <option value="piece"{{ isset($item) &&  $item->serving_size_unit == 'piece' ? 'selected' : ''}}>piece</option> -->
                                         </select>
-                                        <!-- <input type="text" name="serving_size_unit" class="form-control d-inline-block d-flex" id="serving_size_unit" value="{{ $item->serving_size_unit ?? 'gm' }}" placeholder="Enter Serving Size"> -->
+                                        <!-- <input type="text" name="serving_size_unit" class="form-control d-inline-block d-flex" id="serving_size_unit" value="{{ isset($item) &&  $item->serving_size_unit ?? 'gm' }}" placeholder="Enter Serving Size"> -->
                                     </div>
 
                                     <!-- Fat Field -->
@@ -144,7 +144,7 @@
                                     <div class="col-md-6 mt-3">
                                         <label for="serving_per_pack" class="form-label">Serving Per Pack</label>
                                         <input type="number" name="serving_per_pack" class="form-control" id="serving_per_pack"
-                                            value="{{ $item->serving_per_pack ?? '0' }}" 
+                                            value="{{ $item->serving_per_pack ?? '' }}" 
                                             step="1" min="1" 
                                             placeholder="Enter Serving Per Pack">
                                         <small class="text-muted">Please enter the total number of servings per pack.</small>

@@ -2007,7 +2007,7 @@
                                         </div>
                                         <div class="p-3 card-header bg-white">
                                             <h5 class="m-0">7. Which statements about iron are correct? </h5>
-                                            <input type="hidden" name="questions[sports-nutrition-Q-7]" value="What main fuels do muscles use during training?" />
+                                            <input type="hidden" name="questions[sports-nutrition-Q-7]" value="Which statements about iron are correct?" />
                                         </div>
                                         <div class="row px-2">
                                             <!-- Left Column -->
@@ -2291,7 +2291,7 @@
                                                 </svg>
                                             </span>
                                             <h4 class="text-center mt-4">Supplement Nutrition Knowledge</h4>
-                                            <h3 class="text-center mt-1 text-black supplement-percentage d-none">40%</h3>
+                                            <h3 class="text-center mt-1 text-black supplement-percentage d-none"></h3>
 
                                             <div class="text-center mt-4">
                                                 <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="supplement">
@@ -2342,7 +2342,7 @@
                                                 </svg>
                                             </span>
                                             <h4 class="text-center mt-4">Sports Nutrition Knowledge</h4>
-                                            <h3 class="text-center mt-1 text-black sports-percentage d-none">40%</h3>
+                                            <h3 class="text-center mt-1 text-black sports-percentage d-none"></h3>
 
                                             <div class="text-center mt-4">
                                                 <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="sport">
@@ -2967,7 +2967,7 @@
                 }
 
                 if (type == 'sport') {
-                    const maxTotal = 9;
+                    const maxTotal = 14;
                     const degree = 180 / maxTotal;
                     let totalDegree = Math.max(0, totalAnswerCounts['sports-form'] * degree); // Ensure non-negative
                     const percentage = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal) * 100);
@@ -2979,8 +2979,8 @@
                     $('.score-meter-box-2').removeClass('score-meter-out');
                     $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree + 'deg)');
 
-                    const maxTotal1 = 6;
-                    const degree1 = 180 / maxTotal;
+                    const maxTotal1 = 5;
+                    const degree1 = 180 / maxTotal1;
                     let totalDegree1 = Math.max(0, totalAnswerCounts['supplement-form'] * degree1); // Ensure non-negative
                     const percentage1 = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal1) * 100);
                     
@@ -2993,7 +2993,7 @@
                 }
 
                 if (type == 'supplement') {
-                    const maxTotal = 6;
+                    const maxTotal = 5;
                     const degree = 180 / maxTotal;
                     let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
                     const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
@@ -3005,7 +3005,7 @@
                     $('.score-meter-box-3').removeClass('score-meter-out');
                     $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
 
-                    const maxTotal2 = 9;
+                    const maxTotal2 = 14;
                     const degree2 = 180 / maxTotal2;
                     let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
                     const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
@@ -3246,7 +3246,7 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        alert("Something went wrong. Please try again.");
+                        alert("Error: ", error);
                         console.log("Error submitting form:", error);
                         $('.supplement-plan .unlock-result').removeClass('d-none');
                         $('.sport-plan .unlock-result').removeClass('d-none');
@@ -3633,7 +3633,7 @@
                                 if (response.success) {
                                     // Close the modal
                                     $('#purchaseModal').modal('hide');
-
+                                    $('#submit').prop('disabled', false);
                                     var user_id = response.data.user_id;
                                     var payment_id = response.data.payment_id;
 
@@ -3643,6 +3643,8 @@
                                         setTimeout(function () {
                                             window.location.href = redirectUrlWithUserId;
                                         }, 3000);
+                                    }else {
+                                        alert('Error: Redirect url not found.');
                                     }
                                 } else {
                                     // Show error message for failed payment
@@ -3655,8 +3657,8 @@
                                         }, 500); // 1000ms for smooth scrolling
                                     } else {
                                         alert('Payment failed: ' + response.message);
-                                        $('#submit').prop('disabled', false);
                                     }
+                                    $('#submit').prop('disabled', false);
                                 }
                             },
                             error: function (xhr, status, error) {
@@ -3672,9 +3674,11 @@
                                     });
 
                                     alert(errorMessage);
+                                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    // Show custom error message from backend
+                                    alert(`Error: ${xhr.responseJSON.message}`);
                                 } else {
-                                    // For other errors (500, 403, etc.)
-                                    alert('Something went wrong. Please try again.');
+                                    alert(`Unexpected Error (${xhr.status}): ${error}`);
                                 }
                             }
                         });
@@ -3727,7 +3731,7 @@
                                                     window.location.href = redirectUrlWithUserId;
                                                 }, 3000); // 3-second delay before redirecting (adjust as needed)
                                             }
-
+                                            $('#submit').prop('disabled', true);
                                         } else {
                                             // Show error message for failed payment
                                             if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
@@ -3739,8 +3743,9 @@
                                                 }, 500); // 1000ms for smooth scrolling
                                             } else {
                                                 alert('Payment failed: ' + response.message);
-                                                $('#submit').prop('disabled', false);
                                             }
+                                            $('#submit').prop('disabled', false);
+
                                         }
                                     },
                                     error: function(xhr, status, error) {
@@ -3756,9 +3761,11 @@
                                             });
 
                                             alert(errorMessage);
+                                        }else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                            // Show custom error message from backend
+                                            alert(`Error: ${xhr.responseJSON.message}`);
                                         } else {
-                                            // For other errors (500, 403, etc.)
-                                            alert('Something went wrong. Please try again.');
+                                            alert(`Unexpected Error (${xhr.status}): ${error}`);
                                         }
                                     }
                                 });
@@ -3890,6 +3897,7 @@
                         }
                     })
                     .catch(error => {
+                        alert('Error: ', error);
                         console.error('Error:', error);
                         document.getElementById('promo-message').textContent = 'Something went wrong. Please try again.';
                         document.getElementById('promo-message').classList.add('text-danger');
