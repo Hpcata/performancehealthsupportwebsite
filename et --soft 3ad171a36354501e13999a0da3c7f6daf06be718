@@ -1,0 +1,71 @@
+[33mcommit 75acb77d29f8109823637ad808e2956ba243f001[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkartik[m[33m)[m
+Author: Meet Kapadiya <meetpatel5393@gmail.com>
+Date:   Thu Mar 27 17:16:34 2025 +0800
+
+    ai base changes
+
+[33mcommit 3ad171a36354501e13999a0da3c7f6daf06be718[m[33m ([m[1;31morigin/kartik[m[33m)[m
+Author: Meet Kapadiya <meetpatel5393@gmail.com>
+Date:   Sat Mar 8 18:31:45 2025 +0800
+
+    push error fixed
+
+[33mcommit bddcc7d7360bd09ee38fc0ed654bfbf79641c212[m
+Author: Meet Kapadiya <meetpatel5393@gmail.com>
+Date:   Mon Feb 3 14:25:19 2025 +0800
+
+    Removed unnecessary files and recommitted
+
+[33mcommit a3431a2e1a0c3f95ab6627a27d3b972d0e6621ee[m
+Author: Kartik <kartikvadhaiya@Mac.lan>
+Date:   Sat Jan 4 09:38:16 2025 +0530
+
+    Updated commit without secret key
+
+[33mcommit 5c27656f9358ce694287388733059d2a5d59278f[m[33m ([m[1;31morigin/dev[m[33m)[m
+Author: Kartik <kartikvadhaiya@Mac.lan>
+Date:   Sat Dec 28 12:08:29 2024 +0530
+
+    select 2 issue fixed and side bar icon set
+
+[33mcommit 5615fb3b8477270d1b75d1dcf6de5fedfbf2e698[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Kartik <kartikvadhaiya@Mac.lan>
+Date:   Sat Dec 28 10:57:45 2024 +0530
+
+    issue fixed
+
+[33mcommit 7f9219d58a004dd4099f4bef8bbd26680269aff2[m[33m ([m[1;32mmaster[m[33m)[m
+Author: Meet Kapadiya <meetpatel5393@gmail.com>
+Date:   Thu Dec 12 19:32:04 2024 +0800
+
+    issue fixed
+
+[33mcommit 05e38af9abd62ce33b925c6a488fd3ccd840b0f9[m
+Author: Kartik <kartikvadhaiya@Mac.lan>
+Date:   Wed Dec 11 01:58:36 2024 +0530
+
+    functionality related changes
+
+[33mcommit 25103be6246904457c777215ca88071cfed6d316[m
+Author: Kartik <kartikvadhaiya@Mac.lan>
+Date:   Tue Dec 10 13:27:25 2024 +0530
+
+    front website dynamic create and his related modules add
+
+[33mcommit 57373f6a880b56a2f9a2294996d40f265b5062ab[m
+Author: Kartik <kartikvadhaiya@Mac.lan>
+Date:   Wed Nov 20 19:14:29 2024 +0530
+
+    migration issue fixed
+
+[33mcommit ad07121dadb71c2d20b6cfe7b8cdf33e3a9608ab[m
+Author: Kartik <kartikvadhaiya@Mac.lan>
+Date:   Wed Nov 20 10:32:03 2024 +0530
+
+    minor changes
+
+[33mcommit 350c70bb0887015d000788a9528aa091cacee8b3[m
+Author: Kartik <kartikvadhaiya@Mac.lan>
+Date:   Wed Nov 20 00:26:29 2024 +0530
+
+    blog page add and project laravel setup
