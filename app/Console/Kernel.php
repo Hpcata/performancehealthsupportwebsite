@@ -17,6 +17,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('update:food-serving-sizes');
+        $schedule->command('nutrition:fetch');
+        $schedule->command('nutrition:alternates');
+
     }
 
     /**

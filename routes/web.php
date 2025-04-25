@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Front\ForgotPasswordController;
 use App\Http\Controllers\Admin\NutritionAIController;
 use App\Http\Controllers\Admin\ImageController;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +47,15 @@ Route::get('/check-auth', function () {
 
 Route::get('/chat', function () {
     return view('image_form');
+});
+
+Route::get('/fetch-alternate-measurement', function () {
+    Artisan::call('nutrition:alternates');
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Nutrition alternate measurements fetched successfully.',
+    ]);
 });
 
 Route::post('/chat', [ImageController::class, 'chat'])->name('chat');

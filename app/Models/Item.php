@@ -8,10 +8,14 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'price', 'image', 'qty', 'unit', 'is_swiped', 'protein', 'carbs', 'fat', 'category_id', 'serving_per_pack', 'serving_size', 'serving_size_unit'];
+    protected $fillable = ['title', 'description', 'price', 'image', 'qty', 'unit', 'is_swiped', 'protein', 'carbs', 'fat', 'category_id', 'serving_per_pack', 'serving_size', 'serving_size_unit', 'selected_qty_unit','is_locked'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
+    protected $casts = [
+        'selected_qty_unit' => 'array',
+    ];
+    
     public $timestamps = true;  // Ensure timestamps are enabled
 
     public function meals()
