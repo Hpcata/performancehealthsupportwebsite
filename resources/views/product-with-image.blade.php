@@ -219,6 +219,8 @@
                     success: function (response) {
                         if (response.success) {
                             alert('Food added successfully!');
+                            const editUrl = '{{ route("admin.items.edit", ":id") }}'.replace(':id', response.food.id);
+                            window.location.href = editUrl;
                         } else {
                             alert('Failed to add food: ' + (response.message || 'Unknown error.'));
                         }

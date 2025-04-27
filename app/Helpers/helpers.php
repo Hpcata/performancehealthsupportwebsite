@@ -95,3 +95,21 @@ function formatDecimal($value) {
 function isDecimal($value) {
     return is_float($value) || (is_numeric($value) && strpos($value, '.') !== false);
 }
+
+function cleanDecimal($value)
+{
+    // Remove all non-digit/non-dot characters (keep only digits and dot)
+    $cleaned = preg_replace('/[^0-9.]/', '', $value);
+
+    // Fix multiple dots (e.g., '0.330.' -> '0.330')
+    // Remove extra trailing dots
+    $cleaned = rtrim($cleaned, '.');
+
+    // If there are still multiple dots, keep only the first one
+    $parts = explode('.', $cleaned, 3); // allow max 2 parts
+    if (count($parts) > 2) {
+        $cleaned = $parts[0] . '.' . $parts[1];
+    }
+
+    return is_numeric($cleaned) ? (float) $cleaned : 0;
+}

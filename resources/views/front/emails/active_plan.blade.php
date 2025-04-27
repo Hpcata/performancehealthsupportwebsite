@@ -6,7 +6,7 @@
     <title>Plan Activated</title>
 </head>
 <body>
-    <h2>Hello {{ $user->name }},</h2>
+    <h2>Hey {{ $user->name }},</h2>
 
     <p>We are excited to inform you that your {{ $planName }} plan has been successfully activated!</p>
 

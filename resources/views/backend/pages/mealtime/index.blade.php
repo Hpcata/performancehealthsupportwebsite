@@ -39,7 +39,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $mealTime->title }}</td>
-                        <td>    {{ $mealTime->time ? \Carbon\Carbon::createFromFormat('H:i:s', $mealTime->time)->format('h:i A') : 'N/A' }}
+                        <td>{{ $mealTime->time ? \Carbon\Carbon::createFromFormat('H:i:s', $mealTime->time)->format('h:i A') : 'N/A' }}
                         </td>
                         <td>{{ $mealTime->description }}</td>
                         <td>

@@ -11,7 +11,7 @@ class GoalHistory extends Model
 
     protected $table = 'goal_histories';
 
-    protected $fillable = ['user_id', 'payment_id', 'type', 'question', 'answer'];
+    protected $fillable = ['user_id', 'payment_id', 'type', 'question', 'answer', 'start_date', 'end_date'];
 
     protected $casts = [
         'answer' => 'array', // Ensure answer is handled as JSON

@@ -52,7 +52,7 @@
                             <div class="nutrition-athlete-box">
                                 <figure>
                                     @if(isset($user->profile_image))
-                                    <img src="{{ asset('private/public/' . $user->profile_image) }}">
+                                    <img src="{{ asset('private/public/' .$user->profile_image) }}">
                                     @else
                                     <img src="{{ frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
                                     @endif
@@ -100,7 +100,7 @@
                                 <figure>
                                     <!-- <img src="{{ asset('private/public/front/images/athlete-sport.jpg') }}" alt=""> -->
                                     @if(isset($user->profile_image))
-                                    <img src="{{ asset('private/public/' . $user->profile_image) ?? frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
+                                    <img src="{{ asset($user->profile_image) ?? frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
                                     @else
                                     <img src="{{ frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
                                     @endif
@@ -120,20 +120,19 @@
                                         </h4>
                                         <ul>
                                             <li>Sport: N/A
-                                                <button class="btn btn-light edit-icon add-sport"
-                                                    data-form-name="physical_measures" data-question="Current body weight (kg) (if known):" data-answer="{{ $profileDetails['Current body weight (kg) (if known):'] ?? 'Nill' }}">
+                                                <!-- <button class="btn btn-light edit-icon add-sport">
                                                     <i class="fas fa-edit"></i>
-                                                </button>
+                                                </button> -->
                                             </li>
-                                            <li>Weight: {{ !empty($profileDetails['Current body weight (kg) (if known):']) ? $profileDetails['Current body weight (kg) (if known):'] : 'N/A' }}
+                                            <li>Weight: {{ !empty($profileDetails['Current body weight (kg) (if known):']) ? $profileDetails['Current body weight (kg) (if known):'] : 'N/A' }} kg
                                                 <!-- <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
                                                     data-form-name="physical_measures" data-question="Current body weight (kg) (if known):" data-answer="{{ $profileDetails['Current body weight (kg) (if known):'] ?? 'Nill' }}">
                                                     <i class="fas fa-edit"></i>
                                                 </button> -->
                                             </li>
                                             <li><a href="#" class="text-decoration-underline" id="weight-tracking">Track Your Weight</a></li>
-                                            <li>Height: {{ !empty($profileDetails['Height (cm):']) ? $profileDetails['Height (cm):'] : 'N/A' }}
-                                                <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
+                                            <li>Height: {{ !empty($profileDetails['Height (cm):']) ? $profileDetails['Height (cm):'] : 'N/A' }} cm
+                                                <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editHeightModal" data-type="physical_measures"
                                                     data-form-name="physical_measures" data-question="Height (cm):" data-answer="{{ $profileDetails['Height (cm):'] ?? 'Nill' }}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
@@ -198,14 +197,27 @@
                                 <div class="p-0 card-body intake-card">
                                     <div class="px-4 py-3 border-bottom">
                                         <div class="position-relative">
+                                            @php
+                                                $vitaminDetails = $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? null;
+                                                $vitaminStartDate = isset($vitaminDetails['start_date']) ? \Carbon\Carbon::parse($vitaminDetails['start_date'])->format('d-m-Y') : 'N/A';
+                                                $vitaminEndDate = isset($vitaminDetails['end_date']) ? \Carbon\Carbon::parse($vitaminDetails['end_date'])->format('d-m-Y') : 'N/A';
+
+                                                $medications = $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? null;
+                                                $medicationStartDate = isset($medications['start_date']) ? \Carbon\Carbon::parse($medications['start_date'])->format('d-m-Y') : 'N/A';
+                                                $medicationEndDate = isset($medications['end_date']) ? \Carbon\Carbon::parse($medications['end_date'])->format('d-m-Y') : 'N/A';
+                                            @endphp
+
                                             <strong>Supplements: </strong>
-                                            <p>{{ $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? 'Nill' }}</p>
+                                            <p>{{ $vitaminDetails['answer'] ?? 'Nill' }}</p>
+                                            @if($vitaminStartDate != 'N/A')
+                                            <small>Duration: {{ $vitaminStartDate }} to {{ $vitaminEndDate }}</small>
+                                            @endif
                                             <div class="btn-list">
                                                 <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? 'Nill' }}" data-type="supplement">
+                                                    data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $vitaminDetails['answer'] ?? 'Nill' }}" data-type="supplement">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
-                                                <button class="btn btn-light edit-icon view-past-history" title="View Past Supplements" data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? 'Nill' }}" data-type="supplement">
+                                                <button class="btn btn-light edit-icon view-past-history" title="View Past Supplements" data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $vitaminDetails['answer'] ?? 'Nill' }}" data-type="supplement">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -214,14 +226,17 @@
                                     <div class="px-4 py-3 border-bottom">
                                         <div class="position-relative">
                                             <strong>Medications:</strong>
-                                            <p>{{ $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? 'Nill' }} </p>
+                                            <p>{{ $medications['answer'] ?? 'Nill' }} </p>
+                                            @if($medicationStartDate != 'N/A')
+                                            <small>Duration: {{ $medicationStartDate }} to {{ $medicationEndDate }}</small>
+                                            @endif
                                             <div class="btn-list">
                                                 <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? 'Nill' }}" data-type="medication">
+                                                    data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medications['answer'] ?? 'Nill' }}" data-type="medication">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
                                                 <button class="btn btn-light edit-icon view-past-history" title="View Past Medications" 
-                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? 'Nill' }}" data-type="medication">
+                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medications['answer'] ?? 'Nill' }}" data-type="medication">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -280,7 +295,7 @@
                                                 <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
                                                 View Plan</a>
                                                 <a href="javascript:void(0);" class="btn btn-primary m-2 print-plan-btn @if(!$isPlanCreated) disabled @endif" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}">Print Plan</a>
-                                                <a href="#" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#ShoppingModal" id="fetchAllMeals">Shopping List</a>
+                                                <a href="#" class="btn btn-primary m-2 @if(!$isPlanCreated) disabled @endif" data-bs-toggle="modal" data-bs-target="#ShoppingModal" id="fetchAllMeals">Shopping List</a>
                                             </div>
                                         </div>
                                     </div>
@@ -338,6 +353,34 @@
         <div class="section"></div>
     </div>
 
+    <!-- Modal for Editing Height -->
+    <div class="modal" id="editHeightModal" tabindex="-1" aria-labelledby="editHeightModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editHeightModalLabel">Edit Height</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editHeightForm">
+                        <div class="mb-3">
+                            <label for="heightQuestion" class="form-label">Question</label>
+                            <input type="text" class="form-control" id="heightQuestion" name="heightQuestion" readonly>
+                            <input type="hidden" class="form-control" id="formName" name="formName" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="heightAnswer" class="form-label">Height (cm)</label>
+                            <input type="number" class="form-control" id="heightAnswer" name="heightAnswer" required>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--Edit Profile Image Modal -->
     <div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -351,7 +394,7 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-3 text-center">
-                            <img id="imagePreview" src="{{ asset('private/public/' . $user->profile_image) }}" alt="Current Profile Image" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
+                            <img id="imagePreview" src="{{ asset($user->profile_image) }}" alt="Current Profile Image" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                         </div>
                         <div class="mb-3">
                             <label for="profileImageInput" class="form-label">Upload New Image</label>
@@ -452,10 +495,10 @@
                     </div>
                     <div class="weight-filter">
                         <ul>
-                            <li><a href="#">1W</a></li>
+                            <li><a href="#" class="active">1W</a></li>
                             <li><a href="#">2W</a></li>
                             <li><a href="#">1M</a></li>
-                            <li><a href="#" class="active">3M</a></li>
+                            <li><a href="#">3M</a></li>
                             <li><a href="#">6M</a></li>
                             <li><a href="#">1Y</a></li>
                             <li><a href="#">ALL</a></li>
@@ -466,9 +509,9 @@
                         <canvas id="line-chart" width="400" height="200"></canvas>
                     </div>
                 </div>
-                <div class="modal-footer p-0">
+                <!-- <div class="modal-footer p-0">
                     <a href="#" class="btn btn-primary m-0 w-100 text-center rounded-0">Close</a>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -537,25 +580,31 @@
                 </div>
                 <div class="modal-body">
                     <form id="editForm">
-                        <!-- Hidden Field to Store Form Name -->
                         <input type="hidden" id="formName" name="form_name">
                         <input type="hidden" id="formQuestion" name="question">
                         <input type="hidden" id="type" name="type">
-                        
-                        <!-- Display Question -->
+
                         <div class="mb-3">
                             <label class="form-label">Question</label>
                             <p id="questionText"></p>
                             <input type="hidden" id="question" class="form-control" readonly>
                         </div>
 
-                        <!-- Answer Input -->
                         <div class="mb-3">
                             <label class="form-label">Your Answer</label>
                             <textarea id="answer" name="answer" class="form-control" rows="3" required></textarea>
                         </div>
 
-                        <!-- Submit Button -->
+                        <div class="mb-3 startDate">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" id="start_date" name="start_date" class="form-control">
+                        </div>
+
+                        <div class="mb-3 endDate">
+                            <label class="form-label">End Date</label>
+                            <input type="date" id="end_date" name="end_date" class="form-control">
+                        </div>
+
                         <button type="submit" class="btn btn-primary w-100">Save Changes</button>
                     </form>
                 </div>
@@ -667,6 +716,28 @@
             </div>
         </div>
     </div>
+    <!-- Plan Preview Modal -->
+    <div class="modal" id="planPreviewModal" tabindex="-1" aria-labelledby="planPreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Customise your meals before you PRINT plan.</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="plan-preview-body">
+                    <div class="text-center">Loading preview...</div>
+                </div>
+                <div class="modal-footer">
+                    <form id="downloadPdfForm" method="POST" target="_blank">
+                        @csrf
+                        <input type="hidden" name="user_id" value="">
+                        <button type="submit" class="btn btn-success">Download PDF</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
@@ -745,6 +816,56 @@
         .catch(error => console.error('Error:', error));
     }
 
+    // Handle opening the edit modal and populating the fields with data
+    $('#editHeightModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var question = button.data('question'); // Extract the question (e.g., "Height (cm):")
+        var answer = button.data('answer'); // Extract the answer (Height value)
+        var formName = button.data('form-name'); // Extract the answer (Height value)
+        
+        var modal = $(this);
+        modal.find('#heightQuestion').val(question); // Populate the question field (read-only)
+        modal.find('#heightAnswer').val(answer); // Populate the height value in the input field
+        modal.find('#formName').val(formName); // Populate the height value in the input field
+    });
+
+    // Handle form submission to update the height
+    $('#editHeightForm').on('submit', function (e) {
+        e.preventDefault();
+        
+        var updatedHeight = $('#heightAnswer').val(); // Get the new height value
+        
+        // AJAX request to update the height (You should change the URL and method as per your requirement)
+        let formData = {
+            form_name: $('#formName').val(),
+            question: $('#heightQuestion').val(),
+            answer: $('#heightAnswer').val(),
+            type: "height",
+            user_id: userId,
+            _token: '{{ csrf_token() }}' // CSRF protection
+        };
+
+        $.ajax({
+            url: "{{ route('front.sample-plan-details-update') }}", // Laravel route to handle updates
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    alert('Updated successfully!');
+                    $('#editModal').modal('hide'); // Close modal
+                    location.reload(); // Refresh page to reflect changes (or update UI dynamically)
+                } else {
+                    alert('Error updating!');
+                }
+            },
+            error: function(xhr) {
+                alert('Something went wrong!');
+            }
+        });
+    
+    });
+
+
     $(document).on('change', '.meal-item-checkbox', function () {
         let allItems = $('.meal-item-checkbox'); // All item checkboxes
         let allChecked = allItems.length === allItems.filter(':checked').length; // Check if all are selected
@@ -803,7 +924,7 @@
                                                 </div>
                                                 <span>${item.title}</span>
                                             </div>
-                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty ? item.pivot.item_qty : 'N/A'}</span>
+                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty} ${item.pivot.item_qty_unit}</span>
                                         </li>`;
                     });
 
@@ -869,11 +990,17 @@
         // Generate the HTML for the aggregated list by category
         let printListContent = '';
         for (let [category, items] of Object.entries(aggregatedItems)) {
-            printListContent += `<h6>${category}</h6><ul>`;
+            printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;  // Removed dot style
             for (let [itemName, data] of Object.entries(items)) {
-                printListContent += `<li>${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}</li>`;
+                printListContent += `
+                    <li style="margin: 0;">
+                        <!-- Right tick mark icon added here -->
+                        <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>  
+                        ${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}
+                    </li>
+                `;
             }
-            printListContent += `</ul></br>`;
+            printListContent += `</ul><br/>`;
         }
 
         // Populate the print modal with the aggregated list
@@ -885,9 +1012,9 @@
         const content = $('#ShippingPrintModal .print-list').html();
         // Create a container to format the content for PDF
         const pdfContainer = `
-            <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto;">
+            <div style="font-family: Arial, sans-serif; padding: 10px; max-width: 600px; margin: auto;">
                 <h3 style="text-align: center;">Shopping List</h3><hr>
-                <ul style="list-style: number; padding: 0;">
+                <ul style="list-style: none; padding: 0;">
                     ${content}
                 </ul>
             </div>
@@ -906,12 +1033,27 @@
 
     $(document).ready(function () {
         $(".print-plan-btn").click(function () {
-            let planId = $(this).data('plan-id');
-            let userId = $(this).data('user-id');
-            //alert(planId);
-            window.open("{{ route('plans.generatePdf', ':id') }}".replace(':id', planId)+ `?user_id=${userId}`, '_blank');
+            const planId = $(this).data("plan-id");
+            const userId = $(this).data("user-id");
+            // Set form action for download button
+            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
 
-        })
+            $("#downloadPdfForm input[name='user_id']").val(userId);
+
+            // Load the preview content from the controller
+            $("#plan-preview-body").html('<div class="text-center">Loading preview...</div>');
+            fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
+            .then(res => res.text())
+                .then(html => {
+                    console.log(html);
+                    $("#plan-preview-body").html(html);
+                    $("#planPreviewModal").modal("show"); // ✅ show modal
+                    console.log('modal show');
+                })
+                .catch(err => {
+                    $("#plan-preview-body").html('<div class="text-danger">Error loading preview</div>');
+                });
+        });
     });
 
     $(document).ready(function () {
@@ -926,9 +1068,16 @@
                 url: "{{ route('front.fetch.weight.data') }}", // Endpoint to fetch existing data
                 method: 'GET',
                 data: { user_id: userId },
-                success: function (data) {
+                success: function (response) {
+                    let data = response.latest_weight_tracking
+                    let weightString = response.current_weight.trim();
+                    // Check raw value and individual characters
+                    let cleaned = weightString.replace(/"/g, ''); // Remove double quotes
+                    let weight = parseFloat(cleaned);
+
                     // Prefill fields with fetched data or set defaults
-                    $('#weight').val(data?.weight || ''); // Prefill current weight
+                    $('#weight').val(data?.weight || weight);
+                
                     $('#weightGoal').val(data?.weight_goal || ''); // Prefill weight goal
                     $('#date').val(data?.date || date); // Prefill date or default to today
                 },
@@ -961,7 +1110,7 @@
                     if (response.success) {
                         $('#WeightModal').modal('hide');
                         $('#WeightGraphModal').modal('show');
-                        loadChart('3M', userId); // Default to 3 months
+                        loadChart('1W', userId); // Default to 3 months
                     }
                 },
                 error: function (xhr) {
@@ -1428,6 +1577,8 @@
                 question: $('#question').val(),
                 answer: $('#answer').val(),
                 type: $('#type').val(),
+                start_date: $("#start_date").val(),
+                end_date: $("#end_date").val(),
                 user_id: userId,
                 _token: '{{ csrf_token() }}' // CSRF protection
             };

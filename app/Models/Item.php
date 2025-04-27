@@ -25,8 +25,8 @@ class Item extends Model
 
     public function swapItems()
     {
-        return $this->belongsToMany(Item::class, 'item_swaps', 'item_id', 'swap_item_id')
-        ->wherePivot('item_id', '<>', \DB::raw('swap_item_id'));
+        return $this->belongsToMany(Item::class, 'item_swaps', 'item_id', 'swap_item_id');
+        // ->wherePivot('item_id', '<>', \DB::raw('swap_item_id'));
     }
 
     public function items()

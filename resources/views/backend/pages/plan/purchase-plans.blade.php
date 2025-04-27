@@ -48,6 +48,7 @@
                                 <th>Phone</th>
                                 <!-- <th>Status</th>
                                 <th>Discount Code</th> -->
+                                <!-- <th>Status</th> -->
                                 <th>Purchase Date</th>
                                 <th>Action</th>
                             </tr>
@@ -71,6 +72,7 @@
                                 <td>{{ $payment->phone }}</td>
                                 <!-- <td>{{ $payment->status }}</td>
                                 <td>{{ $payment->coupon_code }}</td> -->
+                                <!-- <td>{{ $payment->status }}</td> -->
                                 <td>{{ formatDate($payment->created_at) }}</td>
                                 <td>
                                     <!-- Action link to show payment details -->

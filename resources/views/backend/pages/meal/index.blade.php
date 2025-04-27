@@ -32,7 +32,21 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">
+
+                    <!-- 🔹 Category Filter Dropdown -->
+                    <div class="row mb-3">
+                        <div class="col-md-12 d-flex justify-content-end align-items-center">
+                            <label for="categoryFilter" class="form-label mb-0 me-2">Filter by Category:</label>
+                            <select id="categoryFilter" class="form-control w-auto">
+                                <option value="">All Categories</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <table id="mealDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -40,56 +54,113 @@
                                 <th>Image</th>
                                 <th>Total Protein (g)</th>
                                 <th>Total Carbs (g)</th>
+                                <th>Total Fat (g)</th>
                                 <th>Description</th>
                                 <!-- <th>Created At</th> -->
                                 <th>Categories</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($meals as $meal)
-                            <tr>
-                                <td><strong>{{ $meal->id }}</strong></td>
-                                <td>{{ $meal->title }}</td>
-                                <td>
-                                    @if($meal->image)
-                                    <img src="{{ asset('private/public/storage/' . $meal->image) }}" alt="" width="50">
-                                    @else
-                                    <span class="text-muted">No Image</span>
-                                    @endif
-                                </td>
-                                <td>{{ $meal->totalProtein() }}</td>
-                                <td>{{ $meal->totalCarbs() }}</td>
-                                <td>{{ Str::limit($meal->description, 50, '...') }}</td>
-                                <td>
-                                    @if($meal->categories->isNotEmpty())
-                                        {{ $meal->categories->pluck('title')->implode(', ') }}
-                                    @else
-                                        <span class="text-muted">No Subcategories</span>
-                                    @endif
-                                </td> 
-                                <!-- <td>{{ $meal->created_at->format('Y-m-d') }}</td> -->
-                                <td>
-                                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                        <a href="{{ route('admin.meals.edit', $meal->id) }}" class="btn btn-outline-secondary">
-                                            <i class="icofont-edit text-success"></i>
-                                        </a>
-                                        <form action="{{ route('admin.meals.destroy', $meal->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-secondary">
-                                                <i class="icofont-ui-delete text-danger"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
+                        <tbody></tbody> <!-- Empty initially, data will be loaded via AJAX -->
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script src="{!! backendAssets('dist/assets/bundles/dataTables.bundle.js') !!}"></script>
+@endpush
+@push('custom_scripts')
+<script>
+    $(document).ready(function () {
+        let dataTable = $('#mealDataTable').DataTable({
+        processing: true,
+        serverSide: false, // Use true if handling data via Laravel DataTables
+        ajax: {
+            url: "{{ route('admin.meals.index') }}",
+                type: "GET",
+                dataSrc: function (json) {
+                    return json.meals;
+                }
+            },
+            columns: [
+                { data: "id" },
+                { data: "title" },
+                {
+                    data: "image",
+                    render: function (data) {
+                        return data
+                            ? `<img src="{{ asset('private/public/storage/') }}/${data}" width="50"/>`
+                            : '<span class="text-muted">No Image</span>';
+                    }
+                },
+                {
+                    data: "items",
+                    render: function (data) {
+                        let totalProtein = data.reduce((sum, item) => sum + parseFloat(item.protein || 0), 0);
+                        return totalProtein.toFixed(2) + " g";
+                    }
+                },
+                {
+                    data: "items",
+                    render: function (data) {
+                        let totalCarbs = data.reduce((sum, item) => sum + parseFloat(item.carbs || 0), 0);
+                        return totalCarbs.toFixed(2) + " g";
+                    }
+                },
+                {
+                    data: "items",
+                    render: function (data) {
+                        let totalfats = data.reduce((sum, item) => sum + parseFloat(item.fat || 0), 0);
+                        return totalfats.toFixed(2) + " g";
+                    }
+                },
+                {
+                    data: "description",
+                    render: function (data) {
+                        return data ? data.substring(0, 50) + "..." : "";
+                    }
+                },
+                {
+                    data: "categories",
+                    render: function (data) {
+                        return data.map(category => category.title).join(", ") || "No Category";
+                    }
+                },
+                {
+                    data: "id",
+                    render: function (data) {
+                        let editUrl = `{{ url('admin/meals/${data}/edit') }}`;
+                        let deleteUrl = `{{ url('admin/meals/${data}') }}`;
+
+                        return `
+                            <div class="btn-group">
+                                <a href="${editUrl}" class="btn btn-outline-secondary">
+                                    <i class="icofont-edit text-success"></i>
+                                </a>
+                                <form action="${deleteUrl}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-outline-secondary">
+                                        <i class="icofont-ui-delete text-danger"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        `;
+                    }
+                }
+            ]
+        });
+
+        // 🔹 Reload DataTable when category is changed
+        $('#categoryFilter').on('change', function () {
+            let selectedCategory = $(this).val();
+            dataTable.ajax.url("{{ route('admin.meals.index') }}?category_id=" + selectedCategory).load();
+        });
+    });
+
+</script>
+@endpush
 @endsection
