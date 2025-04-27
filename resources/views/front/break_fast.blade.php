@@ -27,10 +27,15 @@
                     <ul class="">
                         @if($userPlan->userMealTimes->count())
                             @foreach($userPlan->userMealTimes as $plan)
-                            <li class="m-2" style="">
-                                <a class="@if($userMealTime->mealTime->id == $plan->mealTime->id) active btn btn-outline-primary btn-sm  text-white @else bg-white btn btn-outline-secondary text-black  @endif" aria-current="page" href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" >{{ $plan->mealTime->title }}</a>
-                            </li>
-                            
+                                @if($plan->userMeals && $plan->userMeals->count())
+                                    <li class="m-2">
+                                        <a class="@if($userMealTime->mealTime->id == $plan->mealTime->id) active btn btn-outline-primary btn-sm text-white @else bg-white btn btn-outline-secondary text-black @endif"
+                                        aria-current="page"
+                                        href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}">
+                                            {{ $plan->mealTime->title }}
+                                        </a>
+                                    </li>
+                                @endif
                             @endforeach
                         @endif
                     </ul>

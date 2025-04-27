@@ -26,8 +26,8 @@
                             <div class="h-100">
                                 <div class="all-login-input">
                                     <div class="bg-white px-sm-5 px-3" style="padding-top: 1px; padding-bottom: 1px;">
-                                        <div class="text-center mt-4">
-                                            <img src="{{ frontAssets('images/main-logo.png') }}" alt="logo" width="150">
+                                        <div class="text-center mb-3 p-3" style="background: #3B3B3B;">
+                                            <img src="{{ frontAssets('images/logo.svg') }}" alt="logo" width="300">
                                         </div>
                                         <div class="text-center">
                                             <h2 class="mb-4">Reset Password</h2>

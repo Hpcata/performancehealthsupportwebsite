@@ -157,6 +157,7 @@
                                             <label>Please list any other medical conditions</label>
                                             <input type="hidden" name="questions[medical_history][medical_conditions]" value="Please list any other medical conditions">
                                             <input type="text" class="form-control" name="ans[medical_history][medical_conditions]" placeholder="Short-answer text">
+                                            <small class="text-muted">Use commas to separate multiple conditions. Ex: Diabetes, Asthma.</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
@@ -164,6 +165,7 @@
                                             <label>Provide details of any prescription medications (if taking any):</label>
                                             <input type="hidden" name="questions[medical_history][prescription_meds]" value="Provide details of any prescription medications (if taking any):">
                                             <input type="text" class="form-control" name="ans[medical_history][prescription_meds]" placeholder="Long-answer text">
+                                            <small class="text-muted">Separate medications with commas. Ex: Metformin, Lisinopril.</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
@@ -171,6 +173,8 @@
                                             <label>List any dietary vitamins or supplements you are <strong>currently</strong> taking (if any):</label>
                                             <input type="hidden" name="questions[medical_history][vitamins_supplements]" value="List any dietary vitamins or supplements you are currently taking (if any):">
                                             <input type="text" class="form-control" name="ans[medical_history][vitamins_supplements]" placeholder="Long-answer text">
+                                            <small class="text-muted">(Use commas to separate items. Ex: Vitamin C, Magnesium.)</small>
+
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
@@ -2266,7 +2270,7 @@
             const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
             const trackingDetailsInput = trackingDetailsField.querySelector('input');
 
-            if (inputValue === 'no') {
+            if (inputValue === 'no' || inputValue === 'No' || inputValue === 'None' || inputValue === 'none' || inputValue === 'N/A') {
                 trackingDetailsField.style.display = 'none';
                 trackingDetailsInput.disabled = true;
                 trackingDetailsInput.removeAttribute('required');

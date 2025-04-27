@@ -342,8 +342,9 @@ class FrontController extends Controller
                 foreach ($prePlan->prePlanDetails as $detail) {
                     $intakeDetails[$detail->question] = [
                         'answer'     => trim($detail->answer, '"'),
-                        'start_date' => $detail->start_date ?? null,
+                        'start_date' => $detail->start_date ?? $detail->created_at->format('Y-m-d'),
                         'end_date'   => $detail->end_date ?? null,
+
                     ];
                 }
             }
@@ -357,7 +358,7 @@ class FrontController extends Controller
                 foreach ($prePlan->prePlanDetails as $detail) {
                     $intakeDetails[$detail->question] = [
                         'answer'     => trim($detail->answer, '"'),
-                        'start_date' => $detail->start_date ?? null,
+                        'start_date' => $detail->start_date ?? $detail->created_at->format('Y-m-d'),
                         'end_date'   => $detail->end_date ?? null,
                     ];
                 }
@@ -392,7 +393,7 @@ class FrontController extends Controller
                 }
             }
 
-            // dd($medicalHistories);
+            // dd($intakeDetails);
             return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan'));
         }
     }
@@ -495,7 +496,7 @@ class FrontController extends Controller
     {
         // Assuming you have a relationship `items` defined on the `Meal` model
         
-        $meals = \App\Models\Meal::with('items','items.category')->get();
+        $meals = \App\Models\Meal::with('items','items.category','userMealItems')->get();
 
         // $userPlans = UserPlan::with('plan', 
         //     'userMealTimes.userCategories.userMeals.userItems')
@@ -1029,7 +1030,8 @@ class FrontController extends Controller
         $type = $request->type;
         $startDate = $request->start_date;
         $endDate = $request->end_date;
-        // dd($userId);
+        $mainAns = $request->main_ans;
+        // dd(json_encode($answer));
         $payment = Payment::where('user_id', $userId)->first();
         $prePlan = \App\Models\UserPrePlan::where('payment_id', $payment->id)
         ->where('user_id', $userId)

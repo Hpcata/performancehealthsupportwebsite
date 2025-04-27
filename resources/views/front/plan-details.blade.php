@@ -55,19 +55,21 @@
                 <div class="row g-4">
                 @if($userPlan->userMealTimes->count())
                     @foreach($userPlan->userMealTimes as $plan)
-                    <div class="col-md-3">
-                        <div class="nutrition-plan-box">
-                            <figure>
-                                @if($plan->mealTime->image)
-                                    <img src="{{ asset('private/public/storage/' . $plan->mealTime->image) }}" alt="{{ $plan->mealTime->title }}">
-                                @endif
-                            </figure>
-                            <h5>{{ $plan->mealTime->title }} </h5>
-                            <p></p>
-                            <a href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" class="btn btn-primary view-details-btn" data-category-id="{{ $plan->mealTime->id }}" 
-                                data-category-name="{{ $plan->mealTime->title }}">View Details</a>
+                        @if($plan->userMeals && $plan->userMeals->count())
+                        <div class="col-md-3">
+                            <div class="nutrition-plan-box">
+                                <figure>
+                                    @if($plan->mealTime->image)
+                                        <img src="{{ asset('storage/' . $plan->mealTime->image) }}" alt="{{ $plan->mealTime->title }}">
+                                    @endif
+                                </figure>
+                                <h5>{{ $plan->mealTime->title }} </h5>
+                                <p></p>
+                                <a href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" class="btn btn-primary view-details-btn" data-category-id="{{ $plan->mealTime->id }}" 
+                                    data-category-name="{{ $plan->mealTime->title }}">View Details</a>
+                            </div>
                         </div>
-                    </div>
+                        @endif
                     @endforeach
                 @endif
                 </div>

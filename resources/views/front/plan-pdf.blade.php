@@ -141,29 +141,30 @@
         <div class="meal-plan">
 
             @foreach ($userPlan->userMealTimes as $userMealTime)
-                <div class="meal-time">
-                    <h3>{{ $userMealTime->mealTime->title }}</h3>
-
-                    <table>
-                        <tbody>
-                            @foreach ($userMealTime->userCategories as $userCategory)
-                                @foreach ($userCategory->userMeals as $userMeal)
-                                    <tr>
-                                        <td><img src="{{ url('private/public/storage/'.$userMeal->meal->image) }}" alt="Meal image"></td>
-                                        <td>{{ $userMeal->meal->title }}</td>
-                                        <td>
-                                            <ul>
-                                                @foreach ($userMeal->userItems as $userItem)
-                                                    <li>{{ ($userItem->item) ? $userItem->item->title : '' }} | QTY : {{ $userItem->item->qty ?? '0' }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </td>
-                                    </tr>
+                @if($userMealTime->userMeals && $userMealTime->userMeals->count())
+                    <div class="meal-time">
+                        <h3>{{ $userMealTime->mealTime->title }}</h3>
+                        <table>
+                            <tbody>
+                                @foreach ($userMealTime->userCategories as $userCategory)
+                                    @foreach ($userCategory->userMeals as $userMeal)
+                                        <tr>
+                                            <td><img src="{{ url('storage/'.$userMeal->meal->image) }}" alt="Meal image"></td>
+                                            <td>{{ $userMeal->meal->title }}</td>
+                                            <td>
+                                                <ul>
+                                                    @foreach ($userMeal->userItems as $userItem)
+                                                        <li>{{ ($userItem->item) ? $userItem->item->title : '' }} | QTY : {{ $userItem->item->qty ?? '0' }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             @endforeach
         </div>
     @endforeach

@@ -199,25 +199,66 @@
                                         <div class="position-relative">
                                             @php
                                                 $vitaminDetails = $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? null;
-                                                $vitaminStartDate = isset($vitaminDetails['start_date']) ? \Carbon\Carbon::parse($vitaminDetails['start_date'])->format('d-m-Y') : 'N/A';
-                                                $vitaminEndDate = isset($vitaminDetails['end_date']) ? \Carbon\Carbon::parse($vitaminDetails['end_date'])->format('d-m-Y') : 'N/A';
+                                                $vitaminAnswer = $vitaminDetails['answer'] ?? null;
+                                                $vitaminStartDate = isset($vitaminDetails['start_date']) ? \Carbon\Carbon::parse($vitaminDetails['start_date'])->format('d-m-Y') : null;
+                                                $vitaminEndDate = isset($vitaminDetails['end_date']) ? \Carbon\Carbon::parse($vitaminDetails['end_date'])->format('d-m-Y') : null;
+
+                                                $supplements = $vitaminAnswer ? explode(',', $vitaminAnswer) : [];
 
                                                 $medications = $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? null;
-                                                $medicationStartDate = isset($medications['start_date']) ? \Carbon\Carbon::parse($medications['start_date'])->format('d-m-Y') : 'N/A';
-                                                $medicationEndDate = isset($medications['end_date']) ? \Carbon\Carbon::parse($medications['end_date'])->format('d-m-Y') : 'N/A';
+                                                $medicationStartDate = isset($medications['start_date']) ? \Carbon\Carbon::parse($medications['start_date'])->format('d-m-Y') : null;
+                                                $medicationEndDate = isset($medications['end_date']) ? \Carbon\Carbon::parse($medications['end_date'])->format('d-m-Y') : null;
                                             @endphp
 
-                                            <strong>Supplements: </strong>
-                                            <p>{{ $vitaminDetails['answer'] ?? 'Nill' }}</p>
-                                            @if($vitaminStartDate != 'N/A')
-                                            <small>Duration: {{ $vitaminStartDate }} to {{ $vitaminEndDate }}</small>
+                                            <strong>Supplements:</strong>
+
+                                            @if (!empty($supplements))
+                                                <ul class="ps-3 mt-3">
+                                                    @foreach ($supplements as $item)
+                                                        @php $item = trim($item); @endphp
+                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                            <span>{{ $item }}</span>
+                                                            <div class="btn-list ms-2">
+                                                                <!-- <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                                    data-form-name="medical_history"
+                                                                    data-question="List any dietary vitamins or supplements you are currently taking (if any):"
+                                                                    data-answer="{{ $item }}"
+                                                                    data-main-ans="{{ $vitaminAnswer }}"
+                                                                    data-type="supplement-edit"
+                                                                    data-startdate="{{ $vitaminStartDate }}"
+                                                                    data-enddate="{{ $vitaminEndDate }}" >
+                                                                    <i class="fas fa-pen"></i>
+                                                                </button> -->
+                                                            </div>
+                                                        </li>
+                                                        @if ($vitaminStartDate)
+                                                            <small>
+                                                                Duration: {{ $vitaminStartDate }}
+                                                                @if ($vitaminEndDate)
+                                                                    to {{ $vitaminEndDate }}
+                                                                @endif
+                                                            </small>
+                                                        @endif
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p>Nill</p>
                                             @endif
-                                            <div class="btn-list">
+
+                                            <div class="btn-list mt-2">
                                                 <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $vitaminDetails['answer'] ?? 'Nill' }}" data-type="supplement">
+                                                    data-form-name="medical_history"
+                                                    data-question="List any dietary vitamins or supplements you are currently taking (if any):"
+                                                    data-answer="{{ $vitaminAnswer ?? 'Nill' }}"
+                                                    data-type="supplement">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
-                                                <button class="btn btn-light edit-icon view-past-history" title="View Past Supplements" data-form-name="medical_history" data-question="List any dietary vitamins or supplements you are currently taking (if any):" data-answer="{{ $vitaminDetails['answer'] ?? 'Nill' }}" data-type="supplement">
+                                                <button class="btn btn-light edit-icon view-past-history"
+                                                    title="View Past Supplements"
+                                                    data-form-name="medical_history"
+                                                    data-question="List any dietary vitamins or supplements you are currently taking (if any):"
+                                                    data-answer="{{ $vitaminAnswer ?? 'Nill' }}"
+                                                    data-type="supplement">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -227,8 +268,13 @@
                                         <div class="position-relative">
                                             <strong>Medications:</strong>
                                             <p>{{ $medications['answer'] ?? 'Nill' }} </p>
-                                            @if($medicationStartDate != 'N/A')
-                                            <small>Duration: {{ $medicationStartDate }} to {{ $medicationEndDate }}</small>
+                                            @if ($medicationStartDate)
+                                                <small>
+                                                    Duration: {{ $medicationStartDate }}
+                                                    @if ($medicationEndDate)
+                                                        to {{ $medicationEndDate }}
+                                                    @endif
+                                                </small>
                                             @endif
                                             <div class="btn-list">
                                                 <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
@@ -243,6 +289,7 @@
                                            
                                         </div>
                                     </div>
+                                    
                             {{--    <div class="px-4 py-3 border-bottom">
                                         <strong>Favourite Food:</strong>
                                         <p>{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}
@@ -583,6 +630,7 @@
                         <input type="hidden" id="formName" name="form_name">
                         <input type="hidden" id="formQuestion" name="question">
                         <input type="hidden" id="type" name="type">
+                        <input type="hidden" id="mainAns" name="mainAns">
 
                         <div class="mb-3">
                             <label class="form-label">Question</label>
@@ -1580,6 +1628,7 @@
                 start_date: $("#start_date").val(),
                 end_date: $("#end_date").val(),
                 user_id: userId,
+                main_ans: $('#mainAns'),
                 _token: '{{ csrf_token() }}' // CSRF protection
             };
 
@@ -1602,6 +1651,40 @@
             });
         });
 
+        $('.edit-supliment-details').on('click', function () {
+            // Set modal title
+            $('#editModalLabel').text('Edit Supplements');
+
+            // Get data attributes from button
+            const formName = $(this).data('form-name');
+            const question = $(this).data('question');
+            const type = $(this).data('type');
+            const answer = $(this).data('answer');
+            const startDate = $(this).data('startdate');
+            const endDate = $(this).data('enddate');
+
+            // Set values in modal
+            $('#formName').val(formName);
+            $('#formQuestion').val(question);
+            $('#type').val(type);
+            $('#mainAns').val(answer);
+
+            $('#questionText').text(question);
+            $('#question').val(question);
+
+            $('#answer').val(answer);
+            $('#start_date').val(formatDateForInput(startDate));
+            $('#end_date').val(formatDateForInput(endDate));
+        });
+
+        // Helper function: converts DD-MM-YYYY → YYYY-MM-DD
+        function formatDateForInput(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-'); // ["24", "04", "2025"]
+            if (parts.length !== 3) return '';
+            return `${parts[2]}-${parts[1]}-${parts[0]}`; // "2025-04-24"
+        }
+        
         $('.add-sport').on('click', function() {
             $('#editSportModal').modal('show');
         });
@@ -1723,51 +1806,78 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         const ctx = document.getElementById('trainingChart').getContext('2d');
-        let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null); 
-        // Define X-axis labels (Days per week)
-        let daysLabels = ["1-2", "3-4", "5+"];
 
-        // Define intensity levels (Y-axis)
-        let intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
+        let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
+        console.log(response);
 
-        // Define colors for each intensity
-        let colors = {
+        // X-axis: frequency groups
+        const daysLabels = ["1-2", "3-4", "5+"];
+
+        // Mapping range to max day
+        const dayHeights = {
+            "1-2": 2,
+            "3-4": 4,
+            "5+": 5
+        };
+
+        const intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
+
+        const colors = {
             "Low intensity": "rgba(75, 192, 192, 0.6)",
             "Moderate intensity": "rgba(255, 159, 64, 0.6)",
             "High intensity": "rgba(255, 99, 132, 0.6)"
         };
 
-        // Initialize dataset for each intensity level
-        let datasets = intensityLabels.map(intensity => ({
-            label: intensity,
-            data: daysLabels.map(day => response[day]?.includes(intensity) ? 1 : 0), // If selected, show 1, else 0
-            backgroundColor: colors[intensity],
-            borderColor: colors[intensity].replace('0.6', '1'), // Darker border color
-            borderWidth: 1
-        }));
+        const borderColors = {
+            "Low intensity": "rgba(75, 192, 192, 1)",
+            "Moderate intensity": "rgba(255, 159, 64, 1)",
+            "High intensity": "rgba(255, 99, 132, 1)"
+        };
 
-        // Create the stacked vertical bar chart
+        let datasets = intensityLabels.map((intensity, index) => {
+            return {
+                label: intensity,
+                data: daysLabels.map(label => response[label]?.includes(intensity) ? dayHeights[label] : 0),
+                backgroundColor: colors[intensity],
+                borderColor: borderColors[intensity],
+                borderWidth: 1,
+                barPercentage: 0.8,
+                categoryPercentage: 0.8
+            };
+        });
+
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: daysLabels, // X-axis: Days per week
-                datasets: datasets  // Y-axis: Intensity levels stacked
+                labels: daysLabels,
+                datasets: datasets
             },
             options: {
                 responsive: true,
                 plugins: {
                     tooltip: { enabled: true },
-                    legend: { display: true } // Show legend for intensity types
+                    legend: { display: true }
                 },
                 scales: {
                     x: {
-                        title: { display: true, text: "Days per Week" },
-                        stacked: true // Enable stacking
+                        title: {
+                            display: true,
+                            text: 'Training Frequency (Days per Week)'
+                        },
+                        stacked: false // Show bars side-by-side
                     },
                     y: {
-                        title: { display: true, text: "Training Intensity" },
-                        stacked: true, // Enable stacking
-                        ticks: { stepSize: 1, beginAtZero: true }
+                        title: {
+                            display: true,
+                            text: 'Days'
+                        },
+                        stacked: false,
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        },
+                        suggestedMax: 6
                     }
                 }
             }
