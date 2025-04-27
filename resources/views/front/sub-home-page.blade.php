@@ -2291,7 +2291,7 @@
                                                 </svg>
                                             </span>
                                             <h4 class="text-center mt-4">Supplement Nutrition Knowledge</h4>
-                                            <h3 class="text-center mt-1 text-black supplement-percentage d-none">40%</h3>
+                                            <h3 class="text-center mt-1 text-black supplement-percentage d-none"></h3>
 
                                             <div class="text-center mt-4">
                                                 <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="supplement">
@@ -2342,7 +2342,7 @@
                                                 </svg>
                                             </span>
                                             <h4 class="text-center mt-4">Sports Nutrition Knowledge</h4>
-                                            <h3 class="text-center mt-1 text-black sports-percentage d-none">40%</h3>
+                                            <h3 class="text-center mt-1 text-black sports-percentage d-none"></h3>
 
                                             <div class="text-center mt-4">
                                                 <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="sport">
@@ -3246,7 +3246,7 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        alert("Something went wrong. Please try again.");
+                        alert("Error: ", error);
                         console.log("Error submitting form:", error);
                         $('.supplement-plan .unlock-result').removeClass('d-none');
                         $('.sport-plan .unlock-result').removeClass('d-none');
@@ -3639,7 +3639,6 @@
                                     // Close the modal
                                     $('#purchaseModal').modal('hide');
                                     $('#submit').prop('disabled', false);
-
                                     var user_id = response.data.user_id;
                                     var payment_id = response.data.payment_id;
 
@@ -3649,6 +3648,8 @@
                                         setTimeout(function () {
                                             window.location.href = redirectUrlWithUserId;
                                         }, 3000);
+                                    }else {
+                                        alert('Error: Redirect url not found.');
                                     }
                                 } else {
                                     // Show error message for failed payment
@@ -3661,10 +3662,8 @@
                                         }, 500); // 1000ms for smooth scrolling
                                     } else {
                                         alert('Payment failed: ' + response.message);
-                                        $('#submit').prop('disabled', false);
                                     }
                                     $('#submit').prop('disabled', false);
-
                                 }
                             },
                             error: function (xhr, status, error) {
@@ -3737,7 +3736,7 @@
                                                     window.location.href = redirectUrlWithUserId;
                                                 }, 3000); // 3-second delay before redirecting (adjust as needed)
                                             }
-
+                                            $('#submit').prop('disabled', true);
                                         } else {
                                             // Show error message for failed payment
                                             if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
@@ -3749,7 +3748,6 @@
                                                 }, 500); // 1000ms for smooth scrolling
                                             } else {
                                                 alert('Payment failed: ' + response.message);
-                                                $('#submit').prop('disabled', false);
                                             }
                                             $('#submit').prop('disabled', false);
 
@@ -3903,6 +3901,7 @@
                         }
                     })
                     .catch(error => {
+                        alert('Error: ', error);
                         console.error('Error:', error);
                         document.getElementById('promo-message').textContent = 'Something went wrong. Please try again.';
                         document.getElementById('promo-message').classList.add('text-danger');

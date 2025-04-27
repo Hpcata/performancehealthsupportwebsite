@@ -591,22 +591,22 @@ class FrontController extends Controller
     {
         switch ($category) {
             case 'nutrition-form': // Score out of 35
-                if ($score <= 16) return 'Needs work';
-                if ($score <= 22) return 'Pretty ordinary';
-                if ($score <= 26) return 'Not bad';
+                if ($score <= 19) return 'Needs work';
+                if ($score <= 25) return 'Pretty ordinary';
+                if ($score <= 31) return 'Not bad';
                 // if ($score <= 35) return 'Good';
                 return 'Good';
 
             case 'sports-form': // Score out of 9
-                if ($score <= 3) return 'Untapped potential';
-                if ($score <= 5) return 'Much to learn';
-                if ($score <= 7) return 'Ok';
+                if ($score <= 4) return 'Untapped potential';
+                if ($score <= 8) return 'Much to learn';
+                if ($score <= 11) return 'Ok';
                 return 'Good start';
 
             case 'supplement-form': // Score out of 6
                 if ($score <= 2) return 'Likely at risk';
-                if ($score <= 4) return 'Pretty ordinary';
-                if ($score <= 6) return 'Decent';
+                if ($score <= 3) return 'Pretty ordinary';
+                if ($score <= 4) return 'Decent';
                 return 'Nice';
 
             default:
@@ -711,6 +711,14 @@ class FrontController extends Controller
     public function fetchWeightData(Request $request)
     {
         $userId = $request->user_id;
+        // Fetch physical measure weight from pre plan details
+        $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+            $query->where('form_slug', 'physical_measures')
+                ->where('question', 'Current body weight (kg) (if known):');
+        }])->where('user_id', $userId)->first();
+
+        // Extract the answer if available
+        $prePlanWeight = optional($physicalMeasures->prePlanDetails->first())->answer ?? null;
 
         $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
             $query->where('form_slug', 'physical_measures')

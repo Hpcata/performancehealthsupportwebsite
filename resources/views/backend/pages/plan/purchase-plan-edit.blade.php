@@ -697,6 +697,7 @@
             });
         });
     });
+    // $('#swapFoods').val(null).trigger('change');
 
     $(document).ready(function() {
         const previouslySelectedMeals = {};
