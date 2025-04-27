@@ -60,7 +60,7 @@
                             <div class="nutrition-plan-box">
                                 <figure>
                                     @if($plan->mealTime->image)
-                                        <img src="{{ asset('storage/' . $plan->mealTime->image) }}" alt="{{ $plan->mealTime->title }}">
+                                        <img src="{{ webAssets('storage/' . $plan->mealTime->image) }}" alt="{{ $plan->mealTime->title }}">
                                     @endif
                                 </figure>
                                 <h5>{{ $plan->mealTime->title }} </h5>

@@ -38,6 +38,11 @@ function frontAssets($path) {
 	return asset($asset);
 }
 
+function webAssets($path) {
+	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/' . $path : 'private/public/' . $path;
+	return asset($asset);
+}
+
 function adminAssets($path) {
 	$asset = config('constant.ENVIRONMENT') == 'production' ? 'public/admin/' . $path : 'admin/' . $path;
 	return asset($asset);

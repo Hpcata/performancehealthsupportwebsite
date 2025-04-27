@@ -69,7 +69,7 @@ class PlanController extends Controller
                 'name' => ($userMeal->meal_name) ? $userMeal->meal_name : $userMeal->meal->title,
                 'description' => $userMeal->meal->description,
                 'image' => $userMeal->meal->image
-                    ? asset('storage/' . $userMeal->meal->image)
+                    ? webAssets('storage/' . $userMeal->meal->image)
                     : 'https://via.placeholder.com/300x200?text=No+Image',
             ];
         });
@@ -85,7 +85,7 @@ class PlanController extends Controller
                 'id' => $item->id,
                 'name' => $item->title,
                 'description' => $item->description,
-                'image' => $item->image ? asset('storage/' . $item->image) : 'https://via.placeholder.com/300x200?text=No+Image'
+                'image' => $item->image ? webAssets('storage/' . $item->image) : 'https://via.placeholder.com/300x200?text=No+Image'
             ];
         });
 
@@ -127,7 +127,7 @@ class PlanController extends Controller
                 // 'category' => ($userItem->item->category) ? $userItem->item->category->name : null,
                 'description' => $userItem->item->description,
                 'image' => $userItem->item->image
-                    ? asset('storage/' . $userItem->item->image)
+                    ? webAssets('storage/' . $userItem->item->image)
                     : 'https://via.placeholder.com/300x200?text=No+Image',
                 'swapItems' => $userItem->userSwapItems
             ];
@@ -155,13 +155,13 @@ class PlanController extends Controller
                 'swap_item_carbs' => $swapItem->item->carbs,
                 'swap_item_description' => $swapItem->item->description,
                 'swap_item_image' => $swapItem->item->image
-                    ? asset('storage/' . $swapItem->item->image)
+                    ? webAssets('storage/' . $swapItem->item->image)
                     : 'https://via.placeholder.com/300x200?text=No+Image',
             ];
         });
         $user_item_id = $request->user_item_id;
 
-       $item_image = $userItem->item->image ? asset('storage/' . $userItem->item->image) : 'https://via.placeholder.com/300x200?text=No+Image';
+       $item_image = $userItem->item->image ? webAssets('storage/' . $userItem->item->image) : 'https://via.placeholder.com/300x200?text=No+Image';
         // Return the response
         return response()->json(['item_id' => $userItem->item->id,'item_name' => $userItem->item->title, 'item_image' => $item_image, 'user_item_id' => $user_item_id, 'items' => $items, 'item'=> $userItem->item]);
     }
