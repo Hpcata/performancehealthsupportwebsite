@@ -52,12 +52,14 @@
                                     <td>{{ $coupon->start_date->format('Y-m-d') }}</td>
                                     <td>{{ $coupon->end_date->format('Y-m-d') }}</td>
                                     <td>
-                                        <a href="{{ route('admin.coupons.edit', $coupon) }}" class="btn btn-warning">Edit</a>
-                                        <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
+                                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                            <a href="{{ route('admin.coupons.edit', $coupon) }}" class="btn btn-outline-secondary"><i class="icofont-edit text-success"></i></a>
+                                            <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-outline-secondary"><i class="icofont-ui-delete text-danger"></i></button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

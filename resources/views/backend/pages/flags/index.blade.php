@@ -35,8 +35,8 @@
 	<div class="row align-items-center">
 		<div class="border-0 mb-4">
 			<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-				<h3 class="fw-bold mb-0">Flags List</h3>
-				<a href="{!! route('admin.flags.create') !!}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Flag</a>
+				<h3 class="fw-bold mb-0">Preferences List</h3>
+				<a href="{!! route('admin.flags.create') !!}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Preferences</a>
 			</div>
 		</div>
 	</div> <!-- Row end  -->
@@ -48,9 +48,8 @@
 						<thead>
 							<tr>
                                 <th>#</th>
-                                <th>Flag Name</th>
+                                <th>Preferences Name</th>
                                 <th>Foods</th>
-                                <!-- <th>Icon</th> -->
                                 <th>Actions</th>
 							</tr>
 						</thead>
@@ -92,7 +91,7 @@
 
                                 <!-- Modal for adding foods to the flag -->
                                 <div class="modal" id="foodModal_{{ $flag->id }}" tabindex="-1" aria-labelledby="foodModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-dialog-scrollable">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="foodModalLabel">Select Foods for {{ $flag->name }}</h5>
@@ -251,10 +250,17 @@
 
         return $selected;
     }
+    $(document).ready(function () {
+        $('.modal').on('hidden.bs.modal', function () {
+            // Reset all select fields inside the closed modal
+            $(this).find('select').val([]).trigger('change');
 
-
+            // Optionally reset other inputs, checkboxes, etc.
+            $(this).find('input[type="text"], input[type="number"], textarea').val('');
+            $(this).find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+        });
+    });
 
 </script>
 @endpush
-
 @endsection

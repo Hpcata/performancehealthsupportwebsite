@@ -10,6 +10,10 @@ use App\Models\SubCategory; // Import SubCategory model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Client;
+use App\Models\Tag;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\MealsImport;
+use Psy\Readline\Hoa\Console;
 
 class MealController extends Controller
 {
@@ -51,7 +55,10 @@ class MealController extends Controller
     {
         $categories = Category::all(); // Fetch all subcategories
         $foods = Item::all();
-        return view('backend.pages.meal.form', compact('categories','foods'));
+        $tags = Tag::all();
+        $mealTimes = \App\Models\MealTime::orderBy('order', 'asc')->get();
+
+        return view('backend.pages.meal.form', compact('categories','foods', 'tags', 'mealTimes'));
     }
     
     public function store(Request $request)
@@ -64,6 +71,7 @@ class MealController extends Controller
             'categories.*' => 'exists:categories,id',
             'food_ids' => 'nullable|array',
             'food_ids.*' => 'integer|exists:items,id',
+            'note' => 'nullable'
         ]);
     
         if ($request->hasFile('image')) {
@@ -78,7 +86,8 @@ class MealController extends Controller
         }
     
         $meal = Meal::create($data);
-    
+        $meal->tags()->sync($request->input('tag_ids')); // attaches tags via pivot
+
         $selectedQtyUnitsArray = $request->selected_qty_unit;
     
         if ($request->has('food_ids') && !empty($request->food_ids)) {
@@ -176,6 +185,34 @@ class MealController extends Controller
                                 'selected_qty_unit' => $decodedQtyUnits
                             ]);
                         }
+
+                        // ✅ Create UserItemSwap entries if item has swapItems
+                        if ($item && $item->swapItems()->exists()) {
+                            foreach ($item->swapItems as $swapItem) {
+                                $alreadyExists = \App\Models\UserItemSwap::where('user_id', $userId)
+                                    ->where('meal_id', $meal->id)
+                                    ->where('item_id', $item->id)
+                                    ->where('swap_item_id', $swapItem->id)
+                                    ->exists();
+
+                                if (!$alreadyExists) {
+                                    \App\Models\UserItemSwap::create([
+                                        'user_id' => $userId,
+                                        'meal_id' => $meal->id,
+                                        'item_id' => $item->id,
+                                        'swap_item_id' => $swapItem->id,
+                                        'qty' => $firstQty,
+                                        'unit' => $firstUnit,
+                                        'carbs' => $request->carbs[$index] ?? '0',
+                                        'fat' => $request->fat[$index] ?? '0',
+                                        'protein' => $request->protein[$index] ?? '0',
+                                        'energy' => $request->energy[$index] ?? '0',
+                                        'selected_qty_unit' => $decodedQtyUnits
+                                    ]);
+                                }
+                            }
+                        }
+
                     }
                 }
             }
@@ -184,7 +221,11 @@ class MealController extends Controller
         if ($request->has('categories')) {
             $meal->categories()->sync($request->categories);
         }
-    
+        
+        if ($request->has('meal_times')) {
+            $meal->mealTimes()->sync($request->meal_times); // Sync subcategories
+        }
+        
         return redirect()->route('admin.meals.index')->with('success', 'Meal created successfully.');
     }
     
@@ -193,12 +234,16 @@ class MealController extends Controller
     {
         $categories = Category::all(); // Fetch all subcategories
         $foods = Item::all();
+        $tags = Tag::all();
+        $mealTimes = \App\Models\MealTime::orderBy('order', 'asc')->get();
+
         // $foods = Item::where('is_swiped',0)->get();
-        return view('backend.pages.meal.form', compact('meal', 'categories','foods'));
+        return view('backend.pages.meal.form', compact('meal', 'categories','foods', 'tags', 'mealTimes'));
     }
 
     public function update(Request $request, Meal $meal)
     {
+        // dd($request->all());
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -207,6 +252,7 @@ class MealController extends Controller
             'categories.*' => 'exists:categories,id', // Validate subcategory IDs
             'food_ids' => 'nullable|array', // Ensure food items are selected
             'food_ids.*' => 'integer|exists:items,id', // Ensure food items exist
+            'note' => 'nullable'
             // 'food_qty' => 'nullable|array',
             // 'food_qty.*' => 'string|max:50',
             // 'food_qty_unit' => 'nullable|array',
@@ -235,6 +281,7 @@ class MealController extends Controller
         // }
         
         $meal->update($data);
+        $meal->tags()->sync($request->input('tag_ids')); // attaches tags via pivot
 
         // ✅ Clear old food items before adding new ones to prevent duplicates
         $meal->items()->detach();
@@ -275,6 +322,7 @@ class MealController extends Controller
                     'protein' => $request->protein[$index] ?? '0',
                     'carbs' => $request->carbs[$index] ?? '0',
                     'fat' => $request->fat[$index] ?? '0',
+                    // 'energy' => $request->energy[$index] ?? '0',
                     'selected_qty_unit' => json_encode($decodedQtyUnits ?? []) // ✅ Fixed here
                 ];
             }
@@ -298,8 +346,8 @@ class MealController extends Controller
                         foreach ($request->food_ids as $index => $foodId) {
                             $selectedQtyUnitRaw = $selectedQtyUnitsArray[$index];
                             $decodedQtyUnits = json_decode($selectedQtyUnitRaw, true);
+                            $item = \App\Models\Item::find($foodId); // Adjust namespace if needed
                             if (empty($decodedQtyUnits)) {
-                                $item = \App\Models\Item::find($foodId); // Adjust namespace if needed
                         
                                 if ($item) {
                                     $decodedQtyUnits = [[
@@ -337,6 +385,7 @@ class MealController extends Controller
                                     'carbs' => $request->carbs[$index] ?? '0',
                                     'fat' => $request->fat[$index] ?? '0',
                                     'protein' => $request->protein[$index] ?? '0',
+                                    'energy' => $request->energy[$index] ?? '0',
                                     'is_swiped' => isset($item->is_swiped) ? $item->is_swiped : 0,
                                     'selected_qty_unit' => $decodedQtyUnits
                                 ]);
@@ -345,10 +394,38 @@ class MealController extends Controller
                                 $exists->qty = $firstQty;
                                 $exists->unit = $firstUnit;
                                 $exists->carbs = $request->carbs[$index] ?? '0';
-                                $exists->protein = $request->fat[$index] ?? '0';
-                                $exists->fat = $request->protein[$index] ?? '0';
+                                $exists->protein = $request->protein[$index] ?? '0';
+                                $exists->fat = $request->fat[$index] ?? '0';
+                                $exists->energy = $request->energy[$index] ?? '0';
                                 $exists->selected_qty_unit = $decodedQtyUnits;
                                 $exists->save();
+                            }
+
+                            // ✅ Create UserItemSwap entries if item has swapItems
+                            if ($item && $item->swapItems()->exists()) {
+                                foreach ($item->swapItems as $swapItem) {
+                                    $alreadyExists = \App\Models\UserItemSwap::where('user_id', $userId)
+                                        ->where('meal_id', $meal->id)
+                                        ->where('item_id', $item->id)
+                                        ->where('swap_item_id', $swapItem->id)
+                                        ->exists();
+
+                                    if (!$alreadyExists) {
+                                        \App\Models\UserItemSwap::create([
+                                            'user_id' => $userId,
+                                            'meal_id' => $meal->id,
+                                            'item_id' => $item->id,
+                                            'swap_item_id' => $swapItem->id,
+                                            'qty' => $firstQty,
+                                            'unit' => $firstUnit,
+                                            'carbs' => $request->carbs[$index] ?? '0',
+                                            'fat' => $request->fat[$index] ?? '0',
+                                            'protein' => $request->protein[$index] ?? '0',
+                                            'energy' => $request->energy[$index] ?? '0',
+                                            'selected_qty_unit' => $decodedQtyUnits
+                                        ]);
+                                    }
+                                }
                             }
                         }
                     }
@@ -359,6 +436,10 @@ class MealController extends Controller
 
         if ($request->has('categories')) {
             $meal->categories()->sync($request->categories); // Sync subcategories
+        }
+
+        if ($request->has('meal_times')) {
+            $meal->mealTimes()->sync($request->meal_times); // Sync subcategories
         }
 
         return redirect()->route('admin.meals.index')->with('success', 'Meal updated successfully.');
@@ -621,37 +702,212 @@ class MealController extends Controller
     //     return response()->json(['success' => false, 'message' => 'Meal not found.']);
     // }
 
-    public function generateImage(Request $request)
-    {
-        $prompt = "A beautifully plated dish of {$request->title}, professional food photography, vibrant colors, soft lighting, high resolution, delicious presentation, top-down view, 4K quality.";
+    // public function generateImage(Request $request)
+    // {
+    //     $prompt = "A beautifully plated dish of {$request->title} {$request->description}, professional food photography, vibrant colors, soft lighting, high resolution, delicious presentation, top-down view, 4K quality and close lookout image.";
         
+    //     try {
+    //         $client = new Client();
+    //         $response = $client->post('https://api.openai.com/v1/images/generations', [
+    //             'headers' => [
+    //                 'Authorization' => 'Bearer '. config('services.openai.key'),
+    //                 'Content-Type'  => 'application/json',
+    //             ],
+    //             'json' => [
+    //             'prompt' => $prompt,
+    //             'n' => 1,
+    //             'size' => '512x512',
+    //             ],
+    //         ]);
+
+    //         $data = json_decode($response->getBody(), true);
+
+    //         $imageUrl = $data['data'][0]['url'] ?? null;
+    //         // dd($imageUrl);
+    //         if ($imageUrl) {
+    //             return response()->json(['image_url' => $this->compressAndSaveImage($imageUrl)]);
+    //         }
+
+    //         return response()->json(['error' => 'Image generation failed'], 500);
+    //     } catch (\Exception $e) {
+    //         // dd($e->getMessage());
+    //         \Log::error('OpenAI Image Generation Error: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Image generation error'], 500);
+    //     }
+    // }
+
+     public function generateImage(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'prompt' => 'nullable|string',
+            'existing_image_url' => 'nullable|url',
+        ]);
+
+        $title = $request->input('title');
+        $description = $request->input('description');
+        $prompt = $request->input('prompt', '');
+        $existingImageUrl = $request->input('existing_image_url');
+        if(!$prompt && !$existingImageUrl) {
+            $fullPrompt = "A beautifully plated dish of {$title} {$description}, professional food photography, vibrant colors, soft lighting, high resolution, delicious presentation, top-down view, 4K quality and close lookout image.";
+        }else {
+            $fullPrompt = "Edit this dish of {$title} {$description} to look more gourmet. " . $prompt;
+        }
+
         try {
-            $client = new Client();
+            $client = new \GuzzleHttp\Client();
+
+            if ($existingImageUrl) {
+                // Try to fetch image
+                $imageContents = @file_get_contents($existingImageUrl);
+                if ($imageContents === false) {
+                    return response()->json(['error' => 'Invalid or inaccessible image URL'], 400);
+                }
+
+                // Ensure image is PNG (DALL·E edit requires PNG with transparency)
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mimeType = finfo_buffer($finfo, $imageContents);
+                finfo_close($finfo);
+
+                if ($mimeType !== 'image/png') {
+                    return response()->json(['error' => 'Image must be a PNG with transparency for editing'], 400);
+                }
+
+                // Save to temporary file
+                $tempPath = tempnam(sys_get_temp_dir(), 'edit_image_') . '.png';
+                file_put_contents($tempPath, $imageContents);
+
+                // Prepare multipart data
+                $multipart = [
+                    [
+                        'name'     => 'image',
+                        'contents' => fopen($tempPath, 'r'),
+                        'filename' => 'image.png',
+                        'headers'  => ['Content-Type' => 'image/png']
+                    ],
+                    [
+                        'name'     => 'prompt',
+                        'contents' => $fullPrompt,
+                    ],
+                    [
+                        'name'     => 'n',
+                        'contents' => 1,
+                    ],
+                    [
+                        'name'     => 'size',
+                        'contents' => '512x512',
+                    ],
+                ];
+
+                // Send edit request
+                $response = $client->post('https://api.openai.com/v1/images/edits', [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . config('services.openai.key'),
+                    ],
+                    'multipart' => $multipart,
+                ]);
+
+                unlink($tempPath); // Clean up temp file
+
+            } else {
+                // Generate new image if no existing image provided
+                $response = $client->post('https://api.openai.com/v1/images/generations', [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . config('services.openai.key'),
+                        'Content-Type'  => 'application/json',
+                    ],
+                    'json' => [
+                        'prompt' => $fullPrompt,
+                        'n' => 1,
+                        'size' => '512x512',
+                    ],
+                ]);
+            }
+
+            // Parse and return the response
+            $data = json_decode($response->getBody(), true);
+
+            if (!isset($data['data'][0]['url'])) {
+                return response()->json(['error' => 'Image generation failed or no image returned'], 500);
+            }
+
+            return response()->json([
+                'image_url' => $data['data'][0]['url']
+            ]);
+
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            \Log::error('OpenAI API Error: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Failed to connect to OpenAI',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function editImage(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'prompt' => 'nullable|string',
+            'existing_image_url' => 'required|url',
+        ]);
+
+        $title = $request->input('title');
+        $description = $request->input('description');
+        $prompt = $request->input('prompt', '');
+        
+        // Construct a more specific prompt for editing
+        if ($prompt) {
+            // If a specific prompt is provided, use it directly
+            $basePrompt = $prompt;
+        } else {
+            // Otherwise, create a default prompt
+            $basePrompt = "Create a professional food photography of " . $title;
+            if ($description) {
+                $basePrompt .= " that is " . $description;
+            }
+            $basePrompt .= ". Make it look appetizing and professional.";
+        }
+
+        \Log::debug('OpenAI API Prompt: ' . $basePrompt);
+
+        try {
+            $client = new \GuzzleHttp\Client();
+
+            // Use the image generation endpoint instead of editing
             $response = $client->post('https://api.openai.com/v1/images/generations', [
                 'headers' => [
-                    'Authorization' => 'Bearer '. config('services.openai.key'),
+                    'Authorization' => 'Bearer ' . config('services.openai.key'),
                     'Content-Type'  => 'application/json',
                 ],
                 'json' => [
-                'prompt' => $prompt,
-                'n' => 1,
-                'size' => '512x512',
+                    'prompt' => $basePrompt,
+                    'n' => 1,
+                    'size' => '1024x1024',
+                    'response_format' => 'url',
                 ],
             ]);
 
+            // Parse and return the response
             $data = json_decode($response->getBody(), true);
 
-            $imageUrl = $data['data'][0]['url'] ?? null;
-
-            if ($imageUrl) {
-                return response()->json(['image_url' => $this->compressAndSaveImage($imageUrl)]);
+            if (!isset($data['data'][0]['url'])) {
+                return response()->json(['error' => 'Image generation failed or no image returned'], 500);
             }
 
-            return response()->json(['error' => 'Image generation failed'], 500);
+            return response()->json([
+                'image_url' => $data['data'][0]['url']
+            ]);
+
         } catch (\Exception $e) {
-            // dd($e->getMessage());
-            \Log::error('OpenAI Image Generation Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Image generation error'], 500);
+            \Log::error('OpenAI API Error: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Failed to connect to OpenAI',
+                'details' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -669,12 +925,49 @@ class MealController extends Controller
             $fileName = uniqid('meal_') . '.jpg';
             $storagePath = 'storage/meals/' . $fileName;
             file_put_contents(public_path($storagePath), $compressedImage);
+            // dd($storagePath);
 
-            return asset($storagePath);
+            return asset('private/public/'.$storagePath);
         } catch (\Exception $e) {
             // dd($e->getMessage());
             \Log::error('Image Compression Error: ' . $e->getMessage());
             return null;
         }
+    }
+
+    public function viewImport()
+    {
+        return view('backend.pages.meal.import-form');
+
+    }
+
+    public function import(Request $request)
+    {
+        // Validate the uploaded file
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx,csv|max:2048', // Adjust size limit as needed
+        ]);
+
+        // Get the file from the request
+        $file = $request->file('file');
+        
+        // Load the file using Maatwebsite Excel
+        Excel::load($file, function($reader) {
+            // Iterate through each row in the file
+            $reader->each(function($row) {
+                // dd($row);
+                // Import data into the 'meals' table (you can modify this to fit your data structure)
+                Meal::create([
+                    'title' => $row['breakfast'],           // Assuming 'breakfast' column in your sheet
+                    'description' => $row['description'],    // Assuming 'description' column in your sheet
+                    'note' => $row['notes___variations'],   // Assuming 'notes___variations' column in your sheet
+                    'user_id' => auth()->id(),              // You can link to the logged-in user
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            });
+        });
+
+        return back()->with('success', 'Meals imported successfully!');
     }
 }

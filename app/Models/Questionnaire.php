@@ -13,5 +13,9 @@ class Questionnaire extends Model
     protected $table = 'questionnaire';
 
     // Specify the fillable fields to prevent mass assignment vulnerability
-    protected $fillable = ['user_id', 'name', 'email', 'phone', 'question', 'answer'];
+    protected $fillable = ['user_id', 'name', 'email', 'phone', 'question', 'answer', 'nutrition_score', 'nutrition_feedback', 'sports_score','sports_feedback', 'supplement_score', 'supplement_feedback'];
+
+    protected $casts = [
+        'answer' => 'array',
+    ];
 }

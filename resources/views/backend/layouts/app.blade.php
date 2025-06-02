@@ -219,10 +219,10 @@
 	
 	<script>
 		$('#myDataTable')
-			.addClass('nowrap')
 			.DataTable({
 				responsive: true,
 				stateSave: true,
+				pageLength: 100,
 				columnDefs: [{
 					targets: [-1, -3],
 				}]

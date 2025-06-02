@@ -12076,7 +12076,7 @@ h4,
 h5,
 .h5,
 .logo {
-  font-family: "Merriweather", serif;
+  font-family: "sans-serif", Helvetica, Arial;
   font-weight: 700;
   color: #3b3b3b;
 }
@@ -14158,7 +14158,7 @@ span.border-heading:after {
 }
 
 .side-phrase{
-  font-family: "Merriweather", serif;;
+   font-family: "sans-serif", Helvetica, Arial;
    position: absolute;
    transform: rotate(-90deg);
    font-size: 76px;
@@ -14540,14 +14540,14 @@ span.border-heading:after {
 .spot-search .btn { font-weight: 700; font-size: 16px; height: 50px; line-height: 50px; padding: 0 1.2rem 0; display: flex; align-items: center; width: 100%; justify-content: center; border-radius: 50px; }
 .spot-search .btn svg { width: 18px; position: relative; fill: #fff; margin: 0 0.5rem 0 0; top: 0; } 
 .select-middle { border-left: 1px solid #bfbfbf; }
-.spot-plan-box { border: 1px solid #C8C8C8; border-radius: 1rem; padding: 10px; height: 100%; display: flex; flex-direction: column; }
+.spot-plan-box { border: 1px solid #C8C8C8; border-radius: 1rem; padding: 10px; height: 90%; display: flex; flex-direction: column; }
 .spot-plan-box h5 { text-align: center; font-size: 1rem; padding: 1rem; line-height: 1.25; margin: 0; }
 .spot-plan-img-box { position: relative; border: 1px solid #C8C8C8; border-radius: 0.5rem; overflow: hidden; margin-bottom: 10px; margin-top: auto; }
 .spot-plan-img-box figure { margin: 0; font-size: 0; }
 .spot-plan-img-box figure img { width: 100%; height: 400px; object-fit: cover; object-position: center center; }
 .spot-plan-info-box { position: absolute; z-index: 2; left: 0; top: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); padding: 1rem; font-size: 0.9rem; overflow: auto; transition: 0.35s all; transform: translateY(40%); opacity: 0; visibility: hidden; }
 .spot-plan-box .btn { width: 100%; font-size: 1rem; }
-.spot-plan-info-box h6 { font-family: "Merriweather", serif; font-weight: 700; font-size: 1.1rem; }
+.spot-plan-info-box h6 { font-family: "sans-serif", Helvetica, Arial; font-weight: 700; font-size: 1.1rem; }
 .spot-plan-info-box ul { padding-left: 1.1rem; margin-bottom: 0.4rem; }
 .spot-plan-box:hover .spot-plan-info-box { opacity: 1; visibility: visible; transform: translateY(0); }
 
@@ -14644,7 +14644,7 @@ span.border-heading:after {
 
 .category-item-swap.category-swap-list-box figure { margin-right: 0; }
 .category-item-swap .category-swap-btn { padding-left: 0; }
-.category-swap-list-box figcaption { font-family: "Merriweather", serif; font-weight: 600; text-align: center; letter-spacing: 0.03rem; }
+.category-swap-list-box figcaption { font-family: "sans-serif", Helvetica, Arial; font-weight: 600; text-align: center; letter-spacing: 0.03rem; }
 .apply-changes-btn.btn { font-size: 15px; padding: 0.5rem 1.3rem 0.7rem; border-radius: 0.6rem; }
 
 
@@ -14673,7 +14673,7 @@ span.border-heading:after {
 .steps-list { display: flex; align-items: center; justify-content: center; }
 .round-tab { height: 40px; width: 40px; border: 1px solid #cccccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; background: #fafafa; transition: 0.35s all; }
 
-.wizard-inner a { display: flex; flex-direction: column; align-items: center; font-family: "Merriweather", serif; font-weight: 700; color: #3b3b3b; transition: 0.35s all; text-align: center; width: 80px; position: relative; z-index: 1; }
+.wizard-inner a { display: flex; flex-direction: column; align-items: center; font-family: "sans-serif", Helvetica, Arial; font-weight: 700; color: #3b3b3b; transition: 0.35s all; text-align: center; width: 80px; position: relative; z-index: 1; }
 .wizard-inner a:after { content: ""; position: absolute; top: 20px; right:0; height: 3px; width: 100%; background: #ccc; transition: 0.35s all; z-index: -1; }
 .wizard-inner a:first-child:after { width: 50%; }
 .wizard-inner a:last-child:after { width: 50%; left: 0; right: auto; }
@@ -14831,7 +14831,7 @@ span.border-heading:after {
 .meter-arrow { position: absolute; left: 27%; bottom: 1.9%; margin: auto; width: 23%; transform-origin: right center; transform: rotate(0deg); transition: 0.5s all; transition-delay: 0.5s; }
 .meter-arrow svg { fill: #1B1C1E; }
 .score-meter-box:after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; width: 40px; height: 40px; background: #fff; border: 10px solid #1B1C1E; margin: auto; border-radius: 50px; }
-.score-meter-text span { font-size: 1.7rem; font-size: 1.2rem; font-family: "Merriweather", serif; font-weight: 600; position: absolute; text-align: center; line-height: 1.25; }
+.score-meter-text span { font-size: 1.7rem; font-size: 1.2rem; font-family: "sans-serif", Helvetica, Arial; font-weight: 600; position: absolute; text-align: center; line-height: 1.25; }
 .score-meter-text { position: absolute; top: 1%; left: 1%; right: 1%; bottom: 1%; margin: auto; }
 .meter-text-01 { left: -3%; bottom: 36%; transform: rotate(-70deg); transform-origin: center center; }
 .meter-text-02 { left: 18%; bottom: 92%; transform: rotate(-26deg); transform-origin: center center; }
@@ -14889,20 +14889,20 @@ span.border-heading:after {
 .title-ico { margin: 0 0.5rem 0 0; min-width: 28px; width: 28px; }
 .title-ico svg { width: 100%; height: auto; }
 .gray-bg { background: #CFD5DD; }
-.talk-expert-box { background: #124E4D; color: #fff; }
-.talk-expert-box figure { max-width: 200px; width: 100%; }
-.talk-expert-box figure img { width: 100%; height: auto; }
-.talk-expert-box h3 { color: #fff; }
-.talk-expert-box .btn.btn-white { color: #124E4D; background: #fff; display: inline-flex; align-items: center; }
-.talk-expert-box .btn.btn-white svg { margin: 0.2rem 0 0 0.4rem; }
+.card-body .talk-expert-box { background: #124E4D; color: #fff; }
+.card-body .talk-expert-box figure { max-width: 200px; width: 100%; }
+.card-body .talk-expert-box figure img { width: 100%; height: auto; }
+.card-body .talk-expert-box h3 { color: #fff; }
+.card-body .talk-expert-box .btn.btn-white { color: #124E4D; background: #fff; display: inline-flex; align-items: center; }
+.card-body .talk-expert-box .btn.btn-white svg { margin: 0.2rem 0 0 0.4rem; }
 
-.talk-expert-box h6 { font-family: "Merriweather", serif; font-weight: 500; font-size: 0.875rem; margin: 0 0 1rem 0; } 
-.talk-expert-box h6 span { color: #2CCC6B; }
-.kerry-info-box { display: flex; align-items: center; background: #fff; border-radius: 1rem; padding: 1rem; margin-top: 1.2rem; max-width: 767px; }
-.kerry-info-box figure { max-width: 100px; border-radius: 50%; overflow: hidden; margin: 0 1rem 0 0; min-width: 70px; }
-.kerry-info { color: #000; }
-.kerry-info h5 { color: #000; }
-.kerry-info p { margin-bottom: 0; }
+.card-body .talk-expert-box h6 { font-family: "sans-serif", Helvetica, Arial; font-weight: 500; font-size: 0.875rem; margin: 0 0 1rem 0; } 
+.card-body .talk-expert-box h6 span { color: #2CCC6B; }
+.card-body .kerry-info-box { display: flex; align-items: center; background: #fff; border-radius: 1rem; padding: 1rem; margin-top: 1.2rem; max-width: 767px; }
+.card-body .kerry-info-box figure { max-width: 100px; border-radius: 50%; overflow: hidden; margin: 0 1rem 0 0; min-width: 70px; }
+.card-body .kerry-info { color: #000; }
+.card-body .kerry-info h5 { color: #000; }
+.card-body .kerry-info p { margin-bottom: 0; }
 
 .category-swap-btn .info-tootlip { left: auto; right: calc(100% + 12px); min-width: 150px; max-width: 150px; font-weight: normal; padding: 0.5rem; font-size: 12px; text-align: left; }
 .category-swap-btn { position: relative; }
@@ -14965,9 +14965,9 @@ div#linkedin-carousel .carousel-inner {
 .nutrition-plan-img-box { max-width: 450px; }
 .bg-lighter { background: #F6F8FC; }
 .profile-box { padding-bottom: 1.5rem; position: relative; }
-.profile-box figure { margin: 0; }
-.profile-box figure img { width: 100%; height: auto; border-radius: 10px; }
-.profile-box .card {position: relative;bottom: 0;left: 0;right: 0;z-index: 2;margin: -1.5rem 1rem 1rem 1rem;}
+.profile-box figure { margin: 0; background: #fff; border-radius: 10px; text-align: center; padding-top: 2rem; }
+.profile-box figure img { width: 100%; height: auto; border-radius: 10px; border-radius: 10px; max-width: 240px; margin: 0 auto;}
+.profile-box .card {position: relative;bottom: 0;left: 0;right: 0;z-index: 2;margin: 0;}
 .top-main-box { display: flex; flex-direction: column; }
 .top-main-box .card { border-radius: 10px; }
 .top-main-box ul li { color: #60748D; margin-bottom: 1rem; position: relative;}
@@ -14994,7 +14994,7 @@ div#linkedin-carousel .carousel-inner {
 .sample-img figure { margin: 0; text-align: center; }
 .sample-img figure img { width: auto; height: auto; max-width: 100%; }
 .sample-list .sample-list-box:nth-child(2n+2) .sample-arrow-img { -webkit-transform: scaleX(-1); transform: scaleX(-1); }
-.profile-box > .edit-icon { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 3; }
+.profile-box > .edit-icon { position: absolute; top: 1rem; right: 1rem; z-index: 3; }
 .top-main-box .nutrition-profile-info ul li { display: flex; align-items: center; }
 .top-main-box .nutrition-profile-info ul li .edit-icon { margin-left: auto; }
 .intake-card p { display: flex; align-items: center; }
@@ -15018,23 +15018,23 @@ div#linkedin-carousel .carousel-inner {
 
 /* New Css : 10 Feb 2025
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
-.nutrition-login-images { max-width: 730px; margin: 0 auto; width: 100%; position: relative; padding-left: 20%; }
-.nutrition-login-images img { width: 100%; height: auto; }
-.nutrition-login-big { padding: 2rem; background: #EBEDF5; border-radius: 1rem; }
-.nutrition-login-big figure { position: relative; border-radius: 1rem; overflow: hidden; width: 75%; margin: auto; }
-.nutrition-login-small { position: absolute; left: 0; top: 50%; transform: translateY(-50%); max-width: 50%; overflow: hidden; border-radius: 1rem; box-shadow: 0 0 25px rgba(0,0,0,0.15); }
-.nutrition-login-small figure { margin: 0; }
-.nutrition-login-form { max-width: 490px; width: 100%; }
-.nutrition-login-form .form-control { border-radius: 10px; border-color: #CCCCCC; }
-.nutrition-login-form .form-group { margin-bottom: 0.8rem; } 
-.nutrition-login-form .form-group:last-child { margin-bottom: 0; }
-.nutrition-login-form .form-group label { font-weight: 600; margin: 0 0 0.3rem 0; }
-.nutrition-login-form h3 { margin: 0 0 0.9rem 0; }
-.nutrition-login-book { margin-top: 2rem; }
-.nutrition-login-book .talk-expert-box { border-radius: 1rem; }
-.go-bottom-link { z-index: 2; }
-.nutrition-plan-img figure { padding-top: 100%; z-index: 1; position: relative; }
-.nutrition-plan-img figure img { position: absolute; left: 0; right: 0; top: 0; bottom: 0; height: 100%; object-fit: cover; object-position: center center; width: 100%; }
+.tab-main-box .nutrition-login-images { max-width: 730px; margin: 0 auto; width: 100%; position: relative; padding-left: 20%; }
+.tab-main-box .nutrition-login-images img { width: 100%; height: auto; }
+.tab-main-box .nutrition-login-big { padding: 2rem; background: #EBEDF5; border-radius: 1rem; }
+.tab-main-box .nutrition-login-big figure { position: relative; border-radius: 1rem; overflow: hidden; width: 75%; margin: auto; }
+.tab-main-box .nutrition-login-small { position: absolute; left: 0; top: 50%; transform: translateY(-50%); max-width: 50%; overflow: hidden; border-radius: 1rem; box-shadow: 0 0 25px rgba(0,0,0,0.15); }
+.tab-main-box .nutrition-login-small figure { margin: 0; }
+.tab-main-box .nutrition-login-form { max-width: 490px; width: 100%; }
+.tab-main-box .nutrition-login-form .form-control { border-radius: 10px; border-color: #CCCCCC; }
+.tab-main-box .nutrition-login-form .form-group { margin-bottom: 0.8rem; } 
+.tab-main-box .nutrition-login-form .form-group:last-child { margin-bottom: 0; }
+.tab-main-box .nutrition-login-form .form-group label { font-weight: 600; margin: 0 0 0.3rem 0; }
+.tab-main-box .nutrition-login-form h3 { margin: 0 0 0.9rem 0; }
+.tab-main-box .nutrition-login-book { margin-top: 2rem; }
+.tab-main-box .nutrition-login-book .talk-expert-box { border-radius: 1rem; }
+.tab-main-box .go-bottom-link { z-index: 2; }
+.tab-main-box .nutrition-plan-img figure { padding-top: 100%; z-index: 1; position: relative; }
+.step-tab-box .nutrition-plan-img figure img { position: absolute; left: 0; right: 0; top: 0; bottom: 0; height: 100%; object-fit: cover; object-position: center center; width: 100%; }
 .btn svg {  width: 21px; }
 
 
@@ -15067,4 +15067,36 @@ div#linkedin-carousel .carousel-inner {
 .mealtime-btn-list ul a {
   font-size:1rem;
   padding:0.5rem 1.2rem;
+}
+
+.nutrition-plan-box-overlay {
+    position: absolute;
+    left: 0.7rem;
+    top: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    z-index: 6;
+    background: rgba(255,255,255,0.87);
+    padding: 0.7rem;
+    overflow: auto;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    transition: 0.35s all;
+    transform-origin: center center;
+    transform: scale(0.8);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.nutrition-plan-box:hover .nutrition-plan-box-overlay {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.nutrition-plan-box-text p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
 }

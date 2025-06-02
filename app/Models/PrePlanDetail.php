@@ -19,6 +19,8 @@ class PrePlanDetail extends Model
         'answer',
         'start_date',
         'end_date',
+        'step',
+        'step_fill'
     ];
 
     // Relationship with the UserPrePlan model (belongsTo)

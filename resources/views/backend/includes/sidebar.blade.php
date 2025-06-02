@@ -11,20 +11,10 @@
 		<ul class="menu-list flex-grow-1 mt-3">
 
 			<!-- <li><a class="m-link {!! routeIsActive(backendRoute('dashboard')) !!}" href="{!! backendRoutePut('dashboard') !!}"><i class="icofont-home fs-5"></i> <span>Dashboard</span></a></li> -->
-
-			<li>
-				<a class="m-link {{request()->routeIs('backend.blogs.*') ? 'active' : '' }}" href="{{ route('backend.blogs.index') }}"><i class="icofont-copy fs-5"></i> <span>Blog Page</span></a>
-			</li>
 			<li>
 				<a class="m-link {{request()->routeIs('pages.*') ? 'active' : '' }}" href="{{ route('pages.index') }}">
 					<i class="icofont-page fs-5"></i>
 					<span>Pages</span>
-				</a>
-			</li>
-			<li>
-				<a class="m-link {{request()->routeIs('admin.meal-times.*') ? 'active' : '' }}" href="{{ route('admin.meal-times.index') }}">
-					<i class="icofont-ui-clock fs-5"></i>
-					<span>Meal Times</span>
 				</a>
 			</li>
 			<li>
@@ -34,18 +24,71 @@
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
-					<i class="icofont-chart-flow  fs-5"></i>
-					<span>Categories</span>
+				<a class="m-link {{request()->routeIs('admin.coupons.*') ? 'active' : '' }}" href="{{ route('admin.coupons.index') }}">
+					<i class="icofont-sale-discount fs-5"></i>
+					<span>Coupons</span>
+				</a>
+			</li>
+			<li>
+				<a class="m-link {{request()->routeIs('admin.meal-times.*') ? 'active' : '' }}" href="{{ route('admin.meal-times.index') }}">
+					<i class="icofont-ui-clock fs-5"></i>
+					<span>Category</span>
 				</a>
 			</li>
 			
+			<li>
+				<a class="m-link {{request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
+					<i class="icofont-chart-flow  fs-5"></i>
+					<span>Sub Categories</span>
+				</a>
+			</li>
+			<li>
+				<a class="m-link {{request()->routeIs('admin.items.*') ? 'active' : '' }}" href="{{ route('admin.items.index') }}">
+					<i class="icofont-fruits fs-5"></i>
+					<span>Foods</span>
+				</a>
+			</li>
 			<li>
 				<a class="m-link {{request()->routeIs('admin.meals.*') ? 'active' : '' }}" href="{{ route('admin.meals.index') }}">
 					<i class="icofont-culinary fs-5"></i>
 					<span>Meals</span>
 				</a>
 			</li>
+
+			<li>
+				<a class="m-link {{request()->routeIs('admin.purchase-plans.*') ? 'active' : '' }}" href="{{ route('admin.purchase-plans.index') }}">
+					<i class="icofont-law-document fs-5"></i>
+					<span>Purchase Plans</span>
+				</a>
+			</li>
+
+			<li>
+				<a class="m-link {{request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}">
+					<i class="icofont-culinary fs-5"></i>
+					<span>Tags</span>
+				</a>
+			</li>
+			<li>
+				<a class="m-link {{request()->routeIs('admin.flags.*') ? 'active' : '' }}" href="{{ route('admin.flags.index') }}">
+					<i class="icofont-culinary fs-5"></i>
+					<span>Preferences</span>
+				</a>
+			</li>
+
+			<li>
+				<a class="m-link {{request()->routeIs('backend.blogs.*') ? 'active' : '' }}" href="{{ route('backend.blogs.index') }}"><i class="icofont-copy fs-5"></i> <span>Blog Page</span></a>
+			</li>
+
+			<li>
+				<a class="m-link {{request()->routeIs('testimonials.*') ? 'active' : '' }}" href="{!! route('testimonials.index') !!}"><i class="icofont-users-alt-2 fs-5"></i> <span>Testimonials</span></a>
+			</li>
+			<li>
+				<a class="m-link {{request()->routeIs('organizations.*') ? 'active' : '' }}" href="{!! route('organizations') !!}"><i class="icofont-ui-rating fs-5"></i> <span>Associations</span></a>
+			</li>
+			<li>
+				<a class="m-link {{ request()->routeIs('site-settings', ['slug' => 'general']) ? 'active' : '' }}" href="{{ route('site-settings', ['slug' => 'general']) }}"><i class="icofont-ui-settings fs-5"></i> <span>Site Settings</span></a>
+			</li>
+
 			{{-- <li>
 				
 				<a class="m-link" data-bs-toggle="collapse" data-bs-target="#categories" href="#">
@@ -57,34 +100,6 @@
 					<li><a class="ms-link " href="{{ route('admin.subcategories.index') }}">Sub Categories List</a></li>
 				</ul>
 			</li> --}}
-			<li>
-				<a class="m-link {{request()->routeIs('admin.items.*') ? 'active' : '' }}" href="{{ route('admin.items.index') }}">
-					<i class="icofont-fruits fs-5"></i>
-					<span>Foods</span>
-				</a>
-			</li>
-			<li>
-				<a class="m-link {{request()->routeIs('admin.purchase-plans.*') ? 'active' : '' }}" href="{{ route('admin.purchase-plans.index') }}">
-					<i class="icofont-law-document fs-5"></i>
-					<span>Purchase Plans</span>
-				</a>
-			</li>
-			<li>
-				<a class="m-link {{request()->routeIs('admin.coupons.*') ? 'active' : '' }}" href="{{ route('admin.coupons.index') }}">
-					<i class="icofont-culinary fs-5"></i>
-					<span>Coupons</span>
-				</a>
-			</li>
-			<li>
-				<a class="m-link {{request()->routeIs('testimonials.*') ? 'active' : '' }}" href="{!! route('testimonials.index') !!}"><i class="icofont-users-alt-2 fs-5"></i> <span>Testimonials</span></a>
-			</li>
-			<li><a class="m-link {{request()->routeIs('organizations.*') ? 'active' : '' }}" href="{!! route('organizations') !!}"><i class="icofont-ui-rating fs-5"></i> <span>Associations</span></a>
-			</li>
-			
-
-			<li><a class="m-link {{ request()->routeIs('site-settings', ['slug' => 'general']) ? 'active' : '' }}" href="{{ route('site-settings', ['slug' => 'general']) }}"><i class="icofont-ui-settings fs-5"></i> <span>Site Settings</span></a>
-			</li>
-
 		</ul>
 
 		<!-- Menu: menu collepce btn -->

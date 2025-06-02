@@ -37,6 +37,11 @@
             filter: blur(5px); /* Adjust the blur value */
             transition: filter 0.3s ease-in-out;
         }
+        .purchase-now-btn {
+            white-space: nowrap;
+        }
+        
+
     </style>
     @php
         $showHeader = !empty($user->front_logo) && 
@@ -52,16 +57,44 @@
         }
     @endphp
     <?php // dd($page); ?>
-    @if(session('error'))
+    @if(session('error') == 'Plan not purchased.')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var planModal = new bootstrap.Modal(document.getElementById('planModal'));
+                planModal.show();
+            });
+        </script>
+    @elseif(session('error'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="planModal" tabindex="-1" aria-labelledby="planModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Plan Required</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>You have not purchased any plans.<br>Please purchase a plan.</p>
+
+                    <div class="d-grid justify-content-center gap-3 mt-5">
+                        <a href="{{ route('front.sub-home-page') }}#sport-plans" class="btn btn-primary btn-sm px-4" style="width: 300px;">View Plans</a>
+                        <a href="{{ route('front.index') }}#bookingtypecontainer" class="btn btn-secondary px-4" style="width: 300px;">Book Consultation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->type == 'section-1' && $section->enabled == 1)
-                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(front/images/hero-img-03.jpg);">
+                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(private/public/front/images/hero-img-03.jpg);">
                     <div class="container">
                         <div class="text-center">
                             <h1 class="text-white mt-md-3">Sports Nutrition Plans</h1>
@@ -103,7 +136,7 @@
         @endforeach 
     @endif
 
-    <div class="section find-spot-row" style="background-image: url(front/images/female-athlete.jpg);">
+    <div class="section find-spot-row" style="background-image: url(private/public/front/images/female-athlete.jpg);">
         <div class="container">
             <div class="h1 text-center text-white">Find Your Sport</div>
             <div class="spot-search">
@@ -167,7 +200,7 @@
 
     <div class="section py-5" id="sport-plans">
         <div class="container">
-            <h2 class="heading mb-5 d-flex">
+            <h2 class="heading mb-3 d-flex">
                 <div class="mt-2 h2 text-nowrap">Nutrition plans built by <br> Sports Nutrition expert, <br>
                     Kerry O’Bryan
                 </div>
@@ -225,11 +258,12 @@
                                                     data-plan-id="{{ $plan->id }}" 
                                                     data-plan-name="{{ $plan->name }}" 
                                                     data-plan-price="{{ $plan->price }}">
-                                                Purchase Now: $ {{ $plan->price }}
+                                                <span class="full-text">Purchase Now: $250</span>
+                                                <span class="mobile-text d-none">Purchase Now:<br>$250</span>
                                             </button>
                                         </div>
                                     @endif
-                            </div>
+                            </div>  
                         </div>
                     </div>
                 @endforeach
@@ -497,7 +531,7 @@
                                                     <div class="accordion-item">
                                                         <h2 class="accordion-header" id="flush-headingOne">
                                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#printSummaryPlan" aria-expanded="false" aria-controls="flush-collapseOne">
-                                                        Print Your Summery Plan
+                                                        Print Your Summary Plan
                                                         </button>
                                                         </h2>
                                                         <div id="printSummaryPlan" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
@@ -505,7 +539,7 @@
                                                                 <div class="row align-items-center">
                                                                     <div class="col-md-5 col-lg-4">
                                                                         <div class="sample-content">
-                                                                            <h3>Print Your Summery Plan</h3>
+                                                                            <h3>Print Your Summary Plan</h3>
                                                                             <p>Print Your Plan and get cracking on hitting your goals!</p>
                                                                         </div>
                                                                     </div>
@@ -2508,6 +2542,10 @@
                             <label for="mobile" class="form-label">Mobile:</label>
                             <input type="text" class="form-control" id="mobile" name="mobile" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
@@ -3186,10 +3224,16 @@
             // Handle form submission
             $('#detailsForm').on('submit', function (e) {
                 e.preventDefault(); // Prevent default form submission
-
+                const stepsData = JSON.parse(localStorage.getItem("testStepsData"));
+                const totalAnswerCounts = JSON.parse(localStorage.getItem("totalAnswerCounts"));
+                console.log(stepsData);
+                console.log(totalAnswerCounts);
                 let type = $('#formType').val() // Retrieve stored type (sports or supplement)
                 console.log(type);
                 let email = $('#detailsForm').find('#email').val();
+                let name = $('#detailsForm').find('#name').val();
+                let password = $('#detailsForm').find('#password').val();
+                let mobile = $('#detailsForm').find('#mobile').val();
                 // $('#detailsModal').modal('hide');
                 // $('#TakeTestModel').removeClass('blur-background');
 
@@ -3202,6 +3246,12 @@
                     method: 'POST',
                     data: {
                         email: email,
+                        name: name,
+                        password: password,
+                        phone: mobile,
+                        type: type, // Include the type (sports or supplement)
+                        testData: stepsData,
+                        totalAnswerCounts: totalAnswerCounts,
                         _token: "{{ csrf_token() }}"
                     },
                     success: function (response) {
@@ -3237,6 +3287,9 @@
                             //     $('.supplement-plan .supplement-lock').addClass('d-none');
                             //     $('.supplement-plan .supplement-unlock').removeClass('d-none');
                             // }
+
+                            localStorage.removeItem("testStepsData");
+                            localStorage.removeItem("totalAnswerCounts");
 
                             $('#detailsForm')[0].reset();
                         }else {
@@ -3529,8 +3582,8 @@
     
         // Add this JavaScript code to your page
         $(document).ready(function() {
-            var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
-            // var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
+            // var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+            var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
             var elements = stripe.elements();
             var style = {
                 base: {
@@ -3581,15 +3634,17 @@
                 $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text());
 
                 // Check if the user is authenticated
-                var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }}; // Use Laravel's Auth system to check if the user is authenticated
-                var isAdmin = {{ isset(Auth::user()->is_superadmin) ? 'true' : 'false' }};
+                var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+                var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};
+                console.log('Authenticated and not admin, User ID:', userId);
+
+                var isAdmin = {{ Auth::check() && Auth::user()->is_superadmin == 1 ? 'true' : 'false' }};
                 if (isAuthenticated && !isAdmin) {
                     console.log('Authenticated and not admin');
 
-                    // If authenticated, show only the payment details in the modal and remove registration details
-                    // Hide the registration form fields in the modal
-                    $('#registration-details').hide();  // Assuming you have a div with ID 'registration-details' for registration form
-                    $('#payment-details').show();  // Show the payment form section in the modal
+                   
+                    $('#registration-details').hide();
+                    $('#payment-details').show();
                     @if(Auth::check())
                         $('#name').val('{{ Auth::user()->first_name }} {{Auth::user()->last_name }}');  // Pre-fill name field
                         $('#email').val('{{ Auth::user()->email }}');  // Pre-fill email field
@@ -3933,6 +3988,9 @@
                 },
                 success: function(response) {
                     if (response.success) {
+                        if(response.message == 'Plan not purchased.') {
+                            alert('Please complete your profile.');
+                        }
                         // If login is successful, redirect to the given URL
                         window.location.href = response.redirect_url;
                     }
@@ -3941,7 +3999,11 @@
 
                     // Show error messages for validation errors
                     if (response.message) {
-                        $('#login-error').text(response.message); // Display error message in #login-error div
+                        if(response.message == 'CSRF token mismatch.') {
+                            $('#login-error').text('Your session has expired. Please reload the page and login again.'); 
+                        }else {
+                            $('#login-error').text(response.message); // Display error message in #login-error div
+                        }
                     } else {
                         $('#login-error').text('Something went wrong. Please try again.'); // General error message
                     }

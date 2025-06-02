@@ -9,10 +9,19 @@ class Tag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'icon',
+    ];
 
-    public function blogs()
+    public function items()
     {
-        return $this->belongsToMany(Blog::class);
+        return $this->belongsToMany(Item::class);
     }
+
+    public function meals()
+    {
+        return $this->belongsToMany(Meal::class);
+    }
+
 }

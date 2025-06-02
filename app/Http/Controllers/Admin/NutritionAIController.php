@@ -61,16 +61,21 @@ class NutritionAIController extends Controller
         // Validate input
         $request->validate([
             'title'           => 'required|string',
-            'qty'             => 'required|numeric',
+            'qty'             => 'required',
             'measurement'     => 'required|string',
             'carbs'           => 'nullable|numeric|min:0',
             'protein'         => 'nullable|numeric|min:0',
-            'fat'             => 'nullable|numeric|min:0'
+            'fat'             => 'nullable|numeric|min:0',
+            'energy'          => 'nullable'
         ]);
-    
+        // dd($request->input('qty'));
         // Extract inputs
         $title = $request->input('title');
-        $qty = $request->input('qty');
+        // $qty = $request->input('qty');
+        // $qty = $this->convertFractionToDecimal($qty);
+        $qtyInput = $request->input('qty');
+        $qty = $this->parseFraction($qtyInput);
+
         $measurement = strtolower($request->input('measurement'));
     
         $item = \App\Models\Item::find($request->id);
@@ -82,14 +87,16 @@ class NutritionAIController extends Controller
         $baseCarbs = $item->carbs ?? null;
         $baseProtein = $item->protein ?? null;
         $baseFat = $item->fat ?? null;
-    
+        $baseEnergy = floatval($item->energy ?? null) ?? null;
+        
         // If missing, fetch from AI
         if ($baseCarbs === null || $baseProtein === null || $baseFat === null || $baseCarbs == 0.00 || $baseProtein == 0.00 || $baseFat == 0.00) {
-            $aiNutrition = $this->fetchFromOpenAI($title, 100); // 100g base
+            $aiNutrition = $this->fetchFromOpenAI($title, $serving_size, $serving_size_unit); // 100g base
     
             $baseCarbs = $baseCarbs > 0 ? $baseCarbs : $aiNutrition['carbs'];
             $baseProtein = $baseProtein > 0 ? $baseProtein : $aiNutrition['protein'];
             $baseFat = $baseFat > 0 ? $baseFat : $aiNutrition['fat'];
+            $baseEnergy = $baseEnergy > 0 ? $baseEnergy : $aiNutrition['energy'];
             $serving_size = $serving_size ?: $aiNutrition['serving_size'];
             $serving_size_unit = $serving_size_unit ?: $aiNutrition['serving_size_unit'];
             $servings_per_pack = $servings_per_pack ?: $aiNutrition['servings_per_pack'];
@@ -107,7 +114,15 @@ class NutritionAIController extends Controller
     
         // Convert to grams if unit is non-standard
         $num_servings = $qty / $serving_size;
-    
+
+        // if($measurement == 'g') {
+        //     $num_servings = $qty / $serving_size;
+        // } else {
+        //     $convertedToGrams = $this->getGramsFromTitle($title, $qty, $measurement);
+        //     dd($convertedToGrams);
+        //     $num_servings = $convertedToGrams / $serving_size;
+        // }
+        
         if (in_array($measurement, ["piece", "tablespoon", "teaspoon", "cup", "handful", "dessert spoon", "pouch", "tub", "slice"])) {
             $convertedToGrams = $this->convertToGrams($title, $qty, $measurement);
             $num_servings = $convertedToGrams / $serving_size;
@@ -117,13 +132,15 @@ class NutritionAIController extends Controller
         $scaledCarbs = $baseCarbs * $num_servings;
         $scaledProtein = $baseProtein * $num_servings;
         $scaledFat = $baseFat * $num_servings;
-    
+        $scaledEnergy = $baseEnergy * $num_servings;
+        // dd($scaledCarbs, $scaledProtein, $scaledFat );
         // Return nutrition data
         return response()->json([
             'title' => $title,
             'protein' => round($scaledProtein, 2),
             'carbs' => round($scaledCarbs, 2),
             'fat' => round($scaledFat, 2),
+            'energy' => round($scaledEnergy, 2),
             'converted_qty' => round($num_servings, 2) . " g",
             'measurement' => $measurement,
             'serving_size' => round($serving_size, 2),
@@ -133,6 +150,148 @@ class NutritionAIController extends Controller
         ]);
     }
 
+    private function parseFraction($value)
+    {
+        if (strpos($value, '/') !== false) {
+            [$numerator, $denominator] = explode('/', $value);
+            if (is_numeric($numerator) && is_numeric($denominator) && $denominator != 0) {
+                return floatval($numerator) / floatval($denominator);
+            }
+        }
+        return is_numeric($value) ? floatval($value) : 0;
+    }
+
+    /**
+     * Helper function to convert fractional quantities like 1/2, 1/4 into decimal (float).
+     */
+    private function convertFractionToDecimal($fraction)
+    {
+        if (strpos($fraction, '/') !== false) {
+            // If the qty is a fraction (e.g., 1/2, 3/4, 2/3)
+            list($numerator, $denominator) = explode('/', $fraction);
+            return (float)$numerator / (float)$denominator;
+        }
+        return (float)$fraction; // if it's already a decimal or integer value
+    }
+
+    // public function getGramsFromTitle($title, $qty, $measurement) {
+    //     // Set your OpenAI API key here
+    //     $apiKey = config('services.openai.key');
+    
+    //     // Define the prompt with placeholders for title, quantity, and measurement
+    //     $prompt = <<<EOT
+    //     You are an Australian-accredited dietitian.
+    
+    //     For the food and quantity supplied, calculate and return the equivalent weight in grams (g).
+    
+    //     ────────────────────────
+    //     🇦🇺 Australian Household Benchmarks
+    //     ────────────────────────
+    //     • WEIGHT ↔ VOLUME  
+    //     – 1 cup = 250 mL           – 1 Tbsp = 20 mL  
+    //     – 1 tsp  = 5 mL
+        
+    //     • STANDARD PIECES  
+    //     – Fruit (apple, banana, orange, etc.) = 150 g  
+    //     – Bread roll = 70 g  
+    //     – Bread slice = 35 g  
+    //     – Small yoghurt tub = 170 g ± 20 g  
+    //     – Cheese slice = 25 g  
+    //     – Egg (whole) = 55 g  
+    //     – Handful nuts/seeds = 30 g  
+    //     – Weet‑Bix / breakfast biscuit = 16 g
+    
+    //     • Specific Ingredients Conversions  
+    //     – Milk (1 cup) = 250 g  
+    //     – Flour (1 cup) = 125 g  
+    //     – Sugar (1 cup) = 220 g  
+    //     – Rice (1 cup) = 200 g  
+    //     – Butter (1 cup) = 250 g  
+    //     – Beans (Black beans, etc.) (1 cup) = 200 g  
+    //     – Oil (1 cup) = 230 g  
+    //     – Honey (1 cup) = 340 g
+    //     -Cous Cous (1 cup) = 200 g
+    
+    //     ────────────────────────
+    //     ✅ Instructions
+    //     ────────────────────────
+    //     1. Always output a number representing grams — no text, no JSON, no explanation.
+    //     2. If the food title suggests a specific ingredient (e.g., flour, rice, milk), apply the specific conversion for that ingredient.
+    //     3. If the food item is not found in the specific ingredient list, use the default conversion (for example, 1 cup → 250 g).
+    //     4. If the food is in pieces, estimate using 150 g per piece.
+    //     5. If the quantity is in tablespoons, teaspoons, or dessert spoons, use standard conversions:  
+    //         • Tablespoon → 20 g
+    //         • Teaspoon → 5 g
+    //         • Dessert Spoon → 10 g 
+    //     6. Round to the nearest whole number.
+    //     7. Never return `null`. Always estimate.
+    
+    //     ────────────────────────
+    //     📝 Response Format
+    //     ────────────────────────
+    //     Return only the number.
+    
+    //     Example outputs:  
+    //     `250`
+    //     `80` 
+    //     `150`
+    
+    //     Food: {$title}  
+    //     Quantity: {$qty} {$measurement}
+    // EOT;
+    
+    
+    //     // Prepare data for the API request
+    //     $data = [
+    //         'model' => 'gpt-4',  // Specify the GPT model you're using
+    //         'messages' => [
+    //             ['role' => 'system', 'content' => 'You are an Australian-accredited dietitian.'],
+    //             ['role' => 'user', 'content' => str_replace(['{$title}', '{$qty}', '{$measurement}'], [$title, $qty, $measurement], $prompt)],
+    //         ],
+    //         'temperature' => 0.5,  // Use a moderate level of creativity (adjust as needed)
+    //         'max_tokens' => 100,   // Limit the response to prevent over-fetching
+    //     ];
+    
+    //     // Set the OpenAI API URL
+    //     $url = 'https://api.openai.com/v1/chat/completions';
+    
+    //     // Initialize cURL session
+    //     $ch = curl_init();
+    
+    //     // Set the cURL options
+    //     curl_setopt($ch, CURLOPT_URL, $url);
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //     curl_setopt($ch, CURLOPT_POST, true);
+    //     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    //     curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    //         'Content-Type: application/json',
+    //         'Authorization: Bearer ' . $apiKey
+    //     ]);
+    
+    //     // Execute the cURL request
+    //     $response = curl_exec($ch);
+    
+    //     // Check for errors in the cURL request
+    //     if ($response === false) {
+    //         $error = curl_error($ch);
+    //         curl_close($ch);
+    //         return "Error: $error";
+    //     }
+    
+    //     // Close cURL session
+    //     curl_close($ch);
+    
+    //     // Decode the response from the API
+    //     $responseData = json_decode($response, true);
+    
+    //     // Check if the response contains valid data
+    //     if (isset($responseData['choices'][0]['message']['content'])) {
+    //         $grams = trim($responseData['choices'][0]['message']['content']);
+    //         return (int)$grams;  // Return the grams value as an integer
+    //     } else {
+    //         return 'Error: Invalid response from API';
+    //     }
+    // }
     /**
      * Convert measurement units to grams/ml dynamically
      */
@@ -166,9 +325,12 @@ class NutritionAIController extends Controller
             'pouch' => 250, // Approximate conversion for a pouch
             'tub' => 500, // Approximate conversion for a tub
             'slice' => 80,
+            'loaf' => null,
+            'muffin'=> null,
+            'pouch' => null,
             // Weight conversions
-            'oz' => 28.35, 
-            'lb' => 453.59
+            // 'oz' => 28.35, 
+            // 'lb' => 453.59
         ];
 
         if ($measurement == 'cup') {
@@ -186,21 +348,24 @@ class NutritionAIController extends Controller
     /**
      * Fetch missing macronutrients dynamically using OpenAI API
      */
-    private function fetchFromOpenAI($title, $converted_qty)
+    private function fetchFromOpenAI($title, $qty, $unit)
     {
         try {
+            $qty = $qty ?? 100;
+            $unit = $unit ?? 'grams/milliliters';
             $client = new Client();
             $prompt = "
             You are a nutrition expert. Estimate the macronutrient breakdown for:
             
             **Food Name**: $title  
-            **Quantity**: $converted_qty grams/milliliters  
+            **Quantity**: $qty $unit 
 
             Return a valid JSON response:
             {
                 \"protein\": value_in_grams,
                 \"carbs\": value_in_grams,
                 \"fat\": value_in_grams,
+                \"energy\": value_in_kj,
                 \"serving_size\": value_in_grams,
                 \"serving_size_unit\": \"g\" or \"ml\",
                 \"servings_per_pack\": number_of_servings
@@ -415,19 +580,6 @@ class NutritionAIController extends Controller
         try {
             $client = new Client();
 
-            // All possible units for consistency
-            $units = [
-                "g", "mL", "cup", "teaspoon", "tablespoon", "dessert spoon",
-                "handful", "piece", "pouch", "tub", "slice", "roll", "bowl"
-            ];
-
-            // Remove the input unit from response list
-            $filteredUnits = array_filter($units, function ($unit) use ($measurement) {
-                return strtolower($unit) !== strtolower($measurement);
-            });
-
-            $unitListForPrompt = implode(", ", array_map(fn($u) => "\"$u\"", $filteredUnits));
-
             $prompt = <<<EOT
             You are an Australian‑accredited dietitian.  
             For the food and quantity supplied, provide up to 5 alternative household measurements commonly used in Australia, relevant to the food type.
@@ -466,7 +618,9 @@ class NutritionAIController extends Controller
             Meat/poultry/fish/egg → g, piece, fillet, slice  
             Bread & bakery → g, slice, roll, loaf, muffin  
             Powders/condiments → g, cup, Tbsp, tsp
-
+            Breakfast cereal (Weet-Bix, etc.) → g, piece, biscuit, cup, Tbsp
+            Crackers/bars → g, piece, bar  ❌ *Not Tbsp/tsp*
+            
             ────────────────────────
             🔁 Conversion Rules
             ────────────────────────
@@ -865,4 +1019,51 @@ class NutritionAIController extends Controller
 
     //     return response()->json(['result' => $result]);
     // }
+
+    public function generateDescription(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $title = $request->input('title');
+
+        $prompt = <<<EOD
+            In making healthier food choices, provide a concise educational description (max 20 words) for the food item "$title". Avoid myths, clinical language, and keep it science-backed and useful. Base tone on the Australian Institute of Sport website.
+            EOD;
+
+        $client = new Client();
+
+        try {
+            $response = $client->post('https://api.openai.com/v1/chat/completions', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . config('services.openai.key'),
+                    'Content-Type'  => 'application/json',
+                ],
+                'json' => [
+                    'model'    => 'gpt-4-0613',
+                    'messages' => [
+                        ['role' => 'system', 'content' => 'You are a food nutrition assistant.'],
+                        ['role' => 'user', 'content' => $prompt],
+                    ],
+                    'max_tokens' => 200,
+                    'temperature' => 0.7,
+                ],
+            ]);
+
+            $result = json_decode($response->getBody()->getContents(), true);
+            $description = $result['choices'][0]['message']['content'] ?? '';
+            $description = trim($description, '"');
+
+            return response()->json([
+                'description' => trim($description),
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to generate description.',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

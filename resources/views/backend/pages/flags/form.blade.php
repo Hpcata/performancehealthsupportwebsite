@@ -5,7 +5,7 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">{{ isset($flag) ? 'Edit Flag' : 'Create Flag' }}</h3>
+                <h3 class="fw-bold mb-0">{{ isset($flag) ? 'Edit Preferences' : 'Create Preferences' }}</h3>
                 <div class="col-auto d-flex w-sm-100">
                     <a type="button" href="{{ route('admin.flags.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
                 </div>
@@ -23,7 +23,7 @@
                         <div class="row g-3 align-items-center">
                             <!-- Tag Name Field -->
                             <div class="col-md-12">
-                                <label for="name" class="form-label">Flag Name</label>
+                                <label for="name" class="form-label">Preferences Name</label>
                                 <input type="text" name="name" id="name" class="form-control" value="{{ $flag->name ?? '' }}" placeholder="Enter flag name">
                             </div>
 

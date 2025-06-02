@@ -15,7 +15,7 @@ class MealTimeController extends Controller
      */
     public function index()
     {
-        $mealTimes = MealTime::latest()->paginate(10);
+        $mealTimes = MealTime::orderBy('order', 'asc')->get(); // Fetch all MealTime records ordered by 'order' field
         return view('backend.pages.mealtime.index', compact('mealTimes'));
     }
 
@@ -36,7 +36,8 @@ class MealTimeController extends Controller
             'title' => 'required|string|max:255',
             'time' => 'required',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'order' => 'nullable|integer', // Optional order field
         ];
 
         // Define custom error messages (optional)
@@ -101,6 +102,8 @@ class MealTimeController extends Controller
             'time' => 'required',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'order' => 'nullable|integer', // Optional order field
+
         ];
 
         // Define custom error messages (optional)

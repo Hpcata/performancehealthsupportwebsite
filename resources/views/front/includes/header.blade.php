@@ -31,18 +31,31 @@ $headerData = json_decode($setting['meta_value'], true);
                         </li>
                     @else
                         @if(Auth::check() && Auth::user()->is_superadmin == 0) 
-                        <li class="nav-item">
-                            <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                            <a class="nav-link restriction-page" id="logout" href="#" 
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Logout
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user"></i>
+                                My Account
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li>
+                                    <a class="dropdown-item text-dark p-2" href="{{ route('front.profile', ['id' => Auth::user()->id]) }}">My Profile</a>
+                                </li>
+                                <!-- <li>
+                                    <a class="dropdown-item text-dark p-2" href="">View My Plan</a>
+                                </li> -->
+                                <li>
+                                    <!-- Logout form (hidden) -->
+                                    <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                                    <a class="dropdown-item text-danger p-2" href="#" onclick="handleLogout(event)">
+                                        Logout
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         @elseif($title == 'Login')
                         <li class="nav-item">
-                            <a class="nav-link restriction-page login-btn" id="login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fa-solid fa-user"></i></a>
+                            <a class="nav-link restriction-page " id="login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fa-solid fa-user"></i> Login</a>
                         </li>
                         @else
                         <li class="nav-item">
@@ -158,6 +171,25 @@ $headerData = json_decode($setting['meta_value'], true);
     </div>
 </div>
 <script>
+    function handleLogout(event) {
+        event.preventDefault();
+
+        // Attempt logout via POST
+        try {
+            // Check for existing CSRF token
+            const csrfToken = document.querySelector('input[name="_token"]').value;
+            if (csrfToken) {
+                document.getElementById('logout-form').submit();
+            } else {
+                // If no CSRF token found (likely session expired)
+                window.location.href = "{{ route('front.logout.guest') }}";
+            }
+        } catch (e) {
+            // Fallback in case of any error
+            window.location.href = "{{ route('front.logout.guest') }}";
+        }
+    }
+
     $(document).ready(function() {
         $('#login').on('click', function() {
             $('#loginModal').modal('show');
@@ -183,6 +215,9 @@ $headerData = json_decode($setting['meta_value'], true);
                 },
                 success: function(response) {
                     if (response.success) {
+                        if(response.message == 'Plan not purchased.') {
+                            alert('Please complete your profile.');
+                        }
                         // If login is successful, redirect to the given URL
                         window.location.href = response.redirect_url;
                     }
@@ -191,7 +226,11 @@ $headerData = json_decode($setting['meta_value'], true);
 
                     // Show error messages for validation errors
                     if (response.message) {
-                        $('#login-error').text(response.message); // Display error message in #login-error div
+                        if(response.message == 'CSRF token mismatch.') {
+                            $('#login-error').text('Your session has expired. Please reload the page and login again.'); 
+                        }else {
+                            $('#login-error').text(response.message); // Display error message in #login-error div
+                        }
                     } else {
                         $('#login-error').text('An error occurred. Please try again.'); // General error message
                     }

@@ -25,7 +25,7 @@
 			<div class="w-100 p-3 p-md-5 card border-0 shadow-sm" style="max-width: 32rem;">
 				<!-- Form -->
 				@include(backendView('includes.alert'))
-				<form class="row g-1 p-3 p-md-4" action="{!! backendRoutePut('login') !!}" method='POST'>
+				<form class="row g-1 p-3 p-md-4" action="{{ route('login') }}" method="POST">
 					@csrf
 					<div class="col-12 text-center mb-5">
 						<h1>Sign in</h1>
@@ -33,7 +33,7 @@
 					<div class="col-12">
 						<div class="mb-2">
 							<label class="form-label">Email address</label>
-							<input type="email" name="email" class="form-control form-control-lg" placeholder="name@example.com">
+							<input type="email" name="email" class="form-control form-control-lg" placeholder="name@example.com" required>
 						</div>
 					</div>
 					<div class="col-12">
@@ -44,12 +44,12 @@
 									<a class="text-secondary" href="{!! route('forgot-password') !!}">Forgot Password?</a>
 								</span>
 							</div>
-							<input type="password" name="password" class="form-control form-control-lg" placeholder="***************">
+							<input type="password" name="password" class="form-control form-control-lg" placeholder="***************" required>
 						</div>
 					</div>
 					<div class="col-12">
 						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+							<input class="form-check-input" type="checkbox" name="remember_me" value="1" id="flexCheckDefault">
 							<label class="form-check-label" for="flexCheckDefault">
 								Remember me
 							</label>

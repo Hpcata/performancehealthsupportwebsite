@@ -8,7 +8,7 @@ class Meal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'image', 'user_id'];
+    protected $fillable = ['title', 'description', 'note', 'image', 'user_id'];
 
     protected $table = 'meals';
 
@@ -40,7 +40,7 @@ class Meal extends Model
     public function userMealItems()
     {
         return $this->belongsToMany(Item::class, 'user_item_meals', 'meal_id', 'item_id')
-                    ->withPivot(['qty', 'unit'])
+                    ->withPivot(['qty', 'unit', 'selected_qty_unit'])
                     ->wherePivot('is_swiped',0);
     }
 
@@ -52,5 +52,10 @@ class Meal extends Model
     public function totalCarbs()
     {
         return $this->items()->sum('carbs');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class); // Uses 'item_tag' pivot table by default
     }
 }

@@ -5,7 +5,7 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold">{{ isset($mealTime) ? 'Edit Meal Time' : 'Create Meal Time' }}</h3>
+                <h3 class="fw-bold">{{ isset($mealTime) ? 'Edit Category' : 'Create Category' }}</h3>
                 <div class="col-auto">
                     <a href="{{ route('admin.meal-times.index') }}" class="btn btn-primary">Back</a>
                 </div>
@@ -32,9 +32,17 @@
                     <textarea name="description" class="form-control" rows="4">{{ $mealTime->description ?? '' }}</textarea>
                 </div>
 
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="time" class="form-label">Time</label>
                     <input type="time" name="time" class="form-control" value="{{ $mealTime->time ?? '' }}" required>
+                    @error('time')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div> -->
+
+                <div class="mb-3">
+                    <label for="time" class="form-label">Order</label>
+                    <input type="number" name="order" class="form-control" value="{{ $mealTime->order ?? '' }}" min=0 required>
                     @error('time')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -42,7 +50,10 @@
 
                 <div class="mb-3">
                     <label for="image" class="form-label">Image</label>
-                    <input type="file" name="image" class="form-control">
+                    <small class="form-text text-muted">
+                        Only image files are allowed (.jpg, .jpeg, .png, .gif, .webp). Max size: 2MB.
+                    </small>
+                    <input type="file" name="image" class="form-control" accept="image/*">
                     @if (isset($mealTime) && $mealTime->image)
                         <img src="{{ asset('private/public/storage/' . $mealTime->image) }}" class="img-thumbnail mt-3" style="max-height: 150px;">
                     @endif

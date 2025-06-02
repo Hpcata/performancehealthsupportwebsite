@@ -18,10 +18,10 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next)
     {
         // Check if user is authenticated and has 'is_superadmin' flag set to 1
-        if (Auth::check() && Auth::user()->is_superadmin == 1) {
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->is_superadmin == 1) {
             return $next($request);
         }
-        // Redirect non-superadmin users to the login page
-        return redirect()->route('index');
+        // Redirect non-superadmin users to the login page with an error message
+        return redirect()->route('index')->with('error', 'You do not have permission to access this area.');
     }
 }

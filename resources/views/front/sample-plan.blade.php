@@ -291,7 +291,7 @@
                         </div>
                         <div class="col-md-5 col-lg-4">
                             <div class="sample-content">
-                                <h3>Print Your Summery Plan</h3>
+                                <h3>Print Your Summary Plan</h3>
                                 <p>Print Your Plan and get cracking on hitting your goals!</p>
                             </div>
                         </div>

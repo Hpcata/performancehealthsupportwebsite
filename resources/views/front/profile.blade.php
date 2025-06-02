@@ -3,20 +3,75 @@
 @section('title', 'Profile Page')
 
 @section('content')
+<style>
+    /* Remove border from accordion when opened */
+    .accordion-button {
+        color: inherit !important; /* Prevent orange color */
+        background-color: #fff !important; /* Keep white background */
+        box-shadow: none !important; /* Remove any shadow */
+        border: none !important; /* Remove border */
+    }
+
+    /* Keep title styling consistent on open/close */
+    .accordion-button:not(.collapsed) {
+        color: inherit !important;
+        background-color: #fff !important;
+    }
+
+    /* Optional: Remove blue border highlight on focus */
+    .accordion-button:focus {
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+</style>
     <div class="nutrition-plan-hero bg-white py-4">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 col-lg-5">
                     <div class="nutrition-plan-text">
                         <h1>We Take Care Of Your <span class="text-primary">Health</span></h1>
-                        <p>Make sure your daily nutrition is sufficient. Consult your Nutrition Supplements Products about nutrition with us.</p>
+                        <p>Fuel your performance with daily nutrition that works. Get expert advice and customised plans - without the guess work.</p>
                         <!-- <a href="#" class="btn btn-primary">
-                            <span class="me-1">Get Started</span>
+                            <span class="me-1">Pre Plan Details</span>
                             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
                                 <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </a> -->
+                        @php
+                            $Plan = $plans->first();
+                            $userPlan = \App\Models\UserPlan::where('user_id', $user->id)->where('plan_id', $Plan->id)->where('status', 'active')->first();
+                            $isMailSend = 0;
+                            if($userPlan){
+                                $isMailSend = $userPlan->is_mail_sent ?? 0;
+                            }
+                        @endphp
+                        @if($profileSetUp == 0)
+                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                            class="btn btn-danger btn-outline-danger mt-3 px-3 text-white"
+                            >
+                            Complete Your Profile
+                            </a> 
+                            <p class="mt-3 text-danger">* Finish Questionnaire to Continue</p>
+                        @elseif(($profileSetUp == 1 || $profileSetUp == 0) && $user->email === 'zachtennis7@icloud.com')
+                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                            class="btn btn-danger btn-outline-danger mt-3 px-3 text-white @if($isMailSend) d-none @endif"
+                            >
+                            Complete Your Profile
+                            </a> 
+                            <p class="mt-3 text-danger @if($isMailSend) d-none @endif">* Finish Questionnaire to Continue</p>
+
+                        @endif
+                        @if(isset($user->email) && $user->email === 'chloecovell2010@gmail.com')
+                            <a href="{{ route('front.overseas_travel_nutrition_plan') }}" target="_blank" class="btn btn-primary mt-3 mx-2">
+                                <span class="me-1">Overseas Travel Nutrition Plan</span>
+                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
+                                    <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </a>
+                        @endif
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-5 ms-lg-auto">
@@ -40,7 +95,7 @@
                         </div>
                         <div class="nutrition-plan-img">
                             <figure style="padding-top:80%">
-                                <img src="{!! frontAssets('images/nutrition-supplements.jpg') !!}" alt="images/nutrition-supplements.jpg" alt="">
+                                <img src="{!! frontAssets('images/nutrition-supplements-1.jpg') !!}" alt="images/nutrition-supplements.jpg" alt="">
                             </figure>
                         </div>
                         <div class="nutrition-bottom-box ">
@@ -95,31 +150,31 @@
                     {{-- Profile Section --}}
                     <div class="col-lg-4 col-md-12">
                         <div class="top-main-box h-100">
-                            <h4 class="text-center mb-3">Profile</h4>
-                            <div class="profile-box h-100">
+                            <h4 class="mb-3 text-center">Profile</h4>
+                            <div class="card profile-box h-100 border-0 shadow-sm">
                                 <figure>
                                     <!-- <img src="{{ asset('private/public/front/images/athlete-sport.jpg') }}" alt=""> -->
                                     @if(isset($user->profile_image))
-                                    <img src="{{ asset($user->profile_image) ?? frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
+                                    <img src="{{ webAssets($user->profile_image) ?? frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
                                     @else
                                     <img src="{{ frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
                                     @endif
                                 </figure>
-                                <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editImageModal"
-                                    data-form-name="profile_image" data-question="Profile Image" data-answer="{{ asset('private/public/storage/' . isset($profileDetails) ? $profileDetails['Profile Image'] : '') }}">
+                                <button class="btn btn-light edit-icon edit-profile-image" data-bs-target="#editImageModal"
+                                    data-form-name="profile_image" data-question="Profile Image" data-answer="{{ asset('private/public/storage/' . (isset($profileDetails) ? $profileDetails['Profile Image'] : '')) }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <div class="card border-0 shadow-sm">
+                                <div class="card border-0 shadow-none">
                                     <div class="card-body nutrition-profile-info">
-                                        <h4 class="text-center">
-                                            <span class="mx-auto">{{ $profileDetails['Name'] ?? 'Nill' }}</span>
-                                            <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editNameModal"
+                                        <h4 class="">
+                                            <span class="me-auto">{{ $profileDetails['Name'] ?? 'Nill' }}</span>
+                                            <button class="btn btn-light edit-icon " id="editNameButton"
                                                 data-form-name="profile_name" data-question="Name" data-answer="{{ $profileDetails['Name'] ?? 'Nill' }}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                         </h4>
                                         <ul>
-                                            <li>Sport: N/A
+                                            <li>Sport: {{ !empty($profileDetails['Sport']) ? $profileDetails['Sport'] : 'N/A' }}
                                                 <!-- <button class="btn btn-light edit-icon add-sport">
                                                     <i class="fas fa-edit"></i>
                                                 </button> -->
@@ -132,7 +187,7 @@
                                             </li>
                                             <li><a href="#" class="text-decoration-underline" id="weight-tracking">Track Your Weight</a></li>
                                             <li>Height: {{ !empty($profileDetails['Height (cm):']) ? $profileDetails['Height (cm):'] : 'N/A' }} cm
-                                                <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editHeightModal" data-type="physical_measures"
+                                                <button class="btn btn-light edit-icon" id="editHeightButton" data-type="physical_measures"
                                                     data-form-name="physical_measures" data-question="Height (cm):" data-answer="{{ $profileDetails['Height (cm):'] ?? 'Nill' }}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
@@ -155,26 +210,28 @@
                             <div class="card h-100 border-0 shadow-sm">
                                 <div class="p-4 card-body goal-card">
                                     <ul>
-                                        <li><strong>Nutrition Goals:</strong> {{ $nutritionGoalsDetails['Which of the following nutrition related goals are you interested in working on?'] ?? 'Nill' }}
+                                       
+                                        <li><strong>Nutrition Goals:</strong> {{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}
                                         <div class="btn-list">
                                             <button class="btn btn-light edit-icon add-goal " title="Add Goal" data-type="goal"
-                                                data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of the following nutrition related goals are you interested in working on?'] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                             <button class="btn btn-light edit-icon view-past-goals" title="View Past Goals" data-type="goal"
-                                                data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of the following nutrition related goals are you interested in working on?'] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="Which of these do you want help with?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             </div>
                                         </li>
-                                        <li><strong>Nutrition Challenge:</strong> {{ $nutritionGoalsDetails['What is your biggest nutrition challenge?'] ?? 'Nill' }}
+                                      
+                                        <li><strong>Nutrition Challenge:</strong> {{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}
                                         <div class="btn-list">
                                             <button class="btn btn-light edit-icon add-goal" title="Add Challenge" data-type="challenge"
-                                                data-form-name="nutrition_goals" data-question="What is your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails['What is your biggest nutrition challenge?'] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                             <button class="btn btn-light edit-icon view-past-goals" title="View Past Challenges" data-type="challenge"
-                                                data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of the following nutrition related goals are you interested in working on?'] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
@@ -200,42 +257,84 @@
                                             @php
                                                 $vitaminDetails = $intakeDetails['List any dietary vitamins or supplements you are currently taking (if any):'] ?? null;
                                                 $vitaminAnswer = $vitaminDetails['answer'] ?? null;
-                                                $vitaminStartDate = isset($vitaminDetails['start_date']) ? \Carbon\Carbon::parse($vitaminDetails['start_date'])->format('d-m-Y') : null;
-                                                $vitaminEndDate = isset($vitaminDetails['end_date']) ? \Carbon\Carbon::parse($vitaminDetails['end_date'])->format('d-m-Y') : null;
+                                                $vitaminStartDateRaw = $vitaminDetails['start_date'] ?? '';
+                                                $vitaminEndDateRaw = $vitaminDetails['end_date'] ?? '';
+                                                $vitaminStartDates = array_map('trim', explode(',', $vitaminStartDateRaw));
+                                                $vitaminEndDates = array_map('trim', explode(',', $vitaminEndDateRaw));
+                                                $formatDate = fn($date, $fallback = null) => $date && strtolower($date) !== 'null'
+                                                                ? \Carbon\Carbon::parse($date)->format('d-m-Y')
+                                                                : $fallback;    
+                                                $supplements = $vitaminAnswer ? array_map('trim', explode(',', $vitaminAnswer)) : [];
+                                                $supplementCount = count($supplements);
 
-                                                $supplements = $vitaminAnswer ? explode(',', $vitaminAnswer) : [];
+                                                $vitaminStartDates = array_map('trim', explode(',', $vitaminStartDateRaw));
+                                                $vitaminEndDates = array_map('trim', explode(',', $vitaminEndDateRaw));
 
-                                                $medications = $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? null;
-                                                $medicationStartDate = isset($medications['start_date']) ? \Carbon\Carbon::parse($medications['start_date'])->format('d-m-Y') : null;
-                                                $medicationEndDate = isset($medications['end_date']) ? \Carbon\Carbon::parse($medications['end_date'])->format('d-m-Y') : null;
+                                                // If only one date is provided, apply it to all supplements
+                                                if (count($vitaminStartDates) === 1 && $supplementCount > 1) {
+                                                    $vitaminStartDates = array_fill(0, $supplementCount, $vitaminStartDates[0]);
+                                                }
+                                                if (count($vitaminEndDates) === 1 && $supplementCount > 1) {
+                                                    $vitaminEndDates = array_fill(0, $supplementCount, $vitaminEndDates[0]);
+                                                }
+
+                                                $medicationDetails = $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? null;
+                                                $medicationAnswer = $medicationDetails['answer'] ?? null;
+                                                $medicationStartDateRaw = $medicationDetails['start_date'] ?? '';
+                                                $medicationEndDateRaw = $medicationDetails['end_date'] ?? '';
+
+                                                $medicationStartDates = array_map('trim', explode(',', $medicationStartDateRaw));
+                                                $medicationEndDates = array_map('trim', explode(',', $medicationEndDateRaw));
+
+                                                $formatDate = fn($date, $fallback = null) => $date && strtolower($date) !== 'null'
+                                                    ? \Carbon\Carbon::parse($date)->format('d-m-Y')
+                                                    : $fallback;
+
+                                                $medications = $medicationAnswer ? array_map('trim', explode(',', $medicationAnswer)) : [];
+                                                $medicationCount = count($medications);
+
+                                                // If only one date is provided, apply it to all medications
+                                                if (count($medicationStartDates) === 1 && $medicationCount > 1) {
+                                                    $medicationStartDates = array_fill(0, $medicationCount, $medicationStartDates[0]);
+                                                }
+                                                if (count($medicationEndDates) === 1 && $medicationCount > 1) {
+                                                    $medicationEndDates = array_fill(0, $medicationCount, $medicationEndDates[0]);
+                                                }
                                             @endphp
 
                                             <strong>Supplements:</strong>
 
                                             @if (!empty($supplements))
                                                 <ul class="ps-3 mt-3">
-                                                    @foreach ($supplements as $item)
-                                                        @php $item = trim($item); @endphp
+                                                    @foreach ($supplements as $index => $item)
+                                                        @php
+                                                            $startDate = $vitaminStartDates[$index] ?? null;
+                                                            $endDate = $vitaminEndDates[$index] ?? null;
+
+                                                            $formattedStart = $formatDate($startDate, null);
+                                                            $formattedEnd = $formatDate($endDate, null);
+                                                            $item = trim($item);
+                                                        @endphp
                                                         <li class="d-flex justify-content-between align-items-start mb-1">
                                                             <span>{{ $item }}</span>
-                                                            <div class="btn-list ms-2">
-                                                                <!-- <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                            <div class="btn-list ms-2 mt-1">
+                                                                <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
                                                                     data-form-name="medical_history"
                                                                     data-question="List any dietary vitamins or supplements you are currently taking (if any):"
                                                                     data-answer="{{ $item }}"
                                                                     data-main-ans="{{ $vitaminAnswer }}"
                                                                     data-type="supplement-edit"
-                                                                    data-startdate="{{ $vitaminStartDate }}"
-                                                                    data-enddate="{{ $vitaminEndDate }}" >
+                                                                    data-startdate="{{ $formattedStart }}"
+                                                                    data-enddate="{{ $formattedEnd }}" >
                                                                     <i class="fas fa-pen"></i>
-                                                                </button> -->
+                                                                </button>
                                                             </div>
                                                         </li>
-                                                        @if ($vitaminStartDate)
-                                                            <small>
-                                                                Duration: {{ $vitaminStartDate }}
-                                                                @if ($vitaminEndDate)
-                                                                    to {{ $vitaminEndDate }}
+                                                        @if ($formattedStart)
+                                                            <small class="text-muted">
+                                                                Start: {{ $formattedStart }}
+                                                                @if ($formattedEnd)
+                                                                    to End: {{ $formattedEnd }}
                                                                 @endif
                                                             </small>
                                                         @endif
@@ -266,23 +365,54 @@
                                     </div>
                                     <div class="px-4 py-3 border-bottom">
                                         <div class="position-relative">
-                                            <strong>Medications:</strong>
-                                            <p>{{ $medications['answer'] ?? 'Nill' }} </p>
-                                            @if ($medicationStartDate)
-                                                <small>
-                                                    Duration: {{ $medicationStartDate }}
-                                                    @if ($medicationEndDate)
-                                                        to {{ $medicationEndDate }}
-                                                    @endif
-                                                </small>
+                                        <strong>Medications:</strong>
+                                            @if (!empty($medications))
+                                                <ul class="ps-3 mt-3">
+                                                    @foreach ($medications as $index => $item)
+                                                        @php
+                                                            $startDate = $medicationStartDates[$index] ?? null;
+                                                            $endDate = $medicationEndDates[$index] ?? null;
+
+                                                            $formattedStart = $formatDate($startDate, null);
+                                                            $formattedEnd = $formatDate($endDate, null);
+                                                            $item = trim($item);
+                                                        @endphp
+                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                            <span>{{ $item }}</span>
+                                                            <div class="btn-list ms-2 mt-1">
+                                                                <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
+                                                                    data-form-name="medical_history"
+                                                                    data-question="Provide details of any prescription medications (if taking any):"
+                                                                    data-answer="{{ $item }}"
+                                                                    data-main-ans="{{ $medicationAnswer }}"
+                                                                    data-type="medication-edit"
+                                                                    data-startdate="{{ $formattedStart }}"
+                                                                    data-enddate="{{ $formattedEnd }}">
+                                                                    <i class="fas fa-pen"></i>
+                                                                </button>
+                                                            </div>
+                                                        </li>
+                                                        @if ($formattedStart)
+                                                            <small class="text-muted">
+                                                                Start: {{ $formattedStart }}
+                                                                @if ($formattedEnd)
+                                                                    to End: {{ $formattedEnd }}
+                                                                @endif
+                                                            </small>
+                                                        @endif
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p>Nill</p>
                                             @endif
+
                                             <div class="btn-list">
                                                 <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medications['answer'] ?? 'Nill' }}" data-type="medication">
+                                                    data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medicationAnswer }}" data-type="medication">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
                                                 <button class="btn btn-light edit-icon view-past-history" title="View Past Medications" 
-                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medications['answer'] ?? 'Nill' }}" data-type="medication">
+                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medicationAnswer }}" data-type="medication">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -319,51 +449,194 @@
                             <div class="card-header bg-white">
                                 <h4 class="mt-2">Nutrition plan</h4>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" id="planDiv">
                                 @foreach($plans as $plan)
                                     @if(in_array($plan->id,$purchasedplans))
                                     <?php
                                         $userPlan = \App\Models\UserPlan::where('user_id', $user->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
-                                        $isPlanCreated = $userPlan ? true : false;
+                                        $isMailSend = 0;
+                                        if($userPlan){
+                                            $isMailSend = $userPlan->is_mail_sent ?? 0;
+                                        }
+                                        $paymentMode = \App\Models\Payment::where('user_id', $user->id)->where('plan_id', $plan->id)->first();
+                                        $discount = $paymentMode->status == "discount_applied" ?? null;
+                                        $successPayment = $paymentMode->status == "succeeded" ?? null;
+
                                     ?>
-                                    <div class="card rounded-3 shadow-none overflow-hidden">
-                                        <div class="card-header bg-white">
-                                            <h5 class="mt-2 d-flex align-items-center">
-                                                <figure class="title-ico">
-                                                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M19.8333 8.16732C19.8333 6.62022 19.2188 5.13649 18.1248 4.04253C17.0308 2.94857 15.5471 2.33398 14 2.33398C12.4529 2.33398 10.9692 2.94857 9.87521 4.04253C8.78125 5.13649 8.16667 6.62022 8.16667 8.16732V10M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#344356" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    </svg>
-                                                </figure>
-                                                {{ $plan->name }}
-                                            </h5>
-                                        </div>
-                                        <div class="card-footer border-top-0 bg-white">
-                                            <div class="d-flex flex-wrap">
-                                                <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
-                                                View Plan</a>
-                                                <a href="javascript:void(0);" class="btn btn-primary m-2 print-plan-btn @if(!$isPlanCreated) disabled @endif" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}">Print Plan</a>
-                                                <a href="#" class="btn btn-primary m-2 @if(!$isPlanCreated) disabled @endif" data-bs-toggle="modal" data-bs-target="#ShoppingModal" id="fetchAllMeals">Shopping List</a>
+                                    <div class="accordion mt-3" id="planAccordionPurchased">
+                                        <div class="accordion-item card rounded-3 shadow-none overflow-hidden">
+                                            <h2 class="accordion-header" id="headingPurchased{{ $plan->id }}">
+                                                <button class="accordion-button collapsed d-flex justify-content-between align-items-center bg-white" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapsePurchased{{ $plan->id }}"
+                                                    aria-expanded="false"
+                                                    aria-controls="collapsePurchased{{ $plan->id }}">
+                                                    <span class="d-flex align-items-center">
+                                                        <figure class="title-ico">
+                                                        @if(!$isMailSend)
+                                                            <svg class="score-lock-ico" version="1.1" x="0px" y="0px" viewBox="0 0 800 800" style="enable-background:new 0 0 800 800;" xml:space="preserve">
+                                                            <g>
+                                                                <circle class="st0" cx="400" cy="567.2" r="54.7"></circle>
+                                                                <path class="st0" d="M621.2,326.9V219.3c0-120.2-97.8-217.9-217.9-217.9C279.5,1.3,178.8,102,178.8,225.7v101.2c-59.5,1.2-107.3,49.7-107.3,109.5v255.5c0,60.5,49,109.5,109.5,109.5h438c60.5,0,109.5-49,109.5-109.5V436.4C728.5,376.6,680.6,328.1,621.2,326.9z M255.5,225.7c0-81.5,66.3-147.8,147.8-147.8c77.9,0,141.3,63.4,141.3,141.3v104H255.5V225.7z M655.5,691.8c0,20.2-16.3,36.5-36.5,36.5H181c-20.2,0-36.5-16.3-36.5-36.5V436.4c0-20.2,16.3-36.5,36.5-36.5h42.8h352.3H619c20.2,0,36.5,16.3,36.5,36.5V691.8z"></path>
+                                                            </g>
+                                                            </svg> 
+                                                        @else
+                                                            <svg class="score-unlock-ico" version="1.1" x="0px" y="0px" viewBox="0 0 800 800" style="enable-background:new 0 0 800 800;" xml:space="preserve">
+                                                            <g>
+                                                                <circle cx="400" cy="566.5" r="54.4"></circle>
+                                                                <path d="M617.8,327.5H271.9c-7.3-18-14.2-37.7-19.4-58.2c-9.4-37.5-12.3-74.3-3.9-105.5c7.9-29.6,26.4-56.8,65.8-76.5c39.4-19.8,72.2-18.4,100.6-7.1c30.1,12,57.9,36.2,82.3,66.1c5,6.1,9.8,12.4,14.3,18.7c12.7,17.6,37.6,22.4,54.6,8.9c14.4-11.3,18.1-31.7,7.6-46.7c-6.3-9-13.1-18-20.3-26.8C525.2,65.5,487.9,31,441.9,12.7c-47.7-19-102.1-19.5-160.1,9.7c-58,29.1-90.1,73.1-103.3,122.7c-12.8,47.9-7.3,98.4,3.7,142c3.5,13.9,7.7,27.5,12.2,40.4h-12.1c-60.1,0-108.9,48.8-108.9,108.9v254.1c0,60.1,48.8,108.9,108.9,108.9h435.6c60.1,0,108.9-48.8,108.9-108.9V436.4C726.7,376.2,677.9,327.5,617.8,327.5zM654.1,690.5c0,20-16.3,36.3-36.3,36.3H182.2c-20,0-36.3-16.3-36.3-36.3V436.4c0-20,16.3-36.3,36.3-36.3h435.6c20,0,36.3,16.3,36.3,36.3V690.5z"></path>
+                                                            </g>
+                                                            </svg>
+                                                        @endif
+                                                        </figure>
+                                                        <h5 class="mb-0">{{ $plan->name }}</h5> 
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                            <div id="collapsePurchased{{ $plan->id }}" class="accordion-collapse collapse" aria-labelledby="headingPurchased{{ $plan->id }}" data-bs-parent="#planAccordionPurchased">
+                                                <div class="accordion-body pb-1 pt-2 bg-white" style="color: #000; font-size: 0.9rem;">
+                                                    {!! ($plan->description ?? 'No description available.') !!}
+                                                </div>
+                                            </div>
+                                            <div class="card-footer border-top-0 bg-white">
+                                                <div class="d-flex flex-wrap">
+                                                @if($user->email === 'zachtennis7@icloud.com' && ($profileSetUp == 1 || $profileSetUp == 0))
+                                                    <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}" class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $isMailSend == 1 ? 'd-none' : '' }}">
+                                                    Complete Your Profile
+                                                </a>
+                                                @else
+                                                <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                                                class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $profileSetUp == 1 ? 'd-none' : '' }}">
+                                                    Complete Your Profile
+                                                </a>
+                                                @endif
+                                                @if($discount && !request()->get('admin_view') == 1)
+                                                    @if($isMailSend)
+                                                        <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
+                                                        data-bs-toggle="tooltip">
+                                                        View Plan
+                                                        </a>
+                                                    @else 
+                                                        <a href="javascript:void(0);"
+                                                        class="btn btn-white m-2 buy-plan btn-outline-secondary"
+                                                        data-user-id="{{ $user->id }}"
+                                                        data-plan-id="{{ $plan->id }}"
+                                                        data-plan-price="{{ $plan->price }}"
+                                                        data-plan-name="{{ $plan->name }}">
+                                                            Buy Plan
+                                                        </a>
+                                                    @endif
+                                                @elseif($successPayment && !request()->get('admin_view') == 1)
+                                                    @if($isMailSend)
+                                                        <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
+                                                        data-bs-toggle="tooltip">
+                                                        View Plan
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-secondary m-2 disabled"
+                                                        data-bs-toggle="tooltip" title="Working on your plan :-) Email you when ready."
+                                                        style="pointer-events: auto; cursor: not-allowed;">
+                                                        View Plan
+                                                        </a>
+                                                    @endif
+                                                @elseif(($discount || $successPayment) && request()->get('admin_view') == 1)
+                                                    <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
+                                                    >
+                                                    View Plan
+                                                    </a>
+
+                                                    <!-- <a href="javascript:void(0);"
+                                                    class="btn btn-primary m-2 print-plan-btn "
+                                                    data-user-id="{{ $user->id }}"
+                                                    data-plan-id="{{ $plan->id }}"
+                                                    data-bs-toggle="tooltip"
+                                                    >
+                                                        Print Plan
+                                                    </a>
+
+                                                    <a href="#"
+                                                    class="btn btn-primary m-2 "
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#ShoppingModal"
+                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
+                                                    id="fetchAllMeals"
+                                                    >
+                                                        Shopping List
+                                                    </a> -->
+                                                @endif
+
+                                                    <!-- <a href="javascript:void(0);"
+                                                    class="btn btn-primary m-2 print-plan-btn @if(!$isMailSend) disabled @endif"
+                                                    data-user-id="{{ $user->id }}"
+                                                    data-plan-id="{{ $plan->id }}"
+                                                    style="color:#fff; background-color:#6c757d;"
+                                                    data-bs-toggle="tooltip"
+                                                    @if(!$isMailSend)
+                                                        title="Working on your plan :-) Email you when ready."
+                                                    @endif>
+                                                        Print Plan
+                                                    </a>
+
+                                                    <a href="#"
+                                                    class="btn btn-primary m-2 @if(!$isMailSend) disabled @endif"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#ShoppingModal"
+                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
+                                                    id="fetchAllMeals"
+                                                    style="color:#fff; background-color:#6c757d;"
+                                                    @if(!$isMailSend)
+                                                        title="Working on your plan :-) Email you when ready."
+                                                    @endif>
+                                                        Shopping List
+                                                    </a> -->
                                             </div>
                                         </div>
                                     </div>
                                     @else
-                                    <div class="card rounded-3 shadow-none overflow-hidden mt-3">
-                                        <div class="card-header bg-white">
-                                            <h5 class="mt-2 d-flex align-items-center">
-                                                <figure class="title-ico">
-                                                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M8.16667 12.834V8.16732C8.16667 6.62022 8.78125 5.13649 9.87521 4.04253C10.9692 2.94857 12.4529 2.33398 14 2.33398C15.5471 2.33398 17.0308 2.94857 18.1248 4.04253C19.2188 5.13649 19.8333 6.62022 19.8333 8.16732V12.834M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#344356" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    </svg>                                                
-                                                </figure>
-                                                {{ $plan->name }}
-                                            </h5>
-                                        </div>
-                                        <div class="card-footer gray-bg border-top-0">
-                                            <div class="d-flex flex-wrap">
-                                                <a href="javascript:void(0);" class="btn btn-white m-2 buy-plan-btn" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}" data-plan-price="{{ $plan->price }}" data-plan-name="{{ $plan->name }}">Buy Plan</a>
+                                    <div class="accordion mt-3" id="planAccordion">
+                                        <div class="accordion-item card rounded-3 shadow-none overflow-hidden">
+                                            <h2 class="accordion-header" id="heading{{ $plan->id }}">
+                                                <button class="accordion-button collapsed d-flex justify-content-between align-items-center bg-white" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapse{{ $plan->id }}"
+                                                    aria-expanded="false"
+                                                    aria-controls="collapse{{ $plan->id }}">
+                                                    <span class="d-flex align-items-center">
+                                                        <figure class="title-ico me-2 mb-0">
+                                                            <svg class="score-lock-ico" viewBox="0 0 800 800" width="24" height="24"  xmlns="http://www.w3.org/2000/svg">
+                                                                <circle cx="400" cy="567.2" r="54.7"/>
+                                                                <path d="M621.2,326.9V219.3c0-120.2-97.8-217.9-217.9-217.9C279.5,1.3,178.8,102,178.8,225.7v101.2
+                                                                    c-59.5,1.2-107.3,49.7-107.3,109.5v255.5c0,60.5,49,109.5,109.5,109.5h438c60.5,0,109.5-49,109.5-109.5V436.4
+                                                                    C728.5,376.6,680.6,328.1,621.2,326.9z M255.5,225.7c0-81.5,66.3-147.8,147.8-147.8c77.9,0,141.3,63.4,141.3,141.3v104H255.5V225.7z
+                                                                    M655.5,691.8c0,20.2-16.3,36.5-36.5,36.5H181c-20.2,0-36.5-16.3-36.5-36.5V436.4c0-20.2,16.3-36.5,36.5-36.5h42.8h352.3H619
+                                                                    c20.2,0,36.5,16.3,36.5,36.5V691.8z"/>
+                                                            </svg>
+                                                        </figure>
+                                                        <h5>{{ $plan->name }} (${{ $plan->price }})<h5>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                            <div id="collapse{{ $plan->id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $plan->id }}" data-bs-parent="#planAccordion">
+                                                <div class="accordion-body pb-1 pt-2" style="background-color: #CFD5DD; color: #000; font-size: 0.9rem;">
+                                                    <p class="mb-3">
+                                                        {!! ($plan->description ?? 'No description available.') !!}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer gray-bg border-top-0 d-flex flex-wrap">
+                                                <a href="javascript:void(0);" class="btn btn-white m-2 buy-plan-btn"
+                                                    data-user-id="{{ $user->id }}"
+                                                    data-plan-id="{{ $plan->id }}"
+                                                    data-plan-price="{{ $plan->price }}"
+                                                    data-plan-name="{{ $plan->name }}"
+                                                    data-plan-description="{{ htmlspecialchars(strip_tags($plan->description), ENT_QUOTES) }}">
+                                                    Buy Plan
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
+
+
                                     @endif
                                 @endforeach
                                 <div class="card rounded-3 border-0 shadow-none overflow-hidden mt-3 talk-expert-box">
@@ -429,7 +702,7 @@
     </div>
 
     <!--Edit Profile Image Modal -->
-    <div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
+    <div class="modal" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -456,7 +729,7 @@
     </div>
 
     <!--Edit Profile Name Modal -->
-    <div class="modal fade" id="editNameModal" tabindex="-1" aria-labelledby="editNameModalLabel" aria-hidden="true">
+    <div class="modal" id="editNameModal" tabindex="-1" aria-labelledby="editNameModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -563,7 +836,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -593,7 +866,7 @@
                                     <input type="hidden" class="form-control" id="discount">
                                     <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
                                 </div>
-                                <small id="promo-message" class="form-text "></small>
+                                <small id="promo-message" class=""></small>
                             </div>
                         </div>
                         <div id="payment-details">
@@ -616,7 +889,63 @@
                 </div>
             </div>
         </div>
+    </div> --}}
+
+    <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-3">
+            <div class="modal-header bg-light border-0">
+                <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body px-4">
+                <!-- Plan Description -->
+                <p class="mb-4 text-muted" id="plan-description">
+                    
+                </p>
+
+                <!-- Form -->
+                <form id="payment-form">
+                    <!-- Hidden User Info -->
+                    <div id="registration-details">
+                        <input type="hidden" id="name" value="{{ $user->name }}">
+                        <input type="hidden" id="email" value="{{ $user->email }}">
+                        <input type="hidden" id="phone" value="">
+                    </div>
+                    <!-- Heading -->
+                    <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
+
+                    <!-- Coupon Code -->
+                    <div class="mb-3" id="coupon-details">
+                        <label for="promo-code" class="form-label">Coupon Code</label>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
+                            <input type="hidden" class="form-control" id="discount">
+                            <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
+                        </div>
+                        <small id="promo-message" class="form-text"></small>
+                    </div>
+
+                    <!-- Card Info -->
+                    <div class="mb-3" id="payment-details">
+                        <label for="card-element" class="form-label">Credit or Debit Card</label>
+                        <div id="card-element" class="border rounded p-3 bg-light">
+                            <!-- Stripe card element will go here -->
+                        </div>
+                        <div id="card-errors" class="text-danger mt-2"></div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
+                        Buy Now
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
+</div>
+
 
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -769,7 +1098,7 @@
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Customise your meals before you PRINT plan.</h5>
+                    <h5 class="modal-title"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="plan-preview-body">
@@ -786,9 +1115,68 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="supplementEditModal" tabindex="-1" aria-labelledby="supplementEditModalLabel" aria-hidden="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="supplementEditModalLabel">Edit Supplement Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="suplimentEditForm">
+                        <input type="hidden" id="formName" name="form_name">
+                        <input type="hidden" id="formQuestion" name="question" value="List any dietary vitamins or supplements you are currently taking (if any):">
+                        <input type="hidden" id="type" name="type" value="supplement-edit">
+                        <input type="hidden" id="mainAns" name="mainAns" value="Vitamin A">
+
+                        <div class="mb-3">
+                            <label class="form-label">Supplement Name</label>
+                            <input type="text" id="answer" name="answer" class="form-control" readonly>
+                        </div>
+
+                        <div class="mb-3 startDate">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" id="start_date" name="start_date" class="form-control">
+                        </div>
+
+                        <div class="mb-3 endDate">
+                            <label class="form-label">End Date</label>
+                            <input type="date" id="end_date" name="end_date" class="form-control">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal show" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="icon-container mb-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
+                    <p class="mb-2" id="thankYouMessage">Your payment was successful.</p>
+                    <a href="#" id="planUrlLink" class="btn btn-primary mt-2">Order Your Personalised Plan</a>
+
+                    <!-- <button type="button" class="btn btn-primary w-50 mt-3" data-bs-dismiss="modal">Close</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
@@ -798,6 +1186,12 @@
     const userId = user.id;
     const userPrePlan = @json($userPrePlan);
 
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
     document.getElementById('profileImageInput').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (file) {
@@ -864,18 +1258,42 @@
         .catch(error => console.error('Error:', error));
     }
 
-    // Handle opening the edit modal and populating the fields with data
-    $('#editHeightModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var question = button.data('question'); // Extract the question (e.g., "Height (cm):")
-        var answer = button.data('answer'); // Extract the answer (Height value)
-        var formName = button.data('form-name'); // Extract the answer (Height value)
-        
-        var modal = $(this);
-        modal.find('#heightQuestion').val(question); // Populate the question field (read-only)
-        modal.find('#heightAnswer').val(answer); // Populate the height value in the input field
-        modal.find('#formName').val(formName); // Populate the height value in the input field
+    $(document).ready(function () {
+        // Handle the click event for the "Edit Profile Image" button
+        $('.edit-profile-image').on('click', function () {
+            $('#editImageModal').modal('show'); // Show the modal
+        });
+
+        // Handle the click event for the "Edit Name" button
+        $('#editNameButton').on('click', function () {
+            $('#editNameModal').modal('show'); // Show the modal
+        });
+
+        $('#editHeightButton').on('click', function (event) {
+            var button = $(this); // Button that triggered the modal
+            var question = button.data('question'); // Extract the question (e.g., "Height (cm):")
+            var answer = button.data('answer'); // Extract the answer (Height value)
+            var formName = button.data('form-name'); // Extract the answer (Height value)
+            // Populate the modal fields with the data attributes            
+            $('#editHeightModal').find('#heightQuestion').val(question); // Populate the question field (read-only)
+            $('#editHeightModal').find('#heightAnswer').val(answer); // Populate the height value in the input field
+            $('#editHeightModal').find('#formName').val(formName); // Populate the height value in the input field
+            $('#editHeightModal').modal('show'); // Show the modal
+        });
     });
+
+    // Handle opening the edit modal and populating the fields with data
+    // $('#editHeightModal').on('show.bs.modal', function (event) {
+    //     var button = $(event.relatedTarget); // Button that triggered the modal
+    //     var question = button.data('question'); // Extract the question (e.g., "Height (cm):")
+    //     var answer = button.data('answer'); // Extract the answer (Height value)
+    //     var formName = button.data('form-name'); // Extract the answer (Height value)
+        
+    //     var modal = $(this);
+    //     modal.find('#heightQuestion').val(question); // Populate the question field (read-only)
+    //     modal.find('#heightAnswer').val(answer); // Populate the height value in the input field
+    //     modal.find('#formName').val(formName); // Populate the height value in the input field
+    // });
 
     // Handle form submission to update the height
     $('#editHeightForm').on('submit', function (e) {
@@ -914,6 +1332,14 @@
     });
 
 
+    $(document).off('change', '#selectAllCheckbox').on('change', '#selectAllCheckbox', function () {
+        let isChecked = $(this).is(':checked'); // Check if "Select All" is checked
+
+        // Toggle all checkboxes based on the state of "Select All"
+        $('.meal-item-checkbox').prop('checked', isChecked);
+        $('.meal-checkbox').prop('checked', isChecked);
+    });
+
     $(document).on('change', '.meal-item-checkbox', function () {
         let allItems = $('.meal-item-checkbox'); // All item checkboxes
         let allChecked = allItems.length === allItems.filter(':checked').length; // Check if all are selected
@@ -921,65 +1347,129 @@
         // Set the global "Select All" checkbox state
         $('#selectAllCheckbox').prop('checked', allChecked);
     });
-    
-    $(document).on('change', '#selectAllCheckbox', function () {
-        let isChecked = $(this).is(':checked'); // Check if "Select All" is checked
-
-        // Toggle all checkboxes based on the state of "Select All"
-        $('.meal-item-checkbox').prop('checked', isChecked);
-    });
 
     $(document).on('click', '#fetchAllMeals', function () {
-        // Show loader or clear previous content
         $('#ShoppingModal .modal-body').html('<p>Loading...</p>');
+        $('#ShoppingModal').modal('show');
 
-        // Fetch all meals with items
+        let userPlanId = $(this).data('user-plan-id');
+
         $.ajax({
-            url: '{{ route("front.get.meals.items") }}', // Adjust URL if needed
+            url: '{{ route("front.get.meals.items") }}' + `?user_id=${userId}&user_plan_id=${userPlanId}`,
             method: 'GET',
             success: function (response) {
                 let meals = response.meals;
-                // let selectedItems = response.selectedItems;
-                let modalContent = '';
-                modalContent += `<div class="form-check mb-2">
-                                        <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
-                                        <label class="form-check-label" for="printPlanCheckbox">Select All</label>
-                                    </div>`;                
-                // Loop through each meal
-                meals.forEach(meal => {
-                    modalContent += `<div class="ingredient-list">
-                                        <input type="checkbox" class="form-check-input mt-3 mx-3 meal-checkbox" id="id="mealCheckbox${meal.id}"">
-                                        <h2 class="d-inline-block px-0" style="border-bottom:none;">${meal.title}</h2>
-                                        <hr class="m-0">
-                                        <ul>`;
-                    
-                    // Loop through each item in the meal
-                    meal.items.forEach(item => {
-                        // let isChecked = selectedItems[meal.id] && selectedItems[meal.id].includes(item.id) ? 'checked' : '';
+                let modalContent = `
+                    <div class="form-check mb-2">
+                        <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
+                        <label class="form-check-label" for="selectAllCheckbox">Select All</label>
+                    </div>
+                `;
 
-                        modalContent += `<li>
-                                            <div class="ingredient-info">
-                                                <div class="form-check">
-                                                    <input class="form-check-input meal-item-checkbox" type="checkbox" value="${item.id}" id="Check${item.id}">
-                                                    <input type="hidden" id="category" value="${item.category?.name || ''}">
-                                                    <label class="form-check-label" for="Check${item.id}">
-                                                        <div class="ingredient-img">
-                                                            <figure>
-                                                                <img src="{{ asset('private/public/storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
-                                                            </figure>
-                                                        </div>
-                                                    </label>
-                                                </div>
-                                                <span>${item.title}</span>
-                                            </div>
-                                            <span class="quantity"><strong>QTY:</strong> ${item.pivot.item_qty} ${item.pivot.item_qty_unit}</span>
-                                        </li>`;
+                meals.forEach(meal => {
+                    modalContent += `<h5 class="ms-3">${meal.category_title}</h5>`;
+                    modalContent += `
+                        <div class="ingredient-list">
+                            <input type="checkbox" class="form-check-input mt-3 mx-3 meal-checkbox" id="mealCheckbox${meal.meal_id}">
+                            <h2 class="d-inline-block px-0" style="border-bottom:none;">${meal.meal_title}</h2>
+                            <hr class="m-0">
+                            <ul>
+                    `;
+
+                    meal.items.forEach(item => {
+                        let selectedQtyUnits = [];
+                        try {
+                            if (item.selected_qty_unit) {
+                                selectedQtyUnits = JSON.parse(item.selected_qty_unit);
+                            }
+                            if (!Array.isArray(selectedQtyUnits)) {
+                                selectedQtyUnits = [];
+                            }
+                        } catch (e) {
+                            console.error(`Invalid selected_qty_unit JSON for item ${item.id}:`, e);
+                            selectedQtyUnits = [];
+                        }
+
+                        const checkedUnits = selectedQtyUnits.filter(u =>
+                            u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1"
+                        );
+
+                        let qtyCheckboxes = '';
+                        if (checkedUnits.length > 0) {
+                            const qtyText = checkedUnits.map(unitObj => {
+                                let rawQty = unitObj.qty;
+                                let unit = unitObj.unit;
+                                let qty = 0;
+
+                                // Handle fractional quantities
+                                if (!isNaN(rawQty)) {
+                                    qty = parseFloat(rawQty);
+                                } else if (typeof rawQty === 'string' && rawQty.includes('/')) {
+                                    const parts = rawQty.split('/');
+                                    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                                        qty = parseFloat(parts[0]) / parseFloat(parts[1]);
+                                    } else {
+                                        qty = rawQty; // fallback
+                                    }
+                                }
+
+                                if (['g', 'ml', 'mL'].includes(unit)) {
+                                    return `${Math.round(qty)}${unit}`;
+                                } else {
+                                    const rounded = Math.round(qty * 100) / 100;
+                                    let displayQty = rawQty;
+
+                                    if (rounded === 0.25) displayQty = '¼';
+                                    else if (rounded === 0.5) displayQty = '½';
+                                    else if (rounded === 0.75) displayQty = '¾';
+
+                                    return `${displayQty} ${unit}`;
+                                }
+                            }).join(' or ');
+                            qtyCheckboxes = `<span>${qtyText}</span>`;
+                        } else {
+                            let qty = parseFloat(item.qty);
+                            let unit = item.unit;
+                            let displayQty = qty;
+
+                            if (['g', 'ml', 'mL'].includes(unit)) {
+                                qtyCheckboxes = `<span>${Math.round(qty)}${unit}</span>`;
+                            } else {
+                                const rounded = Math.round(qty * 100) / 100;
+                                if (rounded === 0.25) displayQty = '¼';
+                                else if (rounded === 0.5) displayQty = '½';
+                                else if (rounded === 0.75) displayQty = '¾';
+
+                                qtyCheckboxes = `<span>${displayQty} ${unit}</span>`;
+                            }
+                        }
+
+                        modalContent += `
+                            <li class="mb-3">
+                                <div class="d-flex align-items-center ingredient-info">
+                                    <div class="m-0">
+                                        <input class="form-check-input meal-item-checkbox" type="checkbox" value="${item.id}" id="Check${item.id}">
+                                        <input type="hidden" id="category" value="${item.category || ''}">
+                                    </div>
+                                    <div class="me-3 ingredient-img">
+                                        <figure>
+                                            <img src="{{ asset('private/public/storage') }}/${item.image || ''}" alt="">
+                                        </figure>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <span><strong>${item.title}</strong></span>
+                                        <div class="mt-1 d-flex flex-wrap align-items-center">
+                                            <strong class="me-2">QTY:</strong> ${qtyCheckboxes}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        `;
                     });
 
                     modalContent += `</ul></div>`;
                 });
 
-                // Update modal content
                 $('#ShoppingModal .modal-body').html(modalContent);
             },
             error: function (xhr) {
@@ -989,6 +1479,191 @@
         });
     });
 
+    $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
+        let aggregatedItems = {};
+
+        $('#ShoppingModal .meal-item-checkbox:checked').each(function () {
+            const listItem = $(this).closest('li');
+            const itemName = listItem.find('.ingredient-info span strong').text().trim() || "Unknown Item";
+            const category = listItem.find('input[type="hidden"]#category').val()?.trim() || "Uncategorized";
+
+            const qtyContainer = listItem.find('.ingredient-info .flex-grow-1 > div.d-flex');
+            if (qtyContainer.length === 0) return;
+
+            const fullText = qtyContainer.text().trim();
+            const qtyTextMatch = fullText.match(/QTY:\s*(.+)/i);
+            if (!qtyTextMatch) return;
+
+            const qtyText = qtyTextMatch[1];
+            const qtyParts = qtyText.split(" or ").map(part => part.trim());
+
+            qtyParts.forEach(part => {
+                // Match values like: ½ piece OR 1/2 piece OR 1 piece
+                const match = part.match(/^([\d¼½¾/.]+)\s*([a-zA-Z\s]+)$/);
+                if (!match) return;
+
+                let qtyRaw = match[1].trim();
+                let unit = match[2].trim();
+
+                // Convert unicode fraction to numeric
+                const unicodeFractions = {
+                    '¼': 0.25,
+                    '½': 0.5,
+                    '¾': 0.75
+                };
+
+                let qty = unicodeFractions[qtyRaw] ?? null;
+
+                // If still null, try numeric or x/y string
+                if (qty === null) {
+                    if (qtyRaw.includes('/')) {
+                        const parts = qtyRaw.split('/');
+                        if (parts.length === 2) {
+                            const numerator = parseFloat(parts[0]);
+                            const denominator = parseFloat(parts[1]);
+                            if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+                                qty = numerator / denominator;
+                            }
+                        }
+                    } else {
+                        qty = parseFloat(qtyRaw);
+                    }
+                }
+
+                if (!qty || isNaN(qty)) return;
+
+                if (!aggregatedItems[category]) aggregatedItems[category] = {};
+                if (!aggregatedItems[category][itemName]) aggregatedItems[category][itemName] = {};
+                if (!aggregatedItems[category][itemName][unit]) aggregatedItems[category][itemName][unit] = 0;
+
+                aggregatedItems[category][itemName][unit] += qty;
+            });
+        });
+
+        // Generate HTML content
+        let printListContent = '';
+        for (let [category, items] of Object.entries(aggregatedItems)) {
+            printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;
+
+            for (let [itemName, unitMap] of Object.entries(items)) {
+                const qtyText = Object.entries(unitMap).map(([unit, total]) => {
+                    if (['g', 'ml', 'mL'].includes(unit)) {
+                        return `${Math.round(total)}${unit}`;
+                    } else {
+                        const roundedTotal = Math.round(total * 100) / 100;
+                        let fraction = '';
+
+                        // Convert to nearest known fraction
+                        if (roundedTotal === 0.25) fraction = '¼';
+                        else if (roundedTotal === 0.5) fraction = '½';
+                        else if (roundedTotal === 0.75) fraction = '¾';
+                        else fraction = roundedTotal;
+
+                        return `${fraction} ${unit}`;
+                    }
+                }).join(' or ');
+
+                printListContent += `
+                    <li style="margin: 0;">
+                        <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>
+                        ${itemName} <strong>QTY:</strong> ${qtyText}
+                    </li>
+                `;
+            }
+
+            printListContent += `</ul><br/>`;
+        }
+
+        if (printListContent === '') {
+            printListContent = '<p>No items selected.</p>';
+        }
+
+        $('#ShippingPrintModal .print-list').html(printListContent);
+    });
+
+    // $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
+    //     let aggregatedItems = {};
+
+    //     $('#ShoppingModal .meal-item-checkbox:checked').each(function () {
+    //         const listItem = $(this).closest('li');
+    //         const itemName = listItem.find('.ingredient-info span strong').text().trim() || "Unknown Item";
+    //         const category = listItem.find('input[type="hidden"]#category').val()?.trim() || "Uncategorized";
+
+    //         // Look for the QTY text inside the ingredient-info block
+    //         const qtyContainer = listItem.find('.ingredient-info .flex-grow-1 > div.d-flex');
+
+    //         if (qtyContainer.length === 0) return;
+
+    //         // Get plain text from inside this container (e.g., "QTY: 50g or 1 cup")
+    //         const fullText = qtyContainer.text().trim();
+    //         const qtyTextMatch = fullText.match(/QTY:\s*(.+)/i);
+    //         if (!qtyTextMatch) return;
+
+    //         const qtyText = qtyTextMatch[1];
+    //         const qtyParts = qtyText.split(" or ").map(part => part.trim());
+
+    //         qtyParts.forEach(part => {
+    //             const match = part.match(/^([\d/.]+)\s*([a-zA-Z\s]+)$/); // updated regex
+    //             if (!match) return;
+
+    //             let qtyRaw = match[1].trim();
+    //             let unit = match[2].trim();
+
+    //             // Convert fraction to decimal (e.g., 1/2 -> 0.5)
+    //             let qty;
+    //             if (qtyRaw.includes('/')) {
+    //                 const parts = qtyRaw.split('/');
+    //                 if (parts.length === 2) {
+    //                     const numerator = parseFloat(parts[0]);
+    //                     const denominator = parseFloat(parts[1]);
+    //                     if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+    //                         qty = numerator / denominator;
+    //                     }
+    //                 }
+    //             } else {
+    //                 qty = parseFloat(qtyRaw);
+    //             }
+
+    //             if (!qty || isNaN(qty)) return;
+
+    //             // Save into aggregation
+    //             if (!aggregatedItems[category]) aggregatedItems[category] = {};
+    //             if (!aggregatedItems[category][itemName]) aggregatedItems[category][itemName] = {};
+    //             if (!aggregatedItems[category][itemName][unit]) aggregatedItems[category][itemName][unit] = 0;
+
+    //             aggregatedItems[category][itemName][unit] += qty;
+    //         });
+
+    //     });
+
+    //     let printListContent = '';
+    //     for (let [category, items] of Object.entries(aggregatedItems)) {
+    //         printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;
+
+    //         for (let [itemName, unitMap] of Object.entries(items)) {
+    //             const qtyText = Object.entries(unitMap)
+    //                 .map(([unit, total]) => `${Math.round(total)}${['g', 'ml', 'mL'].includes(unit) ? unit : ' ' + unit}`)
+    //                 .join(' or ');
+
+    //             printListContent += `
+    //                 <li style="margin: 0;">
+    //                     <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>
+    //                     ${itemName} <strong>QTY:</strong> ${qtyText}
+    //                 </li>
+    //             `;
+    //         }
+
+    //         printListContent += `</ul><br/>`;
+    //     }
+
+
+    //     if (printListContent === '') {
+    //         printListContent = '<p>No items selected.</p>';
+    //     }
+
+    //     $('#ShippingPrintModal .print-list').html(printListContent);
+    // });
+
     $(document).on('change', '.meal-checkbox', function () {
         const mealContainer = $(this).closest('.ingredient-list'); // Find the relevant meal container
         const isChecked = $(this).is(':checked'); // Check if "Meal Checkbox" is selected
@@ -997,63 +1672,63 @@
         mealContainer.find('.meal-item-checkbox').prop('checked', isChecked);
     });
    
-    $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
-        let aggregatedItems = {};
+    // $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
+    //     let aggregatedItems = {};
 
-        // Collect all checked items
-        $('#ShoppingModal .meal-item-checkbox:checked').each(function () {
-            const listItem = $(this).closest('li');  // Correct reference for each item
-            const itemName = listItem.find('.ingredient-info span').text().trim() || "Unknown Item";
-            const quantityText = listItem.find('.quantity').text().trim() || "QTY: 0";
-            const category = listItem.find('input[type="hidden"]#category').val().trim() || "Uncategorized";
+    //     // Collect all checked items
+    //     $('#ShoppingModal .meal-item-checkbox:checked').each(function () {
+    //         const listItem = $(this).closest('li');  // Correct reference for each item
+    //         const itemName = listItem.find('.ingredient-info span').text().trim() || "Unknown Item";
+    //         const quantityText = listItem.find('.quantity').text().trim() || "QTY: 0";
+    //         const category = listItem.find('input[type="hidden"]#category').val().trim() || "Uncategorized";
 
-            // Extract quantity and unit with better regex logic
-            const quantityMatch = quantityText.match(/QTY:\s*([\d\/.]+)\s*([a-zA-Z]*)/i);
-            let rawQuantity = quantityMatch && quantityMatch[1] ? quantityMatch[1] : "0";
-            let unit = quantityMatch && quantityMatch[2] ? quantityMatch[2].trim() : '';
+    //         // Extract quantity and unit with better regex logic
+    //         const quantityMatch = quantityText.match(/QTY:\s*([\d\/.]+)\s*([a-zA-Z]*)/i);
+    //         let rawQuantity = quantityMatch && quantityMatch[1] ? quantityMatch[1] : "0";
+    //         let unit = quantityMatch && quantityMatch[2] ? quantityMatch[2].trim() : '';
 
-            // Correct conversion for fractional values
-            let quantity = 0;
-            if (rawQuantity.includes('/')) {
-                const [numerator, denominator] = rawQuantity.split('/').map(Number);
-                quantity = numerator / denominator;
-            } else {
-                quantity = parseFloat(rawQuantity);
-            }
+    //         // Correct conversion for fractional values
+    //         let quantity = 0;
+    //         if (rawQuantity.includes('/')) {
+    //             const [numerator, denominator] = rawQuantity.split('/').map(Number);
+    //             quantity = numerator / denominator;
+    //         } else {
+    //             quantity = parseFloat(rawQuantity);
+    //         }
 
-            // Ensure category exists in the aggregated structure
-            if (!aggregatedItems[category]) {
-                aggregatedItems[category] = {};
-            }
+    //         // Ensure category exists in the aggregated structure
+    //         if (!aggregatedItems[category]) {
+    //             aggregatedItems[category] = {};
+    //         }
 
-            // Aggregate quantities within the category
-            if (aggregatedItems[category][itemName]) {
-                aggregatedItems[category][itemName].quantity += quantity;
-                aggregatedItems[category][itemName].unit = unit;
-            } else {
-                aggregatedItems[category][itemName] = { quantity, unit };
-            }
-        });
+    //         // Aggregate quantities within the category
+    //         if (aggregatedItems[category][itemName]) {
+    //             aggregatedItems[category][itemName].quantity += quantity;
+    //             aggregatedItems[category][itemName].unit = unit;
+    //         } else {
+    //             aggregatedItems[category][itemName] = { quantity, unit };
+    //         }
+    //     });
 
-        // Generate the HTML for the aggregated list by category
-        let printListContent = '';
-        for (let [category, items] of Object.entries(aggregatedItems)) {
-            printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;  // Removed dot style
-            for (let [itemName, data] of Object.entries(items)) {
-                printListContent += `
-                    <li style="margin: 0;">
-                        <!-- Right tick mark icon added here -->
-                        <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>  
-                        ${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}
-                    </li>
-                `;
-            }
-            printListContent += `</ul><br/>`;
-        }
+    //     // Generate the HTML for the aggregated list by category
+    //     let printListContent = '';
+    //     for (let [category, items] of Object.entries(aggregatedItems)) {
+    //         printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;  // Removed dot style
+    //         for (let [itemName, data] of Object.entries(items)) {
+    //             printListContent += `
+    //                 <li style="margin: 0;">
+    //                     <!-- Right tick mark icon added here -->
+    //                     <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>  
+    //                     ${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}
+    //                 </li>
+    //             `;
+    //         }
+    //         printListContent += `</ul><br/>`;
+    //     }
 
-        // Populate the print modal with the aggregated list
-        $('#ShippingPrintModal .print-list').html(printListContent);
-    });
+    //     // Populate the print modal with the aggregated list
+    //     $('#ShippingPrintModal .print-list').html(printListContent);
+    // });
 
     $(document).on('click', '#ShippingPrintModal .btn-primary', function () {
         // Get the content of the print list
@@ -1417,11 +2092,13 @@
 
             var planId = $(this).data('plan-id');  // Get the plan ID
             var price = $(this).data('plan-price');     // Get the plan price (if needed)
+            var description = $(this).data('plan-description');     // Get the plan price (if needed)
             
             // Update modal title with plan name (optional)
-            $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name'));
-
+            $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name')+ '($' + price+')');
+            $('#plan-description').text(description);
             // Show the modal
+            $('#purchaseModal #coupon-details').show();
             $('#purchaseModal').modal('show');
 
             // Handle the form submission
@@ -1593,6 +2270,104 @@
                 });
             });
         });
+
+        $('body').on('click', '.buy-plan', function () {
+            // alert('Payment button clicked');
+            // e.preventDefault();
+
+            var planId = $(this).data('plan-id');  // Get the plan ID
+            var price = $(this).data('plan-price');     // Get the plan price (if needed)
+            
+            // Update modal title with plan name (optional)
+            $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name'));
+
+            $('#purchaseModal #coupon-details').hide();
+            // Show the modal
+            $('#purchaseModal').modal('show');
+            let name = $('#purchaseModal #name').val();
+            let email = $('#purchaseModal #email').val();
+            let phone = $('#purchaseModal #phone').val();
+            // Handle the form submission
+            $('#payment-form').submit(function(event) {
+                event.preventDefault();
+
+                // Disable the submit button to prevent multiple clicks
+                $('#submit').prop('disabled', true);
+
+                // Create a PaymentMethod with Stripe's API
+                
+                stripe.createPaymentMethod({
+                    type: 'card',
+                    card: card,
+                    billing_details: {
+                        name: name,
+                        email: email,
+                        phone: phone,
+                    },
+                }).then(function(result) {
+                    if (result.error) { 
+                        // Display error in the card element
+                        cardErrors.textContent = result.error.message;
+                        $('#submit').prop('disabled', false);
+                    } else {
+                        // Call the server to create the PaymentIntent
+                        $.ajax({
+                            url: '{{ route("process.payment") }}', // Define the route to process the payment
+                            method: 'POST',
+                            data: {
+                                payment_method_id: result.paymentMethod.id,
+                                plan_id: planId,
+                                price: price,
+                                name: name,
+                                email: email,
+                                phone: phone,
+                                coupon_code: null,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    // Handle successful payment
+                                    // alert('Payment successful!');
+                                    $('#purchaseModal').modal('hide');
+
+                                    showThankYouModal();
+
+                                    var user_id = response.data.user_id;  // Assuming the backend sends the user_id
+                                    var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
+
+                                } else {
+                                    // Handle failed payment
+                                    alert('Payment failed: ' + response.message);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Payment error:', error);
+                                alert('An error occurred while processing the payment.');
+                                $('#submit').prop('disabled', false);
+                            }
+                        });
+                    }
+                });
+                
+            });
+            
+        });
+
+        function showThankYouModal() {
+            // Set dynamic content
+            const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
+            const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
+            // Set the modal message
+            $('#thankYouMessage').text(thankYouMessage);
+            
+            // Set the URL for the plan button dynamically
+            $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
+            $('#thankYouModal').modal('show');
+        }
+
+        $('#thankYouModal').on('hidden.bs.modal', function () {
+            location.reload(); // Reloads the page when modal is closed
+        });
     });
 
     $(document).ready(function() {
@@ -1628,10 +2403,10 @@
                 start_date: $("#start_date").val(),
                 end_date: $("#end_date").val(),
                 user_id: userId,
-                main_ans: $('#mainAns'),
+                main_ans: $('#mainAns').val(),
                 _token: '{{ csrf_token() }}' // CSRF protection
             };
-
+            console.log(formData);
             $.ajax({
                 url: "{{ route('front.sample-plan-details-update') }}", // Laravel route to handle updates
                 type: "POST",
@@ -1652,29 +2427,69 @@
         });
 
         $('.edit-supliment-details').on('click', function () {
-            // Set modal title
-            $('#editModalLabel').text('Edit Supplements');
-
-            // Get data attributes from button
+             // Get data attributes from button
             const formName = $(this).data('form-name');
             const question = $(this).data('question');
-            const type = $(this).data('type');
+            const type = $(this).data('type'); // "supplement-edit" or "medication-edit"
             const answer = $(this).data('answer');
+            const mainAns = $(this).data('main-ans');
             const startDate = $(this).data('startdate');
             const endDate = $(this).data('enddate');
 
             // Set values in modal
-            $('#formName').val(formName);
-            $('#formQuestion').val(question);
-            $('#type').val(type);
-            $('#mainAns').val(answer);
+            const modal = $('#supplementEditModal');
+            modal.find('#formName').val(formName);
+            modal.find('#formQuestion').val(question);
+            modal.find('#type').val(type);
+            modal.find('#mainAns').val(mainAns);
+            modal.find('#answer').val(answer);
+            modal.find('#start_date').val(formatDateForInput(startDate));
+            modal.find('#end_date').val(formatDateForInput(endDate));
 
-            $('#questionText').text(question);
-            $('#question').val(question);
+            // Change modal title and label dynamically
+            if (type === 'medication-edit') {
+                modal.find('.modal-title').text('Edit Medication Details');
+                modal.find('label[for="answer"], label.form-label').first().text('Medication Name');
+            } else {
+                modal.find('.modal-title').text('Edit Supplement Details');
+                modal.find('label[for="answer"], label.form-label').first().text('Supplement Name');
+            }
 
-            $('#answer').val(answer);
-            $('#start_date').val(formatDateForInput(startDate));
-            $('#end_date').val(formatDateForInput(endDate));
+            modal.modal('show');  
+        });
+
+        $('#suplimentEditForm').on('submit', function(event) {
+            event.preventDefault();
+            console.log(userId);
+            let formData = {
+                form_name: $('#suplimentEditForm #formName').val(),
+                question: $('#suplimentEditForm #formQuestion').val(),
+                answer: $('#suplimentEditForm #answer').val(),
+                type: $('#suplimentEditForm #type').val(),
+                start_date: $("#suplimentEditForm #start_date").val(),
+                end_date: $("#suplimentEditForm #end_date").val(),
+                user_id: userId,
+                main_ans: $('#suplimentEditForm #mainAns').val(),
+                _token: '{{ csrf_token() }}' // CSRF protection
+            };
+            console.log(formData);
+            $.ajax({
+                url: "{{ route('front.sample-plan-details-update') }}", // Laravel route to handle updates
+                type: "POST",
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        alert('Updated successfully!');
+                        $('#supplementEditModal').modal('hide'); // Close modal
+                        location.reload(); // Refresh page to reflect changes (or update UI dynamically)
+                    } else {
+                        alert('Error updating!');
+                    }
+                },
+                error: function(xhr) {
+                    alert('Something went wrong!');
+                }
+            });
         });
 
         // Helper function: converts DD-MM-YYYY → YYYY-MM-DD
@@ -1789,8 +2604,17 @@
 
                     if (data.length > 0) {
                         $.each(data, function (index, item) {
-                            pastList.append("<li>" + item.answer + " <small>(Added on: " + new Date(item.created_at).toLocaleDateString() + ")</small></li>");
+                            let displayText = item.answer;
+
+                            if (item.start_date && item.end_date) {
+                                displayText += ` <small>(Start: ${new Date(item.start_date).toLocaleDateString()} to End: ${new Date(item.end_date).toLocaleDateString()})</small>`;
+                            } else {
+                                displayText += ` <small>(Added on: ${new Date(item.created_at).toLocaleDateString()})</small>`;
+                            }
+
+                            pastList.append("<li>" + displayText + "</li>");
                         });
+
                     } else {
                         pastList.append("<li>No past records found.</li>");
                     }
@@ -1804,80 +2628,267 @@
         });
     });
 
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     const ctx = document.getElementById('trainingChart').getContext('2d');
+//     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
+
+//     const frequencyMap = {
+//         "1-2": 2,
+//         "3-4": 4,
+//         "5+": 7
+//     };
+
+//     const colors = {
+//         "Low intensity": "rgba(47, 202, 98, 0.6)",
+//         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
+//         "High intensity": "rgba(232, 62, 53, 0.6)"
+//     };
+
+//     const borderColors = {
+//         "Low intensity": "rgba(47, 202, 98, 1)",
+//         "Moderate intensity": "rgba(255, 159, 64, 1)",
+//         "High intensity": "rgba(232, 62, 53, 1)"
+//     };
+
+//     const allBars = [];
+
+//     if (response) {
+//         Object.keys(response).forEach(frequency => {
+//             const intensities = response[frequency];
+//             intensities.forEach(intensity => {
+//                 allBars.push({
+//                     label: `${intensity} (${frequency})`,
+//                     intensity: intensity,
+//                     value: frequencyMap[frequency] || 0,
+//                     tooltip: frequency
+//                 });
+//             });
+//         });
+//     }
+
+//     const chart = new Chart(ctx, {
+//         type: 'bar',
+//         data: {
+//             labels: allBars.map(bar => bar.label),
+//             datasets: [{
+//                 label: '# of Days',
+//                 data: allBars.map(bar => bar.value),
+//                 backgroundColor: allBars.map(bar => colors[bar.intensity]),
+//                 borderColor: allBars.map(bar => borderColors[bar.intensity]),
+//                 borderWidth: 1
+//             }]
+//         },
+//         options: {
+//             responsive: true,
+//             plugins: {
+//                 tooltip: {
+//                     callbacks: {
+//                         label: function (context) {
+//                             const bar = allBars[context.dataIndex];
+//                             return `${bar.intensity}: ${bar.tooltip} days`;
+//                         }
+//                     }
+//                 },
+//                 legend: { display: false }
+//             },
+//             scales: {
+//                 y: {
+//                     title: {
+//                         display: true,
+//                         text: '# of Days'
+//                     },
+//                     min: 0,
+//                     max: 7,
+//                     stepSize: 1,
+//                     ticks: {
+//                         callback: function(value) {
+//                             return value.toString();
+//                         }
+//                     }
+//                 },
+//                 x: {
+//                     title: {
+//                         display: true,
+//                         text: 'Training Intensity (by Frequency)'
+//                     }
+//                 }
+//             }
+//         }
+//     });
+// });
+
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     const ctx = document.getElementById('trainingChart').getContext('2d');
+    //     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
+    //     console.log(response);
+    //     const frequencyMap = { "1-2": 2, "3-4": 4, "5+": 7 };
+    //     const intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
+    //     const displayLabels = ["Low", "Moderate", "High"];
+
+    //     const colors = {
+    //         "Low intensity": "rgba(47, 202, 98, 0.6)",
+    //         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
+    //         "High intensity": "rgba(232, 62, 53, 0.6)"
+    //     };
+
+    //     const borderColors = {
+    //         "Low intensity": "rgba(47, 202, 98, 1)",
+    //         "Moderate intensity": "rgba(255, 159, 64, 1)",
+    //         "High intensity": "rgba(232, 62, 53, 1)"
+    //     };
+
+    //     const datasets = [];
+
+    //     for (const intensity of intensityLabels) {
+    //         for (const [freqLabel, intensityArray] of Object.entries(response)) {
+    //             if (intensityArray.includes(intensity)) {
+    //                 const data = [null, null, null];  // index: 0=Low, 1=Moderate, 2=High
+    //                 const index = intensityLabels.indexOf(intensity);
+    //                 data[index] = frequencyMap[freqLabel] || 0;
+
+    //                 datasets.push({
+    //                     label: `${intensity} (${freqLabel})`,
+    //                     data: data,
+    //                     backgroundColor: colors[intensity],
+    //                     borderColor: borderColors[intensity],
+    //                     borderWidth: 1,
+    //                     intensity: intensity // for custom legend filtering
+    //                 });
+    //             }
+    //         }
+    //     }
+
+    //     new Chart(ctx, {
+    //         type: 'bar',
+    //         data: {
+    //             labels: displayLabels,
+    //             datasets: datasets
+    //         },
+    //         options: {
+    //             responsive: true,
+    //             plugins: {
+    //                 tooltip: {
+    //                     callbacks: {
+    //                         label: function (context) {
+    //                             const value = context.raw;
+    //                             const label = context.dataset.label.match(/\((.*?)\)/);
+    //                             return `${context.dataset.label.split(' (')[0]}: ${label ? label[1] : ''}`;
+    //                         }
+    //                     }
+    //                 },
+    //                 legend: {
+    //                     position: 'bottom',
+    //                     labels: {
+    //                         generateLabels: function (chart) {
+    //                             const seen = new Set();
+    //                             return chart.data.datasets
+    //                                 .filter(ds => {
+    //                                     if (!seen.has(ds.intensity)) {
+    //                                         seen.add(ds.intensity);
+    //                                         return true;
+    //                                     }
+    //                                     return false;
+    //                                 })
+    //                                 .map(ds => ({
+    //                                     text: ds.intensity.replace(' intensity', ''),
+    //                                     fillStyle: ds.backgroundColor,
+    //                                     strokeStyle: ds.borderColor,
+    //                                     lineWidth: 1,
+    //                                     hidden: false,
+    //                                     index: chart.data.datasets.indexOf(ds)
+    //                                 }));
+    //                         }
+    //                     }
+    //                 }
+    //             },
+    //             scales: {
+    //                 y: {
+    //                     min: 0,
+    //                     max: 7,
+    //                     ticks: {
+    //                         stepSize: 1
+    //                     },
+    //                     title: {
+    //                         display: true,
+    //                         text: 'Days per week'
+    //                     }
+    //                 },
+    //                 x: {
+    //                     title: {
+    //                         display: true,
+    //                         text: 'Training Intensity'
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     });
+    // });
+
     document.addEventListener("DOMContentLoaded", function () {
         const ctx = document.getElementById('trainingChart').getContext('2d');
+        
+        // Assuming server passes training intensity as JSON
+        const response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
 
-        let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-        console.log(response);
-
-        // X-axis: frequency groups
-        const daysLabels = ["1-2", "3-4", "5+"];
-
-        // Mapping range to max day
-        const dayHeights = {
-            "1-2": 2,
-            "3-4": 4,
-            "5+": 5
-        };
-
-        const intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
+        const displayLabels = ["Low", "Moderate", "High"]; // X-axis labels
+        const intensityKeys = ["Low Intensity", "Moderate Intensity", "High Intensity"];
 
         const colors = {
-            "Low intensity": "rgba(75, 192, 192, 0.6)",
-            "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-            "High intensity": "rgba(255, 99, 132, 0.6)"
+            "Low Intensity": "rgba(47, 202, 98, 0.6)",
+            "Moderate Intensity": "rgba(255, 159, 64, 0.6)",
+            "High Intensity": "rgba(232, 62, 53, 0.6)"
         };
 
         const borderColors = {
-            "Low intensity": "rgba(75, 192, 192, 1)",
-            "Moderate intensity": "rgba(255, 159, 64, 1)",
-            "High intensity": "rgba(255, 99, 132, 1)"
+            "Low Intensity": "rgba(47, 202, 98, 1)",
+            "Moderate Intensity": "rgba(255, 159, 64, 1)",
+            "High Intensity": "rgba(232, 62, 53, 1)"
         };
 
-        let datasets = intensityLabels.map((intensity, index) => {
-            return {
-                label: intensity,
-                data: daysLabels.map(label => response[label]?.includes(intensity) ? dayHeights[label] : 0),
-                backgroundColor: colors[intensity],
-                borderColor: borderColors[intensity],
-                borderWidth: 1,
-                barPercentage: 0.8,
-                categoryPercentage: 0.8
-            };
-        });
+        const dataset = {
+            label: '# of days',
+            data: intensityKeys.map(key => parseInt(response[key]) || 0),
+            backgroundColor: intensityKeys.map(key => colors[key]),
+            borderColor: intensityKeys.map(key => borderColors[key]),
+            borderWidth: 1
+        };
 
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: daysLabels,
-                datasets: datasets
+                labels: displayLabels,
+                datasets: [dataset]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    tooltip: { enabled: true },
-                    legend: { display: true }
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: context => `Days: ${context.raw}`
+                        }
+                    }
                 },
                 scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 7,
+                        ticks: {
+                            stepSize: 1,
+                            autoSkip: false
+                        },
+                        title: {
+                            display: true,
+                            text: '# of days'
+                        }
+                    },
                     x: {
                         title: {
                             display: true,
-                            text: 'Training Frequency (Days per Week)'
-                        },
-                        stacked: false // Show bars side-by-side
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Days'
-                        },
-                        stacked: false,
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1,
-                            precision: 0
-                        },
-                        suggestedMax: 6
+                            text: 'Training Intensity'
+                        }
                     }
                 }
             }

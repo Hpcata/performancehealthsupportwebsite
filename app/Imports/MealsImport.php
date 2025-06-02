@@ -14,16 +14,14 @@ class MealsImport implements ToModel
      */
     public function model(array $row)
     {
-        
+        // dd($row);
         return new Meal([
             'title'       => $row[0],               // Column: "Breakfast"
             'description' => $row[1],             // Column: "Description"
-            'note' => $row[3] . ' | ' . $row[2],  // Concatenate strings with space
+            'note'        => $row[2],                           // Column: "Notes / Variations"
             'user_id'     => auth()->id(),                    // Optional: link to current user
             'created_at' => now(),
             'u[dated_at' => now(),
         ]);
     }
 }
-
-

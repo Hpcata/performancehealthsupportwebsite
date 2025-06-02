@@ -16,6 +16,7 @@ class MealTime extends Model
         'time',
         'description',
         'image',
+        'order'
     ];
 
     /**

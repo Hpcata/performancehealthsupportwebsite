@@ -25,6 +25,9 @@ use App\Http\Controllers\Front\ForgotPasswordController;
 use App\Http\Controllers\Admin\NutritionAIController;
 use App\Http\Controllers\Admin\ImageController;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\FlagController;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +68,7 @@ Route::post('/generate-image', [ImageController::class, 'generateImage'])->name(
 
 Route::post('/nutrition-calculation', [NutritionAIController::class, 'nutritionCalculation'])->name('nutrition.calculate');
 Route::post('/calculate-nutrition', [NutritionAIController::class, 'calculateNutrition'])->name('calculate.nutrition');
+Route::post('/generate-description', [NutritionAIController::class, 'generateDescription'])->name('generate.description');
 
 Route::get('/calculate-nutrition-form', [NutritionAIController::class, 'form'])->name('view.form');
 
@@ -278,7 +282,7 @@ Route::post('/reset-password', [AdminAuthController::class, 'resetPasswordPost']
 Route::get('/change-password', [AdminAuthController::class, 'changePassword'])->name('change-password');
 Route::post('/change-password', [AdminAuthController::class, 'changePasswordPost'])->name('change-password-post');
 
-Route::group(['middleware' => ['auth', 'admin']], function () {
+Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 	Route::get('/woolworths-product-search', [ProductController::class, 'search'])->name('woolworths-product-search');
 	Route::post('/add-food', [ProductController::class, 'addFood'])->name('add-food');
 
@@ -319,6 +323,23 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 		Route::get('/site-settings/{slug}', [SiteSettingsController::class, 'index'])->name('site-settings');
 		Route::post('/site-settings-save', [SiteSettingsController::class, 'saveSiteSettings'])->name('save-site-settings');
 		
+		Route::get('/tags', [TagController::class, 'index'])->name('admin.tags.index');
+		Route::get('/tags/create', [TagController::class, 'create'])->name('admin.tags.create');
+		Route::post('/tags', [TagController::class, 'store'])->name('admin.tags.store');
+		Route::get('/tags/{tag}/edit', [TagController::class, 'edit'])->name('admin.tags.edit');
+		Route::PUT('/tags/{tag}', [TagController::class, 'update'])->name('admin.tags.update');
+		Route::delete('/tags/{tag}', [TagController::class, 'destroy'])->name('admin.tags.destroy');
+
+		Route::get('/flags', [FlagController::class, 'index'])->name('admin.flags.index');
+		Route::get('/flags/create', [FlagController::class, 'create'])->name('admin.flags.create');
+		Route::post('/flags', [FlagController::class, 'store'])->name('admin.flags.store');
+		Route::get('/flags/{flag}/edit', [FlagController::class, 'edit'])->name('admin.flags.edit');
+		Route::PUT('/flags/{flag}', [FlagController::class, 'update'])->name('admin.flags.update');
+		Route::delete('/flags/{flag}', [FlagController::class, 'destroy'])->name('admin.flags.destroy');
+		Route::delete('/admin/flags/{flag}/remove-food/{food}', [FlagController::class, 'removeFood'])->name('admin.flags.removeFood');
+		Route::post('/admin/flags/{flag}/add-foods', [FlagController::class, 'addFoods'])->name('admin.flags.addFoods');
+		Route::get('/flags/food/list', [FlagController::class, 'foodLists'])->name('admin.flags.foodList');
+
 		// Route::resource('pages', PageController::class);
 		Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
 		Route::get('/pages/create', [PageController::class, 'create'])->name('pages.create');
@@ -360,7 +381,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 		Route::get('items/{item}/edit', [ItemController::class, 'edit'])->name('admin.items.edit');
 		Route::put('items/{item}', [ItemController::class, 'update'])->name('admin.items.update');
 		Route::delete('items/{item}', [ItemController::class, 'destroy'])->name('admin.items.destroy');
-		
+		Route::get('get-food-details', [ItemController::class, 'getFoodDetails'])->name('admin.get-food-details');
+
 		// Plans
 		Route::get('plans', [PlanController::class, 'index'])->name('admin.plans.index');
 		Route::get('plans/create', [PlanController::class, 'create'])->name('admin.plans.create');
@@ -377,6 +399,9 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 		Route::delete('meals/{meal}', [MealController::class, 'destroy'])->name('admin.meals.destroy');
 		Route::post('update-meal-name', [MealController::class, 'updateMealName'])->name('admin.update-meal-name');
 		Route::post('meals/generate-image', [MealController::class, 'generateImage'])->name('admin.meals.generate-image');
+		Route::post('meals/edit-image', [MealController::class, 'editImage'])->name('admin.meals.edit-image');
+		Route::get('meals/import/form', [MealController::class, 'viewImport'])->name('admin.meals.import-view');
+		Route::post('/meals/import', [MealController::class, 'import'])->name('admin.meals.import');
 
 		Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
 		Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
@@ -391,9 +416,12 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 		Route::get('/purchase-plans/{user}/edit/{plan}', [PurchasePlanController::class, 'edit'])->name('admin.purchase-plans.edit');
 		Route::put('/purchase-plans', [PurchasePlanController::class, 'update'])->name('admin.purchase-plans.update');
 		Route::get('/pre-plan-details/{id}', [PurchasePlanController::class, 'getPrePlanDetails'])->name('admin.pre-plan-details');
+		Route::post('/handle-plan-action', [PurchasePlanController::class, 'handlePlanAction'])->name('admin.handle-plan-action');
+		Route::post('/update-nutrition-flag', [PurchasePlanController::class, 'updateNutritionFalg'])->name('admin.update-nutrition-flag');
 
 		Route::post('/get-meal-items', [PurchasePlanController::class, 'getMealItems'])->name('admin.get-meal-items');
 		Route::post('/get-meals-by-mealtime', [PurchasePlanController::class, 'getMealsByMealTime'])->name('admin.get-meals-by-mealtime');
+		Route::post('/admin/remove-user-meal', [PurchasePlanController::class, 'removeUserMeal'])->name('admin.remove-user-meal');
 
 		Route::get('/get-items', [PurchasePlanController::class, 'getItems'])->name('admin.get-items');
 		Route::post('/get-swap-items', [PurchasePlanController::class, 'getSwapItems'])->name('admin.get-swap-items');
@@ -402,6 +430,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 		Route::post('/get-swap-foods', [PurchasePlanController::class, 'getSwapFoods'])->name('admin.get-swap-foods');
 		Route::post('/update-swap-foods', [PurchasePlanController::class, 'updateFoodSwapFoods'])->name('admin.update-food-swap-foods');
 		Route::post('/delete-purchase-plan-food', [PurchasePlanController::class, 'deletePurchasePlanFood'])->name('admin.delete-purchase-plan-food');
+
+		Route::get('/admin/user/details', [UserController::class, 'getUserDetails'])->name('admin.user.details');
 	});
 });
 
@@ -415,6 +445,8 @@ Route::post('/pre-plan-details-store', [PaymentController::class, 'prePlanDetail
 Route::get('/sample-plan', [FrontController::class, 'samplePlan'])->name('front.sample-plan');
 Route::post('/sample-plan-details-update', [FrontController::class, 'updateSamplePlanDetails'])->name('front.sample-plan-details-update');
 
+Route::get('/get-foods/{key}', [FrontController::class, 'getFoodItems'])->name('front.flag.items');
+
 Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPlanDetails'])->name('front.competition-plan-details');
 Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
 Route::get('/get-default-plan-details/{id}', [FrontPlanController::class, 'getDefaultPlanDetails'])->name('front.get-default-plan-details');
@@ -427,6 +459,10 @@ Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEm
 Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('front.password.reset');
 Route::post('password/reset', [ForgotPasswordController::class, 'reset'])->name('front.password.update');
 Route::post('front/logout', [FrontController::class, 'logout'])->name('front.logout');
+// GET route fallback for expired session
+Route::get('front/logout-guest', function () {
+    return redirect()->route('front.index')->with('info', 'Your session has expired. Please log in again.');
+})->name('front.logout.guest');
 
 //Stripe payment
 Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
@@ -440,11 +476,16 @@ Route::post('/sport-search', [FrontController::class, 'sportSearch'])->name('fro
 
 Route::post('/query', [FrontController::class, 'submitQuery'])->name('front.submit-query');
 
+Route::get('/overseas_travel_nutrition_plan', function () {
+	return view('front.overseas_travel_nutrition_plan');
+})->name('front.overseas_travel_nutrition_plan');
+
 // Plans
 Route::group(['middleware' => 'auth'], function () {
 	// Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
 	Route::get('/plans/{id}/details/{user_id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
 	Route::get('/meal-time/{id}/{plan_id}', [FrontPlanController::class, 'mealTimeDetails'])->name('front.meal-time.details');
+	Route::post('/get-meals', [FrontPlanController::class, 'getMealByMealTimes'])->name('front.get-meals');
 
 	//categories
 	Route::get('/category/{id}/meals', [FrontPlanController::class, 'getMeals'])->name('front.category.meals');
@@ -471,8 +512,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::post('/upload-report', [FrontController::class, 'uploadReport'])->name('front.upload.report');
 	Route::post('/delete-report', [FrontController::class, 'deleteReport'])->name('front.delete.report');
-
 });
+Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');
 
 Route::post('/google/check-login', [FrontController::class, 'checkGoogleLogin'])->name('front.google.check-login');
 Route::post('/unlock-result', [FrontController::class, 'unlockFreeTestResult'])->name('front.unlock-result');

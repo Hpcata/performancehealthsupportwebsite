@@ -46,15 +46,33 @@
                             
                             <!-- Description Field -->
                             <div class="col-md-12">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="4">{{ $meal->description ?? '' }}</textarea>
+                                <label for="description" class="form-label d-flex justify-content-between">
+                                    <span>Description</span>
+                                </label>
+                                <textarea name="description" id="description" class="form-control" rows="4" maxlength="180">{{ $meal->description ?? '' }}</textarea>
+                                <small id="desc-count" class="text-muted" style="bottom: 10px; left: 15px; font-size: 0.75rem;">0 / 180</small>
                             </div>
-                            <select name="food_ids[]" class="form-control" id="food">
-                                               
-                            </select>
+                            
+                            <div class="col-md-12">
+                                <label for="note" class="form-label">Notes</label>
+                                <textarea name="note" class="form-control" rows="2">{{ $meal->note ?? '' }}</textarea>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="tag_ids" class="form-label">Select Tags</label>
+                                <select name="tag_ids[]" class="form-control select2" id="tag_ids" multiple>
+                                    @foreach ($tags as $tag)
+                                        <option value="{{ $tag->id }}" 
+                                                {{ isset($meal) && $meal->tags->contains($tag->id) ? 'selected' : '' }}>
+                                            {{ $tag->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <!-- Meal Times -->
-                         {{--  <div class="col-md-12">
-                                <label for="meal_times" class="form-label">Meal Times</label>
+                            <div class="col-md-12">
+                                <label for="meal_times" class="form-label">Category</label>
                                 <select name="meal_times[]" id="meal_times" class="form-control select2" multiple>
                                     @foreach ($mealTimes as $mealTime)
                                     <option value="{{ $mealTime->id }}" 
@@ -64,10 +82,10 @@
                                     @endforeach
                                 </select>
                             </div>
-                            --}}
+                            
                             <!-- Sub Categories -->
                             <div class="col-md-12">
-                                <label for="sub_categories" class="form-label">Categories</label>
+                                <label for="sub_categories" class="form-label">Sub Categories</label>
                                 <select name="categories[]" id="categories" class="form-control select2" multiple>
                                     @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" 
@@ -96,27 +114,37 @@
                                                 
                                                 @foreach ($meal->items as $item)
                                                     @php
-                                                    $quantityInfo = '';
+                                                        $quantityInfo = '';
 
-                                                    if (!empty($item->pivot->selected_qty_unit)) {
-                                                        $decoded = json_decode($item->pivot->selected_qty_unit, true);
+                                                        if (!empty($item->pivot->selected_qty_unit)) {
+                                                            $decoded = json_decode($item->pivot->selected_qty_unit, true);
 
-                                                        if (is_array($decoded)) {
-                                                            $parts = [];
+                                                            if (is_array($decoded)) {
+                                                                $parts = [];
 
-                                                            foreach ($decoded as $unitSet) {
-                                                                $qty = $unitSet['qty'] ?? '';
-                                                                $unit = $unitSet['unit'] ?? '';
-                                                                if ($qty && $unit) {
-                                                                    $parts[] = $qty . '' . $unit;
+                                                                foreach ($decoded as $unitSet) {
+                                                                    $qty = $unitSet['qty'] ?? '';
+                                                                    $unit = $unitSet['unit'] ?? '';
+                                                                    $checked = $unitSet['checked'] ?? false;
+
+                                                                    if ($checked && $qty && $unit) {
+                                                                        $noSpaceUnits = ['g', 'ml', 'mL'];
+                                                                        $space = in_array($unit, $noSpaceUnits) ? '' : ' ';
+                                                                        $parts[] = $qty . $space . $unit;
+                                                                    }
+                                                                }
+
+                                                                if (!empty($parts)) {
+                                                                    $quantityInfo = implode(' or ', $parts);
                                                                 }
                                                             }
-
-                                                            $quantityInfo = implode(' or ', $parts);
                                                         }
-                                                    } else {
-                                                        $quantityInfo = $item->pivot->item_qty . ' ' . $item->pivot->item_qty_unit;
-                                                    }
+
+                                                        if (empty($quantityInfo)) {
+                                                            $noSpaceUnits = ['g', 'ml', 'mL'];
+                                                            $space = in_array($item->pivot->item_qty_unit, $noSpaceUnits) ? '' : ' ';
+                                                            $quantityInfo = $item->pivot->item_qty . $space . $item->pivot->item_qty_unit;
+                                                        }
 
                                                     @endphp
                                                     <tr class="food-row">
@@ -130,10 +158,10 @@
                                                                 @endforeach
                                                             </select>
                                                             <p class="food-title-qty mt-2 mb-0"><strong>{{ $item->title }} {{ $quantityInfo }}</strong></p>
-                                                            <p class="nutrition-info mt-2 mb-0 text-muted">Protein: {{ round($item->pivot->protein)}}g, Carb: {{round($item->pivot->carbs)}}g, Fat: {{round($item->pivot->fat)}}g</p>
+                                                            <p class="nutrition-info mt-2 mb-0 text-muted">Energy: {{ floatval($item->energy) ?? 0 }}kJ, Protein: {{ ($item->pivot->protein)}}g, Carb: {{($item->pivot->carbs)}}g, Fat: {{($item->pivot->fat)}}g</p>
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-outline-success edit-food" data-carbs="{{$item->pivot->carbs}}" data-protein="{{$item->pivot->protein}}" data-fat="{{$item->pivot->fat}}" data-serving-size="{{$item->serving_size}}" data-serving-size-unit="{{$item->serving_size_unit}}"><i class="icofont-edit text-success" ></i>
+                                                            <button type="button" class="btn btn-outline-success edit-food" data-carbs="{{$item->pivot->carbs}}" data-protein="{{$item->pivot->protein}}" data-fat="{{$item->pivot->fat}}" data-energy="{{ floatval($item->energy) }}" data-serving-size="{{$item->serving_size}}" data-serving-size-unit="{{$item->serving_size_unit}}"><i class="icofont-edit text-success" ></i>
                                                             </button>
                                                             <button type="button" class="btn btn-outline-danger remove-food"><i class="icofont-ui-delete text-danger"></i>
                                                             </button>
@@ -141,7 +169,8 @@
                                                         <input type="hidden" class="hidden-selected-qty-unit" name="selected_qty_unit[]" value='{{ isset($item->pivot->selected_qty_unit) ? ($item->pivot->selected_qty_unit) : json_encode([["qty" => $item->pivot->item_qty, "unit" => $item->pivot->item_qty_unit]]) }}'>
                                                         <input type="hidden" class="hidden-protein" name="protein[]" value="{{$item->pivot->protein}}">
                                                         <input type="hidden" class="hidden-carbs" name="carbs[]" value="{{$item->pivot->carbs}}">
-                                                        <input type="hidden" class="hidden-fat" name="fat[]" value="{{$item->pivot->fat}}">
+                                                        <input type="hidden" class="hidden-fat" name="fat[]" value="{{ $item->pivot->fat }}">
+                                                        <input type="hidden" class="hidden-energy" name="energy[]" value="{{ floatval($item->energy) }}">
                                                         <input type="hidden" class="hidden-serving-size" name="serving_size[]" value="{{$item->serving_size}}">
                                                         <input type="hidden" class="hidden-serving-size-unit" name="serving_size_unit[]" value="{{$item->serving_size_unit}}">
                                                     </tr>
@@ -168,6 +197,7 @@
                                                     <input type="hidden" class="hidden-protein" name="protein[]" value="0">
                                                     <input type="hidden" class="hidden-carbs" name="carbs[]" value="0">
                                                     <input type="hidden" class="hidden-fat" name="fat[]" value="0">
+                                                    <input type="hidden" class="hidden-energy" name="energy[]" value="0">
                                                     <input type="hidden" class="hidden-serving-size" name="serving_size[]" value="0">
                                                     <input type="hidden" class="hidden-serving-size-unit" name="serving_size_unit[]" value="0">
                                                 </tr>
@@ -177,7 +207,10 @@
                                 </div>
                                 <button type="button" id="add-food" class="btn btn-primary mt-2">Add More</button>
                             </div>
+                            <div class="total-nutritions">
+                                <p style="font-size: 16px; "><strong>Meal Total: Energy: <span class="totalEnergy">0kJ</span> | Protein: <span class="totalProtein">0g</span> | Carb: <span class="totalCarbs">0g</span> | Fat: <span class="totalFat">g</span> </strong></p>
 
+                            </div>
                             <!-- <div class="col-md-12">
                                 <label for="food_ids" class="form-label">Select Foods</label>
                                 <select name="food_ids[]" id="food_ids" class="form-control select2" multiple required>
@@ -195,12 +228,17 @@
                                 <label for="image" class="form-label">Image</label>
                                 <input type="file" name="image" class="form-control">
                                 @if (isset($meal) && $meal->image)
-                                <img src="{{ asset('private/public/storage/' . $meal->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                <img src="{{ asset('private/public/storage/' . $meal->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;" id="existing-meal-image">
                                 @endif
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">OR Generate Image with AI</label>
-                                <button type="button" id="generate-ai-image" class="btn btn-primary">Generate Image</button>
+                                <input type="text" id="ai-image-prompt" name="ai-image-prompt" class="form-control mb-2" placeholder="Enter prompt to generate image (e.g., healthy banana breakfast)">
+
+                                <div id="image-buttons">
+                                    <button type="button" id="generate-ai-image" class="btn btn-primary" {{ isset($meal) && $meal->image ? 'style=display:none;' : '' }}>Generate Image</button>
+                                    <button type="button" id="edit-ai-image" class="btn btn-warning" {{ isset($meal) && $meal->image ? '' : 'style=display:none;' }}>Edit Image</button>
+                                </div>
                                 
                                 <div id="image-preview-container" style="display: none;">
                                     <img id="meal-image-preview" class="img-thumbnail mt-2" style="max-height: 150px;">
@@ -229,7 +267,7 @@
                 <div id="dynamicQtyMeasurementContainer"></div>
           
                 <div class="nutrition-info mt-3">
-                <p><strong>Protein:</strong> <span id="modalProtein">0g </span>, <strong>Carb:</strong> <span id="modalCarbs">0g </span>, <strong>Fat:</strong> <span id="modalFat">0g </span></p>
+                <p><strong>Energy:</strong> <span id="modalEnergy">0kJ </span>, <strong>Protein:</strong> <span id="modalProtein">0g </span>, <strong>Carb:</strong> <span id="modalCarbs">0g </span>, <strong>Fat:</strong> <span id="modalFat">0g </span></p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -273,60 +311,142 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     let hasUnsavedChanges = false;
+    //     let intendedHref = ''; // Store the intended link URL
+
+    //     // Track changes in form fields
+    //     document.querySelectorAll('input, textarea, select').forEach(input => {
+    //         input.addEventListener('input', () => {
+    //             hasUnsavedChanges = true;
+    //         });
+    //     });
+
+    //     // Custom navigation detection
+    //     document.querySelectorAll('a').forEach(anchor => {
+    //         anchor.addEventListener('click', function (event) {
+    //             if (hasUnsavedChanges) {
+    //                 event.preventDefault(); // Prevent immediate navigation
+                    
+    //                 // Correctly capture the intended URL
+    //                 const clickedLink = event.target.closest('a'); 
+                    
+    //                 if (clickedLink) {
+    //                     intendedHref = clickedLink.href;
+    //                     console.log('Intended Link:', intendedHref); // ✅ Correctly logs the clicked link URL
+    //                     document.getElementById('saveMealModal').style.display = 'block'; // Show modal
+    //                 }
+    //             }
+    //         });
+    //     });
+
+    //     // Suppress browser's default popup for page reload/close
+    //     window.addEventListener('beforeunload', function (event) {
+    //         if (hasUnsavedChanges) {
+    //             event.preventDefault();
+    //         }
+    //     });
+
+    //     // Modal Button: "Save Changes"
+    //     document.getElementById('saveChanges').addEventListener('click', function () {
+    //         hasUnsavedChanges = false;
+    //         document.getElementById('mealForm').submit();
+    //         document.getElementById('saveMealModal').style.display = 'none';
+    //     });
+
+    //     // Modal Button: "No Leave"
+    //     document.getElementById('leaveWithoutSaving').addEventListener('click', function () {
+    //         hasUnsavedChanges = false;
+
+    //         // Correctly redirect to the stored intended URL (like Food link)
+    //         if (intendedHref) {
+    //             window.location.href = intendedHref;
+    //         }
+    //     });
+
+    //     // Form submit bypasses the unsaved warning
+    //     document.getElementById('mealForm').addEventListener('submit', function () {
+    //         hasUnsavedChanges = false;
+    //     });
+    // });
+    document.addEventListener('DOMContentLoaded', function () {
+        const descInput = document.getElementById('description');
+        const countDisplay = document.getElementById('desc-count');
+        const maxLength = 180;
+
+        function updateCounter() {
+            const currentLength = descInput.value.length;
+            countDisplay.textContent = `${currentLength} / ${maxLength}`;
+        }
+
+        descInput.addEventListener('input', updateCounter);
+        updateCounter(); // Initialize on load
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
         let hasUnsavedChanges = false;
         let intendedHref = ''; // Store the intended link URL
+
+        // Initialize Bootstrap modal
+        const saveModal = new bootstrap.Modal(document.getElementById('saveMealModal'));
 
         // Track changes in form fields
         document.querySelectorAll('input, textarea, select').forEach(input => {
             input.addEventListener('input', () => {
                 hasUnsavedChanges = true;
             });
+
+            input.addEventListener('change', () => {
+                hasUnsavedChanges = true;
+            });
         });
 
-        // Custom navigation detection
+        // ✅ Also track changes via Select2 events
+        $('#tag_ids').on('change', function () {
+            hasUnsavedChanges = true;
+        });
+
+        // Handle all anchor link clicks
         document.querySelectorAll('a').forEach(anchor => {
             anchor.addEventListener('click', function (event) {
                 if (hasUnsavedChanges) {
-                    event.preventDefault(); // Prevent immediate navigation
-                    
-                    // Correctly capture the intended URL
-                    const clickedLink = event.target.closest('a'); 
-                    
+                    event.preventDefault(); // Prevent navigation
+
+                    const clickedLink = event.target.closest('a');
                     if (clickedLink) {
                         intendedHref = clickedLink.href;
-                        console.log('Intended Link:', intendedHref); // ✅ Correctly logs the clicked link URL
-                        document.getElementById('saveMealModal').style.display = 'block'; // Show modal
+                        console.log('Intended Link:', intendedHref);
+                        saveModal.show(); // ✅ Show modal using Bootstrap API
                     }
                 }
             });
         });
 
-        // Suppress browser's default popup for page reload/close
+        // Warn user on page refresh/close
         window.addEventListener('beforeunload', function (event) {
             if (hasUnsavedChanges) {
                 event.preventDefault();
+                event.returnValue = ''; // For most browsers
             }
         });
 
-        // Modal Button: "Save Changes"
+        // "Save Changes" button in modal
         document.getElementById('saveChanges').addEventListener('click', function () {
             hasUnsavedChanges = false;
             document.getElementById('mealForm').submit();
-            document.getElementById('saveMealModal').style.display = 'none';
+            saveModal.hide(); // ✅ Hide modal
         });
 
-        // Modal Button: "No Leave"
+        // "Leave Without Saving" button
         document.getElementById('leaveWithoutSaving').addEventListener('click', function () {
             hasUnsavedChanges = false;
-
-            // Correctly redirect to the stored intended URL (like Food link)
+            saveModal.hide(); // Optional visual
             if (intendedHref) {
                 window.location.href = intendedHref;
             }
         });
 
-        // Form submit bypasses the unsaved warning
+        // Form submit clears unsaved flag
         document.getElementById('mealForm').addEventListener('submit', function () {
             hasUnsavedChanges = false;
         });
@@ -336,9 +456,18 @@
 
     $(document).ready(function() {
         $('#categories').select2({
-            placeholder: "Select categories",
+            placeholder: "Select child categories",
             allowClear: true
         });
+        $('#tag_ids').select2({
+            placeholder: "Select tags",
+            allowClear: true
+        });
+
+        $('#meal_times').select2({
+            placeholder: "Select Parent Category",
+            allowClear: true
+        })
 
         // Preload selected foods for Edit Mode
         @if (isset($meal))
@@ -373,6 +502,7 @@
                                     protein: item.protein,
                                     carbs: item.carbs,
                                     fat: item.fat,
+                                    energy: item.energy,
                                     image: item.image,
                                     selected_qty_unit: item.selected_qty_unit || []  // Ensure it's an array
                                 };
@@ -384,25 +514,26 @@
             }).on('select2:select', function (e) {
                 const selectedFood = e.params.data;
                 const row = $(this).closest('tr');
-                const carb = Math.round(selectedFood.carbs);
-
-                const protein = Math.round(selectedFood.protein);
-
-                const fat = Math.round(selectedFood.fat);
-
+                const carb = parseFloat(selectedFood.carbs).toFixed(2);
+                const protein = parseFloat(selectedFood.protein).toFixed(2);
+                const fat = parseFloat(selectedFood.fat).toFixed(2);
+                const numericEnergy = parseFloat(selectedFood.energy || '0').toFixed(2);
+                
                 row.find('.edit-food').data('carbs', selectedFood.carbs)
                 row.find('.edit-food').data('protein', selectedFood.protein)
                 row.find('.edit-food').data('fat', selectedFood.fat)
                 row.find('.edit-food').data('serving-size', selectedFood.serving_size)
                 row.find('.edit-food').data('serving-size-unit', selectedFood.serving_size_unit)
+                row.find('.edit-food').data('energy', numericEnergy)
 
                 row.find('.hidden-selected-qty-unit').val(selectedFood.selected_qty_unit);
                 row.find('.hidden-protein').val(selectedFood.protein);
                 row.find('.hidden-carbs').val(selectedFood.carbs);
                 row.find('.hidden-fat').val(selectedFood.fat);
+                row.find('.hidden-energy').val(numericEnergy);
                 row.find('.hidden-serving-size').val(selectedFood.serving_size);
                 row.find('.hidden-serving-size-unit').val(selectedFood.serving_size_unit);
-                row.find('.nutrition-info').text(`Protein: ${protein}g, Carb: ${carb}g, Fat: ${fat}g`);
+                row.find('.nutrition-info').text(`Energy: ${numericEnergy}kJ, Protein: ${protein}g, Carb: ${carb}g, Fat: ${fat}g`);
 
                 let selectedUnits = [];
 
@@ -415,13 +546,24 @@
                 } catch (err) {
                     console.error('Error parsing selected_qty_unit:', err);
                 }
+                // ✅ Filter by checked: true and format spacing
                 let displayQty = '';
-                if (selectedUnits.length > 0) {
-                    displayQty = selectedUnits
-                        .map(unit => `${unit.qty}${unit.unit}`)
+                const filteredUnits = selectedUnits.filter(unit => unit.checked === true);
+
+                if (filteredUnits.length > 0) {
+                    displayQty = filteredUnits
+                        .map(unit => {
+                            const needsNoSpace = ['g', 'ml', 'mL'].includes(unit.unit);
+                            return needsNoSpace
+                                ? `${unit.qty}${unit.unit}`
+                                : `${unit.qty} ${unit.unit}`;
+                        })
                         .join(' or ');
                 } else if (selectedFood.qty && selectedFood.measurement) {
-                    displayQty = `${selectedFood.qty}${selectedFood.measurement}`;
+                    const needsNoSpace = ['g', 'ml', 'mL'].includes(selectedFood.measurement);
+                    displayQty = needsNoSpace
+                        ? `${selectedFood.qty}${selectedFood.measurement}`
+                        : `${selectedFood.qty} ${selectedFood.measurement}`;
                 }
 
                 const displayTitle = selectedFood.text || '';
@@ -431,59 +573,37 @@
 
                 // Display formatted title + qty
                 row.find('.food-title-qty').html(`<strong>${displayTitle} ${displayQty}</strong>`);
+
+                updateTotalNutrition();
+
+            });
+        }
+        updateTotalNutrition();
+
+        function updateTotalNutrition() {
+            let totalProtein = 0;
+            let totalCarbs = 0;
+            let totalFat = 0;
+            let totalEnergy = 0;
+
+            $('tr').each(function () {
+                const protein = parseFloat($(this).find('.hidden-protein').val()) || 0;
+                const carbs = parseFloat($(this).find('.hidden-carbs').val()) || 0;
+                const fat = parseFloat($(this).find('.hidden-fat').val()) || 0;
+                const energy = parseFloat($(this).find('.hidden-energy').val()) || 0;
+
+                totalProtein += protein;
+                totalCarbs += carbs;
+                totalFat += fat;
+                totalEnergy += energy;
             });
 
+            $('.totalProtein').text(`${totalProtein.toFixed(2)}g`);
+            $('.totalCarbs').text(`${totalCarbs.toFixed(2)}g`);
+            $('.totalFat').text(`${totalFat.toFixed(2)}g`);
+            $('.totalEnergy').text(`${totalEnergy.toFixed(2)}kJ`);
         }
-        
-        // function updateQtyAndMeasurement(row, selectedQtyUnit, defaultQty, defaultMeasurement) {
-        //     let qtyDropdown = row.find('.food-qty');
-        //     let measurementDropdown = row.find('.food-qty-measurement');
 
-        //     // Clear existing options
-        //     qtyDropdown.empty();
-        //     measurementDropdown.empty();
-
-        //     // Parse JSON string into JS array if it's not already an array
-        //     let parsedQtyUnit = [];
-        //     if (typeof selectedQtyUnit === "string") {
-        //         try {
-        //             parsedQtyUnit = JSON.parse(selectedQtyUnit);
-        //         } catch (e) {
-        //             console.error("Invalid JSON format for selectedQtyUnit:", e);
-        //         }
-        //     } else {
-        //         parsedQtyUnit = selectedQtyUnit;
-        //     }
-
-        //     if (parsedQtyUnit.length > 0) {
-        //         parsedQtyUnit.forEach(function (option, index) {
-        //             let qtyOption = new Option(option.qty, option.qty, index === 0, index === 0);
-        //             let measurementOption = new Option(option.unit, option.unit, index === 0, index === 0);
-
-        //             qtyDropdown.append(qtyOption);
-        //             measurementDropdown.append(measurementOption);
-        //         });
-
-        //         // Initialize Select2 for qty with tagging (editable dropdown)
-        //         // qtyDropdown.select2({
-        //         //     // tags: true,
-        //         //     placeholder: "Select or enter quantity",
-        //         //     width: '100%'
-        //         // });
-        //     } else {
-        //         // Fallback if selectedQtyUnit is null or empty
-        //         qtyDropdown.append(new Option(defaultQty, defaultQty, true, true)).trigger('change');
-        //         measurementDropdown.append(new Option(defaultMeasurement, defaultMeasurement, true, true));
-        //     }
-        // }
-
-        // $('.food-qty').select2({
-        //     // tags: true,
-        //     placeholder: "Select or enter quantity",
-        //     allowClear: true,
-        //     width: '100%'
-        // })
-            
         initializeSelect2();
 
         $('#add-food').click(function () {
@@ -497,10 +617,10 @@
                             @endforeach
                         </select>
                         <p class="food-title-qty mt-2 mb-0"><strong></strong></p>
-                        <p class="nutrition-info mt-2 mb-0 text-muted">Protein: 0g, Carb: 0g, Fat: 0g</p>
+                        <p class="nutrition-info mt-2 mb-0 text-muted">Energy: 0kJ, Protein: 0g, Carb: 0g, Fat: 0g</p>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-outline-success edit-food" data-carbs="" data-protein="" data-fat="" data-serving-size="" data-serving-size-unit=""><i class="icofont-edit text-success"></i>
+                        <button type="button" class="btn btn-outline-success edit-food" data-carbs="" data-protein="" data-fat="" data-energy="" data-serving-size="" data-serving-size-unit=""><i class="icofont-edit text-success"></i>
                         </button>
                         <button type="button" class="btn btn-outline-danger remove-food"><i class="icofont-ui-delete text-danger"></i>
                         </button>
@@ -509,6 +629,7 @@
                     <input type="hidden" class="hidden-protein" name="protein[]" value="0">
                     <input type="hidden" class="hidden-carbs" name="carbs[]" value="0">
                     <input type="hidden" class="hidden-fat" name="fat[]" value="0">
+                    <input type="hidden" class="hidden-energy" name="energy[]" value="0">
                     <input type="hidden" class="hidden-serving-size" name="serving_size[]" value="0">
                     <input type="hidden" class="hidden-serving-size-unit" name="serving_size_unit[]" value="0">
                 </tr>
@@ -521,78 +642,21 @@
 
         $(document).on('click', '.remove-food', function () {
             $(this).closest('tr').remove();
+            updateTotalNutrition();
+
         });
-
-        // function updateNutrition(row) {
-        //     const foodId = row.find('.food-select').val();
-        //     const foodTitle = row.find('.food-select option:selected').text();
-        //     const qty = row.find('.food-qty').val();
-        //     const measurement = row.find('.food-qty-measurement').val();
-
-        //     if (!foodId || !qty || !measurement) return;
-
-        //     const data = {
-        //         id: foodId,
-        //         title: foodTitle,
-        //         qty: qty,
-        //         measurement: measurement,
-        //         _token: '{{ csrf_token() }}'
-        //     };
-
-        //     $.ajax({
-        //         url: "{{ route('meal.food.nutrition.calculate') }}",
-        //         type: 'POST',
-        //         data: data,
-        //         success: function(response) {
-        //             if (response) {
-        //                 row.find('.hidden-protein').val(response.protein);
-        //                 row.find('.hidden-carbs').val(response.carbs);
-        //                 row.find('.hidden-fat').val(response.fat);
-        //                 row.find('.nutrition-info').text(`P: ${response.protein}g, C: ${response.carbs}g, F: ${response.fat}g`);
-        //             }
-        //         },
-        //         error: function(xhr) {
-        //             console.error('Error:', xhr.responseText);
-        //         }
-        //     });
-        // }
-        // Call updateNutrition when qty or measurement is changed
-        // $(document).on('input', '.food-qty', function () {
-        //     const row = $(this).closest('tr');
-        //     const qtyInput = $(this);
-        //     const value = qtyInput.val();
-        //     const regex = /^(\d+(\.\d*)?|\d+\/\d+)?$/;
-        //     const errorMessage = qtyInput.closest('td').find('.error-message');
-            
-        //     if (!regex.test(value)) {
-        //         errorMessage.show();
-        //         qtyInput[0].setCustomValidity("Invalid quantity format");
-        //     } else {
-        //         errorMessage.hide();
-        //         qtyInput[0].setCustomValidity("");
-        //     }
-        //     // updateNutrition(row);
-        // });
-
-        // ✅ Trigger update when measurement (unit) is changed
-        // $(document).on('change', '.food-qty-measurement', function () {
-        //     const row = $(this).closest('tr');
-        //     // updateNutrition(row);
-        // });
 
         let $editingRow = null;
 
         $(document).on('click', '.edit-food', function () {
             window.currentEditFoodButton = $(this);
 
-            $editingRow = $(this).closest('tr');
-            console.log($(this).data('carbs'));
+            const $editingRow = $(this).closest('tr');
             const selectedFoodName = $editingRow.find('.food-select option:selected').text();
 
             let qtyUnits = [];
-
-            // Try reading hidden-selected-qty-unit
-            let selectedQtyUnitRaw = $editingRow.find('.hidden-selected-qty-unit').val();
+            const $hiddenInput = $editingRow.find('.hidden-selected-qty-unit');
+            let selectedQtyUnitRaw = $hiddenInput.val();
 
             try {
                 if (selectedQtyUnitRaw && selectedQtyUnitRaw !== "null") {
@@ -603,24 +667,23 @@
                 qtyUnits = [];
             }
 
-            // If empty, fallback to food-qty and food-qty-measurement values
             if (!Array.isArray(qtyUnits) || qtyUnits.length === 0) {
                 const fallbackQty = $editingRow.find('.food-qty').val() || '';
                 const fallbackUnit = $editingRow.find('.food-qty-measurement').val() || '';
-                qtyUnits = [{ qty: fallbackQty, unit: fallbackUnit }];
+                qtyUnits = [{ qty: fallbackQty, unit: fallbackUnit, checked: true }];
             }
 
-            // Set modal title
             $('#editFoodModalLabel').text(`Edit ${selectedFoodName}`);
-
             const $container = $('#dynamicQtyMeasurementContainer');
             $container.empty();
 
-            // Create input rows
-            qtyUnits.forEach(({ qty, unit }, index) => {
+            qtyUnits.forEach(({ qty, unit, checked }, index) => {
                 const rowHtml = `
-                    <div class="row mb-2 qty-unit-row">
-                        <div class="col-6">
+                    <div class="row mb-2 qty-unit-row align-items-center">
+                        <div class="col-1 text-center">
+                            <input type="checkbox" class="form-check-input modalQtyCheckbox" ${checked ? 'checked' : ''}>
+                        </div>
+                        <div class="col-5">
                             ${index === 0 ? '<label class="form-label">Quantity</label>' : ''}
                             <input type="text" class="form-control modalQtyInput" value="${qty}">
                         </div>
@@ -633,124 +696,90 @@
                 $container.append(rowHtml);
             });
 
-            // const carbs = parseFloat($(this).data('carbs'));
-            // const protein = parseFloat($(this).data('protein'));
-            // const fat = parseFloat($(this).data('fat'));
-
-            const carbs = Math.round(parseFloat($(this).data('carbs')) * 10) / 10;   
-            const protein = Math.round(parseFloat($(this).data('protein')) * 10) / 10;
-            const fat = Math.round(parseFloat($(this).data('fat')) * 10) / 10;
-
-            const baseQty = parseFloat($('.modalQtyInput').first().val());
-            const baseUnit = $('.modalMeasurementInput').first().val();
+            // Nutrition data
+            const carbs = parseFloat($(this).data('carbs')).toFixed(2);
+            const protein = parseFloat($(this).data('protein')).toFixed(2);
+            const fat = parseFloat($(this).data('fat')).toFixed(2);
+            const energy = parseFloat($(this).data('energy')).toFixed(2);
 
             $('#modalCarbs').text(carbs + 'g');
             $('#modalProtein').text(protein + 'g');
             $('#modalFat').text(fat + 'g');
+            $('#modalEnergy').text(energy + 'kJ');
 
+            // Show modal
             $('#editFoodModal').modal('show');
+
+            // Setup sync logic
             setupDynamicMeasurementSync();
-            setupNutritionSync(carbs, protein, fat);
+            setupNutritionSync(carbs, protein, fat, energy);
+
+            // 🆕 Listen for checkbox and input changes to update the hidden input
+            $('#dynamicQtyMeasurementContainer').on('input change', '.modalQtyInput, .modalMeasurementInput, .modalQtyCheckbox', function () {
+                let updated = [];
+                $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+                    const qty = $(this).find('.modalQtyInput').val();
+                    const unit = $(this).find('.modalMeasurementInput').val();
+                    const checked = $(this).find('.modalQtyCheckbox').is(':checked');
+
+                    if (qty && unit) {
+                        updated.push({ qty, unit, checked });
+                    }
+                });
+                $hiddenInput.val(JSON.stringify(updated));
+            });
         });
 
-        // function setupNutritionSync(baseCarbs, baseProtein, baseFat) {
-        //     const $rows = $('#dynamicQtyMeasurementContainer .qty-unit-row');
+        let AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
 
-        //     if ($rows.length === 0) return;
+        function buildUnitQtyMap() {
+            let map = {};
 
-        //     // Identify base row (e.g., grams)
-        //     let $baseRow = null;
-        //     $rows.each(function () {
-        //         const unit = $(this).find('.modalMeasurementInput').val().trim().toLowerCase();
-        //         if (unit === 'g') {
-        //             $baseRow = $(this);
-        //         }
-        //     });
+            $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+                const qtyInput = $(this).find('.modalQtyInput').val();
+                const unitInput = $(this).find('.modalMeasurementInput').val();
 
-        //     if (!$baseRow) {
-        //         console.warn('No base row with grams found.');
-        //         return;
-        //     }
+                const qty = parseFraction(qtyInput);
+                const unit = unitInput?.toLowerCase();
 
-        //     // Get original base values
-        //     let originalBaseQty = parseFloat($baseRow.find('.modalQtyInput').val());
+                if (!isNaN(qty) && unit) {
+                    map[unit] = qty;
+                }
+            });
 
-        //     if (!originalBaseQty) return;
+            return map;
+        }
 
-        //     function updateNutritionFromGrams(grams) {
-        //         const multiplier = grams / originalBaseQty;
+        function parseFraction(value) {
+            if (!value) return NaN;
 
-        //         $('#modalCarbs').text((baseCarbs * multiplier).toFixed(2) + 'g');
-        //         $('#modalProtein').text((baseProtein * multiplier).toFixed(2) + 'g');
-        //         $('#modalFat').text((baseFat * multiplier).toFixed(2) + 'g');
-        //     }
+            value = value.trim();
+            if (value.includes('/')) {
+                const parts = value.split(' ');
+                if (parts.length === 2) {
+                    // mixed fraction (e.g. "1 1/2")
+                    const whole = parseFloat(parts[0]);
+                    const [num, denom] = parts[1].split('/').map(Number);
+                    return whole + (num / denom);
+                } else {
+                    const [num, denom] = value.split('/').map(Number);
+                    return num / denom;
+                }
+            }
 
-        //     $rows.find('.modalQtyInput').on('input', function () {
-        //         const $changedRow = $(this).closest('.qty-unit-row');
-        //         const changedQty = parseFloat($(this).val());
-        //         const changedUnit = $changedRow.find('.modalMeasurementInput').val().trim().toLowerCase();
+            return parseFloat(value);
+        }
 
-        //         if (!changedQty || !changedUnit) return;
-
-        //         // If user changes the grams input
-        //         if (changedUnit === 'g') {
-        //             updateNutritionFromGrams(changedQty);
-        //             return;
-        //         }
-
-        //         // Find the matching row with grams to get its qty
-        //         const $gramRow = $rows.filter(function () {
-        //             return $(this).find('.modalMeasurementInput').val().trim().toLowerCase() === 'g';
-        //         }).first();
-
-        //         if ($gramRow.length) {
-        //             const gramQty = parseFloat($gramRow.find('.modalQtyInput').val());
-
-        //             // Now find the "piece" qty for the same item
-        //             const $pieceRow = $rows.filter(function () {
-        //                 return $(this).find('.modalMeasurementInput').val().trim().toLowerCase() === changedUnit;
-        //             }).first();
-
-        //             if ($pieceRow.length) {
-        //                 const pieceQty = parseFloat($pieceRow.find('.modalQtyInput').val());
-
-        //                 if (pieceQty && gramQty) {
-        //                     const perUnitGrams = gramQty / pieceQty; // 1 piece = 150g
-        //                     const newGrams = changedQty * perUnitGrams;
-
-        //                     // Update gram input value in the base row
-        //                     $gramRow.find('.modalQtyInput').val(newGrams.toFixed(2));
-
-        //                     // Call the nutrition update with new grams
-        //                     updateNutritionFromGrams(newGrams);
-        //                 }
-        //             }
-        //         }
-        //     });
-        // }
-
-        function setupNutritionSync(baseCarbs, baseProtein, baseFat) {
-            const AU_UNIT_EQUIVALENTS = {
-                'cup': 250,           // mL
-                'tablespoon': 20,
-                'teaspoon': 5,
-                'dessert spoon': 10,
-                'piece': 150,
-                'slice': 30,
-                'roll': 70,
-                'tub': 180,
-                'pouch': 100,
-                'handful': 40,
-                'ml': 1,
-                'g': 1
-            };
+        function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy) {
+            // Step 0: Build the unit equivalents map from modal inputs
+            AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
 
             const $rows = $('#dynamicQtyMeasurementContainer .qty-unit-row');
             if ($rows.length === 0) return;
 
-            // Step 1: Identify the base row (first one shown)
+            // Step 1: Identify the base row (first visible one)
             const $baseRow = $rows.first();
-            const baseQty = parseFloat($baseRow.find('.modalQtyInput').val());
+            const baseQty = parseFraction($baseRow.find('.modalQtyInput').val());
             const baseUnit = $baseRow.find('.modalMeasurementInput').val().trim().toLowerCase();
 
             if (!baseQty || !baseUnit) {
@@ -758,36 +787,42 @@
                 return;
             }
 
-            function updateNutrition(currentQty, currentUnit) {
-                if (!currentQty || !currentUnit) return;
+            function updateNutrition(currentQtyRaw, currentUnit) {
+                const currentQty = parseFraction(currentQtyRaw);
+                console.log(currentQty, currentUnit);
+                console.log(AU_UNIT_EQUIVALENTS);
 
-                currentUnit = currentUnit.toLowerCase();
-                let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
-                let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
-
-                if (!baseEquivalent || !currentEquivalent) {
-                    console.warn('Unknown unit used in conversion.');
+                const baseEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
+                console.log(baseEquivalent);
+                if (!baseEquivalent) {
+                    console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
 
-                // Convert both quantities to grams or equivalent unit
-                const baseGrams = baseQty * baseEquivalent;
-                const currentGrams = currentQty * currentEquivalent;
+                // // Convert to base equivalent
+                // const baseGrams = baseQty * baseEquivalent;
+                // const currentGrams = currentQty * currentEquivalent;
 
-                const multiplier = currentGrams / baseGrams;
+                const ratio = currentQty / baseEquivalent;
+                console.log(ratio);
+                const newCarbs = baseCarbs * ratio;
+                const newProtein = baseProtein * ratio;
+                const newFat = baseFat * ratio;
+                const newEnergy = baseEnergy * ratio;
 
-                $('#modalCarbs').text((baseCarbs * multiplier).toFixed(1) + 'g');
-                $('#modalProtein').text((baseProtein * multiplier).toFixed(1) + 'g');
-                $('#modalFat').text((baseFat * multiplier).toFixed(1) + 'g');
+                $('#modalCarbs').text(newCarbs.toFixed(2) + 'g');
+                $('#modalProtein').text(newProtein.toFixed(2) + 'g');
+                $('#modalFat').text(newFat.toFixed(2) + 'g');
+                $('#modalEnergy').text(newEnergy.toFixed(2) + 'kJ');
             }
 
-            // Listen to input on any qty input field
-            $rows.find('.modalQtyInput').on('input', function () {
+            // Step 2: Listen to input changes
+            $rows.find('.modalQtyInput, .modalMeasurementInput').on('input', function () {
                 const $row = $(this).closest('.qty-unit-row');
-                const newQty = parseFloat($(this).val());
-                const newUnit = $row.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-                updateNutrition(newQty, newUnit);
+                const currentQty = $row.find('.modalQtyInput').val();
+                const currentUnit = $row.find('.modalMeasurementInput').val();
+                console.log(currentQty, currentUnit);
+                updateNutrition(currentQty, currentUnit);
             });
         }
 
@@ -797,50 +832,60 @@
 
             let unitMap = {}; // e.g., { g: 150, piece: 1 }
 
-            // 1. Build unit map
+            // Build unit map
             $rows.each(function () {
-                const qty = parseFloat($(this).find('.modalQtyInput').val());
+                const qty = parseFraction($(this).find('.modalQtyInput').val());
                 const unit = $(this).find('.modalMeasurementInput').val().toLowerCase().trim();
                 if (!isNaN(qty) && unit) {
                     unitMap[unit] = qty;
                 }
             });
 
-            // Use the first row as the base
             const baseUnit = Object.keys(unitMap)[0];
             const baseQty = unitMap[baseUnit];
-
             if (!baseQty || !baseUnit) return;
 
-            // Convert all units to ratio relative to base
+            // Calculate ratios
             let ratios = {};
             for (const [unit, qty] of Object.entries(unitMap)) {
-                ratios[unit] = qty / baseQty; // e.g., 1 piece = 1/150 g = 0.0067
+                ratios[unit] = qty / baseQty;
             }
 
-            // 2. Setup listener on each qty input
+            let isManuallyEditing = false;
+
             $rows.each(function () {
                 const $qtyInput = $(this).find('.modalQtyInput');
                 const $unitInput = $(this).find('.modalMeasurementInput');
 
+                $qtyInput.on('focus', function () {
+                    isManuallyEditing = true;
+                });
+
+                $qtyInput.on('blur', function () {
+                    isManuallyEditing = false;
+                });
+
                 $qtyInput.on('input', function () {
-                    const changedQty = parseFloat($(this).val());
+                    if (!isManuallyEditing) return;
+
+                    const changedQty = parseFraction($(this).val());
                     const changedUnit = $unitInput.val().toLowerCase().trim();
 
                     if (isNaN(changedQty) || !ratios[changedUnit]) return;
 
-                    // Convert input qty to base qty
                     const updatedBaseQty = changedQty / ratios[changedUnit];
 
-                    // Update all others
                     $rows.each(function () {
                         const $otherQtyInput = $(this).find('.modalQtyInput');
                         const $otherUnitInput = $(this).find('.modalMeasurementInput');
+                        const otherUnit = $otherUnitInput.val().toLowerCase().trim();
 
-                        const unit = $otherUnitInput.val().toLowerCase().trim();
-                        if (unit !== changedUnit && ratios[unit]) {
-                            const newQty = updatedBaseQty * ratios[unit];
-                            $otherQtyInput.val(newQty.toFixed(2));
+                        if (otherUnit !== changedUnit && ratios[otherUnit]) {
+                            // Only skip updating the field the user is actively typing in
+                            if (!$otherQtyInput.is(':focus')) {
+                                const newQty = updatedBaseQty * ratios[otherUnit];
+                                $otherQtyInput.val(newQty.toFixed(1));
+                            }
                         }
                     });
                 });
@@ -852,58 +897,89 @@
             const updatedProtein = $('#modalProtein').text().replace('g', '').trim();
             const updatedCarbs = $('#modalCarbs').text().replace('g', '').trim();
             const updatedFat = $('#modalFat').text().replace('g', '').trim();
+            const updatedEnergy = $('#modalEnergy').text().replace('kJ', '').trim();
+            console.log(updatedEnergy);
+            const updatedQtyUnits = []; 
+            const displayQtyParts = [];
 
-            // Get all qty/unit pairs from modal
-            const updatedQtyUnits = [];
             $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
-                const qty = $(this).find('.modalQtyInput').val();
-                const unit = $(this).find('.modalMeasurementInput').val();
-                if (qty && unit) {
-                    updatedQtyUnits.push({ qty: parseFloat(qty), unit: unit.trim() });
+                const $checkbox = $(this).find('.modalQtyCheckbox');
+                if ($checkbox.is(':checked')) {
+                    const qty = $(this).find('.modalQtyInput').val();
+                    const unit = $(this).find('.modalMeasurementInput').val().trim();
+
+                    if (qty && unit) {
+                        updatedQtyUnits.push({ qty, unit, checked: true });
+
+                        // Format for display: no space for 'g' or 'ml', space for others
+                        const formattedDisplay = (unit === 'g' || unit === 'ml' || unit === 'mL') 
+                            ? `${qty}${unit}` 
+                            : `${qty} ${unit}`;
+                        displayQtyParts.push(formattedDisplay);
+                    }
+                } else {
+                    // Include unchecked ones in hidden data, but mark as unchecked
+                    const qty = $(this).find('.modalQtyInput').val();
+                    const unit = $(this).find('.modalMeasurementInput').val().trim();
+                    if (qty && unit) {
+                        updatedQtyUnits.push({ qty, unit, checked: false });
+                    }
                 }
             });
 
             const $triggerButton = window.currentEditFoodButton;
             if (!$triggerButton) return;
-
             const $tr = $triggerButton.closest('tr');
 
-            // ✅ Update visible nutrition info
-            const nutritionText = `Protein: ${Math.round(updatedProtein)}g, Carb: ${Math.round(updatedCarbs)}g, Fat: ${Math.round(updatedFat)}g`;
+            // Update nutrition info
+             const nutritionText = `Energy: ${updatedEnergy}kJ, Protein: ${updatedProtein}g, Carb: ${updatedCarbs}g, Fat: ${updatedFat}g`;
+
             $tr.find('.nutrition-info').text(nutritionText);
 
-            // ✅ Update hidden fields
             $tr.find('.hidden-protein').val(updatedProtein);
             $tr.find('.hidden-carbs').val(updatedCarbs);
             $tr.find('.hidden-fat').val(updatedFat);
+            $tr.find('.hidden-energy').val(updatedEnergy);
 
-            // Set first qty/unit pair as serving size info
-            if (updatedQtyUnits.length > 0) {
+            if (displayQtyParts.length > 0) {
                 $tr.find('.hidden-serving-size').val(updatedQtyUnits[0].qty);
                 $tr.find('.hidden-serving-size-unit').val(updatedQtyUnits[0].unit);
             }
 
-            // ✅ Save selected_qty_unit back to hidden input
+            // Save JSON with checked states
             $tr.find('.hidden-selected-qty-unit').val(JSON.stringify(updatedQtyUnits));
 
-            // ✅ Update the display title with qty/units like: "150g or 1 piece"
+            // Update display title
             const foodTitle = $tr.find('.food-select option:selected').text();
-            const displayQty = updatedQtyUnits.map(item => `${item.qty}${item.unit}`).join(' or ');
+            const displayQty = displayQtyParts.join(' or ');
             $tr.find('.food-title-qty').html(`<strong>${foodTitle} ${displayQty}</strong>`);
 
             $modal.modal('hide');
+            
+            // ✅ Recalculate total nutrition after save
+            updateTotalNutrition();
         });
 
-        // $('.modalQtyInput').on('change', function () {
-        //     setupDynamicMeasurementSync();
+        function updateImageButtons() {
+            const hasExistingImage = $('#existing-meal-image').length > 0;
+            const hasGeneratedImage = $('#meal-image-preview').attr('src') !== undefined;
+            
+            if (hasExistingImage || hasGeneratedImage) {
+                $('#generate-ai-image').hide();
+                $('#edit-ai-image').show();
+            } else {
+                $('#generate-ai-image').show();
+                $('#edit-ai-image').hide();
+            }
+        }
 
-        // });
-    });
-          
+        // Initial button state
+        updateImageButtons();
 
-    $(document).ready(function () {
         $('#generate-ai-image').on('click', function () {
             let title = $('input[name="title"]').val();
+            let description = $('textarea[name="description"]').val();
+            let prompt = $('input[name="ai-image-prompt"]').val();
 
             if (!title) {
                 alert('Please enter a meal title first!');
@@ -915,18 +991,68 @@
                 method: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
-                    title: title
+                    title: title,
+                    description: description,
+                    prompt: prompt
                 },
                 success: function (response) {
                     if (response.image_url) {
                         $('#meal-image-preview').attr('src', response.image_url).show();
-                        $('#generated_image').val(response.image_url); // Store for form submission
+                        $('#generated_image').val(response.image_url);
                         $('#image-preview-container').show();
-                        $('#loader').hide();
-                    }else{
+                        updateImageButtons();
+                    } else {
                         alert('Failed to generate image. Please try again.');
-                        $('#loader').hide();
                     }
+                    $('#loader').hide();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('Something went wrong!');
+                    $('#loader').hide();
+                }
+            });
+        });
+
+        // Handle image editing
+        $('#edit-ai-image').on('click', function () {
+            let title = $('input[name="title"]').val();
+            let description = $('textarea[name="description"]').val();
+            let prompt = $('input[name="ai-image-prompt"]').val();
+            let existingImageUrl = $('#meal-image-preview').attr('src') || $('#existing-meal-image').attr('src');
+
+            if (!title) {
+                alert('Please enter a meal title first!');
+                return;
+            }
+
+            if (!existingImageUrl) {
+                alert('No image to edit!');
+                return;
+            }
+
+            $('#loader').show();
+
+            $.ajax({
+                url: "{{ route('admin.meals.edit-image') }}",
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    title: title,
+                    description: description,
+                    prompt: prompt,
+                    existing_image_url: existingImageUrl
+                },
+                success: function (response) {
+                    if (response.image_url) {
+                        $('#meal-image-preview').attr('src', response.image_url).show();
+                        $('#generated_image').val(response.image_url);
+                        $('#image-preview-container').show();
+                        $('#existing-meal-image').hide();
+                    } else {
+                        alert('Failed to edit image. Please try again.');
+                    }
+                    $('#loader').hide();
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);

@@ -24,7 +24,7 @@ $(document).ready(function() {
 
                 $('#bookingtypecontainer').empty();
 
-                
+                console.log(response.data);
 
                 if(response.data && response.data.length){
 
@@ -51,7 +51,7 @@ $(document).ready(function() {
                                     <a href="https://booking.biohealthpassport.com.au/kerry-obryan">
                                         `;
                                         html += `<div class="booking-type-box">
-                                        <img src="${item.thumbnail_image}" alt="${item.name}" class="img-fluid">`;
+                                        <img src="https://booking.biohealthpassport.com.au/.${item.thumbnail_image}" alt="${item.name}" class="img-fluid">`;
                                         if(item.description != null){
                                         html += `<div class="booking-desc-box">
                                                 ${item.description}
