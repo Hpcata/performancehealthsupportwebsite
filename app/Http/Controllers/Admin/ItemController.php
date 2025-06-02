@@ -6,6 +6,8 @@ use App\Models\FoodCategory;
 use App\Models\Item;
 use App\Models\Meal;
 use Illuminate\Http\Request;
+use App\Models\Tag;
+use App\Models\Flag;
 
 class ItemController extends Controller
 {
@@ -21,12 +23,20 @@ class ItemController extends Controller
                     ->first();
             }else {
                 $items = Item::with('category')
-                    ->where('title', 'LIKE', '%' . $query . '%')
-                    ->orWhereHas('category', function ($q) use ($query) {
-                        $q->where('name', 'LIKE', '%' . $query . '%');
-                    })
-                    ->orderBy('updated_at', 'DESC')
-                    ->get();
+                        ->where(function ($q) use ($query) {
+                            $words = preg_split('/\s+/', trim($query)); // Split query into words
+
+                            foreach ($words as $word) {
+                                $q->where(function ($subQ) use ($word) {
+                                $subQ->where('title', 'LIKE', '%' . $word . '%')
+                                    ->orWhereHas('category', function ($catQ) use ($word) {
+                                        $catQ->where('name', 'LIKE', '%' . $word . '%');
+                                    });
+                                });
+                            }
+                        })
+                        ->orderBy('updated_at', 'DESC')
+                        ->get();
             }
 
             return response()->json(['items' => $items]);
@@ -42,7 +52,10 @@ class ItemController extends Controller
         $meals = Meal::all(); // Fetch all meals
         $allItems = Item::where('is_swiped',0)->get(); // Fetch all items for the swap dropdown
         $categories = FoodCategory::all();
-        return view('backend.pages.item.form', compact('meals', 'allItems', 'categories'));
+        $tags = Tag::all(); // Fetch all meals
+        $flags = Flag::all(); // Fetch all meals
+
+        return view('backend.pages.item.form', compact('meals', 'allItems', 'categories', 'tags', 'flags'));
     }
 
     public function store(Request $request)
@@ -66,7 +79,13 @@ class ItemController extends Controller
             'category_id' => 'required|exists:food_categories,id',
             'serving_size_unit' => 'nullable',
             'unit'  => 'nullable',
-            'selected_qty_unit' => 'nullable|array',
+            // 'selected_qty_unit' => 'nullable|array',
+            'note' => 'nullable',
+            'energy' => 'nullable',
+            'saturated' => 'nullable',
+            'sugars' => 'nullable',
+            'dietary_fibre' => 'nullable',
+            'sodium' => 'nullable',
             // 'is_locked' => 'nullable|boolean'
         ]);
         
@@ -80,7 +99,7 @@ class ItemController extends Controller
         }else {
             $data['is_locked'] = 0;
         }
-        
+
         if ($request->has('selected_qty_unit') && $request->selected_qty_unit != null) {
             $rawSelectedUnit = $request->selected_qty_unit;
 
@@ -99,8 +118,11 @@ class ItemController extends Controller
 
             $data['selected_qty_unit'] = ($decoded);
         }
+
         // Create item
         $item = Item::create($data);
+        $item->tags()->sync($request->input('tag_ids')); // attaches tags via pivot
+        $item->flags()->sync($request->input('flag_ids')); // attaches tags via pivot
 
         // Sync swap items
         if ($request->is_swiped == 1 && $request->has('swap_item_ids')) {
@@ -123,7 +145,7 @@ class ItemController extends Controller
                         foreach ($request->swap_item_ids as $swapItemId) {
 
                             $swapItem = Item::find($swapItemId);
-
+                            
                             $exists = \DB::table('user_item_swaps')
                                 ->where('user_id', $userId)
                                 ->where('item_id', $item->id)
@@ -159,14 +181,17 @@ class ItemController extends Controller
         $meals = Meal::all(); // Fetch all meals
         $allItems = Item::where('is_swiped',0)->get(); // Fetch all items for the swap dropdown
         $categories = FoodCategory::all();
-        return view('backend.pages.item.form', compact('item', 'meals', 'allItems', 'categories'));
+        $tags = Tag::all(); // Fetch all meals
+        $flags = Flag::all(); // Fetch all meals
+
+        return view('backend.pages.item.form', compact('item', 'meals', 'allItems', 'categories', 'tags', 'flags'));
     }
 
     public function update(Request $request, Item $item)
     {
         // dd($request->all());
         $data = $request->validate([
-            'title' => 'required|string|max:255|unique:items,title,' . $item->id,
+            'title' => 'required|string|max:255',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
             'qty' => 'nullable|string',
@@ -184,6 +209,12 @@ class ItemController extends Controller
             'category_id' => 'nullable',
             'serving_size_unit' => 'nullable',
             'unit'  => 'nullable',
+            'note' => 'nullable',
+            'energy' => 'nullable',
+            'saturated' => 'nullable',
+            'sugars' => 'nullable',
+            'dietary_fibre' => 'nullable',
+            'sodium' => 'nullable',
             // 'selected_qty_unit' => 'nullable',
             // 'is_locked' => 'nullable|boolean'
             // 'category_id' => 'required|exists:food_categories,id',
@@ -203,7 +234,7 @@ class ItemController extends Controller
 
             $data['image'] = $path;
         }
-
+        // 
         if ($request->has('selected_qty_unit') && $request->selected_qty_unit != null) {
             $rawSelectedUnit = $request->selected_qty_unit;
         
@@ -232,6 +263,9 @@ class ItemController extends Controller
         // dd($request->is_swiped);
         // Update item
         $item->update($data);
+        $item->tags()->sync($request->input('tag_ids')); // attaches tags via pivot
+        $item->flags()->sync($request->input('flag_ids')); // attaches tags via pivot
+
         // dd($item);
         if ($request->is_swiped == 1) {
             // dd('11');
@@ -307,6 +341,8 @@ class ItemController extends Controller
         // Detach subcategories and swap items
         $item->meals()->detach();
         $item->swapItems()->detach();
+        $item->tags()->detach();
+        $item->flags()->detach();
 
         // Delete item
         $item->delete();
@@ -351,5 +387,29 @@ class ItemController extends Controller
     {
         preg_match("/{$term}\s*[-:]?\s*([\d.]+)\s*g?/i", $query, $matches);
         return isset($matches[1]) ? (float)$matches[1] : null;
+    }
+
+    public function getFoodDetails(Request $request)
+    {
+        $foodId = $request->input('food_id');
+        if (!$foodId) {
+            return response()->json(['error' => 'Food ID is required'], 400);
+        }
+
+        $item = Item::with('flags:id,name') // Load only necessary fields from flags
+                    ->select('id', 'title') // Select only needed item fields
+                    ->find($foodId);
+
+        if (!$item) {
+            return response()->json(['error' => 'Food not found'], 404);
+        }
+
+        return response()->json([
+            'item' => [
+                'id' => $item->id,
+                'title' => $item->title,
+                'flags' => $item->flags, // Only id and name from related flags
+            ]
+        ]);
     }
 }

@@ -3,7 +3,26 @@
 @section('title', 'Performance Dietitian | Strength & Conditioning Coach')
 
 @section('content')
-  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+    input::placeholder {
+        color: #6c757d !important;
+        opacity: 1 !important;
+    }
+
+    .edit-icon {
+        display: none;
+        margin-left: 8px;
+        cursor: pointer;
+        color: #0d6efd;
+    }
+    .food-checkbox:checked + label + .edit-icon {
+        display: inline-block;
+    }
+
+</style>
     <div class="section">
         <div class="container">
             <div class="steps-list mb-4">
@@ -19,7 +38,6 @@
                     <a class="tab-steps" href="#"><span class="round-tab">9</span> <i>Step 9</i></a>
                 </div>
             </div>
-
             <div class="tab-main-box">
                 <form id="nutrition-screen-form">
                     @csrf
@@ -33,37 +51,34 @@
                             <div class="card-body px-4">
                                 <div class="row">
                                     <div class="col-md-6 col-lg-4">
+                                        <input type="hidden" name="questions[personal_details][dob]" value="Date of Birth">
                                         <div class="form-floating my-3">
-                                            <input type="date" class="form-control" name="dob" placeholder="">
+                                            <!-- Hidden question input -->
+                                            <input type="date" class="form-control" name="ans[personal_details][dob]" placeholder="">
                                             <label>Date of Birth</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
+                                        <input type="hidden" name="questions[personal_details][occupation]" value="Occupation">
                                         <div class="form-floating my-3">
-                                            <input type="text" class="form-control" name="occupation" placeholder="">
-                                            <label>Occupation</label>
+                                            <input type="text" class="form-control" name="ans[personal_details][occupation]" placeholder="">
+                                            <label>Sport</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
+                                        <input type="hidden" name="questions[personal_details][postcode]" value="Postcode">
                                         <div class="form-floating my-3">
-                                            <input type="text" class="form-control" name="address" placeholder="">
+                                            <input type="text" class="form-control" name="ans[personal_details][postcode]" placeholder="">
                                             <label>Postcode</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
+                                        <input type="hidden" name="questions[personal_details][referredBy]" value="Referred by">
                                         <div class="form-floating my-3">
-                                            <input type="text" class="form-control" name="referredBy" id="referredBy" placeholder="">
+                                            <input type="text" class="form-control" name="ans[personal_details][referredBy]" id="referredBy" placeholder="">
                                             <label>Referred by</label>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-6 col-lg-4">
-                                        <div class="form-floating my-3">
-                                            <select class="form-select select2" name="race_ethnicity_culture" id="raceEthnicityCulture">
-                                                <option value="" disabled selected>Select or search</option>
-                                            </select>
-                                            <label for="raceEthnicityCulture">Race/ethnicity/culture</label>
-                                        </div>
-                                    </div> -->
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
@@ -84,22 +99,41 @@
                                         <input type="hidden" name="questions[medical_history][blood_test]" value="Have you recently had a blood test?">
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[medical_history][blood_test]" value="Yes" id="bloodTest1">
-                                                <label class="form-check-label" for="bloodTest1">
-                                                Yes
+                                                <input class="form-check-input" type="radio" name="ans[medical_history][blood_test][answer]" value="No" id="bloodTestNo">
+                                                <label class="form-check-label" for="bloodTestNo">
+                                                No
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[medical_history][blood_test]" value="No" id="bloodTest2">
-                                                <label class="form-check-label" for="bloodTest2">
-                                                No
+                                                <input class="form-check-input" type="radio" name="ans[medical_history][blood_test][answer]" value="Yes" id="bloodTestYes">
+                                                <label class="form-check-label" for="bloodTestYes">
+                                                Yes
                                                 </label>
                                             </div>
                                         </div>
                                         <!-- File Upload Input, initially hidden -->
+                                        <div id="bloodTestDateSection" style="display: none;">
+                                            <label for="bloodTestDate" class="form-label">Approx. Date:</label>
+                                            <select class="form-select" name="ans[medical_history][blood_test][date]" id="bloodTestDate">
+                                                <option value="">-- Select --</option>
+                                                <option value="3 months">3 months</option>
+                                                <option value="6 months">6 months</option>
+                                                <option value="1 year">1 year</option>
+                                                <option value="2 years">2 years</option>
+                                                <option value="over 2 years">Over 2 years</option>
+                                            </select>
+                                        </div>
                                         <div id="fileUploadSection" style="display: none;">
                                             <label for="bloodTestFile" class="form-label">Optional: Upload blood test results</label>
                                             <input type="file" class="form-control" name="ans[medical_history][blood_test_file]" id="bloodTestFile">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-6">
+                                        <div class="no-form-floating form-floating my-3">
+                                            <h5>Provide details of any prescription medications (if taking any):</h5>
+                                            <input type="hidden" name="questions[medical_history][prescription_meds]" value="Provide details of any prescription medications (if taking any):">
+                                            <input type="text" class="form-control" name="ans[medical_history][prescription_meds]" placeholder="Eg: Nurofen, Ritalin or Nil">
+                                            <small class="text-muted">(Use commas to separate items. Eg: Nurofen, Ritalin or Nil.)</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
@@ -120,32 +154,32 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" value="Eating disorder" name="ans[medical_history][diagnosed][]" id="diagnosed2">
-                                                <label class="form-check-label" for="diagnosed2">
+                                                <input class="form-check-input" type="checkbox" value="Eating disorder" name="ans[medical_history][diagnosed][]" id="diagnosed3">
+                                                <label class="form-check-label" for="diagnosed3">
                                                     Eating disorder
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" value="Low iron/anaemia" name="ans[medical_history][diagnosed][]" id="diagnosed3" >
-                                                <label class="form-check-label" for="diagnosed3">
+                                                <input class="form-check-input" type="checkbox" value="Low iron/anaemia" name="ans[medical_history][diagnosed][]" id="diagnosed4" >
+                                                <label class="form-check-label" for="diagnosed4">
                                                     Low iron/anaemia
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[medical_history][diagnosed][]" value="Amenorrhoea (loss of menstruation/period)" id="diagnosed4">
-                                                <label class="form-check-label" for="diagnosed4">
+                                                <input class="form-check-input" type="checkbox" name="ans[medical_history][diagnosed][]" value="Amenorrhoea (loss of menstruation/period)" id="diagnosed5">
+                                                <label class="form-check-label" for="diagnosed5">
                                                     Amenorrhoea (loss of menstruation/period)
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[medical_history][diagnosed][]" value="Surgery" id="diagnosed5">
-                                                <label class="form-check-label" for="diagnosed5">
+                                                <input class="form-check-input" type="checkbox" name="ans[medical_history][diagnosed][]" value="Surgery" id="diagnosed6">
+                                                <label class="form-check-label" for="diagnosed6">
                                                     Surgery
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" value="No" name="ans[medical_history][diagnosed][]" id="diagnosed1">
-                                                <label class="form-check-label" for="diagnosed1">
+                                                <input class="form-check-input" type="checkbox" value="No" name="ans[medical_history][diagnosed][]" id="diagnosed7">
+                                                <label class="form-check-label" for="diagnosed7">
                                                     No
                                                 </label>
                                             </div>  
@@ -154,67 +188,61 @@
                                     
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>Please list any other medical conditions</label>
-                                            <input type="hidden" name="questions[medical_history][medical_conditions]" value="Please list any other medical conditions">
-                                            <input type="text" class="form-control" name="ans[medical_history][medical_conditions]" placeholder="Short-answer text">
-                                            <small class="text-muted">Use commas to separate multiple conditions. Ex: Diabetes, Asthma.</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-lg-6">
-                                        <div class="no-form-floating form-floating my-3">
-                                            <label>Provide details of any prescription medications (if taking any):</label>
-                                            <input type="hidden" name="questions[medical_history][prescription_meds]" value="Provide details of any prescription medications (if taking any):">
-                                            <input type="text" class="form-control" name="ans[medical_history][prescription_meds]" placeholder="Long-answer text">
-                                            <small class="text-muted">Separate medications with commas. Ex: Metformin, Lisinopril.</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-lg-6">
-                                        <div class="no-form-floating form-floating my-3">
-                                            <label>List any dietary vitamins or supplements you are <strong>currently</strong> taking (if any):</label>
+                                            <h5>List any dietary vitamins or supplements you are <strong>currently</strong> taking (if any):</h5>
                                             <input type="hidden" name="questions[medical_history][vitamins_supplements]" value="List any dietary vitamins or supplements you are currently taking (if any):">
-                                            <input type="text" class="form-control" name="ans[medical_history][vitamins_supplements]" placeholder="Long-answer text">
-                                            <small class="text-muted">(Use commas to separate items. Ex: Vitamin C, Magnesium.)</small>
+                                            <input type="text" class="form-control" name="ans[medical_history][vitamins_supplements]" placeholder="Eg: Swisse Vitamin C, Musashi Whey Protein Powder or Nil">
+                                            <small class="text-muted">(Use commas to separate items. Eg: Swisse Vitamin C, Musashi Whey Protein Powder or Nil.)</small>
 
                                         </div>
                                     </div>
+
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>If female which statement best describes your current menstrual function?</label>
+                                            <h5>Please list any other medical conditions</h5>
+                                            <input type="hidden" name="questions[medical_history][medical_conditions]" value="Please list any other medical conditions">
+                                            <input type="text" class="form-control" name="ans[medical_history][medical_conditions]" placeholder="Eg: Coeilac, Asthma or Nil">
+                                            <small class="text-muted">Use commas to separate items. Eg: Coeilac, Asthma or Nil.</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 col-lg-6">
+                                        <div class="no-form-floating form-floating my-3">
+                                            <h5>If female which statement best describes your current menstrual function?</h5>
                                             <input type="hidden" name="questions[medical_history][menstrual_function]" value="If female which statement best describes your current menstrual function?">
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" value="Male - Not applicable" name="ans[medical_history][menstrual_function]" id="diagnosed1">
-                                                    <label class="form-check-label" for="diagnosed1">
+                                                    <input class="form-check-input" type="radio" value="Male - Not applicable" name="ans[medical_history][menstrual_function]" id="diagnose1">
+                                                    <label class="form-check-label" for="diagnose1">
                                                         Male - Not applicable
                                                     </label>
                                                 </div>  
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" value="I am on contraception with controlled cycles" name="ans[medical_history][menstrual_function]" id="diagnosed1">
-                                                    <label class="form-check-label" for="diagnosed1">
+                                                    <input class="form-check-input" type="radio" value="I am on contraception with controlled cycles" name="ans[medical_history][menstrual_function]" id="diagnose2">
+                                                    <label class="form-check-label" for="diagnose2">
                                                         I am on contraception with controlled cycles
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" value="I am not on contraception and have regular menstrual cycles" name="ans[medical_history][menstrual_function]" id="diagnosed2">
-                                                    <label class="form-check-label" for="diagnosed2">
+                                                    <input class="form-check-input" type="radio" value="I am not on contraception and have regular menstrual cycles" name="ans[medical_history][menstrual_function]" id="diagnose3">
+                                                    <label class="form-check-label" for="diagnose3">
                                                         I am not on contraception and have regular menstrual cycles 
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" value="I often miss a cycles" name="ans[medical_history][menstrual_function]" id="diagnosed2">
-                                                    <label class="form-check-label" for="diagnosed2">
+                                                    <input class="form-check-input" type="radio" value="I often miss a cycles" name="ans[medical_history][menstrual_function]" id="diagnose4">
+                                                    <label class="form-check-label" for="diagnose4">
                                                         I often miss a cycles
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" value="I have not had a cycle for over 2 months" name="ans[medical_history][menstrual_function]" id="diagnosed3" >
-                                                    <label class="form-check-label" for="diagnosed3">
+                                                    <input class="form-check-input" type="radio" value="I have not had a cycle for over 2 months" name="ans[medical_history][menstrual_function]" id="diagnose5" >
+                                                    <label class="form-check-label" for="diagnose5">
                                                         I have not had a cycle for over 2 months
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[medical_history][menstrual_function]" value="Other" id="diagnosed5">
-                                                    <label class="form-check-label" for="diagnosed5">
+                                                    <input class="form-check-input" type="radio" name="ans[medical_history][menstrual_function]" value="Other" id="diagnose6">
+                                                    <label class="form-check-label" for="diagnose6">
                                                         Other
                                                     </label>
                                                 </div>
@@ -293,21 +321,32 @@
                                         <input type="hidden" name="questions[physical_measures][bodycomposition]" value="Have you recently undertaken a body composition assessment (measure of muscle, body fat)?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[physical_measures][bodycomposition]" value="No" id="bodycomposition2">
-                                                <label class="form-check-label" for="bodycomposition2">
+                                                <input class="form-check-input" type="radio" name="ans[physical_measures][bodycomposition][answer]" value="No" id="bodyCompositionNo">
+                                                <label class="form-check-label" for="bodyCompositionNo">
                                                     No
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[physical_measures][bodycomposition]" value="Yes" id="bodycomposition1">
-                                                <label class="form-check-label" for="bodycomposition1">
+                                                <input class="form-check-input" type="radio" name="ans[physical_measures][bodycomposition][answer]" value="Yes" id="bodyCompositionYes">
+                                                <label class="form-check-label" for="bodyCompositionYes">
                                                    Yes
                                                 </label>
                                             </div>
                                             <!-- File Upload Input, initially hidden -->
-                                            <div id="bodycompositionFileInput" style="display: none;">
-                                                <label for="bodycompositionFile" class="form-label">Optional: Upload body composition file</label>
-                                                <input type="file" class="form-control" name="ans[physical_measures][bodycomposition][]" id="bodycompositionFile" multiple>
+                                            <div id="bodyCompositionDateSection" style="display: none;">
+                                                <label for="bodyCompositionDate" class="form-label">Approx. Date:</label>
+                                                <select class="form-select" name="ans[physical_measures][bodycomposition][date]" id="bodyCompositionDate">
+                                                    <option value="">-- Select --</option>
+                                                    <option value="3 months">3 months</option>
+                                                    <option value="6 months">6 months</option>
+                                                    <option value="1 year">1 year</option>
+                                                    <option value="2 years">2 years</option>
+                                                    <option value="over 2 years">Over 2 years</option>
+                                                </select>
+                                            </div>
+                                            <div id="bodyCompositionFileInput" style="display: none;">
+                                                <label for="bodyCompositionFile" class="form-label">Optional: Upload body composition file</label>
+                                                <input type="file" class="form-control" name="ans[physical_measures][bodycomposition][]" id="bodyCompositionFile" multiple>
                                             </div>
                                         </div>
                                     </div>
@@ -472,7 +511,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <h5>Do you have any allergies or intolerances?</h5><span>(more than 1 box can be checked)</span>
-                                        <input type="hidden" name="questions[dietary_information][dietaryneeds]" value="Do you have any special dietary needs (e.g. Coeliac  - Gluten free)" />
+                                        <input type="hidden" name="questions[dietary_information][dietaryneeds]" value="Do you have any allergies or intolerances?" />
                                         <div class="form-floating my-3">
                                             
                                             <div class="form-check my-2">
@@ -488,20 +527,20 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Nut allergy" id="dietaryneeds3">
-                                                <label class="form-check-label" for="dietaryneeds3">
+                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Nut allergy" id="dietaryneeds4">
+                                                <label class="form-check-label" for="dietaryneeds4">
                                                     Nut allergy
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Shellfish allergy" id="dietaryneeds3">
-                                                <label class="form-check-label" for="dietaryneeds3">
+                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Shellfish allergy" id="dietaryneeds5">
+                                                <label class="form-check-label" for="dietaryneeds5">
                                                     Shellfish allergy
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Soy allergy" id="dietaryneeds3">
-                                                <label class="form-check-label" for="dietaryneeds3">
+                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Soy allergy" id="dietaryneeds6">
+                                                <label class="form-check-label" for="dietaryneeds6">
                                                     Soy allergy
                                                 </label>
                                             </div>
@@ -521,9 +560,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <h5>Do you tend to follow any particular way of eating? </h5><span>(more than 1 box can be checked)</span>
-                                        <input type="hidden" name="questions[dietary_information][wayofeating]" value="Do you have any special dietary needs (e.g. Coeliac  - Gluten free)" />
+                                        <input type="hidden" name="questions[dietary_information][wayofeating]" value="Do you tend to follow any particular way of eating?" />
                                         <div class="form-floating my-3">
-                                            
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[dietary_information][wayofeating][]" value="Paleo" id="wayofeating2">
                                                 <label class="form-check-label" for="wayofeating2">Paleo</label>
@@ -642,8 +680,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>What are the most common takeaways you eat? Pizza, McDonald’s, Mexican, etc</label>
-                                            <input type="hidden" name="questions[dietary_information][common_takeaways]" value="What are the most common takeaways you eat? Pizza, McDonald’s, Mexican, etc" />
+                                            <label>What are the most common takeaways you eat? Pizza, McDonald's, Mexican, etc</label>
+                                            <input type="hidden" name="questions[dietary_information][common_takeaways]" value="What are the most common takeaways you eat? Pizza, McDonald's, Mexican, etc" />
                                             <input type="text" class="form-control" name="ans[dietary_information][common_takeaways]" placeholder="">
                                         </div>
                                     </div>
@@ -686,9 +724,24 @@
 
                                     <div class="col-md-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>If 18+, do you drink alcohol? If yes, how many days of the week do you drink? How many each day?</label>
-                                            <input type="hidden" name="questions[dietary_information][drink_alcohol]" value="If 18+, do you drink alcohol? If yes, how many days of the week do you drink? How many each day?" />
-                                            <input type="text" class="form-control" name="ans[dietary_information][drink_alcohol]" placeholder="">
+                                            <label>If 18+, do you drink alcohol?</label>
+                                            <input type="hidden" name="questions[dietary_information][drink_alcohol]" value="If 18+, do you drink alcohol?" />
+                                            <div class="form-floating my-3">
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[dietary_information][drink_alcohol]" value="No" id="drink_alcohol_no">
+                                                    <label class="form-check-label" for="drink_alcohol_no">No</label>
+                                                </div>
+                                                <div class="form-check my-2">
+                                                    <input class="form-check-input" type="radio" name="ans[dietary_information][drink_alcohol]" value="Yes" id="drink_alcohol_yes">
+                                                    <label class="form-check-label" for="drink_alcohol_yes">Yes</label>
+                                                </div>
+                                            </div>
+                                            <div id="drinkAlcoholInput" style="display: none;" class="mt-3">
+                                                <label for="drink_alcohol_days" class="form-label">If yes, how many days/week?</label>
+                                                <input type="text" class="form-control" id="drink_alcohol_days" name="ans[dietary_information][drink_alcohol][days]" placeholder="e.g. 3 days">
+                                                <label for="drink_alcohol_drinks" class="form-label mt-2">How many drinks/day?</label>
+                                                <input type="text" class="form-control" id="drink_alcohol_drinks" name="ans[dietary_information][drink_alcohol][drinks]" placeholder="e.g. 2 drinks">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -703,691 +756,315 @@
                         <div class="card">
                             <div class="bg-white card-header p-4 pb-3">
                                 <h4 class="m-0">Food Preference List</h4>
-                                <p class="mt-3">Please select all items that you enjoy eating.</p>
+                                <p class="mt-3 text-danger">* Select foods you currently eat OR are open to try</p>
                             </div>
                             <div class="card-body px-4">
                                 <div class="row">
-                                    <h5>Carbohydrate rich foods</h5>
-                                    <div class="col-md">
+                                    <!-- <h5>Carbohydrate rich foods</h5> -->
+                                    <div class="col-md-12">
                                         <h5>1. Grains</h5>
                                         <input type="hidden" name="questions[food_preference][grains]" value="Grains" />
 
                                         <div class="form-floating my-3">
-                                            <div class="row">
-                                                <div class="col-sm-6">
+                                            <div class="row row-cols-1 row-cols-md-3 g-2">
+                                                <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Cereals (granola, weet-bix, oats)" id="repair1">
-                                                        <label class="form-check-label" for="repair1">Cereals (granola, weet-bix, oats)</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Cereals][]" value="" id="repair1" data-food-key="Cereals" 
+                                                        data-food-group="grains">
+                                                        <label class="form-check-label" for="repair1">Cereals</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Cereals"></div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Pasta" id="repair2">
-                                                        <label class="form-check-label" for="repair2">Pasta</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Pasta & Noodles][]" value="" id="repair2" data-food-key="Pasta & Noodles" 
+                                                        data-food-group="grains">
+                                                        <label class="form-check-label" for="repair2">Pasta & Noodles</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Pasta & Noodles"></div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Rice" id="repair3">
-                                                        <label class="form-check-label" for="repair3">Rice</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Small Grains][]" value="" id="repair3" data-food-key="Small Grains" 
+                                                        data-food-group="grains">
+                                                        <label class="form-check-label" for="repair3">Small Grains</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Small Grains"></div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Quinoa" id="repair4">
-                                                        <label class="form-check-label" for="repair4">Quinoa</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Bread & Rolls][]" value="" id="repair7" data-food-key="Bread & Rolls" 
+                                                        data-food-group="grains">
+                                                        <label class="form-check-label" for="repair7">Bread & Rolls</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Bread & Rolls"></div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Cous cous" id="repair5">
-                                                        <label class="form-check-label" for="repair5">Cous cous</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Specialty Breads][]" value="" id="repair8" data-food-key="Specialty Breads" 
+                                                        data-food-group="grains">
+                                                        <label class="form-check-label" for="repair8">Specialty Breads</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Specialty Breads"></div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                               
+                                                <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Noodles" id="repair6">
-                                                        <label class="form-check-label" for="repair6">Noodles</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Flat Bread][]" value="" id="repair8" data-food-key="Flat Bread" 
+                                                        data-food-group="grains">
+                                                        <label class="form-check-label" for="repair8">Flat Bread</label>
                                                     </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Bread" id="repair7">
-                                                        <label class="form-check-label" for="repair7">Bread</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Wraps" id="repair8">
-                                                        <label class="form-check-label" for="repair8">Wraps</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Rolls" id="repair8">
-                                                        <label class="form-check-label" for="repair8">Rolls</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Pita" id="repair8">
-                                                        <label class="form-check-label" for="repair8">Pita</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="English muffin" id="repair8">
-                                                        <label class="form-check-label" for="repair8">English muffin</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Crumpets" id="repair8">
-                                                        <label class="form-check-label" for="repair8">Crumpets</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][grains][]" value="Fruit bread" id="repair8">
-                                                        <label class="form-check-label" for="repair8">Fruit bread</label>
-                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Flat Bread"></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md">
-                                        <h5>2. Legume, beans & nuts</h5>
-                                        <input type="hidden" name="questions[food_preference][legumes_beans_and_pulses]" value="Legumes, beans and pulses" />
+                                    <div class="col-md-12">
+                                        <h5>2. Legumes & Beans</h5>
+                                        <input type="hidden" name="questions[food_preference][legumes_beans_and_pulses]" value="Legumes &  Beans" />
                                         <div class="form-floating my-3">
-                                            <div class="row">
-                                                <div class="col-sm-6">
+                                             <div class="row row-cols-1 row-cols-md-4 g-2">
+                                                <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][]" value="Kidney beans" id="protect1">
-                                                        <label class="form-check-label" for="protect1">Kidney beans</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][Legumes & Beans][]" value="" id="protect1" data-food-key="Legumes & Beans" data-food-group="legumes_beans_and_pulses">
+                                                        <label class="form-check-label" for="protect1">Legumes & Beans</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Legumes & Beans"></div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <!-- <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][]" value="Chickpeas" id="protect2">
-                                                        <label class="form-check-label" for="protect2">Chickpeas</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][Beans][]" value="" id="protect2" data-food-key="Beans" data-food-group="legumes_beans_and_pulses">
+                                                        <label class="form-check-label" for="protect2">Beans</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Beans"></div>
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h5>3. Nuts</h5>
+                                        <input type="hidden" name="questions[food_preference][nuts]" value="Nuts" />
+                                        <div class="form-floating my-3">
+                                             <div class="row row-cols-1 row-cols-md-4 g-2">
+                                                <div class="col">
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][Nuts][]" value="" id="protect3" data-food-key="Nuts" data-food-group="nuts">
+                                                        <label class="form-check-label" for="protect3">Nuts</label>
+                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Nuts"></div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <!-- <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][]" value="Navy beans" id="protect3">
-                                                        <label class="form-check-label" for="protect3">Navy beans</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][nuts_and_seeds][Seeds][]" value="" id="protect4" data-food-key="Seeds" data-food-group="nuts_and_seeds">
+                                                        <label class="form-check-label" for="protect4">Seeds</label>
                                                     </div>
-                                                </div>
-                                                <div class="col-sm-6">
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Seeds"></div>
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h5>4. Seeds</h5>
+                                        <input type="hidden" name="questions[food_preference][seeds]" value="Seeds" />
+                                        <div class="form-floating my-3">
+                                             <div class="row row-cols-1 row-cols-md-4 g-2">
+                                                <!-- <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][]" value="Black beans" id="protect4">
-                                                        <label class="form-check-label" for="protect4">Black beans</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][nuts_and_seeds][Nuts][]" value="" id="protect3" data-food-key="Nuts" data-food-group="nuts_and_seeds">
+                                                        <label class="form-check-label" for="protect3">Nuts</label>
                                                     </div>
-                                                </div>
-                                                <div class="col-sm-6">
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Nuts"></div>
+                                                </div> -->
+                                                <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][]" value="Lentils" id="protect5">
-                                                        <label class="form-check-label" for="protect5">Lentils</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][Seeds][]" value="" id="protect4" data-food-key="Seeds" data-food-group="seeds">
+                                                        <label class="form-check-label" for="protect4">Seeds</label>
                                                     </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][]" value="Black beans" id="protect6">
-                                                        <label class="form-check-label" for="protect6">Baked beans</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][]" value="Nuts (almonds, macadamia)" id="protect8">
-                                                        <label class="form-check-label" for="protect8">Nuts (almonds, macadamia)</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][legumes_beans_and_pulses][]" value="Seeds (pepita, chia, flaxseed)" id="protect9">
-                                                        <label class="form-check-label" for="protect9">Seeds (pepita, chia, flaxseed)</label>
-                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Seeds"></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <hr>
-                                    <h5>Protein rich foods </h5>
+                                    <!-- <h5>Protein rich foods </h5> -->
                                     <div class="col-md">
-                                        <h5>1. Eggs</h5>
+                                        <h5>5. Eggs</h5>
                                         <input type="hidden" name="questions[food_preference][eggs]" value="Eggs" />
                                         <div class="form-floating my-3">
                                             <div class="form-check ">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][eggs][]" value="Eggs" id="protein1">
+                                                <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][eggs][]" value="" id="protein1" data-food-key="Eggs" data-food-group="eggs">
                                                 <label class="form-check-label" for="protein1">Eggs</label>
                                             </div>
+                                            <div class="food-dropdown-wrapper" data-wrapper-for="Eggs"></div>
                                         </div>
                                         <hr>
-                                        <h5>2. Meat</h5>
+                                        <h5>6. Meat</h5>
                                         <input type="hidden" name="questions[food_preference][meat]" value="Meat" />
                                         <div class="form-floating my-3">
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat][]" value="Beef - Steak" id="protein2">
-                                                        <label class="form-check-label" for="protein2">Beef - Steak</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][meat][Beef][]" value="" id="protein2" data-food-key="Beef" data-food-group="meat">
+                                                        <label class="form-check-label" for="protein2">Beef</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Beef"></div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat][]" value="Beef - Mince" id="protein3">
-                                                        <label class="form-check-label" for="protein3">Beef - Mince</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][meat][Chicken][]" value="" id="protein3" data-food-key="Chicken" data-food-group="meat">
+                                                        <label class="form-check-label" for="protein3">Chicken</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Chicken"></div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat][]" value="Lamb" id="protein4">
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][meat][Lamb][]" value="" id="protein4" data-food-key="Lamb" data-food-group="meat">
                                                         <label class="form-check-label" for="protein4">Lamb</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Lamb"></div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat][]" value="Pork" id="protein5">
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][meat][Pork][]" value="" id="protein5" data-food-key="Pork" data-food-group="meat">
                                                         <label class="form-check-label" for="protein5">Pork</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Pork"></div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat][]" value="Turkey" id="protein6">
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][meat][Turkey][]" value="" id="protein6" data-food-key="Turkey" data-food-group="meat">
                                                         <label class="form-check-label" for="protein6">Turkey</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Turkey"></div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat][]" value="Chicken" id="protein7">
-                                                        <label class="form-check-label" for="protein7">Chicken</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][meat][Deli Meat][]" value="" id="protein7" data-food-key="Deli Meat" data-food-group="meat">
+                                                        <label class="form-check-label" for="protein7">Deli Meat</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Deli Meat"></div>
                                                 </div>
                                             </div>
                                         </div>
                                         <hr>
-                                        <h5>3. Meat Alternatives</h5>
-                                        <input type="hidden" name="questions[food_preference][meat_alternatives]" value="Meat Alternatives" />
+                                        <h5>7. Plant Based</h5>
+                                        <input type="hidden" name="questions[food_preference][plant_based]" value="Plant Based" />
                                         <div class="form-floating my-3">
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat_alternatives][]" value="Tofu" id="protein2">
-                                                        <label class="form-check-label" for="protein2">Tofu</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][plant_based][Meat Alternatives][]" value="" id="protein2" data-food-key="Meat Alternatives" data-food-group="plant_based">
+                                                        <label class="form-check-label" for="protein2">Meat Alternatives</label>
                                                     </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat_alternatives][]" value="Tempeh" id="protein3">
-                                                        <label class="form-check-label" for="protein3">Tempeh</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat_alternatives][]" value="Quorn" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Quorn</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat_alternatives][]" value="TVP (Textured Vegetable Protein)" id="protein5">
-                                                        <label class="form-check-label" for="protein5">TVP (Textured Vegetable Protein)</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][meat_alternatives][]" value="Seitan" id="protein6">
-                                                        <label class="form-check-label" for="protein6">Seitan</label>
-                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Meat Alternatives"></div>
                                                 </div>
                                             </div>
                                         </div>
                                         <hr>
-                                        <h5>4. Seafood</h5>
+                                        <h5>8. Seafood</h5>
                                         <input type="hidden" name="questions[food_preference][seafood]" value="Seafood" />
                                         <div class="form-floating my-3">
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][seafood][]" value="White Fish" id="seafood1">
-                                                        <label class="form-check-label" for="seafood1">White fish (barramundi, snapper)</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][seafood][Fresh Seafood][]" value="" id="seafood1" data-food-key="Fresh Seafood" data-food-group="seafood">
+                                                        <label class="form-check-label" for="seafood1">Fresh Seafood</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Fresh Seafood"></div>
+
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][seafood][]" value="Salmon" id="seafood2">
-                                                        <label class="form-check-label" for="seafood2">Salmon</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][seafood][Tinned Seafood][]" value="" id="seafood2" data-food-key="Tinned Seafood" data-food-group="seafood">
+                                                        <label class="form-check-label" for="seafood2">Tinned Seafood</label>
                                                     </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][seafood][]" value="Smoked Salmon" id="seafood3">
-                                                        <label class="form-check-label" for="seafood3">Smoked Salmon</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][seafood][]" value="Tuna" id="seafood4">
-                                                        <label class="form-check-label" for="seafood4">Tuna</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][seafood][]" value="Tinned Fish" id="seafood5">
-                                                        <label class="form-check-label" for="seafood5">Tinned Fish</label>
-                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Tinned Seafood"></div>
                                                 </div>
                                             </div>
                                         </div>
                                         <hr>
-                                        <h5>5. Dairy</h5>
+                                        <h5>9. Dairy</h5>
                                         <input type="hidden" name="questions[food_preference][dairy]" value="Dairy" />
                                         <div class="form-floating my-3">
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Full Cream Milk" id="dairy1">
-                                                        <label class="form-check-label" for="dairy1">Full Cream Milk</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][dairy][Milk][]" value="" id="dairy1" data-food-key="Milk" data-food-group="dairy">
+                                                        <label class="form-check-label" for="dairy1">Milk</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Milk"></div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="High Protein Yoghurt" id="dairy5">
-                                                        <label class="form-check-label" for="dairy5">High Protein Yoghurt (Yopro)</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][dairy][Cheese][]" value="" id="dairy3" data-food-key="Cheese" data-food-group="dairy">
+                                                        <label class="form-check-label" for="dairy3">Cheese</label>
                                                     </div>
-                                                </div>
-
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Parmesan cheese" id="dairy5">
-                                                        <label class="form-check-label" for="dairy5">Parmesan cheese</label>
-                                                    </div>
-                                                </div>
-                                               
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Low Fat Milk" id="dairy2">
-                                                        <label class="form-check-label" for="dairy2">Low Fat Milk</label>
-                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Cheese"></div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Tasty cheese" id="dairy5">
-                                                        <label class="form-check-label" for="dairy5">Tasty cheese</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][dairy][Yoghurt][]" value="" id="dairy2" data-food-key="Yoghurt" data-food-group="dairy">
+                                                        <label class="form-check-label" for="dairy2">Yoghurt</label>
                                                     </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Goats cheese" id="dairy5">
-                                                        <label class="form-check-label" for="dairy5">Goats cheese</label>
-                                                    </div>
-                                                </div>
-                                                
-
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Skim Milk" id="dairy3">
-                                                        <label class="form-check-label" for="dairy3">Skim Milk</label>
-                                                    </div>
-                                                </div>
-                                               
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Colby cheese" id="dairy5">
-                                                        <label class="form-check-label" for="dairy5">Colby cheese</label>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Soft Cheese (Brie)" id="dairy5">
-                                                        <label class="form-check-label" for="dairy5">Soft Cheese (Brie)</label>
-                                                    </div>
-                                                </div>
-                                                
-                                                
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Greek Yoghurt" id="dairy4">
-                                                        <label class="form-check-label" for="dairy4">Greek Yoghurt</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][dairy][]" value="Vintage cheese" id="dairy5">
-                                                        <label class="form-check-label" for="dairy5">Vintage cheese</label>
-                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Yoghurt"></div>
                                                 </div>
                                             </div>
                                         </div>
                                         <hr>
-                                        <h5>6. Non-Dairy</h5>
-                                        <input type="hidden" name="questions[food_preference][non-dairy]" value="Non-Dairy" />
-                                        <div class="form-floating my-3">
-                                            <div class="row row-cols-1 row-cols-md-3 g-2">
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][non-dairy][]" value="Soy Milk" id="nondairy1">
-                                                        <label class="form-check-label" for="nondairy1">Soy Milk</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][non-dairy][]" value="Almond Milk" id="nondairy2">
-                                                        <label class="form-check-label" for="nondairy2">Almond Milk</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][non-dairy][]" value="Oat Milk" id="nondairy3">
-                                                        <label class="form-check-label" for="nondairy3">Oat Milk</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <h5>7. Fruit</h5>
+                                        
+                                        <h5>10. Fruit</h5>
                                         <input type="hidden" name="questions[food_preference][fruit]" value="Fruit" />
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="selectAllFruits">
+                                        <!-- <div class="form-check">
+                                            <input class="form-check-input food-checkbox" type="checkbox" id="selectAllFruits">
                                             <label class="form-check-label fw-bold" for="selectAllFruits">Select All</label>
-                                        </div>
+                                        </div> -->
                                         <div class="form-floating my-3">
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Avocado" id="protein2">
-                                                        <label class="form-check-label" for="protein2">Avocado</label>
+                                                            <input class="form-check-input food-checkbox fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="" id="protein2" data-food-key="Fruit" data-food-group="fruit">
+                                                        <label class="form-check-label" for="protein2">Fruit</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Fruit"></div>
                                                 </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Banana" id="protein3">
-                                                        <label class="form-check-label" for="protein3">Banana</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Pineapple" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Pineapple</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Kiwi" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Kiwi</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Passionfruit" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Passionfruit</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Orange" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Orange</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Mandarin" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Mandarin</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Mango" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Mango</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Peach" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Peach</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Rockmelon" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Rockmelon</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Apple" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Apple</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Watermelon" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Watermelon</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Strawberries" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Strawberries</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Raspberries" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Raspberries</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Pomegranate" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Pomegranate</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Blackberry" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Blackberry</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Pear" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Pear</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Grapes" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Grapes</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Tomato" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Tomato</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Blueberries" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Blueberries</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Black grapes" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Black grapes</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="Dates" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Dates</label>
-                                                    </div>
-                                                </div>
-
                                             </div>
                                         </div>
                                         <hr>
-                                        <h5>8. Vegetables</h5>
+                                        <h5>11. Vegetables</h5>
                                         <input type="hidden" name="questions[food_preference][vegetables]" value="Vegetables" />
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="selectAllVegetables">
+                                        <!-- <div class="form-check">
+                                            <input class="form-check-input food-checkbox" type="checkbox" id="selectAllVegetables">
                                             <label class="form-check-label fw-bold" for="selectAllVegetables">Select All</label>
-                                        </div>
+                                        </div> -->
                                         <div class="form-floating my-3">
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Carrot" id="protein2">
-                                                        <label class="form-check-label" for="protein2">Carrot</label>
+                                                        <input class="form-check-input food-checkbox vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="" id="protein2" data-food-key="Vegetables" data-food-group="vegetables">
+                                                        <label class="form-check-label" for="protein2">Vegetables</label>
                                                     </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Pumpkin" id="protein3">
-                                                        <label class="form-check-label" for="protein3">Pumpkin</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Potato" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Potato</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Sweet potato" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Sweet potato</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Capsicum" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Capsicum</label>
-                                                    </div>
-                                                </div>
-                                                <!-- <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Capsicum (green)" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Capsicum (green)</label>
-                                                    </div>
-                                                </div> -->
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Zucchini" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Zucchini</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Corn" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Corn</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Celery" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Celery</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Cucumber" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Cucumber</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Broccoli" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Broccoli</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Beans" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Beans</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Snow peas" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Snow peas</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Bok choy" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Bok choy</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Peas" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Peas</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Beetroot" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Beetroot</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="Eggplant" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Eggplant</label>
-                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Vegetables"></div>
                                                 </div>
                                             </div>
                                         </div>
                                         <hr>
-                                        <h5>9. Oils / Butter</h5>
+                                        <h5>12. Oils / Butter</h5>
                                         <input type="hidden" name="questions[food_preference][oils_butter]" value="Oils / Butter" />
                                         <div class="form-floating my-3">
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][oils_butter][]" value="Butter" id="protein2">
-                                                        <label class="form-check-label" for="protein2">Butter</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][oils_butter][Butters][]" value="" id="protein2" data-food-key="Butters" data-food-group="oils_butter">
+                                                        <label class="form-check-label" for="protein2">Butters</label>
                                                     </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Butters"></div>
                                                 </div>
+                                                
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][oils_butter][]" value="Margarine" id="protein3">
-                                                        <label class="form-check-label" for="protein3">Margarine</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][oils_butter][Oils][]" value="" id="protein4" data-food-key="Oils" data-food-group="oils_butter">
+                                                        <label class="form-check-label" for="protein4">Oils</label>
                                                     </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][oils_butter][]" value="Vegetable oil" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Vegetable oil</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][oils_butter][]" value="Extra Virgin Olive oil" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Extra Virgin Olive oil</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][oils_butter][]" value="Olive oil" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Olive oil</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][oils_butter][]" value="Avocado oil" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Avocado oil</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="ans[food_preference][oils_butter][]" value="Canola oil" id="protein4">
-                                                        <label class="form-check-label" for="protein4">Canola oil</label>
-                                                    </div>
+                                                    <div class="food-dropdown-wrapper" data-wrapper-for="Oils"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1404,7 +1081,7 @@
                         <div class="card">
                             <div class="bg-white card-header p-4 pb-3">
                                 <h4 class="m-0">Food Preference List</h4>
-                                <p class="mt-3">Please select all items that you enjoy eating.</p>
+                                <p class="mt-3 text-danger">* Select foods you currently eat OR are open to try</p>
                             </div>
                             <div class="card-body px-4">
                                 <div class="row">
@@ -1414,196 +1091,127 @@
                                         <input type="hidden" name="questions[food_preference][snacks]" value="Snacks" />
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Cracker biscuits (e.g. Jatz)" id="snack_cracker_biscuits_checkbox">
-                                                <label for="snack_cracker_biscuits_checkbox" class="form-label">Cracker biscuits (e.g. Jatz)</label>
-                                                <input type="text" id="snack_cracker_biscuits" name="ans[food_preference][snacks][cracker_biscuits]" class="form-control" placeholder="">
+                                                <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][snacks][Fruit & Nut bars][]" value="" id="snack_fruit_nut_bars_checkbox" data-food-key="Fruit & Nut bars" data-food-group="snacks">
+                                                <label for="snack_fruit_nut_bars_checkbox" class="form-label">Fruit & Nut bars</label>
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Fruit & Nut bars"></div>
+                                                <!-- <input type="text" id="snack_fruit_nut_bars" name="ans[food_preference][snacks][fruit_nut_bars]" class="form-control" placeholder=""> -->
                                             </div>
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Rice cakes" id="snack_rice_cakes_checkbox">
-                                                <label for="snack_rice_cakes_checkbox" class="form-label">Rice cakes</label>
-                                                <input type="text" id="snack_rice_cakes" name="ans[food_preference][snacks][rice_cakes]" class="form-control" placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Fruit/nut bars" id="snack_fruit_nut_bars_checkbox">
-                                                <label for="snack_fruit_nut_bars_checkbox" class="form-label">Fruit/nut bars</label>
-                                                <input type="text" id="snack_fruit_nut_bars" name="ans[food_preference][snacks][fruit_nut_bars]" class="form-control" placeholder="">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Muesli bars" id="snack_muesli_bars_checkbox">
+                                                <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][snacks][Muesli bars][]" value="" id="snack_muesli_bars_checkbox" data-food-key="Muesli bars" data-food-group="snacks">
                                                 <label for="snack_muesli_bars_checkbox" class="form-label">Muesli bars</label>
-                                                <input type="text" id="snack_muesli_bars" name="ans[food_preference][snacks][muesli_bars]" class="form-control" placeholder="">
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Muesli bars"></div>
+                                                <!-- <input type="text" id="snack_muesli_bars" name="ans[food_preference][snacks][muesli_bars]" class="form-control" placeholder=""> -->
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Popcorn" id="snack_popcorn_checkbox">
-                                                <label for="snack_popcorn_checkbox" class="form-label">Popcorn</label>
-                                                <input type="text" id="snack_popcorn" name="ans[food_preference][snacks][popcorn]" class="form-control" placeholder="">
+                                                <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][snacks][Other Snacks][]" value="" id="snack_popcorn_checkbox" data-food-key="Other Snacks" data-food-group="snacks">
+                                                <label for="snack_popcorn_checkbox" class="form-label">Other Snacks</label>
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Other Snacks"></div>
+                                                <!-- <input type="text" id="snack_popcorn" name="ans[food_preference][snacks][popcorn]" class="form-control" placeholder=""> -->
                                             </div>
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Lollies" id="snack_lollies_checkbox">
-                                                <label for="snack_lollies_checkbox" class="form-label">Lollies</label>
-                                                <input type="text" id="snack_lollies" name="ans[food_preference][snacks][lollies]" class="form-control" placeholder="">
-                                            </div>
+                                            
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Chocolate bars" id="snack_chocolate_bars_checkbox">
+                                                <!-- <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][Chocolate bars]" value="" id="snack_chocolate_bars_checkbox" data-food-key="Chocolate bars" data-food-group="snacks"> -->
                                                 <label for="snack_chocolate_bars_checkbox" class="form-label">Chocolate bars</label>
-                                                <input type="text" id="snack_chocolate_bars" name="ans[food_preference][snacks][chocolate_bars]" class="form-control" placeholder="">
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Chocolate bars"></div>
+                                                <input type="text" id="snack_chocolate_bars" name="ans[food_preference][snacks][Chocolate Bars]" class="form-control" placeholder="Eg: Mars Bar, Picnic, Chocolate mud cake">
+                                                <small class="form-text text-muted">(Use commas to separate items. Eg: Mars Bar, Picnic, Chocolate mud cake.)</small>
                                             </div>
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Chocolate bites" id="snack_chocolate_bites_checkbox">
-                                                <label for="snack_chocolate_bites_checkbox" class="form-label">Chocolate bites</label>
-                                                <input type="text" id="snack_chocolate_bites" name="ans[food_preference][snacks][chocolate_bites]" class="form-control" placeholder="">
+                                                <!-- <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][Lollies]" value="" id="snack_lollies_checkbox" data-food-key="Lollies" data-food-group="snacks"> -->
+                                                <label for="snack_lollies_checkbox" class="form-label">Lollies</label>
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Lollies"></div>
+                                                <input type="text" id="snack_lollies" name="ans[food_preference][snacks][Lollies]" class="form-control" placeholder="Eg: Snakes, Sour Worms">
+                                                <small class="form-text text-muted">(Use commas to separate items. Eg: Snakes, Sour Worms.)</small>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Chips (Corn, Crisps, Pretzels)" id="snack_chips_checkbox">
-                                                <label for="snack_chips_checkbox" class="form-label">Chips (Corn, Crisps, Pretzels)</label>
-                                                <input type="text" id="snack_chips" name="ans[food_preference][snacks][chips]" class="form-control" placeholder="">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][snacks][]" value="Muffins" id="snack_muffins_checkbox">
-                                                <label for="snack_muffins_checkbox" class="form-label">Muffins</label>
-                                                <input type="text" id="snack_muffins" name="ans[food_preference][snacks][muffins]" class="form-control" placeholder="">
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                     <!-- Drinks Section -->
                                     <div class="col-12 mb-4">
                                         <h5>Drinks</h5>
-                                        <h6>Cold Drinks</h6>
-                                        <input type="hidden" name="questions[food_preference][cold_drink]" value="Cold Drinks" />
+                                        <!-- <h6>Cold Drinks</h6> -->
+                                        <input type="hidden" name="questions[food_preference][drink]" value="Drinks" />
 
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cold_drink][iced_coffee][]" value="Iced Coffee" id="drink_iced_coffee_checkbox">
-                                                <label for="drink_iced_coffee" class="form-label">Iced Coffee</label>
-                                                <input type="text" id="drink_iced_coffee" name="ans[food_preference][cold_drink][iced_coffee]" class="form-control" placeholder="">
+                                                <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][drink][Cold Drinks][]" value="" id="drink_iced_coffee_checkbox" data-food-key="Cold Drinks" data-food-group="drink">
+                                                <label for="drink_iced_coffee" class="form-label">Cold Drinks</label>
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Cold Drinks"></div>
+                                                <!-- <input type="text" id="drink_iced_coffee" name="ans[food_preference][cold_drink][iced_coffee]" class="form-control" placeholder=""> -->
                                             </div>
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cold_drink][iced_tea][]" value="Iced Tea" id="drink_iced_tea_checkbox">
-                                                <label for="drink_iced_tea" class="form-label">Iced Tea</label>
-                                                <input type="text" id="drink_iced_tea" name="ans[food_preference][cold_drink][iced_tea]" class="form-control" placeholder="">
+                                                <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][drink][Hot Drinks][]" value="" id="drink_iced_tea_checkbox" data-food-key="Hot Drinks" data-food-group="drink">
+                                                <label for="drink_iced_tea" class="form-label">Hot Drinks</label>
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Hot Drinks"></div>
+                                                <!-- <input type="text" id="drink_iced_tea" name="ans[food_preference][cold_drink][iced_tea]" class="form-control" placeholder="> -->
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cold_drink][flavoured_milk][]" value="Flavoured Milk" id="drink_flavoured_milk_checkbox">
-                                                <label for="drink_flavoured_milk" class="form-label">Flavoured Milk</label>
-                                                <input type="text" id="drink_flavoured_milk" name="ans[food_preference][cold_drink][flavoured_milk]" class="form-control" placeholder="">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cold_drink][soft_drink][]" value="Soft Drink" id="drink_soft_drink_checkbox">
-                                                <label for="drink_soft_drink" class="form-label">Soft drink</label>
-                                                <input type="text" id="drink_soft_drink" name="ans[food_preference][cold_drink][soft_drink]" class="form-control" placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cold_drink][sugar_free_soft_drink][]" value="Sugar-free soft drink (e.g. Coke Zero)" id="drink_sugar_free_soft_drink_checkbox">
-                                                <label for="drink_sugar_free_soft_drink" class="form-label">Sugar-free soft drink (e.g. Coke Zero)</label>
-                                                <input type="text" id="drink_sugar_free_soft_drink" name="ans[food_preference][cold_drink][sugar_free_soft_drink]" class="form-control" placeholder="">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cold_drink][energy_drink][]" value="Energy Drink" id="drink_energy_drink_checkbox">
-                                                <label for="drink_energy_drink" class="form-label">Energy Drink</label>
-                                                <input type="text" id="drink_energy_drink" name="ans[food_preference][cold_drink][energy_drink]" class="form-control" placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cold_drink][juice][]" value="Juice" id="drink_juice_checkbox">
-                                                <label for="drink_juice" class="form-label">Juice</label>
-                                                <input type="text" id="drink_juice" name="ans[food_preference][cold_drink][juice]" class="form-control" placeholder="">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cold_drink][kombucha][]" value="Kombucha" id="drink_kombucha_checkbox">
-                                                <label for="drink_kombucha" class="form-label">Kombucha</label>
-                                                <input type="text" id="drink_kombucha" name="ans[food_preference][cold_drink][kombucha]" class="form-control" placeholder="">
-                                            </div>
-                                        </div>
-
-                                        <h6>Hot Drinks</h6>
-                                        <input type="hidden" name="questions[food_preference][hot_drink]" value="Hot Drinks" />
-
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][hot_drink][coffee][]" value="Coffee" id="drink_hot_coffee_checkbox">
-                                                <label for="drink_hot_coffee" class="form-label">Coffee</label>
-                                                <input type="text" id="drink_hot_coffee" name="ans[food_preference][hot_drink][coffee]" class="form-control" placeholder="">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][hot_drink][chocolate][]" value="Hot Chocolate" id="drink_hot_chocolate_checkbox">
-                                                <label for="drink_hot_chocolate" class="form-label">Hot Chocolate</label>
-                                                <input type="text" id="drink_hot_chocolate" name="ans[food_preference][hot_drink][chocolate]" class="form-control" placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][hot_drink][tea][]" value="Tea" id="drink_hot_tea_checkbox">
-                                                <label for="drink_hot_tea" class="form-label">Tea</label>
-                                                <input type="text" id="drink_hot_tea" name="ans[food_preference][hot_drink][tea]" class="form-control" placeholder="">
-                                            </div>
-                                        </div>
+                                        
                                     </div>
 
                                     <!-- Cuisines Section -->
                                     <div class="col-12 mb-4">
                                         <h5>Cuisines</h5>
-                                        <p>Select preferred cuisines</p>
+                                        <p>Select your favourite cuisines</p>
                                         <input type="hidden" name="questions[food_preference][cuisines]" value="Cuisines" />
 
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cuisines][japanese][]" value="Japanese" id="cuisine_japanese_checkbox">
+                                                <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][Japanese][]" value="" id="cuisine_japanese_checkbox" data-food-key="Japanese" data-food-group="cuisines">
                                                 <label for="cuisine_japanese" class="form-label">Japanese</label>
-                                                <input type="text" id="cuisine_japanese" name="ans[food_preference][cuisines][japanese]" class="form-control" placeholder="">
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Japanese"></div>
+                                                <input type="text" id="cuisine_japanese" name="ans[food_preference][cuisines][Japanese]" class="form-control" placeholder="">
                                             </div>
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cuisines][chinese][]" value="Chinese" id="cuisine_chinese_checkbox">
+                                                <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][Chinese][]" value="" id="cuisine_chinese_checkbox" data-food-key="Chinese" data-food-group="cuisines">
                                                 <label for="cuisine_chinese" class="form-label">Chinese</label>
-                                                <input type="text" id="cuisine_chinese" name="ans[food_preference][cuisines][chinese]" class="form-control" placeholder="">
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Chinese"></div>
+                                                <input type="text" id="cuisine_chinese" name="ans[food_preference][cuisines][Chinese]" class="form-control" placeholder="">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cuisines][thai][]" value="Thai" id="cuisine_thai_checkbox">
+                                                <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][Thai][]" value="" id="cuisine_thai_checkbox" data-food-key="Thai" data-food-group="cuisines">
                                                 <label for="cuisine_thai" class="form-label">Thai</label>
-                                                <input type="text" id="cuisine_thai" name="ans[food_preference][cuisines][thai]" class="form-control" placeholder="">
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Thai"></div>
+                                                <input type="text" id="cuisine_thai" name="ans[food_preference][cuisines][Thai]" class="form-control" placeholder="">
                                             </div>
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cuisines][indian][]" value="Indian" id="cuisine_indian_checkbox">
+                                                <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][Indian][]" value="" id="cuisine_indian_checkbox" data-food-key="Indian" data-food-group="cuisines">
                                                 <label for="cuisine_indian" class="form-label">Indian</label>
-                                                <input type="text" id="cuisine_indian" name="ans[food_preference][cuisines][indian]" class="form-control" placeholder="">
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Indian"></div>
+                                                <input type="text" id="cuisine_indian" name="ans[food_preference][cuisines][Indian]" class="form-control" placeholder="">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cuisines][italian][]" value="Italian" id="cuisine_italian_checkbox">
+                                                <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][Italian][]" value="" id="cuisine_italian_checkbox" data-food-key="Italian" data-food-group="cuisines">
                                                 <label for="cuisine_italian" class="form-label">Italian</label>
-                                                <input type="text" id="cuisine_italian" name="ans[food_preference][cuisines][italian]" class="form-control" placeholder="">
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Italian"></div>
+                                                <input type="text" id="cuisine_italian" name="ans[food_preference][cuisines][Italian]" class="form-control" placeholder="">
                                             </div>
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cuisines][mexican][]" value="Mexican" id="cuisine_mexican_checkbox">
+                                                <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][mexican][]" value="" id="cuisine_mexican_checkbox" data-food-key="Mexican" data-food-group="cuisines">
                                                 <label for="cuisine_mexican" class="form-label">Mexican</label>
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Mexican"></div>
                                                 <input type="text" id="cuisine_mexican" name="ans[food_preference][cuisines][mexican]" class="form-control" placeholder="">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input class="form-check-input" type="checkbox" name="ans[food_preference][cuisines][greek][]" value="Greek" id="cuisine_greek_checkbox">
+                                                <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][Greek][]" value="" id="cuisine_greek_checkbox" data-food-key="Greek" data-food-group="cuisines">
                                                 <label for="cuisine_greek" class="form-label">Greek</label>
-                                                <input type="text" id="cuisine_greek" name="ans[food_preference][cuisines][greek]" class="form-control" placeholder="">
+                                                <div class="food-dropdown-wrapper" data-wrapper-for="Greek"></div>
+                                                <input type="text" id="cuisine_greek" name="ans[food_preference][cuisines][Greek]" class="form-control" placeholder="">
                                             </div>
                                             <div class="col-md-6">
-                                                <!-- <input class="form-check-input" type="checkbox" name="ans[food_preference][cuisines][other]" value="Other" id="cuisine_other_checkbox"> -->
+                                                <!-- <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][other]" value="Others" id="cuisine_other_checkbox"> -->
                                                 <label for="cuisine_other" class="form-label">Other</label>
-                                                <input type="text" id="cuisine_other" name="ans[food_preference][cuisines][other]" class="form-control" placeholder="">
+                                                <input type="text" id="cuisine_other" name="ans[food_preference][cuisines][other]" class="form-control" placeholder="What are your favourite dish/s?">
                                             </div>
                                         </div>
                                     </div>
@@ -1785,45 +1393,45 @@
                             <div class="card-body px-4">
                                 <div class="row">
                                     <div class="col-md-6">
-                                    <h5>Which of the following nutrition related goals are you <strong class="text-primary">CURRENTLY</strong> interested in working on?</h5>
-                                        <input type="hidden" name="questions[nutrition_goals][related_goals]" value="Which of the following nutrition related goals are you interested in working on?" />
+                                    <h5>Which of these do you want help with?</h5>
+                                        <input type="hidden" name="questions[nutrition_goals][related_goals]" value="Which of these do you want help with?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Reduce bodyweight (i.e. weight loss)" id="relatedgoals1">
-                                                <label class="form-check-label" for="relatedgoals1">Improving Sports Performance/Recovery</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Sports performance & recovery" id="relatedgoals1">
+                                                <label class="form-check-label" for="relatedgoals1">Sports performance & recovery</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Improve health/immunity" id="relatedgoals5">
-                                                <label class="form-check-label" for="relatedgoals5">Improve health/immunity</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Health & immunity" id="relatedgoals5">
+                                                <label class="form-check-label" for="relatedgoals5">Health & immunity</label>
                                             </div>
                                             
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Competition nutrition strategies" id="relatedgoals9">
-                                                <label class="form-check-label" for="relatedgoals9">Competition nutrition strategies</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Comp day nutrition" id="relatedgoals9">
+                                                <label class="form-check-label" for="relatedgoals9">Comp day nutrition</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Reduce bodyweight (i.e. weight loss)" id="relatedgoals1">
-                                                <label class="form-check-label" for="relatedgoals1">Reduce bodyweight (i.e. weight loss)</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Weight loss" id="relatedgoals1">
+                                                <label class="form-check-label" for="relatedgoals1">Weight loss</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Increase bodyweight (i.e. gain mass)" id="relatedgoals2">
-                                                <label class="form-check-label" for="trelatedgoals2">Increase bodyweight (i.e. gain mass)</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Mass gain" id="relatedgoals2">
+                                                <label class="form-check-label" for="trelatedgoals2">Mass gain</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Body composition (maintain weight while getting leaner)" id="relatedgoals3">
-                                                <label class="form-check-label" for="relatedgoals3">Body composition (maintain weight while getting leaner)</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Leaner body composition" id="relatedgoals3">
+                                                <label class="form-check-label" for="relatedgoals3">Leaner body composition</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Decreasing fatigue" id="relatedgoals4">
-                                                <label class="form-check-label" for="relatedgoals4">Decreasing fatigue</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Reducing fatigue" id="relatedgoals4">
+                                                <label class="form-check-label" for="relatedgoals4">Reducing fatigue</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Nutrition for injury" id="relatedgoals7">
-                                                <label class="form-check-label" for="relatedgoals7">Nutrition for injury</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Injury nutrition" id="relatedgoals7">
+                                                <label class="form-check-label" for="relatedgoals7">Injury nutrition</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Gastrointestinal (gut) issues" id="relatedgoals8">
-                                                <label class="form-check-label" for="relatedgoals8">Gastrointestinal (gut) issues</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Gut issues" id="relatedgoals8">
+                                                <label class="form-check-label" for="relatedgoals8">Gut issues</label>
                                             </div>
                                             
                                             <div class="form-check my-2">
@@ -1833,25 +1441,25 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>What areas would you like assistance with?</h5>
-                                        <input type="hidden" name="questions[nutrition_goals][like_assistance_with]" value="What areas would you like assistance with?" />
+                                        <h5>What do you want help with?</h5>
+                                        <input type="hidden" name="questions[nutrition_goals][like_assistance_with]" value="What do you want help with?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Teach me about healthier eating" id="likeassistancewith1">
-                                                <label class="form-check-label" for="likeassistancewith1">Teach me about healthier eating
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Healthier eating habits" id="likeassistancewith1">
+                                                <label class="form-check-label" for="likeassistancewith1">Healthier eating habits
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Help confirming I am on the right track" id="likeassistancewith2">
-                                                <label class="form-check-label" for="likeassistancewith2">Help confirming I am on the right track</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Confirming I'm on the right track" id="likeassistancewith2">
+                                                <label class="form-check-label" for="likeassistancewith2">Confirming I'm on the right track</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Hold me accountable to my goals and provide support" id="likeassistancewith3">
-                                                <label class="form-check-label" for="likeassistancewith3">Hold me accountable to my goals and provide support</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Accountability & support" id="likeassistancewith3">
+                                                <label class="form-check-label" for="likeassistancewith3">Accountability & support</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Navigating through social media mixed messages" id="likeassistancewith4">
-                                                <label class="form-check-label" for="likeassistancewith4">Navigating through social media mixed messages</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Cutting through social media confusion" id="likeassistancewith4">
+                                                <label class="form-check-label" for="likeassistancewith4">Cutting through social media confusion</label>
                                             </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Other" id="likeassistancewith5">
@@ -1860,52 +1468,56 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>What is your biggest nutrition challenge? </h5>
-                                        <input type="hidden" name="questions[nutrition_goals][biggest_nutrition_challenge]" value="What is your biggest nutrition challenge?" />
+                                        <h5>What's your biggest nutrition challenge?</h5>
+                                        <input type="hidden" name="questions[nutrition_goals][biggest_nutrition_challenge]" value="What's your biggest nutrition challenge?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Cravings" id="biggestnutritionchallenge1">
                                                 <label class="form-check-label" for="biggestnutritionchallenge1">Cravings</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Don't know what I should eat" id="biggestnutritionchallenge2">
-                                                <label class="form-check-label" for="biggestnutritionchallenge2">Don't know what I should eat</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Not sure what to eat" id="biggestnutritionchallenge2">
+                                                <label class="form-check-label" for="biggestnutritionchallenge2">Not sure what to eat</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Lack of time to prepare meals" id="biggestnutritionchallenge3">
-                                                <label class="form-check-label" for="biggestnutritionchallenge3">Lack of time to prepare meals</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="No time to prep meals" id="biggestnutritionchallenge3">
+                                                <label class="form-check-label" for="biggestnutritionchallenge3">No time to prep meals</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Eating out too often" id="biggestnutritionchallenge4">
-                                                <label class="form-check-label" for="biggestnutritionchallenge4">Eating out too often</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Eating out too much" id="biggestnutritionchallenge4">
+                                                <label class="form-check-label" for="biggestnutritionchallenge4">Eating out too much</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Emotional eating / stress eating" id="biggestnutritionchallenge5">
-                                                <label class="form-check-label" for="biggestnutritionchallenge5">Emotional eating / stress eating</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Emotional/stress eating" id="biggestnutritionchallenge5">
+                                                <label class="form-check-label" for="biggestnutritionchallenge5">Emotional/stress eating</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Family / peer pressure" id="biggestnutritionchallenge6">
-                                                <label class="form-check-label" for="biggestnutritionchallenge6">Family / peer pressure</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Family or peer pressure" id="biggestnutritionchallenge6">
+                                                <label class="form-check-label" for="biggestnutritionchallenge6">Family or peer pressure</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Large portions" id="biggestnutritionchallenge7">
-                                                <label class="form-check-label" for="biggestnutritionchallenge7">Large portions</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Big portions" id="biggestnutritionchallenge7">
+                                                <label class="form-check-label" for="biggestnutritionchallenge7">Big portions</label>
                                             </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Lack of planning" id="biggestnutritionchallenge8">
                                                 <label class="form-check-label" for="biggestnutritionchallenge8">Lack of planning</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Snacking when not hungry" id="biggestnutritionchallenge9">
-                                                <label class="form-check-label" for="biggestnutritionchallenge9">Snacking when not hungry</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Poor planning" id="biggestnutritionchallenge9">
+                                                <label class="form-check-label" for="biggestnutritionchallenge9">Poor planning</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Sweet tooth" id="biggestnutritionchallenge10">
-                                                <label class="form-check-label" for="biggestnutritionchallenge10">Sweet tooth</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Snacking when not hungry" id="biggestnutritionchallenge10">
+                                                <label class="form-check-label" for="biggestnutritionchallenge10">Snacking when not hungry</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Heavily impacted by social media 'Influences" id="biggestnutritionchallenge11">
-                                                <label class="form-check-label" for="biggestnutritionchallenge11">Heavily impacted by social media 'Influences</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Sweet tooth" id="biggestnutritionchallenge11">
+                                                <label class="form-check-label" for="biggestnutritionchallenge11">Sweet tooth</label>
+                                            </div>
+                                            <div class="form-check my-2">
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Social media influence" id="biggestnutritionchallenge14">
+                                                <label class="form-check-label" for="biggestnutritionchallenge14">Social media influence</label>
                                             </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][biggest_nutrition_challenge][]" value="Unsure" id="biggestnutritionchallenge12">
@@ -1918,9 +1530,15 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>Where do you currently get nutrition information from?</h5>
-                                        <input type="hidden" name="questions[nutrition_goals][getnutrition]" value="Where do you currently get nutrition information from?" />
+                                        <h5>Where do you get your nutrition info?</h5>
+                                        <input type="hidden" name="questions[nutrition_goals][getnutrition]" value="Where do you get your nutrition info?" />
                                         <div class="form-floating my-3">
+                                            <div class="form-check my-2">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Coach" id="getnutrition1">
+                                                <label class="form-check-label" for="getnutrition1">
+                                                    Coach
+                                                </label>
+                                            </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Parents" id="getnutrition1">
                                                 <label class="form-check-label" for="getnutrition1">
@@ -1928,9 +1546,9 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Siblings (brother, sister)" id="getnutrition2">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Siblings" id="getnutrition2">
                                                 <label class="form-check-label" for="getnutrition2">
-                                                    Siblings (brother, sister)
+                                                    Siblings
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
@@ -1946,14 +1564,14 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Facebook" id="getnutrition3">
-                                                <label class="form-check-label" for="getnutrition3">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Facebook" id="getnutrition4">
+                                                <label class="form-check-label" for="getnutrition4">
                                                     Facebook
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Google" id="getnutrition3">
-                                                <label class="form-check-label" for="getnutrition3">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Google" id="getnutrition5">
+                                                <label class="form-check-label" for="getnutrition5">
                                                     Google
                                                 </label>
                                             </div>
@@ -1990,47 +1608,10 @@
                     <div class="step-tab-box" id="div9">
                         <div class="card">
                             <div class="bg-white card-header p-4">
-                                <h4 class="m-0">Physical Activity and Exercise</h4>
+                                <h4 class="m-0">Sport & Training</h4>
                             </div>
                             <div class="card-body px-4">
                                 <div class="row">
-                                    <div class="col-md-12 col-lg-12">
-                                        <h5>How many days per week and at what intensity do you normally train for your sport?</h5>
-                                        <input type="hidden" name="questions[physical_activity_and_exercise][intensity]" value="How many days per week and at what intensity do you normally train for your sport?" />
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th></th>
-                                                        <th class="text-center">Low intensity</th>
-                                                        <th class="text-center">Moderate intensity</th>
-                                                        <th class="text-center">High intensity</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>1-2</td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][1-2][]" value="Low intensity" id="perweekintensity-1"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][1-2][]" value="Moderate intensity" id="perweekintensity-2"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][1-2][]" value="High intensity" id="perweekintensity-3"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>3-4</td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][3-4][]" value="Low intensity" id="perweekintensity-4"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][3-4][]" value="Moderate intensity" id="perweekintensity-5"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][3-4][]" value="High intensity" id="perweekintensity-6"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>5+</td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][5+][]" value="Low intensity" id="perweekintensity-7"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][5+][]" value="Moderate intensity" id="perweekintensity-8"></td>
-                                                        <td class="text-center"><input class="form-check-input" type="checkbox" name="ans[physical_activity_and_exercise][intensity][5+][]" value="High intensity" id="perweekintensity-9"></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
                                     <div class="col-md-12 col-lg-12">
                                         <h5>What type of physical activity do you mainly do or compete in? (more than one can apply)</h5>
                                         <input type="hidden" name="questions[physical_activity_and_exercise][physical_activity]" value="What type of physical activity do you mainly do or compete in? (more than one can apply)" />
@@ -2062,9 +1643,41 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-12">
-                                        <h5>Do you <strong class="text-primary">CURRENTLY</strong> use any EXERCISE OR NUTRITION tracking devices/apps?  </h5>
-                                        <input type="hidden" name="questions[physical_activity_and_exercise][tracking_device]" value="Do you CURRENTLY use any EXERCISE OR NUTRITION tracking devices/apps? " />
+                                        <h5>On average, how many days per week do you train, and at what intensity?</h5>
+                                        <input type="hidden" name="questions[physical_activity_and_exercise][intensity]" value="On average, how many days per week do you train, and at what intensity?" />
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="">Intensity Level</th>
+                                                        <th class="">Days per Week (0-7)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Low Intensity</td>
+                                                        <td class=""><input type="number" name="ans[physical_activity_and_exercise][intensity][Low Intensity]" value="" id="perweekintensity-1" style="width: 60px; height: 40px; text-align: center; padding: 0;" min="0" max="7"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Moderate Intensity</td>
+                                                        <td class=""><input type="number" name="ans[physical_activity_and_exercise][intensity][Moderate Intensity]" value="" id="perweekintensity-4" style="width: 60px; height: 40px; text-align: center; padding: 0;" min="0" max="7"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>High Intensity</td>
+                                                        <td class=""><input type="number" name="ans[physical_activity_and_exercise][intensity][High Intensity]" value="" id="perweekintensity-7" style="width: 60px; height: 40px; text-align: center; padding: 0;" min="0" max="7"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-12">
+                                        <h5>Do you <strong class="text-primary">CURRENTLY</strong> use any exercise or nutrition trackers/apps? </h5>
+                                        <input type="hidden" name="questions[physical_activity_and_exercise][tracking_device]" value="Do you CURRENTLY use any exercise or nutrition trackers/apps?" />
                                         <div class="form-floating my-3">
+                                            <div class="form-check my-2">
+                                                <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-5" value="No">
+                                                <label class="form-check-label" for="trackingDevices-5">No</label>
+                                            </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-1" value="Garmin or similar watch">
                                                 <label class="form-check-label" for="trackingDevices-1">Garmin or similar watch</label>
@@ -2078,18 +1691,18 @@
                                                 <label class="form-check-label" for="trackingDevices-3">Whoop band</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-4" value="My Fitness Pal or similar">
-                                                <label class="form-check-label" for="trackingDevices-4">My Fitness Pal or similar</label>
+                                                <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-4" value="MyFitnessPal or similar">
+                                                <label class="form-check-label" for="trackingDevices-4">MyFitnessPal or similar</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-5" value="Other">
-                                                <label class="form-check-label" for="trackingDevices-5">Other:</label>
+                                                <input class="form-check-input" type="radio" name="ans[physical_activity_and_exercise][tracking_device]" id="trackingDevices-6" value="Other">
+                                                <label class="form-check-label" for="trackingDevices-6">Other:</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
-                                        <div class="no-form-floating form-floating my-3">
-                                            <label>If answered yes to the above question, what do you mainly track? (e.g. exercise, food ,sleep)</label>
+                                        <div class="no-form-floating form-floating my-3 d-none" id="trackingDetailsField">
+                                            <label>What do you mainly track? (e.g. exercise, food ,sleep)</label>
                                             <input type="hidden" name="questions[physical_activity_and_exercise][track]" value="If answered yes to the above question, what do you mainly track? (e.g. exercise, food, sleep)" />
                                             <input type="text" class="form-control" name="ans[physical_activity_and_exercise][track]" placeholder="">
                                         </div>
@@ -2120,14 +1733,40 @@
                     </div>
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
                     <p class="mb-2">Your form is submitted.</p>
-                    <p class="mb-4">Kerry will now create your plan and let you know as soon as it’s ready (48-72hrs).</p>
+                    <p class="mb-4">Kerry will now create your plan and let you know as soon as it's ready (48-72hrs).</p>
                     <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Food Selection Modal -->
+    <div class="modal" id="foodModal" tabindex="-1" aria-labelledby="foodModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="foodModalLabel">Select Food Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row" id="foodListContainer">
+                    <!-- Items inserted here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="confirmFoodSelection">
+                        Confirm Selection
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
 <script>
     // localStorage.clear();
@@ -2152,145 +1791,76 @@
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        function saveFormData() {
-            const formData = {};
+    function createOtherInput(input, value = '') {
+        let otherInputId = `${input.id}-input`;
+        let otherInput = document.getElementById(otherInputId);
 
-            document.querySelectorAll('input, select, textarea').forEach(input => {
-                if (input.type === 'checkbox') {
-                    if (!formData[input.name]) {
-                        formData[input.name] = [];
-                    }
+        const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+        const trackingDetailsInput = trackingDetailsField.querySelector('input');
 
-                    if (input.checked) {
-                        if (input.value === 'Other') {
-                            formData[input.name].push('Other');
+        if (!otherInput) {
+            otherInput = document.createElement('input');
+            otherInput.type = 'text';
+            otherInput.className = 'form-control mt-2';
+            otherInput.name = `${input.name}_other`;
+            otherInput.id = otherInputId;
+            otherInput.placeholder = 'Please specify...';
+            input.parentNode.appendChild(otherInput);
 
-                            const otherInput = document.getElementById(`${input.id}-input`);
-                            if (otherInput) {
-                                formData[`${input.name}_other`] = otherInput.value;
-                            }
-                        } else {
-                            formData[input.name].push(input.value);
-                        }
-                    }
-                } else if (input.type === 'radio') {
-                    if (input.checked) {
-                        if (input.value === 'Other') {
-                            formData[input.name] = 'Other';
+            console.log(`🟠 Created "Other" Input for [${input.name}]`);
 
-                            const otherInput = document.getElementById(`${input.id}-input`);
-                            if (otherInput) {
-                                formData[`${input.name}_other`] = otherInput.value;
-                            }
-                        } else {
-                            formData[input.name] = input.value;
-                        }
-                    }
-                } else {
-                    formData[input.name] = input.value;
-                }
-            });
-
-            console.log('🟢 Saved Form Data:', formData);
-            localStorage.setItem('nutritionFormData', JSON.stringify(formData));
+            // otherInput.addEventListener('keyup', function () {
+            //     const inputValue = this.value.trim().toLowerCase();
+            //     handleTrackingDetailsVisibility(inputValue);
+            // });
         }
 
-        function restoreFormData() {
-            const savedData = JSON.parse(localStorage.getItem('nutritionFormData'));
-            console.log('🔵 Restoring Form Data:', savedData);
+        otherInput.value = value;
+    }
 
-            if (savedData) {
-                document.querySelectorAll('input, select, textarea').forEach(input => {
-                    if (input.type === 'checkbox') {
-                        if (savedData[input.name]?.includes(input.value)) {
-                            input.checked = true;
-                        }
+    // function handleTrackingDetailsVisibility(inputValue) {
+    //     const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+    //     const trackingDetailsInput = trackingDetailsField.querySelector('input');
 
-                        if (input.value === 'Other' && savedData[input.name]?.includes('Other')) {
-                            input.checked = true;
-                            input.dispatchEvent(new Event('change'));
+    //     if (inputValue === 'no' || inputValue === 'No' || inputValue === 'None' || inputValue === 'none' || inputValue === 'N/A') {
+    //         trackingDetailsField.style.display = 'none';
+    //         trackingDetailsInput.disabled = true;
+    //         trackingDetailsInput.removeAttribute('required');
+    //     } else {
+    //         trackingDetailsField.style.display = 'block';
+    //         trackingDetailsInput.disabled = false;
+    //         trackingDetailsInput.setAttribute('required', 'required');
+    //     }
+    // }
 
-                            const otherInputValue = savedData[`${input.name}_other`];
-                            if (otherInputValue) {
-                                createOtherInput(input, otherInputValue);
-                            }
-                        }
-                    } else if (input.type === 'radio') {
-                        if (savedData[input.name] === 'Other' && input.value === 'Other') {
-                            input.checked = true;
-                            input.dispatchEvent(new Event('change'));
-
-                            const otherInputValue = savedData[`${input.name}_other`];
-                            if (otherInputValue) {
-                                createOtherInput(input, otherInputValue);
-
-                                // Handle TrackingDetails visibility
-                                handleTrackingDetailsVisibility(otherInputValue);
-                            }
-                        } else if (input.value === savedData[input.name]) {
-                            input.checked = true;
-                        }
-                    } else {
-                        input.value = savedData[input.name] || '';
-                    }
-                });
-            }
-        }
-
-        function createOtherInput(input, value = '') {
-            let otherInputId = `${input.id}-input`;
+    document.querySelectorAll('input[type="radio"][value="Other"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            let otherInputId = `${this.id}-input`;
             let otherInput = document.getElementById(otherInputId);
 
-            const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
-            const trackingDetailsInput = trackingDetailsField.querySelector('input');
-
-            if (!otherInput) {
-                otherInput = document.createElement('input');
-                otherInput.type = 'text';
-                otherInput.className = 'form-control mt-2';
-                otherInput.name = `${input.name}_other`;
-                otherInput.id = otherInputId;
-                otherInput.placeholder = 'Please specify...';
-                input.parentNode.appendChild(otherInput);
-
-                console.log(`🟠 Created "Other" Input for [${input.name}]`);
-
-                otherInput.addEventListener('keyup', function () {
-                    const inputValue = this.value.trim().toLowerCase();
-                    handleTrackingDetailsVisibility(inputValue);
-                    saveFormData();
-                });
-            }
-
-            otherInput.value = value;
-        }
-
-        function handleTrackingDetailsVisibility(inputValue) {
-            const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
-            const trackingDetailsInput = trackingDetailsField.querySelector('input');
-
-            if (inputValue === 'no' || inputValue === 'No' || inputValue === 'None' || inputValue === 'none' || inputValue === 'N/A') {
-                trackingDetailsField.style.display = 'none';
-                trackingDetailsInput.disabled = true;
-                trackingDetailsInput.removeAttribute('required');
+            if (this.checked) {
+                if (!otherInput) {
+                    createOtherInput(this);
+                }
             } else {
+                if (otherInput) {
+                    otherInput.remove();
+                }
+
+                const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+                const trackingDetailsInput = trackingDetailsField.querySelector('input');
+
                 trackingDetailsField.style.display = 'block';
                 trackingDetailsInput.disabled = false;
                 trackingDetailsInput.setAttribute('required', 'required');
             }
-        }
-
-        // Restore data on page load
-        restoreFormData();
-
-        document.querySelector('form').addEventListener('submit', function () {
-            console.log('✅ Form submitted — Clearing LocalStorage');
-            localStorage.removeItem('nutritionFormData');
         });
-
-        document.querySelectorAll('input[type="radio"][value="Other"]').forEach(function (radio) {
-            radio.addEventListener('change', function () {
+    });
+    
+    // Handle checkbox changes
+    document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            if (this.value === 'Other') {
                 let otherInputId = `${this.id}-input`;
                 let otherInput = document.getElementById(otherInputId);
 
@@ -2302,69 +1872,101 @@
                     if (otherInput) {
                         otherInput.remove();
                     }
+                }
+            }
+        });
+    });
 
-                    const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
-                    const trackingDetailsInput = trackingDetailsField.querySelector('input');
+    // <i class="fas fa-pen p-1" style="color:#0d6efd; border:1px solid #0d6efd; border-radius:5px;"></i>
 
+    // document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+    //     radio.addEventListener('change', function () {
+    //         let radioName = this.name;
+
+    //         const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+    //         const trackingDetailsInput = trackingDetailsField.querySelector('input');
+
+    //         trackingDetailsField.style.display = 'block';
+    //         trackingDetailsInput.disabled = false;
+    //         trackingDetailsInput.setAttribute('required', 'required');
+
+    //         document.querySelectorAll(`input[type="radio"][name="${radioName}"]`).forEach(function (otherRadio) {
+    //             if (otherRadio !== radio) {
+    //                 let otherInputId = `${otherRadio.id}-input`;
+    //                 let otherInput = document.getElementById(otherInputId);
+
+    //                 if (otherInput) {
+    //                     otherInput.remove();
+    //                 }
+    //             }
+    //         });
+
+    //         // saveFormData();
+    //     });
+    // });
+    document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            let radioName = this.name;
+
+            // Target the tracking input field wrapper
+            const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
+            const trackingDetailsInput = trackingDetailsField.querySelector('input');
+
+            // Check if current question is the tracking device one
+            if (radioName === 'ans[physical_activity_and_exercise][tracking_device]') {
+                if (this.value === 'No') {
+                    // Hide the follow-up input
+                    trackingDetailsField.style.display = 'none';
+                    trackingDetailsInput.disabled = true;
+                    trackingDetailsInput.removeAttribute('required');
+                    trackingDetailsInput.value = '';
+                } else {
+                    // Show the follow-up input
                     trackingDetailsField.style.display = 'block';
                     trackingDetailsInput.disabled = false;
                     trackingDetailsInput.setAttribute('required', 'required');
                 }
+            }
 
-                saveFormData();
-            });
-        });
-
-        // Handle checkbox changes
-        document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                if (this.value === 'Other') {
-                    let otherInputId = `${this.id}-input`;
+            // Remove other radio's dynamic input fields (if any)
+            document.querySelectorAll(`input[type="radio"][name="${radioName}"]`).forEach(function (otherRadio) {
+                if (otherRadio !== radio) {
+                    let otherInputId = `${otherRadio.id}-input`;
                     let otherInput = document.getElementById(otherInputId);
-
-                    if (this.checked) {
-                        if (!otherInput) {
-                            createOtherInput(this);
-                        }
-                    } else {
-                        if (otherInput) {
-                            otherInput.remove();
-                        }
+                    if (otherInput) {
+                        otherInput.remove();
                     }
                 }
-
-                saveFormData();
-            });
-        });
-
-
-        // Handle radio button changes
-        document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
-            radio.addEventListener('change', function () {
-                let radioName = this.name;
-
-                const trackingDetailsField = document.querySelector('[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6');
-                const trackingDetailsInput = trackingDetailsField.querySelector('input');
-
-                trackingDetailsField.style.display = 'block';
-                trackingDetailsInput.disabled = false;
-                trackingDetailsInput.setAttribute('required', 'required');
-
-                document.querySelectorAll(`input[type="radio"][name="${radioName}"]`).forEach(function (otherRadio) {
-                    if (otherRadio !== radio) {
-                        let otherInputId = `${otherRadio.id}-input`;
-                        let otherInput = document.getElementById(otherInputId);
-
-                        if (otherInput) {
-                            otherInput.remove();
-                        }
-                    }
-                });
-
-                saveFormData();
             });
         });
     });
+
+    $(document).ready(function () {
+        $('.cuisines-checkbox').on('change', function () {
+            const $checkbox = $(this);
+            const checkboxId = $checkbox.attr('id'); // e.g., cuisine_japanese_checkbox
+            const cuisineKey = checkboxId.replace('_checkbox', ''); // e.g., cuisine_japanese
+            const $input = $('#' + cuisineKey);
+
+            if ($checkbox.is(':checked')) {
+                $input.addClass('required-if-checked');
+                $input.attr('required', true);
+                $input.attr('placeholder', 'What are your favourite dish/s?');
+            } else {
+                $input.removeClass('required-if-checked');
+                $input.removeAttr('required');
+                $input.attr('placeholder', '');
+                $input.css('border', ''); // remove red border if previously invalid
+                $input.val('');
+            }
+        });
+    });
+
+    // Initialize the dropdown with Select2 for search functionality
+    $('.select2').select2({
+        placeholder: 'Select foods',
+        allowClear: true
+    })
 
     document.addEventListener("DOMContentLoaded", () => {
         const stepCircles = document.querySelectorAll('.tab-steps');
@@ -2374,221 +1976,819 @@
         const form = document.getElementById('nutrition-screen-form');
 
         let currentStep = 0; // Track the active step index
+        let targetStep = null;
 
-        // Initially, show only the first step-tab-box
-        stepTabs.forEach((tab, index) => {
-            tab.style.display = index === 0 ? "block" : "none";
+        const startingStep = {{ $nextStep ?? 1 }};
+        const stepDataRaw = @json($stepData->toArray());
+        const stepData = Object.values(stepDataRaw).flat();
+        console.log(stepData);
+        console.log(stepDataRaw);
+        currentStep = startingStep - 1;
+        // console.log(currentStep);
+        // console.log(startingStep);
+        // ✅ Initial display moved here
+        showStep(currentStep);
+        prefillData(currentStep);
+
+        const alcoholData = stepData.find(item => {
+            if (item.question === "If 18+, do you drink alcohol?" && item.answer) {
+                try {
+                    const parsedAnswer = JSON.parse(item.answer);
+                    return parsedAnswer && 'days' in parsedAnswer && 'drinks' in parsedAnswer;
+                } catch (e) {
+                    return false;
+                }
+            }
+            return false;
         });
 
-        // Function to validate all fields in the current step
+        console.log("Alcohol Data:", alcoholData);
+
+        if (alcoholData && alcoholData.answer) {
+            // Try to parse the answer string
+            let parsedAnswer;
+            try {
+                parsedAnswer = JSON.parse(alcoholData.answer);
+            } catch (e) {
+                parsedAnswer = null;
+            }
+
+            if (parsedAnswer && parsedAnswer.days && parsedAnswer.drinks) {
+                $('#drink_alcohol_yes').prop('checked', true);
+                $('#drinkAlcoholInput').show();
+                $('#drink_alcohol_days').prop('required', true);
+                $('#drink_alcohol_drinks').prop('required', true);
+
+                // Prefill the input fields
+                $('#drink_alcohol_days').val(parsedAnswer.days);
+                $('#drink_alcohol_drinks').val(parsedAnswer.drinks);
+            } else {
+                $('#drink_alcohol_no').prop('checked', true);
+                $('#drinkAlcoholInput').hide();
+                $('#drink_alcohol_days').prop('required', false);
+                $('#drink_alcohol_drinks').prop('required', false);
+            }
+        } else {
+            $('#drink_alcohol_no').prop('checked', true);
+            $('#drinkAlcoholInput').hide();
+            $('#drink_alcohol_days').prop('required', false);
+            $('#drink_alcohol_drinks').prop('required', false);
+        }
+
+        // Handle radio button changes
+        $('input[name="ans[dietary_information][drink_alcohol]"]').on('change', function() {
+            if ($('#drink_alcohol_yes').prop('checked')) {
+                $('#drinkAlcoholInput').show();
+                $('#drink_alcohol_days').prop('required', true);
+                $('#drink_alcohol_drinks').prop('required', true);
+            } else {
+                $('#drinkAlcoholInput').hide();
+                $('#drink_alcohol_days').prop('required', false);
+                $('#drink_alcohol_drinks').prop('required', false);
+                $('#drink_alcohol_days').val('');
+                $('#drink_alcohol_drinks').val('');
+            }
+        });
+        
+        const trackerUsage = stepData.find(item =>
+            item.question === "Do you CURRENTLY use any exercise or nutrition trackers/apps?" &&
+            item.answer
+        );
+
+        if (trackerUsage) {
+            let trackerAnswer = trackerUsage.answer;
+
+            // Parse answer if it's a stringified JSON
+            if (typeof trackerAnswer === 'string') {
+                try {
+                    trackerAnswer = JSON.parse(trackerAnswer);
+                } catch (e) {
+                    // Leave as string if JSON.parse fails
+                }
+            }
+
+            if (trackerAnswer === "No") {
+                // Hide the "What do you mainly track?" field
+                $('input[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6').hide();
+            } else {
+                $('input[name="ans[physical_activity_and_exercise][track]"]').closest('.col-md-6').show();
+            }
+        }
+
+        const bloodTestData = stepData.find(item =>
+            item.question === "Have you recently had a blood test?" && item.answer
+        );
+
+        if (bloodTestData) {
+            let bloodAnswer = bloodTestData.answer;
+
+            // Try to parse JSON if it's a string
+            if (typeof bloodAnswer === 'string') {
+                try {
+                    bloodAnswer = JSON.parse(bloodAnswer);
+                } catch (e) {
+                    console.warn("Failed to parse bloodAnswer as JSON", e);
+                }
+            }
+
+            if (bloodAnswer && typeof bloodAnswer === 'object') {
+                if (bloodAnswer.answer === "Yes") {
+                    $('#bloodTestYes').prop('checked', true);
+                    $('#bloodTestDateSection').show();
+                    $('#fileUploadSection').show();
+
+                    if (bloodAnswer.date) {
+                        console.log("Setting bloodTestDate to:", bloodAnswer.date);
+                        $('#bloodTestDate').val(bloodAnswer.date.trim().toLowerCase());
+                    }
+                } else if (bloodAnswer.answer === "No") {
+                    $('#bloodTestNo').prop('checked', true);
+                    $('#bloodTestDateSection').hide();
+                    $('#fileUploadSection').hide();
+                }
+            } else {
+                console.warn("bloodAnswer is not an object:", bloodAnswer);
+            }
+        }
+
+        const bodyCompositionData = stepData.find(item =>
+            item.question === "Have you recently undertaken a body composition assessment (measure of muscle, body fat)?" && item.answer
+        );
+
+        if (bodyCompositionData) {
+            let bodyCompositionAnswer = bodyCompositionData.answer;
+
+            // Parse if answer is stringified JSON
+            if (typeof bodyCompositionAnswer === 'string') {
+                try {
+                    bodyCompositionAnswer = JSON.parse(bodyCompositionAnswer);
+                } catch (e) {
+                    // If parsing fails, keep original
+                    console.warn("Failed to parse bodyCompositionAnswer as JSON", e);
+                }
+            }
+
+            if (bodyCompositionAnswer && typeof bodyCompositionAnswer === 'object') {
+                if (bodyCompositionAnswer.answer === "Yes") {
+                    $('#bodyCompositionYes').prop('checked', true);
+                    $('#bodyCompositionDateSection').show();
+                    $('#bodyCompositionFileInput').show();
+
+                    if (bodyCompositionAnswer.date) {
+                        $('#bodyCompositionDate').val(bodyCompositionAnswer.date.trim().toLowerCase());
+                    }
+                } else if (bodyCompositionAnswer.answer === "No") {
+                    $('#bodyCompositionNo').prop('checked', true);
+                    $('#bodyCompositionDateSection').hide();
+                    $('#bodyCompositionFileInput').hide();
+                }
+            } else {
+                console.warn("bloodAnswer is not an object:", bloodAnswer);
+            }
+        }
+
+        // document.body.addEventListener("click", function (e) {
+        //     const button = e.target.closest(".showStepTab");
+        //     if (!button) return;
+
+        //     targetStep = parseInt(button.getAttribute("target")) - 1;
+        //     console.log("Clicked Step Button => Target Step:", targetStep);
+            
+        //     if (targetStep > currentStep && !validateStep(currentStep)) return;
+
+        //     if (targetStep > currentStep) {
+        //         saveStepData(currentStep, function (success) {
+        //             if (success) {
+        //                 currentStep = targetStep;
+        //                 showStep(currentStep);
+        //                 prefillData(currentStep);
+        //                 prefillFoodInputsOnStep(currentStep); // Prefill food data
+        //             }
+        //         });
+        //     }else {
+        //         currentStep = targetStep;
+        //         showStep(currentStep);
+        //         prefillData(currentStep);
+        //         prefillFoodInputsOnStep(currentStep); // Prefill food data
+        //     }
+        // });
+
+        document.body.addEventListener("click", function (e) {
+            const button = e.target.closest(".showStepTab");
+            const stepCircle = e.target.closest(".tab-steps");
+
+            // Handle Next/Back buttons
+            if (button) {
+                const targetStep = parseInt(button.getAttribute("target")) - 1;
+                if (targetStep > currentStep && !validateStep(currentStep)) return;
+
+                if (targetStep > currentStep) {
+                    saveStepData(currentStep, function (success) {
+                        if (success) {
+                            currentStep = targetStep;
+                            showStep(currentStep);
+                            prefillData(currentStep);
+                            prefillFoodInputsOnStep(currentStep);
+                        }
+                    });
+                } else {
+                    currentStep = targetStep;
+                    showStep(currentStep);
+                    prefillData(currentStep);
+                    prefillFoodInputsOnStep(currentStep);
+                }
+            }
+
+            if (button) {
+                const targetStep = parseInt(button.getAttribute("target")) - 1;
+                if (targetStep > currentStep && !validateStep(currentStep)) return;
+
+                if (targetStep > currentStep) {
+                    saveStepData(currentStep, function (success) {
+                        if (success) {
+                            currentStep = targetStep;
+                            showStep(currentStep);
+                            
+                            // ✅ Immediately prefill step data from server/database
+                            prefillData(currentStep);
+                        }
+                    });
+                } else {
+                    currentStep = targetStep;
+                    showStep(currentStep);
+                    prefillData(currentStep); // ✅ Even on back
+                }
+            }
+
+            // Handle tab-circle click navigation
+            if (stepCircle) {
+                const steps = Array.from(document.querySelectorAll('.tab-steps'));
+                const targetStep = steps.indexOf(stepCircle);
+
+                // Only allow navigating to a previously completed step
+                if (targetStep <= currentStep) {
+                    currentStep = targetStep;
+                    showStep(currentStep);
+                    prefillData(currentStep);
+                    prefillFoodInputsOnStep(currentStep);
+                }
+            }
+        });
+
         function validateStep(stepIndex) {
-            // Skip validation for stepIndex 5 and 6
-            if (stepIndex === 5 || stepIndex === 6) {
-                return true; // Skip validation
-            }
-            const stepTab = stepTabs[stepIndex]; // Get current step tab
-            const inputs = stepTab.querySelectorAll('input, textarea, select');
+            const stepTab = stepTabs[stepIndex];
+            console.log(stepTab);
+            const inputs = stepTab.querySelectorAll("input, select, textarea");
             let isValid = true;
-            const errorMessage = "Note: All questions are required. Please fill them out or select answers.";
 
-            // Skip validation for the intensity question in this step (identified by the hidden input name)
-            const skipValidationQuestion = stepTab.querySelector('input[name="questions[physical_activity_and_exercise][intensity]"]');
-
-            // If this question exists, we skip validation for the related checkboxes
-            if (skipValidationQuestion) {
-                // Skip the validation logic for this specific set of checkboxes
-                const checkboxes = stepTab.querySelectorAll('input[name^="ans[physical_activity_and_exercise][intensity]"]');
-                checkboxes.forEach(checkbox => {
-                    checkbox.disabled = false; // Ensure all checkboxes are enabled for skipping validation
-                });
-            }
-
-            // Loop through each input to validate
             inputs.forEach(input => {
+                if (input.name === "ans[personal_details][referredBy]") return;
+                if (stepIndex === 5) return;
 
-                if (input.name === "referredBy") {
-                    return; // Skip validation for this field
-                }
-                
                 const isHidden = input.offsetParent === null || getComputedStyle(input).display === 'none';
+                if (input.disabled || isHidden) return;
 
-                if (input.disabled || isHidden) {
-                    return; 
-                }
-                
-                // Reset border color for input before applying red borders
                 input.style.border = "";
 
-                // Skip validation if this input is part of the "intensity" question
-                if (
-                    skipValidationQuestion &&
-                    input.name.includes("physical_activity_and_exercise][intensity")
-                ) {
-                    return; // Skip validation for this input
+                const skipValidationQuestion = stepTab.querySelector('input[name="questions[physical_activity_and_exercise][intensity]"]');
+                if (skipValidationQuestion && input.name.includes("physical_activity_and_exercise][intensity")) return;
+
+                if ((input.type === "text" || input.type === "date" || input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "select") && !input.value.trim()) {
+                    
+                    if(stepIndex === 6) {
+                        const isRequiredIfChecked = input.classList.contains('required-if-checked');
+                        const relatedCheckboxId = input.id + '_checkbox';
+                        const relatedCheckbox = document.getElementById(relatedCheckboxId);
+
+                        const isActuallyRequired = input.hasAttribute('required') || (isRequiredIfChecked && relatedCheckbox && relatedCheckbox.checked);
+
+                        // ✅ Only validate these inputs if required (either natively or conditionally)
+                        if (isActuallyRequired && !input.value.trim()) {
+                            input.style.border = "1px solid red";
+                            isValid = false;
+                        }
+                    }else {
+                        input.style.border = "1px solid red";
+                        isValid = false;
+                    }
                 }
-                
-                // Check for validation errors (radio, checkbox, text fields)
-                if (
-                    (input.type === "radio" || input.type === "checkbox") &&
-                    input.name &&
-                    !document.querySelector(`input[name="${input.name}"]:checked`)
-                ) {
-                    input.style.border = "1px solid red";
-                    isValid = false;
-                } else if (
-                    (input.type === "text" || input.type === "date" || input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "select") &&
-                    !input.value.trim()
-                ) {
-                    input.style.border = "1px solid red";
-                    isValid = false;
+
+                if ((input.type === "radio" || input.type === "checkbox") && !document.querySelector(`input[name="${input.name}"]:checked`)) {
+                    
+
+                    if(stepIndex === 6) {
+                        const isActuallyRequired = input.hasAttribute('required');
+
+                        // ✅ Only validate these inputs if required (either natively or conditionally)
+                        if (isActuallyRequired && !input.value.trim()) {
+                            input.style.border = "1px solid red";
+                            isValid = false;
+                        }
+                    }else {
+                        input.style.border = "1px solid red";
+                        isValid = false;
+                    }
                 }
             });
 
-            // Display a general error message if the step is invalid
-            const cardBody = stepTab.querySelector('.card-body');
-            let errorMessageSpan = cardBody.querySelector('.general-error-message');
-
-            if (!errorMessageSpan) {
-                // Create error message span if not present
-                errorMessageSpan = document.createElement("span");
-                errorMessageSpan.className = "text-danger general-error-message";
-                errorMessageSpan.textContent = errorMessage;
-                cardBody.appendChild(errorMessageSpan);
-            }
-
-            errorMessageSpan.style.display = isValid ? "none" : "block";
             return isValid;
         }
 
-        // Show step tabs on direct click
-        showStepButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const targetStep = parseInt(button.getAttribute('target'), 10) - 1;
-                console.log("Clicked button for step:", targetStep + 1);
+        function saveStepData(stepIndex, callback) {
+            const stepTab = stepTabs[stepIndex];
 
-                if (targetStep > currentStep && !validateStep(currentStep)) {
-                    console.warn("Validation failed at step:", currentStep + 1);
-                    return;
+            const formData = new FormData();
+            formData.append("user_id", document.querySelector('[name="user_id"]').value);
+            formData.append("payment_id", document.querySelector('[name="payment_id"]').value);
+            formData.append("step", stepIndex + 1);
+            formData.append("step_fill", true);
+
+            const inputs = stepTab.querySelectorAll("input, select, textarea");
+            inputs.forEach(input => {
+                if (!input.name) return;
+
+                if (input.type === "file") {
+                    for (let i = 0; i < input.files.length; i++) {
+                        formData.append(input.name + '[]', input.files[i]);
+                    }
+                } else if ((input.type === "checkbox" || input.type === "radio")) {
+                    if (input.checked) {
+                        formData.append(input.name, input.value);
+                    }
+                } else {
+                    formData.append(input.name, input.value);
                 }
-
-                stepCircles.forEach((step, index) => {
-                    step.classList.toggle('active', index <= targetStep);
-                });
-
-                stepTabs.forEach((tab, index) => {
-                    tab.style.display = index === targetStep ? "block" : "none";
-                });
-
-                currentStep = targetStep;
-
-                // Debugging logs
-                console.log("Current step set to:", currentStep + 1);
-                console.log("Scrolling to top...");
-
-                setTimeout(() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 100);
             });
-        });
 
-        let redirectUrl = null;
-        // Handle form submission
-        submitButton.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevent default form submission
-
-            // Validate the last step
-            if (!validateStep(currentStep)) {
-                return;
-            }
-
-            // Serialize form data
-            const formData = new FormData(form);
-
-            // Perform AJAX request
             $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
+                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
             });
 
             $.ajax({
                 url: "{{ route('front.pre-plan-details.store') }}",
-                method: 'POST',
+                method: "POST",
                 data: formData,
-                processData: false, // Required for FormData
-                contentType: false, // Required for FormData
-                success: function (response) {
-                    // Show thank you modal
-                    $('#thankYouModal').modal('show');
-                    redirectUrl = response.redirect_url;
-                    // Optional: Redirect after showing modal
-                    // setTimeout(function () {
-                    //     window.location.href = response.redirect_url;
-                    // }, 3000); // Redirect after 3 seconds
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    if (res.success) {
+                        if (res.redirect_url) {
+                            $('#thankYouModal').modal('show');
+                            setTimeout(() => {
+                                window.location.href = res.redirect_url;
+                            }, 3000);
+                        } else {
+                            stepTabs.forEach((tab, i) => {
+                                tab.style.display = i === targetStep ? "block" : "none";
+                            });
+                            stepCircles.forEach((circle, i) => {
+                                circle.classList.toggle("active", i <= targetStep);
+                            });
+                            currentStep = targetStep;
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                        }
+                        callback(true);
+                    } else {
+                        alert("Save failed: " + res.message);
+                        callback(false);
+                    }
                 },
-                error: function (xhr, status, error) {
-                    console.error('Form submission failed:', xhr.responseText);
-                    alert('Something went wrong! Please try again.');
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    alert("Error saving step. Try again.");
+                    callback(false);
+                }
+            });
+        }
+
+        // function showStep(stepIndex) {
+        //     console.log("Showing Step:", stepIndex);
+        //     console.log(stepTabs);
+        //     stepTabs.forEach((tab, index) => {
+        //         tab.style.display = index === stepIndex ? "block" : "none";
+        //     });
+
+        //     stepCircles.forEach((circle, index) => {
+        //         circle.classList.toggle("active", index <= stepIndex);
+        //     });
+
+        //     window.scrollTo({ top: 0, behavior: "smooth" });
+        // }
+
+        function showStep(stepIndex) {
+            console.log("Showing Step:", stepIndex);
+            console.log(stepTabs);
+            stepTabs.forEach((tab, index) => {
+                tab.style.display = index === stepIndex ? "block" : "none";
+            });
+
+            stepCircles.forEach((circle, index) => {
+                circle.classList.toggle("active", index <= stepIndex);
+            });
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+
+        function normalizeString(str) {
+            return String(str).trim().toLowerCase().replace(/\s+/g, " ");
+        }
+
+        function prefillData(stepIndex) {
+            const currentStepNum = stepIndex + 1;
+            const currentStepData = stepData.filter(item => parseInt(item.step) === currentStepNum);
+
+            const stepTab = stepTabs[stepIndex];
+            const stepFields = stepTab.querySelectorAll("input, select, textarea");
+            const hiddenQuestions = stepTab.querySelectorAll("input[type='hidden'][name^='questions']");
+
+            hiddenQuestions.forEach(hiddenInput => {
+                const questionText = normalizeString(hiddenInput.value);
+                const questionName = hiddenInput.name; // e.g., "questions[dietary_information][flavour_taste]"
+                const matchedItem = currentStepData.find(item =>
+                    normalizeString(item.question) === questionText
+                );
+                if (!matchedItem) return;
+
+                let baseFieldName = questionName.replace(/^questions/, "ans");
+                console.log("Matched Item:", baseFieldName);
+                let answer;
+                try {
+                    answer = JSON.parse(matchedItem.answer);
+                } catch {
+                    answer = matchedItem.answer;
+                }
+
+                if (answer == null) return;
+
+                // Handle deeply nested objects
+                function setFields(fieldNamePrefix, value) {
+                    if (typeof value === 'object' && !Array.isArray(value)) {
+                        Object.entries(value).forEach(([key, val]) => {
+                            if (val == null) return;
+                            setFields(`${fieldNamePrefix}[${key}]`, val);
+                        });
+                    } else if (Array.isArray(value)) {
+                        value.forEach(val => {
+                            if (val == null) {
+                                // Special case: check checkboxes with empty value ("") if array value is null
+                                stepFields.forEach(field => {
+                                    if (
+                                        (field.name === `${fieldNamePrefix}[]` || field.name === fieldNamePrefix) &&
+                                        field.type === "checkbox" &&
+                                        field.value === ""
+                                    ) {
+                                        field.checked = true;
+                                    }
+                                });
+                            } else {
+                                // Existing logic: match value normally
+                                stepFields.forEach(field => {
+                                    if (
+                                        (field.name === `${fieldNamePrefix}[]` || field.name === fieldNamePrefix) &&
+                                        field.value === val
+                                    ) {
+                                        field.checked = true;
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        stepFields.forEach(field => {
+                            if (field.name === fieldNamePrefix) {
+                                if (field.type === "radio" || field.type === "checkbox") {
+                                    field.checked = field.value === String(value);
+                                } else {
+                                    field.value = value;
+                                }
+                            }
+                        });
+                    }
+                }
+
+                setFields(baseFieldName, answer);
+            });
+        }
+
+        submitButton.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default form submission
+            currentStep = 8;
+
+            if (!validateStep(currentStep)) {
+                return;
+            }
+
+            console.log('Saving final step...');
+            saveStepData(currentStep, function (success) {
+                if (!success) {
+                    alert("Final step failed to save. Please try again.");
                 }
             });
         });
-
+        
         $('#thankYouModal').on('hidden.bs.modal', function () {
             if (redirectUrl) {
                 window.location.href = redirectUrl;
             }
         })
-    });
 
-    // Initialize the dropdown with Select2 for search functionality
-    // $('#raceEthnicityCulture').select2({
-    //     placeholder: 'Select or search',
-    //     allowClear: true
-    // })
+        // ✅ Modified JavaScript for food selection with correct prefill logic
+        let selectedFoodKey = '';
+        let selectedFoodGroup = '';
+        let targetWrapper = null;
+        let activeFoodCheckbox = null;
+        let userConfirmed = false;
 
-    // Fetch options from the server or AI API
-    $.ajax({
-        url: '{{ route("front.get-race-ethnicity-culture-options") }}', // Endpoint to fetch top 20 options
-        method: 'GET',
-        success: function (response) {
-            if (response.error) {
-                console.error('Error fetching options:', response.error);
-                return;
+        // Prefill food checkboxes + hidden inputs on page load
+        function prefillFoodDataFromPrevious(previousData, wrapper) {
+            if (!previousData || !previousData.food_preference) return;
+
+            const foodPreference = previousData.food_preference;
+
+            Object.keys(foodPreference).forEach(group => {
+                const groupData = foodPreference[group];
+
+                // Check if groupData is an array or an object
+                if (Array.isArray(groupData)) {
+                // If groupData is a simple array, key is the same as group (or no key)
+                groupData.forEach(name => {
+                    // Set UI selection for this group and item (you'll need to implement setSelection)
+                    setSelection(group, null, name);
+
+                    // Create hidden input with the correct name format
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = `ans[food_preference][${group}][]`;
+                    input.value = name;
+                    wrapper.appendChild(input);
+                });
+                } else if (typeof groupData === 'object') {
+                // If groupData is an object, iterate keys
+                Object.keys(groupData).forEach(key => {
+                    const items = groupData[key];
+                    items.forEach(name => {
+                    // Set UI selection for group, key, and item
+                    setSelection(group, key, name);
+
+                    // Create hidden input with the correct name format
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+
+                    if (group.toLowerCase() !== key.toLowerCase()) {
+                        input.name = `ans[food_preference][${group}][${key}][]`;
+                    } else {
+                        input.name = `ans[food_preference][${group}][]`;
+                    }
+
+                    input.value = name;
+                    wrapper.appendChild(input);
+                    });
+                });
+                }
+            });
+        }
+
+        // Listen for main food checkbox changes
+        document.querySelectorAll('.food-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                if (this.checked) {
+                    activeFoodCheckbox = this;
+                    selectedFoodKey = this.dataset.foodKey;
+                    selectedFoodGroup = this.dataset.foodGroup;
+                    targetWrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${selectedFoodKey}"]`);
+
+                    // Load sub-food items via AJAX
+                    const url = "{{ route('front.flag.items', ['key' => 'FOOD_KEY_PLACEHOLDER']) }}".replace('FOOD_KEY_PLACEHOLDER', encodeURIComponent(selectedFoodKey));
+
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        success: function (data) {
+                            $('#foodListContainer').empty();
+
+                            if (Array.isArray(data) && data.length > 0) {
+                                $('#foodListContainer').append(`
+                                    <div class="form-check mb-3 mx-3">
+                                        <input type="checkbox" class="form-check-input" id="selectAllSubFoods">
+                                        <label class="form-check-label" for="selectAllSubFoods"><strong>Select All</strong></label>
+                                    </div>
+                                `);
+
+                                data.forEach(item => {
+                                    $('#foodListContainer').append(`
+                                        <div class="col-md-12 mb-3">
+                                            <div class="card h-100 p-2">
+                                                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                                    <div class="d-flex align-items-center flex-grow-1">
+                                                        <input type="checkbox" class="form-check-input me-2 sub-food-checkbox" id="sub-${item.name}" value="${item.name}">
+                                                        <label class="form-check-label mb-0" for="sub-${item.name}">${item.name}</label>
+                                                    </div>
+                                                    <div>
+                                                        <img src="${item.image}" class="img-fluid rounded" alt="" style="width: 50px; height: auto;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `);
+                                });
+                            } else {
+                                $('#foodListContainer').append(`<div class="col-md-12 mb-3"><p>No Food Found.</p></div>`);
+                            }
+
+                            // Prefill modal checkboxes from hidden inputs in wrapper
+                            const hiddenInputs = targetWrapper.querySelectorAll('input[type="hidden"]');
+                            const savedValues = Array.from(hiddenInputs).map(input => input.value);
+
+                            savedValues.forEach(val => {
+                                $(`.sub-food-checkbox[value="${val}"]`).prop('checked', true);
+                            });
+
+                            // Set select all checkbox state
+                            const allChecked = $('.sub-food-checkbox').length === $('.sub-food-checkbox:checked').length;
+                            $('#selectAllSubFoods').prop('checked', allChecked);
+
+                            $('#foodModal').modal('show');
+
+                            // Select all toggle
+                            $(document).off('change', '#selectAllSubFoods').on('change', '#selectAllSubFoods', function () {
+                                $('.sub-food-checkbox').prop('checked', this.checked);
+                            });
+
+                            // Sub-food checkbox toggle to update select all
+                            $(document).off('change', '.sub-food-checkbox').on('change', '.sub-food-checkbox', function () {
+                                const allChecked = $('.sub-food-checkbox').length === $('.sub-food-checkbox:checked').length;
+                                $('#selectAllSubFoods').prop('checked', allChecked);
+                            });
+                        },
+                        error: function () {
+                            console.error('Failed to load sub food items.');
+                        }
+                    });
+                } else {
+                    // If main checkbox unchecked, clear hidden inputs in wrapper
+                    const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${this.dataset.foodKey}"]`);
+                    if (wrapper) wrapper.innerHTML = '';
+                }
+            });
+        });
+
+        // Confirm button in modal
+        document.getElementById('confirmFoodSelection').addEventListener('click', function () {
+            if (!selectedFoodKey || !selectedFoodGroup) return;
+
+            const selectedItems = document.querySelectorAll('.sub-food-checkbox:checked');
+            if (selectedItems.length === 0) return;
+
+            const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${selectedFoodKey}"]`);
+            if (!wrapper) return;
+
+            // Clear old hidden inputs
+            wrapper.innerHTML = '';
+
+            selectedItems.forEach(item => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+
+                if (selectedFoodGroup.toLowerCase() !== selectedFoodKey.toLowerCase()) {
+                    input.name = `ans[food_preference][${selectedFoodGroup}][${selectedFoodKey}][]`;
+                } else {
+                    input.name = `ans[food_preference][${selectedFoodGroup}][]`;
+                }
+
+                input.value = item.value;
+                wrapper.appendChild(input);
+            });
+
+            userConfirmed = true;
+            $('#foodModal').modal('hide');
+        });
+
+        // On modal hide event
+        document.getElementById('foodModal').addEventListener('hidden.bs.modal', function () {
+            this.querySelectorAll('.sub-food-checkbox').forEach(cb => cb.checked = false);
+
+            if (!userConfirmed && activeFoodCheckbox) {
+                activeFoodCheckbox.checked = false;
+                const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${activeFoodCheckbox.dataset.foodKey}"]`);
+                if (wrapper) wrapper.innerHTML = '';
             }
 
-            // Append AI-generated options
-            if (response.options && response.options.data) {
-                // Append AI-generated options
-                response.options.data.forEach(function (option) {
-                    $('#raceEthnicityCulture').append(
-                        $('<option>', { value: option.label, text: option.label }) // Use 'value' for both key and text
-                    );
-                });
-            } else {
-                response.options.forEach(function (option) {
-                    $('#raceEthnicityCulture').append(
-                        $('<option>', { value: option.label, text: option.label })
-                    );
-                });
-            }
+            activeFoodCheckbox = null;
+            userConfirmed = false;
+        });
+        
+        // Prefill food checkboxes + hidden inputs on page load
+        function prefillFoodDataFromPrevious(previousData) {
+            console.log("Prefilling food data from previous answers...");
+            console.log(previousData);
+            if (!previousData || !previousData.food_preference) return;
 
-            // Add the "Other" option
-            $('#raceEthnicityCulture').append(
-                $('<option>', { value: 'other', text: 'Other' })
+            const foodPreference = previousData.food_preference;
+
+           Object.keys(foodPreference).forEach(group => {
+                const groupData = foodPreference[group];
+                const groupLower = group.toLowerCase(); // convert once for reuse
+                console.log(`Processing group: ${group}`, groupData);
+
+                if (Array.isArray(groupData)) {
+                    const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${group}"]`);
+                    if (!wrapper) return;
+                    wrapper.innerHTML = ''; // Clear old inputs
+
+                    groupData.forEach(name => {
+                        setSelection(group, null, name);
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = `ans[food_preference][${groupLower}][]`;
+                        input.value = name;
+                        wrapper.appendChild(input);
+                    });
+                    console.log(`Prefilled ${group} with items:`, groupData);
+
+                } else if (typeof groupData === 'object') {
+                    Object.keys(groupData).forEach(key => {
+                        const items = groupData[key];
+                        const keyLower = key.toLowerCase(); // convert once
+                        const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${key}"]`);
+                        if (!wrapper) return;
+                        wrapper.innerHTML = ''; // Clear old inputs
+
+                        items.forEach(name => {
+                            setSelection(group, key, name);
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = (groupLower !== keyLower)
+                                ? `ans[food_preference][${groupLower}][${key}][]`
+                                : `ans[food_preference][${groupLower}][]`;
+                            input.value = name;
+                            wrapper.appendChild(input);
+                        });
+                        console.log(`Prefilled ${group} - ${key} with items:`, items);
+                    });
+                }
+            });
+
+        }
+
+        function setSelection(group, key, name) {
+            const groupKey = key || group; // fallback if no nested group
+
+            const checkbox = document.querySelector(
+                `.food-checkbox[data-food-group="${group.toLowerCase()}"][data-food-key="${groupKey}"]`
             );
-        },
-        error: function () {
-            console.error('Failed to fetch options.');
-        }
-    });
 
-    // Show an input box when "Other" is selected
-    $('#raceEthnicityCulture').on('change', function () {
-        if ($(this).val() === 'other') {
-            $('#otherInputContainer').show();
-        } else {
-            $('#otherInputContainer').hide();
+            if (checkbox) {
+                checkbox.checked = true;
+                checkbox.classList.add("selected"); // optional for visual effect
+            } else {
+                console.warn(`Checkbox not found for group=${group}, key=${key}, name=${name}`);
+            }
         }
+
+        // Extract previous answers from stepData for food preference
+        function getPreviousAnswers() {
+            if (!Array.isArray(stepData)) return null;
+
+            const foodPreference = {};
+
+            stepData.forEach(item => {
+                if (item.form_slug !== 'food_preference') return;
+
+                const group = item.question?.trim();
+                if (!group) return;
+
+                let value = item.answer;
+
+                try {
+                    value = JSON.parse(value);
+                } catch (e) {
+                    value = [];
+                }
+
+                if (Array.isArray(value)) {
+                    foodPreference[group] = value.filter(Boolean);
+                } else if (value && typeof value === 'object') {
+                    foodPreference[group] = {};
+                    Object.keys(value).forEach(key => {
+                        foodPreference[group][key] = Array.isArray(value[key])
+                            ? value[key].filter(Boolean)
+                            : [];
+                    });
+                }
+            });
+
+            return { food_preference: foodPreference };
+        }
+
+        // Call this when the current step is 5 or 6
+        function prefillFoodInputsOnStep(currentStep) {
+            console.log("Prefilling food inputs for step:", currentStep);
+            if (currentStep === 5 || currentStep === 6) {
+                const previousData = getPreviousAnswers();
+                prefillFoodDataFromPrevious(previousData);
+            }
+        }
+
     });
 
     // HTML for Other Input (Hidden by Default)
@@ -2601,39 +2801,249 @@
         </div>
     `);
 
-</script>
-<script>
-    $(document).ready(function () {
-        // Check if a value is already selected on page load (in case of form pre-population)
-        if ($('#bloodTest1').prop('checked')) {
-            $('#fileUploadSection').show();
-        } else {
-            $('#fileUploadSection').hide();
+    // Add edit icon to labels when checkbox is checked
+    document.querySelectorAll('.food-checkbox').forEach(checkbox => {
+        const label = checkbox.nextElementSibling;
+        const editIcon = document.createElement('i');
+        editIcon.className = 'fas fa-edit edit-icon';
+        editIcon.title = 'Edit selection';
+        label.parentNode.insertBefore(editIcon, label.nextSibling);
+
+        // Handle edit icon click
+        editIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Set active checkbox and show modal
+            activeFoodCheckbox = checkbox;
+            selectedFoodKey = checkbox.dataset.foodKey;
+            selectedFoodGroup = checkbox.dataset.foodGroup;
+            
+            // Get previously selected items
+            const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${selectedFoodKey}"]`);
+            const selectedValues = Array.from(wrapper.querySelectorAll('input[type="hidden"]')).map(input => input.value);
+            
+            // Load and show modal with pre-selected items
+            const url = "{{ route('front.flag.items', ['key' => 'FOOD_KEY_PLACEHOLDER']) }}".replace('FOOD_KEY_PLACEHOLDER', encodeURIComponent(selectedFoodKey));
+            
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(data) {
+                    $('#foodListContainer').empty();
+                    
+                    // Add Select All checkbox at the top
+                    $('#foodListContainer').append(`
+                        <div class="col-md-12 mb-3">
+                            <div class="card h-100 p-3">
+                                <div class="d-flex align-items-center">
+                                    <input type="checkbox" class="form-check-input me-2" id="selectAllFoods">
+                                    <label class="form-check-label mb-0" for="selectAllFoods">
+                                        Select All
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                    // Add individual food items
+                    data.forEach(item => {
+                        const isChecked = selectedValues.includes(item.name);
+                        $('#foodListContainer').append(`
+                            <div class="col-md-12 mb-3">
+                                <div class="card h-100 p-3">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                        <div class="d-flex align-items-center flex-grow-1">
+                                            <input type="checkbox" class="form-check-input me-2 sub-food-checkbox" 
+                                                id="sub-${item.name}" value="${item.name}" ${isChecked ? 'checked' : ''}>
+                                            <label class="form-check-label mb-0" for="sub-${item.name}">
+                                                ${item.name}
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <img src="${item.image}" class="img-fluid rounded" alt="" style="width: 50px; height: auto;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+
+                    // Add Select All functionality
+                    const selectAllCheckbox = document.getElementById('selectAllFoods');
+                    const subCheckboxes = document.querySelectorAll('.sub-food-checkbox');
+                    
+                    // Set initial state of Select All
+                    selectAllCheckbox.checked = subCheckboxes.length > 0 && 
+                        Array.from(subCheckboxes).every(cb => cb.checked);
+
+                    // Handle Select All checkbox change
+                    selectAllCheckbox.addEventListener('change', function() {
+                        subCheckboxes.forEach(cb => {
+                            cb.checked = this.checked;
+                        });
+                    });
+
+                    // Update Select All state when individual checkboxes change
+                    subCheckboxes.forEach(cb => {
+                        cb.addEventListener('change', function() {
+                            selectAllCheckbox.checked = Array.from(subCheckboxes).every(cb => cb.checked);
+                        });
+                    });
+
+                    $('#foodModal').modal('show');
+                },
+                error: function() {
+                    console.error('Failed to load sub food items.');
+                }
+            });
+        });
+    });
+
+    // Modify the confirm button click handler
+    document.getElementById('confirmFoodSelection').addEventListener('click', function() {
+        if (!selectedFoodKey || !selectedFoodGroup || !activeFoodCheckbox) return;
+
+        const selectedItems = document.querySelectorAll('.sub-food-checkbox:checked');
+        const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${selectedFoodKey}"]`);
+        
+        if (!wrapper) return;
+
+        // Clear old hidden inputs
+        wrapper.innerHTML = '';
+
+        // If no items selected, uncheck the main checkbox
+        if (selectedItems.length === 0) {
+            activeFoodCheckbox.checked = false;
+            userConfirmed = true;
+            $('#foodModal').modal('hide');
+            return;
         }
 
-        // Toggle file upload visibility based on radio button selection
-        $('input[name="ans[medical_history][blood_test]"]').on('change', function () {
-            if ($('#bloodTest1').prop('checked')) {
-                $('#fileUploadSection').show();  // Show file upload when "Yes" is selected
+        // Add new hidden inputs for selected items
+        selectedItems.forEach(item => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            
+            if (selectedFoodGroup.toLowerCase() !== selectedFoodKey.toLowerCase()) {
+                input.name = `ans[food_preference][${selectedFoodGroup}][${selectedFoodKey}][]`;
             } else {
-                $('#bloodTestFile').val('');  // Reset the file input when "No" is selected
-                $('#fileUploadSection').hide();  // Hide file upload when "No" is selected
+                input.name = `ans[food_preference][${selectedFoodGroup}][]`;
+            }
+            
+            input.value = item.value;
+            wrapper.appendChild(input);
+        });
+
+        // Ensure main checkbox is checked
+        activeFoodCheckbox.checked = true;
+        userConfirmed = true;
+        $('#foodModal').modal('hide');
+    });
+
+    // Add step change handler to update food selections
+    document.querySelectorAll('.showStepTab').forEach(button => {
+        button.addEventListener('click', function() {
+            const target = this.getAttribute('target');
+            if (target === '5') { // When going back to step 5
+                // Update all food checkboxes and their hidden inputs
+                document.querySelectorAll('.food-checkbox').forEach(checkbox => {
+                    const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${checkbox.dataset.foodKey}"]`);
+                    if (wrapper) {
+                        const hasSelections = wrapper.querySelectorAll('input[type="hidden"]').length > 0;
+                        checkbox.checked = hasSelections;
+                    }
+                });
+            }
+        });
+    });
+
+    // Add back the modal hide event handler
+    document.getElementById('foodModal').addEventListener('hidden.bs.modal', function() {
+        // Reset sub-checkboxes
+        this.querySelectorAll('.sub-food-checkbox').forEach(cb => cb.checked = false);
+
+        // If user did not confirm and there are no selected items, uncheck the main checkbox
+        if (!userConfirmed && activeFoodCheckbox) {
+            const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${activeFoodCheckbox.dataset.foodKey}"]`);
+            if (wrapper && wrapper.querySelectorAll('input[type="hidden"]').length === 0) {
+                activeFoodCheckbox.checked = false;
+            }
+        }
+
+        // Reset flags
+        activeFoodCheckbox = null;
+        userConfirmed = false;
+    });
+
+    $(document).ready(function () {
+        // Check if a value is already selected on page load (in case of form pre-population)
+        // if ($('#bloodTest1').prop('checked')) {
+        //     $('#fileUploadSection').show();
+        //     $('#bloodTestDateSection').show();
+        // } else {
+        //     $('#fileUploadSection').hide();
+        //     $('#bloodTestDateSection').hide();
+        // }
+
+        $('input[name="ans[physical_activity_and_exercise][tracking_device]"]').on('change', function () {
+            const selectedValue = $(this).val();
+
+            if (selectedValue === 'No') {
+                $('#trackingDetailsField').addClass('d-none');
+            } else {
+                $('#trackingDetailsField').removeClass('d-none');
+            }
+        });
+        
+        // Toggle file upload visibility based on radio button selection
+        $('input[name="ans[medical_history][blood_test][answer]"]').on('change', function () {
+            if ($('#bloodTestYes').is(':checked')) {
+                $('#bloodTestDateSection').show();
+                $('#fileUploadSection').show();
+            } else {
+                $('#bloodTestDateSection').hide();
+                $('#fileUploadSection').hide();
+                $('#bloodTestDate').val('');
+                $('#bloodTestFile').val('');
             }
         });
 
-        if ($('#bodycomposition1').prop('checked')) {
-            $('#bodycompositionFileInput').show();
+        if ($('#bodyCompositionYes').prop('checked')) {
+            $('#bodyCompositionFileInput').show();
+            $('#bodyCompositionDateSection').show();
         } else {
-            $('#bodycompositionFileInput').hide();
+            $('#bodyCompositionFileInput').hide();
+            $('#bodyCompositionDateSection').hide();
+            $('#bodyCompositionFile').val('');
+            $('#bodyCompositionDate').val('');
         }
 
         // Toggle file upload visibility based on radio button selection
-        $('input[name="ans[physical_measures][bodycomposition]"]').on('change', function () {
-            if ($('#bodycomposition1').prop('checked')) {
-                $('#bodycompositionFileInput').show();  // Show file upload when "Yes" is selected
+        $('input[name="ans[physical_measures][bodycomposition][answer]"]').on('change', function () {
+            if ($('#bodyCompositionYes').prop('checked')) {
+                $('#bodyCompositionFileInput').show();
+                $('#bodyCompositionDateSection').show();
             } else {
-                $('#bodycompositionFile').val('');  // Reset the file input when "No" is selected
-                $('#bodycompositionFileInput').hide();  // Hide file upload when "No" is selected
+                $('#bodyCompositionFile').val('');
+                $('#bodyCompositionFileInput').hide();
+                $('#bodyCompositionDate').val('');
+                $('#bodyCompositionDateSection').hide();
+            }
+        });
+
+        if ($('#drink_alcohol_yes').prop('checked')) {
+            $('#drinkAlcoholInput').show();
+        } else {
+            $('#drinkAlcoholInput').hide();
+        }
+
+        $('input[name="ans[dietary_information][drink_alcohol]"]').on('change', function () {
+            if ($('#drink_alcohol_yes').prop('checked')) {
+                $('#drinkAlcoholInput').show();  // Show file upload when "Yes" is selected
+            } else {
+                $('#drink_alcohol_details').val('');  // Reset the file input when "No" is selected
+                $('#drinkAlcoholInput').hide();  // Hide file upload when "No" is selected
             }
         });
 
@@ -2665,6 +3075,16 @@
             }
         });
     });
+
+    // $(document).ready(function() {
+    //     // Handle clicking on step circles
+    //     $('.tab-steps').on('click', function(e) {
+    //         console.log('clicked');
+    //         e.preventDefault();
+    //         const $this = $(this);
+    //         $this.removeClass('active');
+    //     });
+    // });
     // document.addEventListener("DOMContentLoaded", () => {
     //     // const nextButtons = document.querySelectorAll('.next-step');
     //     // const prevButtons = document.querySelectorAll('.prev-step');

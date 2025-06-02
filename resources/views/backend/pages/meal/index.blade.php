@@ -76,6 +76,7 @@
 <script>
     $(document).ready(function () {
         let dataTable = $('#mealDataTable').DataTable({
+        pageLength: 100,
         processing: true,
         serverSide: false, // Use true if handling data via Laravel DataTables
         ajax: {

@@ -12,7 +12,7 @@
     
     <p>Thank you for purchasing Sports Nutrition Plans - {{ $planName }} .</p>
 
-    <p>Our team will review your submission shortly and your plan will be finalised and ready within the next 48 hours.</p>
+    <p>Our team will review your submission shortly and we will email you when your plan is ready.</p>
 
     <p>Best regards, <br> The Performance Health Support Team</p>
 </body>

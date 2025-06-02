@@ -8,7 +8,7 @@ class UserItemMeal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id','item_id', 'meal_id', 'qty', 'unit', 'carbs', 'protein', 'fat', 'selected_qty_unit'];
+    protected $fillable = ['user_id','item_id', 'meal_id', 'qty', 'unit', 'carbs', 'protein', 'fat', 'energy', 'selected_qty_unit'];
 
     protected $casts = [
         'selected_qty_unit' => 'array',

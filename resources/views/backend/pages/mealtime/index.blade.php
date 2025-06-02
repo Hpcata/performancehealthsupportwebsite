@@ -15,10 +15,10 @@
     @endif
     <div class="row align-items-center">
         <div class="col">
-            <h3 class="fw-bold mb-0">Meal Times</h3>
+            <h3 class="fw-bold mb-0">Categories</h3>
         </div>
         <div class="col-auto">
-            <a href="{{ route('admin.meal-times.create') }}" class="btn btn-primary">Create Meal Time</a>
+            <a href="{{ route('admin.meal-times.create') }}" class="btn btn-primary">Create Category</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -28,8 +28,9 @@
                     <tr>
                         <th>#</th>
                         <th>Title</th>
-                        <th>Time</th>
+                        <!-- <th>Time</th> -->
                         <th>Description</th>
+                        <th>Order</th>
                         <th>Image</th>
                         <th>Actions</th>
                     </tr>
@@ -39,27 +40,31 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $mealTime->title }}</td>
-                        <td>{{ $mealTime->time ? \Carbon\Carbon::createFromFormat('H:i:s', $mealTime->time)->format('h:i A') : 'N/A' }}
+                        <!-- <td>{{ $mealTime->time ? \Carbon\Carbon::createFromFormat('H:i:s', $mealTime->time)->format('h:i A') : 'N/A' }} -->
                         </td>
                         <td>{{ $mealTime->description }}</td>
+                        <td>{{ $mealTime->order }}</td>
                         <td>
                             @if ($mealTime->image)
                                 <img src="{{ asset('private/public/storage/' . $mealTime->image) }}" alt="Meal Time Image" style="max-height: 50px;">
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.meal-times.edit', $mealTime) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{{ route('admin.meal-times.edit', $mealTime) }}" class="btn btn-outline-success btn-sm">
+                                <i class="icofont-edit text-success"></i>
+                            </a>
                             <form action="{{ route('admin.meal-times.destroy', $mealTime) }}" method="POST" class="d-inline-block">
                                 @csrf 
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure?')"><i class="icofont-ui-delete text-danger"></i>
+                                </button>
                             </form>
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
-            {{ $mealTimes->links() }}
+            
         </div>
     </div>
 </div>

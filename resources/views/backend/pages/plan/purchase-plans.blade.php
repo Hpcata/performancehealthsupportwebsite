@@ -76,7 +76,7 @@
                                 <td>{{ formatDate($payment->created_at) }}</td>
                                 <td>
                                     <!-- Action link to show payment details -->
-                                    <a href="javascript:void(0);" class="btn btn-set-task btn-outline-primary w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}" ><i class="icofont-eye text-primary"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary user-pre-plan-details" data-payment-id="{{ $payment->id }}" ><i class="icofont-eye text-primary"></i></a>
                                     @if($isPlanCreated)
                                     <a href="{{ route('admin.purchase-plans.edit', ['user' => $payment->user_id,'plan' => $payment->id]) }}" class="btn btn-sm btn-outline-success"><i class="icofont-edit text-success"></i></a>
                                     @else
@@ -121,7 +121,7 @@
                 url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                 method: 'GET',
 
-                success: function (response) {
+                success: function(response) {
                     if (response.success) {
                         console.log(response.data);
 
@@ -143,64 +143,95 @@
                                         <div class="col-md-6">
                                             <p><strong>Postcode:</strong> ${userDetails.address || 'N/A'}</p>
                                             <p><strong>Referred By:</strong> ${userDetails.referredBy || 'N/A'}</p>
-                                            <p><strong>Occupation:</strong> ${userDetails.occupation || 'N/A'}</p>
-                                            <p><strong>Race/Ethnicity/Culture:</strong> ${userDetails.culture || 'N/A'}</p>
+                                            <p><strong>Sport:</strong> ${userDetails.occupation || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div><hr>`;
                         }
 
-                        // Loop through the response "data" object to display forms, questions, and answers
                         const formData = response.data;
 
                         Object.keys(formData).forEach(function (formName) {
+                            if (formName === 'Personal Details') {
+                                return;
+                            }
                             modalContent += `<div><h4 style="color:#7258db;">${formName}</h4><hr>`;
 
                             const formQuestions = formData[formName];
 
-                            Object.keys(formQuestions).forEach(function (question) {
-                                let answer = formQuestions[question];
-                                let answerContent = '';
-
-                                // Safely handle different answer types (null, array, object, string)
-                                if (!answer) {
-                                    answerContent = 'N/A'; // Handle null values
-                                } else if (Array.isArray(answer)) {
-                                    answerContent = '<ul>';
-                                    answer.forEach(function (item) {
-                                        answerContent += `<li>${item}</li>`;
-                                    });
-                                    answerContent += '</ul>';
-                                } else if (typeof answer === 'object') {
-                                    answerContent = '<ul>';
-                                    for (const [key, value] of Object.entries(answer)) {
-                                        const formattedKey = key
-                                            .replace(/_/g, ' ') // Replace underscores with spaces
-                                            .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize each word
-
-                                        answerContent += `<li>${formattedKey}: `;
-                                        if (Array.isArray(value)) {
-                                            answerContent += '<ul>';
-                                            value.forEach(function (subItem) {
-                                                answerContent += `<li>${subItem}</li>`;
-                                            });
-                                            answerContent += '</ul>';
-                                        } else {
-                                            answerContent += `${value || 'N/A'}`;
-                                        }
-                                        answerContent += '</li>';
-                                    }
-                                    answerContent += '</ul>';
-                                } else {
-                                    answerContent = answer || 'N/A'; // Fallback for null values
+                            Object.keys(formData).forEach(function (formName) {
+                                if (formName === 'Personal Details') {
+                                    return;
                                 }
 
-                                modalContent += `
-                                    <div>
-                                        <p><strong>Q : ${question}</strong></p>
-                                        <p>${answerContent}</p>
-                                    </div>`;
+                                modalContent += `<div><h4 style="color:#7258db;">${formName}</h4><hr>`;
+
+                                const formQuestions = formData[formName];
+
+                                Object.keys(formQuestions).forEach(function (question) {
+                                    let answer = formQuestions[question];
+                                    let answerContent = '';
+
+                                    if (!answer) {
+                                        answerContent = ''; // Skip null or empty answers
+                                    } else if (Array.isArray(answer)) {
+                                        const filtered = answer.filter(item => item !== null && item !== '' && item !== undefined);
+                                        if (filtered.length > 0) {
+                                            answerContent = '<ul>';
+                                            filtered.forEach(function (item) {
+                                                answerContent += `<li>${item}</li>`;
+                                            });
+                                            answerContent += '</ul>';
+                                        }
+                                    } else if (typeof answer === 'object') {
+                                        let validEntries = Object.entries(answer).filter(([_, value]) => value !== null && value !== '');
+
+                                        // Sort hunger question if matched
+                                        if (question.includes('hunger/appetite over the day')) {
+                                            const preferredOrder = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
+                                            validEntries.sort((a, b) => preferredOrder.indexOf(a[0]) - preferredOrder.indexOf(b[0]));
+                                        }
+
+                                        if (validEntries.length > 0) {
+                                            answerContent = '<ul>';
+                                            validEntries.forEach(([key, value]) => {
+                                                const formattedKey = key
+                                                    .replace(/_/g, ' ')
+                                                    .replace(/\b\w/g, char => char.toUpperCase());
+
+                                                answerContent += `<li>${formattedKey}: `;
+                                                if (Array.isArray(value)) {
+                                                    const cleanArray = value.filter(subItem => subItem !== null && subItem !== '' && subItem !== undefined);
+                                                    if (cleanArray.length > 0) {
+                                                        answerContent += '<ul>';
+                                                        cleanArray.forEach(function (subItem) {
+                                                            answerContent += `<li>${subItem}</li>`;
+                                                        });
+                                                        answerContent += '</ul>';
+                                                    }
+                                                } else {
+                                                    answerContent += `${value}`;
+                                                }
+                                                answerContent += '</li>';
+                                            });
+                                            answerContent += '</ul>';
+                                        }
+                                    } else {
+                                        answerContent = answer || ''; // Fallback for simple string values
+                                    }
+
+                                    if (answerContent) {
+                                        modalContent += `
+                                            <div>
+                                                <p><strong>Q : ${question}</strong></p>
+                                                <p>${answerContent}</p>
+                                            </div>`;
+                                    }
+                                });
+
+                                modalContent += `</div><hr>`;
                             });
+
 
                             modalContent += `</div><hr>`;
                         });
@@ -211,7 +242,11 @@
                         // Show the modal
                         $('#prePlanDetail').modal('show');
                     } else {
-                        alert('Failed to load the data');
+                        if (!response.data) {
+                            alert('Pre plan details not available.');
+                        } else {
+                            alert('Failed to load the data');
+                        }
                     }
                 },
                 error: function () {

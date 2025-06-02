@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -37,5 +40,27 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    // ✅ Add this method
+    public function render($request, Throwable $exception): Response
+    {
+        // Handle CSRF token mismatch
+        if ($exception instanceof TokenMismatchException) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Session expired. Please reload the page.',
+                ], 419);
+            }
+
+            return redirect()
+                ->back()
+                ->withInput($request->except('_token'))
+                ->with('error', 'Session expired. Please reload the page.');
+        }
+
+        // Default handler
+        return parent::render($request, $exception);
     }
 }

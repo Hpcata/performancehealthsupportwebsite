@@ -20,6 +20,7 @@ class UserItemSwap extends Model
         'carbs',
         'protein',
         'fat',
+        'energy',
         'unit',
         'selected_qty_unit'
     ];

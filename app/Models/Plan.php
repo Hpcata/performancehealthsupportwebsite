@@ -41,9 +41,9 @@ class Plan extends Model
     // Define relationship with MealTime
     public function mealTimes()
     {
-        return $this->belongsToMany(MealTime::class, 'plan_meal_time');
+        return $this->belongsToMany(MealTime::class, 'plan_meal_time')
+            ->orderBy('meal_times.order', 'asc');
     }
-
 
     public function subPlans()
     {

@@ -19,6 +19,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:food-serving-sizes');
         $schedule->command('nutrition:fetch');
         $schedule->command('nutrition:alternates');
+        $schedule->command('update:food-nutrition-data');
+        $schedule->command('nutrition:fetch-energy');
 
     }
 

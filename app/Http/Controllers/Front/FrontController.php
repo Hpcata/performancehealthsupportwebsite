@@ -33,6 +33,7 @@ use App\Models\PrePlanDetail;
 use App\Models\GoalHistory;
 use App\Mail\SportInterestMail;
 use Carbon\Carbon;
+use GrahamCampbell\ResultType\Success;
 
 class FrontController extends Controller
 {
@@ -141,14 +142,14 @@ class FrontController extends Controller
         $existingUser = User::where('email', $request->input('email'))->first();
 
         if ($existingUser) {
-            $freeTest = Questionnaire::where('email', $request->input('email'))->first();
-            if ($freeTest) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You have already submitted the test.',
-                    'user' => $existingUser,
-                ]);
-            }
+            // $freeTest = Questionnaire::where('email', $request->input('email'))->first();
+            // if ($freeTest) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'You have already submitted the test.',
+            //         'user' => $existingUser,
+            //     ]);
+            // }
             return response()->json([
                 'success' => true,
                 'message' => 'User with this email already exists.',
@@ -190,14 +191,14 @@ class FrontController extends Controller
 
             $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->orWhere('status','discount_applied')->pluck('plan_id')->toArray();
             if ($planIds) {
-                if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-                    if (!Auth::user()->isSuperAdmin()) {
+                if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])) {
+                    if (!Auth::guard('web')->user()->isSuperAdmin()) {
                         $redirectUrl = route('front.profile', ['id' => $user->id]); // Change this to the page you want
-                        $freeTest = Questionnaire::where('email', $validated['email'])->first();
+                        // $freeTest = Questionnaire::where('email', $validated['email'])->first();
 
-                        if($freeTest) {
-                            \Mail::to($validated['email'])->send(new \App\Mail\FreeTestResultMail($user));
-                        }
+                        // if($freeTest) {
+                        //     \Mail::to($validated['email'])->send(new \App\Mail\FreeTestResultMail($user));
+                        // }
                         return response()->json([
                             'success' => true,
                             'redirect_url' => $redirectUrl,
@@ -206,7 +207,7 @@ class FrontController extends Controller
                         ]);
                     }
             
-                    Auth::logout();
+                    Auth::guard('web')->logout();
                     // return back()->withErrors(['Unauthorized access for this role.']);
                     return response()->json([
                         'success' => false,
@@ -215,10 +216,13 @@ class FrontController extends Controller
                 } // Auth::login($user);
     
             } else {
+                $redirectUrl = route('front.profile', ['id' => $user->id]);
                 return response()->json([
-                    'success' => false,
-                    'message' => 'You have not purchased any plan yet. Please purchase a plan first.',
-                ], 401);
+                    'success' => 'success',
+                    'redirect_url' => $redirectUrl,
+                    'user' => $user,
+                    'message' => 'Plan not purchased.',
+                ]);
             }
         }
 
@@ -232,22 +236,19 @@ class FrontController extends Controller
     // Logout for admin users
     public function logout(Request $request)
     {
-        // Check if the user is an admin
-        if (Auth::user() && Auth::user()->is_superadmin == 0) {
-            // Logout the admin
-            Auth::logout();
-
-            // Invalidate the session
-            $request->session()->invalidate();
-
-            // Regenerate the CSRF token
+        // Only logout from web guard (frontend)
+        if (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
+            
+            // Invalidate only the web session
+            $request->session()->forget('web');
+            
+            // Regenerate CSRF token
             $request->session()->regenerateToken();
 
-            // Redirect to the admin login page
-            return redirect()->route('front.index');
+            return redirect()->route('front.index')->with('success', 'You have been logged out successfully.');
         }
 
-        // If not admin, redirect to home
         return redirect()->route('front.index')->with('error', 'Unauthorized access.');
     }
 
@@ -277,7 +278,7 @@ class FrontController extends Controller
             $preplanDetails = [];
 
             if(!$payment) {
-                return redirect()->back()->with('error', 'You have not purchased any plan yet. Please purchase a plan first.');
+                return redirect()->back()->with('error', 'Plan not purchased.');
             }
 
             $userPrePlan = UserPrePlan::where('user_id', $user->id)->where('payment_id', $payment->id)->first();
@@ -307,6 +308,7 @@ class FrontController extends Controller
             $profileDetails = [
                 'Name' => $user->name,
                 'Profile Image' => $user->profile_image ?? '', // Ensure there's a fallback image
+                'Sport' => $userPrePlan->occupation ?? '',
             ];
         
             foreach ($physicalMeasures as $prePlan) {
@@ -317,7 +319,7 @@ class FrontController extends Controller
     
             $nutritionGoals = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
                 $query->where('form_slug', 'nutrition_goals')
-                        ->whereIn('question', ['Which of the following nutrition related goals are you interested in working on?','What is your biggest nutrition challenge?']); 
+                        ->whereIn('question', ['Which of these do you want help with?',"What's your biggest nutrition challenge?"]); 
             }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
     
             $nutritionGoalsDetails = [];
@@ -367,7 +369,7 @@ class FrontController extends Controller
             $trainingIntencity = [];
             $trainingDetails = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
                 $query->where('form_slug', 'physical_activity_and_exercise')
-                        ->where('question', 'How many days per week and at what intensity do you normally train for your sport?');
+                        ->where('question', 'On average, how many days per week do you train, and at what intensity?');
             }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
             foreach($trainingDetails as $prePlan) {
                 foreach ($prePlan->prePlanDetails as $detail) {
@@ -393,8 +395,18 @@ class FrontController extends Controller
                 }
             }
 
-            // dd($intakeDetails);
-            return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan'));
+            $profileSetUp = 0 ;
+            if($userPrePlan) {
+                $completedSteps = DB::table('pre_plan_details')
+                ->where('user_pre_plan_id', $prePlan->id ?? null)
+                ->max('step');
+                
+                if($completedSteps == 9 || $completedSteps == null) {
+                    $profileSetUp = 1;
+                }
+            }
+            // dd($profileSetUp);
+            return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan', 'payment', 'profileSetUp'));
         }
     }
 
@@ -492,34 +504,72 @@ class FrontController extends Controller
 
     }
 
-    public function getAllMeals()
+    public function getAllMeals(Request $request)
     {
-        // Assuming you have a relationship `items` defined on the `Meal` model
-        
-        $meals = \App\Models\Meal::with('items','items.category','userMealItems')->get();
-
-        // $userPlans = UserPlan::with('plan', 
-        //     'userMealTimes.userCategories.userMeals.userItems')
-        //     ->where('user_id', Auth::user()->id) // Ensure user_id is always applied
-        //     ->get();
-        
-        // $selectedItems = []; // To store pre-selected user items
-        // foreach ($userPlans as $userPlan) {
-        //     foreach ($userPlan->userMealTimes as $mealTime) {
-        //         foreach ($mealTime->userMeals as $userMeal) {
-        //             $mealId = $userMeal->meal_id;
-        //             // Store user items
-        //             $selectedItems[$mealId] = $userMeal->userItems->pluck('item_id')->toArray();
-        //         }
-        //     }
-        // }
-
-        // Return JSON response
-        return response()->json([
-            'meals' => $meals,
-            // 'selectedItems' => $selectedItems,
-        ]);
-    }
+        $userId = $request->user_id;
+    
+        $userPlan = UserPlan::with([
+            'userMealTimes.mealTime:id,title',
+            'userMealTimes.userCategories.category:id,title',
+            'userMealTimes.userCategories.userMeals' => function ($q) use ($userId) {
+                $q->with([
+                    'meal' => function ($mealQuery) use ($userId) {
+                        $mealQuery->with(['userMealItems' => function ($q2) use ($userId) {
+                            $q2->wherePivot('user_id', $userId)
+                                ->select('items.id', 'items.title', 'items.image', 'items.category_id')
+                                ->withPivot('qty', 'unit', 'selected_qty_unit')
+                                ->with('category:id,name');
+                        }]);
+                    },
+                    'userItems.item' => function ($q3) {
+                        $q3->select('id', 'title', 'image', 'category_id')->with('category:id,name');
+                    }
+                ]);
+            }
+        ])
+        ->where('id', $request->user_plan_id)
+        ->first();
+    
+        $result = [];
+    
+        foreach ($userPlan->userMealTimes as $mealTime) {
+            foreach ($mealTime->userCategories as $category) {
+                foreach ($category->userMeals as $userMeal) {
+                    $meal = $userMeal->meal;
+                    $userItemMap = $userMeal->userItems->pluck('item_id')->flip(); // Lookup
+    
+                    $items = [];
+                    foreach ($meal->userMealItems as $mealItem) {
+                        if (!$userItemMap->has($mealItem->id)) continue;
+    
+                        $items[] = [
+                            'id' => $mealItem->id,
+                            'title' => $mealItem->title,
+                            'image' => $mealItem->image,
+                            'qty' => $mealItem->pivot->qty,
+                            'unit' => $mealItem->pivot->unit,
+                            'selected_qty_unit' => $mealItem->pivot->selected_qty_unit,
+                            'category' => $mealItem->category->name ?? null,
+                        ];
+                    }
+    
+                    if (count($items)) {
+                        $result[] = [
+                            'meal_time_id' => $mealTime->mealTime->id,
+                            'meal_time_title' => $mealTime->mealTime->title,
+                            'category_id' => $category->category->id,
+                            'category_title' => $category->category->title,
+                            'meal_id' => $meal->id,
+                            'meal_title' => $meal->title,
+                            'items' => $items
+                        ];
+                    }
+                }
+            }
+        }
+    
+        return response()->json(['meals' => $result]);
+    }    
 
     public function freeTestSave(Request $request)
     {
@@ -543,14 +593,14 @@ class FrontController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found.'], 404);
         }
 
-        $existingSubmission = Questionnaire::where('email', $user->email)->first();
+        // $existingSubmission = Questionnaire::where('email', $user->email)->first();
 
-        if ($existingSubmission) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You have already submitted the test.'
-            ], 400);
-        }
+        // if ($existingSubmission) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'You have already submitted the test.'
+        //     ], 400);
+        // }
 
         $nutritionScore  = $request->totalAnswerCount['nutrition-form'] ?? 0;
         $sportsScore     = $request->totalAnswerCount['sports-form'] ?? 0;
@@ -561,26 +611,33 @@ class FrontController extends Controller
         $sportsFeedback     = $this->getFeedbackMessage($sportsScore, 'sports-form');
         $supplementFeedback = $this->getFeedbackMessage($supplementScore, 'supplement-form');
 
-        $user->nutrition_score      = $nutritionScore;
-        $user->nutrition_feedback   = $nutritionFeedback;
-        $user->sports_score         = $sportsScore;
-        $user->sports_feedback      = $sportsFeedback;
-        $user->supplement_score     = $supplementScore;
-        $user->supplement_feedback = $supplementFeedback;
-        $user->save();
-
         // Loop through the test data and insert each question and answer into the `questionnaire` table
-        foreach ($request->testData as $question => $answer) {
-            // dd($question);
-            $questionnaire = new Questionnaire();
-            $questionnaire->user_id = $user->id;
-            $questionnaire->name    = $user->name;
-            $questionnaire->email   = $user->email;
-            $questionnaire->phone   = $request->phone;  // Assuming 'phone' is part of the user
-            $questionnaire->question = $question;  // Store the question text
-            $questionnaire->answer   = json_encode($answer);      // Store the corresponding answer
-            $questionnaire->save(); // Save the data to the table
-        }
+        // foreach ($request->testData as $question => $answer) {
+        //     // dd($question);
+        //     $questionnaire = new Questionnaire();
+        //     $questionnaire->user_id = $user->id;
+        //     $questionnaire->name    = $user->name;
+        //     $questionnaire->email   = $user->email;
+        //     $questionnaire->phone   = $request->phone;  // Assuming 'phone' is part of the user
+        //     $questionnaire->question = $question;  // Store the question text
+        //     $questionnaire->answer   = json_encode($answer);      // Store the corresponding answer
+        //     $questionnaire->save(); // Save the data to the table
+        // }
+
+        $questionnaire = new Questionnaire();
+        $questionnaire->user_id = $user->id;
+        $questionnaire->name    = $user->name;
+        $questionnaire->email   = $user->email;
+        $questionnaire->phone   = $request->phone;
+        $questionnaire->question = 'free-test';
+        $questionnaire->answer   = json_encode($request->testData);
+        $questionnaire->nutrition_score      = $nutritionScore;
+        $questionnaire->nutrition_feedback   = $nutritionFeedback;
+        $questionnaire->sports_score         = $sportsScore;
+        $questionnaire->sports_feedback      = $sportsFeedback;
+        $questionnaire->supplement_score     = $supplementScore;
+        $questionnaire->supplement_feedback = $supplementFeedback;
+        $questionnaire->save();
 
         // Return success response
         return response()->json(['success' => true, 'message' => 'Test data submitted successfully']);
@@ -1031,7 +1088,7 @@ class FrontController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
         $mainAns = $request->main_ans;
-        // dd(json_encode($answer));
+        // dd($request->all());
         $payment = Payment::where('user_id', $userId)->first();
         $prePlan = \App\Models\UserPrePlan::where('payment_id', $payment->id)
         ->where('user_id', $userId)
@@ -1041,26 +1098,92 @@ class FrontController extends Controller
                 ->where('question', $question)
                 ->where('user_pre_plan_id', $prePlan->id)
                 ->first(); 
-
+        // dd($type);
         if($prePlanDetail){
-            if($type != "height") {
-                GoalHistory::create([
-                    'user_id' => $userId,
-                    'payment_id' => $payment->id,
-                    'type' => $type,
-                    'question' => $prePlanDetail->question,
-                    'answer' => $prePlanDetail->answer,
-                    'start_date'=> $prePlanDetail->start_date,
-                    'end_date' => $prePlanDetail->end_date
+            if ($type == 'supplement-edit' || $type == 'medication-edit') {
+                $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
+                $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
+                $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
+                $count = count($preplanAnswers);
+            
+                // If startDates are empty or contain all nulls, set all to created_at
+                if (empty($prePlanDetail->start_date) || collect($startDates)->every(fn($date) => empty($date) || strtolower($date) === 'null')) {
+                    $createdDate = $prePlanDetail->created_at->format('Y-m-d');
+                    $startDates = array_fill(0, $count, $createdDate);
+                } else {
+                    $startDates = array_pad($startDates, $count, null);
+                }
+            
+                $endDates = array_pad($endDates, $count, null);
+                // Find index of the edited answer
+                $index = array_search($answer, $preplanAnswers);
+            
+                if ($index !== false) {
+                    if (!empty($startDate)) {
+                        $startDates[$index] = $startDate;
+                    }
+            
+                    if (!empty($endDate)) {
+                        $endDates[$index] = $endDate;
+                    }
+                }
+                // dd($preplanAnswers);
+                $prePlanDetail->update([
+                    'answer' => json_encode(implode(', ', $preplanAnswers)),
+                    'start_date' => implode(', ', $startDates),
+                    'end_date' => implode(', ', $endDates)
+                ]);
+            }elseif ($type == 'supplement' || $type == 'medication') {
+                // dd($type);
+                $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
+                $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
+                $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
+            
+                $answer = trim($request->answer);
+                $startDate = $request->start_date;
+                $endDate = $request->end_date;
+            
+                $currentDate = now()->format('Y-m-d');
+                
+                foreach ($preplanAnswers as $index => $item) {
+                    $itemEndDate = $endDates[$index] ?? null;
+                    // dd($itemEndDate);
+                    if ($itemEndDate && $itemEndDate < $currentDate) {
+                        // Archive expired item in GoalHistory
+                        GoalHistory::create([
+                            'user_id' => $userId,
+                            'payment_id' => $payment->id,
+                            'type' => $type,
+                            'question' => $prePlanDetail->question,
+                            'answer' => $item,
+                            'start_date' => $startDates[$index] ?? $prePlanDetail->created_at,
+                            'end_date' => $itemEndDate
+                        ]);
+            
+                        // Remove from arrays
+                        unset($preplanAnswers[$index]);
+                        unset($startDates[$index]);
+                        unset($endDates[$index]);
+                    }
+                }
+            
+                // Reindex arrays
+                $preplanAnswers = array_values($preplanAnswers);
+                $startDates = array_values($startDates);
+                $endDates = array_values($endDates);
+            
+                // Add new entry
+                $preplanAnswers[] = $answer;
+                $startDates[] = $startDate ?? $prePlanDetail->created_at;
+                $endDates[] = $endDate ?? null;
+            
+                $prePlanDetail->update([
+                    'answer' => json_encode(implode(', ', $preplanAnswers)),
+                    'start_date' => implode(', ', $startDates),
+                    'end_date' => implode(', ', $endDates)
                 ]);
             }
-            
-            $prePlanDetail->update([
-                'answer' => json_encode($answer),
-                'start_date' => $startDate,
-                'end_date' => $endDate                     
-            ]);
-
+          
         } else {
             // Create a new record if none exists
             $userPrePlan = UserPrePlan::firstOrCreate([
@@ -1077,15 +1200,7 @@ class FrontController extends Controller
                 'end_date' => $endDate   
             ]);
         }
-        // // Ensure answer is stored as valid JSON
-        // if (is_array($answer)) {
-        //     $prePlanDetail->answer = json_encode([$answer], JSON_UNESCAPED_UNICODE);
-        // } else {
-        //     $prePlanDetail->answer = json_encode($answer, JSON_UNESCAPED_UNICODE);
-        // }
-
-        // $prePlanDetail->save();
-    
+       
         return response()->json(['success' => true, 'message' => 'Answer updated successfully']);
     }
 
@@ -1094,8 +1209,8 @@ class FrontController extends Controller
         $userId = $request->user_id;
         $type = $request->input('type'); // "goal" or "challenge"
         $question = $type == "goal" ? 
-            "Which of the following nutrition related goals are you interested in working on?" : 
-            "What is your biggest nutrition challenge?";
+            "Which of these do you want help with?" : 
+            "What's your biggest nutrition challenge?";
         
         $answer = $request->input('answer'); // New answer input
         $payment = \App\Models\Payment::where('user_id', $userId)->first();
@@ -1293,17 +1408,123 @@ class FrontController extends Controller
         $user = \App\Models\User::where('email', $request->email)->first();
 
         if ($user) {
+
+            $nutritionScore  = $request->totalAnswerCounts['nutrition-form'] ?? 0;
+            $sportsScore     = $request->totalAnswerCounts['sports-form'] ?? 0;
+            $supplementScore = $request->totalAnswerCounts['supplement-form'] ?? 0;
+
+            // Generate feedback based on score ranges
+            $nutritionFeedback  = $this->getFeedbackMessage($nutritionScore, 'nutrition-form');
+            $sportsFeedback     = $this->getFeedbackMessage($sportsScore, 'sports-form');
+            $supplementFeedback = $this->getFeedbackMessage($supplementScore, 'supplement-form');
+
+            $questionnaire = new Questionnaire();
+            $questionnaire->user_id = $user->id;
+            $questionnaire->name    = $user->name;
+            $questionnaire->email   = $user->email;
+            $questionnaire->phone   = $request->phone;
+            $questionnaire->question = 'free-test';
+            $questionnaire->answer   = json_encode($request->testData);
+            $questionnaire->nutrition_score      = $nutritionScore;
+            $questionnaire->nutrition_feedback   = $nutritionFeedback;
+            $questionnaire->sports_score         = $sportsScore;
+            $questionnaire->sports_feedback      = $sportsFeedback;
+            $questionnaire->supplement_score     = $supplementScore;
+            $questionnaire->supplement_feedback = $supplementFeedback;
+            $questionnaire->save();
+
             return response()->json([
                 'status' => 'success',
                 'user_id' => $user->id,
                 'message' => 'User found'
             ]);
         } else {
+            $firstName = explode(' ', $request->input('name'))[0]; // First name from full name
+            $lastName = explode(' ', $request->input('name'))[1] ?? ''; // Last name from full name
+
+            $user = User::create([
+                'name' => $request->input('name'), // Full name of the admin user.
+                'first_name' => $firstName, // First name of the admin user.
+                'last_name' => $lastName, // Last name of the admin user.
+                'email' => $request->input('email'), // Email of the admin user.
+                'password' => Hash::make($request->input('password')), // Hashed password of the admin user.
+            ]);
+            
+            $nutritionScore  = $request->totalAnswerCounts['nutrition-form'] ?? 0;
+            $sportsScore     = $request->totalAnswerCounts['sports-form'] ?? 0;
+            $supplementScore = $request->totalAnswerCounts['supplement-form'] ?? 0;
+
+            // Generate feedback based on score ranges
+            $nutritionFeedback  = $this->getFeedbackMessage($nutritionScore, 'nutrition-form');
+            $sportsFeedback     = $this->getFeedbackMessage($sportsScore, 'sports-form');
+            $supplementFeedback = $this->getFeedbackMessage($supplementScore, 'supplement-form');
+
+            $questionnaire = new Questionnaire();
+            $questionnaire->user_id = $user->id;
+            $questionnaire->name    = $user->name;
+            $questionnaire->email   = $user->email;
+            $questionnaire->phone   = $request->phone;
+            $questionnaire->question = 'free-test';
+            $questionnaire->answer   = json_encode($request->testData);
+            $questionnaire->nutrition_score      = $nutritionScore;
+            $questionnaire->nutrition_feedback   = $nutritionFeedback;
+            $questionnaire->sports_score         = $sportsScore;
+            $questionnaire->sports_feedback      = $sportsFeedback;
+            $questionnaire->supplement_score     = $supplementScore;
+            $questionnaire->supplement_feedback = $supplementFeedback;
+            $questionnaire->save();
+
             return response()->json([
-                'status' => 'error',
-                'user_id' => null,
-                'message' => 'Your email is not registered'
+                'status' => 'success',
+                'user_id' => $user->id,
+                'message' => 'User found'
             ]);
         }
+
+        return response()->json([
+            'status' => 'error',
+            'user_id' => null,
+            'message' => 'Something went wrong, please try again later.'
+        ]);
     }
+
+    public function getFoodItems($key)
+    {
+        // Find flag by name
+        $flag = \App\Models\Flag::where('name', $key)->with('items')->first();
+
+        if (!$flag) {
+            return response()->json([]);
+        }
+
+        // Extract item names as a simple array
+        $items = $flag->items->map(function ($item) {
+            return [
+                'name' => $item->title,
+                'image' => webAssets('storage/' . $item->image)
+            ];
+        });
+    
+        return response()->json($items);
+    }
+
+    public function setUserSession($id)
+    {
+        // Optional: restrict only for admin if needed
+        // if (!Auth::guard('admin')->check()) {
+        //     return response()->json(['error' => 'Unauthorized'], 403);
+        // }
+
+        $user = \App\Models\User::findOrFail($id);
+        // dd($user);
+        // Set user session
+        Auth::guard('web')->login($user);
+
+        // Respond with URL instead of redirect
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('front.profile', ['id' => $id]) . '?admin_view=1'
+        ]);
+    }
+
 }

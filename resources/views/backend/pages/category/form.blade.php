@@ -5,7 +5,7 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">{{ isset($category) ? 'Edit Category' : 'Create Category' }}</h3>
+                <h3 class="fw-bold mb-0">{{ isset($category) ? 'Edit Sub Category' : 'Create Sub Category' }}</h3>
                 <div class="col-auto d-flex w-sm-100">
                     <a type="button" href="{{ route('admin.categories.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
                 </div>
@@ -24,7 +24,7 @@
                         <div class="row g-3 align-items-center">
                             <!-- Mealtime Selection (Multiple Select) -->
                             <div class="col-md-12">
-                                <label for="mealtime_ids" class="form-label">Select Mealtimes</label>
+                                <label for="mealtime_ids" class="form-label">Select Categories</label>
                                 <select name="mealtime_ids[]" class="form-select select2" id="mealtime_ids" multiple required>
                                     @foreach ($mealtimes as $mealtime)
                                         <option value="{{ $mealtime->id }}" 
@@ -50,12 +50,15 @@
                             <!-- Image Upload Field -->
                             <div class="col-md-12">
                                 <label for="image" class="form-label">Image</label>
-                                <input type="file" name="image" class="form-control">
+                                <small class="form-text text-muted">
+                                    Only image files are allowed (.jpg, .jpeg, .png, .gif, .webp). Max size: 2MB.
+                                </small>
+                                <input type="file" name="image" class="form-control" accept="image/*">
                                 
                                 <!-- Show current image if editing -->
                                 @if (isset($category) && $category->image)
                                 <div class="mt-3">
-                                    <img src="{{ asset('storage/' . $category->image) }}" alt="Category Image" class="img-thumbnail" style="max-height: 150px;">
+                                    <img src="{{ webAssets('storage/' . $category->image) }}" alt="Category Image" class="img-thumbnail" style="max-height: 150px;">
                                 </div>
                                 @endif
                             </div>
@@ -81,7 +84,7 @@
     <script>
         $(document).ready(function () {
             $('#mealtime_ids').select2({
-                placeholder: "Select options",
+                placeholder: "Select categories",
                 allowClear: true,
                 width: '100%'
             });
