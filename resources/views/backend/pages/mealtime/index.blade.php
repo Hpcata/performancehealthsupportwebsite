@@ -36,24 +36,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($mealTimes as $mealTime)
+                    @foreach ($categories as $category)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $mealTime->title }}</td>
-                        <!-- <td>{{ $mealTime->time ? \Carbon\Carbon::createFromFormat('H:i:s', $mealTime->time)->format('h:i A') : 'N/A' }} -->
+                        <td>{{ $category->title }}</td>
+                        <!-- <td>{{ $category->time ? \Carbon\Carbon::createFromFormat('H:i:s', $category->time)->format('h:i A') : 'N/A' }} -->
                         </td>
-                        <td>{{ $mealTime->description }}</td>
-                        <td>{{ $mealTime->order }}</td>
+                        <td>{{ $category->description }}</td>
+                        <td>{{ $category->order }}</td>
                         <td>
-                            @if ($mealTime->image)
-                                <img src="{{ asset('private/public/storage/' . $mealTime->image) }}" alt="Meal Time Image" style="max-height: 50px;">
+                            @if ($category->image)
+                                <img src="{{ asset('private/public/storage/' . $category->image) }}" alt="Meal Time Image" style="max-height: 50px;">
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.meal-times.edit', $mealTime) }}" class="btn btn-outline-success btn-sm">
+                            <a href="{{ route('admin.meal-times.edit', $category) }}" class="btn btn-outline-success btn-sm">
                                 <i class="icofont-edit text-success"></i>
                             </a>
-                            <form action="{{ route('admin.meal-times.destroy', $mealTime) }}" method="POST" class="d-inline-block">
+                            <form action="{{ route('admin.meal-times.destroy', $category) }}" method="POST" class="d-inline-block">
                                 @csrf 
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure?')"><i class="icofont-ui-delete text-danger"></i>

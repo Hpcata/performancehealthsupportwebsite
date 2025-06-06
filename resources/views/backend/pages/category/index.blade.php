@@ -45,32 +45,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($categories as $category)
+                            @foreach ($subCategories as $subCategory)
                             <tr>
-                                <td><strong>{{ $category->id }}</strong></td>
-                                <td>{{ $category->title }}</td>
+                                <td><strong>{{ $subCategory->id }}</strong></td>
+                                <td>{{ $subCategory->title }}</td>
                                 <td>
-                                    @if($category->mealtimes->isNotEmpty())
-                                        {{ $category->mealtimes->pluck('title')->implode(', ') }}
+                                    @if($subCategory->categories->isNotEmpty())
+                                        {{ $subCategory->categories->pluck('title')->implode(', ') }}
                                     @else
                                         <span class="text-muted">No Meal Time</span>
                                     @endif
                                 </td>
                                 <td>
-                                    @if($category->image)
-                                    <img src="{{ asset('private/public/storage/' . $category->image) }}" alt="" width="50">
+                                    @if($subCategory->image)
+                                    <img src="{{ asset('private/public/storage/' . $subCategory->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif
                                 </td>
-                                <td>{{ Str::limit($category->description, 50, '...') }}</td>
-                                <td>{{ $category->created_at->format('Y-m-d') }}</td>
+                                <td>{{ Str::limit($subCategory->description, 50, '...') }}</td>
+                                <td>{{ $subCategory->created_at->format('Y-m-d') }}</td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                        <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-outline-secondary">
+                                        <a href="{{ route('admin.categories.edit', $subCategory->id) }}" class="btn btn-outline-secondary">
                                             <i class="icofont-edit text-success"></i>
                                         </a>
-                                        <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('admin.categories.destroy', $subCategory->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-secondary">

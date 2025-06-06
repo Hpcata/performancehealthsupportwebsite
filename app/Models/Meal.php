@@ -18,17 +18,22 @@ class Meal extends Model
         return $this->belongsToMany(MealTime::class, 'meal_meal_time');
     }
 
-    // Define the relationship with SubCategory
+    // Define the relationship with Category
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'meal_category'); // Assuming a pivot table
+        return $this->belongsToMany(Category::class, 'meal_category');
+    }
+
+    public function subCategories()
+    {
+        return $this->belongsToMany(SubCategory::class, 'meal_sub_category', 'meal_id', 'sub_category_id');
     }
 
     public function items()
     {
-        return $this->belongsToMany(Item::class, 'item_meals', 'meal_id', 'item_id')
-                    ->withPivot(['item_qty', 'item_qty_unit', 'carbs', 'protein', 'fat', 'selected_qty_unit']);
-                    // ->where('is_swiped', 0);
+        return $this->belongsToMany(Item::class, 'item_meals')
+            ->withPivot('item_qty', 'item_qty_unit', 'carbs', 'protein', 'fat', 'selected_qty_unit')
+            ->withTimestamps();
     }
 
     // Many-to-many relationship with Item through the user_items pivot table
@@ -57,5 +62,10 @@ class Meal extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class); // Uses 'item_tag' pivot table by default
+    }
+
+    public function userMeals()
+    {
+        return $this->hasMany(UserMeal::class, 'id');  // Changed from meal_id to id
     }
 }

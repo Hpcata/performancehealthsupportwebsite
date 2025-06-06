@@ -119,21 +119,21 @@
         </div>
 
         <div class="meal-plan">
-            @foreach ($userPlan->userMealTimes as $userMealTime)
-                @if($userMealTime->userMeals && $userMealTime->userMeals->count())
+            @foreach ($userPlan->userCategories as $userMealTime)
+                @if($userMealTime->userMeals->where('user_plan_id', $userPlan->id) && $userMealTime->userMeals->where('user_plan_id', $userPlan->id)->count())
                     <div class="meal-time">
-                        <h5>{{ $userMealTime->mealTime->title }}</h5>
+                        <h5>{{ $userMealTime->category->title }}</h5>
                         <table>
                             <tbody>
                                 @php
                                     // Combine all meals from all categories into one collection
                                     $allMeals = collect();
-                                    foreach ($userMealTime->userCategories as $userCategory) {
-                                        $allMeals = $allMeals->merge($userCategory->userMeals);
+                                    foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $userCategory) {
+                                        $allMeals = $allMeals->merge($userCategory->userMeals->where('user_plan_id', $userPlan->id));
                                     }
                                     // Sort combined meals by meal_id as integer ascending
                                     $sortedMeals = $allMeals->sortBy(function($userMeal) {
-                                        return (int) $userMeal->meal_id;
+                                        return (int) $userMeal->id;
                                     });
                                 @endphp
 
@@ -157,7 +157,7 @@
                                                 $fatTotal = 0;
                                                 $energyTotal = 0;
 
-                                                foreach ($userMeal->userItems as $userItem) {
+                                                foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem) {
                                                     $item = $userItem->item;
 
                                                     $carbsTotal += round(floatval($item->carbs ?? 0));
@@ -168,7 +168,7 @@
                                             @endphp
                                             @if ($userPlan->nutrition_info_flag == 1)
                                                 <br>
-                                                <span class="mt-3" style="font-size: 12px; color: #666;"><strong>Meal Total: 
+                                                <span class="mt-3 d-none" style="font-size: 12px; color: #666;"><strong>Meal Total: 
                                                     Energy: {{ (int) $energyTotal }}kJ |
                                                     Protein: {{ (int) $proteinTotal }}g |
                                                     Carb: {{ (int) $carbsTotal }}g |
@@ -178,9 +178,10 @@
                                         </td>
                                         <td>
                                             <ul>
-                                                @foreach ($userMeal->userItems as $userItem)
+                                                @foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem)
                                                     @php
-                                                        $matchedItem = $userMeal->meal->userMealItems->firstWhere('id', $userItem->item_id);
+                                                        $matchedItem = $userMeal->meal->userMealItems->firstWhere('id', $userItem->id);
+                                                        dd($matchedItem);
                                                         $selectedQty = $matchedItem->pivot->selected_qty_unit ?? null;
                                                         if (is_string($selectedQty)) {
                                                             $decoded = json_decode($selectedQty, true);

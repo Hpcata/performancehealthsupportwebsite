@@ -143,30 +143,30 @@
         </div>
 
         <div class="meal-plan">
-            @foreach ($userPlan->userMealTimes as $userMealTime)
-                @if($userMealTime->userMeals && $userMealTime->userMeals->count())
+            @foreach ($userPlan->userCategories as $userMealTime)
+                @if($userMealTime->userMeals->where('user_plan_id', $userPlan->id) && $userMealTime->userMeals->where('user_plan_id', $userPlan->id)->count())
                     <div class="meal-time">
-                        <h5>{{ $userMealTime->mealTime->title }}</h5>
+                        <h5>{{ $userMealTime->category->title }}</h5>
                         <table>
                             <tbody>
                                 @php
                                     // Combine all meals from all categories into one collection
                                     $allMeals = collect();
-                                    foreach ($userMealTime->userCategories as $userCategory) {
-                                        $allMeals = $allMeals->merge($userCategory->userMeals);
+                                    foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $userCategory) {
+                                        $allMeals = $allMeals->merge($userCategory->userMeals->where('user_plan_id', $userPlan->id));
                                     }
                                     // Sort combined meals by meal_id as integer ascending
                                     $sortedMeals = $allMeals->sortBy(function($userMeal) {
-                                        return (int) $userMeal->meal_id;
+                                        return (int) $userMeal->id;
                                     });
                                 @endphp
 
                                 @foreach ($sortedMeals as $userMeal)
                                     <tr>
                                         <td>
-                                            <img src="{{ url('private/public/storage/'.$userMeal->meal->image) }}" alt="Meal image">
+                                            <img src="{{ url('private/public/storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
                                         </td>
-                                        <td>{{ $userMeal->meal->title }}
+                                        <td>{{ $userMeal->meal->title }} 
                                             @if ($userMeal->meal->description)
                                                 <br>
                                                 <span style="font-size: 12px; color: #666;">{{ $userMeal->meal->description }}</span>
@@ -181,7 +181,7 @@
                                                 $fatTotal = 0;
                                                 $energyTotal = 0;
 
-                                                foreach ($userMeal->userItems as $userItem) {
+                                                foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem) {
                                                     $item = $userItem->item;
 
                                                     $carbsTotal += round(floatval($item->carbs ?? 0));
@@ -202,11 +202,10 @@
                                         </td>
                                         <td>
                                             <ul>
-                                                @foreach ($userMeal->userItems as $userItem)
+                                                @foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem)
                                                     @php
-                                                        $matchedItem = $userMeal->meal->userMealItems->firstWhere('id', $userItem->item_id);
+                                                        $matchedItem = $userMeal->meal->userMealItems->firstWhere('id', $userItem->id);
                                                         $selectedQty = $matchedItem->pivot->selected_qty_unit ?? null;
-
                                                         if (is_string($selectedQty)) {
                                                             $decoded = json_decode($selectedQty, true);
                                                             $selectedQty = (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : null;
@@ -306,7 +305,5 @@
     <div class="footer">
         <img src="{{ url('private/public/front/images/logo.svg') }}" alt="Logo">
     </div>
-
-    
 </body>
 </html>

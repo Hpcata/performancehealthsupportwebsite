@@ -74,10 +74,10 @@
                             <div class="col-md-12">
                                 <label for="meal_times" class="form-label">Category</label>
                                 <select name="meal_times[]" id="meal_times" class="form-control select2" multiple>
-                                    @foreach ($mealTimes as $mealTime)
-                                    <option value="{{ $mealTime->id }}" 
-                                        {{ isset($meal) && $meal->mealTimes->contains($mealTime->id) ? 'selected' : '' }}>
-                                        {{ $mealTime->title }}
+                                    @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}" 
+                                        {{ isset($meal) && $meal->categories->contains($category->id) ? 'selected' : '' }}>
+                                        {{ $category->title }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -87,10 +87,10 @@
                             <div class="col-md-12">
                                 <label for="sub_categories" class="form-label">Sub Categories</label>
                                 <select name="categories[]" id="categories" class="form-control select2" multiple>
-                                    @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}" 
-                                        {{ isset($meal) && $meal->categories->contains($category->id) ? 'selected' : '' }}>
-                                        {{ $category->title }}
+                                    @foreach ($subCategories as $subCategory)
+                                    <option value="{{ $subCategory->id }}" 
+                                        {{ isset($meal) && $meal->subCategories->contains($subCategory->id) ? 'selected' : '' }}>
+                                        {{ $subCategory->title }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -456,7 +456,7 @@
 
     $(document).ready(function() {
         $('#categories').select2({
-            placeholder: "Select child categories",
+            placeholder: "Select sub categories",
             allowClear: true
         });
         $('#tag_ids').select2({
@@ -465,7 +465,7 @@
         });
 
         $('#meal_times').select2({
-            placeholder: "Select Parent Category",
+            placeholder: "Select Category",
             allowClear: true
         })
 

@@ -7,7 +7,7 @@ use App\Models\Plan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use App\Models\MealTime;
+use App\Models\Category;
 
 class PlanController extends Controller
 {
@@ -25,9 +25,9 @@ class PlanController extends Controller
      */
     public function create()
     {
-        $mealTimes = MealTime::all(); // Fetch all meal times
+        $categories = Category::all(); // Fetch all meal times
         $subPlans = Plan::all();
-        return view('backend.pages.plan.form', compact('mealTimes', 'subPlans'));
+        return view('backend.pages.plan.form', compact('categories', 'subPlans'));
     }
 
     /**
@@ -42,7 +42,7 @@ class PlanController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'meal_times' => 'nullable|array', // Validate meal times
-            'meal_times.*' => 'exists:meal_times,id',
+            'meal_times.*' => 'exists:categories,id',
         ]);
     
         if ($request->hasFile('image')) {
@@ -56,7 +56,7 @@ class PlanController extends Controller
         $plan = Plan::create($validated);
     
         if ($request->has('meal_times')) {
-            $plan->mealTimes()->sync($request->meal_times); // Sync meal times
+            $plan->categories()->sync($request->meal_times); // Sync meal times
         }
 
         // Sync Sub-Plans
@@ -67,9 +67,9 @@ class PlanController extends Controller
     
     public function edit(Plan $plan)
     {
-        $mealTimes = MealTime::all(); // Fetch all meal times
+        $categories = Category::all(); // Fetch all meal times
         $subPlans = Plan::where('id', '!=', $plan->id)->get();
-        return view('backend.pages.plan.form', compact('plan', 'mealTimes','subPlans'));
+        return view('backend.pages.plan.form', compact('plan', 'categories','subPlans'));
     }
     
     public function update(Request $request, Plan $plan)
@@ -98,7 +98,7 @@ class PlanController extends Controller
         $plan->update($validated);
     
         if ($request->has('meal_times')) {
-            $plan->mealTimes()->sync($request->meal_times); // Sync meal times
+            $plan->categories()->sync($request->meal_times); // Sync meal times
         }
 
         // Sync Sub-Plans

@@ -509,9 +509,9 @@ class FrontController extends Controller
         $userId = $request->user_id;
     
         $userPlan = UserPlan::with([
-            'userMealTimes.mealTime:id,title',
-            'userMealTimes.userCategories.category:id,title',
-            'userMealTimes.userCategories.userMeals' => function ($q) use ($userId) {
+            'userCategories.category:id,title',
+            'userCategories.userSubCategories.subCategory:id,title',
+            'userCategories.userSubCategories.userMeals' => function ($q) use ($userId) {
                 $q->with([
                     'meal' => function ($mealQuery) use ($userId) {
                         $mealQuery->with(['userMealItems' => function ($q2) use ($userId) {
@@ -532,11 +532,11 @@ class FrontController extends Controller
     
         $result = [];
     
-        foreach ($userPlan->userMealTimes as $mealTime) {
-            foreach ($mealTime->userCategories as $category) {
-                foreach ($category->userMeals as $userMeal) {
+        foreach ($userPlan->userCategories as $mealTime) {
+            foreach ($mealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $category) {
+                foreach ($category->userMeals->where('user_plan_id', $userPlan->id) as $userMeal) {
                     $meal = $userMeal->meal;
-                    $userItemMap = $userMeal->userItems->pluck('item_id')->flip(); // Lookup
+                    $userItemMap = $userMeal->userItems->where('user_plan_id', $userPlan->id)->pluck('id')->flip(); // Lookup
     
                     $items = [];
                     foreach ($meal->userMealItems as $mealItem) {
@@ -555,10 +555,10 @@ class FrontController extends Controller
     
                     if (count($items)) {
                         $result[] = [
-                            'meal_time_id' => $mealTime->mealTime->id,
-                            'meal_time_title' => $mealTime->mealTime->title,
-                            'category_id' => $category->category->id,
-                            'category_title' => $category->category->title,
+                            'meal_time_id' => $mealTime->category->id,
+                            'meal_time_title' => $mealTime->category->title,
+                            'category_id' => $category->subCategory->id,
+                            'category_title' => $category->subCategory->title,
                             'meal_id' => $meal->id,
                             'meal_title' => $meal->title,
                             'items' => $items

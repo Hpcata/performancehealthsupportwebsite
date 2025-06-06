@@ -1,6 +1,6 @@
 @extends(frontView('layouts.app'))
 
-@section('title', $userMealTime->mealTime->name)
+@section('title', $userMealTime->category->name)
 
 @section('content')
 <style>
@@ -14,7 +14,7 @@
         <div class="row align-items-top">
             <div class="col-md-6 col-lg-5">
                 <div class="nutrition-plan-text">
-                    <h1> <span class="text-primary">Healthy {{ $userMealTime->mealTime->title }} Meals</span></h1>
+                    <h1> <span class="text-primary">Healthy {{ $userMealTime->category->title }} Meals</span></h1>
                     <p>Simple meals to perform, recover, and thrive.</p>
                 </div>
             </div>
@@ -22,14 +22,14 @@
                 
                 <div class="mt-2 mealtime-btn-list">
                     <ul class="">
-                        @if($userPlan->userMealTimes->count())
-                            @foreach($userPlan->userMealTimes as $plan)
+                        @if($userPlan->userCategories->count() > 0)
+                            @foreach($userPlan->userCategories as $plan)
                                 @if($plan->userMeals && $plan->userMeals->count())
                                     <li class="m-2">
-                                        <a class="@if($userMealTime->mealTime->id == $plan->mealTime->id) active btn btn-outline-primary btn-sm text-white @else bg-white btn btn-outline-secondary text-black @endif"
+                                        <a class="@if($userMealTime->category->id == $plan->category->id) active btn btn-outline-primary btn-sm text-white @else bg-white btn btn-outline-secondary text-black @endif"
                                         aria-current="page"
-                                        href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}">
-                                            {{ $plan->mealTime->title }}
+                                        href="{{ route('front.meal-time.details', ['id' => $plan->category->id, 'plan_id' => $userPlan->id]) }}">
+                                            {{ $plan->category->title }}
                                         </a>
                                     </li>
                                 @endif
@@ -57,15 +57,16 @@
     <div class="container">
         <div class="main-category-list mt-4">
             <div class="row g-0">
-                @foreach($userMealTime->userCategories as $item)
-                    @if($item->userMeals && $item->userMeals->count())
+                
+                @foreach($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $item)
+                    @if($item->userMeals->where('user_plan_id', $userPlan->id) && $item->userMeals->where('user_plan_id', $userPlan->id)->count() > 0)
                     <div class="col-md-3">
                         <div class="nutrition-plan-box h-100 d-flex flex-column">
                             <figure>
-                                <img src="{!! asset('private/public/storage/' . $item->category->image) !!} " alt="">
+                                <img src="{!! asset('private/public/storage/' . $item->subCategory->image) !!} " alt="">
                             </figure>
-                            <h5 class="mb-3">{{ $item->category->title }}</h5>
-                            <a href="javascript:void(0)" class="btn btn-primary view-details-btn mt-auto" data-category-id="{{ $item->category->id }}" data-user-category-id="{{ $item->id }}" data-category-name="{{ $item->category->title }}">View Details</a>
+                            <h5 class="mb-3">{{ $item->subCategory->title }}</h5>
+                            <a href="javascript:void(0)" class="btn btn-primary view-details-btn mt-auto" data-sub-category-id="{{ $item->subCategory->id }}" data-user-category-id="{{ $userMealTime->id }}" data-sub-category-name="{{ $item->subCategory->title }}" data-user-plan-id="{{ $userPlan->id }}">View Details</a>
                             <!-- <button type="button" class="subcategoryItemsModalbtn btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal">View Details</button> -->
                         </div>
                     </div>
@@ -229,16 +230,17 @@
 
         // Handle click event to fetch subcategories
         $('body').on('click', '.view-details-btn', function () {
-            const categoryId = $(this).data('category-id');
-            const categoryName = $(this).data('category-name');
+            const subCategoryId = $(this).data('sub-category-id');
+            const subCategoryName = $(this).data('sub-category-name');
             const userCategoryId = $(this).data('user-category-id');
-            if (!categoryId || !categoryName) {
+            const userPlanId = $(this).data('user-plan-id');
+            if (!subCategoryId || !userPlanId) {
                 console.error('Invalid category data.');
                 return;
             }
 
             // Update modal title
-            $mealModalLabel.text(categoryName);
+            $mealModalLabel.text(subCategoryName);
 
             // Clear previous subcategories and show loading spinner
             $mealModelContainer.empty().hide();
@@ -246,7 +248,7 @@
 
             // Fetch subcategories via AJAX
             $.ajax({
-                url: '{{ route('front.category.meals', ':id') }}'.replace(':id', categoryId) + `?user_category_id=${userCategoryId}`,
+                url: '{{ route('front.category.meals', ':id') }}'.replace(':id', subCategoryId) + `?user_category_id=${userCategoryId}&user_plan_id=${userPlanId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -266,7 +268,7 @@
                                     </div>
                                 </figure>
                                 <h5 class="mb-3">${meal.name}</h5>
-                                <button type="button" class="view-items-btn btn btn-primary mt-auto" data-user-meal-id="${meal.user_meal_id}" data-meal-id="${meal.id}" 
+                                <button type="button" class="view-items-btn btn btn-primary mt-auto" data-user-meal-id="${meal.id}" data-meal-id="${meal.id}" data-user-plan-id="${userPlanId}" data-category-id="${userCategoryId}" data-sub-category-id="${meal.user_sub_category_id}"
                                 data-meal-name="${meal.name}">
                                     <svg class="me-2" width="25" height="25" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
@@ -313,6 +315,9 @@
             const mealId = $(this).data('meal-id');
             const mealName = $(this).data('meal-name');
             const userMealId = $(this).data('user-meal-id');
+            const userPlanId = $(this).data('user-plan-id');
+            const userSubCategoryId = $(this).data('sub-category-id');
+            const userCategoryId = $(this).data('category-id');
 
             if (!mealId || !mealName) {
                 console.error('Invalid meal data.');
@@ -327,7 +332,7 @@
             $mealItemsLoadingSpinner.show();
 
             $.ajax({
-                url: '{{ route('front.meals.items', ':mealId') }}'.replace(':mealId', mealId) + `?user_meal_id=${userMealId}`,
+                url: '{{ route('front.meals.items', ':mealId') }}'.replace(':mealId', mealId) + `?user_meal_id=${userMealId}&user_plan_id=${userPlanId}&user_sub_category_id=${userSubCategoryId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -399,7 +404,7 @@
                             }
 
                             const swapButton = item.swapItems && item.swapItems.length > 0
-                                ? `<button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}">
+                                ? `<button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}" data-user-plan-id="${userPlanId}" data-sub-category-id="${userSubCategoryId}" data-user-category-id="${userCategoryId}">
                                     <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
                                         <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
@@ -473,6 +478,10 @@
             const itemName = $(this).data('item-name');
             const userItemId = $(this).data('user-item-id');
             const userMealId = $(this).data('user-meal-id');
+            const userPlanId = $(this).data('user-plan-id');
+            const userSubCategoryId = $(this).data('sub-category-id');
+            const userCategoryId = $(this).data('user-category-id');
+
             if (!itemId || !itemName) {
                 console.error('Invalid item data.');
                 return;
@@ -480,6 +489,9 @@
             
             $('.apply-changes-btn').attr('data-user-item-id', userItemId);
             $('.apply-changes-btn').attr('data-user-meal-id', userMealId);
+            $('.apply-changes-btn').attr('data-user-plan-id', userPlanId);
+            $('.apply-changes-btn').attr('data-user-sub-category-id', userSubCategoryId);
+            $('.apply-changes-btn').attr('data-user-category-id', userCategoryId);
 
             // Update modal title
             $itemsSwapModalLabel.text(itemName);
@@ -490,7 +502,7 @@
 
             // Fetch subcategories via AJAX
             $.ajax({
-                url: '{{ route('front.items.swap-items', ':id') }}'.replace(':id', itemId) + `?user_meal_id=${userMealId}&user_item_id=${userItemId}`,
+                url: '{{ route('front.items.swap-items', ':id') }}'.replace(':id', itemId) + `?user_meal_id=${userMealId}&user_item_id=${userItemId}&user_plan_id=${userPlanId}&sub_category_id=${userSubCategoryId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -868,6 +880,9 @@
             // Send all swaps to the server
             const userItemId = $(this).data('user-item-id');
             const userMealId = $(this).data('user-meal-id');
+            const userPlanId = $(this).data('user-plan-id');
+            const userSubCategoryId = $(this).data('user-sub-category-id');
+            const userCategoryId = $(this).data('user-category-id');
             console.log(userItemId);
             console.log('123');
             console.log(swaps);
@@ -879,6 +894,9 @@
                     meal_id: currentMealId,
                     user_item_id: userItemId,
                     user_meal_id: userMealId,
+                    user_category_id: userCategoryId,
+                    user_sub_category_id: userSubCategoryId,
+                    user_plan_id: userPlanId,
                     user_id: userId,
                     // headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
                 },
@@ -892,7 +910,7 @@
                         var meal_id = response.data['meal_id'];
                         var meal_name = response.data['meal_name'];
                         var user_meal_id = response.data['user_meal_id'];
-                        mealItemModelReload(meal_id, meal_name, user_meal_id);
+                        mealItemModelReload(meal_id, meal_name, user_meal_id, userSubCategoryId, userPlanId, userCategoryId);
                     }
                     
                     // $('#mealItemModel').modal('show');
@@ -905,7 +923,7 @@
             });
         });
 
-        function mealItemModelReload(meal_id, meal_name, userMealId){
+        function mealItemModelReload(meal_id, meal_name, userMealId, userSubCategoryId, userPlanId, userCategoryId){
             console.log(meal_id, meal_name);
             // Update modal title
             $mealItemsModalLabel.text(meal_name);
@@ -916,21 +934,31 @@
 
             // Fetch subcategory items via AJAX
             $.ajax({
-                url: '{{ route('front.meals.items', ':mealId') }}'.replace(':mealId', meal_id) + `?user_meal_id=${userMealId}`,
+                url: '{{ route('front.meals.items', ':meal_id') }}'.replace(':mealId', meal_id) + `?user_meal_id=${userMealId}&user_plan_id=${userPlanId}&user_sub_category_id=${userSubCategoryId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
                     if (data.items && data.items.length > 0) {
-                        // Populate items into the modal
                         $.each(data.items, function (index, item) {
-                            const unit = item.unit ? item.unit.toString() : '';
-                            const needsSpace = !["g", "ml", "mL"].includes(unit.toLowerCase());
-                            let displayQty = `${item.qty}${needsSpace ? ' ' : ''}${unit}`;
+                            let displayQty = '';
 
-                            if (item.selected_qty_unit && Array.isArray(item.selected_qty_unit)) {
-                                const checkedUnits = item.selected_qty_unit.filter(u =>
-                                    u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1"
-                                );
+                            // Normalize selected_qty_unit
+                            let selectedUnits = [];
+                            try {
+                                if (typeof item.selected_qty_unit === 'string') {
+                                    selectedUnits = JSON.parse(item.selected_qty_unit);
+                                } else if (Array.isArray(item.selected_qty_unit)) {
+                                    selectedUnits = item.selected_qty_unit;
+                                }
+                            } catch (e) {
+                                console.warn('Failed to parse selected_qty_unit for item:', item.name, e);
+                            }
+
+                            if (Array.isArray(selectedUnits)) {
+                                const checkedUnits = selectedUnits.filter(u => {
+                                    const isChecked = u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1";
+                                    return isChecked;
+                                });
 
                                 if (checkedUnits.length > 0) {
                                     const formattedUnits = checkedUnits.map(u => {
@@ -938,6 +966,7 @@
                                         const unitText = (u.unit || '').toString().trim();
                                         const needsSpace = !["g", "ml", "mL"].includes(unitText.toLowerCase());
 
+                                        // Check if qtyText is a valid number, otherwise preserve as-is (e.g., "1/4")
                                         const numericQty = Number(qtyText);
                                         if (!isNaN(numericQty)) {
                                             qtyText = numericQty % 1 === 0 ? numericQty.toFixed(0) : numericQty.toFixed(1);
@@ -950,9 +979,14 @@
                                 }
                             }
 
-                            console.log("displayQty:", displayQty);
-                            let infoButton = '';
+                            // Fallback
+                            if (!displayQty && item.qty && item.unit) {
+                                const unit = item.unit.toString();
+                                const needsSpace = !["g", "ml", "mL"].includes(unit.toLowerCase());
+                                displayQty = `${item.qty}${needsSpace ? ' ' : ''}${unit}`;
+                            }
 
+                            let infoButton = '';
                             if (item.description) {
                                 infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1 info-btn" 
                                     data-bs-toggle="tooltip" 
@@ -961,7 +995,7 @@
                                     data-item-id="${item.id}" 
                                     data-item-name="${item.name}"
                                     data-description="${item.description}"
-                                    data-note="${item.note}"
+                                    data-note="${item.note}">
                                     <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M8 0.5C3.6 0.5 0 4.1 0 8.5C0 12.9 3.6 16.5 8 16.5C12.4 16.5 16 12.9 16 8.5C16 4.1 12.4 0.5 8 0.5ZM8 15C4.4 15 1.5 12.1 1.5 8.5C1.5 4.9 4.4 2 8 2C11.6 2 14.5 4.9 14.5 8.5C14.5 12.1 11.6 15 8 15Z" fill="white"/>
                                         <path d="M7.99999 7.79999C7.59999 7.79999 7.29999 8.09999 7.29999 8.49999V11.4C7.29999 11.8 7.59999 12.1 7.99999 12.1C8.39999 12.1 8.69999 11.8 8.69999 11.4V8.49999C8.69999 8.09999 8.39999 7.79999 7.99999 7.79999Z" fill="white"/>
@@ -970,16 +1004,17 @@
                                     Info
                                 </button>`;
                             }
+
                             const swapButton = item.swapItems && item.swapItems.length > 0
-                                ? `
-                                    <button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}">
-                                        <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
-                                            <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
-                                        </svg>
-                                        Swap
-                                    </button>`
+                                ? `<button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" data-bs-toggle="modal" data-bs-target="#subcategoryItemsModal3" data-item-id="${item.id}" data-item-name="${item.name}" data-user-item-id="${item.user_item_id}" data-user-meal-id="${item.user_meal_id}" data-user-plan-id="${userPlanId}" data-sub-category-id="${userSubCategoryId}" data-user-category-id="${userCategoryId}">
+                                    <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
+                                        <path d="M12.6667 8.5C12.2667 8.5 12 8.76667 12 9.16667V10.5C12 11.6333 11.1333 12.5 9.99999 12.5H2.26666L3.79999 10.9667C4.06666 10.7 4.06666 10.3 3.79999 10.0333C3.53333 9.76667 3.13333 9.76667 2.86666 10.0333L0.199996 12.7C0.133329 12.7667 0.0666626 12.8333 0.0666626 12.9C-4.06429e-06 13.0333 -4.06429e-06 13.2333 0.0666626 13.4333C0.133329 13.5 0.133329 13.5667 0.199996 13.6333L2.86666 16.3C3 16.4333 3.13333 16.5 3.33333 16.5C3.53333 16.5 3.66666 16.4333 3.79999 16.3C4.06666 16.0333 4.06666 15.6333 3.79999 15.3667L2.26666 13.8333H9.99999C11.8667 13.8333 13.3333 12.3667 13.3333 10.5V9.16667C13.3333 8.76667 13.0667 8.5 12.6667 8.5Z" fill="white"/>
+                                    </svg>
+                                    Swap
+                                </button>`
                                 : '';
+
                             const itemCard = `
                                 <div class="category-swap-list-box">
                                     <div class="category-swap-img">
@@ -1009,16 +1044,15 @@
                             $mealItemsContainer.append(itemCard);
                         });
                     } else {
-                        $mealItemsContainer.html('<p class="text-center">No foods available in this meals.</p>');
+                        $mealItemsContainer.html('<p class="text-center">No foods available in this meal.</p>');
                     }
 
-                    // Hide loading spinner and show items
                     $mealItemsLoadingSpinner.hide();
                     $mealItemsContainer.show();
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error fetching subcategory items:', error);
-                    $mealItemsContainer.html('<p class="text-center text-danger">Failed to load items.</p>');
+                    console.error('Error fetching meal items:', error);
+                    $mealItemsContainer.html('<p class="text-center text-danger">Failed to load foods.</p>');
                     $mealItemsLoadingSpinner.hide();
                     $mealItemsContainer.show();
                 }

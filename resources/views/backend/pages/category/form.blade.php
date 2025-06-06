@@ -5,7 +5,7 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">{{ isset($category) ? 'Edit Sub Category' : 'Create Sub Category' }}</h3>
+                <h3 class="fw-bold mb-0">{{ isset($subCategory) ? 'Edit Sub Category' : 'Create Sub Category' }}</h3>
                 <div class="col-auto d-flex w-sm-100">
                     <a type="button" href="{{ route('admin.categories.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
                 </div>
@@ -16,20 +16,20 @@
         <div class="col-md-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <form action="{{ isset($category) ? route('admin.categories.update', $category) : route('admin.categories.store') }}" 
+                    <form action="{{ isset($subCategory) ? route('admin.categories.update', $subCategory) : route('admin.categories.store') }}" 
                           method="POST" enctype="multipart/form-data">
                         @csrf
-                        @if (isset($category)) @method('PUT') @endif
+                        @if (isset($subCategory)) @method('PUT') @endif
 
                         <div class="row g-3 align-items-center">
                             <!-- Mealtime Selection (Multiple Select) -->
                             <div class="col-md-12">
                                 <label for="mealtime_ids" class="form-label">Select Categories</label>
                                 <select name="mealtime_ids[]" class="form-select select2" id="mealtime_ids" multiple required>
-                                    @foreach ($mealtimes as $mealtime)
-                                        <option value="{{ $mealtime->id }}" 
-                                                {{ isset($category) && $category->mealtimes->contains($mealtime->id) ? 'selected' : '' }}>
-                                            {{ $mealtime->title }}
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" 
+                                                {{ isset($subCategory) && $subCategory->categories->contains($category->id) ? 'selected' : '' }}>
+                                            {{ $category->title }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -38,13 +38,13 @@
                             <!-- Title Field -->
                             <div class="col-md-12">
                                 <label for="title" class="form-label">Title</label>
-                                <input type="text" name="title" class="form-control" value="{{ $category->title ?? '' }}" required>
+                                <input type="text" name="title" class="form-control" value="{{ $subCategory->title ?? '' }}" required>
                             </div>
 
                             <!-- Description Field -->
                             <div class="col-md-12">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="4">{{ $category->description ?? '' }}</textarea>
+                                <textarea name="description" class="form-control" rows="4">{{ $subCategory->description ?? '' }}</textarea>
                             </div>
 
                             <!-- Image Upload Field -->
@@ -56,15 +56,15 @@
                                 <input type="file" name="image" class="form-control" accept="image/*">
                                 
                                 <!-- Show current image if editing -->
-                                @if (isset($category) && $category->image)
+                                @if (isset($subCategory) && $subCategory->image)
                                 <div class="mt-3">
-                                    <img src="{{ webAssets('storage/' . $category->image) }}" alt="Category Image" class="img-thumbnail" style="max-height: 150px;">
+                                    <img src="{{ webAssets('storage/' . $subCategory->image) }}" alt="Category Image" class="img-thumbnail" style="max-height: 150px;">
                                 </div>
                                 @endif
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary mt-4">{{ isset($category) ? 'Update' : 'Create' }}</button>
+                        <button type="submit" class="btn btn-primary mt-4">{{ isset($subCategory) ? 'Update' : 'Create' }}</button>
                     </form>
                 </div>
             </div>

@@ -4,130 +4,168 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\MealTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
     /**
-     * Display a listing of the categories.
-     *
-     * @return \Illuminate\Http\Response
+     * Display a listing of the resource.
      */
     public function index()
     {
-        $categories = Category::with('mealtimes')->get();
-        return view('backend.pages.category.index', compact('categories'));
+        $categories = Category::orderBy('order', 'asc')->get(); // Fetch all MealTime records ordered by 'order' field
+        return view('backend.pages.mealtime.index', compact('categories'));
     }
 
     /**
-     * Show the form for creating a new category.
-     *
-     * @return \Illuminate\Http\Response
+     * Show the form for creating a new resource.
      */
     public function create()
     {
-        $mealtimes = Mealtime::all();
-        return view('backend.pages.category.form', compact('mealtimes'));
+        return view('backend.pages.mealtime.form');
     }
 
     /**
-     * Store a newly created category in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'mealtime_ids' => 'required|array',
-            'mealtime_ids.*' => 'exists:meal_times,id',
+        $rules = [
             'title' => 'required|string|max:255',
+            'time' => 'required',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-        ]);
+            'order' => 'nullable|integer', // Optional order field
+        ];
 
-        // Create the category
-        $category = Category::create($data);
+        // Define custom error messages (optional)
+        $messages = [
+            'title.required' => 'The title is mandatory.',
+            'time.required' => 'The time field is required.',
+            'time.date_format' => 'The time must be in the format HH:mm.',
+            'image.image' => 'The uploaded file must be an image.',
+        ];
 
-        // Attach the selected mealtimes
-        $category->mealtimes()->sync($request->mealtime_ids);
+        // Create the validator instance
+        $validator = Validator::make($request->all(), $rules, $messages);
 
-        // Handle image upload if provided
-        if ($request->hasFile('image')) {
-            $category->image = $request->file('image')->store('categories', 'public');
-            $category->save();
+        // Check for validation errors
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator) // Pass validation errors
+                ->withInput();          // Retain old input values
         }
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
+        try {
+            // Handle image upload if a new file is provided
+            $validatedData = $validator->validated();
+
+            if ($request->hasFile('image')) {
+                $validatedData['image'] = $request->file('image')->store('categories', 'public');
+            }
+    
+            Category::create($validatedData);
+
+            return redirect()->route('admin.meal-times.index')
+                ->with('success', 'Category updated successfully.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+
     }
 
     /**
-     * Show the form for editing the specified category.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
+     * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit($id, Category $category)
     {
-        $mealtimes = MealTime::all();
-        return view('backend.pages.category.form', compact('category', 'mealtimes'));
+       // dd($id);
+       $category = Category::findOrFail($id); // Fetch the Category record
+       return view('backend.pages.mealtime.form', compact('category'));
     }
 
     /**
-     * Update the specified category in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
+     * Update the specified resource in storage.
      */
     public function update(Request $request, Category $category)
     {
-        $data = $request->validate([
-            'mealtime_ids' => 'required|array',
-            'mealtime_ids.*' => 'exists:meal_times,id',
+        // Fetch the Category record by ID
+        $category = Category::findOrFail($request->id);
+
+        // Define validation rules
+        $rules = [
             'title' => 'required|string|max:255',
+            'time' => 'required',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
-        ]);
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'order' => 'nullable|integer', // Optional order field
 
-        // Update the category
-        $category->update($data);
+        ];
 
-        // Sync the selected mealtimes
-        $category->mealtimes()->sync($request->mealtime_ids);
+        // Define custom error messages (optional)
+        $messages = [
+            'title.required' => 'The title is mandatory.',
+            'time.required' => 'The time field is required.',
+            'time.date_format' => 'The time must be in the format HH:mm.',
+            'image.image' => 'The uploaded file must be an image.',
+        ];
 
-        // Handle image upload if provided
-        if ($request->hasFile('image')) {
-            // Delete the old image if it exists
-            if ($category->image) {
-                Storage::delete('public/' . $category->image);
-            }
-            $category->image = $request->file('image')->store('categories', 'public');
-            $category->save();
+        // Create the validator instance
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // Check for validation errors
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator) // Pass validation errors
+                ->withInput();          // Retain old input values
         }
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
+        try {
+            // Handle image upload if a new file is provided
+            $validatedData = $validator->validated();
+
+            if ($request->hasFile('image')) {
+                // Delete the old image if it exists
+                if ($category->image) {
+                    Storage::disk('public')->delete($category->image);
+                }
+                // Store the new image
+                $validatedData['image'] = $request->file('image')->store('categories', 'public');
+            }
+
+            // Update the Category record with validated data
+            $category->update($validatedData);
+
+            return redirect()->route('admin.meal-times.index')
+                ->with('success', 'Category updated successfully.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
     }
 
     /**
-     * Remove the specified category from storage.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
+     * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Category $category, $id)
     {
-        // Delete the category image if exists
-        if ($category->image) {
-            Storage::delete('public/' . $category->image);
+        
+        try {
+            $category = Category::findOrFail($id);
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+            }
+            $category->delete();
+            return redirect()->route('admin.meal-times.index')->with('success', 'Category deleted.');
+        } catch (\Exception $e) {
+            // dd($e->getMessage());
+            \Log::error('Delete Error: ' . $e->getMessage());
+            return back()->with('error', 'Deletion failed!');
         }
-
-        // Detach the mealtimes and delete the category
-        $category->mealtimes()->detach();
-        $category->delete();
-
-        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
     }
 }

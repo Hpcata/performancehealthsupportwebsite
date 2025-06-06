@@ -39,7 +39,7 @@
                             <label for="categoryFilter" class="form-label mb-0 me-2">Filter by Category:</label>
                             <select id="categoryFilter" class="form-control w-auto">
                                 <option value="">All Categories</option>
-                                @foreach($categories as $category)
+                                @foreach($subCategories as $category)
                                     <option value="{{ $category->id }}">{{ $category->title }}</option>
                                 @endforeach
                             </select>
@@ -125,9 +125,14 @@
                     }
                 },
                 {
-                    data: "categories",
-                    render: function (data) {
-                        return data.map(category => category.title).join(", ") || "No Category";
+                    data: "subCategories",
+                    render: function (data, type, row) {
+                        const categories = row.sub_categories;
+                        // console.log(categories);
+                        if (Array.isArray(categories) && categories.length > 0) {
+                            return categories.map(cat => cat.title).join(", ");
+                        }
+                        return "No Category";
                     }
                 },
                 {

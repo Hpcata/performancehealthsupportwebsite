@@ -83,7 +83,7 @@
 
                                         <!-- Meal Times (Checkboxes) -->
                                         <ul class="list-group mb-4">
-                                            @foreach ($plan->mealTimes as $mealTime)
+                                            @foreach ($plan->categories as $mealTime)
                                             <li class="list-group-item border rounded mb-3">
                                                 <!-- Meal Time Checkbox -->
                                                 <div class="form-check d-flex justify-content-between align-items-center px-0">
@@ -1292,6 +1292,7 @@
                         return {
                             meal_time_id: mealTimeId,
                             user_id: userId,
+                            plan_id: planID,
                             search: params.term || '', // Search keyword
                             _token: '{{ csrf_token() }}'
                         };
@@ -2726,12 +2727,9 @@
 
                     if (isChecked) {
                         qtyUnitDisplay.push(`${qtyToUse}${['g', 'ml', 'mL'].includes(unit) ? unit : ' ' + unit}`);
-                        if (!foundChecked) {
-                            // Set qty and unit only for the FIRST checked row
-                            qty = qtyToUse;
-                            unit = unit;
-                            foundChecked = true;
-                        }
+                        // Set qty and unit only for the FIRST checked row
+                        qty = qtyToUse;
+                        unit = unit;
                     }
                 }
             });
@@ -4410,32 +4408,7 @@
         });
     });
 
-    $(document).ready(function() {
-        $('.view-user-profile').on('click', function(e) {
-            e.preventDefault();
-            var userId = $(this).data('user-id');
-            var sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-
-            $.ajax({
-                url: sessionUrl,
-                method: 'GET',
-                success: function(response) {
-                    // If the session is set successfully, redirect to profile
-                    if (response.redirect_url) {
-                        // window.location.href = response.redirect_url;
-                        window.open(response.redirect_url, '_blank');
-
-                    } else {
-                        alert('Something went wrong!');
-                    }
-                },
-                error: function(xhr) {
-                    // alert(xhr.responseText);
-                    alert('Error setting user session.');
-                }
-            });
-        });
-    });
+    
 
 </script>
 @endpush

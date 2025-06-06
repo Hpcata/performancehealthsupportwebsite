@@ -52,10 +52,10 @@
                             <div class="col-md-12">
                                 <label for="meal_times" class="form-label">Meal Times</label>
                                 <select id="meal_times" name="meal_times[]" class="form-select select2" multiple>
-                                    @foreach ($mealTimes as $mealTime)
-                                        <option value="{{ $mealTime->id }}" 
-                                            {{ isset($plan) && $plan->mealTimes->contains($mealTime->id) ? 'selected' : '' }}>
-                                            {{ $mealTime->title }}
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" 
+                                            {{ isset($plan) && $plan->categories->contains($category->id) ? 'selected' : '' }}>
+                                            {{ $category->title }}
                                         </option>
                                     @endforeach
                                 </select>

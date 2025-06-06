@@ -5,17 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserSubcategory extends Model
+class UserSubCategory extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_subcategories';
+    protected $table = 'user_sub_categories';
 
     protected $fillable = [
         'user_plan_id',
-        'user_meal_time_id',
         'user_category_id',
-        'sub_category_id',
+        'id'  // This will store sub_category_id
     ];
 
     public function userCategory()
@@ -23,15 +22,14 @@ class UserSubcategory extends Model
         return $this->belongsTo(UserCategory::class, 'user_category_id');
     }
 
-    public function subcategory()
+    public function subCategory()
     {
-        return $this->belongsTo(SubCategory::class, 'sub_category_id');
+        return $this->belongsTo(SubCategory::class, 'id');
     }
 
     public function userMeals()
     {
-        return $this->hasMany(UserMeal::class, 'user_subcategory_id');
+        return $this->hasMany(UserMeal::class, 'user_sub_category_id');
     }
-
 }
 

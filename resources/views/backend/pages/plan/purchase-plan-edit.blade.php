@@ -109,7 +109,7 @@
 
                                             <!-- Meal Times (Checkboxes) -->
                                             <ul class="list-group mb-4">
-                                                @foreach ($userPlan->plan->mealTimes as $mealTime)
+                                                @foreach ($userPlan->plan->categories as $mealTime)
                                                 <input type="hidden"
                                                     name="meal_times[{{$plan->id}}][]"
                                                     value="{{ $mealTime->id }}"
@@ -1046,23 +1046,27 @@
         const payment = @json($payment);
         const userId = payment.user_id;
         const loader = $('#loader');
+
         console.log(preSelectedMeals);
+
         $('.meal-time-checkbox').each(function() {
             const checkbox = $(this);
             const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
             const mealTimeId = checkbox.data('mealtime-id');
-            // console.log(`Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
+            console.log(`Checkbox for Plan ID: ${planId}, Meal Time ID: ${mealTimeId} initialized.`);
             const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
             const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
             const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
             const mealSelect = $(dropdownId).find('select');
             const mealTimeDetailsDiv = checkbox.closest('li').find('.mealTimeDetailsDiv');
 
-            if (preSelectedMeals[planId]?.[mealTimeId]) {
+            const selectedMealsArray = preSelectedMeals[planId]?.[mealTimeId] || [];
+
+            if (selectedMealsArray.length > 0) {
                 $(dropdownId).show();
                 $(selectedMealsId).show();
                 mealTimeDetailsDiv.css('display', 'none');
-
+                console.log(`Showing dropdown for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
                 initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
 
                 $.ajax({
@@ -1078,19 +1082,17 @@
                         if (response.success) {
                             mealSelect.empty(); // Clear previous options
 
-                            // ✅ Get and sort the selected meal IDs in ASC order
-                            const selectedMealsObj = preSelectedMeals[planId]?.[mealTimeId] || {};
-                            const sortedMealIds = Object.keys(selectedMealsObj)
-                                .map(id => parseInt(id))  // Ensure numbers for sorting
-                                .sort((a, b) => a - b);   // Ascending order
+                            const sortedMealIds = selectedMealsArray
+                                .map(id => parseInt(id))
+                                .sort((a, b) => a - b);
 
-                            // ✅ Create a map for fast lookup
+                            // Create a map for quick lookup
                             const mealMap = {};
                             response.meals.forEach(meal => {
                                 mealMap[meal.id] = meal;
                             });
 
-                            // ✅ Add selected meals in sorted order
+                            // Add selected meals in sorted order
                             sortedMealIds.forEach(mealId => {
                                 const meal = mealMap[mealId];
                                 if (meal) {
@@ -1098,41 +1100,43 @@
                                 }
                             });
 
-                            // ✅ Add remaining unselected meals
+                            // Add remaining unselected meals
                             response.meals.forEach(meal => {
                                 if (!sortedMealIds.includes(meal.id)) {
                                     mealSelect.append(new Option(meal.name, meal.id, false, false));
                                 }
                             });
 
-                            // ✅ Update the value and set the "previouslySelectedMeals"
                             const stringIds = sortedMealIds.map(String);
                             mealSelect.val(stringIds).trigger('change');
                             previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
                         }
                     },
-
                     error: function() {
                         alert('Error occurred while loading meals.');
                     }
                 });
 
             } else {
+                console.log(`Hiding dropdown for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
                 checkbox.prop('checked', false);
                 $(dropdownId).hide();
                 $(selectedMealsId).hide();
                 mealTimeDetailsDiv.css('display', 'block');
             }
 
-            // ✅ Fix: Handle meal removal when "X" is clicked in select2
+            // Handle meal removal when "X" is clicked in select2
             mealSelect.on('select2:unselect', function(e) {
-                let mealId = e.params.data.id;
+                let mealId = parseInt(e.params.data.id);
 
-                if (preSelectedMeals[planId]?.[mealTimeId]?.[mealId]) {
-                    delete preSelectedMeals[planId][mealTimeId][mealId]; // Remove from preSelectedMeals
+                if (Array.isArray(preSelectedMeals[planId]?.[mealTimeId])) {
+                    const index = preSelectedMeals[planId][mealTimeId].indexOf(mealId);
+                    if (index !== -1) {
+                        preSelectedMeals[planId][mealTimeId].splice(index, 1);
+                    }
                 }
-               // console.log('222');
-                // Send AJAX to remove meal and its items
+
+                // Send AJAX to remove meal
                 $.ajax({
                     url: '{{ route("admin.remove-user-meal") }}',
                     method: 'POST',
@@ -1150,7 +1154,7 @@
                     }
                 });
 
-                $(this).find(`option[value="${mealId}"]`).remove(); // Remove the option
+                $(this).find(`option[value="${mealId}"]`).remove(); // Remove option
                 $(this).trigger('change'); // Refresh Select2
             });
         });
@@ -1160,16 +1164,8 @@
         let mealIDs = [];
         let mealTimeIds = [];
         $('.meal-time-checkbox').on('change', function() {
-
             const checkbox = $(this);
             const mealTimeDetailsDiv = checkbox.closest('li').find('.mealTimeDetailsDiv');
-
-            if (checkbox.is(':checked')) {
-                mealTimeDetailsDiv.css('display', 'block'); // Hide the element
-            } else {
-                mealTimeDetailsDiv.css('display', 'none'); // Hide the element
-            }
-
             const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
             const mealTimeId = checkbox.data('mealtime-id');
             mealIDs = [];
@@ -1181,71 +1177,67 @@
             const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
             const mealSelect = $(dropdownId).find('select');
 
-            console.log(`Toggling dropdown for: Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
-            console.log(`Dropdown ID: ${dropdownId}, Selected Meals ID: ${selectedMealsId}`);
-
-            // Check if checkbox is checked
             if (checkbox.is(':checked')) {
-                $(dropdownId).show(); // Show Add Meal dropdown
-                $(selectedMealsId).show(); // Show Selected Meals container
-                initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
+                mealTimeDetailsDiv.css('display', 'block');
+                $(dropdownId).show();
+                $(selectedMealsId).show();
+                
+                // Only initialize Select2 and load meals if they haven't been loaded before
+                if (!mealSelect.data('select2')) {
+                    initializeSelect2(mealSelect, mealTimeId);
+                    
+                    // Load meals only if they haven't been loaded before
+                    if (!previouslySelectedMeals[`${planId}_${mealTimeId}`]) {
+                        $.ajax({
+                            url: '{{ route("admin.get-meals-by-mealtime") }}',
+                            method: 'POST',
+                            data: {
+                                plan_id: planId,
+                                user_id: userId,
+                                meal_time_id: mealTimeId,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    mealSelect.empty();
+                                    const sortedMeals = response.meals.sort((a, b) => a.id - b.id);
+                                    
+                                    sortedMeals.forEach(meal => {
+                                        let selectedMeal = null;
+                                        if (preSelectedMeals[planId]?.[mealTimeId]?.[meal.id]) {
+                                            selectedMeal = preSelectedMeals[planId][mealTimeId][meal.id];
+                                        }
 
-                // Load dynamic dropdown options via AJAX
-                $.ajax({
-                    url: '{{ route("admin.get-meals-by-mealtime") }}', // Replace with your route to fetch meals dynamically
-                    method: 'POST',
-                    data: {
-                        plan_id: planId,
-                        user_id: userId,
-                        meal_time_id: mealTimeId,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Clear previous options
-                            mealSelect.empty();
+                                        const isSelected = selectedMeal ? true : false;
+                                        if (isSelected) {
+                                            mealIDs.push(meal.id);
+                                        }
 
-                            // ✅ Sort meals by meal.id (ascending)
-                            const sortedMeals = response.meals.sort((a, b) => a.id - b.id);
+                                        const userMealId = isSelected ? selectedMeal : null;
+                                        mealSelect.append(`
+                                            <option value="${meal.id}" ${isSelected ? 'selected' : ''} 
+                                                    id="${userMealId ? userMealId : ''}">
+                                                ${meal.name}
+                                            </option>
+                                        `);
+                                    });
 
-                            sortedMeals.forEach(meal => {
-                                let selectedMeal = null;
-                                if (preSelectedMeals[planId]?.[mealTimeId]?.[meal.id]) {
-                                    selectedMeal = preSelectedMeals[planId][mealTimeId][meal.id];
+                                    mealSelect.trigger('change');
+                                    previouslySelectedMeals[`${planId}_${mealTimeId}`] = mealSelect.val();
                                 }
-
-                                const isSelected = selectedMeal ? true : false;
-                                if (isSelected) {
-                                    mealIDs.push(meal.id);
-                                }
-
-                                const userMealId = isSelected ? selectedMeal : null;
-
-                                mealSelect.append(`
-                                    <option value="${meal.id}" ${isSelected ? 'selected' : ''} 
-                                            id="${userMealId ? userMealId : ''}">
-                                        ${meal.name}
-                                    </option>
-                                `);
-                            });
-
-                            mealSelect.trigger('change');
-                        } else {
-                            alert('Failed to load meals for the selected meal time.');
-                        }
-                    },
-
-                    error: function() {
-                        alert('Error occurred while loading meals.');
+                            },
+                            error: function() {
+                                alert('Error occurred while loading meals.');
+                            }
+                        });
                     }
-                });
+                }
             } else {
-                // $(dropdownId).hide();          // Hide dropdown
-                // $(selectedMealsId).hide();     // Hide selected meals
-                // $(dropdownId).find('select').val([]).trigger('change'); // Clear selected values
-                // $(selectedMealsId).empty();    // Clear selected meals content
-
+                mealTimeDetailsDiv.css('display', 'none');
+                $(dropdownId).hide();
+                $(selectedMealsId).hide();
             }
+            
             calculateMealNutrition();
         });
 
@@ -1262,7 +1254,7 @@
                         return {
                             meal_time_id: mealTimeId,
                             user_id: userId,
-                            search: params.term || '', // Search keyword
+                            search: params.term || '',
                             _token: '{{ csrf_token() }}'
                         };
                     },
@@ -1442,7 +1434,8 @@
             const ids = $(this).attr('id').replace('mealItems', '').split('_');
             const planId = ids[0];
             const mealTimeId = ids[1];
-
+            console.log(`Meal items select changed for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
+            console.log('Selected values:', $(this).val());
             planID = planId;
             mealtimeID = mealTimeId;
 
@@ -2399,22 +2392,64 @@
             }
         }
 
-        function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-            const AU_UNIT_EQUIVALENTS = {
-                'cup': 250,
-                'tablespoon': 20,
-                'teaspoon': 5,
-                'dessert spoon': 10,
-                'piece': 150,
-                'slice': 30,
-                'roll': 70,
-                'tub': 180,
-                'pouch': 100,
-                'handful': 40,
-                'ml': 1,
-                'g': 1
-            };
+        let AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal = null);
 
+        function buildUnitQtyMap(modal) {
+            let map = {};
+
+            $(`${modal} #dynamicQtyMeasurementContainer .qty-unit-row`).each(function () {
+                const qtyInput = $(this).find('.modalQtyInput').val();
+                const unitInput = $(this).find('.modalMeasurementInput').val();
+
+                const qty = parseFraction(qtyInput);
+                const unit = unitInput?.toLowerCase();
+
+                if (!isNaN(qty) && unit) {
+                    map[unit] = qty;
+                }
+            });
+
+            return map;
+        }
+
+        function parseFraction(value) {
+            if (!value) return NaN;
+
+            value = value.trim();
+            if (value.includes('/')) {
+                const parts = value.split(' ');
+                if (parts.length === 2) {
+                    // mixed fraction (e.g. "1 1/2")
+                    const whole = parseFloat(parts[0]);
+                    const [num, denom] = parts[1].split('/').map(Number);
+                    return whole + (num / denom);
+                } else {
+                    const [num, denom] = value.split('/').map(Number);
+                    return num / denom;
+                }
+            }
+
+            return parseFloat(value);
+        }
+
+        function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
+            // const AU_UNIT_EQUIVALENTS = {
+            //     'cup': 250,
+            //     'tablespoon': 20,
+            //     'teaspoon': 5,
+            //     'dessert spoon': 10,
+            //     'piece': 150,
+            //     'slice': 30,
+            //     'roll': 70,
+            //     'tub': 180,
+            //     'pouch': 100,
+            //     'handful': 40,
+            //     'ml': 1,
+            //     'g': 1
+            // };
+
+            AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
+            console.log(AU_UNIT_EQUIVALENTS);
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
             if ($rows.length === 0) return;
@@ -2432,24 +2467,29 @@
                 const currentQty = parseFraction(currentQtyRaw);
                 if (!currentQty || !currentUnit) return;
 
-                currentUnit = currentUnit.toLowerCase();
-                let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
-                let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
+                console.log(currentQty, currentUnit);
+                console.log(AU_UNIT_EQUIVALENTS);
 
-                if (!baseEquivalent || !currentEquivalent) {
-                    console.warn('Unknown unit used in conversion.');
+                const normalizedUnitEquivalents = {};
+                Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
+                    normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
+                });
+
+                // Later in your function
+                const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
+                console.log(baseEquivalent);
+                if (!baseEquivalent) {
+                    console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
-
-                const baseGrams = baseQty * baseEquivalent;
-                const currentGrams = currentQty * currentEquivalent;
-
-                const multiplier = currentGrams / baseGrams;
-
-                $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
+                const ratio = currentQty / baseEquivalent;
+                console.log(ratio);
+                console.log(modal);
+                console.log(baseCarbs * ratio);
+                $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalProtein`).text((Math.round(baseProtein * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalFat`).text((Math.round(baseFat * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * ratio * 10) / 10) + 'kJ');
 
             }
 

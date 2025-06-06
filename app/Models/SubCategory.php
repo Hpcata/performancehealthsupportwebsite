@@ -8,20 +8,25 @@ class SubCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'image'];
+    protected $table = 'sub_categories';
 
-    protected $table = 'subcategories';
+    protected $fillable = [
+        'title',
+        'description',
+        'image',
+        'category_id'
+    ];
 
-    public function categories()
+    public function category()
     {
-        return $this->belongsToMany(Category::class, 'category_subcategory', 'sub_category_id', 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
-    // Define the relationship with Meal
     public function meals()
     {
-        return $this->belongsToMany(Meal::class, 'meal_subcategory'); // Assuming a pivot table
+        return $this->belongsToMany(Meal::class, 'meal_sub_category', 'sub_category_id', 'meal_id');
     }
+
 
     public function items()
     {
@@ -31,7 +36,11 @@ class SubCategory extends Model
     // Many-to-many relationship with Meal through the user_meals pivot table
     public function userMeals()
     {
-        return $this->belongsToMany(Meal::class, 'user_meals', 'user_subcategory_id', 'meal_id');
+        return $this->belongsToMany(Meal::class, 'user_meals', 'user_sub_category_id', 'meal_id');
     }
-    
+
+    public function userSubCategories()
+    {
+        return $this->hasMany(UserSubCategory::class, 'id');
+    }
 }
