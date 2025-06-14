@@ -17,6 +17,7 @@
         width: 50px; /* Adjust size */
         height: 50px;
     }
+
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -145,8 +146,8 @@
                                                             $space = in_array($item->pivot->item_qty_unit, $noSpaceUnits) ? '' : ' ';
                                                             $quantityInfo = $item->pivot->item_qty . $space . $item->pivot->item_qty_unit;
                                                         }
-
                                                     @endphp
+
                                                     <tr class="food-row">
                                                         <td>
                                                             <select name="food_ids[]" class="form-control select2 food-select">
@@ -157,15 +158,39 @@
                                                                     </option>
                                                                 @endforeach
                                                             </select>
-                                                            <p class="food-title-qty mt-2 mb-0"><strong>{{ $item->title }} {{ $quantityInfo }}</strong></p>
-                                                            <p class="nutrition-info mt-2 mb-0 text-muted">Energy: {{ floatval($item->energy) ?? 0 }}kJ, Protein: {{ ($item->pivot->protein)}}g, Carb: {{($item->pivot->carbs)}}g, Fat: {{($item->pivot->fat)}}g</p>
+
+                                                            {{-- ✅ Show purple dot if item->flags is a non-empty collection --}}
+                                                            <p class="food-title-qty mt-2 mb-0">
+                                                                <strong>
+                                                                    @if ($item->flags && $item->flags->isNotEmpty())
+                                                                        <span style="color: purple; font-size: 24px;">&#9679;</span> 
+                                                                    @endif
+                                                                    {{ $item->title }} {{ $quantityInfo }}
+                                                                </strong>
+                                                            </p>
+
+                                                            <p class="nutrition-info mt-2 mb-0 text-muted">
+                                                                Energy: {{ floatval($item->energy) ?? 0 }}kJ,
+                                                                Protein: {{ ($item->pivot->protein)}}g,
+                                                                Carb: {{($item->pivot->carbs)}}g,
+                                                                Fat: {{($item->pivot->fat)}}g
+                                                            </p>
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-outline-success edit-food" data-carbs="{{$item->pivot->carbs}}" data-protein="{{$item->pivot->protein}}" data-fat="{{$item->pivot->fat}}" data-energy="{{ floatval($item->energy) }}" data-serving-size="{{$item->serving_size}}" data-serving-size-unit="{{$item->serving_size_unit}}"><i class="icofont-edit text-success" ></i>
+                                                            <button type="button" class="btn btn-outline-success edit-food"
+                                                                data-carbs="{{$item->pivot->carbs}}"
+                                                                data-protein="{{$item->pivot->protein}}"
+                                                                data-fat="{{$item->pivot->fat}}"
+                                                                data-energy="{{ floatval($item->energy) }}"
+                                                                data-serving-size="{{$item->serving_size}}"
+                                                                data-serving-size-unit="{{$item->serving_size_unit}}">
+                                                                <i class="icofont-edit text-success"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-outline-danger remove-food"><i class="icofont-ui-delete text-danger"></i>
+                                                            <button type="button" class="btn btn-outline-danger remove-food">
+                                                                <i class="icofont-ui-delete text-danger"></i>
                                                             </button>
                                                         </td>
+
                                                         <input type="hidden" class="hidden-selected-qty-unit" name="selected_qty_unit[]" value='{{ isset($item->pivot->selected_qty_unit) ? ($item->pivot->selected_qty_unit) : json_encode([["qty" => $item->pivot->item_qty, "unit" => $item->pivot->item_qty_unit]]) }}'>
                                                         <input type="hidden" class="hidden-protein" name="protein[]" value="{{$item->pivot->protein}}">
                                                         <input type="hidden" class="hidden-carbs" name="carbs[]" value="{{$item->pivot->carbs}}">
@@ -476,7 +501,109 @@
         @endif
     });
     $(document).ready(function () {
-        function initializeSelect2() {
+        // function initializeSelect2() {
+        //     $('.food-select').not('.select2-hidden-accessible').select2({
+        //         placeholder: "Search and select foods",
+        //         minimumInputLength: 1,
+        //         width: '100%',
+        //         allowClear: true,
+        //         ajax: {
+        //             url: '{{ route("admin.items.index") }}',
+        //             dataType: 'json',
+        //             delay: 250,
+        //             data: function(params) {
+        //                 return { query: params.term };
+        //             },
+        //             processResults: function(response) {
+        //                 return {
+        //                     results: response.items.map(function(item) {
+        //                         return {
+        //                             id: item.id,
+        //                             text: item.title,
+        //                             qty: item.qty || '',  // Fetch default quantity
+        //                             measurement: item.unit || '', // Fetch default measurement
+        //                             serving_size: item.serving_size,
+        //                             serving_size_unit: item.serving_size_unit,
+        //                             protein: item.protein,
+        //                             carbs: item.carbs,
+        //                             fat: item.fat,
+        //                             energy: item.energy,
+        //                             image: item.image,
+        //                             selected_qty_unit: item.selected_qty_unit || []  // Ensure it's an array
+        //                         };
+        //                     })
+        //                 };
+        //             },
+        //             cache: true
+        //         }
+        //     }).on('select2:select', function (e) {
+        //         const selectedFood = e.params.data;
+        //         const row = $(this).closest('tr');
+        //         const carb = parseFloat(selectedFood.carbs).toFixed(2);
+        //         const protein = parseFloat(selectedFood.protein).toFixed(2);
+        //         const fat = parseFloat(selectedFood.fat).toFixed(2);
+        //         const numericEnergy = parseFloat(selectedFood.energy || '0').toFixed(2);
+                
+        //         row.find('.edit-food').data('carbs', selectedFood.carbs)
+        //         row.find('.edit-food').data('protein', selectedFood.protein)
+        //         row.find('.edit-food').data('fat', selectedFood.fat)
+        //         row.find('.edit-food').data('serving-size', selectedFood.serving_size)
+        //         row.find('.edit-food').data('serving-size-unit', selectedFood.serving_size_unit)
+        //         row.find('.edit-food').data('energy', numericEnergy)
+
+        //         row.find('.hidden-selected-qty-unit').val(selectedFood.selected_qty_unit);
+        //         row.find('.hidden-protein').val(selectedFood.protein);
+        //         row.find('.hidden-carbs').val(selectedFood.carbs);
+        //         row.find('.hidden-fat').val(selectedFood.fat);
+        //         row.find('.hidden-energy').val(numericEnergy);
+        //         row.find('.hidden-serving-size').val(selectedFood.serving_size);
+        //         row.find('.hidden-serving-size-unit').val(selectedFood.serving_size_unit);
+        //         row.find('.nutrition-info').text(`Energy: ${numericEnergy}kJ, Protein: ${protein}g, Carb: ${carb}g, Fat: ${fat}g`);
+
+        //         let selectedUnits = [];
+
+        //         try {
+        //             if (typeof selectedFood.selected_qty_unit === 'string') {
+        //                 selectedUnits = JSON.parse(selectedFood.selected_qty_unit.replace(/&quot;/g, '"'));
+        //             } else if (Array.isArray(selectedFood.selected_qty_unit)) {
+        //                 selectedUnits = selectedFood.selected_qty_unit;
+        //             }
+        //         } catch (err) {
+        //             console.error('Error parsing selected_qty_unit:', err);
+        //         }
+        //         // ✅ Filter by checked: true and format spacing
+        //         let displayQty = '';
+        //         const filteredUnits = selectedUnits.filter(unit => unit.checked === true);
+
+        //         if (filteredUnits.length > 0) {
+        //             displayQty = filteredUnits
+        //                 .map(unit => {
+        //                     const needsNoSpace = ['g', 'ml', 'mL'].includes(unit.unit);
+        //                     return needsNoSpace
+        //                         ? `${unit.qty}${unit.unit}`
+        //                         : `${unit.qty} ${unit.unit}`;
+        //                 })
+        //                 .join(' or ');
+        //         } else if (selectedFood.qty && selectedFood.measurement) {
+        //             const needsNoSpace = ['g', 'ml', 'mL'].includes(selectedFood.measurement);
+        //             displayQty = needsNoSpace
+        //                 ? `${selectedFood.qty}${selectedFood.measurement}`
+        //                 : `${selectedFood.qty} ${selectedFood.measurement}`;
+        //         }
+
+        //         const displayTitle = selectedFood.text || '';
+
+        //         // Set hidden field value as escaped JSON
+        //         row.find('.hidden-selected-qty-unit').val(JSON.stringify(selectedUnits));
+
+        //         // Display formatted title + qty
+        //         row.find('.food-title-qty').html(`<strong>${displayTitle} ${displayQty}</strong>`);
+
+        //         updateTotalNutrition();
+
+        //     });
+        // }
+         function initializeSelect2() {
             $('.food-select').not('.select2-hidden-accessible').select2({
                 placeholder: "Search and select foods",
                 minimumInputLength: 1,
@@ -495,8 +622,8 @@
                                 return {
                                     id: item.id,
                                     text: item.title,
-                                    qty: item.qty || '',  // Fetch default quantity
-                                    measurement: item.unit || '', // Fetch default measurement
+                                    qty: item.qty || '',
+                                    measurement: item.unit || '',
                                     serving_size: item.serving_size,
                                     serving_size_unit: item.serving_size_unit,
                                     protein: item.protein,
@@ -504,21 +631,52 @@
                                     fat: item.fat,
                                     energy: item.energy,
                                     image: item.image,
-                                    selected_qty_unit: item.selected_qty_unit || []  // Ensure it's an array
+                                    flags: item.flags || [],
+                                    selected_qty_unit: item.selected_qty_unit || []
                                 };
                             })
                         };
                     },
                     cache: true
+                },
+
+                // ✅ Show purple dot in dropdown
+                templateResult: function(item) {
+                    if (!item.id) return item.text;
+
+                    const hasFlags = Array.isArray(item.flags) && item.flags.length > 0;
+                    const purpleDot = hasFlags
+                        ? '<span style="color: purple; font-size: 24px;">&#9679;</span> '
+                        : '';
+
+                    return $(`<span>${purpleDot}${item.text}</span>`);
+                },
+
+                // ✅ Also show dot in selected box (optional)
+                templateSelection: function(item) {
+                    if (!item.id) return item.text;
+
+                    const hasFlags = Array.isArray(item.flags) && item.flags.length > 0;
+                    const purpleDot = hasFlags
+                        ? '<span style="color: purple; font-size: 24px;">&#9679;</span> '
+                        : '';
+
+                    return $(`<span>${purpleDot}${item.text}</span>`);
+                },
+
+                escapeMarkup: function(markup) {
+                    return markup; // Allow HTML rendering
                 }
-            }).on('select2:select', function (e) {
+            })
+            .on('select2:select', function (e) {
                 const selectedFood = e.params.data;
                 const row = $(this).closest('tr');
+
                 const carb = parseFloat(selectedFood.carbs).toFixed(2);
                 const protein = parseFloat(selectedFood.protein).toFixed(2);
                 const fat = parseFloat(selectedFood.fat).toFixed(2);
                 const numericEnergy = parseFloat(selectedFood.energy || '0').toFixed(2);
-                
+
                 row.find('.edit-food').data('carbs', selectedFood.carbs)
                 row.find('.edit-food').data('protein', selectedFood.protein)
                 row.find('.edit-food').data('fat', selectedFood.fat)
@@ -546,38 +704,31 @@
                 } catch (err) {
                     console.error('Error parsing selected_qty_unit:', err);
                 }
-                // ✅ Filter by checked: true and format spacing
+
                 let displayQty = '';
                 const filteredUnits = selectedUnits.filter(unit => unit.checked === true);
 
                 if (filteredUnits.length > 0) {
-                    displayQty = filteredUnits
-                        .map(unit => {
-                            const needsNoSpace = ['g', 'ml', 'mL'].includes(unit.unit);
-                            return needsNoSpace
-                                ? `${unit.qty}${unit.unit}`
-                                : `${unit.qty} ${unit.unit}`;
-                        })
-                        .join(' or ');
+                    displayQty = filteredUnits.map(unit => {
+                        const needsNoSpace = ['g', 'ml', 'mL'].includes(unit.unit);
+                        return needsNoSpace ? `${unit.qty}${unit.unit}` : `${unit.qty} ${unit.unit}`;
+                    }).join(' or ');
                 } else if (selectedFood.qty && selectedFood.measurement) {
                     const needsNoSpace = ['g', 'ml', 'mL'].includes(selectedFood.measurement);
-                    displayQty = needsNoSpace
-                        ? `${selectedFood.qty}${selectedFood.measurement}`
-                        : `${selectedFood.qty} ${selectedFood.measurement}`;
+                    displayQty = needsNoSpace ? `${selectedFood.qty}${selectedFood.measurement}` : `${selectedFood.qty} ${selectedFood.measurement}`;
                 }
 
                 const displayTitle = selectedFood.text || '';
+                const hasFlags = Array.isArray(selectedFood.flags) && selectedFood.flags.length > 0;
+                const purpleDot = hasFlags ? '<span style="color: purple; font-size: 24px;">&#9679;</span> ' : '';
 
-                // Set hidden field value as escaped JSON
                 row.find('.hidden-selected-qty-unit').val(JSON.stringify(selectedUnits));
-
-                // Display formatted title + qty
-                row.find('.food-title-qty').html(`<strong>${displayTitle} ${displayQty}</strong>`);
+                row.find('.food-title-qty').html(`${purpleDot}<strong>${displayTitle} ${displayQty}</strong>`);
 
                 updateTotalNutrition();
-
             });
         }
+
         updateTotalNutrition();
 
         function updateTotalNutrition() {

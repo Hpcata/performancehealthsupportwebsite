@@ -277,6 +277,8 @@
                                             @endforeach
                                         @endforeach
                                     </div>
+                                    <div class="recommendations-food-section mb-3" id="recommendations-food-section">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2260,161 +2262,328 @@
         }
 
         function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
-            // First, fetch food details via AJAX if not provided
-            if (!title || !category_id) {
-                $.ajax({
-                    url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.item) {
-                            const foodData = response.item;
-                            // Get category from first flag
-                            const categoryName = foodData.flags && foodData.flags.length > 0 ? foodData.flags[0].name : null;
-                            if (!categoryName) {
-                                console.error('No category found for food:', foodData.title);
-                                return;
-                            }
-                            processFoodUpdate(foodId, change, foodData.title, categoryName);
-                        } else {
-                            console.error('Error fetching food details: Invalid response format');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Error fetching food details:', xhr.responseText);
-                    }
-                });
+    $.ajax({
+        url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
+        method: 'GET',
+        success: function(response) {
+            if (response.item) {
+                const foodData = response.item;
+
+                // Check if food has flags
+                const hasFlags = foodData.flags && foodData.flags.length > 0;
+                const categoryName = hasFlags
+                    ? foodData.flags[0].name
+                    : (foodData.category && foodData.category.name) ? foodData.category.name : 'Uncategorized';
+
+                const targetSection = hasFlags ? '#category-section' : '#recommendations-food-section';
+
+                processFoodUpdate(foodId, change, foodData.title, categoryName, targetSection);
             } else {
-                processFoodUpdate(foodId, change, title, category_id);
+                console.error('Invalid response format');
             }
+        },
+        error: function(xhr) {
+            console.error('AJAX error:', xhr.responseText);
+        }
+    });
+}
+
+function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelector) {
+    let textColor = preSelectedFoods.includes(Number(foodId)) ? 'text-primary' : 'text-success';
+
+    // Sanitize category name into a valid slug
+    const categoryId = categoryName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')   // replace non-alphanum with hyphen
+        .replace(/^-+|-+$/g, '');       // trim leading/trailing hyphens
+
+    let foodWrapper = $(`#food-wrapper-${foodId}`);
+    let justAdded = false;
+
+    if (!foodWrapper.length) {
+        let categoryRow = $(`#category-row-${categoryId}`);
+
+        if (!categoryRow.length) {
+            let categorySection = $(`#category-section-${categoryId}`);
+            if (!categorySection.length) {
+                categorySection = $(`
+                    <div class="category-section mb-3" id="category-section-${categoryId}">
+                        <h6 class="mt-3 text-muted">${categoryName}</h6>
+                        <div class="row" id="category-row-${categoryId}"></div>
+                    </div>
+                `);
+                $(parentSelector).append(categorySection);
+            }
+
+            categoryRow = $(`#category-row-${categoryId}`);
         }
 
-        function processFoodUpdate(foodId, change, foodTitle, categoryName) {
-            let textColor = 'text-dark';
-            
-            // Determine color based on preSelectedFoods
-            if (preSelectedFoods.includes(Number(foodId))) {
-                textColor = 'text-primary'; // purple for pre-selected
-            } else {
-                textColor = 'text-success'; // green for newly added
-            }
-            console.log('Processing food update:', foodId, change, foodTitle, categoryName);
-            console.log('Pre-selected foods:', preSelectedFoods);
-            console.log('Text color:', textColor);
+        // Try to append in a column with fewer than 10 items
+        let column = categoryRow.find('.col-md-6').filter(function() {
+            return $(this).children().length < 10;
+        }).first();
 
-            let foodWrapper = $(`#food-wrapper-${foodId}`);
-            let justAdded = false;
+        if (!column.length) {
+            column = $('<div class="col-md-6"></div>');
+            categoryRow.append(column);
+        }
 
-            // If food wrapper doesn't exist, create it
-            if (!foodWrapper.length) {
-                // Convert category name to slug format for ID
-                const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
-                let categoryRow = $(`#category-row-${categoryId}`);
-                
-                // If category row doesn't exist, create it
-                if (!categoryRow.length) {
-                    // Create category section if it doesn't exist
-                    let categorySection = $(`#category-section-${categoryId}`);
-                    if (!categorySection.length) {
-                        categorySection = $(`
-                            <div class="category-section mb-3" id="category-section-${categoryId}">
-                                <h6 class="mt-3 text-muted">${categoryName}</h6>
-                                <div class="row" id="category-row-${categoryId}"></div>
-                            </div>
-                        `);
-                        $('#category-section').append(categorySection);
-                    }
-                    
-                    // Get or create the category row
-                    categoryRow = $(`#category-row-${categoryId}`);
+        // Build food item
+        const foodHTML = `
+            <div class="form-check dynamically-added-food" id="food-wrapper-${foodId}" data-category-id="${categoryId}">
+                <input type="checkbox" name="setp5_foods[]" value="${foodId}"
+                    class="form-check-input food-checkbox"
+                    id="setp5Food${foodId}"
+                    data-food-id="${foodId}"
+                    data-food-name="${foodTitle}">
+                <label class="form-check-label" for="setp5Food${foodId}">
+                    ${foodTitle}
+                </label>
+            </div>
+        `;
+        column.append(foodHTML);
+        justAdded = true;
+        foodWrapper = $(`#food-wrapper-${foodId}`);
+    }
+
+    const checkbox = $(`#setp5Food${foodId}`);
+    const countLabel = checkbox.siblings('.form-check-label');
+    const wrapperCategoryId = foodWrapper.data('category-id');
+    const categoryWrapper = $(`#category-section-${wrapperCategoryId}`);
+
+    foodWrapper.removeClass('d-none');
+    categoryWrapper.removeClass('d-none');
+
+    // Count update logic
+    let countText = countLabel.text();
+    let match = countText.match(/\((\d+)\)$/);
+    let currentCount = match ? parseInt(match[1]) : 0;
+    let newCount = Math.max(0, currentCount + change);
+
+    if (change === -1) {
+        if (currentCount > 1) {
+            countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
+        } else {
+            if (!preSelectedFoods.includes(Number(foodId))) {
+                foodWrapper.remove();
+                const remainingFoods = categoryWrapper.find('.form-check:visible');
+                if (remainingFoods.length === 0) {
+                    categoryWrapper.addClass('d-none');
                 }
-
-                // Find or create a column
-                let column = categoryRow.find('.col-md-6').filter(function() {
-                    return $(this).children().length < 10; // Limit items per column
-                }).first();
-
-                if (!column.length) {
-                    column = $('<div class="col-md-6"></div>');
-                    categoryRow.append(column);
-                }
-
-                // Create new food wrapper
-                const foodHTML = `
-                    <div class="form-check dynamically-added-food" id="food-wrapper-${foodId}" data-category-id="${categoryId}">
-                        <input type="checkbox" name="setp5_foods[]" value="${foodId}"
-                            class="form-check-input food-checkbox"
-                            id="setp5Food${foodId}"
-                            data-food-id="${foodId}"
-                            data-food-name="${foodTitle}">
-                        <label class="form-check-label" for="setp5Food${foodId}">
-                            ${foodTitle}
-                        </label>
-                    </div>
-                `;
-                column.append(foodHTML);
-                justAdded = true;
-                foodWrapper = $(`#food-wrapper-${foodId}`);
-            }
-
-            const checkbox = $(`#setp5Food${foodId}`);
-            const countLabel = checkbox.siblings('.form-check-label');
-            const categoryId = foodWrapper.data('category-id');
-            const categoryWrapper = $(`#category-section-${categoryId}`);
-
-            // Show the food wrapper and category
-            foodWrapper.removeClass('d-none');
-            categoryWrapper.removeClass('d-none');
-
-            // Handle count update
-            let countText = countLabel.text();
-            let match = countText.match(/\((\d+)\)$/);
-            let currentCount = match ? parseInt(match[1]) : 0;
-            let newCount = Math.max(0, currentCount + change);
-
-            // Handle decrement logic
-            if (change === -1) {
-                if (currentCount > 1) {
-                    countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
-                } else {
-                    if (!preSelectedFoods.includes(Number(foodId))) {
-                        foodWrapper.remove();
-                        
-                        // Check if category has no more visible food items
-                        const remainingFoods = categoryWrapper.find('.form-check:visible');
-                        if (remainingFoods.length === 0) {
-                            categoryWrapper.addClass('d-none');
-                        }
-                    } else {
-                        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
-                    }
-                }
-                return;
-            }
-
-            // Handle increment logic
-            if (newCount > 0) {
-                countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
             } else {
                 countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
             }
         }
+        return;
+    }
+
+    if (newCount > 0) {
+        countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
+    } else {
+        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+    }
+}
+
+
+
+        // function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
+        //     // First, fetch food details via AJAX if not provided
+        //     if (!title || !category_id) {
+        //         $.ajax({
+        //             url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
+        //             method: 'GET',
+        //             success: function(response) {
+        //                 if (response.item) {
+        //                     const foodData = response.item;
+        //                     // Get category from first flag
+        //                     const categoryName = foodData.flags && foodData.flags.length > 0 ? foodData.flags[0].name : null;
+        //                     if (!categoryName) {
+        //                         console.error('No category found for food:', foodData.title);
+        //                         return;
+        //                     }
+        //                     processFoodUpdate(foodId, change, foodData.title, categoryName);
+        //                 } else {
+        //                     console.error('Error fetching food details: Invalid response format');
+        //                 }
+        //             },
+        //             error: function(xhr) {
+        //                 console.error('Error fetching food details:', xhr.responseText);
+        //             }
+        //         });
+        //     } else {
+        //         processFoodUpdate(foodId, change, title, category_id);
+        //     }
+        // }
+
+        // function processFoodUpdate(foodId, change, foodTitle, categoryName) {
+        //     let textColor = 'text-dark';
+            
+        //     // Determine color based on preSelectedFoods
+        //     if (preSelectedFoods.includes(Number(foodId))) {
+        //         textColor = 'text-primary'; // purple for pre-selected
+        //     } else {
+        //         textColor = 'text-success'; // green for newly added
+        //     }
+        //     console.log('Processing food update:', foodId, change, foodTitle, categoryName);
+        //     console.log('Pre-selected foods:', preSelectedFoods);
+        //     console.log('Text color:', textColor);
+
+        //     let foodWrapper = $(`#food-wrapper-${foodId}`);
+        //     let justAdded = false;
+
+        //     // If food wrapper doesn't exist, create it
+        //     if (!foodWrapper.length) {
+        //         // Convert category name to slug format for ID
+        //         const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
+        //         let categoryRow = $(`#category-row-${categoryId}`);
+                
+        //         // If category row doesn't exist, create it
+        //         if (!categoryRow.length) {
+        //             // Create category section if it doesn't exist
+        //             let categorySection = $(`#category-section-${categoryId}`);
+        //             if (!categorySection.length) {
+        //                 categorySection = $(`
+        //                     <div class="category-section mb-3" id="category-section-${categoryId}">
+        //                         <h6 class="mt-3 text-muted">${categoryName}</h6>
+        //                         <div class="row" id="category-row-${categoryId}"></div>
+        //                     </div>
+        //                 `);
+        //                 $('#category-section').append(categorySection);
+        //             }
+                    
+        //             // Get or create the category row
+        //             categoryRow = $(`#category-row-${categoryId}`);
+        //         }
+
+        //         // Find or create a column
+        //         let column = categoryRow.find('.col-md-6').filter(function() {
+        //             return $(this).children().length < 10; // Limit items per column
+        //         }).first();
+
+        //         if (!column.length) {
+        //             column = $('<div class="col-md-6"></div>');
+        //             categoryRow.append(column);
+        //         }
+
+        //         // Create new food wrapper
+        //         const foodHTML = `
+        //             <div class="form-check dynamically-added-food" id="food-wrapper-${foodId}" data-category-id="${categoryId}">
+        //                 <input type="checkbox" name="setp5_foods[]" value="${foodId}"
+        //                     class="form-check-input food-checkbox"
+        //                     id="setp5Food${foodId}"
+        //                     data-food-id="${foodId}"
+        //                     data-food-name="${foodTitle}">
+        //                 <label class="form-check-label" for="setp5Food${foodId}">
+        //                     ${foodTitle}
+        //                 </label>
+        //             </div>
+        //         `;
+        //         column.append(foodHTML);
+        //         justAdded = true;
+        //         foodWrapper = $(`#food-wrapper-${foodId}`);
+        //     }
+
+        //     const checkbox = $(`#setp5Food${foodId}`);
+        //     const countLabel = checkbox.siblings('.form-check-label');
+        //     const categoryId = foodWrapper.data('category-id');
+        //     const categoryWrapper = $(`#category-section-${categoryId}`);
+
+        //     // Show the food wrapper and category
+        //     foodWrapper.removeClass('d-none');
+        //     categoryWrapper.removeClass('d-none');
+
+        //     // Handle count update
+        //     let countText = countLabel.text();
+        //     let match = countText.match(/\((\d+)\)$/);
+        //     let currentCount = match ? parseInt(match[1]) : 0;
+        //     let newCount = Math.max(0, currentCount + change);
+
+        //     // Handle decrement logic
+        //     if (change === -1) {
+        //         if (currentCount > 1) {
+        //             countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
+        //         } else {
+        //             if (!preSelectedFoods.includes(Number(foodId))) {
+        //                 foodWrapper.remove();
+                        
+        //                 // Check if category has no more visible food items
+        //                 const remainingFoods = categoryWrapper.find('.form-check:visible');
+        //                 if (remainingFoods.length === 0) {
+        //                     categoryWrapper.addClass('d-none');
+        //                 }
+        //             } else {
+        //                 countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+        //             }
+        //         }
+        //         return;
+        //     }
+
+        //     // Handle increment logic
+        //     if (newCount > 0) {
+        //         countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
+        //     } else {
+        //         countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+        //     }
+        // }
+
+        let AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal = null);
+
+        function buildUnitQtyMap(modal) {
+            let map = {};
+
+            $(`${modal} #dynamicQtyMeasurementContainer .qty-unit-row`).each(function () {
+                const qtyInput = $(this).find('.modalQtyInput').val();
+                const unitInput = $(this).find('.modalMeasurementInput').val();
+
+                const qty = parseFraction(qtyInput);
+                const unit = unitInput?.toLowerCase();
+
+                if (!isNaN(qty) && unit) {
+                    map[unit] = qty;
+                }
+            });
+
+            return map;
+        }
+
+        function parseFraction(value) {
+            if (!value) return NaN;
+
+            value = value.trim();
+            if (value.includes('/')) {
+                const parts = value.split(' ');
+                if (parts.length === 2) {
+                    // mixed fraction (e.g. "1 1/2")
+                    const whole = parseFloat(parts[0]);
+                    const [num, denom] = parts[1].split('/').map(Number);
+                    return whole + (num / denom);
+                } else {
+                    const [num, denom] = value.split('/').map(Number);
+                    return num / denom;
+                }
+            }
+
+            return parseFloat(value);
+        }
 
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-            const AU_UNIT_EQUIVALENTS = {
-                'cup': 250,
-                'tablespoon': 20,
-                'teaspoon': 5,
-                'dessert spoon': 10,
-                'piece': 150,
-                'slice': 30,
-                'roll': 70,
-                'tub': 180,
-                'pouch': 100,
-                'handful': 40,
-                'ml': 1,
-                'g': 1
-            };
+            // const AU_UNIT_EQUIVALENTS = {
+            //     'cup': 250,
+            //     'tablespoon': 20,
+            //     'teaspoon': 5,
+            //     'dessert spoon': 10,
+            //     'piece': 150,
+            //     'slice': 30,
+            //     'roll': 70,
+            //     'tub': 180,
+            //     'pouch': 100,
+            //     'handful': 40,
+            //     'ml': 1,
+            //     'g': 1
+            // };
 
+            AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
+            console.log(AU_UNIT_EQUIVALENTS);
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
             if ($rows.length === 0) return;
@@ -2432,24 +2601,29 @@
                 const currentQty = parseFraction(currentQtyRaw);
                 if (!currentQty || !currentUnit) return;
 
-                currentUnit = currentUnit.toLowerCase();
-                let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
-                let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
+                console.log(currentQty, currentUnit);
+                console.log(AU_UNIT_EQUIVALENTS);
 
-                if (!baseEquivalent || !currentEquivalent) {
-                    console.warn('Unknown unit used in conversion.');
+                const normalizedUnitEquivalents = {};
+                Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
+                    normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
+                });
+
+                // Later in your function
+                const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
+                console.log(baseEquivalent);
+                if (!baseEquivalent) {
+                    console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
-
-                const baseGrams = baseQty * baseEquivalent;
-                const currentGrams = currentQty * currentEquivalent;
-
-                const multiplier = currentGrams / baseGrams;
-
-                $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
+                const ratio = currentQty / baseEquivalent;
+                console.log(ratio);
+                console.log(modal);
+                console.log(baseCarbs * ratio);
+                $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalProtein`).text((Math.round(baseProtein * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalFat`).text((Math.round(baseFat * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * ratio * 10) / 10) + 'kJ');
 
             }
 
@@ -2486,6 +2660,94 @@
                 return result || null;
             }
         }
+        
+        // function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
+        //     const AU_UNIT_EQUIVALENTS = {
+        //         'cup': 250,
+        //         'tablespoon': 20,
+        //         'teaspoon': 5,
+        //         'dessert spoon': 10,
+        //         'piece': 150,
+        //         'slice': 30,
+        //         'roll': 70,
+        //         'tub': 180,
+        //         'pouch': 100,
+        //         'handful': 40,
+        //         'ml': 1,
+        //         'g': 1
+        //     };
+
+        //     const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
+        //     const $rows = $container.find('.qty-unit-row');
+        //     if ($rows.length === 0) return;
+
+        //     const $baseRow = $rows.first();
+        //     const baseQty = parseFraction($baseRow.find('.modalQtyInput').val());
+        //     const baseUnit = $baseRow.find('.modalMeasurementInput').val().trim().toLowerCase();
+
+        //     if (!baseQty || !baseUnit) {
+        //         console.warn('Base quantity or unit is missing.');
+        //         return;
+        //     }
+
+        //     function updateNutrition(currentQtyRaw, currentUnit) {
+        //         const currentQty = parseFraction(currentQtyRaw);
+        //         if (!currentQty || !currentUnit) return;
+
+        //         currentUnit = currentUnit.toLowerCase();
+        //         let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
+        //         let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
+
+        //         if (!baseEquivalent || !currentEquivalent) {
+        //             console.warn('Unknown unit used in conversion.');
+        //             return;
+        //         }
+
+        //         const baseGrams = baseQty * baseEquivalent;
+        //         const currentGrams = currentQty * currentEquivalent;
+
+        //         const multiplier = currentGrams / baseGrams;
+
+        //         $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
+        //         $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
+        //         $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
+        //         $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
+
+        //     }
+
+        //     $rows.find('.modalQtyInput').on('input', function () {
+        //         const $row = $(this).closest('.qty-unit-row');
+        //         const newQtyRaw = $(this).val();
+        //         const newUnit = $row.find('.modalMeasurementInput').val().trim().toLowerCase();
+
+        //         updateNutrition(newQtyRaw, newUnit);
+        //     });
+
+        //     // Utility: Convert fractions like "1/2" or "3/4" to decimal numbers
+        //     function parseFraction(input) {
+        //         if (!input) return null;
+        //         input = input.trim();
+        //         // Direct number
+        //         if (!isNaN(input)) return parseFloat(input);
+
+        //         // Handle fractions like "1/2", "3/4", or even "1 1/2"
+        //         const parts = input.split(' ');
+        //         let result = 0;
+
+        //         parts.forEach(part => {
+        //             if (part.includes('/')) {
+        //                 const [num, denom] = part.split('/');
+        //                 if (!isNaN(num) && !isNaN(denom)) {
+        //                     result += parseFloat(num) / parseFloat(denom);
+        //                 }
+        //             } else if (!isNaN(part)) {
+        //                 result += parseFloat(part);
+        //             }
+        //         });
+
+        //         return result || null;
+        //     }
+        // }
 
         function setupDynamicMeasurementSync(modal) {
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
@@ -3168,7 +3430,8 @@
                                 qty: item.qty,
                                 unit: item.unit,
                                 description: item.description,
-                                selected_qty_unit: item.selected_qty_unit
+                                selected_qty_unit: item.selected_qty_unit,
+                                has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
                         };
                     },
@@ -3180,8 +3443,10 @@
 
             function formatFood(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px;">
                         <span>${food.text}</span>
                     </div>
@@ -3190,8 +3455,10 @@
 
             function formatFoodSelection(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 25px; height: 25px; margin-right: 5px;">
                         <span>${food.text}</span>
                     </div>
@@ -3322,7 +3589,8 @@
                                 qty: item.qty,
                                 unit: item.unit,
                                 description: item.description,
-                                selected_qty_unit: item.selected_qty_unit
+                                selected_qty_unit: item.selected_qty_unit,
+                                has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
                         };
                     },
@@ -3334,8 +3602,10 @@
 
             function formatFood(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px;">
                         <span>${food.text}</span>
                     </div>
@@ -3344,8 +3614,10 @@
 
             function formatFoodSelection(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 25px; height: 25px; margin-right: 5px;">
                         <span>${food.text}</span>
                     </div>
@@ -3628,7 +3900,8 @@
                                 qty: item.qty,
                                 unit: item.unit,
                                 description: item.description,
-                                selected_qty_unit: item.selected_qty_unit
+                                selected_qty_unit: item.selected_qty_unit,
+                                has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
                         };
                     },
@@ -3640,8 +3913,10 @@
 
             function formatFood(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px;">
                         <span>${food.text}</span>
                     </div>
@@ -3650,8 +3925,10 @@
 
             function formatFoodSelection(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 25px; height: 25px; margin-right: 5px;">
                         <span>${food.text}</span>
                     </div>
@@ -3937,7 +4214,8 @@
                                 qty: item.qty,
                                 unit: item.unit,
                                 description: item.description,
-                                selected_qty_unit: item.selected_qty_unit
+                                selected_qty_unit: item.selected_qty_unit,
+                                has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
                         };
                     },
@@ -3949,8 +4227,10 @@
 
             function formatFood(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px;">
                         <span>${food.text}</span>
                     </div>
@@ -3959,8 +4239,10 @@
 
             function formatFoodSelection(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 25px; height: 25px; margin-right: 5px;">
                         <span>${food.text}</span>
                     </div>

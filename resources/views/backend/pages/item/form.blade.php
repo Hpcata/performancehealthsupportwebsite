@@ -122,7 +122,7 @@
                             </div>
 
                             <!-- category Field -->
-                            <div class="col-md-12">
+                        {{--<div class="col-md-12">
                                 <label for="category" class="form-label">Food Category</label>
                                 <select name="category_id" class="form-control">
                                     <option value="">Select Food Category</option>
@@ -131,25 +131,8 @@
                                     @endforeach
                                 </select>
                             </div>
-
+                        --}}
                             <div class="mb-3 d-flex align-items-center gap-2 justify-content-between">
-                                <div class="d-flex align-items-center gap-2">
-                                    <input type="checkbox" 
-                                        id="lockCheckbox" 
-                                        name="is_locked" 
-                                        value="{{ $item->is_locked ?? 0 }}" 
-                                        class="form-check-input" 
-                                        {{ isset($item) ? ($item->is_locked == 1 ? 'checked' : '') : '' }} />
-
-                                    <label for="lockCheckbox" id="lockLabel" class="form-label mb-0">
-                                        {{ isset($item) ? ($item->is_locked == 1 ? 'Unlock' : 'Lock') : 'Lock' }}
-                                    </label>
-                                    <small class="form-text text-muted">
-                                        (Lock to prevent editing nutrition info. Unlock to allow changes.)
-                                    </small>
-                                    
-                                </div>
-
                                 <!-- Right side: Lock icon + Reset button -->
                                 <div class="d-flex align-items-center gap-2 mx-3">
                                     <button type="button" class="btn btn-secondary btn-sm" data-qty="{{ $item->serving_size ?? ''}}" data-unit="{{ $item->serving_size_unit ?? '' }}" data-title="{{ $item->title ?? '' }}" id="resetQty">Reset Qty</button>
@@ -355,7 +338,21 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-1">
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="checkbox" 
+                                    id="lockCheckbox" 
+                                    name="is_locked" 
+                                    value="{{ $item->is_locked ?? 0 }}" 
+                                    class="form-check-input" 
+                                    {{ isset($item) ? ($item->is_locked == 1 ? 'checked' : '') : '' }} />
+
+                                <label for="lockCheckbox" id="lockLabel" class="form-label mb-0">
+                                    {{ isset($item) ? ($item->is_locked == 1 ? 'Unlock' : 'Lock') : 'Lock' }}
+                                </label>
+                                <small class="form-text text-muted">
+                                    (Lock to prevent editing nutrition info. Unlock to allow changes.)
+                                </small>
+                                    
                                 <img class="pull-right mt-1" id="lockIcon" src="{{ asset('private/public/uploads/lock.png') }}" alt="Lock Icon" />
                             </div>
                             <!-- Is Swapped Field -->
@@ -758,19 +755,12 @@
                     return {
                         query: params.term,
                         selected_ids: selected,
-                        exclude_id: currentItemId  // send current item ID to server if editing
-
+                        exclude_id: currentItemId
                     };
                 },
                 processResults: function (response) {
                     const selectedIds = $('#swap_item_ids').val() || [];
-
-                    // Convert all to strings for accurate comparison
                     const selectedIdSet = new Set(selectedIds.map(id => id.toString()));
-
-                    // const filteredItems = response.items.filter(item => {
-                    //     return !selectedIdSet.has(item.id.toString());
-                    // });
 
                     return {
                         results: response.items
@@ -783,7 +773,8 @@
                                 text: item.title,
                                 image: item.image
                                     ? `{{ asset('private/public/storage') }}/${item.image}`
-                                    : '{{ asset("default.png") }}'
+                                    : '{{ asset("default.png") }}',
+                                has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
                     };
                 },
@@ -795,10 +786,12 @@
             if (!food.id) return food.text;
 
             const image = food.image || '{{ asset("default.png") }}';
+            const dot = food.has_flags ? '<span style="color: purple; font-size: 24px;">&#9679;</span> ' : '';
 
             return `
                 <div style="display: flex; align-items: center;">
-                    <img src="${image}" style="width: 30px; height: 30px; margin-right: 10px; object-fit: cover;" />
+                    ${dot}
+                    <img src="${image}" style="width: 30px; height: 30px; margin-left: 6px; margin-right: 10px; object-fit: cover;" />
                     <span>${food.text}</span>
                 </div>
             `;
@@ -808,10 +801,12 @@
             if (!food.id) return food.text;
 
             const image = food.image || '{{ asset("default.png") }}';
+            const dot = food.has_flags ? '<span style="color: purple; font-size: 24px;">&#9679;</span> ' : '';
 
             return `
                 <div style="display: flex; align-items: center;">
-                    <img src="${image}" style="width: 25px; height: 25px; margin-right: 5px; object-fit: cover;" />
+                    ${dot}
+                    <img src="${image}" style="width: 25px; height: 25px; margin-left: 6px; margin-right: 5px; object-fit: cover;" />
                     <span>${food.text}</span>
                 </div>
             `;

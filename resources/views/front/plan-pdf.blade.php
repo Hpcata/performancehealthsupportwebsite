@@ -192,7 +192,7 @@
                                             @endphp
                                             @if ($userPlan->nutrition_info_flag == 1)
                                                 <br>
-                                                <span class="mt-3" style="font-size: 12px; color: #666;"><strong>Meal Total: 
+                                                <span class="mt-3 d-none" style="font-size: 12px; color: #666;"><strong>Meal Total: 
                                                     Energy: {{ (int) $energyTotal }}kJ |
                                                     Protein: {{ (int) $proteinTotal }}g |
                                                     Carb: {{ (int) $carbsTotal }}g |

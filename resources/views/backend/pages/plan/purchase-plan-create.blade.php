@@ -247,6 +247,8 @@
                                         @endforeach
                                     @endforeach
                                 </div>
+                                <div class="recommendations-food-section mb-3" id="recommendations-food-section">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1383,24 +1385,38 @@
 
             // Remove unselected meals
             unselectedMeals.forEach(mealId => {
-               
                 // $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
                 const removedMealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
-        
-                // Decrement item and swap item counts
-                removedMealContainer.find('input[name^="items"]').each(function () {
-                    const itemId = $(this).val();
-                    updateFoodCount(itemId, -1, null);  // Decrease item count
-                });
+                if (removedMealContainer.length) {
+                    // Decrement item and swap item counts
+                    removedMealContainer.find('input[name^="items"]').each(function() {
+                        const itemId = $(this).val();
+                        updateFoodCount(itemId, -1, null); // Decrease item count
+                    });
 
-                removedMealContainer.find('input[name^="swap_items"]').each(function () {
-                    const swapItemId = $(this).val();
-                    updateFoodCount(swapItemId, -1, null);  // Decrease swap item count
-                });
-
-                // Finally remove the meal container
-                removedMealContainer.remove();
-                calculateMealNutrition();
+                    $.ajax({
+                        url: '{{ route("admin.remove-user-meal") }}',
+                        method: 'POST',
+                        data: {
+                            user_id: userId,
+                            meal_id: mealId,
+                            plan_id: planId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            console.log(response.message || 'Meal removed successfully');
+                        },
+                        error: function(xhr) {
+                            alert('Failed to remove meal. Please try again.');
+                        }
+                    });
+                    
+                    // Remove the meal container
+                    removedMealContainer.remove();
+                    // Trigger meal count update
+                    $(document).trigger('mealRemoved', [planId, mealTimeId]);
+                    calculateMealNutrition();
+                }
             });
 
             // Fetch and add new meals
@@ -1437,14 +1453,14 @@
                             
                             calculateMealNutrition();
                             response.data.forEach(item => {
-                                
+                                console.log(item);
                                 // ✅ Increment count for each item in the meal
-                                updateFoodCount(item.id, 1, 'purple', item.name, item.category_id);  
+                                updateFoodCount(item.id, 1, 'purple', item.name, null);  
 
                                 // ✅ Increment count for each swap item if available
-                                item.swapItems.forEach(swapItem => {
-                                    updateFoodCount(swapItem.id, 1, 'purple', swapItem.name, swapItem.category_id);
-                                });
+                                // item.swapItems.forEach(swapItem => {
+                                //     updateFoodCount(swapItem.id, 1, 'purple', swapItem.name, null);
+                                // });
                             });
                         } else {
                             alert('Failed to fetch meal details.');
@@ -1565,7 +1581,7 @@
                                     <div class="col-9">
                                         <div class="d-flex align-items-start">
                                             <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                value="${swapItem.id}" class="form-check-input me-2 d-none" data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" checked>
+                                                value="${swapItem.id}" class="form-check-input me-2 d-none" data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${swapItem.energy}" checked>
                                             <label class="form-check-label">${swapItem.name}</label>
                                         </div>
                                     </div>
@@ -1707,7 +1723,7 @@
                         const carb = Math.round(foodItem.carbs * 10) / 10;
                         const protein = Math.round(foodItem.protein * 10) / 10;
                         const fat = Math.round(foodItem.fat * 10) / 10;
-                        const energy = parseFloat(foodItem.energy) ? parseFloat(foodItem.energy * 10) / 10 : 0;
+                        const energy = parseFloat(foodItem.energy) ? (parseFloat(foodItem.energy) * 10) / 10 : 0;
 
                         let selectedQtyUnits = [];
 
@@ -1861,66 +1877,66 @@
                         const tableBody = $(mealContainerId).find('.items-table-body');
 
                         if (swapFoods.length > 0) {
-                            swapItemsHTML = swapFoods.map(swapItem => `
-                                <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
-                                    <div class="d-flex justify-content-between align-items-start mb-0"> 
-                                        <div class="col-9">
-                                            <div class="d-flex align-items-start">
-                                                <input type="checkbox" name="swap_items[${planID}][${mealtimeID}][${mealId}][${item.id}][]"
-                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked
-                                                    data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy)}">
-                                                <label class="form-check-label">${swapItem.title}</label>
+                            swapItemsHTML = swapFoods.map(swapItem => {
+                                const checkedQtyText = getQtyDisplay(
+                                    swapItem.selected_qty_unit || [],
+                                    swapItem.qty,
+                                    swapItem.unit
+                                );
+
+                                return `
+                                    <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
+                                        <div class="d-flex justify-content-between align-items-start mb-0"> 
+                                            <div class="col-9">
+                                                <div class="d-flex align-items-start">
+                                                    <input type="checkbox" name="swap_items[${planID}][${mealtimeID}][${mealId}][${item.id}][]"
+                                                        value="${swapItem.id}" class="form-check-input me-2 d-none" checked
+                                                        data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy)}">
+                                                    <label class="form-check-label">${swapItem.title}</label>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button type="button" class="btn btn-sm btn-outline-primary view-info"
+                                                    data-swap-item-id="${swapItem.id}" data-item-id="${swapItem.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
+                                                    data-meal-time-id="${mealtimeID}" data-user-id="${userId}" data-description="${swapItem.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${swapItem.description}">
+                                                    <i class="fas fa-info-circle text-primary"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
+                                                    data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
+                                                    data-meal-time-id="${mealtimeID}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
+                                                    data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
+                                                    title="Edit"><i class="icofont-edit text-success"></i></button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
+                                                    data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
+                                                    data-meal-time-id="${mealtimeID}" data-user-id="${userId}" title="Delete">
+                                                    <i class="icofont-ui-delete text-danger"></i>
+                                                </button>
                                             </div>
                                         </div>
-                                        <div>
-                                            <button type="button" class="btn btn-sm btn-outline-primary view-info"
-                                                data-swap-item-id="${swapItem.id}" data-item-id="${swapItem.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                                                data-meal-time-id="${mealtimeID}" data-user-id="${userId}" data-description="${swapItem.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${swapItem.description}">
-                                                <i class="fas fa-info-circle text-primary"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
-                                                data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                                                data-meal-time-id="${mealtimeID}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
-                                                data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
-                                                title="Edit"><i class="icofont-edit text-success"></i></button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
-                                                data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                                                data-meal-time-id="${mealtimeID}" data-user-id="${userId}" title="Delete">
-                                                <i class="icofont-ui-delete text-danger"></i>
-                                            </button>
+                                        <div class="row">
+                                            <div class="col">
+                                                <p class="px-2 mb-2 fw-bold">${checkedQtyText}</p>
+                                                <p class="mb-0 px-2">Energy: ${parseFloat(swapItem.energy)}kJ | Protein: ${Math.round(swapItem.protein)}g | Carb: ${Math.round(swapItem.carbs)}g | Fat: ${Math.round(swapItem.fat)}g</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <p class="px-2 mb-2 fw-bold"><p class="px-2 mb-2 fw-bold">( ${
-                                                    // Check if qty is a fraction (contains '/')
-                                                    swapItem.qty.includes('/') 
-                                                    ? swapItem.qty 
-                                                    : Math.round(parseFloat(swapItem.qty))
-                                                }
-                                                ${swapItem.unit})</p>
-                                            <p class="mb-0 px-2">Energy: ${(parseFloat(swapItem.energy))}kJ | Protein: ${Math.round(swapItem.protein)}g | Carb: ${Math.round(swapItem.carbs)}g | Fat: ${Math.round(swapItem.fat)}g</p>
-                                        </div>
-                                    </div>
-                                </li>
-                            `).join('');
+                                    </li>
+                                `;
+                            }).join('');
 
-                            swapFoods.map(swapItem =>
-                                updateFoodCount(swapItem.id, 1, 'green')
-                            );
-                            // Add the final "+ Add" button row
                             // swapItemsHTML += `
-                            //     <li class="d-flex justify-content-between align-items-start mb-2">
-                            //         <div class="col-9"><span class="text-muted">Add another swap item</span></div>
+                            //     <li class="d-flex justify-content-between align-items-start mt-1">
+                            //         <div class="col-9"></div>
                             //         <div>
-                            //             <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+                            //             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                             //                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                            //                 data-meal-time-id="${mealtimeID}" data-user-id="${userId}" title="Add">
-                            //                 <i class="icofont-plus text-primary"></i>
-                            //             </button>
+                            //                 data-meal-time-id="${mealtimeID}" data-user-id="${userId}" 
+                            //                 title="Add More"><i class="icofont-plus text-primary"></i></button>
                             //         </div>
-                            //     </li>
-                            // `;
+                            //     </li>`;
+
+                            // swapFoods.map(swapItem =>
+                            //     updateFoodCount(swapItem.id, 1, 'green')
+                            // );
                         } else {
                             swapItemsHTML = `
                                 <li class="d-flex justify-content-between align-items-start mb-2">
@@ -1934,7 +1950,6 @@
                                     </div>
                                 </li>`;
                         }
-
                         const rowHTML = `
                             <tr id="itemRow_${planID}_${mealtimeID}_${mealId}_${item.id}">
                                 <td class="text-wrap" width="50%">
@@ -1988,6 +2003,36 @@
             });
 
         });
+        
+        function getQtyDisplay(selectedQtyUnits, fallbackQty, fallbackUnit) {
+            const checked = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
+
+            if (checked.length) {
+                return `(${checked.map(q => {
+                    const unit = q.unit || '';
+                    const qty = q.qty || '';
+                    const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                    const formattedQty = formatQty(qty, unit);
+                    return `${formattedQty}${space}${unit}`;
+                }).join(' or ')})`;
+            } else {
+                const formattedQty = formatQty(fallbackQty, fallbackUnit);
+                const space = ['g', 'ml', 'mL'].includes(fallbackUnit) ? '' : ' ';
+                return `(${formattedQty}${space}${fallbackUnit})`;
+            }
+        }
+
+        function formatQty(value) {
+            // Check if it's a string fraction like "1/2", "3/4"
+            if (typeof value === 'string' && /^\d+\/\d+$/.test(value)) {
+                return value; // keep it as-is
+            }
+
+            const floatVal = parseFloat(value);
+            if (isNaN(floatVal)) return value;
+
+            return floatVal % 1 === 0 ? floatVal.toFixed(0) : floatVal.toFixed(1);
+        }
 
         $('#closeMealFoodAddModal').on('click', function() {
             $('#mealFoodAddModal').modal('hide');
@@ -2277,76 +2322,101 @@
 
         //     column.append(foodHTML);
         // }
+       // ..................................
+        // function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
+        //     // First, fetch food details via AJAX if not provided
+        //                     console.log('categoryId:', category_id);
+
+        //     // if (!title || !category_id) {
+        //         $.ajax({
+        //             url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
+        //             method: 'GET',
+        //             success: function(response) {
+        //                 if (response.item) {
+        //                     const foodData = response.item;
+        //                     // Get category from first flag
+        //                     const categoryName = foodData.flags && foodData.flags.length > 0 ? foodData.flags[0].name : null;
+        //                     if (!categoryName) {
+        //                         console.error('No category found for food:', foodData.title);
+        //                         return;
+        //                     }
+        //                     processFoodUpdate(foodId, change, foodData.title, categoryName);
+        //                 } else {
+        //                     console.error('Error fetching food details: Invalid response format');
+        //                 }
+        //             },
+        //             error: function(xhr) {
+        //                 console.error('Error fetching food details:', xhr.responseText);
+        //             }
+        //         });
+        //     // } else {
+        //     //     console.log('aaa : ', category_id);
+        //     //     processFoodUpdate(foodId, change, title, category_id);
+        //     // }
+        // }
 
         function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
-            // First, fetch food details via AJAX if not provided
-            if (!title || !category_id) {
-                $.ajax({
-                    url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.item) {
-                            const foodData = response.item;
-                            // Get category from first flag
-                            const categoryName = foodData.flags && foodData.flags.length > 0 ? foodData.flags[0].name : null;
-                            if (!categoryName) {
-                                console.error('No category found for food:', foodData.title);
-                                return;
-                            }
-                            processFoodUpdate(foodId, change, foodData.title, categoryName);
-                        } else {
-                            console.error('Error fetching food details: Invalid response format');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Error fetching food details:', xhr.responseText);
+            $.ajax({
+                url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
+                method: 'GET',
+                success: function(response) {
+                    if (response.item) {
+                        const foodData = response.item;
+
+                        const categoryName = (foodData.flags && foodData.flags.length > 0)
+                            ? foodData.flags[0].name
+                            : (foodData.category && foodData.category.name)
+                                ? foodData.category.name
+                                : 'Uncategorized';
+
+                        processFoodUpdate(foodId, change, foodData.title, categoryName);
+                    } else {
+                        console.error('Error fetching food details: Invalid response format');
                     }
-                });
-            } else {
-                processFoodUpdate(foodId, change, title, category_id);
-            }
+                },
+                error: function(xhr) {
+                    console.error('Error fetching food details:', xhr.responseText);
+                }
+            });
         }
 
         function processFoodUpdate(foodId, change, foodTitle, categoryName) {
             let textColor = 'text-dark';
-            
-            // Determine color based on preSelectedFoods
             if (preSelectedFoods.includes(Number(foodId))) {
-                textColor = 'text-primary'; // purple for pre-selected
+                textColor = 'text-primary';
             } else {
-                textColor = 'text-success'; // green for newly added
+                textColor = 'text-success';
             }
 
             let foodWrapper = $(`#food-wrapper-${foodId}`);
             let justAdded = false;
 
-            // If food wrapper doesn't exist, create it
+            // ✅ Safe slug from category name
+            const categoryId = categoryName
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')   // Replace non-alphanumeric chars with hyphen
+                .replace(/^-+|-+$/g, '');      // Trim hyphens
+
+            let categoryRow = $(`#category-row-${categoryId}`);
+
             if (!foodWrapper.length) {
-                // Convert category name to slug format for ID
-                const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
-                let categoryRow = $(`#category-row-${categoryId}`);
-                
-                // If category row doesn't exist, create it
-                if (!categoryRow.length) {
-                    // Create category section if it doesn't exist
-                    let categorySection = $(`#category-section-${categoryId}`);
-                    if (!categorySection.length) {
-                        categorySection = $(`
-                            <div class="category-section mb-3" id="category-section-${categoryId}">
-                                <h6 class="mt-3 text-muted">${categoryName}</h6>
-                                <div class="row" id="category-row-${categoryId}"></div>
-                            </div>
-                        `);
-                        $('#category-section').append(categorySection);
-                    }
-                    
-                    // Get or create the category row
-                    categoryRow = $(`#category-row-${categoryId}`);
+                // Create category section if it doesn't exist
+                let categorySection = $(`#category-section-${categoryId}`);
+                if (!categorySection.length) {
+                    categorySection = $(`
+                        <div class="category-section mb-3" id="category-section-${categoryId}">
+                            <h6 class="mt-3 text-muted">${categoryName}</h6>
+                            <div class="row" id="category-row-${categoryId}"></div>
+                        </div>
+                    `);
+                    $('#recommendations-food-section').append(categorySection);
                 }
 
+                categoryRow = $(`#category-row-${categoryId}`);
+
                 // Find or create a column
-                let column = categoryRow.find('.col-md-6').filter(function() {
-                    return $(this).children().length < 10; // Limit items per column
+                let column = categoryRow.find('.col-md-6').filter(function () {
+                    return $(this).children().length < 10;
                 }).first();
 
                 if (!column.length) {
@@ -2354,7 +2424,6 @@
                     categoryRow.append(column);
                 }
 
-                // Create new food wrapper
                 const foodHTML = `
                     <div class="form-check dynamically-added-food" id="food-wrapper-${foodId}" data-category-id="${categoryId}">
                         <input type="checkbox" name="setp5_foods[]" value="${foodId}"
@@ -2374,28 +2443,22 @@
 
             const checkbox = $(`#setp5Food${foodId}`);
             const countLabel = checkbox.siblings('.form-check-label');
-            const categoryId = foodWrapper.data('category-id');
             const categoryWrapper = $(`#category-section-${categoryId}`);
 
-            // Show the food wrapper and category
             foodWrapper.removeClass('d-none');
             categoryWrapper.removeClass('d-none');
 
-            // Handle count update
             let countText = countLabel.text();
             let match = countText.match(/\((\d+)\)$/);
             let currentCount = match ? parseInt(match[1]) : 0;
             let newCount = Math.max(0, currentCount + change);
 
-            // Handle decrement logic
             if (change === -1) {
                 if (currentCount > 1) {
                     countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
                 } else {
                     if (!preSelectedFoods.includes(Number(foodId))) {
                         foodWrapper.remove();
-                        
-                        // Check if category has no more visible food items
                         const remainingFoods = categoryWrapper.find('.form-check:visible');
                         if (remainingFoods.length === 0) {
                             categoryWrapper.addClass('d-none');
@@ -2407,13 +2470,122 @@
                 return;
             }
 
-            // Handle increment logic
             if (newCount > 0) {
                 countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
             } else {
                 countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
             }
         }
+
+
+        // function processFoodUpdate(foodId, change, foodTitle, categoryName) {
+        //     let textColor = 'text-dark';
+            
+        //     // Determine color based on preSelectedFoods
+        //     if (preSelectedFoods.includes(Number(foodId))) {
+        //         textColor = 'text-primary'; // purple for pre-selected
+        //     } else {
+        //         textColor = 'text-success'; // green for newly added
+        //     }
+
+        //     let foodWrapper = $(`#food-wrapper-${foodId}`);
+        //     let justAdded = false;
+
+        //     // If food wrapper doesn't exist, create it
+        //     if (!foodWrapper.length) {
+        //         // Convert category name to slug format for ID
+        //         const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
+        //         console.log(categoryId);
+        //         let categoryRow = $(`#category-row-${categoryId}`);
+                
+        //         // If category row doesn't exist, create it
+        //         if (!categoryRow.length) {
+        //             // Create category section if it doesn't exist
+        //             let categorySection = $(`#category-section-${categoryId}`);
+        //             if (!categorySection.length) {
+        //                 categorySection = $(`
+        //                     <div class="category-section mb-3" id="category-section-${categoryId}">
+        //                         <h6 class="mt-3 text-muted">${categoryName}</h6>
+        //                         <div class="row" id="category-row-${categoryId}"></div>
+        //                     </div>
+        //                 `);
+        //                 $('#category-section').append(categorySection);
+        //             }
+                    
+        //             // Get or create the category row
+        //             categoryRow = $(`#category-row-${categoryId}`);
+        //         }
+
+        //         // Find or create a column
+        //         let column = categoryRow.find('.col-md-6').filter(function() {
+        //             return $(this).children().length < 10; // Limit items per column
+        //         }).first();
+
+        //         if (!column.length) {
+        //             column = $('<div class="col-md-6"></div>');
+        //             categoryRow.append(column);
+        //         }
+
+        //         // Create new food wrapper
+        //         const foodHTML = `
+        //             <div class="form-check dynamically-added-food" id="food-wrapper-${foodId}" data-category-id="${categoryId}">
+        //                 <input type="checkbox" name="setp5_foods[]" value="${foodId}"
+        //                     class="form-check-input food-checkbox"
+        //                     id="setp5Food${foodId}"
+        //                     data-food-id="${foodId}"
+        //                     data-food-name="${foodTitle}">
+        //                 <label class="form-check-label" for="setp5Food${foodId}">
+        //                     ${foodTitle}
+        //                 </label>
+        //             </div>
+        //         `;
+        //         column.append(foodHTML);
+        //         justAdded = true;
+        //         foodWrapper = $(`#food-wrapper-${foodId}`);
+        //     }
+
+        //     const checkbox = $(`#setp5Food${foodId}`);
+        //     const countLabel = checkbox.siblings('.form-check-label');
+        //     const categoryId = foodWrapper.data('category-id');
+        //     const categoryWrapper = $(`#category-section-${categoryId}`);
+
+        //     // Show the food wrapper and category
+        //     foodWrapper.removeClass('d-none');
+        //     categoryWrapper.removeClass('d-none');
+
+        //     // Handle count update
+        //     let countText = countLabel.text();
+        //     let match = countText.match(/\((\d+)\)$/);
+        //     let currentCount = match ? parseInt(match[1]) : 0;
+        //     let newCount = Math.max(0, currentCount + change);
+
+        //     // Handle decrement logic
+        //     if (change === -1) {
+        //         if (currentCount > 1) {
+        //             countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
+        //         } else {
+        //             if (!preSelectedFoods.includes(Number(foodId))) {
+        //                 foodWrapper.remove();
+                        
+        //                 // Check if category has no more visible food items
+        //                 const remainingFoods = categoryWrapper.find('.form-check:visible');
+        //                 if (remainingFoods.length === 0) {
+        //                     categoryWrapper.addClass('d-none');
+        //                 }
+        //             } else {
+        //                 countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+        //             }
+        //         }
+        //         return;
+        //     }
+
+        //     // Handle increment logic
+        //     if (newCount > 0) {
+        //         countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
+        //     } else {
+        //         countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+        //     }
+        // }
 
         // function updateFoodCount(foodId, change, color = null) {
         //     let countLabel = $(`#setp5Food${foodId}`).siblings('.form-check-label');
@@ -2443,23 +2615,64 @@
         //             .removeClass(textColor) // Remove primary color when count is zero
         //     }
         // }
+        let AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal = null);
+
+        function buildUnitQtyMap(modal) {
+            let map = {};
+
+            $(`${modal} #dynamicQtyMeasurementContainer .qty-unit-row`).each(function () {
+                const qtyInput = $(this).find('.modalQtyInput').val();
+                const unitInput = $(this).find('.modalMeasurementInput').val();
+
+                const qty = parseFraction(qtyInput);
+                const unit = unitInput?.toLowerCase();
+
+                if (!isNaN(qty) && unit) {
+                    map[unit] = qty;
+                }
+            });
+
+            return map;
+        }
+
+        function parseFraction(value) {
+            if (!value) return NaN;
+
+            value = value.trim();
+            if (value.includes('/')) {
+                const parts = value.split(' ');
+                if (parts.length === 2) {
+                    // mixed fraction (e.g. "1 1/2")
+                    const whole = parseFloat(parts[0]);
+                    const [num, denom] = parts[1].split('/').map(Number);
+                    return whole + (num / denom);
+                } else {
+                    const [num, denom] = value.split('/').map(Number);
+                    return num / denom;
+                }
+            }
+
+            return parseFloat(value);
+        }
 
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-            const AU_UNIT_EQUIVALENTS = {
-                'cup': 250,
-                'tablespoon': 20,
-                'teaspoon': 5,
-                'dessert spoon': 10,
-                'piece': 150,
-                'slice': 30,
-                'roll': 70,
-                'tub': 180,
-                'pouch': 100,
-                'handful': 40,
-                'ml': 1,
-                'g': 1
-            };
+            // const AU_UNIT_EQUIVALENTS = {
+            //     'cup': 250,
+            //     'tablespoon': 20,
+            //     'teaspoon': 5,
+            //     'dessert spoon': 10,
+            //     'piece': 150,
+            //     'slice': 30,
+            //     'roll': 70,
+            //     'tub': 180,
+            //     'pouch': 100,
+            //     'handful': 40,
+            //     'ml': 1,
+            //     'g': 1
+            // };
 
+            AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
+            console.log(AU_UNIT_EQUIVALENTS);
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
             if ($rows.length === 0) return;
@@ -2477,24 +2690,29 @@
                 const currentQty = parseFraction(currentQtyRaw);
                 if (!currentQty || !currentUnit) return;
 
-                currentUnit = currentUnit.toLowerCase();
-                let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
-                let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
+                console.log(currentQty, currentUnit);
+                console.log(AU_UNIT_EQUIVALENTS);
 
-                if (!baseEquivalent || !currentEquivalent) {
-                    console.warn('Unknown unit used in conversion.');
+                const normalizedUnitEquivalents = {};
+                Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
+                    normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
+                });
+
+                // Later in your function
+                const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
+                console.log(baseEquivalent);
+                if (!baseEquivalent) {
+                    console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
-
-                const baseGrams = baseQty * baseEquivalent;
-                const currentGrams = currentQty * currentEquivalent;
-
-                const multiplier = currentGrams / baseGrams;
-
-                $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
-                $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
+                const ratio = currentQty / baseEquivalent;
+                console.log(ratio);
+                console.log(modal);
+                console.log(baseCarbs * ratio);
+                $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalProtein`).text((Math.round(baseProtein * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalFat`).text((Math.round(baseFat * ratio * 10) / 10) + 'g');
+                $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * ratio * 10) / 10) + 'kJ');
 
             }
 
@@ -2531,6 +2749,94 @@
                 return result || null;
             }
         }
+
+        // function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
+        //     const AU_UNIT_EQUIVALENTS = {
+        //         'cup': 250,
+        //         'tablespoon': 20,
+        //         'teaspoon': 5,
+        //         'dessert spoon': 10,
+        //         'piece': 150,
+        //         'slice': 30,
+        //         'roll': 70,
+        //         'tub': 180,
+        //         'pouch': 100,
+        //         'handful': 40,
+        //         'ml': 1,
+        //         'g': 1
+        //     };
+
+        //     const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
+        //     const $rows = $container.find('.qty-unit-row');
+        //     if ($rows.length === 0) return;
+
+        //     const $baseRow = $rows.first();
+        //     const baseQty = parseFraction($baseRow.find('.modalQtyInput').val());
+        //     const baseUnit = $baseRow.find('.modalMeasurementInput').val().trim().toLowerCase();
+
+        //     if (!baseQty || !baseUnit) {
+        //         console.warn('Base quantity or unit is missing.');
+        //         return;
+        //     }
+
+        //     function updateNutrition(currentQtyRaw, currentUnit) {
+        //         const currentQty = parseFraction(currentQtyRaw);
+        //         if (!currentQty || !currentUnit) return;
+
+        //         currentUnit = currentUnit.toLowerCase();
+        //         let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
+        //         let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
+
+        //         if (!baseEquivalent || !currentEquivalent) {
+        //             console.warn('Unknown unit used in conversion.');
+        //             return;
+        //         }
+
+        //         const baseGrams = baseQty * baseEquivalent;
+        //         const currentGrams = currentQty * currentEquivalent;
+
+        //         const multiplier = currentGrams / baseGrams;
+
+        //         $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
+        //         $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
+        //         $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
+        //         $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
+
+        //     }
+
+        //     $rows.find('.modalQtyInput').on('input', function () {
+        //         const $row = $(this).closest('.qty-unit-row');
+        //         const newQtyRaw = $(this).val();
+        //         const newUnit = $row.find('.modalMeasurementInput').val().trim().toLowerCase();
+
+        //         updateNutrition(newQtyRaw, newUnit);
+        //     });
+
+        //     // Utility: Convert fractions like "1/2" or "3/4" to decimal numbers
+        //     function parseFraction(input) {
+        //         if (!input) return null;
+        //         input = input.trim();
+        //         // Direct number
+        //         if (!isNaN(input)) return parseFloat(input);
+
+        //         // Handle fractions like "1/2", "3/4", or even "1 1/2"
+        //         const parts = input.split(' ');
+        //         let result = 0;
+
+        //         parts.forEach(part => {
+        //             if (part.includes('/')) {
+        //                 const [num, denom] = part.split('/');
+        //                 if (!isNaN(num) && !isNaN(denom)) {
+        //                     result += parseFloat(num) / parseFloat(denom);
+        //                 }
+        //             } else if (!isNaN(part)) {
+        //                 result += parseFloat(part);
+        //             }
+        //         });
+
+        //         return result || null;
+        //     }
+        // }
 
         function setupDynamicMeasurementSync(modal) {
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
@@ -2696,6 +3002,7 @@
                 alert('Please select at least one quantity/measurement option.');
                 return;
             }
+            let foundChecked = false;
 
             $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
                 const $row = $(this);
@@ -3208,7 +3515,8 @@
                                 qty: item.qty,
                                 unit: item.unit,
                                 description: item.description,
-                                selected_qty_unit: item.selected_qty_unit
+                                selected_qty_unit: item.selected_qty_unit,
+                                has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
                         };
                     },
@@ -3220,8 +3528,11 @@
 
             function formatFood(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
+
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px;">
                         <span>${food.text}</span>
                     </div>
@@ -3230,8 +3541,11 @@
 
             function formatFoodSelection(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
+
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 25px; height: 25px; margin-right: 5px;">
                         <span>${food.text}</span>
                     </div>
@@ -3362,7 +3676,8 @@
                                 qty: item.qty,
                                 unit: item.unit,
                                 description: item.description,
-                                selected_qty_unit: item.selected_qty_unit
+                                selected_qty_unit: item.selected_qty_unit,
+                                has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
                         };
                     },
@@ -3374,8 +3689,11 @@
 
             function formatFood(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
+
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px;">
                         <span>${food.text}</span>
                     </div>
@@ -3384,8 +3702,11 @@
 
             function formatFoodSelection(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
+
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 25px; height: 25px; margin-right: 5px;">
                         <span>${food.text}</span>
                     </div>
@@ -3626,7 +3947,8 @@
                                 qty: item.qty,
                                 unit: item.unit,
                                 description: item.description,
-                                selected_qty_unit: item.selected_qty_unit
+                                selected_qty_unit: item.selected_qty_unit,
+                                has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
                         };
                     },
@@ -3638,8 +3960,10 @@
 
             function formatFood(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px;">
                         <span>${food.text}</span>
                     </div>
@@ -3648,8 +3972,10 @@
 
             function formatFoodSelection(food) {
                 if (!food.id) return food.text;
+                const dot = food.has_flags ? '<span style="color: purple; font-size: 24px; margin-right: 6px;">&#9679;</span>' : '';
                 return $(`
                     <div style="display: flex; align-items: center;">
+                        ${dot}
                         <img src="${food.image}" style="width: 25px; height: 25px; margin-right: 5px;">
                         <span>${food.text}</span>
                     </div>
@@ -4185,7 +4511,7 @@
                                     swapFoods.map(swapItem => `
                                         <li>
                                             <div class="d-flex align-items-start">
-                                                <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${food.id}][]" value="${swapItem.id}" class="form-check-input me-2 d-none" data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-fat="${swapItem.energy}"  checked>
+                                                <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${food.id}][]" value="${swapItem.id}" class="form-check-input me-2 d-none" data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${swapItem.energy}"  checked>
                                                 <label>${swapItem.name} (${swapItem.qty} ${swapItem.unit})</label>
                                             </div>
                                             <p class="mb-0 px-2">Energy: ${parseFloat(swapItem.energy)}kJ | Protein: ${Math.round(swapItem.protein)}g | Carb: ${Math.round(swapItem.carbs)}g | Fat: ${Math.round(swapItem.fat)}g</p>

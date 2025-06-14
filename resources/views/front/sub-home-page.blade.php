@@ -102,7 +102,7 @@
                         <div class="text-center banner-text mt-auto pt-5">
                             {!! $section->content !!}
                             <a href="#" class="btn btn-primary" id="takeFreeTest">
-                                <span class="me-1">Take Free Test</span>
+                                <span class="me-1">Take Free Quiz</span>
                                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
                                     <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -258,8 +258,8 @@
                                                     data-plan-id="{{ $plan->id }}" 
                                                     data-plan-name="{{ $plan->name }}" 
                                                     data-plan-price="{{ $plan->price }}">
-                                                <span class="full-text">Purchase Now: $250</span>
-                                                <span class="mobile-text d-none">Purchase Now:<br>$250</span>
+                                                <span class="full-text">Purchase Now: ${{ $plan->price }}</span>
+                                                <span class="mobile-text d-none">Purchase Now:<br>${{ $plan->price }}</span>
                                             </button>
                                         </div>
                                     @endif
@@ -646,7 +646,7 @@
                         </div>
                     </div>
 
-                    <div class="nutrition-login-book">
+                    <div class="nutrition-login-book card-body p-0">
                         <div class="card border-0 shadow-none overflow-hidden mt-3 talk-expert-box">
                             <div class="card-body p-4">
                                 <div class="p-md-3 row">
@@ -1070,6 +1070,7 @@
                     </div>
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
                     <p class="mb-2" id="thankYouMessage">Your payment was successful.</p>
+                    <p class="mb-2">Your plan will be created by Kez and sent via email in the coming days.</p>
                     <a href="#" id="planUrlLink" class="btn btn-primary mt-2">Order Your Personalised Plan</a>
 
                     <!-- <button type="button" class="btn btn-primary w-50 mt-3" data-bs-dismiss="modal">Close</button> -->
@@ -2426,7 +2427,7 @@
                                                 <div class="col-lg-5">
                                                     <div class="">
                                                         <figure class="m-auto" style="max-width: inherit;">
-                                                            <img src="{!! frontAssets('images/purchase-plan-image.png') !!}" alt="">
+                                                            <img src="{!! frontAssets('images/purchase-plan-image.png') !!}" class="img-fluid" alt="">
                                                         </figure>
                                                         <!-- <div class="kerry-info">
                                                             <h5>Kerry O'Bryan</h5>
@@ -2458,7 +2459,7 @@
                                                 <div class="col-lg-5">
                                                     <div class="">
                                                         <figure class="m-auto" style="max-width: inherit;">
-                                                            <img src="{!! frontAssets('images/your-purchased-plan-0001.png') !!}" alt="">
+                                                            <img src="{!! frontAssets('images/your-purchased-plan-0001.png') !!}" class="img-fluid" alt="">
                                                         </figure>
                                                         <!-- <div class="kerry-info">
                                                             <h5>Kerry O'Bryan</h5>
@@ -2471,14 +2472,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="nutrition-login-book">
+                                <div class="nutrition-login-book card-body p-0">
                                     <div class="card border-0 shadow-none overflow-hidden mt-3 talk-expert-box">
                                         <div class="card-body p-4">
                                             <div class="p-md-3 row">
                                                 <div class="col-lg-6">
                                                     <h6>Powered by BioHealth<span>Passport</span></h6>
                                                     <figure>
-                                                        <img src="https://booking.biohealthpassport.com.au/public/uploads/front_logo/1727981512_1727875441_logo.png" alt="">
+                                                        <img src="https://booking.biohealthpassport.com.au/public/uploads/front_logo/1727981512_1727875441_logo.png" class="img-fluid" alt="">
                                                     </figure>
                                                     <h3>Get answers from a real-life expert. Not a chat bot.</h3>
                                                     <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-white" target="_blank">Book Now 
@@ -2490,7 +2491,7 @@
                                                 <div class="col-lg-6">
                                                     <div class="kerry-info-box">
                                                         <figure>
-                                                            <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png" alt="">
+                                                            <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png" alt="" class="img-fluid">
                                                         </figure>
                                                         <div class="kerry-info">
                                                             <h5>Kerry O'Bryan</h5>
@@ -2740,6 +2741,17 @@
         $(document).ready(function () {
             // Show the modal on clicking the start test button
             $('#takeFreeTest').on('click', function () {
+                // Track quiz click
+                $.ajax({
+                    url: "{{ route('front.track.quiz.click') }}",
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        console.log('Quiz click tracked');
+                    }
+                });
                 $('#TakeTestModel').modal('show');
             });
 
@@ -2936,6 +2948,22 @@
                 localStorage.setItem("testStepsData", JSON.stringify(stepData));
 
                 console.log(`Step Data Collected for ${formClass}:`, stepData);
+                // Track progress
+                $.ajax({
+                    url: "{{ route('front.track.quiz.progress') }}",
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    data: {
+                        stepData: stepData,
+                        currentStep: currentStep
+                    },
+                    success: function(response) {
+                        console.log('Quiz progress tracked');
+                    }
+                });
+
                 return stepData;
             }
 
@@ -3071,7 +3099,7 @@
                     collectStepData(currentStep);
 
                     // Update the meter arrows dynamically as the user progresses
-                    updateMeterArrows('nutrition-form');
+                    // updateMeterArrows('nutrition-form');
 
                     // Update modal title dynamically based on the step
                     updateModalTitle(targetStep);
@@ -3124,13 +3152,13 @@
                 // localStorage.setItem("testStepsData", JSON.stringify(stepsData));
                 localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
 
-                console.log("Total Answer Counts by Form: ", totalAnswerCounts);
+                // console.log("Total Answer Counts by Form: ", totalAnswerCounts);
 
-                $('#div9').css('display', 'block');
-                $('#div8').css('display', 'none');
-                $('#step-9').addClass('active');
+                // $('#div9').css('display', 'block');
+                // $('#div8').css('display', 'none');
+                // $('#step-9').addClass('active');
 
-                updateMeterArrows('nutrition-form');
+                // updateMeterArrows('nutrition-form');
 
                 google.accounts.id.initialize({
                     client_id: "293809303653-og7a8udbu78o7gjaffkm7vq1jjoh3cnl.apps.googleusercontent.com", // Replace with your real client ID
@@ -3166,6 +3194,21 @@
                     console.log("User Data:", data);
 
                     if (data.status == "logged_in") {
+                        // Track completion
+                        $.ajax({
+                            url: "{{ route('front.track.quiz.completion') }}",
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            data: {
+                                userId: user_id,
+                                email: $('#email').val()
+                            },
+                            success: function(response) {
+                                console.log('Quiz completion tracked');
+                            }
+                        });
                         // Google login successful, now send questionnaire data
                         sendQuestionnaireData(data.user_id);
                     } else {
@@ -3257,7 +3300,22 @@
                     success: function (response) {
                         if(response.status == "success") {
                             console.log("Form submitted successfully!", response);
-                        
+                            
+                            // Track completion
+                            $.ajax({
+                                url: "{{ route('front.track.quiz.completion') }}",
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                data: {
+                                    userId: response.user_id,
+                                    email: email
+                                },
+                                success: function(response) {
+                                    console.log('Quiz completion tracked');
+                                }
+                            });
                             // Close modal
                             $('#detailsModal').modal('hide');
                             $('#TakeTestModel').removeClass('blur-background');
@@ -3403,7 +3461,27 @@
                                 data: JSON.stringify({ userId, name, email, phone, testData, totalAnswerCount }),
                                 success: function () {
                                     // alert("Registration and Test Data Submission Successful!");
+                                    // Track completion
+                                    $.ajax({
+                                        url: "{{ route('front.track.quiz.completion') }}",
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                        },
+                                        data: {
+                                            userId: userId,
+                                            email: email
+                                        },
+                                        success: function(response) {
+                                            console.log('Quiz completion tracked');
+                                        }
+                                    });
 
+                                    $('#div9').css('display', 'block');
+                                    $('#div8').css('display', 'none');
+                                    $('#step-9').addClass('active');
+
+                                    updateMeterArrows('nutrition-form');
                                     // Clear localStorage and close the modal
                                     localStorage.removeItem("testStepsData");
                                     localStorage.removeItem("totalAnswerCounts");
@@ -3522,6 +3600,30 @@
                 registerModal.modal('show');
             });
 
+            // Add this after your existing registration modal code
+            $('#registerModal').on('hidden.bs.modal', function () {
+                // Check if we have test data in localStorage (indicating quiz was completed)
+                const testData = JSON.parse(localStorage.getItem("testStepsData"));
+                if (testData) {
+                    // Track completion without email
+                    $.ajax({
+                        url: "{{ route('front.track.quiz.completion') }}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        data: {
+                            userId: null,
+                            email: null
+                        },
+                        success: function(response) {
+                            console.log('Quiz completion tracked (modal closed)');
+                        }
+                    });
+                }
+                $('#TakeTestModel').removeClass('blur-background');
+            });
+
             function showThankYouModal() {
                 // Set dynamic content
                 const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
@@ -3631,8 +3733,7 @@
                 var price = $(this).data('plan-price');     // Get the plan price (if needed)
                 
                 // Update modal title with plan name (optional)
-                $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text());
-
+                ('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + '($' + price+')');
                 // Check if the user is authenticated
                 var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
                 var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};

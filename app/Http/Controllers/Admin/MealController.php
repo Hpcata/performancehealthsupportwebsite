@@ -203,11 +203,11 @@ class MealController extends Controller
                                         'swap_item_id' => $swapItem->id,
                                         'qty' => $firstQty,
                                         'unit' => $firstUnit,
-                                        'carbs' => $request->carbs[$index] ?? '0',
-                                        'fat' => $request->fat[$index] ?? '0',
-                                        'protein' => $request->protein[$index] ?? '0',
-                                        'energy' => $request->energy[$index] ?? '0',
-                                        'selected_qty_unit' => $decodedQtyUnits
+                                        'carbs' => $swapItem->carbs ?? '0',
+                                        'fat' => $swapItem->fat ?? '0',
+                                        'protein' => $swapItem->protein ?? '0',
+                                        'energy' => $swapItem->energy ?? '0',
+                                        'selected_qty_unit' => $swapItem->selected_qty_unit ?? null
                                     ]);
                                 }
                             }
@@ -408,7 +408,7 @@ class MealController extends Controller
                                         ->where('meal_id', $meal->id)
                                         ->where('item_id', $item->id)
                                         ->where('swap_item_id', $swapItem->id)
-                                        ->exists();
+                                        ->first();
 
                                     if (!$alreadyExists) {
                                         \App\Models\UserItemSwap::create([
@@ -418,12 +418,22 @@ class MealController extends Controller
                                             'swap_item_id' => $swapItem->id,
                                             'qty' => $firstQty,
                                             'unit' => $firstUnit,
-                                            'carbs' => $request->carbs[$index] ?? '0',
-                                            'fat' => $request->fat[$index] ?? '0',
-                                            'protein' => $request->protein[$index] ?? '0',
-                                            'energy' => $request->energy[$index] ?? '0',
-                                            'selected_qty_unit' => $decodedQtyUnits
+                                            'carbs' => $swapItem->carbs ?? '0',
+                                            'fat' => $swapItem->fat ?? '0',
+                                            'protein' => $swapItem->protein ?? '0',
+                                            'energy' => $swapItem->energy ?? '0',
+                                            'selected_qty_unit' => $swapItem->selected_qty_unit ?? null
                                         ]);
+                                    } else {
+                                        // Update existing swap item
+                                        $alreadyExists->qty = $firstQty;
+                                        $alreadyExists->unit = $firstUnit;
+                                        $alreadyExists->carbs = $swapItem->carbs ?? '0';
+                                        $alreadyExists->fat = $swapItem->fat ?? '0';
+                                        $alreadyExists->protein = $swapItem->protein ?? '0';
+                                        $alreadyExists->energy = $swapItem->energy ?? '0';
+                                        $alreadyExists->selected_qty_unit = $swapItem->selected_qty_unit ?? null;
+                                        $alreadyExists->save();
                                     }
                                 }
                             }

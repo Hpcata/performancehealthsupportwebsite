@@ -94,7 +94,7 @@
                             </figure>
                         </div>
                         <div class="nutrition-plan-img">
-                            <figure style="padding-top:80%">
+                            <figure style="">
                                 <img src="{!! frontAssets('images/nutrition-supplements-1.jpg') !!}" alt="images/nutrition-supplements.jpg" alt="">
                             </figure>
                         </div>
@@ -166,37 +166,48 @@
                                 </button>
                                 <div class="card border-0 shadow-none">
                                     <div class="card-body nutrition-profile-info">
-                                        <h4 class="">
-                                            <span class="me-auto">{{ $profileDetails['Name'] ?? 'Nill' }}</span>
-                                            <button class="btn btn-light edit-icon " id="editNameButton"
+                                        <h4 class="text-center">
+                                            <span class="mx-auto">{{ $profileDetails['Name'] ?? 'Nill' }}</span>
+                                            <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editNameModal"
                                                 data-form-name="profile_name" data-question="Name" data-answer="{{ $profileDetails['Name'] ?? 'Nill' }}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                         </h4>
-                                        <ul>
-                                            <li>Sport: {{ !empty($profileDetails['Sport']) ? $profileDetails['Sport'] : 'N/A' }}
-                                                <!-- <button class="btn btn-light edit-icon add-sport">
-                                                    <i class="fas fa-edit"></i>
-                                                </button> -->
-                                            </li>
-                                            <li>Weight: {{ !empty($profileDetails['Current body weight (kg) (if known):']) ? $profileDetails['Current body weight (kg) (if known):'] : 'N/A' }} kg
-                                                <!-- <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-form-name="physical_measures" data-question="Current body weight (kg) (if known):" data-answer="{{ $profileDetails['Current body weight (kg) (if known):'] ?? 'Nill' }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button> -->
-                                            </li>
-                                            <li><a href="#" class="text-decoration-underline" id="weight-tracking">Track Your Weight</a></li>
-                                            <li>Height: {{ !empty($profileDetails['Height (cm):']) ? $profileDetails['Height (cm):'] : 'N/A' }} cm
-                                                <button class="btn btn-light edit-icon" id="editHeightButton" data-type="physical_measures"
-                                                    data-form-name="physical_measures" data-question="Height (cm):" data-answer="{{ $profileDetails['Height (cm):'] ?? 'Nill' }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </li>
 
-                                            <li><a href="#" class="text-decoration-underline report-link" id="blood-report" data-report-type="medical_history">Blood Report</a></li>
-
-                                            <li><a href="#" class="text-decoration-underline report-link" id="body-composition-report" data-report-type="physical_measures">Body Composition Report</a></li>
+                                        <ul class="mb-3">
+                                            <li>Sport: N/A</li>
                                         </ul>
+
+                                        <!-- Toggle button -->
+                                        <!-- <button class="btn-outline-primary btn-sm mb-2 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#profileDetailsCollapse" aria-expanded="false" aria-controls="profileDetailsCollapse">
+                                            Health Data
+                                        </button> -->
+                                        <a data-bs-toggle="collapse" href="#profileDetailsCollapse" role="button" aria-expanded="false" aria-controls="profileDetailsCollapse" class="text-decoration-none mt-3"> Health Data : 
+                                            <!-- <i class="fas fa-chevron-down pull-right"></i> -->
+                                        </a>
+                                        <!-- Collapsible section -->
+                                        <div class="collapse" id="profileDetailsCollapse">
+                                            <ul>
+                                                <li>
+                                                    Weight: {{ !empty($profileDetails['Current body weight (kg) (if known):']) ? $profileDetails['Current body weight (kg) (if known):'] : 'N/A' }} kg
+                                                </li>
+                                                <li><a href="#" class="text-decoration-underline" id="weight-tracking">Track Your Weight</a></li>
+                                                <li>
+                                                    Height: {{ !empty($profileDetails['Height (cm):']) ? $profileDetails['Height (cm):'] : 'N/A' }} cm
+                                                    <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editHeightModal"
+                                                        data-type="physical_measures" data-form-name="physical_measures"
+                                                        data-question="Height (cm):" data-answer="{{ $profileDetails['Height (cm):'] ?? 'Nill' }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="text-decoration-underline report-link" id="blood-report" data-report-type="medical_history">Blood Report</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="text-decoration-underline report-link" id="body-composition-report" data-report-type="physical_measures">Body Composition Report</a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>                            

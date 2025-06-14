@@ -357,7 +357,7 @@ class PurchasePlanController extends Controller
                         ->pluck('meal_id')
                         ->toArray();
             
-                    $newMeals = Arr::flatten($meals[$planId]);
+                    $newMeals = isset($meals[$planId]) ? Arr::flatten($meals[$planId]) : [];
                     $mealsToRemove = array_diff($existingMeals, $newMeals);
             
                     if (!empty($mealsToRemove)) {
@@ -2187,7 +2187,7 @@ class PurchasePlanController extends Controller
                                 'selected_qty_unit' => $swapItem->selected_qty_unit,
                             ];
                         });
-                        $swapItems = [];
+                        // $swapItems = [];
                         // dd($swapItems);
                     } else {
                         // dd($swapItems);
@@ -2287,7 +2287,6 @@ class PurchasePlanController extends Controller
                     'swapItems' => $swapItems,
                     'is_new' => $isNew
                 ];
-                dd($item);
             });
 
         }

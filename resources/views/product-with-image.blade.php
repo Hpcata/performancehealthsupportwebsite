@@ -122,6 +122,11 @@
                                                     data-serving-pack="{{ $product['nutrition']['serving_per_pack'] ?? '0' }}"
                                                     data-serving-size="{{ $product['nutrition']['serving_size'] ?? '0' }}"
                                                     data-fat="{{ $product['nutrition']['fat'] ?? '0' }}"
+                                                    data-energy="{{ $product['nutrition']['energy'] ?? '0' }}"
+                                                    data-saturated="{{ $product['nutrition']['saturated'] ?? '0' }}"
+                                                    data-sugars="{{ $product['nutrition']['sugars'] ?? '0' }}"
+                                                    data-dietary-fibre="{{ $product['nutrition']['dietary_fibre'] ?? '0' }}"
+                                                    data-sodium="{{ $product['nutrition']['sodium'] ?? '0' }}"
                                                     data-category="{{ $product['category'] ?? '' }}">
                                                     Add Food
                                                 </button>
@@ -195,6 +200,11 @@
                 const protein = $(this).data('protein');
                 const carbs = $(this).data('carbs');
                 const fat = $(this).data('fat');
+                const energy = $(this).data('energy');
+                const saturated = $(this).data('saturated');
+                const sugars = $(this).data('sugars');
+                const dietary_fibre = $(this).data('dietary-fibre');
+                const sodium = $(this).data('sodium');
                 const category = $(this).data('category');
                 const serving_per_pack = $(this).data('serving-pack');
                 const serving_size = $(this).data('serving-size');
@@ -211,6 +221,11 @@
                         protein: protein,
                         carbs: carbs,
                         fat: fat,
+                        energy: energy,
+                        saturated: saturated,
+                        sugars: sugars,
+                        dietary_fibre: dietary_fibre,
+                        sodium: sodium,
                         category: category,
                         serving_per_pack: serving_per_pack,
                         serving_size: serving_size,

@@ -18,11 +18,11 @@ class ItemController extends Controller
             $query = $request->input('query');
             $foodId = $request->input('food_id') ?? null;
             if($foodId){
-                $items = Item::where('id', $foodId)
+                $items = Item::with('flags')->where('id', $foodId)
                     ->orderBy('updated_at', 'DESC')
                     ->first();
             }else {
-                $items = Item::with('category')
+                $items = Item::with('category', 'flags')
                         ->where(function ($q) use ($query) {
                             $words = preg_split('/\s+/', trim($query)); // Split query into words
 
@@ -42,7 +42,7 @@ class ItemController extends Controller
             return response()->json(['items' => $items]);
         }
 
-        $items = Item::with('meals', 'swapItems')->orderBy('updated_at', 'DESC')->get();
+        $items = Item::with('meals', 'swapItems', 'flags')->orderBy('updated_at', 'DESC')->get();
         return view('backend.pages.item.index', compact('items'));
     }
 
@@ -396,19 +396,20 @@ class ItemController extends Controller
             return response()->json(['error' => 'Food ID is required'], 400);
         }
 
-        $item = Item::with('flags:id,name') // Load only necessary fields from flags
-                    ->select('id', 'title') // Select only needed item fields
+        $item = Item::with(['flags:id,name', 'category:id,name']) // Load only necessary fields from flags
+                    ->select('id', 'title', 'category_id') // Select only needed item fields
                     ->find($foodId);
 
         if (!$item) {
             return response()->json(['error' => 'Food not found'], 404);
         }
-
+        // dd($item);
         return response()->json([
             'item' => [
                 'id' => $item->id,
                 'title' => $item->title,
                 'flags' => $item->flags, // Only id and name from related flags
+                'category' => $item->category, // Only id and name from related flags
             ]
         ]);
     }

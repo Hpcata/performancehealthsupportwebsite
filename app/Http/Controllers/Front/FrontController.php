@@ -34,6 +34,8 @@ use App\Models\GoalHistory;
 use App\Mail\SportInterestMail;
 use Carbon\Carbon;
 use GrahamCampbell\ResultType\Success;
+use App\Models\QuizLog;
+use App\Mail\QuizSubmittedMail;
 
 class FrontController extends Controller
 {
@@ -638,6 +640,9 @@ class FrontController extends Controller
         $questionnaire->supplement_score     = $supplementScore;
         $questionnaire->supplement_feedback = $supplementFeedback;
         $questionnaire->save();
+
+        Mail::to('kerry@performancehealthsupport.com')->send(new QuizSubmittedMail($user, $questionnaire));
+        // Mail::to('kartikvadhaiya6656@gmail.com')->send(new QuizSubmittedMail($user, $questionnaire));
 
         // Return success response
         return response()->json(['success' => true, 'message' => 'Test data submitted successfully']);
@@ -1417,22 +1422,25 @@ class FrontController extends Controller
             $nutritionFeedback  = $this->getFeedbackMessage($nutritionScore, 'nutrition-form');
             $sportsFeedback     = $this->getFeedbackMessage($sportsScore, 'sports-form');
             $supplementFeedback = $this->getFeedbackMessage($supplementScore, 'supplement-form');
+            if (!empty($request->testData)) {
+                $questionnaire = new Questionnaire();
+                $questionnaire->user_id = $user->id;
+                $questionnaire->name    = $user->name;
+                $questionnaire->email   = $user->email;
+                $questionnaire->phone   = $request->phone;
+                $questionnaire->question = 'free-test';
+                $questionnaire->answer   = json_encode($request->testData);
+                $questionnaire->nutrition_score      = $nutritionScore;
+                $questionnaire->nutrition_feedback   = $nutritionFeedback;
+                $questionnaire->sports_score         = $sportsScore;
+                $questionnaire->sports_feedback      = $sportsFeedback;
+                $questionnaire->supplement_score     = $supplementScore;
+                $questionnaire->supplement_feedback = $supplementFeedback;
+                $questionnaire->save();
 
-            $questionnaire = new Questionnaire();
-            $questionnaire->user_id = $user->id;
-            $questionnaire->name    = $user->name;
-            $questionnaire->email   = $user->email;
-            $questionnaire->phone   = $request->phone;
-            $questionnaire->question = 'free-test';
-            $questionnaire->answer   = json_encode($request->testData);
-            $questionnaire->nutrition_score      = $nutritionScore;
-            $questionnaire->nutrition_feedback   = $nutritionFeedback;
-            $questionnaire->sports_score         = $sportsScore;
-            $questionnaire->sports_feedback      = $sportsFeedback;
-            $questionnaire->supplement_score     = $supplementScore;
-            $questionnaire->supplement_feedback = $supplementFeedback;
-            $questionnaire->save();
+                Mail::to('kerry@performancehealthsupport.com')->send(new QuizSubmittedMail($user, $questionnaire));
 
+            }
             return response()->json([
                 'status' => 'success',
                 'user_id' => $user->id,
@@ -1450,6 +1458,8 @@ class FrontController extends Controller
                 'password' => Hash::make($request->input('password')), // Hashed password of the admin user.
             ]);
             
+            $user = \App\Models\User::where('email', $request->email)->first();
+
             $nutritionScore  = $request->totalAnswerCounts['nutrition-form'] ?? 0;
             $sportsScore     = $request->totalAnswerCounts['sports-form'] ?? 0;
             $supplementScore = $request->totalAnswerCounts['supplement-form'] ?? 0;
@@ -1473,6 +1483,8 @@ class FrontController extends Controller
             $questionnaire->supplement_score     = $supplementScore;
             $questionnaire->supplement_feedback = $supplementFeedback;
             $questionnaire->save();
+
+            Mail::to('kerry@performancehealthsupport.com')->send(new QuizSubmittedMail($user, $questionnaire));
 
             return response()->json([
                 'status' => 'success',
@@ -1525,6 +1537,82 @@ class FrontController extends Controller
             'success' => true,
             'redirect_url' => route('front.profile', ['id' => $id]) . '?admin_view=1'
         ]);
+    }
+
+    public function trackQuizClick(Request $request)
+    {
+        $ip = $request->ip();
+        $userAgent = $request->header('User-Agent');
+
+        $quizLog = QuizLog::firstOrCreate(
+            ['ip_address' => $ip],
+            [
+                'user_agent' => $userAgent,
+                'free_quiz_clicks' => 0
+            ]
+        );
+
+        $quizLog->increment('free_quiz_clicks');
+
+        return response()->json(['success' => true]);
+    }
+
+    public function trackQuizProgress(Request $request)
+    {
+        $ip = $request->ip();
+        $userAgent = $request->header('User-Agent');
+        $stepData = $request->input('stepData');
+        $currentStep = $request->input('currentStep');
+
+        $quizLog = QuizLog::firstOrCreate(
+            ['ip_address' => $ip],
+            [
+                'user_agent' => $userAgent,
+                'completed_steps' => []
+            ]
+        );
+
+        $completedSteps = $quizLog->completed_steps ?? [];
+        $completedSteps[$currentStep] = $stepData;
+        
+        $quizLog->update([
+            'completed_steps' => $completedSteps
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function trackQuizCompletion(Request $request)
+    {
+        $ip = $request->ip();
+        $userAgent = $request->header('User-Agent');
+        $email = $request->input('email');
+        $userId = $request->input('userId');
+
+        $quizLog = QuizLog::firstOrCreate(
+            [
+                'ip_address' => $ip,
+                'email' => $email
+            ],
+            [
+                'user_agent' => $userAgent,
+                'completed_steps' => []
+            ]
+        );
+
+        if ($email) {
+            $quizLog->update([
+                'email' => $email,
+                'user_id' => $userId,
+                'completed_with_email' => true
+            ]);
+        } else {
+            $quizLog->update([
+                'completed_without_email' => true
+            ]);
+        }
+
+        return response()->json(['success' => true]);
     }
 
 }

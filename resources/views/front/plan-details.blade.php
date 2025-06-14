@@ -3,6 +3,17 @@
 @section('title', $plan->name)
 
 @section('content')
+<style>
+.meal-checkbox {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    width: 20px;
+    height: 20px;
+}
+
+</style>
     <?php
         $userPlan = \App\Models\UserPlan::where('user_id', $user->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
         $isPlanCreated = $userPlan ? true : false;
@@ -49,7 +60,14 @@
                             <a href="javascript:void(0);" class="btn btn-primary" data-user-id="{{ $user->id }}" data-plan-id="{{ $plan->id}}">Nutrition Plan</a>
                             <a href="javascript:void(0);" class="" id="">Competition Plan</a>
                             <a href="javascript:void(0);" class="" id="">Injury Plan</a>
-                            <a href="javascript:void(0);" class="" id="showAllMeals">All Meals</a>
+                            <a href="javascript:void(0);"
+                                class="btn btn-primary"
+                                id="showAllMeals"
+                                data-user-id="{{ $user->id }}"
+                                data-plan-id="{{ $plan->id }}"
+                                data-fetch-route="{{ route('user.plan.meals', ['user' => $user->id, 'plan' => $plan->id]) }}">
+                                All Meals
+                            </a>                        
                         </div>
                     </div>
                 </div>
@@ -82,8 +100,15 @@
                                         <h5>{{ $plan->mealTime->title }}</h5>
                                         <p></p>
 
-                                        {{-- Show View Details button only if mealTimes exist --}}
-                                        @if($hasValidMeal)
+                                        <a href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" 
+                                            class="btn btn-primary view-details-btn"
+                                            data-category-id="{{ $plan->mealTime->id }}" 
+                                            data-category-name="{{ $plan->mealTime->title }}">
+                                                View Details
+                                        </a>
+
+                                        {{-- 
+                                        @if(!$hasValidMeal)
                                             <a href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" 
                                             class="btn btn-primary view-details-btn"
                                             data-category-id="{{ $plan->mealTime->id }}" 
@@ -93,7 +118,7 @@
                                         @else
                                             <a href="javascript:void(0);" class="btn btn-primary view-meal-modal" data-meal-time-id="{{ $plan->mealTime->id }}" data-user-meal-time-id="{{ $plan->id }}" data-meal-time-name="{{ $plan->mealTime->title }}">View Details</a>
                                         @endif
-
+                                        --}}
                                     </div>
                                 </div>
                             @endif
@@ -264,10 +289,28 @@
         </div>
     </div>
 
+    <div class="modal" id="mealsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">All Meals</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="mealListContainer"></div> <!-- Meals Render Here -->
+                </div>
+
+                <div class="modal-footer">
+                    <button id="saveSelectedMeals" class="btn btn-success">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script>
 
-    const baseUrl = "{{ asset('private/public/storage') }}";
+    // const baseUrl = "{{ asset('private/public/storage') }}";
     const user = @json($userPlan);
     const userId = user.user_id;
     const userPlanId = user.id;
@@ -376,7 +419,7 @@
         $('#selectAllCheckbox').prop('checked', allChecked);
     });
 
-     $(document).on('click', '#fetchAllMeals', function () {
+    $(document).on('click', '#fetchAllMeals', function () {
         $('#ShoppingModal .modal-body').html('<p>Loading...</p>');
         $('#ShoppingModal').modal('show');
 
@@ -1393,5 +1436,127 @@
             $('#mealItemModel').removeClass('blur-background');
         });
     });
+
+    $(document).ready(function () {
+        const mealsModal = new bootstrap.Modal($('#mealsModal')[0]);
+
+        // Open modal and fetch data
+        $('#showAllMeals').on('click', function () {
+            const fetchUrl = $(this).data('fetch-route');
+
+            $.ajax({
+                url: fetchUrl,
+                type: 'GET',
+                success: renderMealsModal,
+                error: function (xhr) {
+                    alert('Error fetching meals: ' + xhr.responseText);
+                }
+            });
+        });
+
+        // Render all meals grouped by category
+        function renderMealsModal(data) {
+            $('#mealListContainer').empty(); // Clear old content
+
+            // Loop through each category
+            data.categories.forEach(category => {
+                const catId = category.id;
+                const catName = category.name;
+                const meals = Array.isArray(category.meals) ? category.meals : [];
+
+                if (meals.length === 0) return; // Skip empty categories
+
+                // Append Category Title
+                $('#mealListContainer').append(`
+                    <div class="mb-3">
+                        <h5 class="fw-bold border-bottom pb-1 mb-3">${catName}</h5>
+                        <div class="row" id="category-${catId}-meals"></div>
+                    </div>
+                `);
+
+                // Append Meals under the current category
+                const $container = $(`#category-${catId}-meals`);
+                meals.forEach(meal => {
+                    $container.append(`
+                        <div class="col-sm-6 col-lg-4 mb-4">
+                            <div class="nutrition-plan-box h-100 d-flex flex-column position-relative">
+                                <figure class="position-relative mb-0">
+                                    <img src="${meal.image_url}" alt="${meal.title}" class="img-fluid">
+                                    
+                                    <!-- Checkbox at top-right -->
+                                    <input type="checkbox" class="select-meal-checkbox form-check-input" data-meal-id="${meal.id}" data-user-category-id="${category.user_category_id}" data-user-meal-time-id="${category.user_meal_time_id}" data-user-plan-id="${category.user_plan_id}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 20px; height: 20px;">
+                                
+                                </figure>
+                                <h5 class="mb-3 mt-2 text-center">${meal.title}</h5>
+                                <div class="text-center mt-auto mb-2">
+                                    <button type="button" class="view-items-btn btn btn-primary"
+                                        data-meal-id="${meal.id}"
+                                        data-meal-name="${meal.title}">
+                                        Smart Swaps
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
+            });
+
+            mealsModal.show();
+        }
+
+        $('#saveSelectedMeals').on('click', function (e) {
+            e.preventDefault(); // prevent form from submitting
+            const groupedData = {};
+
+            $('.select-meal-checkbox:checked').each(function () {
+                const mealId = $(this).data('meal-id');
+                const userPlanId = $(this).data('user-plan-id');
+                const userMealTimeId = $(this).data('user-meal-time-id');
+                const userCategoryId = $(this).data('user-category-id');
+
+                if (!groupedData[userPlanId]) {
+                    groupedData[userPlanId] = {};
+                }
+                if (!groupedData[userPlanId][userMealTimeId]) {
+                    groupedData[userPlanId][userMealTimeId] = {};
+                }
+                if (!groupedData[userPlanId][userMealTimeId][userCategoryId]) {
+                    groupedData[userPlanId][userMealTimeId][userCategoryId] = [];
+                }
+
+                groupedData[userPlanId][userMealTimeId][userCategoryId].push(mealId);
+            });
+
+            // Send grouped data to Laravel and receive HTML response
+            fetch("{{ route('front.plans.preview') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": '{{ csrf_token() }}',
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user_id: userId, // replace with actual user ID
+                    plan_id: user.plan_id, // replace with actual plan ID
+                    grouped_data: groupedData
+                })
+            })
+            .then(res => res.text())
+            .then(html => {
+                console.log('12');
+                console.log(html);
+                // Inject returned HTML into modal
+                mealsModal.hide();
+                $("#plan-preview-body").html(html);
+                $("#planPreviewModal").modal("show"); // ✅ Show modal
+            })
+            .catch(err => {
+                console.error(err);
+                $("#plan-preview-body").html('<div class="text-danger">Error loading preview</div>');
+            }); 
+        });
+
+
+    });
+
 </script>
 @endsection

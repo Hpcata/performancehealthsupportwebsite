@@ -77,7 +77,7 @@ class PlanController extends Controller
         ->first();
         // dd($userMealTime);
         // $mealtime = MealTime::with('categories','categories.subcategories')->findOrFail($id);
-        return view('front.break_fast', compact('userMealTime','userPlan'));
+        return view('front.sub-category-details', compact('userMealTime','userPlan'));
     }
 
     public function getMeals(Request $request, $id)
@@ -608,8 +608,38 @@ class PlanController extends Controller
                 ->sortBy(fn($mt) => $mt->mealTime->order ?? 0)
                 ->values(); // reindex
         });
+        $printAllmeal = true;
+        return view('front.plan-preview', compact('userPlans', 'printAllmeal'));
+    }
 
-        return view('front.plan-preview', compact('userPlans'));
+    public function planPreview(Request $request)
+    {
+
+        $groupedData = $request->input('grouped_data'); // ✅ Access grouped data from AJAX
+
+        $plan = Plan::find($request->plan_id);
+        $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
+
+        $userPlans = UserPlan::with('plan', 'userMealTimes.userCategories.userMeals.userItems')
+            ->where('user_id', $request->user_id)
+            ->where(function ($query) use ($request, $subPlans) {
+                $query->where('plan_id', $request->plan_id)
+                    ->orWhereIn('plan_id', $subPlans);
+            })
+            ->get();
+
+        // Sort userMealTimes
+        $userPlans->each(function ($userPlan) {
+            $userPlan->userMealTimes = $userPlan->userMealTimes
+                ->sortBy(fn($mt) => $mt->mealTime->order ?? 0)
+                ->values();
+        });
+
+        // ✅ Now you can use $groupedData to highlight or modify view data
+        // Example: you could pass it to the view for use in blade:
+        $printAllmeal = false;
+        // dd(view('front.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal')));
+        return view('front.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal'));
     }
 
     public function getDefaultPlanDetails($id)
@@ -696,4 +726,51 @@ class PlanController extends Controller
 
         return response()->json(['meals' => $meals]);
     }
+
+     public function ajaxGetMeals(User $user, Plan $plan)
+    {
+        $userPlan = UserPlan::with([
+            'userMealTimes.userCategories.userMeals.meal',
+        ])
+        ->where('user_id', $user->id)
+        ->where('plan_id', $plan->id)
+        ->firstOrFail();
+
+        $categories = $userPlan->userMealTimes;
+
+        $result = [];
+
+        foreach ($userPlan->userMealTimes as $mealTime) {
+            foreach ($mealTime->userCategories as $userCategory) {
+                $categoryName = optional($userCategory->category)->title;
+
+                $meals = $userCategory->userMeals->map(function ($userMeal) {
+                    $meal = optional($userMeal->meal);
+                    return [
+                        'id' => $meal->id,
+                        'title' => $meal->title,
+                        'description' => $meal->description,
+                        'image_url' => $meal && $meal->image
+                            ? asset('private/public/storage/'.$meal->image)
+                            : 'https://via.placeholder.com/300x200?text=No+Image',
+                    ];
+                });
+
+                $result[] = [
+                    'user_plan_id' => $userPlan->id,
+                    'user_meal_time_id' => $mealTime->id,
+                    'user_category_id' => $userCategory->id,
+                    'meal_time_id' => $mealTime->meal_time_id,
+                    'id' => $userCategory->category_id,
+                    'name' => $categoryName,
+                    'meals' => $meals,
+                ];
+            }
+        }
+        // dd($result);
+        return response()->json([
+            'categories' => $result
+        ]);
+    }
+
 }

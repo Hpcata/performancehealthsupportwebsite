@@ -432,6 +432,11 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		Route::post('/delete-purchase-plan-food', [PurchasePlanController::class, 'deletePurchasePlanFood'])->name('admin.delete-purchase-plan-food');
 
 		Route::get('/admin/user/details', [UserController::class, 'getUserDetails'])->name('admin.user.details');
+
+		// User routes
+		Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+		Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+
 	});
 });
 
@@ -498,6 +503,7 @@ Route::group(['middleware' => 'auth'], function () {
 	// Route::get('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
 	Route::post('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
 	Route::get('/plans/preview/{id}', [FrontPlanController::class, 'preview'])->name('plans.preview');
+	Route::post('/plans/preview/', [FrontPlanController::class, 'planPreview'])->name('front.plans.preview');
 
 	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
@@ -512,8 +518,15 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::post('/upload-report', [FrontController::class, 'uploadReport'])->name('front.upload.report');
 	Route::post('/delete-report', [FrontController::class, 'deleteReport'])->name('front.delete.report');
+
+	Route::get('/user/{user}/plan/{plan}/meals', [FrontPlanController::class, 'ajaxGetMeals'])->name('user.plan.meals');
+
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');
 
 Route::post('/google/check-login', [FrontController::class, 'checkGoogleLogin'])->name('front.google.check-login');
 Route::post('/unlock-result', [FrontController::class, 'unlockFreeTestResult'])->name('front.unlock-result');
+// Quiz tracking routes
+Route::post('/track-quiz-click', [FrontController::class, 'trackQuizClick'])->name('front.track.quiz.click');
+Route::post('/track-quiz-progress', [FrontController::class, 'trackQuizProgress'])->name('front.track.quiz.progress');
+Route::post('/track-quiz-completion', [FrontController::class, 'trackQuizCompletion'])->name('front.track.quiz.completion');

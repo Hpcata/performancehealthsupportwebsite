@@ -1211,7 +1211,7 @@
                                             <div class="col-md-6">
                                                 <!-- <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][other]" value="Others" id="cuisine_other_checkbox"> -->
                                                 <label for="cuisine_other" class="form-label">Other</label>
-                                                <input type="text" id="cuisine_other" name="ans[food_preference][cuisines][other]" class="form-control" placeholder="What are your favourite dish/s?">
+                                                <input type="text" id="cuisine_other" name="ans[food_preference][cuisines][other]" class="form-control" placeholder="What are your favourite dishes?">
                                             </div>
                                         </div>
                                     </div>
@@ -1733,7 +1733,7 @@
                     </div>
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
                     <p class="mb-2">Your form is submitted.</p>
-                    <p class="mb-4">Kerry will now create your plan and let you know as soon as it's ready (48-72hrs).</p>
+                    <p class="mb-4">Your plan will be created by Kez and sent via email in the coming days.</p>
                     <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -1951,7 +1951,7 @@
             if ($checkbox.is(':checked')) {
                 $input.addClass('required-if-checked');
                 $input.attr('required', true);
-                $input.attr('placeholder', 'What are your favourite dish/s?');
+                $input.attr('placeholder', 'What are your favourite dishes?');
             } else {
                 $input.removeClass('required-if-checked');
                 $input.removeAttr('required');

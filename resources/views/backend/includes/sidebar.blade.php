@@ -11,6 +11,12 @@
 		<ul class="menu-list flex-grow-1 mt-3">
 
 			<!-- <li><a class="m-link {!! routeIsActive(backendRoute('dashboard')) !!}" href="{!! backendRoutePut('dashboard') !!}"><i class="icofont-home fs-5"></i> <span>Dashboard</span></a></li> -->
+			 <li>
+				<a class="m-link {{request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
+					<i class="icofont-ui-user fs-5"></i>
+					<span>Users</span>
+				</a>
+			</li>
 			<li>
 				<a class="m-link {{request()->routeIs('pages.*') ? 'active' : '' }}" href="{{ route('pages.index') }}">
 					<i class="icofont-page fs-5"></i>
@@ -19,8 +25,8 @@
 			</li>
 			<li>
 				<a class="m-link {{request()->routeIs('admin.plans.*') ? 'active' : '' }}" href="{{ route('admin.plans.index') }}">
-					<i class="icofont-gym-alt-3 fs-5"></i>
-					<span>Plans</span>
+					<i class="icofont-dollar fs-5"></i>
+					<span>Purchase Plans</span>
 				</a>
 			</li>
 			<li>
@@ -31,7 +37,7 @@
 			</li>
 			<li>
 				<a class="m-link {{request()->routeIs('admin.meal-times.*') ? 'active' : '' }}" href="{{ route('admin.meal-times.index') }}">
-					<i class="icofont-ui-clock fs-5"></i>
+					<i class="icofont-chart-flow fs-5"></i>
 					<span>Category</span>
 				</a>
 			</li>
@@ -58,7 +64,7 @@
 			<li>
 				<a class="m-link {{request()->routeIs('admin.purchase-plans.*') ? 'active' : '' }}" href="{{ route('admin.purchase-plans.index') }}">
 					<i class="icofont-law-document fs-5"></i>
-					<span>Purchase Plans</span>
+					<span>Athlete Plans</span>
 				</a>
 			</li>
 
@@ -70,7 +76,7 @@
 			</li>
 			<li>
 				<a class="m-link {{request()->routeIs('admin.flags.*') ? 'active' : '' }}" href="{{ route('admin.flags.index') }}">
-					<i class="icofont-culinary fs-5"></i>
+					<i class="icofont-fruits fs-5"></i>
 					<span>Preferences</span>
 				</a>
 			</li>
