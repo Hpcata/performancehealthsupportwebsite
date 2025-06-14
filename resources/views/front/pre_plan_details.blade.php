@@ -55,21 +55,21 @@
                                         <div class="form-floating my-3">
                                             <!-- Hidden question input -->
                                             <input type="date" class="form-control" name="ans[personal_details][dob]" placeholder="">
-                                            <label>Date of Birth</label>
+                                            <label>Date of Birth<small class="text-danger">*</small></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
                                         <input type="hidden" name="questions[personal_details][occupation]" value="Occupation">
                                         <div class="form-floating my-3">
                                             <input type="text" class="form-control" name="ans[personal_details][occupation]" placeholder="">
-                                            <label>Sport</label>
+                                            <label>Sport<small class="text-danger">*</small></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
                                         <input type="hidden" name="questions[personal_details][postcode]" value="Postcode">
                                         <div class="form-floating my-3">
                                             <input type="text" class="form-control" name="ans[personal_details][postcode]" placeholder="">
-                                            <label>Postcode</label>
+                                            <label>Postcode<small class="text-danger">*</small></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                            <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="2">Next</button>
+                            <button id="next" type="button" class="btn btn-primary ms-auto showStepTab pt-2 pb-2 px-4 py-4" target="2">Next</button>
                             </div>
                         </div>
                     </div>
@@ -113,8 +113,8 @@
                                         </div>
                                         <!-- File Upload Input, initially hidden -->
                                         <div id="bloodTestDateSection" style="display: none;">
-                                            <label for="bloodTestDate" class="form-label">Approx. Date:</label>
-                                            <select class="form-select" name="ans[medical_history][blood_test][date]" id="bloodTestDate">
+                                            <label for="bloodTestDate" class="form-label">Approx. Date: <small class="text-danger">*</small></label>
+                                            <select class="form-select mb-2" name="ans[medical_history][blood_test][date]" id="bloodTestDate">
                                                 <option value="">-- Select --</option>
                                                 <option value="3 months">3 months</option>
                                                 <option value="6 months">6 months</option>
@@ -125,7 +125,7 @@
                                         </div>
                                         <div id="fileUploadSection" style="display: none;">
                                             <label for="bloodTestFile" class="form-label">Optional: Upload blood test results</label>
-                                            <input type="file" class="form-control" name="ans[medical_history][blood_test_file]" id="bloodTestFile">
+                                            <input type="file" class="form-control" name="ans[medical_history][blood_test_file]" id="bloodTestFile" style="height: auto; border-radius: 5px;">
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
@@ -150,7 +150,7 @@
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" value="Mental disorder (e.g. ADHD, Anxiety, Depression)" name="ans[medical_history][diagnosed][]" id="diagnosed2">
                                                 <label class="form-check-label" for="diagnosed2">
-                                                    Mental disorder (e.g. ADHD, Anxiety, Depression)
+                                                    Mental disorder (Eg: ADHD, Anxiety, Depression)
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
@@ -252,8 +252,8 @@
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="1">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="3">Next</button>
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab pt-2 pb-2 px-4 py-4" target="1">Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab pt-2 pb-2 px-4 py-4" target="3">Next</button>
                             </div>
                         </div>
                     </div>
@@ -334,8 +334,8 @@
                                             </div>
                                             <!-- File Upload Input, initially hidden -->
                                             <div id="bodyCompositionDateSection" style="display: none;">
-                                                <label for="bodyCompositionDate" class="form-label">Approx. Date:</label>
-                                                <select class="form-select" name="ans[physical_measures][bodycomposition][date]" id="bodyCompositionDate">
+                                                <label for="bodyCompositionDate" class="form-label">Approx. Date: <small class="text-danger">*</small></label>
+                                                <select class="form-select mb-2" name="ans[physical_measures][bodycomposition][date]" id="bodyCompositionDate">
                                                     <option value="">-- Select --</option>
                                                     <option value="3 months">3 months</option>
                                                     <option value="6 months">6 months</option>
@@ -346,15 +346,15 @@
                                             </div>
                                             <div id="bodyCompositionFileInput" style="display: none;">
                                                 <label for="bodyCompositionFile" class="form-label">Optional: Upload body composition file</label>
-                                                <input type="file" class="form-control" name="ans[physical_measures][bodycomposition][]" id="bodyCompositionFile" multiple>
+                                                <input type="file" class="form-control" name="ans[physical_measures][bodycomposition][]" id="bodyCompositionFile" multiple style="height: auto; border-radius: 5px;">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step" target="2">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab next-step" target="4">Next</button>
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="2">Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab next-step pt-2 pb-2 px-4 py-4" target="4">Next</button>
                             </div>
                         </div>
                     </div>
@@ -413,15 +413,15 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="Mum" id="cookinghome1">
+                                                <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="Mother" id="cookinghome1">
                                                 <label class="form-check-label" for="cookinghome1">
-                                                    Mum
+                                                    Mother
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="Dad" id="cookinghome2">
+                                                <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="Father" id="cookinghome2">
                                                 <label class="form-check-label" for="cookinghome2">
-                                                    Dad
+                                                    Father
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
@@ -483,8 +483,8 @@
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step" target="3">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab next-step" target="5">Next</button>
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="3">Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab next-step pt-2 pb-2 px-4 py-4" target="5">Next</button>
                             </div>
                         </div>
                     </div>
@@ -747,8 +747,8 @@
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step" target="4">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab next-step" target="6">Next</button>
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="4">Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab next-step pt-2 pb-2 px-4 py-4" target="6">Next</button>
                             </div>
                         </div>
                     </div>
@@ -1072,8 +1072,8 @@
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="5">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="7">Next</button>
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="5">Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="7">Next</button>
                             </div>
                         </div>
                     </div>
@@ -1211,15 +1211,15 @@
                                             <div class="col-md-6">
                                                 <!-- <input class="form-check-input cuisines-checkbox" type="checkbox" name="ans[food_preference][cuisines][other]" value="Others" id="cuisine_other_checkbox"> -->
                                                 <label for="cuisine_other" class="form-label">Other</label>
-                                                <input type="text" id="cuisine_other" name="ans[food_preference][cuisines][other]" class="form-control" placeholder="What are your favourite dish/s?">
+                                                <input type="text" id="cuisine_other" name="ans[food_preference][cuisines][other]" class="form-control" placeholder="What are your favourite dishes?">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="6">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="8">Next</button>
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="6">Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="8">Next</button>
                             </div>
                         </div>
                     </div>
@@ -1379,8 +1379,8 @@
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="4">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="6">Next</button>
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="4">Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="6">Next</button>
                             </div>
                         </div>
                     </div>
@@ -1410,12 +1410,12 @@
                                                 <label class="form-check-label" for="relatedgoals9">Comp day nutrition</label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Weight loss" id="relatedgoals1">
-                                                <label class="form-check-label" for="relatedgoals1">Weight loss</label>
+                                                <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Weight loss" id="relatedgoals6">
+                                                <label class="form-check-label" for="relatedgoals6">Weight loss</label>
                                             </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Mass gain" id="relatedgoals2">
-                                                <label class="form-check-label" for="trelatedgoals2">Mass gain</label>
+                                                <label class="form-check-label" for="relatedgoals2">Mass gain</label>
                                             </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Leaner body composition" id="relatedgoals3">
@@ -1463,6 +1463,7 @@
                                             </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Other" id="likeassistancewith5">
+			
                                                 <label class="form-check-label" for="likeassistancewith5">Other:</label>
                                             </div>
                                         </div>
@@ -1599,8 +1600,8 @@
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step" target="7">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab next-step" target="9">Next</button>
+                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="7">Back</button>
+                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab next-step pt-2 pb-2 px-4 py-4" target="9">Next</button>
                             </div>
                         </div>
                     </div>
@@ -1710,8 +1711,8 @@
                                 </div>
                             </div>
                             <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                            <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step" target="8">Back</button>
-                                <button type="button" class="btn btn-primary ms-auto next-step" id="submit-nutrition-form">Submit</button>
+                            <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="8">Back</button>
+                                <button type="button" class="btn btn-primary ms-auto next-step pt-2 pb-2 px-4 py-4" id="submit-nutrition-form">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -1733,7 +1734,7 @@
                     </div>
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
                     <p class="mb-2">Your form is submitted.</p>
-                    <p class="mb-4">Kerry will now create your plan and let you know as soon as it's ready (48-72hrs).</p>
+                    <p class="mb-4">Your plan will be created by Kez and sent via email in the coming days.</p>
                     <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -1741,21 +1742,22 @@
     </div>
 
     <!-- Food Selection Modal -->
-    <div class="modal" id="foodModal" tabindex="-1" aria-labelledby="foodModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
+    <div class="modal" id="foodModal" tabindex="-1" aria-labelledby="foodModalLabel" aria-hidden="true"  data-bs-backdrop="static"
+     data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" style="max-width: 50%;">
+            <div class="modal-content" style="overflow-x: hidden; overflow-y: auto;">
                 <div class="modal-header">
                     <h5 class="modal-title" id="foodModalLabel">Select Food Items</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="overflow-x: hidden; overflow-y: auto; max-height: 70vh;">
 
                     <div class="row" id="foodListContainer">
                     <!-- Items inserted here -->
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="confirmFoodSelection">
+                    <button type="button" class="btn btn-primary pt-2 pb-2" id="confirmFoodSelection">
                         Confirm Selection
                     </button>
                 </div>
@@ -1773,6 +1775,11 @@
     // window.addEventListener("beforeunload", function () {
     //     localStorage.clear();
     // });
+    // const foodModal = new bootstrap.Modal(document.getElementById('foodModal'), {
+    //     backdrop: 'static',
+    //     keyboard: false
+    // });
+
     document.addEventListener("DOMContentLoaded", function () {
         const rankOptions = document.querySelectorAll(".rank-option");
 
@@ -1951,7 +1958,7 @@
             if ($checkbox.is(':checked')) {
                 $input.addClass('required-if-checked');
                 $input.attr('required', true);
-                $input.attr('placeholder', 'What are your favourite dish/s?');
+                $input.attr('placeholder', 'What are your favourite dishes?');
             } else {
                 $input.removeClass('required-if-checked');
                 $input.removeAttr('required');
@@ -1967,6 +1974,13 @@
         placeholder: 'Select foods',
         allowClear: true
     })
+
+    // ✅ Modified JavaScript for food selection with correct prefill logic
+    let selectedFoodKey = '';
+    let selectedFoodGroup = '';
+    let targetWrapper = null;
+    let activeFoodCheckbox = null;
+    let userConfirmed = false;
 
     document.addEventListener("DOMContentLoaded", () => {
         const stepCircles = document.querySelectorAll('.tab-steps');
@@ -2361,20 +2375,6 @@
             });
         }
 
-        // function showStep(stepIndex) {
-        //     console.log("Showing Step:", stepIndex);
-        //     console.log(stepTabs);
-        //     stepTabs.forEach((tab, index) => {
-        //         tab.style.display = index === stepIndex ? "block" : "none";
-        //     });
-
-        //     stepCircles.forEach((circle, index) => {
-        //         circle.classList.toggle("active", index <= stepIndex);
-        //     });
-
-        //     window.scrollTo({ top: 0, behavior: "smooth" });
-        // }
-
         function showStep(stepIndex) {
             console.log("Showing Step:", stepIndex);
             console.log(stepTabs);
@@ -2486,18 +2486,51 @@
             });
         });
         
+
+        // ✅ Real-time validation border cleanup
+        document.addEventListener("input", function (e) {
+            const input = e.target;
+            if (input.tagName === "INPUT" || input.tagName === "TEXTAREA" || input.tagName === "SELECT") {
+                validateField(input);
+            }
+        });
+
+        document.addEventListener("change", function (e) {
+            const input = e.target;
+            if (input.type === "radio" || input.type === "checkbox") {
+                validateField(input);
+            }
+        });
+
+        function validateField(input) {
+            if (!input || !input.name) return;
+
+            let isValid = true;
+
+            if ((input.type === "text" || input.type === "date" || input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "select")) {
+                isValid = input.value.trim() !== "";
+            }
+
+            if ((input.type === "radio" || input.type === "checkbox")) {
+                const checked = document.querySelector(`input[name="${input.name}"]:checked`);
+                isValid = !!checked;
+            }
+
+            if (isValid) {
+                input.style.border = "";
+
+                if (input.type === "radio" || input.type === "checkbox") {
+                    const group = document.querySelectorAll(`input[name="${input.name}"]`);
+                    group.forEach(el => el.style.border = "");
+                }
+            }
+        }
+            
         $('#thankYouModal').on('hidden.bs.modal', function () {
             if (redirectUrl) {
                 window.location.href = redirectUrl;
             }
         })
-
-        // ✅ Modified JavaScript for food selection with correct prefill logic
-        let selectedFoodKey = '';
-        let selectedFoodGroup = '';
-        let targetWrapper = null;
-        let activeFoodCheckbox = null;
-        let userConfirmed = false;
 
         // Prefill food checkboxes + hidden inputs on page load
         function prefillFoodDataFromPrevious(previousData, wrapper) {
@@ -2554,6 +2587,7 @@
                 if (this.checked) {
                     activeFoodCheckbox = this;
                     selectedFoodKey = this.dataset.foodKey;
+                    console.log(selectedFoodKey);
                     selectedFoodGroup = this.dataset.foodGroup;
                     targetWrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${selectedFoodKey}"]`);
 
@@ -2603,6 +2637,8 @@
                                 $(`.sub-food-checkbox[value="${val}"]`).prop('checked', true);
                             });
 
+                            // Set modal title using the checkbox's data-food-key attribute
+                            document.getElementById('foodModalLabel').textContent = `Select ${selectedFoodKey} Food Items`;
                             // Set select all checkbox state
                             const allChecked = $('.sub-food-checkbox').length === $('.sub-food-checkbox:checked').length;
                             $('#selectAllSubFoods').prop('checked', allChecked);
@@ -2804,6 +2840,7 @@
     // Add edit icon to labels when checkbox is checked
     document.querySelectorAll('.food-checkbox').forEach(checkbox => {
         const label = checkbox.nextElementSibling;
+        console.log(label);
         const editIcon = document.createElement('i');
         editIcon.className = 'fas fa-edit edit-icon';
         editIcon.title = 'Edit selection';
@@ -2890,6 +2927,8 @@
                             selectAllCheckbox.checked = Array.from(subCheckboxes).every(cb => cb.checked);
                         });
                     });
+
+                    document.getElementById('foodModalLabel').textContent = `Select ${selectedFoodKey} Food Items`;
 
                     $('#foodModal').modal('show');
                 },

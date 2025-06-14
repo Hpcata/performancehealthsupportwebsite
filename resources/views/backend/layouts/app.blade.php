@@ -16,6 +16,11 @@
 		.tawk-custom-color {	
 			display: none !important;
 		}
+		.page-item.active .page-link {
+			background-color: var(--primary-color) !important;
+			border-color: var(--primary-color) !important;
+			color: #ffffff ;
+		}
 	</style>
 	<!-- project css file  -->
 	<link rel="stylesheet" href="{!! backendAssets('ebazar.style.min.css') !!}">
@@ -223,10 +228,14 @@
 				responsive: true,
 				stateSave: true,
 				pageLength: 100,
-				columnDefs: [{
-					targets: [-1, -3],
-				}]
+				columnDefs: [
+					{
+						"targets": -1, // targets the last column (Action)
+						"orderable": false
+					}
+				]
 			});
+
 		// $('.deleterow').on('click', function() {
 		// 	var tablename = $(this).closest('table').DataTable();
 		// 	tablename

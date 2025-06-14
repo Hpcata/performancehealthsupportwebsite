@@ -14,12 +14,11 @@ class SubCategory extends Model
         'title',
         'description',
         'image',
-        'category_id'
     ];
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsToMany(Category::class, 'subcategory_category', 'category_id');
     }
 
     public function meals()

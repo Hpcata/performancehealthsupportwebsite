@@ -66,12 +66,14 @@
                 <div class="row g-4">
                     @if($userPlan->userCategories->count())
                         @foreach($userPlan->userCategories as $plan)
-                            @if($plan->userMeals && $plan->userMeals->count())
-                                @php
-                                    $hasValidMeal = $plan->userMeals->contains(function ($userMeal) {
-                                        return $userMeal->meal && $userMeal->meal->categories && $userMeal->meal->categories->isNotEmpty();
-                                    });
-                                @endphp
+                            @php
+                                // Determine if this category has at least one valid userMeal
+                                $hasValidMeal = $plan->userMeals->filter(function ($userMeal) {
+                                    return $userMeal->meal && $userMeal->meal->categories && $userMeal->meal->categories->isNotEmpty();
+                                })->count() > 0;
+                            @endphp
+
+                            @if($hasValidMeal)
                                 <div class="col-md-3">
                                     <div class="nutrition-plan-box">
                                         <figure>
@@ -82,23 +84,18 @@
                                         <h5>{{ $plan->category->title }}</h5>
                                         <p></p>
 
-                                        {{-- Show View Details button only if mealTimes exist --}}
-                                        @if($hasValidMeal)
-                                            <a href="{{ route('front.meal-time.details', ['id' => $plan->category->id, 'plan_id' => $userPlan->id]) }}" 
+                                        <a href="{{ route('front.meal-time.details', ['id' => $plan->category->id, 'plan_id' => $userPlan->id]) }}" 
                                             class="btn btn-primary view-details-btn"
                                             data-category-id="{{ $plan->category->id }}" 
                                             data-category-name="{{ $plan->category->title }}">
-                                                View Details
-                                            </a>
-                                        @else
-                                            <a href="javascript:void(0);" class="btn btn-primary view-meal-modal" data-meal-time-id="{{ $plan->category->id }}" data-user-meal-time-id="{{ $plan->id }}" data-user-plan-id="{{ $userPlan->id }}" data-meal-time-name="{{ $plan->category->title }}">View Details</a>
-                                        @endif
-
+                                            View Details
+                                        </a>
                                     </div>
                                 </div>
                             @endif
                         @endforeach
                     @endif
+
                 </div>
             </div>
         </div>

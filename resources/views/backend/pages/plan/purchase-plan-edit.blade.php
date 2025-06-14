@@ -58,6 +58,23 @@
         transform: rotate(-180deg);
     }
 
+    /* Image styling */
+    .select2-selection__rendered img {
+        flex-shrink: 0;
+        width: 25px;
+        height: 25px;
+        margin-right: 5px;
+    }
+
+    /* Text part of the selection */
+    .select2-selection__rendered span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        /* display: inline-block; */
+        max-width: 100%;
+    }
+   
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -151,7 +168,7 @@
 
                                                         <!-- Selected Meals and Swap Items -->
                                                         <div class="selected-meals mt-3" id="selectedMeals{{$plan->id}}_{{$mealTime->id}}" style="display: none;">
-                                                            <h6 class="fw-bold">Selected Meals and Foods:</h6>
+                                                            <!-- <h6 class="fw-bold">Selected Meals and Foods:</h6> -->
                                                             <ul class="list-group"></ul>
                                                         </div>
                                                     </div>
@@ -378,7 +395,7 @@
 
 <!-- Modal Popup -->
 <div class="modal" id="searchFoodModal" tabindex="-1" aria-labelledby="searchFoodModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable  modal-lg">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="searchFoodModalLabel">Search Food</h5>
@@ -710,6 +727,45 @@
     </div>
 </div>
 
+<!-- Main Item Delete Modal -->
+<div class="modal" id="deleteMainItemModal" tabindex="-1" aria-labelledby="deleteMainItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteMainItemModalLabel">Delete Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this item and its swap items?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmDeleteMainItem" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Swap Item Delete Modal -->
+<div class="modal" id="deleteSwapItemModal" tabindex="-1" aria-labelledby="deleteSwapItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteSwapItemModalLabel">Delete Swap Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this swap item?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmDeleteSwapItem" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div id="loader-2" style="display: none;">
     <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" alt="Loading..." />
 </div>
@@ -730,9 +786,11 @@
 <script>
     const preSelectedFoods = @json($preplanSlectedFoods);
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         let hasUnsavedChanges = false;
         let intendedHref = ''; // Store the intended link URL
+        let intendedModalAction = null; // Store the intended modal action
+        let intendedProfileAction = null; // Store the intended profile action
 
         // Track changes in form fields
         document.querySelectorAll('input, textarea, select').forEach(input => {
@@ -741,21 +799,59 @@
             });
         });
 
-        // Custom navigation detection
-        document.querySelectorAll('a').forEach(anchor => {
+        // Handle View User Profile button
+        $(document).on('click', '.view-user-profile', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            if (hasUnsavedChanges) {
+                intendedProfileAction = this;
+                const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                modalInstance.show();
+                return false;
+            }else {
+                // If no unsaved changes, proceed with normal profile view
+                const userId = $(this).data('user-id');
+                const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
+                
+                $.ajax({
+                    url: sessionUrl,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.redirect_url) {
+                            window.open(response.redirect_url, '_blank');
+                        } else {
+                            alert('Something went wrong!');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error setting user session.');
+                    }
+                });
+            }
+        });
+
+        // Handle View User Details button
+        document.querySelectorAll('.user-pre-plan-details').forEach(button => {
+            button.addEventListener('click', function(event) {
+                if (hasUnsavedChanges) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    intendedModalAction = this;
+                    const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                    modalInstance.show();
+                }
+            });
+        });
+
+        // Handle other navigation links
+        document.querySelectorAll('a:not(.user-pre-plan-details)').forEach(anchor => {
             anchor.addEventListener('click', function(event) {
                 if (hasUnsavedChanges) {
-                    event.preventDefault(); // Prevent immediate navigation
-
-                    // Correctly capture the intended URL
-                    const clickedLink = event.target.closest('a');
-
-                    if (clickedLink) {
-                        intendedHref = clickedLink.href;
-                        console.log('Intended Link:', intendedHref); // ✅ Correctly logs the clicked link URL
-                        const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
-                        modalInstance.show();                    
-                    }
+                    event.preventDefault();
+                    intendedHref = this.href;
+                    const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                    modalInstance.show();
                 }
             });
         });
@@ -771,26 +867,99 @@
         document.getElementById('saveChanges').addEventListener('click', function() {
             hasUnsavedChanges = false;
             document.getElementById('editPlanForm').submit();
-            const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
-            modalInstance.hide();  
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('savePlanModal'));
+            modalInstance.hide();
+
+            // Handle navigation after saving
+            if (intendedHref) {
+                window.location.href = intendedHref;
+                intendedHref = '';
+            }
+
+            // Handle profile action after saving
+            if (intendedProfileAction) {
+                const userId = intendedProfileAction.getAttribute('data-user-id');
+                const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
+                
+                $.ajax({
+                    url: sessionUrl,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.redirect_url) {
+                            window.open(response.redirect_url, '_blank');
+                        } else {
+                            alert('Something went wrong!');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error setting user session.');
+                    }
+                });
+                intendedProfileAction = null;
+            }
+
+            // Handle modal action after saving
+            if (intendedModalAction) {
+                const paymentId = intendedModalAction.getAttribute('data-payment-id');
+                $.ajax({
+                    url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            // Your existing modal content code here
+                            // ... (keep the existing modal content code)
+                        }
+                    }
+                });
+                intendedModalAction = null;
+            }
         });
 
         // Modal Button: "No Leave"
         document.getElementById('leaveWithoutSaving').addEventListener('click', function() {
             hasUnsavedChanges = false;
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('savePlanModal'));
+            modalInstance.hide();
 
-            // Correctly redirect to the stored intended URL (like Food link)
+            // Handle navigation without saving
             if (intendedHref) {
                 window.location.href = intendedHref;
+                intendedHref = '';
+            }
+
+            // Handle modal action without saving
+            if (intendedModalAction) {
+                const paymentId = intendedModalAction.getAttribute('data-payment-id');
+                $.ajax({
+                    url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            // Your existing modal content code here
+                            // ... (keep the existing modal content code)
+                        }
+                    }
+                });
+                intendedModalAction = null;
             }
         });
 
-        // Form Submit Logic
+        // Form submit bypasses the unsaved warning
         document.getElementById('editPlanForm').addEventListener('submit', function() {
-            hasUnsavedChanges = false; // Clear flag on form submission
+            hasUnsavedChanges = false;
         });
     });
     
+    $(document).on('blur', '.modalQtyInput', function () {
+        let value = parseFloat($(this).val());
+
+        if (isNaN(value) || value <= 0) {
+            // Show warning or set to default (optional)
+            alert('Please enter a value greater than 0.');
+            $(this).val(''); // or set to '1' or some default
+        }
+    });
+
     $(document).ready(function() {
         $(document).on('click', '.user-pre-plan-details', function() {
             const paymentId = $(this).data('payment-id');
@@ -1015,12 +1184,12 @@
         });
 
 
-        $(document).on('click', '.view-info', function () {
-            // alert('22');
-            var description = $(this).data('description') || 'N/A';
-            $('#modalDescription').text(description);
-            $('#itemInfoModal').modal('show');
-        });
+        // $(document).on('click', '.view-info', function () {
+        //     // alert('22');
+        //     var description = $(this).data('description') || 'N/A';
+        //     $('#modalDescription').text(description);
+        //     $('#itemInfoModal').modal('show');
+        // });
     });
     // $('#swapFoods').val(null).trigger('change');
 
@@ -1537,9 +1706,9 @@
                                     // Update food counts for items and swap items
                                     response.data.forEach(item => {
                                         if(item.is_new) {
-                                            updateFoodCount(item.id, 1, 'green', item.name, item.category_id, item.is_new);
+                                            updateFoodCount(item.id, 1, 'green', item.name, null, item.is_new);
                                         } else {
-                                            updateFoodCount(item.id, 1, 'purple', item.name, item.category_id, item.is_new);
+                                            updateFoodCount(item.id, 1, 'purple', item.name, null, item.is_new);
                                         }
 
                                         // Update food counts for swap items
@@ -1790,8 +1959,9 @@
                     </tr>
                 `);
 
-                $('[data-bs-toggle="tooltip"]').tooltip();
             });
+
+            $('[data-bs-toggle="tooltip"]').tooltip('dispose').tooltip();
 
             $(`#selectedMeals${planId}_${mealTimeId} .list-group`).append(mealContainer);
             $(document).trigger('mealAdded', [planId, mealTimeId]);
@@ -2093,7 +2263,7 @@
                                             <div class="col-9">
                                                 <div class="d-flex align-items-start">
                                                     <input type="checkbox" name="items[${planID}][${mealTimeId}][${mealId}][]"
-                                                        value="${item.id}" class="form-check-input me-2 d-none"
+                                                        value="${item.id}" class="form-check-input me-2 d-none" checked
                                                         data-carbs="${carbs}" data-protein="${protein}" data-fat="${fat}" data-energy="${energy}" checked>
                                                     <label class="form-check-label flex-grow-1">${item.title}</label>
                                                 </div>
@@ -2300,7 +2470,12 @@
             // If food wrapper doesn't exist, create it
             if (!foodWrapper.length) {
                 // Convert category name to slug format for ID
-                const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
+                // const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
+                const categoryId = categoryName
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')  // Remove everything except letters, numbers, spaces, and dashes
+                .replace(/\s+/g, '-');
+                console.log(categoryId);
                 let categoryRow = $(`#category-row-${categoryId}`);
                 
                 // If category row doesn't exist, create it
@@ -2378,7 +2553,9 @@
                             categoryWrapper.addClass('d-none');
                         }
                     } else {
-                        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+                        countLabel.text(countText.replace(/\s*\(\d+\)$/, ''))
+                                .removeClass('text-primary text-success')
+                                .addClass('text-dark');
                     }
                 }
                 return;
@@ -2818,55 +2995,104 @@
         });
 
         // Delete Item Button Action
-        $(document).on('click', '.delete-item', function() {
-            const itemId = $(this).data('item-id');
-            const mealId = $(this).data('meal-id');
-            const mealTimeId = $(this).data('meal-time-id');
-            const planId = $(this).data('plan-id');
-            const userId = $(this).data('user-id');
-            let swap_food_id = $(this).data('swapfood-id');
+        // $(document).on('click', '.delete-item', function() {
+        //     const itemId = $(this).data('item-id');
+        //     const mealId = $(this).data('meal-id');
+        //     const mealTimeId = $(this).data('meal-time-id');
+        //     const planId = $(this).data('plan-id');
+        //     const userId = $(this).data('user-id');
+        //     let swap_food_id = $(this).data('swapfood-id');
 
-            const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            const allSwapLis = currentItemRow.find('li');
+        //     const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+        //     const allSwapLis = currentItemRow.find('li');
             
-            // Your delete logic for the item (e.g., show confirmation and delete item)
-            if (confirm('Are you sure you want to delete this item and swap items?')) {
-                console.log('Delete Item:', itemId, mealId, mealTimeId, planId, userId);
-                const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-                const $tableBody = $row.closest('tbody'); // Get the parent tbody
+        //     // Your delete logic for the item (e.g., show confirmation and delete item)
+        //     if (confirm('Are you sure you want to delete this item and swap items?')) {
+        //         console.log('Delete Item:', itemId, mealId, mealTimeId, planId, userId);
+        //         const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+        //         const $tableBody = $row.closest('tbody'); // Get the parent tbody
 
-                // Count remaining <tr> elements in the table
-                const remainingRows = $tableBody.find('tr').length;
+        //         // Count remaining <tr> elements in the table
+        //         const remainingRows = $tableBody.find('tr').length;
 
-                // Uncheck checkboxes in the first and second <td>
-                $row.find('input[type="checkbox"]').prop('checked', false);
+        //         // Uncheck checkboxes in the first and second <td>
+        //         $row.find('input[type="checkbox"]').prop('checked', false);
 
-                // Remove the row
-                $row.remove();
+        //         // Remove the row
+        //         $row.remove();
 
-                // If there are no more rows left, remove the meal from the meal section dropdown
-                if (remainingRows === 1) { // Since we're removing a row, we check before it's removed
-                    $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
-                    const dropdown = `#addMealDropdown${planId}_${mealTimeId}`;
-                    const $select = $(dropdown).find('select'); // Find the select inside the div
+        //         // If there are no more rows left, remove the meal from the meal section dropdown
+        //         if (remainingRows === 1) { // Since we're removing a row, we check before it's removed
+        //             $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+        //             const dropdown = `#addMealDropdown${planId}_${mealTimeId}`;
+        //             const $select = $(dropdown).find('select'); // Find the select inside the div
 
-                    // Correcting the dropdown selection and removing the meal option
-                    $select.find('option[value="' + mealId + '"]').remove();
-                    $select.trigger('change');
-                    // initializeSelect2($select, mealTimeId);
-                }
+        //             // Correcting the dropdown selection and removing the meal option
+        //             $select.find('option[value="' + mealId + '"]').remove();
+        //             $select.trigger('change');
+        //             // initializeSelect2($select, mealTimeId);
+        //         }
 
-                updateFoodCount(itemId, -1, null);
+        //         updateFoodCount(itemId, -1, null);
 
-                allSwapLis.each(function () {
-                    const swapItemId = $(this).data('swap-item-id'); // OR use attr('data-swap-item-id')
-                    console.log('Swap Item ID:', swapItemId);
-                    // updateFoodCount(swapItemId, -1, null);
-                });
+        //         allSwapLis.each(function () {
+        //             const swapItemId = $(this).data('swap-item-id'); // OR use attr('data-swap-item-id')
+        //             console.log('Swap Item ID:', swapItemId);
+        //             // updateFoodCount(swapItemId, -1, null);
+        //         });
                 
-                calculateTotals(planId, mealTimeId, mealId);
-                calculateMealNutrition();
+        //         calculateTotals(planId, mealTimeId, mealId);
+        //         calculateMealNutrition();
+        //     }
+        // });
+
+        let mainDeleteParams = null;
+
+        $(document).on('click', '.delete-item', function () {
+            const $btn = $(this);
+            const itemId = $btn.data('item-id');
+            const mealId = $btn.data('meal-id');
+            const mealTimeId = $btn.data('meal-time-id');
+            const planId = $btn.data('plan-id');
+            const userId = $btn.data('user-id');
+
+            const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+            const $tableBody = $row.closest('tbody');
+            const remainingRows = $tableBody.find('tr').length;
+            const allSwapLis = $row.find('li');
+
+            mainDeleteParams = {
+                $row, $tableBody, remainingRows,
+                itemId, mealId, mealTimeId, planId, allSwapLis
+            };
+
+            new bootstrap.Modal(document.getElementById('deleteMainItemModal')).show();
+            });
+
+            $('#confirmDeleteMainItem').on('click', function () {
+            const { $row, $tableBody, remainingRows, itemId, mealId, mealTimeId, planId, allSwapLis } = mainDeleteParams;
+
+            $row.find('input[type="checkbox"]').prop('checked', false);
+            $row.remove();
+
+            if (remainingRows === 1) {
+                $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+                const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
+                $select.find(`option[value="${mealId}"]`).remove();
+                $select.trigger('change');
             }
+
+            updateFoodCount(itemId, -1, null);
+            allSwapLis.each(function () {
+                const swapItemId = $(this).data('swap-item-id');
+                updateFoodCount(swapItemId, -1, null);
+            });
+
+            calculateTotals(planId, mealTimeId, mealId);
+            calculateMealNutrition();
+
+            mainDeleteParams = null;
+            bootstrap.Modal.getInstance(document.getElementById('deleteMainItemModal')).hide();
         });
 
         $(document).on('click', '.edit-swap-item', function () {
@@ -2919,14 +3145,14 @@
             if (!Array.isArray(selectedQtyUnits) || selectedQtyUnits.length === 0) {
                 selectedQtyUnits = [{ qty: swapQty, unit: swapUnit, checked: false }];
             }
-
+            console.log(selectedQtyUnits);
             const buildQtyUnitRows = (units) => {
                 const $container = $(`${modalId} #dynamicQtyMeasurementContainer`).empty();
                 units.forEach(({ qty, unit, checked }, index) => {
                     const row = `
                         <div class="row mb-2 qty-unit-row align-items-center">
                             <div class="col-auto mt-4">
-                                <input type="checkbox" class="form-check-input qtyUnitSelector" ${checked ? 'checked' : '' }>
+                                <input type="checkbox" class="form-check-input qtyUnitSelector" ${String(checked) === 'true' ? 'checked' : '' }>
                             </div>
                             <div class="col-5">
                                 ${index === 0 ? '<label class="form-label">Quantity</label>' : ''}
@@ -3142,43 +3368,88 @@
             });
         });
 
+        // $(document).on('click', '.delete-swap-item', function () {
+        //     const button = $(this);
+
+        //     const swapItemId = button.data('swap-item-id');
+        //     const itemId = button.data('item-id');
+        //     const mealId = button.data('meal-id');
+        //     const planId = button.data('plan-id');
+        //     const mealTimeId = button.data('meal-time-id');
+        //     const userId = button.data('user-id');
+
+        //     if (!confirm('Are you sure you want to delete this swap item?')) return;
+
+        //     const $li = button.closest('li');
+        //     const $ul = $li.closest('ul');
+
+        //     // Remove the swap item
+        //     $li.remove();
+        //     // updateFoodCount(swapItemId, -1, null);
+
+        //     // Check if there are any <li> left in the list
+        //     if ($ul.children('li').length === 0) {
+        //         // Add "No swap items available" message
+        //         $ul.append(`
+        //             <li class="d-flex justify-content-between align-items-start mb-2">
+        //                 <div class="col-9">
+        //                     <span class="text-muted">No swap items available</span>
+        //                 </div>
+        //                 <div>
+        //                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+        //                         data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
+        //                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+        //                         title="Add"><i class="icofont-plus text-primary"></i>
+        //                     </button>
+        //                 </div>
+        //             </li>
+        //         `);
+        //     }
+        // });
+
+        let swapDeleteParams = null;
+
         $(document).on('click', '.delete-swap-item', function () {
-            const button = $(this);
-
-            const swapItemId = button.data('swap-item-id');
-            const itemId = button.data('item-id');
-            const mealId = button.data('meal-id');
-            const planId = button.data('plan-id');
-            const mealTimeId = button.data('meal-time-id');
-            const userId = button.data('user-id');
-
-            if (!confirm('Are you sure you want to delete this swap item?')) return;
-
-            const $li = button.closest('li');
+            const $btn = $(this);
+            const $li = $btn.closest('li');
             const $ul = $li.closest('ul');
 
-            // Remove the swap item
-            $li.remove();
-            // updateFoodCount(swapItemId, -1, null);
+            swapDeleteParams = {
+                $li, $ul,
+                itemId: $btn.data('item-id'),
+                planId: $btn.data('plan-id'),
+                mealId: $btn.data('meal-id'),
+                mealTimeId: $btn.data('meal-time-id'),
+                userId: $btn.data('user-id')
+            };
 
-            // Check if there are any <li> left in the list
+            new bootstrap.Modal(document.getElementById('deleteSwapItemModal')).show();
+        });
+
+        $('#confirmDeleteSwapItem').on('click', function () {
+            const { $li, $ul, itemId, planId, mealId, mealTimeId, userId } = swapDeleteParams;
+
+            $li.remove();
+
             if ($ul.children('li').length === 0) {
-                // Add "No swap items available" message
                 $ul.append(`
-                    <li class="d-flex justify-content-between align-items-start mb-2">
-                        <div class="col-9">
-                            <span class="text-muted">No swap items available</span>
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-                                data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-                                title="Add"><i class="icofont-plus text-primary"></i>
-                            </button>
-                        </div>
-                    </li>
+                <li class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="col-9">
+                    <span class="text-muted">No swap items available</span>
+                    </div>
+                    <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+                        data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                        title="Add"><i class="icofont-plus text-primary"></i>
+                    </button>
+                    </div>
+                </li>
                 `);
             }
+
+            swapDeleteParams = null;
+            bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
         });
 
         $(document).ready(function () {
@@ -3455,6 +3726,12 @@
             const swapItemId = $dropdown.find('option:selected').val();
             const description = $('#addSwapItemModal #description').val();
 
+            // ✅ Check if food is selected
+            if (!swapItemId || swapItemId === '0') {
+                alert('Please select a food item.');
+                return;
+            }
+
             const anyChecked = $('#addSwapItemModal .qty-unit-row').find('.multiQtyCheckbox:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
@@ -3597,7 +3874,7 @@
             // calculateMealNutrition();
         });
 
-         $(document).on('click', '.add-more-swap-item', function () {
+        $(document).on('click', '.add-more-swap-item', function () {
             const btn = $(this);
             const itemId = $(this).data('item-id');
             const mealId = $(this).data('meal-id');
@@ -4388,20 +4665,42 @@
     });
 
     $(document).ready(function() {
-        // Initially hide swap item dropdown if is_swiped is no
-        if ($('input[name="is_swiped"]:checked').val() == '1') {
-            $('#swapItemsContainer').show();
-        } else {
-            $('#swapItemsContainer').hide();
+        // Global tooltip initialization function
+        function initializeTooltips() {
+            // First dispose all existing tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+            
+            // Initialize new tooltips
+            $('[data-bs-toggle="tooltip"]').each(function() {
+                const $this = $(this);
+                const description = $this.data('description');
+                
+                // Set both title attributes for consistency
+                $this.attr({
+                    'title': description,
+                    'data-bs-original-title': description
+                });
+                
+                // Initialize Bootstrap tooltip
+                new bootstrap.Tooltip(this, {
+                    trigger: 'hover',
+                    placement: 'top',
+                    html: true
+                });
+            });
         }
 
-        // Show/hide the swap item dropdown based on is_swiped selection
-        $('input[name="is_swiped"]').on('change', function() {
-            if ($(this).val() == '1') {
-                $('#swapItemsContainer').show();
-            } else {
-                $('#swapItemsContainer').hide();
-            }
+        // Initialize tooltips on page load
+        initializeTooltips();
+
+        // Handle dynamic content updates
+        $(document).on('shown.bs.modal', function() {
+            initializeTooltips();
+        });
+
+        // Handle AJAX content updates
+        $(document).ajaxComplete(function() {
+            initializeTooltips();
         });
     });
 
@@ -4895,33 +5194,6 @@
         }
     });
 
-    $(document).ready(function() {
-        $('.view-user-profile').on('click', function(e) {
-            e.preventDefault();
-            var userId = $(this).data('user-id');
-            var sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-
-            $.ajax({
-                url: sessionUrl,
-                method: 'GET',
-                success: function(response) {
-                    // If the session is set successfully, redirect to profile
-                    if (response.redirect_url) {
-                        // window.location.href = response.redirect_url;
-                        window.open(response.redirect_url, '_blank');
-
-                    } else {
-                        alert('Something went wrong!');
-                    }
-                },
-                error: function(xhr) {
-                    // alert(xhr.responseText);
-                    alert('Error setting user session.');
-                }
-            });
-        });
-    });
-
     $(document).ready(function () {
         $('#nutritionToggle').on('change', function () {
             var isChecked = $(this).is(':checked') ? 1 : 0;
@@ -4944,6 +5216,30 @@
             });
         });
     });
+
+    $(document).ready(function () {
+        $(document).on('click', '.view-info', function (e) {
+            e.preventDefault();
+
+            const $this = $(this);
+            const description = $this.data('description');
+
+            // ✅ Correctly locate the corresponding label text
+            const foodName = $this.closest('.d-flex').find('label').text().trim();
+
+            const modal = $('#itemInfoModal');
+
+            if (modal.length) {
+                modal.find('.modal-title').text(foodName || 'Item Information');
+                modal.find('#modalDescription').text(description || 'No description available.');
+
+                const bsModal = new bootstrap.Modal(modal[0]);
+                bsModal.show();
+            }
+        });
+    });
+
+
 
 </script>
 

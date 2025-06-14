@@ -376,67 +376,6 @@ class PurchasePlanController extends Controller
 
             // Get payment and related data
             $payment = Payment::with('user')->findOrFail($request->payment_id);
-            
-            // Process meal items
-            // $mealItems = ItemMeal::with('item')->get();
-            // $swapItemsGrouped = DB::table('item_swaps')->get()->groupBy('item_id');
-
-            // // Process each meal item
-            // foreach ($mealItems as $mealItem) {
-            //     if (!$mealItem->item) {
-            //         Log::warning("Skipping meal item {$mealItem->id} - associated item not found");
-            //         continue;
-            //     }
-
-            //     // Create or update UserItemMeal
-            //     UserItemMeal::updateOrCreate(
-            //         [
-            //             'item_id' => $mealItem->item_id,
-            //             'meal_id' => $mealItem->meal_id,
-            //             'user_id' => $payment->user_id,
-            //         ],
-            //         [
-            //             'qty' => $mealItem->item_qty ?? $mealItem->item->qty ?? 0,
-            //             'unit' => $mealItem->item_qty_unit ?? $mealItem->item->unit ?? '',
-            //             'carbs' => $mealItem->carbs ?? $mealItem->item->carbs ?? 0,
-            //             'protein' => $mealItem->protein ?? $mealItem->item->protein ?? 0,
-            //             'fat' => $mealItem->fat ?? $mealItem->item->fat ?? 0,
-            //             'selected_qty_unit' => $mealItem->selected_qty_unit ?? json_encode([
-            //                 ["qty" => $mealItem->item_qty ?? $mealItem->item->qty ?? 0, 
-            //                  "unit" => $mealItem->item_qty_unit ?? $mealItem->item->unit ?? '', 
-            //                  "checked" => true]
-            //             ]),
-            //             'is_swiped' => $mealItem->item->is_swiped ?? 0,
-            //         ]
-            //     );
-
-            //     // Process swap items
-            //     $relatedSwaps = $swapItemsGrouped[$mealItem->item_id] ?? collect();
-            //     foreach ($relatedSwaps as $swapItem) {
-            //         $item = Item::find($swapItem->swap_item_id);
-            //         if (!$item) {
-            //             Log::warning("Skipping swap item {$swapItem->swap_item_id} - item not found");
-            //             continue;
-            //         }
-
-            //         UserItemSwap::updateOrCreate(
-            //             [
-            //                 'item_id' => $swapItem->item_id,
-            //                 'swap_item_id' => $swapItem->swap_item_id,
-            //                 'user_id' => $payment->user_id,
-            //                 'meal_id' => $mealItem->meal_id,
-            //             ],
-            //             [
-            //                 'qty' => $item->qty ?? 0,
-            //                 'unit' => $item->unit ?? '',
-            //                 'carbs' => $item->carbs ?? 0,
-            //                 'protein' => $item->protein ?? 0,
-            //                 'fat' => $item->fat ?? 0,
-            //                 'selected_qty_unit' => $item->selected_qty_unit,
-            //             ]
-            //         );
-            //     }
-            // }
          
             $meals = [];
             $categories = [];
@@ -583,7 +522,7 @@ class PurchasePlanController extends Controller
                         ->pluck('id')
                         ->toArray();
             
-                    $newMeals = Arr::flatten($meals[$planId]);
+                    $newMeals = isset($meals[$planId]) ? Arr::flatten($meals[$planId]) : [];
                     $mealsToRemove = array_diff($existingMeals, $newMeals);
             
                     if (!empty($mealsToRemove)) {
@@ -654,7 +593,7 @@ class PurchasePlanController extends Controller
                                                 ->where('meal_id', $mealId)
                                                 ->where('item_id', $mealItem->item_id)
                                                 ->first();
-
+                                                // dd($mealExist);
                                                 if (!$mealExist) {
                                                     // Insert meal items for the user
                                                     UserItemMeal::create([
@@ -682,6 +621,7 @@ class PurchasePlanController extends Controller
                                                         ->where('item_id', $mealItem->item_id)
                                                         ->where('swap_item_id', $itemSwap->id)
                                                         ->first();
+                                                        // dd($swapItemExist);
                                                         // Insert item swaps for the user
                                                         if(!$swapItemExist) {
                                                             UserItemSwap::create([
@@ -717,7 +657,7 @@ class PurchasePlanController extends Controller
                                                 : [];
             
                                             $itemsToRemove = array_diff($existingItems, $currentItems);
-                                            // dd($currentItems);
+                                            // dd($itemsToRemove);
                                             if (!empty($itemsToRemove)) {
                                                 \DB::table('user_items')
                                                     ->where('user_plan_id', $userPlan->id)
@@ -775,14 +715,13 @@ class PurchasePlanController extends Controller
                                                 $currentSwapItems = isset($swapItems[$planId][$mealTimeId][$categoryId][$mealId][$itemId])
                                                     ? $swapItems[$planId][$mealTimeId][$categoryId][$mealId][$itemId]
                                                     : [];
+                                                // dd($itemId);
                                                     // dd($currentSwapItems);
                                                 $p = \DB::table('user_item_swaps')
                                                     ->where('user_id', $request->user_id)
                                                     ->where('item_id', $itemId)
                                                     ->where('meal_id', $mealId)
-                                                    ->where('user_category_id', $userMealTime->id)
-                                                    ->where('user_sub_category_id', $userCategory->id)
-                                                    ->whereNotIn('id', $currentSwapItems)
+                                                    ->whereNotIn('swap_item_id', $currentSwapItems)
                                                     ->delete();
                                                 // dd($p);
                                                 $swapItemsToRemove = array_diff($existingSwapItems, $currentSwapItems);
@@ -2970,144 +2909,11 @@ class PurchasePlanController extends Controller
                 ->value('id');
             // dd($userPlanId);
             if (!$userPlanId) {
-                DB::rollBack();
-                return response()->json(['success' => false, 'message' => 'User plan not found.']);
-            }
-
-            $meal = UserMeal::where('user_plan_id', $userPlanId)
-                ->where('id', $request->meal_id)
-                ->first();
-            // dd($meal);
-            if ($meal) {
-                $items = UserItem::where('user_plan_id', $userPlanId)
-                    ->where('user_meal_id', $meal->id)
-                    ->get();
-                // dd($items);
-                $validItemIds = \App\Models\ItemMeal::where('meal_id', $meal->id)
-                    ->pluck('item_id')
-                    ->toArray();
-                // dd($validItemIds);
-                foreach ($items as $item) {
-                    if (!in_array($item->id, $validItemIds)) {
-                        // dd('11');
-                        Log::info("Deleting invalid item", ['item_id' => $item->id]);
-
-                        UserSwapItem::where('user_meal_id', $meal->id)
-                            ->where('user_item_id', $item->id)
-                            ->where('user_plan_id', $userPlanId)
-                            ->forceDelete();
-
-                        UserItemSwap::where('user_id', $request->user_id)
-                            ->where('meal_id', $meal->id)
-                            ->where('item_id', $item->id)
-                            ->forceDelete();
-
-                        $userItemMeals = DB::table('user_item_meals')
-                            ->where('user_id', $request->user_id)
-                            ->where('meal_id', $meal->id)
-                            ->where('item_id', $item->id)
-                            ->delete();
-
-                        UserItem::where('id', $item->id)
-                            ->forceDelete();
-                    } else {
-                        // dd('33');
-                        $validSwapItemIds = DB::table('item_swaps')
-                            ->where('item_id', $item->id)
-                            ->pluck('swap_item_id')
-                            ->toArray();
-                        // dd($validSwapItemIds);
-                        $userSwapItems = UserItemSwap::where('user_id', $request->user_id)
-                            ->where('meal_id', $request->meal_id)
-                            ->where('item_id', $item->id)
-                            ->get();
-
-                        // dd($userSwapItems);
-                        foreach ($userSwapItems as $userSwapItem) {
-                            UserItemSwap::where('user_id', $request->user_id)
-                                ->where('meal_id', $request->meal_id)
-                                ->where('item_id', $item->id)
-                                ->where('swap_item_id', $userSwapItem->swap_item_id)
-                                ->forceDelete();
-
-                            UserSwapItem::where('user_item_id', $item->id)
-                                ->where('id', $userSwapItem->swap_item_id)
-                                ->where('user_plan_id', $userPlanId)
-                                ->forceDelete();
-
-                            // if (!in_array($userSwapItem->swap_item_id, $validSwapItemIds)) {
-                            //     // dd('44');
-                            //     Log::info("Deleting invalid swap item", [
-                            //         'item_id' => $item->id,
-                            //         'swap_item_id' => $userSwapItem->swap_item_id,
-                            //     ]);
-
-                            //     UserItemSwap::where('user_id', $request->user_id)
-                            //         ->where('meal_id', $request->meal_id)
-                            //         ->where('item_id', $item->id)
-                            //         ->where('swap_item_id', $userSwapItem->swap_item_id)
-                            //         ->forceDelete();
-                            //     UserSwapItem::where('user_item_id', $item->id)
-                            //         ->where('id', $userSwapItem->swap_item_id)
-                            //         ->forceDelete();
-
-                            // } else {
-                            //     // dd('55');
-                            //     // If the swap item is valid, we can keep it
-                            //     // But we need to ensure that the swap item is not already associated with another item
-                            //     $existingSwapItem = UserSwapItem::where('user_item_id', $item->id)
-                            //         ->where('id', $userSwapItem->swap_item_id)
-                            //         ->first();
-                            //     // dd($existingSwapItem);
-                            //     if (!$existingSwapItem) {
-                            //         // If the swap item is not associated with the current item, we can delete it
-                            //         // dd('66');
-                            //         Log::info("Deleting orphaned swap item", [
-                            //             'item_id' => $item->id,
-                            //             'swap_item_id' => $userSwapItem->swap_item_id,
-                            //         ]);
-                            //         UserSwapItem::where('user_item_id', $item->id)
-                            //             ->where('id', $userSwapItem->swap_item_id)
-                            //             ->forceDelete();
-                            //     }
-                            // }
-                            // dd($userSwapItem);
-                            // Log::info("Deleting swap item", [
-                            //     'item_id' => $item->id,
-                            //     'swap_item_id' => $userSwapItem->id,
-                            // ]);
-
-                            // DB::table('user_item_swaps')
-                            //     ->where('user_id', $request->user_id)
-                            //     ->where('meal_id', $request->meal_id)
-                            //     ->where('item_id', $item->id)
-                            //     ->where('swap_item_id', $userSwapItem->swap_item_id)
-                            //     ->delete();
-
-                            // DB::table('user_swap_items')
-                            //     ->where('user_item_id', $item->id)
-                            //     ->where('id', $userSwapItem->swap_item_id)
-                            //     ->delete();
-                        }
-
-                        $userItemMeals = DB::table('user_item_meals')
-                            ->where('user_id', $request->user_id)
-                            ->where('meal_id', $meal->id)
-                            ->where('item_id', $item->id)
-                            ->delete();
-                       // dd('44');
-                    }
-                }
-
-                UserMeal::where('id', $meal->id)
-                        ->where('user_plan_id', $userPlanId)
-                        ->delete();
-            } else {
-                Log::info("Meal not found in user_meals, cleaning leftovers");
-
+                // DB::rollBack();
+                // return response()->json(['success' => false, 'message' => 'User plan not found.']);
                 $validItemIds = \App\Models\ItemMeal::where('meal_id', $request->meal_id)
-                    ->pluck('item_id')
-                    ->toArray();
+                        ->pluck('item_id')
+                        ->toArray();
 
                 $userItemMeals = DB::table('user_item_meals')
                     ->where('user_id', $request->user_id)
@@ -3127,8 +2933,163 @@ class PurchasePlanController extends Controller
                         ->where('item_id', $userItemMeal->item_id)
                         ->delete();
                 }
-            }
+            } else {
 
+                $meal = UserMeal::where('user_plan_id', $userPlanId)
+                    ->where('id', $request->meal_id)
+                    ->first();
+                // dd($meal);
+                if ($meal) {
+                    $items = UserItem::where('user_plan_id', $userPlanId)
+                        ->where('user_meal_id', $meal->id)
+                        ->get();
+                    // dd($items);
+                    $validItemIds = \App\Models\ItemMeal::where('meal_id', $meal->id)
+                        ->pluck('item_id')
+                        ->toArray();
+                    // dd($validItemIds);
+                    foreach ($items as $item) {
+                        if (!in_array($item->id, $validItemIds)) {
+                            // dd('11');
+                            Log::info("Deleting invalid item", ['item_id' => $item->id]);
+
+                            UserSwapItem::where('user_meal_id', $meal->id)
+                                ->where('user_item_id', $item->id)
+                                ->where('user_plan_id', $userPlanId)
+                                ->forceDelete();
+
+                            UserItemSwap::where('user_id', $request->user_id)
+                                ->where('meal_id', $meal->id)
+                                ->where('item_id', $item->id)
+                                ->forceDelete();
+
+                            $userItemMeals = DB::table('user_item_meals')
+                                ->where('user_id', $request->user_id)
+                                ->where('meal_id', $meal->id)
+                                ->where('item_id', $item->id)
+                                ->delete();
+
+                            UserItem::where('id', $item->id)
+                                ->forceDelete();
+                        } else {
+                            // dd('33');
+                            $validSwapItemIds = DB::table('item_swaps')
+                                ->where('item_id', $item->id)
+                                ->pluck('swap_item_id')
+                                ->toArray();
+                            // dd($validSwapItemIds);
+                            $userSwapItems = UserItemSwap::where('user_id', $request->user_id)
+                                ->where('meal_id', $request->meal_id)
+                                ->where('item_id', $item->id)
+                                ->get();
+
+                            // dd($userSwapItems);
+                            foreach ($userSwapItems as $userSwapItem) {
+                                UserItemSwap::where('user_id', $request->user_id)
+                                    ->where('meal_id', $request->meal_id)
+                                    ->where('item_id', $item->id)
+                                    ->where('swap_item_id', $userSwapItem->swap_item_id)
+                                    ->forceDelete();
+
+                                UserSwapItem::where('user_item_id', $item->id)
+                                    ->where('id', $userSwapItem->swap_item_id)
+                                    ->where('user_plan_id', $userPlanId)
+                                    ->forceDelete();
+
+                                // if (!in_array($userSwapItem->swap_item_id, $validSwapItemIds)) {
+                                //     // dd('44');
+                                //     Log::info("Deleting invalid swap item", [
+                                //         'item_id' => $item->id,
+                                //         'swap_item_id' => $userSwapItem->swap_item_id,
+                                //     ]);
+
+                                //     UserItemSwap::where('user_id', $request->user_id)
+                                //         ->where('meal_id', $request->meal_id)
+                                //         ->where('item_id', $item->id)
+                                //         ->where('swap_item_id', $userSwapItem->swap_item_id)
+                                //         ->forceDelete();
+                                //     UserSwapItem::where('user_item_id', $item->id)
+                                //         ->where('id', $userSwapItem->swap_item_id)
+                                //         ->forceDelete();
+
+                                // } else {
+                                //     // dd('55');
+                                //     // If the swap item is valid, we can keep it
+                                //     // But we need to ensure that the swap item is not already associated with another item
+                                //     $existingSwapItem = UserSwapItem::where('user_item_id', $item->id)
+                                //         ->where('id', $userSwapItem->swap_item_id)
+                                //         ->first();
+                                //     // dd($existingSwapItem);
+                                //     if (!$existingSwapItem) {
+                                //         // If the swap item is not associated with the current item, we can delete it
+                                //         // dd('66');
+                                //         Log::info("Deleting orphaned swap item", [
+                                //             'item_id' => $item->id,
+                                //             'swap_item_id' => $userSwapItem->swap_item_id,
+                                //         ]);
+                                //         UserSwapItem::where('user_item_id', $item->id)
+                                //             ->where('id', $userSwapItem->swap_item_id)
+                                //             ->forceDelete();
+                                //     }
+                                // }
+                                // dd($userSwapItem);
+                                // Log::info("Deleting swap item", [
+                                //     'item_id' => $item->id,
+                                //     'swap_item_id' => $userSwapItem->id,
+                                // ]);
+
+                                // DB::table('user_item_swaps')
+                                //     ->where('user_id', $request->user_id)
+                                //     ->where('meal_id', $request->meal_id)
+                                //     ->where('item_id', $item->id)
+                                //     ->where('swap_item_id', $userSwapItem->swap_item_id)
+                                //     ->delete();
+
+                                // DB::table('user_swap_items')
+                                //     ->where('user_item_id', $item->id)
+                                //     ->where('id', $userSwapItem->swap_item_id)
+                                //     ->delete();
+                            }
+
+                            $userItemMeals = DB::table('user_item_meals')
+                                ->where('user_id', $request->user_id)
+                                ->where('meal_id', $meal->id)
+                                ->where('item_id', $item->id)
+                                ->delete();
+                        // dd('44');
+                        }
+                    }
+
+                    UserMeal::where('id', $meal->id)
+                            ->where('user_plan_id', $userPlanId)
+                            ->delete();
+                } else {
+                    Log::info("Meal not found in user_meals, cleaning leftovers");
+
+                    $validItemIds = \App\Models\ItemMeal::where('meal_id', $request->meal_id)
+                        ->pluck('item_id')
+                        ->toArray();
+
+                    $userItemMeals = DB::table('user_item_meals')
+                        ->where('user_id', $request->user_id)
+                        ->where('meal_id', $request->meal_id)
+                        ->get();
+
+                    foreach ($userItemMeals as $userItemMeal) {
+                        Log::info("Deleting leftover user_item_meal", ['id' => $userItemMeal->id]);
+
+                        DB::table('user_item_meals')
+                            ->where('id', $userItemMeal->id)
+                            ->delete();
+
+                        DB::table('user_item_swaps')
+                            ->where('user_id', $request->user_id)
+                            ->where('meal_id', $request->meal_id)
+                            ->where('item_id', $userItemMeal->item_id)
+                            ->delete();
+                    }
+                }
+            }
             // Optional: clear related cache if you're using caching
             // Cache::forget("meal_items_user_{$request->user_id}_{$request->meal_id}");
 

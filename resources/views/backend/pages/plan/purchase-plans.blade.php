@@ -76,13 +76,13 @@
                                 <td>{{ formatDate($payment->created_at) }}</td>
                                 <td>
                                     <!-- Action link to show payment details -->
-                                    <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary user-pre-plan-details" data-payment-id="{{ $payment->id }}" ><i class="icofont-eye text-primary"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary user-pre-plan-details m-1" data-payment-id="{{ $payment->id }}" ><i class="icofont-eye text-primary"></i></a>
                                     @if($isPlanCreated)
-                                    <a href="{{ route('admin.purchase-plans.edit', ['user' => $payment->user_id,'plan' => $payment->id]) }}" class="btn btn-sm btn-outline-success"><i class="icofont-edit text-success"></i></a>
+                                    <a href="{{ route('admin.purchase-plans.edit', ['user' => $payment->user_id,'plan' => $payment->id]) }}" class="btn btn-sm btn-outline-success m-1"><i class="icofont-edit text-success"></i></a>
                                     @else
-                                    <a href="{{ route('admin.purchase-plans.create', $payment->id) }}" class="btn btn-sm btn-outline-success"><i class="icofont-plus text-success"></i></a>
+                                    <a href="{{ route('admin.purchase-plans.create', $payment->id) }}" class="btn btn-sm btn-outline-success m-1"><i class="icofont-plus text-success"></i></a>
                                     @endif
-                                </td>
+                                </td> 
                             </tr>
                             @endforeach
                         </tbody>
@@ -155,83 +155,71 @@
                             if (formName === 'Personal Details') {
                                 return;
                             }
+
                             modalContent += `<div><h4 style="color:#7258db;">${formName}</h4><hr>`;
 
                             const formQuestions = formData[formName];
 
-                            Object.keys(formData).forEach(function (formName) {
-                                if (formName === 'Personal Details') {
-                                    return;
+                            Object.keys(formQuestions).forEach(function (question) {
+                                let answer = formQuestions[question];
+                                let answerContent = '';
+
+                                if (!answer) {
+                                    answerContent = ''; // Skip null or empty answers
+                                } else if (Array.isArray(answer)) {
+                                    const filtered = answer.filter(item => item !== null && item !== '' && item !== undefined);
+                                    if (filtered.length > 0) {
+                                        answerContent = '<ul>';
+                                        filtered.forEach(function (item) {
+                                            answerContent += `<li>${item}</li>`;
+                                        });
+                                        answerContent += '</ul>';
+                                    }
+                                } else if (typeof answer === 'object') {
+                                    let validEntries = Object.entries(answer).filter(([_, value]) => value !== null && value !== '');
+
+                                    // Sort hunger question if matched
+                                    if (question.includes('hunger/appetite over the day')) {
+                                        const preferredOrder = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
+                                        validEntries.sort((a, b) => preferredOrder.indexOf(a[0]) - preferredOrder.indexOf(b[0]));
+                                    }
+
+                                    if (validEntries.length > 0) {
+                                        answerContent = '<ul>';
+                                        validEntries.forEach(([key, value]) => {
+                                            const formattedKey = key
+                                                .replace(/_/g, ' ')
+                                                .replace(/\b\w/g, char => char.toUpperCase());
+
+                                            answerContent += `<li>${formattedKey}: `;
+                                            if (Array.isArray(value)) {
+                                                const cleanArray = value.filter(subItem => subItem !== null && subItem !== '' && subItem !== undefined);
+                                                if (cleanArray.length > 0) {
+                                                    answerContent += '<ul>';
+                                                    cleanArray.forEach(function (subItem) {
+                                                        answerContent += `<li>${subItem}</li>`;
+                                                    });
+                                                    answerContent += '</ul>';
+                                                }
+                                            } else {
+                                                answerContent += `${value}`;
+                                            }
+                                            answerContent += '</li>';
+                                        });
+                                        answerContent += '</ul>';
+                                    }
+                                } else {
+                                    answerContent = answer || ''; // Fallback for simple string values
                                 }
 
-                                modalContent += `<div><h4 style="color:#7258db;">${formName}</h4><hr>`;
-
-                                const formQuestions = formData[formName];
-
-                                Object.keys(formQuestions).forEach(function (question) {
-                                    let answer = formQuestions[question];
-                                    let answerContent = '';
-
-                                    if (!answer) {
-                                        answerContent = ''; // Skip null or empty answers
-                                    } else if (Array.isArray(answer)) {
-                                        const filtered = answer.filter(item => item !== null && item !== '' && item !== undefined);
-                                        if (filtered.length > 0) {
-                                            answerContent = '<ul>';
-                                            filtered.forEach(function (item) {
-                                                answerContent += `<li>${item}</li>`;
-                                            });
-                                            answerContent += '</ul>';
-                                        }
-                                    } else if (typeof answer === 'object') {
-                                        let validEntries = Object.entries(answer).filter(([_, value]) => value !== null && value !== '');
-
-                                        // Sort hunger question if matched
-                                        if (question.includes('hunger/appetite over the day')) {
-                                            const preferredOrder = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
-                                            validEntries.sort((a, b) => preferredOrder.indexOf(a[0]) - preferredOrder.indexOf(b[0]));
-                                        }
-
-                                        if (validEntries.length > 0) {
-                                            answerContent = '<ul>';
-                                            validEntries.forEach(([key, value]) => {
-                                                const formattedKey = key
-                                                    .replace(/_/g, ' ')
-                                                    .replace(/\b\w/g, char => char.toUpperCase());
-
-                                                answerContent += `<li>${formattedKey}: `;
-                                                if (Array.isArray(value)) {
-                                                    const cleanArray = value.filter(subItem => subItem !== null && subItem !== '' && subItem !== undefined);
-                                                    if (cleanArray.length > 0) {
-                                                        answerContent += '<ul>';
-                                                        cleanArray.forEach(function (subItem) {
-                                                            answerContent += `<li>${subItem}</li>`;
-                                                        });
-                                                        answerContent += '</ul>';
-                                                    }
-                                                } else {
-                                                    answerContent += `${value}`;
-                                                }
-                                                answerContent += '</li>';
-                                            });
-                                            answerContent += '</ul>';
-                                        }
-                                    } else {
-                                        answerContent = answer || ''; // Fallback for simple string values
-                                    }
-
-                                    if (answerContent) {
-                                        modalContent += `
-                                            <div>
-                                                <p><strong>Q : ${question}</strong></p>
-                                                <p>${answerContent}</p>
-                                            </div>`;
-                                    }
-                                });
-
-                                modalContent += `</div><hr>`;
+                                if (answerContent) {
+                                    modalContent += `
+                                        <div>
+                                            <p><strong>Q : ${question}</strong></p>
+                                            <p>${answerContent}</p>
+                                        </div>`;
+                                }
                             });
-
 
                             modalContent += `</div><hr>`;
                         });

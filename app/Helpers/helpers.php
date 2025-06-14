@@ -21,7 +21,7 @@ function routeIsActive($name, $activeClass = "active") {
 
 // BACKEND FUNCTIONS
 function backendAssets($path) {
-	return asset('private/public/backend/' . $path);
+	return asset('backend/' . $path);
 }
 function backendView($key) {
 	return 'backend.' . $key;
@@ -34,12 +34,12 @@ function backendRoutePut($key, $args = []) {
 }
 
 function frontAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/front/' . $path : 'private/public/front/' . $path;
+	$asset = config('constant.ENVIRONMENT') == 'production' ? 'front/' . $path : 'front/' . $path;
 	return asset($asset);
 }
 
 function webAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/' . $path : 'private/public/' . $path;
+	$asset = config('constant.ENVIRONMENT') == 'production' ?  $path :  $path;
 	return asset($asset);
 }
 

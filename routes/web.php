@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\FlagController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\UserController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,11 +42,9 @@ use App\Http\Controllers\Admin\UserController;
 
 Route::get('/check-auth', function () {
     return response()->json([
-        'authenticated' => \Auth::check(),
-        'user' => \Auth::user()
+        'authenticated' => Auth::guard('web')->check()
     ]);
-});
-
+})->name('check-auth');
 
 Route::get('/chat', function () {
     return view('image_form');

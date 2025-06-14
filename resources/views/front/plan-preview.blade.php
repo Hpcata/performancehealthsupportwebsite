@@ -107,31 +107,47 @@
 <body>
     @foreach($userPlans as $userPlan)
         <div class="header">
-            <!-- Sport-specific image based on the sport the user is training for -->
             @if($userPlan->user_id == 66)
                 <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
             @else
                 <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
             @endif
-            <!-- Sport name with color and the plan headline -->
             <h2 style="color: #333">{{ $userPlan->plan->name }}</h2>
-            <!-- <div class="headline">High Load Training Day</div> -->
         </div>
 
         <div class="meal-plan">
             @foreach ($userPlan->userCategories as $userMealTime)
-                @if($userMealTime->userMeals->where('user_plan_id', $userPlan->id) && $userMealTime->userMeals->where('user_plan_id', $userPlan->id)->count())
+                @php
+                    $hasMeals = false;
+                    foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $subCategory) {
+                        if ($subCategory->userMeals
+                            ->where('user_plan_id', $userPlan->id)
+                            ->where('user_category_id', $userMealTime->id)
+                            ->where('user_sub_category_id', $subCategory->id)
+                            ->count()) {
+                            $hasMeals = true;
+                            break;
+                        }
+                    }
+                @endphp
+
+                @if($hasMeals)
                     <div class="meal-time">
                         <h5>{{ $userMealTime->category->title }}</h5>
                         <table>
                             <tbody>
                                 @php
-                                    // Combine all meals from all categories into one collection
                                     $allMeals = collect();
-                                    foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $userCategory) {
-                                        $allMeals = $allMeals->merge($userCategory->userMeals->where('user_plan_id', $userPlan->id));
+
+                                    foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $subCategory) {
+                                        $subMeals = $subCategory->userMeals
+                                            ->where('user_plan_id', $userPlan->id)
+                                            ->where('user_category_id', $userMealTime->id)
+                                            ->where('user_sub_category_id', $subCategory->id);
+
+                                        $allMeals = $allMeals->merge($subMeals);
                                     }
-                                    // Sort combined meals by meal_id as integer ascending
+
                                     $sortedMeals = $allMeals->sortBy(function($userMeal) {
                                         return (int) $userMeal->id;
                                     });
@@ -142,46 +158,53 @@
                                         <td>
                                             <img src="{{ url('private/public/storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
                                         </td>
-                                        <td>{{ $userMeal->meal->title }} 
+                                        <td>
+                                            {{ $userMeal->meal->title }}
                                             @if ($userMeal->meal->description)
-                                                <br>
-                                                <span style="font-size: 12px; color: #666;">{{ $userMeal->meal->description }}</span>
+                                                <br><span style="font-size: 12px; color: #666;">{{ $userMeal->meal->description }}</span>
                                             @endif
                                             @if ($userMeal->meal->note)
-                                                <br>
-                                                <span class="mt-3" style="font-size: 12px; color: #666;"><strong>Note: </strong> {{ $userMeal->meal->note }}</span>
+                                                <br><span class="mt-3" style="font-size: 12px; color: #666;"><strong>Note:</strong> {{ $userMeal->meal->note }}</span>
                                             @endif
+
                                             @php
                                                 $carbsTotal = 0;
                                                 $proteinTotal = 0;
                                                 $fatTotal = 0;
                                                 $energyTotal = 0;
 
-                                                foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem) {
-                                                    $item = $userItem->item;
-
-                                                    $carbsTotal += round(floatval($item->carbs ?? 0));
-                                                    $proteinTotal += round(floatval($item->protein ?? 0));
-                                                    $fatTotal += round(floatval($item->fat ?? 0));
-                                                    $energyTotal += round(floatval($item->energy ?? 0));
+                                                $userItems = $userMeal->userItems
+                                                    ->where('user_plan_id', $userPlan->id)
+                                                    ->where('user_meal_id', $userMeal->id)
+                                                    ->where('user_category_id', $userMealTime->id)
+                                                    ->where('user_sub_category_id', $userMeal->user_sub_category_id);
+                                                foreach ($userItems as $userItem) {
+                                                    $matchedItem = $userMeal->meal->userMealItems->firstWhere('id', $userItem->id);
+                                                    $item = $userMeal->meal->userMealItems->firstWhere('id', $userItem->id);
+                                                   
+                                                    $carbsTotal += round(floatval($item->pivot->carbs ?? 0));
+                                                    $proteinTotal += round(floatval($item->pivot->protein ?? 0));
+                                                    $fatTotal += round(floatval($item->pivot->fat ?? 0));
+                                                    $energyTotal += round(floatval($item->pivot->energy ?? 0));
                                                 }
                                             @endphp
+
                                             @if ($userPlan->nutrition_info_flag == 1)
                                                 <br>
-                                                <span class="mt-3 d-none" style="font-size: 12px; color: #666;"><strong>Meal Total: 
-                                                    Energy: {{ (int) $energyTotal }}kJ |
-                                                    Protein: {{ (int) $proteinTotal }}g |
-                                                    Carb: {{ (int) $carbsTotal }}g |
-                                                    Fat: {{ (int) $fatTotal }}g</strong>
+                                                <span class="mt-3" style="font-size: 12px; color: #666;"><strong>Meal Total: 
+                                                    Energy: {{ round($energyTotal) }}kJ |
+                                                    Protein: {{ round($proteinTotal) }}g |
+                                                    Carb: {{ round($carbsTotal) }}g |
+                                                    Fat: {{ round($fatTotal) }}g</strong>
                                                 </span>
                                             @endif
                                         </td>
                                         <td>
                                             <ul>
-                                                @foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem)
+                                                @foreach ($userItems as $userItem)
                                                     @php
                                                         $matchedItem = $userMeal->meal->userMealItems->firstWhere('id', $userItem->id);
-                                                        dd($matchedItem);
+
                                                         $selectedQty = $matchedItem->pivot->selected_qty_unit ?? null;
                                                         if (is_string($selectedQty)) {
                                                             $decoded = json_decode($selectedQty, true);
@@ -222,11 +245,7 @@
                                                                     return round($qty) . $unit['unit'];
                                                                 }
 
-                                                                if ($isFraction) {
-                                                                    return trim($qtyRaw) . ' ' . $unit['unit'];
-                                                                }
-
-                                                                return rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.') . ' ' . $unit['unit'];
+                                                                return ($isFraction ? trim($qtyRaw) : rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.')) . ' ' . $unit['unit'];
                                                             })->implode(' or ') }}
                                                         @elseif ($matchedItem)
                                                             @php
@@ -262,7 +281,6 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
                     </div>
@@ -270,6 +288,7 @@
             @endforeach
         </div>
     @endforeach
+
 
     <!-- Footer with the logo -->
     <!-- <div class="footer">

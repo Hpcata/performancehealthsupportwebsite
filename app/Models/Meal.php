@@ -45,7 +45,7 @@ class Meal extends Model
     public function userMealItems()
     {
         return $this->belongsToMany(Item::class, 'user_item_meals', 'meal_id', 'item_id')
-                    ->withPivot(['qty', 'unit', 'selected_qty_unit'])
+                    ->withPivot(['qty', 'unit', 'selected_qty_unit', 'user_id', 'carbs', 'protein', 'fat', 'energy'])
                     ->wherePivot('is_swiped',0);
     }
 

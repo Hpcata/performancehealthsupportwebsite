@@ -505,71 +505,88 @@ class FrontController extends Controller
     }
 
     public function getAllMeals(Request $request)
-    {
-        $userId = $request->user_id;
-    
-        $userPlan = UserPlan::with([
-            'userCategories.category:id,title',
-            'userCategories.userSubCategories.subCategory:id,title',
-            'userCategories.userSubCategories.userMeals' => function ($q) use ($userId) {
-                $q->with([
-                    'meal' => function ($mealQuery) use ($userId) {
-                        $mealQuery->with(['userMealItems' => function ($q2) use ($userId) {
-                            $q2->wherePivot('user_id', $userId)
-                                ->select('items.id', 'items.title', 'items.image', 'items.category_id')
-                                ->withPivot('qty', 'unit', 'selected_qty_unit')
-                                ->with('category:id,name');
-                        }]);
-                    },
-                    'userItems.item' => function ($q3) {
-                        $q3->select('id', 'title', 'image', 'category_id')->with('category:id,name');
-                    }
-                ]);
-            }
-        ])
-        ->where('id', $request->user_plan_id)
-        ->first();
-    
-        $result = [];
-    
-        foreach ($userPlan->userCategories as $mealTime) {
-            foreach ($mealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $category) {
-                foreach ($category->userMeals->where('user_plan_id', $userPlan->id) as $userMeal) {
-                    $meal = $userMeal->meal;
-                    $userItemMap = $userMeal->userItems->where('user_plan_id', $userPlan->id)->pluck('id')->flip(); // Lookup
-    
-                    $items = [];
-                    foreach ($meal->userMealItems as $mealItem) {
-                        if (!$userItemMap->has($mealItem->id)) continue;
-    
-                        $items[] = [
-                            'id' => $mealItem->id,
-                            'title' => $mealItem->title,
-                            'image' => $mealItem->image,
-                            'qty' => $mealItem->pivot->qty,
-                            'unit' => $mealItem->pivot->unit,
-                            'selected_qty_unit' => $mealItem->pivot->selected_qty_unit,
-                            'category' => $mealItem->category->name ?? null,
-                        ];
-                    }
-    
-                    if (count($items)) {
-                        $result[] = [
-                            'meal_time_id' => $mealTime->category->id,
-                            'meal_time_title' => $mealTime->category->title,
-                            'category_id' => $category->subCategory->id,
-                            'category_title' => $category->subCategory->title,
-                            'meal_id' => $meal->id,
-                            'meal_title' => $meal->title,
-                            'items' => $items
-                        ];
-                    }
+{
+    $userId = $request->user_id;
+
+    $userPlan = UserPlan::with([
+        'userCategories.category:id,title',
+        'userCategories.userSubCategories.subCategory:id,title',
+        'userCategories.userSubCategories.userMeals' => function ($q) use ($userId) {
+            $q->with([
+                'meal' => function ($mealQuery) use ($userId) {
+                    $mealQuery->with(['userMealItems' => function ($q2) use ($userId) {
+                        $q2->wherePivot('user_id', $userId)
+                            ->select('items.id', 'items.title', 'items.image', 'items.category_id')
+                            ->withPivot('qty', 'unit', 'selected_qty_unit')
+                            ->with('category:id,name');
+                    }]);
+                },
+                'userItems.item' => function ($q3) {
+                    $q3->select('id', 'title', 'image', 'category_id')->with('category:id,name');
+                }
+            ]);
+        }
+    ])
+    ->where('id', $request->user_plan_id)
+    ->first();
+
+    $result = [];
+
+    foreach ($userPlan->userCategories as $mealTime) {
+        $userCategoryId = $mealTime->id;
+
+        foreach ($mealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $category) {
+            $userSubCategoryId = $category->id;
+
+            foreach (
+                $category->userMeals
+                    ->where('user_plan_id', $userPlan->id)
+                    ->where('user_category_id', $userCategoryId)
+                    ->where('user_sub_category_id', $userSubCategoryId)
+                as $userMeal
+            ) {
+                $meal = $userMeal->meal;
+
+                $userItemMap = $userMeal->userItems
+                    ->where('user_plan_id', $userPlan->id)
+                    ->where('user_category_id', $userCategoryId)
+                    ->where('user_sub_category_id', $userSubCategoryId)
+                    ->pluck('id')
+                    ->flip();
+
+                $items = [];
+                foreach ($meal->userMealItems as $mealItem) {
+                    if (!$userItemMap->has($mealItem->id)) continue;
+
+                    $items[] = [
+                        'id' => $mealItem->id,
+                        'title' => $mealItem->title,
+                        'image' => $mealItem->image,
+                        'qty' => $mealItem->pivot->qty,
+                        'unit' => $mealItem->pivot->unit,
+                        'selected_qty_unit' => $mealItem->pivot->selected_qty_unit,
+                        'category' => $mealItem->category->name ?? null,
+                    ];
+                }
+
+                if (count($items)) {
+                    $result[] = [
+                        'meal_time_id' => $mealTime->category->id,
+                        'meal_time_title' => $mealTime->category->title,
+                        'category_id' => $category->subCategory->id,
+                        'category_title' => $category->subCategory->title,
+                        'meal_id' => $meal->id,
+                        'meal_title' => $meal->title,
+                        'items' => $items
+                    ];
                 }
             }
         }
-    
-        return response()->json(['meals' => $result]);
-    }    
+    }
+
+    return response()->json(['meals' => $result]);
+}
+  
 
     public function freeTestSave(Request $request)
     {
@@ -696,30 +713,40 @@ class FrontController extends Controller
 
     public function validateCouponCode(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string|max:255',
-            'plan_id' => 'nullable|exists:plans,id',
-        ]);
-    
-        $promoCode = $request->input('code');
-        $planId = $request->input('plan_id'); // Get the plan ID
-        $currentDateTime = \Carbon\Carbon::now();
-    
-        // Fetch the coupon with active status and matching code
-        $coupon = \App\Models\Coupon::where('code', $promoCode)
-            ->where('status', 1) // Active status
-            ->first();
-    
-        if ($coupon) {
-            // Check if the coupon is within the valid date range
+        try {
+            $request->validate([
+                'code' => 'required|string|max:255',
+                'plan_id' => 'nullable|exists:plans,id',
+            ]);
+
+            $promoCode = $request->input('code');
+            $planId = $request->input('plan_id');
+            $currentDateTime = \Carbon\Carbon::now();
+
+            Log::info('Validating coupon code', [
+                'code' => $promoCode,
+                'plan_id' => $planId,
+                'user_id' => optional($request->user())->id
+            ]);
+
+            $coupon = \App\Models\Coupon::where('code', $promoCode)
+                ->where('status', 1)
+                ->first();
+
+            if (!$coupon) {
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'Invalid coupon code.',
+                ]);
+            }
+
             if ($currentDateTime->lt($coupon->start_date) || $currentDateTime->gt($coupon->end_date)) {
                 return response()->json([
                     'valid' => false,
                     'message' => 'Coupon is not valid at this time.',
                 ]);
             }
-            
-            // Check if the coupon is applicable to the selected plan
+
             $isPlanApplicable = $coupon->plans()->where('plans.id', $planId)->exists();
             if (!$isPlanApplicable) {
                 return response()->json([
@@ -727,21 +754,19 @@ class FrontController extends Controller
                     'message' => 'This coupon is not applicable to the selected plan.',
                 ]);
             }
-            
-            // Check the max_uses limit
-            if ($coupon->max_uses > 0 && $coupon->max_uses <= $coupon->usage_count) {
+
+            if ($coupon->max_uses > 0 && $coupon->usage_count >= $coupon->max_uses) {
                 return response()->json([
                     'valid' => false,
                     'message' => 'Coupon usage limit has been reached.',
                 ]);
             }
-    
-            // // Check uses_per_user limit
-            if(Auth::user() && !Auth::user()->isSuperAdmin()) {
+
+            if (Auth::check() && !Auth::user()->isSuperAdmin()) {
                 $userUsageCount = \App\Models\CouponUsage::where('coupon_id', $coupon->id)
-                    ->where('user_id', $request->user()->id)
+                    ->where('user_id', Auth::id())
                     ->count();
-        
+
                 if ($coupon->uses_per_user > 0 && $userUsageCount >= $coupon->uses_per_user) {
                     return response()->json([
                         'valid' => false,
@@ -749,22 +774,36 @@ class FrontController extends Controller
                     ]);
                 }
             }
-    
+
             // Coupon is valid
             return response()->json([
                 'valid' => true,
                 'type' => $coupon->type,
                 'discount' => $coupon->value,
             ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            dd($e);
+            return response()->json([
+                'valid' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+
+            Log::error('Error validating coupon code', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => optional($request->user())->id,
+            ]);
+dd($e);
+            return response()->json([
+                'valid' => false,
+                'message' => 'An unexpected error occurred. Please try again later.',
+            ], 500);
         }
-    
-        // If no valid coupon was found
-        return response()->json([
-            'valid' => false,
-            'message' => 'Invalid coupon code.',
-        ]);
     }
-    
     public function fetchWeightData(Request $request)
     {
         $userId = $request->user_id;

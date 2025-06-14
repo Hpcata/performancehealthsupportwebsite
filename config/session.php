@@ -31,7 +31,7 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 525600),
+    'lifetime' => env('SESSION_LIFETIME', 525600), // 1 year in minutes
 
     'expire_on_close' => false,
 
@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'encrypt' => false,
+    'encrypt' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -72,7 +72,7 @@ return [
     |
     */
 
-    'connection' => env('SESSION_CONNECTION', null),
+    'connection' => env('SESSION_CONNECTION'),
 
     /*
     |--------------------------------------------------------------------------
@@ -100,7 +100,7 @@ return [
     |
     */
 
-    'store' => env('SESSION_STORE', null),
+    'store' => env('SESSION_STORE'),
 
     /*
     |--------------------------------------------------------------------------
@@ -168,7 +168,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', true),
 
     /*
     |--------------------------------------------------------------------------

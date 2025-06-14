@@ -74,7 +74,8 @@
 .sidebar{
     @include transition(ease .1s);
     background: var(--primary-color);
-    z-index: 99999;
+    // z-index: 99999;
+    z-index: 1038;
     margin: 25px;
     height: calc(100vh - 50px);
     width: 260px;
@@ -525,3 +526,7 @@
         outline: none;
     }
 }
+.sidebar { z-index: 1038; }
+.zindex-popover { z-index: 1040; }
+div.dataTables_wrapper div.dataTables_filter input { border-color: #d7c5c5; }
+.sidebar.sidebar-mini .brand-icon .logo-text { display:none; }

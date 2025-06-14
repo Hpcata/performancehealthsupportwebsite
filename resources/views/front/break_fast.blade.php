@@ -24,7 +24,14 @@
                     <ul class="">
                         @if($userPlan->userCategories->count() > 0)
                             @foreach($userPlan->userCategories as $plan)
-                                @if($plan->userMeals && $plan->userMeals->count())
+                                @php
+                                    // Check if category has any valid meals (with linked meal and meal categories)
+                                    $hasValidMeal = $plan->userMeals->filter(function ($userMeal) {
+                                        return $userMeal->meal && $userMeal->meal->categories && $userMeal->meal->categories->isNotEmpty();
+                                    })->count() > 0;
+                                @endphp
+
+                                @if($hasValidMeal)
                                     <li class="m-2">
                                         <a class="@if($userMealTime->category->id == $plan->category->id) active btn btn-outline-primary btn-sm text-white @else bg-white btn btn-outline-secondary text-black @endif"
                                         aria-current="page"
@@ -36,8 +43,8 @@
                             @endforeach
                         @endif
                     </ul>
-                           
                 </div>
+
             </div>
         </div>
         <div class="plan-buttons-link">
@@ -332,7 +339,7 @@
             $mealItemsLoadingSpinner.show();
 
             $.ajax({
-                url: '{{ route('front.meals.items', ':mealId') }}'.replace(':mealId', mealId) + `?user_meal_id=${userMealId}&user_plan_id=${userPlanId}&user_sub_category_id=${userSubCategoryId}`,
+                url: '{{ route('front.meals.items', ':mealId') }}'.replace(':mealId', mealId) + `?user_meal_id=${userMealId}&user_plan_id=${userPlanId}&user_sub_category_id=${userSubCategoryId}&user_category_id=${userCategoryId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -934,7 +941,7 @@
 
             // Fetch subcategory items via AJAX
             $.ajax({
-                url: '{{ route('front.meals.items', ':meal_id') }}'.replace(':mealId', meal_id) + `?user_meal_id=${userMealId}&user_plan_id=${userPlanId}&user_sub_category_id=${userSubCategoryId}`,
+                url: '{{ route('front.meals.items', ':meal_id') }}'.replace(':mealId', meal_id) + `?user_meal_id=${userMealId}&user_plan_id=${userPlanId}&user_sub_category_id=${userSubCategoryId}&user_category_id=${userCategoryId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
