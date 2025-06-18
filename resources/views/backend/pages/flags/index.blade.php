@@ -78,7 +78,6 @@
                                     </td> -->
                                     <td>
                                     <div class="btn-group" role="group" aria-label="Basic outlined example">
-
                                         <a href="{{ route('admin.flags.edit', $flag->id) }}" class="btn btn-outline-secondary"><i class="icofont-edit text-success"></i></a>
                                         <form action="{{ route('admin.flags.destroy', $flag->id) }}" method="POST" style="display:inline;">
                                             @csrf

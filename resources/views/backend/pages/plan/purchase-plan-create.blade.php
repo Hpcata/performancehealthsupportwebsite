@@ -41,6 +41,23 @@
             transform: rotate(-180deg);
         }
 
+        /* Image styling */
+        .select2-selection__rendered img {
+            flex-shrink: 0;
+            width: 25px;
+            height: 25px;
+            margin-right: 5px;
+        }
+
+        /* Text part of the selection */
+        .select2-selection__rendered span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            /* display: inline-block; */
+            max-width: 100%;
+        }
+
     </style>
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -83,7 +100,7 @@
 
                                         <!-- Meal Times (Checkboxes) -->
                                         <ul class="list-group mb-4">
-                                            @foreach ($plan->mealTimes as $mealTime)
+                                            @foreach ($plan->categories as $mealTime)
                                             <li class="list-group-item border rounded mb-3">
                                                 <!-- Meal Time Checkbox -->
                                                 <div class="form-check d-flex justify-content-between align-items-center px-0">
@@ -119,7 +136,7 @@
 
                                                     <!-- Selected Meals and Swap Items -->
                                                     <div class="selected-meals mt-3" id="selectedMeals{{$plan->id}}_{{$mealTime->id}}" style="display: none;">
-                                                        <h6 class="fw-bold">Selected Meals and Swap Items:</h6>
+                                                        <!-- <h6 class="fw-bold">Selected Meals and Swap Items:</h6> -->
                                                         <ul class="list-group"></ul>
                                                     </div>
                                                 </div>
@@ -524,10 +541,54 @@
         </div>
     </div>
 </div>
+<!-- Add more swap items modal -->
+<div class="modal" id="addMoreSwapItemModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content p-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Swap Food</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editSwapItemForm">
+                    <div class="mb-3">
+                        <label for="itemName" class="form-label">Food Name</label>
+                        <input type="text" class="form-control" id="itemName" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="moreSwapFoodDropdown" class="form-label">Select Swap Food</label>
+                        <select id="moreSwapFoodDropdown" class="form-select mb-3">
+                        </select>
+                    </div>
+
+                    <div class="mb-3 mx-3" id="dynamicQtyMeasurementContainer">
+                    </div>
+
+                    <div class="mb-3 mt-3 mx-3">
+                        <label class="form-label">Nutrition Info</label>
+                        <p>Energy: <span id="modalEnergy">0kJ</span> | Protein: <span id="modalProtein">0g</span> | Carb: <span id="modalCarbs">0g</span> | Fat: <span id="modalFat">0g</span></p>
+                    </div>
+
+                    <!-- Hidden fields -->
+                    <input type="hidden" id="refItemId">
+                    <input type="hidden" id="swapItemId">
+                    <input type="hidden" id="swapPlanId">
+                    <input type="hidden" id="swapMealTimeId">
+                    <input type="hidden" id="swapMealId">
+                    <input type="hidden" id="description">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveMoreSwapItem">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal Popup -->
 <div class="modal" id="searchFoodModal" tabindex="-1" aria-labelledby="searchFoodModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable  modal-lg">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="searchFoodModalLabel">Search Food</h5>
@@ -611,6 +672,40 @@
     </div>
 </div>
 
+<!-- Main Item Delete Modal -->
+<div class="modal fade" id="deleteMainItemModal" tabindex="-1" aria-labelledby="deleteMainItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete this item and its swap items?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmDeleteMainItem" type="button" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Swap Item Delete Modal -->
+<div class="modal fade" id="deleteSwapItemModal" tabindex="-1" aria-labelledby="deleteSwapItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Swap Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete this swap item?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmDeleteSwapItem" type="button" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="loader-2" style="display: none;">
     <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" alt="Loading..." />
 </div>
@@ -628,10 +723,12 @@
 <script>
 
     const preSelectedFoods = @json($preplanSlectedFoods);
-   // console.log(preSelectedFoods);
+    // console.log(preSelectedFoods);
     document.addEventListener('DOMContentLoaded', function () {
         let hasUnsavedChanges = false;
         let intendedHref = ''; // Store the intended link URL
+        let intendedModalAction = null; // Store the intended modal action
+        let intendedProfileAction = null; // Store the intended profile action
 
         // Track changes in form fields
         document.querySelectorAll('input, textarea, select').forEach(input => {
@@ -640,51 +737,153 @@
             });
         });
 
-        // Custom navigation detection
-        document.querySelectorAll('a').forEach(anchor => {
-            anchor.addEventListener('click', function (event) {
+        // Handle View User Profile button
+        $(document).on('click', '.view-user-profile', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            if (hasUnsavedChanges) {
+                intendedProfileAction = this;
+                const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                modalInstance.show();
+                return false;
+            }else {
+                // If no unsaved changes, proceed with normal profile view
+                const userId = $(this).data('user-id');
+                const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
+                
+                $.ajax({
+                    url: sessionUrl,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.redirect_url) {
+                            window.open(response.redirect_url, '_blank');
+                        } else {
+                            alert('Something went wrong!');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error setting user session.');
+                    }
+                });
+            }
+        });
+
+        // Handle View User Details button
+        document.querySelectorAll('.user-pre-plan-details').forEach(button => {
+            button.addEventListener('click', function(event) {
                 if (hasUnsavedChanges) {
-                    event.preventDefault(); // Prevent immediate navigation
-                    
-                    // Correctly capture the intended URL
-                    const clickedLink = event.target.closest('a'); 
-                    
-                    if (clickedLink) {
-                        intendedHref = clickedLink.href;
-                        console.log('Intended Link:', intendedHref); // ✅ Correctly logs the clicked link URL
-                        const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
-                        modalInstance.show();                      }
+                    event.preventDefault();
+                    event.stopPropagation();
+                    intendedModalAction = this;
+                    const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                    modalInstance.show();
+                }
+            });
+        });
+
+        // Handle other navigation links
+        document.querySelectorAll('a:not(.user-pre-plan-details)').forEach(anchor => {
+            anchor.addEventListener('click', function(event) {
+                if (hasUnsavedChanges) {
+                    event.preventDefault();
+                    intendedHref = this.href;
+                    const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                    modalInstance.show();
                 }
             });
         });
 
         // Suppress browser's default popup for page reload/close
-        window.addEventListener('beforeunload', function (event) {
+        window.addEventListener('beforeunload', function(event) {
             if (hasUnsavedChanges) {
                 event.preventDefault();
             }
         });
 
         // Modal Button: "Save Changes"
-        document.getElementById('saveChanges').addEventListener('click', function () {
+        document.getElementById('saveChanges').addEventListener('click', function() {
             hasUnsavedChanges = false;
             document.getElementById('createPlanForm').submit();
-            const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
-            modalInstance.hide();          
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('savePlanModal'));
+            modalInstance.hide();
+
+            // Handle navigation after saving
+            if (intendedHref) {
+                window.location.href = intendedHref;
+                intendedHref = '';
+            }
+
+            // Handle profile action after saving
+            if (intendedProfileAction) {
+                const userId = intendedProfileAction.getAttribute('data-user-id');
+                const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
+                
+                $.ajax({
+                    url: sessionUrl,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.redirect_url) {
+                            window.open(response.redirect_url, '_blank');
+                        } else {
+                            alert('Something went wrong!');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error setting user session.');
+                    }
+                });
+                intendedProfileAction = null;
+            }
+
+            // Handle modal action after saving
+            if (intendedModalAction) {
+                const paymentId = intendedModalAction.getAttribute('data-payment-id');
+                $.ajax({
+                    url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            // Your existing modal content code here
+                            // ... (keep the existing modal content code)
+                        }
+                    }
+                });
+                intendedModalAction = null;
+            }
         });
 
         // Modal Button: "No Leave"
-        document.getElementById('leaveWithoutSaving').addEventListener('click', function () {
+        document.getElementById('leaveWithoutSaving').addEventListener('click', function() {
             hasUnsavedChanges = false;
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('savePlanModal'));
+            modalInstance.hide();
 
-            // Correctly redirect to the stored intended URL (like Food link)
+            // Handle navigation without saving
             if (intendedHref) {
                 window.location.href = intendedHref;
+                intendedHref = '';
+            }
+
+            // Handle modal action without saving
+            if (intendedModalAction) {
+                const paymentId = intendedModalAction.getAttribute('data-payment-id');
+                $.ajax({
+                    url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            // Your existing modal content code here
+                            // ... (keep the existing modal content code)
+                        }
+                    }
+                });
+                intendedModalAction = null;
             }
         });
 
         // Form submit bypasses the unsaved warning
-        document.getElementById('createPlanForm').addEventListener('submit', function () {
+        document.getElementById('createPlanForm').addEventListener('submit', function() {
             hasUnsavedChanges = false;
         });
     });
@@ -702,6 +901,15 @@
             width: 100
         })
 
+    });
+
+    $(document).on('input', '.modalQtyInput', function () {
+        let val = parseFloat($(this).val());
+
+        if (isNaN(val) || val <= 0) {
+            // Optionally show an error or reset
+            $(this).val('0.1'); // or keep empty
+        }
     });
 
     $(document).ready(function () {
@@ -1238,13 +1446,6 @@
         $(this).find('i').toggleClass('fa-chevron-down fa-chevron-up');
     });
 
-     $(document).on('click', '.view-info', function () {
-        // alert('22');
-        var description = $(this).data('description') || 'N/A';
-        $('#modalDescription').text(description);
-        $('#itemInfoModal').modal('show');
-    });
-    
     $(document).ready(function () {
         const previouslySelectedMeals = {};
 
@@ -1294,6 +1495,7 @@
                         return {
                             meal_time_id: mealTimeId,
                             user_id: userId,
+                            plan_id: planID,
                             search: params.term || '', // Search keyword
                             _token: '{{ csrf_token() }}'
                         };
@@ -1613,6 +1815,17 @@
                             </li>
                         `;
                     }).join('');
+
+                    swapItemsHTML += `
+                        <li class="d-flex justify-content-between align-items-start mt-1">
+                            <div class="col-9"></div>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+                                    data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    title="Add More"><i class="icofont-plus text-primary"></i></button>
+                            </div>
+                        </li>`;
                 } else {
                     swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
                                         <div class="col-9">
@@ -1670,7 +1883,6 @@
                         </td>
                     </tr>
                 `);
-                // $('[data-bs-toggle="tooltip"]').tooltip();
             });
             $('[data-bs-toggle="tooltip"]').tooltip('dispose').tooltip();
 
@@ -1747,7 +1959,7 @@
                                 checked: false
                             }];
                         }
-
+                        console.log(energy);
                         // Macros
                         $('#mealFoodAddModal #foodCarbs').val(foodItem.carbs || 0);
                         $('#mealFoodAddModal #foodProtein').val(foodItem.protein || 0);
@@ -1923,16 +2135,16 @@
                                 `;
                             }).join('');
 
-                            // swapItemsHTML += `
-                            //     <li class="d-flex justify-content-between align-items-start mt-1">
-                            //         <div class="col-9"></div>
-                            //         <div>
-                            //             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
-                            //                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                            //                 data-meal-time-id="${mealtimeID}" data-user-id="${userId}" 
-                            //                 title="Add More"><i class="icofont-plus text-primary"></i></button>
-                            //         </div>
-                            //     </li>`;
+                            swapItemsHTML += `
+                                <li class="d-flex justify-content-between align-items-start mt-1">
+                                    <div class="col-9"></div>
+                                    <div>
+                                        <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+                                            data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
+                                            data-meal-time-id="${mealtimeID}" data-user-id="${userId}" 
+                                            title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                    </div>
+                                </li>`;
 
                             // swapFoods.map(swapItem =>
                             //     updateFoodCount(swapItem.id, 1, 'green')
@@ -2004,6 +2216,36 @@
 
         });
         
+        function getQtyDisplay(selectedQtyUnits, fallbackQty, fallbackUnit) {
+            const checked = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
+
+            if (checked.length) {
+                return `(${checked.map(q => {
+                    const unit = q.unit || '';
+                    const qty = q.qty || '';
+                    const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                    const formattedQty = formatQty(qty, unit);
+                    return `${formattedQty}${space}${unit}`;
+                }).join(' or ')})`;
+            } else {
+                const formattedQty = formatQty(fallbackQty, fallbackUnit);
+                const space = ['g', 'ml', 'mL'].includes(fallbackUnit) ? '' : ' ';
+                return `(${formattedQty}${space}${fallbackUnit})`;
+            }
+        }
+
+        function formatQty(value) {
+            // Check if it's a string fraction like "1/2", "3/4"
+            if (typeof value === 'string' && /^\d+\/\d+$/.test(value)) {
+                return value; // keep it as-is
+            }
+
+            const floatVal = parseFloat(value);
+            if (isNaN(floatVal)) return value;
+
+            return floatVal % 1 === 0 ? floatVal.toFixed(0) : floatVal.toFixed(1);
+        }
+
         function getQtyDisplay(selectedQtyUnits, fallbackQty, fallbackUnit) {
             const checked = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
 
@@ -2400,16 +2642,31 @@
             let categoryRow = $(`#category-row-${categoryId}`);
 
             if (!foodWrapper.length) {
-                // Create category section if it doesn't exist
-                let categorySection = $(`#category-section-${categoryId}`);
-                if (!categorySection.length) {
-                    categorySection = $(`
-                        <div class="category-section mb-3" id="category-section-${categoryId}">
-                            <h6 class="mt-3 text-muted">${categoryName}</h6>
-                            <div class="row" id="category-row-${categoryId}"></div>
-                        </div>
-                    `);
-                    $('#recommendations-food-section').append(categorySection);
+                // Convert category name to slug format for ID
+                const categoryId = categoryName
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')  // Remove everything except letters, numbers, spaces, and dashes
+                .replace(/\s+/g, '-');
+
+                console.log(categoryId);
+                let categoryRow = $(`#category-row-${categoryId}`);
+                
+                // If category row doesn't exist, create it
+                if (!categoryRow.length) {
+                    // Create category section if it doesn't exist
+                    let categorySection = $(`#category-section-${categoryId}`);
+                    if (!categorySection.length) {
+                        categorySection = $(`
+                            <div class="category-section mb-3" id="category-section-${categoryId}">
+                                <h6 class="mt-3 text-muted">${categoryName}</h6>
+                                <div class="row" id="category-row-${categoryId}"></div>
+                            </div>
+                        `);
+                        $('#category-section').append(categorySection);
+                    }
+                    
+                    // Get or create the category row
+                    categoryRow = $(`#category-row-${categoryId}`);
                 }
 
                 categoryRow = $(`#category-row-${categoryId}`);
@@ -2464,7 +2721,7 @@
                             categoryWrapper.addClass('d-none');
                         }
                     } else {
-                        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+                        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).removeClass('text-primary text-success').addClass('text-dark');
                     }
                 }
                 return;
@@ -2692,12 +2949,21 @@
 
                 console.log(currentQty, currentUnit);
                 console.log(AU_UNIT_EQUIVALENTS);
+<<<<<<< HEAD
 
                 const normalizedUnitEquivalents = {};
                 Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
                     normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
                 });
 
+=======
+
+                const normalizedUnitEquivalents = {};
+                Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
+                    normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
+                });
+
+>>>>>>> a81479a388fdaaa332aff8828beccb0fd9afc39b
                 // Later in your function
                 const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
                 console.log(baseEquivalent);
@@ -3033,12 +3299,9 @@
 
                     if (isChecked) {
                         qtyUnitDisplay.push(`${qtyToUse}${['g', 'ml', 'mL'].includes(unit) ? unit : ' ' + unit}`);
-                        if (!foundChecked) {
-                            // Set qty and unit only for the FIRST checked row
-                            qty = qtyToUse;
-                            unit = unit;
-                            foundChecked = true;
-                        }
+                        // Set qty and unit only for the FIRST checked row
+                        qty = qtyToUse;
+                        unit = unit;
                     }
                 }
             });
@@ -3126,56 +3389,56 @@
             });
         });
 
-        // Delete Item Button Action
-        $(document).on('click', '.delete-item', function() {
-            const itemId = $(this).data('item-id');
-            const mealId = $(this).data('meal-id');
-            const mealTimeId = $(this).data('meal-time-id');
-            const planId = $(this).data('plan-id');
-            const userId = $(this).data('user-id');
-            let swap_food_id = $(this).data('swapfood-id');
+        let mainDeleteParams = null;
 
-            const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            const allSwapLis = currentItemRow.find('li');
-            
-            // Your delete logic for the item (e.g., show confirmation and delete item)
-            if (confirm('Are you sure you want to delete this item and swap items?')) {
-                console.log('Delete Item:', itemId, mealId, mealTimeId, planId, userId);
-                const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-                const $tableBody = $row.closest('tbody'); // Get the parent tbody
+        // Show main item delete modal
+        $(document).on('click', '.delete-item', function () {
+            const $btn = $(this);
+            const itemId = $btn.data('item-id');
+            const mealId = $btn.data('meal-id');
+            const mealTimeId = $btn.data('meal-time-id');
+            const planId = $btn.data('plan-id');
+            const userId = $btn.data('user-id');
 
-                // Count remaining <tr> elements in the table
-                const remainingRows = $tableBody.find('tr').length;
+            const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+            const $tableBody = $row.closest('tbody');
+            const allSwapLis = $row.find('li');
+            const remainingRows = $tableBody.find('tr').length;
 
-                // Uncheck checkboxes in the first and second <td>
-                $row.find('input[type="checkbox"]').prop('checked', false);
+            mainDeleteParams = {
+                $row, $tableBody, allSwapLis,
+                itemId, mealId, mealTimeId, planId, userId, remainingRows
+            };
 
-                // Remove the row
-                $row.remove();
+            new bootstrap.Modal(document.getElementById('deleteMainItemModal')).show();
+        });
 
-                // If there are no more rows left, remove the meal from the meal section dropdown
-                if (remainingRows === 1) { // Since we're removing a row, we check before it's removed
-                    $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
-                    const dropdown = `#addMealDropdown${planId}_${mealTimeId}`;
-                    const $select = $(dropdown).find('select'); // Find the select inside the div
+        // Confirm delete for main item
+        $('#confirmDeleteMainItem').on('click', function () {
+            const { $row, $tableBody, allSwapLis, itemId, mealId, mealTimeId, planId, remainingRows } = mainDeleteParams;
 
-                    // Correcting the dropdown selection and removing the meal option
-                    $select.find('option[value="' + mealId + '"]').remove();
-                    $select.trigger('change');
-                    // initializeSelect2($select, mealTimeId);
-                }
+            $row.find('input[type="checkbox"]').prop('checked', false);
+            $row.remove();
 
-                updateFoodCount(itemId, -1, null);
-
-                allSwapLis.each(function () {
-                    const swapItemId = $(this).data('swap-item-id'); // OR use attr('data-swap-item-id')
-                    console.log('Swap Item ID:', swapItemId);
-                    updateFoodCount(swapItemId, -1, null);
-                });
-                
-                calculateTotals(planId, mealTimeId, mealId);
-                calculateMealNutrition();
+            if (remainingRows === 1) {
+                $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+                const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
+                $select.find(`option[value="${mealId}"]`).remove();
+                $select.trigger('change');
             }
+
+            updateFoodCount(itemId, -1, null);
+
+            allSwapLis.each(function () {
+                const swapItemId = $(this).data('swap-item-id');
+                updateFoodCount(swapItemId, -1, null);
+            });
+
+            calculateTotals(planId, mealTimeId, mealId);
+            calculateMealNutrition();
+
+            mainDeleteParams = null;
+            bootstrap.Modal.getInstance(document.getElementById('deleteMainItemModal')).hide();
         });
 
         $(document).on('click', '.edit-swap-item', function () {
@@ -3449,44 +3712,93 @@
             });
         });
 
+        // Show swap item delete modal
+        let swapDeleteParams = null;
         $(document).on('click', '.delete-swap-item', function () {
-            const button = $(this);
-
-            const swapItemId = button.data('swap-item-id');
-            const itemId = button.data('item-id');
-            const mealId = button.data('meal-id');
-            const planId = button.data('plan-id');
-            const mealTimeId = button.data('meal-time-id');
-            const userId = button.data('user-id');
-
-            if (!confirm('Are you sure you want to delete this swap item?')) return;
-
-            const $li = button.closest('li');
+            const $btn = $(this);
+            const $li = $btn.closest('li');
             const $ul = $li.closest('ul');
 
-            // Remove the swap item
+            const swapItemId = $btn.data('swap-item-id');
+            const itemId = $btn.data('item-id');
+            const mealId = $btn.data('meal-id');
+            const planId = $btn.data('plan-id');
+            const mealTimeId = $btn.data('meal-time-id');
+            const userId = $btn.data('user-id');
+
+            swapDeleteParams = {
+                $li, $ul, swapItemId, itemId, mealId, planId, mealTimeId, userId
+            };
+
+            new bootstrap.Modal(document.getElementById('deleteSwapItemModal')).show();
+        });
+
+        // Confirm delete for swap item
+        $('#confirmDeleteSwapItem').on('click', function () {
+            const { $li, $ul, swapItemId, itemId, mealId, planId, mealTimeId, userId } = swapDeleteParams;
+
             $li.remove();
             updateFoodCount(swapItemId, -1, null);
 
-            // Check if there are any <li> left in the list
             if ($ul.children('li').length === 0) {
-                // Add "No swap items available" message
                 $ul.append(`
-                    <li class="d-flex justify-content-between align-items-start mb-2">
-                        <div class="col-9">
-                            <span class="text-muted">No swap items available</span>
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-                                data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-                                title="Add"><i class="icofont-plus text-primary"></i>
-                            </button>
-                        </div>
-                    </li>
+                <li class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="col-9">
+                    <span class="text-muted">No swap items available</span>
+                    </div>
+                    <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+                        data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                        title="Add"><i class="icofont-plus text-primary"></i>
+                    </button>
+                    </div>
+                </li>
                 `);
             }
+
+            swapDeleteParams = null;
+            bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
         });
+
+        // $(document).on('click', '.delete-swap-item', function () {
+        //     const button = $(this);
+
+        //     const swapItemId = button.data('swap-item-id');
+        //     const itemId = button.data('item-id');
+        //     const mealId = button.data('meal-id');
+        //     const planId = button.data('plan-id');
+        //     const mealTimeId = button.data('meal-time-id');
+        //     const userId = button.data('user-id');
+
+        //     if (!confirm('Are you sure you want to delete this swap item?')) return;
+
+        //     const $li = button.closest('li');
+        //     const $ul = $li.closest('ul');
+
+        //     // Remove the swap item
+        //     $li.remove();
+        //     updateFoodCount(swapItemId, -1, null);
+
+        //     // Check if there are any <li> left in the list
+        //     if ($ul.children('li').length === 0) {
+        //         // Add "No swap items available" message
+        //         $ul.append(`
+        //             <li class="d-flex justify-content-between align-items-start mb-2">
+        //                 <div class="col-9">
+        //                     <span class="text-muted">No swap items available</span>
+        //                 </div>
+        //                 <div>
+        //                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+        //                         data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
+        //                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+        //                         title="Add"><i class="icofont-plus text-primary"></i>
+        //                     </button>
+        //                 </div>
+        //             </li>
+        //         `);
+        //     }
+        // });
 
         $(document).ready(function () {
             $('#swapFoodDropdown').select2({
@@ -3775,6 +4087,13 @@
             const name = $dropdown.find('option:selected').text();
             const swapItemId = $dropdown.find('option:selected').val();
             const description = $('#addSwapItemModal #description').val();
+
+            // ✅ Check if food is selected
+            if (!swapItemId || swapItemId === '0') {
+                alert('Please select a food item.');
+                return;
+            }
+            
             const anyChecked = $('#addSwapItemModal .qty-unit-row').find('.multiQtyCheckbox:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
@@ -3856,6 +4175,15 @@
                         </div>
                     </div>
                 </li>
+                <li class="d-flex justify-content-between align-items-start mt-1">
+                    <div class="col-9"></div>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+                            data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                            title="Add More"><i class="icofont-plus text-primary"></i></button>
+                    </div>
+                </li>
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
@@ -3905,6 +4233,346 @@
             
             // calculateTotals(planId, mealTimeId, mealId);
             // calculateMealNutrition();
+        });
+
+        $(document).on('click', '.add-more-swap-item', function () {
+            const btn = $(this);
+            const itemId = $(this).data('item-id');
+            const mealId = $(this).data('meal-id');
+            const planId = $(this).data('plan-id');
+            const mealTimeId = $(this).data('meal-time-id');
+            const modalId = '#addMoreSwapItemModal';
+            const description = $(this).data('description');
+
+            // Set item name
+            const name = btn.closest('tr').find('td').first().find('label').text().split('(')[0].trim();
+            $(`${modalId} #itemName`).val(name);
+
+            $(`${modalId} .modal-title`).text('Add Swap Food');
+
+            // Set required hidden fields
+            $('#addMoreSwapItemModal #refItemId').val(itemId);
+            $('#addMoreSwapItemModal #swapPlanId').val(planId);
+            $('#addMoreSwapItemModal #swapMealTimeId').val(mealTimeId);
+            $('#addMoreSwapItemModal #swapMealId').val(mealId);
+            $('#addMoreSwapItemModal #description').val(description);
+
+            // Reset swap item ID since this is a new add
+            $('#addMoreSwapItemModal #swapItemId').val('');
+            // $('#addMoreSwapItemModal #previousSwapItemId').val('');
+
+            // Clear old values
+            $('#addMoreSwapItemModal #itemName').val(name);
+            $('#addMoreSwapItemModal #modalCarbs').text('0g');
+            $('#addMoreSwapItemModal #modalProtein').text('0g');
+            $('#addMoreSwapItemModal #modalFat').text('0g');
+            $('#addMoreSwapItemModal #modalEnergy').text('0kJ');
+            $('#addMoreSwapItemModal #dynamicQtyMeasurementContainer').empty();
+
+            // Optionally reset the dropdown to default (you control how it fills)
+            $('#swapItemDropdown').val('').trigger('change');
+
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('addMoreSwapItemModal'));
+            modal.show();
+            setupDynamicMeasurementSync('#addMoreSwapItemModal');
+
+        });
+
+        $(document).ready(function () {
+            $('#moreSwapFoodDropdown').select2({
+                placeholder: "Search for swap foods",
+                minimumInputLength: 1,
+                width: '100%',
+                allowClear: true,
+                dropdownParent: $('#addMoreSwapItemModal'),
+                ajax: {
+                    url: '{{ route("admin.items.index") }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return { query: params.term };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response.items.map(item => ({
+                                id: item.id,
+                                text: item.title,
+                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                carbs: item.carbs,
+                                protein: item.protein,
+                                fat: item.fat,
+                                energy: item.energy,
+                                qty: item.qty,
+                                unit: item.unit,
+                                description: item.description,
+                                selected_qty_unit: item.selected_qty_unit
+                            }))
+                        };
+                    },
+                    cache: true
+                },
+                templateResult: formatFood,
+                templateSelection: formatFoodSelection
+            });
+
+            function formatFood(food) {
+                if (!food.id) return food.text;
+                return $(`
+                    <div style="display: flex; align-items: center;">
+                        <img src="${food.image}" style="width: 30px; height: 30px; margin-right: 10px;">
+                        <span>${food.text}</span>
+                    </div>
+                `);
+            }
+
+            function formatFoodSelection(food) {
+                if (!food.id) return food.text;
+                return $(`
+                    <div style="display: flex; align-items: center;">
+                        <img src="${food.image}" style="width: 25px; height: 25px; margin-right: 5px;">
+                        <span>${food.text}</span>
+                    </div>
+                `);
+            }
+
+            $('#moreSwapFoodDropdown').on('select2:select', function (e) {
+                const data = e.params.data;
+                let selectedQtyUnits = [];
+                try {
+                    // Only parse if it's a string
+                    if (typeof data.selected_qty_unit === 'string') {
+                        selectedQtyUnits = JSON.parse(data.selected_qty_unit);
+                    } else {
+                        selectedQtyUnits = data.selected_qty_unit; // Already an object/array
+                    }
+                } catch (e) {
+                    console.warn('Invalid JSON in selected_qty_unit:', e);
+                }
+
+                if (!Array.isArray(selectedQtyUnits) || selectedQtyUnits.length === 0) {
+                    selectedQtyUnits = [{ qty: data.qty, unit: data.unit, checked: false }];
+                }
+
+                const $container = $('#addMoreSwapItemModal #dynamicQtyMeasurementContainer').empty();
+
+                selectedQtyUnits.forEach(({ qty, unit, checked }, index) => {
+                    const row = `
+                       <div class="row mb-2 qty-unit-row align-items-center">
+                            <div class="col-auto mt-4">
+                                <input type="checkbox" class="form-check-input multiQtyCheckbox" name="multiQty[]" data-qty="${qty}" data-unit="${unit}" ${checked ? 'checked' : ''}>
+                            </div>
+                            <div class="col-5">
+                                ${index === 0 ? '<label class="form-label">Quantity</label>' : ''}
+                                <input type="text" class="form-control modalQtyInput" value="${qty}" data-base-qty="${qty}">
+                            </div>
+                            <div class="col-5">
+                                ${index === 0 ? '<label class="form-label">Measurement</label>' : ''}
+                                <input type="text" class="form-control modalMeasurementInput" value="${unit}">
+                            </div>
+                        </div>
+
+                    `;
+                    $container.append(row);
+                });
+
+                $('#addMoreSwapItemModal #modalCarbs').text((parseFloat(data.carbs) || 0).toFixed(1) + 'g');
+                $('#addMoreSwapItemModal #modalProtein').text((parseFloat(data.protein) || 0).toFixed(1) + 'g');
+                $('#addMoreSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
+                $('#addMoreSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
+                $('#addMoreSwapItemModal #description').val(data.description);
+                
+                setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#addMoreSwapItemModal');
+                setupDynamicMeasurementSync('#addMoreSwapItemModal');
+            });
+
+        });
+
+        $('#saveMoreSwapItem').on('click', function () {
+            const itemId = $('#addMoreSwapItemModal #refItemId').val();
+            const mealId = $('#addMoreSwapItemModal #swapMealId').val();
+            const planId = $('#addMoreSwapItemModal #swapPlanId').val();
+            const mealTimeId = $('#addMoreSwapItemModal #swapMealTimeId').val();
+            const $dropdown = $('#addMoreSwapItemModal #moreSwapFoodDropdown');
+            const name = $dropdown.find('option:selected').text();
+            const swapItemId = $dropdown.find('option:selected').val();
+            const description = $('#addMoreSwapItemModal #description').val();
+
+            const anyChecked = $('#addMoreSwapItemModal .qty-unit-row').find('.multiQtyCheckbox:checked').length > 0;
+            if (!anyChecked) {
+                alert('Please select at least one quantity/measurement option.');
+                return;
+            }
+
+            const selectedQtyUnits = [];
+            let selectedTitleParts = [];
+            let checkedQtyUnits = [];
+            let qty = 0;
+            let unit = "";
+            $('#addMoreSwapItemModal .qty-unit-row').each(function () {
+                const $row = $(this);
+                const rawQtyInput = $row.find('.modalQtyInput').val().trim();
+                const parsedQty = parseFraction(rawQtyInput);
+                let unit = $row.find('.modalMeasurementInput').val().trim();
+                const $checkbox = $row.find('.multiQtyCheckbox');
+                const isChecked = $checkbox.is(':checked');
+
+                if (!isNaN(parsedQty) && unit) {
+                    let qtyToUse;
+                    const normalizedUnit = unit.toLowerCase();
+
+                    if (['g', 'ml'].includes(normalizedUnit)) {
+                        // Round for g/ml/mL units
+                        qtyToUse = Math.round(parsedQty).toString();
+                    } else {
+                        // Keep as-is if not whole number, else use integer version
+                        qtyToUse = parsedQty % 1 === 0 ? parsedQty.toString() : rawQtyInput;
+                    }
+
+                    selectedQtyUnits.push({ qty: qtyToUse, unit: unit, checked: isChecked });
+
+                    if (isChecked) {
+                        const formattedUnit = ['g', 'ml', 'mL'].includes(unit) ? unit : ' ' + unit;
+                        checkedQtyUnits.push(`${qtyToUse}${formattedUnit}`);
+                        selectedTitleParts.push(`${qtyToUse}${formattedUnit}`);
+
+                        qty = qtyToUse;
+                    }
+                }
+            });
+
+            const carbs = parseFloat($('#addMoreSwapItemModal #modalCarbs').text()) || 0;
+            const protein = parseFloat($('#addMoreSwapItemModal #modalProtein').text()) || 0;
+            const fat = parseFloat($('#addMoreSwapItemModal #modalFat').text()) || 0;
+            const energy = parseFloat($('#addMoreSwapItemModal #modalEnergy').text()) || 0;
+            const updatedLI = `
+                <li class="list-unstyled mb-3" data-swap-item-id="${swapItemId}">
+                    <div class="d-flex justify-content-between align-items-start mb-0">
+                        <div class="col-9">
+                            <div class="d-flex align-items-start">
+                                <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${itemId}][]"
+                                    value="${swapItemId}" class="form-check-input me-2 d-none " checked
+                                    data-carbs="${carbs}" data-protein="${protein}" data-fat="${fat}" data-energy="${energy}">
+                                <label class="form-check-label">${name}</label>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-primary view-info"
+                                data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
+                                <i class="fas fa-info-circle text-primary"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
+                                data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
+                                data-plan-id="${planId}" data-meal-time-id="${mealTimeId}"
+                                data-swap-qty="${qty}" data-swap-unit="${unit}"
+                                data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
+                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
+                                data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
+                                data-plan-id="${planId}" data-meal-time-id="${mealTimeId}" title="Delete">
+                                <i class="icofont-ui-delete text-danger"></i></button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p class="px-2 mb-2 fw-bold">(${selectedTitleParts.join(' or ')})</p>
+                            <p class="mb-0 px-2">Energy: ${parseFloat(energy)}kJ | Protein: ${Math.round(protein)}g | Carb: ${Math.round(carbs)}g | Fat: ${Math.round(fat)}g</p>
+                        </div>
+                    </div>
+                </li>
+            `;
+
+            const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+            const swapItemsContainer = currentItemRow.find(`td:nth-child(2) ul`);
+            
+            // Check if there are any existing swap items
+            const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
+            
+            if (existingItems.length > 0) {
+                // If there are existing items, append the new item after them
+                existingItems.last().after(updatedLI);
+            } else {
+                // If no existing items, replace the entire content
+                swapItemsContainer.html(updatedLI);
+            }
+            
+            // // Add the + icon button at the end
+            // const addButton = `
+            //     <li class="d-flex justify-content-between align-items-start mb-2">
+            //         <div class="col-9">
+            //             <span class="text-muted"></span>
+            //         </div>
+            //         <div>
+            //             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+            //                 data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
+            //                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+            //                 title="Add"><i class="icofont-plus text-primary"></i>
+            //             </button>
+            //         </div>
+            //     </li>
+            // `;
+            // swapItemsContainer.append(addButton);
+            
+            $('[data-bs-toggle="tooltip"]').tooltip();
+            // updateFoodCount(swapItemId, 1, 'green');
+
+            const modalEl = document.getElementById('addMoreSwapItemModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+
+            $.ajax({
+                url: '{{ route("admin.update-food-swap-foods") }}',
+                method: 'POST',
+                data: {
+                    item_id: itemId,
+                    swap_item_id: swapItemId,
+                    meal_id: mealId,
+                    meal_time_id: mealTimeId,
+                    plan_id: planId,
+                    user_id: userId,
+                    swap_item_qty: qty,
+                    swap_item_unit: unit,
+                    swap_food_carbs: carbs,
+                    swap_food_protein: protein,
+                    swap_food_fat: fat,
+                    swap_food_energy: energy,
+                    swap_selected_qty_unit: selectedQtyUnits,
+                    type: 'swap-food-update',
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('swap food added successfully');
+                        modal.hide();
+                    } else {
+                        alert('Failed to update swap items.');
+                        modal.hide();
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while updating swap items.');
+                    modal.hide();
+                }
+            });
+        });
+
+        $('#addMoreSwapItemModal').on('hidden.bs.modal', function () {
+            console.log('Add More Swap Item Modal hidden');
+
+            // Reset all inputs inside the modal
+            $(this).find('input').val('');
+
+            // ✅ Clear the select value FIRST, then trigger change
+            const $dropdown = $('#addMoreSwapItemModal #moreSwapFoodDropdown');
+            $dropdown.val(null).trigger('change'); // This clears Select2 selected value
+
+            // ✅ Clear dynamic fields
+            $('#addMoreSwapItemModal #dynamicQtyMeasurementContainer').empty();
+
+            // ✅ Reset macro values
+            $('#addMoreSwapItemModal #modalCarbs').text('0.0g');
+            $('#addMoreSwapItemModal #modalProtein').text('0.0g');
+            $('#addMoreSwapItemModal #modalFat').text('0.0g');
+            $('#addMoreSwapItemModal #modalEnergy').text('0.0kJ'); // Removed space and fixed selector
         });
 
         $('#editSwapItemModal').on('hidden.bs.modal', function () {
@@ -4144,7 +4812,14 @@
                     let swapItemsHTML = '';
 
                     if (swapFoods.length > 0) {
-                        swapItemsHTML = swapFoods.map(swapItem => `
+                        swapItemsHTML = swapFoods.map(swapItem => {
+                            const checkedQtyText = getQtyDisplay(
+                                swapItem.selected_qty_unit || [],
+                                swapItem.qty,
+                                swapItem.unit
+                            );
+
+                        return `
                             <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
                                 <div class="d-flex justify-content-between align-items-start mb-0">
                                     <div class="col-9">
@@ -4174,26 +4849,28 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <p class="px-2 mb-2 fw-bold">(
-                                            ${
-                                                // Convert qty to string and check for fraction
-                                                String(swapItem.qty).includes('/')
-                                                    ? swapItem.qty
-                                                    : ["g", "ml", "mL"].includes(swapItem.unit)
-                                                        ? Math.round(parseFloat(swapItem.qty))
-                                                        : swapItem.qty
-                                            }
-                                            ${["g", "ml", "mL"].includes(swapItem.unit) ? swapItem.unit : ' ' + swapItem.unit}
-                                        )</p>
+                                        <p class="px-2 mb-2 fw-bold">${checkedQtyText}</p>
                                         <p class="mb-0 px-2">Energy: ${parseFloat(swapItem.energy)}kJ | Protein: ${Math.round(swapItem.protein)}g | Carb: ${Math.round(swapItem.carbs)}g | Fat: ${Math.round(swapItem.fat)}g</p>
                                     </div>
                                 </div>
                             </li>
-                        `).join('');
+                            `;
+                        }).join('');
 
-                        swapFoods.map(swapItem => 
-                            updateFoodCount(swapItem.id, 1, 'green')
-                        );
+                        swapItemsHTML += `
+                            <li class="d-flex justify-content-between align-items-start mt-1">
+                                <div class="col-9"></div>
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+                                        data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                </div>
+                            </li>`;
+
+                        // swapFoods.map(swapItem => 
+                        //     updateFoodCount(swapItem.id, 1, 'green')
+                        // );
 
                     } else {
                         swapItemsHTML = `
@@ -4525,13 +5202,23 @@
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]" 
                                                     value="${food.id}" 
-                                                    class="form-check-input me-2 d-none" data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" checked>
+                                                    class="form-check-input me-2 d-none" data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}"  checked>
                                                 <label class="form-check-label flex-grow-1">${food.title} (${food.qty}${food.unit})</label>
                                             </div>
                                              <p class="mb-0 px-2">Energy: ${parseFloat(food.energy)}kJ | Protein: ${Math.round(food.protein)}g | Carb: ${Math.round(food.carbs)}g | Fat: ${Math.round(food.fat)}g</p>
                                         </td>
                                         <td width="45%">
-                                            <ul class="list-unstyled">${swapItemsHTML}</ul>
+                                            <ul class="list-unstyled">${swapItemsHTML}
+                                                <li class="d-flex justify-content-between align-items-start mt-1">
+                                                    <div class="col-9"></div>
+                                                    <div>
+                                                        <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+                                                            data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                            title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                                    </div>
+                                                </li>
+                                            </ul>
                                         </td>
                                         <td width="10%">
                                             <button type="button" class="btn btn-sm btn-outline-primary"
@@ -4718,6 +5405,66 @@
         });
     });
 
+    $(document).ready(function () {
+        $(document).on('click', '.view-info', function (e) {
+            e.preventDefault();
+
+            const $this = $(this);
+            const description = $this.data('description');
+
+            // ✅ Correctly locate the corresponding label text
+            const foodName = $this.closest('.d-flex').find('label').text().trim();
+
+            const modal = $('#itemInfoModal');
+
+            if (modal.length) {
+                modal.find('.modal-title').text(foodName || 'Item Information');
+                modal.find('#modalDescription').text(description || 'No description available.');
+
+                const bsModal = new bootstrap.Modal(modal[0]);
+                bsModal.show();
+            }
+        });
+
+         function initializeTooltips() {
+            // First dispose all existing tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+            
+            // Initialize new tooltips
+            $('[data-bs-toggle="tooltip"]').each(function() {
+                const $this = $(this);
+                const description = $this.data('description');
+                
+                // Set both title attributes for consistency
+                $this.attr({
+                    'title': description,
+                    'data-bs-original-title': description
+                });
+                
+                // Initialize Bootstrap tooltip
+                new bootstrap.Tooltip(this, {
+                    trigger: 'hover',
+                    placement: 'top',
+                    html: true
+                });
+            });
+        }
+
+        // Initialize tooltips on page load
+        initializeTooltips();
+
+        // Handle dynamic content updates
+        $(document).on('shown.bs.modal', function() {
+            initializeTooltips();
+        });
+
+        // Handle AJAX content updates
+        $(document).ajaxComplete(function() {
+            initializeTooltips();
+        });
+    });
+    
+
     document.addEventListener('DOMContentLoaded', () => {
         const mealTimeCheckboxes = document.querySelectorAll('.meal-time-checkbox');
 
@@ -4733,33 +5480,6 @@
 
             // Trigger change event on page load to ensure proper state
             mealTimeCheckbox.dispatchEvent(new Event('change'));
-        });
-    });
-
-    $(document).ready(function() {
-        $('.view-user-profile').on('click', function(e) {
-            e.preventDefault();
-            var userId = $(this).data('user-id');
-            var sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-
-            $.ajax({
-                url: sessionUrl,
-                method: 'GET',
-                success: function(response) {
-                    // If the session is set successfully, redirect to profile
-                    if (response.redirect_url) {
-                        // window.location.href = response.redirect_url;
-                        window.open(response.redirect_url, '_blank');
-
-                    } else {
-                        alert('Something went wrong!');
-                    }
-                },
-                error: function(xhr) {
-                    // alert(xhr.responseText);
-                    alert('Error setting user session.');
-                }
-            });
         });
     });
 

@@ -13,23 +13,22 @@ class UserCategory extends Model
 
     protected $fillable = [
         'user_plan_id',
-        'meal_time_id',
-        'category_id',
+        'id'  // This will store category_id
     ];
 
-    public function userMealTime()
+    public function userPlan()
     {
-        return $this->belongsTo(UserMealTime::class, 'meal_time_id');
+        return $this->belongsTo(UserPlan::class, 'user_plan_id');
     }
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'id');
     }
 
-    public function userSubcategories()
+    public function userSubCategories()
     {
-        return $this->hasMany(UserSubcategory::class, 'user_category_id');
+        return $this->hasMany(UserSubCategory::class, 'user_category_id');
     }
 
     public function userMeals()

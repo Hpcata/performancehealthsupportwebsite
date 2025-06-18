@@ -64,7 +64,7 @@ class ItemController extends Controller
             'title' => 'required|string|max:255|unique:items',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
-            'qty' => 'nullable|string',
+            'qty' => 'required|string',
             'is_swiped' => 'required|boolean',
             'meal_ids' => 'nullable|array',
             'meal_ids.*' => 'exists:meals,id',
@@ -75,10 +75,10 @@ class ItemController extends Controller
             'carbs' => 'nullable|numeric',
             'fat' => 'nullable|numeric',
             'serving_per_pack' => 'nullable|numeric',
-            'serving_size' => 'nullable|numeric',
+            'serving_size' => 'required|numeric',
             'category_id' => 'required|exists:food_categories,id',
-            'serving_size_unit' => 'nullable',
-            'unit'  => 'nullable',
+            'serving_size_unit' => 'required',
+            'unit'  => 'required',
             // 'selected_qty_unit' => 'nullable|array',
             'note' => 'nullable',
             'energy' => 'nullable',
@@ -86,6 +86,8 @@ class ItemController extends Controller
             'sugars' => 'nullable',
             'dietary_fibre' => 'nullable',
             'sodium' => 'nullable',
+            'flag_ids' => 'required',
+            'category_id' => 'required',
             // 'is_locked' => 'nullable|boolean'
         ]);
         

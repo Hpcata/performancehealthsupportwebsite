@@ -648,3 +648,14 @@ input[type="date"],input[type="time"]
     border: 1px solid var(--border-color);
     background-color: var(--card-color);
 }
+
+
+.sidebar{
+    z-index: 1038;
+}
+.zindex-popover {
+  z-index: 1040;
+}
+td .btn {
+  margin: 0.2rem;
+}

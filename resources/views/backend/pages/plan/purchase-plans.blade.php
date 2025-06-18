@@ -82,7 +82,7 @@
                                     @else
                                     <a href="{{ route('admin.purchase-plans.create', $payment->id) }}" class="btn btn-sm btn-outline-success m-1"><i class="icofont-plus text-success"></i></a>
                                     @endif
-                                </td>
+                                </td> 
                             </tr>
                             @endforeach
                         </tbody>

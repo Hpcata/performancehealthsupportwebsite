@@ -106,7 +106,8 @@
                                         <form action="{{ route('admin.items.destroy', $item->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-secondary">
+                                            <button type="submit" class="btn btn-outline-secondary"
+                                                onclick="return confirm('Are you sure you want to delete this record?');">
                                                 <i class="icofont-ui-delete text-danger"></i>
                                             </button>
                                         </form>

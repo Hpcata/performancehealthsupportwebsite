@@ -58,6 +58,23 @@
         transform: rotate(-180deg);
     }
 
+    /* Image styling */
+    .select2-selection__rendered img {
+        flex-shrink: 0;
+        width: 25px;
+        height: 25px;
+        margin-right: 5px;
+    }
+
+    /* Text part of the selection */
+    .select2-selection__rendered span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        /* display: inline-block; */
+        max-width: 100%;
+    }
+   
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -109,7 +126,7 @@
 
                                             <!-- Meal Times (Checkboxes) -->
                                             <ul class="list-group mb-4">
-                                                @foreach ($userPlan->plan->mealTimes as $mealTime)
+                                                @foreach ($userPlan->plan->categories as $mealTime)
                                                 <input type="hidden"
                                                     name="meal_times[{{$plan->id}}][]"
                                                     value="{{ $mealTime->id }}"
@@ -151,7 +168,7 @@
 
                                                         <!-- Selected Meals and Swap Items -->
                                                         <div class="selected-meals mt-3" id="selectedMeals{{$plan->id}}_{{$mealTime->id}}" style="display: none;">
-                                                            <h6 class="fw-bold">Selected Meals and Foods:</h6>
+                                                            <!-- <h6 class="fw-bold">Selected Meals and Foods:</h6> -->
                                                             <ul class="list-group"></ul>
                                                         </div>
                                                     </div>
@@ -380,7 +397,7 @@
 
 <!-- Modal Popup -->
 <div class="modal" id="searchFoodModal" tabindex="-1" aria-labelledby="searchFoodModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable  modal-lg">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="searchFoodModalLabel">Search Food</h5>
@@ -712,6 +729,45 @@
     </div>
 </div>
 
+<!-- Main Item Delete Modal -->
+<div class="modal" id="deleteMainItemModal" tabindex="-1" aria-labelledby="deleteMainItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteMainItemModalLabel">Delete Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this item and its swap items?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmDeleteMainItem" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Swap Item Delete Modal -->
+<div class="modal" id="deleteSwapItemModal" tabindex="-1" aria-labelledby="deleteSwapItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteSwapItemModalLabel">Delete Swap Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this swap item?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmDeleteSwapItem" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div id="loader-2" style="display: none;">
     <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" alt="Loading..." />
 </div>
@@ -732,9 +788,11 @@
 <script>
     const preSelectedFoods = @json($preplanSlectedFoods);
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         let hasUnsavedChanges = false;
         let intendedHref = ''; // Store the intended link URL
+        let intendedModalAction = null; // Store the intended modal action
+        let intendedProfileAction = null; // Store the intended profile action
 
         // Track changes in form fields
         document.querySelectorAll('input, textarea, select').forEach(input => {
@@ -743,21 +801,59 @@
             });
         });
 
-        // Custom navigation detection
-        document.querySelectorAll('a').forEach(anchor => {
+        // Handle View User Profile button
+        $(document).on('click', '.view-user-profile', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            if (hasUnsavedChanges) {
+                intendedProfileAction = this;
+                const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                modalInstance.show();
+                return false;
+            }else {
+                // If no unsaved changes, proceed with normal profile view
+                const userId = $(this).data('user-id');
+                const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
+                
+                $.ajax({
+                    url: sessionUrl,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.redirect_url) {
+                            window.open(response.redirect_url, '_blank');
+                        } else {
+                            alert('Something went wrong!');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error setting user session.');
+                    }
+                });
+            }
+        });
+
+        // Handle View User Details button
+        document.querySelectorAll('.user-pre-plan-details').forEach(button => {
+            button.addEventListener('click', function(event) {
+                if (hasUnsavedChanges) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    intendedModalAction = this;
+                    const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                    modalInstance.show();
+                }
+            });
+        });
+
+        // Handle other navigation links
+        document.querySelectorAll('a:not(.user-pre-plan-details)').forEach(anchor => {
             anchor.addEventListener('click', function(event) {
                 if (hasUnsavedChanges) {
-                    event.preventDefault(); // Prevent immediate navigation
-
-                    // Correctly capture the intended URL
-                    const clickedLink = event.target.closest('a');
-
-                    if (clickedLink) {
-                        intendedHref = clickedLink.href;
-                        console.log('Intended Link:', intendedHref); // ✅ Correctly logs the clicked link URL
-                        const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
-                        modalInstance.show();                    
-                    }
+                    event.preventDefault();
+                    intendedHref = this.href;
+                    const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
+                    modalInstance.show();
                 }
             });
         });
@@ -773,26 +869,99 @@
         document.getElementById('saveChanges').addEventListener('click', function() {
             hasUnsavedChanges = false;
             document.getElementById('editPlanForm').submit();
-            const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
-            modalInstance.hide();  
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('savePlanModal'));
+            modalInstance.hide();
+
+            // Handle navigation after saving
+            if (intendedHref) {
+                window.location.href = intendedHref;
+                intendedHref = '';
+            }
+
+            // Handle profile action after saving
+            if (intendedProfileAction) {
+                const userId = intendedProfileAction.getAttribute('data-user-id');
+                const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
+                
+                $.ajax({
+                    url: sessionUrl,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.redirect_url) {
+                            window.open(response.redirect_url, '_blank');
+                        } else {
+                            alert('Something went wrong!');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error setting user session.');
+                    }
+                });
+                intendedProfileAction = null;
+            }
+
+            // Handle modal action after saving
+            if (intendedModalAction) {
+                const paymentId = intendedModalAction.getAttribute('data-payment-id');
+                $.ajax({
+                    url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            // Your existing modal content code here
+                            // ... (keep the existing modal content code)
+                        }
+                    }
+                });
+                intendedModalAction = null;
+            }
         });
 
         // Modal Button: "No Leave"
         document.getElementById('leaveWithoutSaving').addEventListener('click', function() {
             hasUnsavedChanges = false;
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('savePlanModal'));
+            modalInstance.hide();
 
-            // Correctly redirect to the stored intended URL (like Food link)
+            // Handle navigation without saving
             if (intendedHref) {
                 window.location.href = intendedHref;
+                intendedHref = '';
+            }
+
+            // Handle modal action without saving
+            if (intendedModalAction) {
+                const paymentId = intendedModalAction.getAttribute('data-payment-id');
+                $.ajax({
+                    url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            // Your existing modal content code here
+                            // ... (keep the existing modal content code)
+                        }
+                    }
+                });
+                intendedModalAction = null;
             }
         });
 
-        // Form Submit Logic
+        // Form submit bypasses the unsaved warning
         document.getElementById('editPlanForm').addEventListener('submit', function() {
-            hasUnsavedChanges = false; // Clear flag on form submission
+            hasUnsavedChanges = false;
         });
     });
     
+    $(document).on('blur', '.modalQtyInput', function () {
+        let value = parseFloat($(this).val());
+
+        if (isNaN(value) || value <= 0) {
+            // Show warning or set to default (optional)
+            alert('Please enter a value greater than 0.');
+            $(this).val(''); // or set to '1' or some default
+        }
+    });
+
     $(document).ready(function() {
         $(document).on('click', '.user-pre-plan-details', function() {
             const paymentId = $(this).data('payment-id');
@@ -1017,12 +1186,12 @@
         });
 
 
-        $(document).on('click', '.view-info', function () {
-            // alert('22');
-            var description = $(this).data('description') || 'N/A';
-            $('#modalDescription').text(description);
-            $('#itemInfoModal').modal('show');
-        });
+        // $(document).on('click', '.view-info', function () {
+        //     // alert('22');
+        //     var description = $(this).data('description') || 'N/A';
+        //     $('#modalDescription').text(description);
+        //     $('#itemInfoModal').modal('show');
+        // });
     });
     // $('#swapFoods').val(null).trigger('change');
 
@@ -1048,23 +1217,27 @@
         const payment = @json($payment);
         const userId = payment.user_id;
         const loader = $('#loader');
+
         console.log(preSelectedMeals);
+
         $('.meal-time-checkbox').each(function() {
             const checkbox = $(this);
             const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
             const mealTimeId = checkbox.data('mealtime-id');
-            // console.log(`Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
+            console.log(`Checkbox for Plan ID: ${planId}, Meal Time ID: ${mealTimeId} initialized.`);
             const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
             const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
             const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
             const mealSelect = $(dropdownId).find('select');
             const mealTimeDetailsDiv = checkbox.closest('li').find('.mealTimeDetailsDiv');
 
-            if (preSelectedMeals[planId]?.[mealTimeId]) {
+            const selectedMealsArray = preSelectedMeals[planId]?.[mealTimeId] || [];
+
+            if (selectedMealsArray.length > 0) {
                 $(dropdownId).show();
                 $(selectedMealsId).show();
                 mealTimeDetailsDiv.css('display', 'none');
-
+                console.log(`Showing dropdown for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
                 initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
 
                 $.ajax({
@@ -1080,19 +1253,17 @@
                         if (response.success) {
                             mealSelect.empty(); // Clear previous options
 
-                            // ✅ Get and sort the selected meal IDs in ASC order
-                            const selectedMealsObj = preSelectedMeals[planId]?.[mealTimeId] || {};
-                            const sortedMealIds = Object.keys(selectedMealsObj)
-                                .map(id => parseInt(id))  // Ensure numbers for sorting
-                                .sort((a, b) => a - b);   // Ascending order
+                            const sortedMealIds = selectedMealsArray
+                                .map(id => parseInt(id))
+                                .sort((a, b) => a - b);
 
-                            // ✅ Create a map for fast lookup
+                            // Create a map for quick lookup
                             const mealMap = {};
                             response.meals.forEach(meal => {
                                 mealMap[meal.id] = meal;
                             });
 
-                            // ✅ Add selected meals in sorted order
+                            // Add selected meals in sorted order
                             sortedMealIds.forEach(mealId => {
                                 const meal = mealMap[mealId];
                                 if (meal) {
@@ -1100,41 +1271,43 @@
                                 }
                             });
 
-                            // ✅ Add remaining unselected meals
+                            // Add remaining unselected meals
                             response.meals.forEach(meal => {
                                 if (!sortedMealIds.includes(meal.id)) {
                                     mealSelect.append(new Option(meal.name, meal.id, false, false));
                                 }
                             });
 
-                            // ✅ Update the value and set the "previouslySelectedMeals"
                             const stringIds = sortedMealIds.map(String);
                             mealSelect.val(stringIds).trigger('change');
                             previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
                         }
                     },
-
                     error: function() {
                         alert('Error occurred while loading meals.');
                     }
                 });
 
             } else {
+                console.log(`Hiding dropdown for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
                 checkbox.prop('checked', false);
                 $(dropdownId).hide();
                 $(selectedMealsId).hide();
                 mealTimeDetailsDiv.css('display', 'block');
             }
 
-            // ✅ Fix: Handle meal removal when "X" is clicked in select2
+            // Handle meal removal when "X" is clicked in select2
             mealSelect.on('select2:unselect', function(e) {
-                let mealId = e.params.data.id;
+                let mealId = parseInt(e.params.data.id);
 
-                if (preSelectedMeals[planId]?.[mealTimeId]?.[mealId]) {
-                    delete preSelectedMeals[planId][mealTimeId][mealId]; // Remove from preSelectedMeals
+                if (Array.isArray(preSelectedMeals[planId]?.[mealTimeId])) {
+                    const index = preSelectedMeals[planId][mealTimeId].indexOf(mealId);
+                    if (index !== -1) {
+                        preSelectedMeals[planId][mealTimeId].splice(index, 1);
+                    }
                 }
-               // console.log('222');
-                // Send AJAX to remove meal and its items
+
+                // Send AJAX to remove meal
                 $.ajax({
                     url: '{{ route("admin.remove-user-meal") }}',
                     method: 'POST',
@@ -1152,7 +1325,7 @@
                     }
                 });
 
-                $(this).find(`option[value="${mealId}"]`).remove(); // Remove the option
+                $(this).find(`option[value="${mealId}"]`).remove(); // Remove option
                 $(this).trigger('change'); // Refresh Select2
             });
         });
@@ -1162,16 +1335,8 @@
         let mealIDs = [];
         let mealTimeIds = [];
         $('.meal-time-checkbox').on('change', function() {
-
             const checkbox = $(this);
             const mealTimeDetailsDiv = checkbox.closest('li').find('.mealTimeDetailsDiv');
-
-            if (checkbox.is(':checked')) {
-                mealTimeDetailsDiv.css('display', 'block'); // Hide the element
-            } else {
-                mealTimeDetailsDiv.css('display', 'none'); // Hide the element
-            }
-
             const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
             const mealTimeId = checkbox.data('mealtime-id');
             mealIDs = [];
@@ -1183,71 +1348,67 @@
             const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
             const mealSelect = $(dropdownId).find('select');
 
-            console.log(`Toggling dropdown for: Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
-            console.log(`Dropdown ID: ${dropdownId}, Selected Meals ID: ${selectedMealsId}`);
-
-            // Check if checkbox is checked
             if (checkbox.is(':checked')) {
-                $(dropdownId).show(); // Show Add Meal dropdown
-                $(selectedMealsId).show(); // Show Selected Meals container
-                initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
+                mealTimeDetailsDiv.css('display', 'block');
+                $(dropdownId).show();
+                $(selectedMealsId).show();
+                
+                // Only initialize Select2 and load meals if they haven't been loaded before
+                if (!mealSelect.data('select2')) {
+                    initializeSelect2(mealSelect, mealTimeId);
+                    
+                    // Load meals only if they haven't been loaded before
+                    if (!previouslySelectedMeals[`${planId}_${mealTimeId}`]) {
+                        $.ajax({
+                            url: '{{ route("admin.get-meals-by-mealtime") }}',
+                            method: 'POST',
+                            data: {
+                                plan_id: planId,
+                                user_id: userId,
+                                meal_time_id: mealTimeId,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    mealSelect.empty();
+                                    const sortedMeals = response.meals.sort((a, b) => a.id - b.id);
+                                    
+                                    sortedMeals.forEach(meal => {
+                                        let selectedMeal = null;
+                                        if (preSelectedMeals[planId]?.[mealTimeId]?.[meal.id]) {
+                                            selectedMeal = preSelectedMeals[planId][mealTimeId][meal.id];
+                                        }
 
-                // Load dynamic dropdown options via AJAX
-                $.ajax({
-                    url: '{{ route("admin.get-meals-by-mealtime") }}', // Replace with your route to fetch meals dynamically
-                    method: 'POST',
-                    data: {
-                        plan_id: planId,
-                        user_id: userId,
-                        meal_time_id: mealTimeId,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Clear previous options
-                            mealSelect.empty();
+                                        const isSelected = selectedMeal ? true : false;
+                                        if (isSelected) {
+                                            mealIDs.push(meal.id);
+                                        }
 
-                            // ✅ Sort meals by meal.id (ascending)
-                            const sortedMeals = response.meals.sort((a, b) => a.id - b.id);
+                                        const userMealId = isSelected ? selectedMeal : null;
+                                        mealSelect.append(`
+                                            <option value="${meal.id}" ${isSelected ? 'selected' : ''} 
+                                                    id="${userMealId ? userMealId : ''}">
+                                                ${meal.name}
+                                            </option>
+                                        `);
+                                    });
 
-                            sortedMeals.forEach(meal => {
-                                let selectedMeal = null;
-                                if (preSelectedMeals[planId]?.[mealTimeId]?.[meal.id]) {
-                                    selectedMeal = preSelectedMeals[planId][mealTimeId][meal.id];
+                                    mealSelect.trigger('change');
+                                    previouslySelectedMeals[`${planId}_${mealTimeId}`] = mealSelect.val();
                                 }
-
-                                const isSelected = selectedMeal ? true : false;
-                                if (isSelected) {
-                                    mealIDs.push(meal.id);
-                                }
-
-                                const userMealId = isSelected ? selectedMeal : null;
-
-                                mealSelect.append(`
-                                    <option value="${meal.id}" ${isSelected ? 'selected' : ''} 
-                                            id="${userMealId ? userMealId : ''}">
-                                        ${meal.name}
-                                    </option>
-                                `);
-                            });
-
-                            mealSelect.trigger('change');
-                        } else {
-                            alert('Failed to load meals for the selected meal time.');
-                        }
-                    },
-
-                    error: function() {
-                        alert('Error occurred while loading meals.');
+                            },
+                            error: function() {
+                                alert('Error occurred while loading meals.');
+                            }
+                        });
                     }
-                });
+                }
             } else {
-                // $(dropdownId).hide();          // Hide dropdown
-                // $(selectedMealsId).hide();     // Hide selected meals
-                // $(dropdownId).find('select').val([]).trigger('change'); // Clear selected values
-                // $(selectedMealsId).empty();    // Clear selected meals content
-
+                mealTimeDetailsDiv.css('display', 'none');
+                $(dropdownId).hide();
+                $(selectedMealsId).hide();
             }
+            
             calculateMealNutrition();
         });
 
@@ -1264,7 +1425,7 @@
                         return {
                             meal_time_id: mealTimeId,
                             user_id: userId,
-                            search: params.term || '', // Search keyword
+                            search: params.term || '',
                             _token: '{{ csrf_token() }}'
                         };
                     },
@@ -1444,7 +1605,8 @@
             const ids = $(this).attr('id').replace('mealItems', '').split('_');
             const planId = ids[0];
             const mealTimeId = ids[1];
-
+            console.log(`Meal items select changed for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
+            console.log('Selected values:', $(this).val());
             planID = planId;
             mealtimeID = mealTimeId;
 
@@ -1546,9 +1708,9 @@
                                     // Update food counts for items and swap items
                                     response.data.forEach(item => {
                                         if(item.is_new) {
-                                            updateFoodCount(item.id, 1, 'green', item.name, item.category_id, item.is_new);
+                                            updateFoodCount(item.id, 1, 'green', item.name, null, item.is_new);
                                         } else {
-                                            updateFoodCount(item.id, 1, 'purple', item.name, item.category_id, item.is_new);
+                                            updateFoodCount(item.id, 1, 'purple', item.name, null, item.is_new);
                                         }
 
                                         // Update food counts for swap items
@@ -1799,8 +1961,9 @@
                     </tr>
                 `);
 
-                $('[data-bs-toggle="tooltip"]').tooltip();
             });
+
+            $('[data-bs-toggle="tooltip"]').tooltip('dispose').tooltip();
 
             $(`#selectedMeals${planId}_${mealTimeId} .list-group`).append(mealContainer);
             $(document).trigger('mealAdded', [planId, mealTimeId]);
@@ -2102,7 +2265,7 @@
                                             <div class="col-9">
                                                 <div class="d-flex align-items-start">
                                                     <input type="checkbox" name="items[${planID}][${mealTimeId}][${mealId}][]"
-                                                        value="${item.id}" class="form-check-input me-2 d-none"
+                                                        value="${item.id}" class="form-check-input me-2 d-none" checked
                                                         data-carbs="${carbs}" data-protein="${protein}" data-fat="${fat}" data-energy="${energy}" checked>
                                                     <label class="form-check-label flex-grow-1">${item.title}</label>
                                                 </div>
@@ -2262,129 +2425,127 @@
         }
 
         function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
-    $.ajax({
-        url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
-        method: 'GET',
-        success: function(response) {
-            if (response.item) {
-                const foodData = response.item;
+            $.ajax({
+                url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
+                method: 'GET',
+                success: function(response) {
+                    if (response.item) {
+                        const foodData = response.item;
 
-                // Check if food has flags
-                const hasFlags = foodData.flags && foodData.flags.length > 0;
-                const categoryName = hasFlags
-                    ? foodData.flags[0].name
-                    : (foodData.category && foodData.category.name) ? foodData.category.name : 'Uncategorized';
+                        // Check if food has flags
+                        const hasFlags = foodData.flags && foodData.flags.length > 0;
+                        const categoryName = hasFlags
+                            ? foodData.flags[0].name
+                            : (foodData.category && foodData.category.name) ? foodData.category.name : 'Uncategorized';
 
-                const targetSection = hasFlags ? '#category-section' : '#recommendations-food-section';
+                        const targetSection = hasFlags ? '#category-section' : '#recommendations-food-section';
 
-                processFoodUpdate(foodId, change, foodData.title, categoryName, targetSection);
-            } else {
-                console.error('Invalid response format');
-            }
-        },
-        error: function(xhr) {
-            console.error('AJAX error:', xhr.responseText);
-        }
-    });
-}
-
-function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelector) {
-    let textColor = preSelectedFoods.includes(Number(foodId)) ? 'text-primary' : 'text-success';
-
-    // Sanitize category name into a valid slug
-    const categoryId = categoryName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')   // replace non-alphanum with hyphen
-        .replace(/^-+|-+$/g, '');       // trim leading/trailing hyphens
-
-    let foodWrapper = $(`#food-wrapper-${foodId}`);
-    let justAdded = false;
-
-    if (!foodWrapper.length) {
-        let categoryRow = $(`#category-row-${categoryId}`);
-
-        if (!categoryRow.length) {
-            let categorySection = $(`#category-section-${categoryId}`);
-            if (!categorySection.length) {
-                categorySection = $(`
-                    <div class="category-section mb-3" id="category-section-${categoryId}">
-                        <h6 class="mt-3 text-muted">${categoryName}</h6>
-                        <div class="row" id="category-row-${categoryId}"></div>
-                    </div>
-                `);
-                $(parentSelector).append(categorySection);
-            }
-
-            categoryRow = $(`#category-row-${categoryId}`);
-        }
-
-        // Try to append in a column with fewer than 10 items
-        let column = categoryRow.find('.col-md-6').filter(function() {
-            return $(this).children().length < 10;
-        }).first();
-
-        if (!column.length) {
-            column = $('<div class="col-md-6"></div>');
-            categoryRow.append(column);
-        }
-
-        // Build food item
-        const foodHTML = `
-            <div class="form-check dynamically-added-food" id="food-wrapper-${foodId}" data-category-id="${categoryId}">
-                <input type="checkbox" name="setp5_foods[]" value="${foodId}"
-                    class="form-check-input food-checkbox"
-                    id="setp5Food${foodId}"
-                    data-food-id="${foodId}"
-                    data-food-name="${foodTitle}">
-                <label class="form-check-label" for="setp5Food${foodId}">
-                    ${foodTitle}
-                </label>
-            </div>
-        `;
-        column.append(foodHTML);
-        justAdded = true;
-        foodWrapper = $(`#food-wrapper-${foodId}`);
-    }
-
-    const checkbox = $(`#setp5Food${foodId}`);
-    const countLabel = checkbox.siblings('.form-check-label');
-    const wrapperCategoryId = foodWrapper.data('category-id');
-    const categoryWrapper = $(`#category-section-${wrapperCategoryId}`);
-
-    foodWrapper.removeClass('d-none');
-    categoryWrapper.removeClass('d-none');
-
-    // Count update logic
-    let countText = countLabel.text();
-    let match = countText.match(/\((\d+)\)$/);
-    let currentCount = match ? parseInt(match[1]) : 0;
-    let newCount = Math.max(0, currentCount + change);
-
-    if (change === -1) {
-        if (currentCount > 1) {
-            countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
-        } else {
-            if (!preSelectedFoods.includes(Number(foodId))) {
-                foodWrapper.remove();
-                const remainingFoods = categoryWrapper.find('.form-check:visible');
-                if (remainingFoods.length === 0) {
-                    categoryWrapper.addClass('d-none');
+                        processFoodUpdate(foodId, change, foodData.title, categoryName, targetSection);
+                    } else {
+                        console.error('Invalid response format');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('AJAX error:', xhr.responseText);
                 }
+            });
+        }
+
+        function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelector) {
+            let textColor = preSelectedFoods.includes(Number(foodId)) ? 'text-primary' : 'text-success';
+
+            // Sanitize category name into a valid slug
+            const categoryId = categoryName
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')   // replace non-alphanum with hyphen
+                .replace(/^-+|-+$/g, '');       // trim leading/trailing hyphens
+
+            let foodWrapper = $(`#food-wrapper-${foodId}`);
+            let justAdded = false;
+
+            if (!foodWrapper.length) {
+                let categoryRow = $(`#category-row-${categoryId}`);
+
+                if (!categoryRow.length) {
+                    let categorySection = $(`#category-section-${categoryId}`);
+                    if (!categorySection.length) {
+                        categorySection = $(`
+                            <div class="category-section mb-3" id="category-section-${categoryId}">
+                                <h6 class="mt-3 text-muted">${categoryName}</h6>
+                                <div class="row" id="category-row-${categoryId}"></div>
+                            </div>
+                        `);
+                        $(parentSelector).append(categorySection);
+                    }
+
+                    categoryRow = $(`#category-row-${categoryId}`);
+                }
+
+                // Try to append in a column with fewer than 10 items
+                let column = categoryRow.find('.col-md-6').filter(function() {
+                    return $(this).children().length < 10;
+                }).first();
+
+                if (!column.length) {
+                    column = $('<div class="col-md-6"></div>');
+                    categoryRow.append(column);
+                }
+
+                // Build food item
+                const foodHTML = `
+                    <div class="form-check dynamically-added-food" id="food-wrapper-${foodId}" data-category-id="${categoryId}">
+                        <input type="checkbox" name="setp5_foods[]" value="${foodId}"
+                            class="form-check-input food-checkbox"
+                            id="setp5Food${foodId}"
+                            data-food-id="${foodId}"
+                            data-food-name="${foodTitle}">
+                        <label class="form-check-label" for="setp5Food${foodId}">
+                            ${foodTitle}
+                        </label>
+                    </div>
+                `;
+                column.append(foodHTML);
+                justAdded = true;
+                foodWrapper = $(`#food-wrapper-${foodId}`);
+            }
+
+            const checkbox = $(`#setp5Food${foodId}`);
+            const countLabel = checkbox.siblings('.form-check-label');
+            const wrapperCategoryId = foodWrapper.data('category-id');
+            const categoryWrapper = $(`#category-section-${wrapperCategoryId}`);
+
+            foodWrapper.removeClass('d-none');
+            categoryWrapper.removeClass('d-none');
+
+            // Count update logic
+            let countText = countLabel.text();
+            let match = countText.match(/\((\d+)\)$/);
+            let currentCount = match ? parseInt(match[1]) : 0;
+            let newCount = Math.max(0, currentCount + change);
+
+            if (change === -1) {
+                if (currentCount > 1) {
+                    countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
+                } else {
+                    if (!preSelectedFoods.includes(Number(foodId))) {
+                        foodWrapper.remove();
+                        const remainingFoods = categoryWrapper.find('.form-check:visible');
+                        if (remainingFoods.length === 0) {
+                            categoryWrapper.addClass('d-none');
+                        }
+                    } else {
+                        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+                    }
+                }
+                return;
+            }
+
+            if (newCount > 0) {
+                countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
             } else {
                 countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
             }
         }
-        return;
-    }
-
-    if (newCount > 0) {
-        countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
-    } else {
-        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
-    }
-}
-
-
 
         // function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
         //     // First, fetch food details via AJAX if not provided
@@ -2558,6 +2719,64 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
                     const [num, denom] = parts[1].split('/').map(Number);
                     return whole + (num / denom);
                 } else {
+<<<<<<< HEAD
+                    const [num, denom] = value.split('/').map(Number);
+                    return num / denom;
+=======
+                    if (!preSelectedFoods.includes(Number(foodId))) {
+                        foodWrapper.remove();
+                        
+                        // Check if category has no more visible food items
+                        const remainingFoods = categoryWrapper.find('.form-check:visible');
+                        if (remainingFoods.length === 0) {
+                            categoryWrapper.addClass('d-none');
+                        }
+                    } else {
+                        countLabel.text(countText.replace(/\s*\(\d+\)$/, ''))
+                                .removeClass('text-primary text-success')
+                                .addClass('text-dark');
+                    }
+>>>>>>> a81479a388fdaaa332aff8828beccb0fd9afc39b
+                }
+            }
+
+            return parseFloat(value);
+        }
+
+<<<<<<< HEAD
+=======
+        let AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal = null);
+
+        function buildUnitQtyMap(modal) {
+            let map = {};
+
+            $(`${modal} #dynamicQtyMeasurementContainer .qty-unit-row`).each(function () {
+                const qtyInput = $(this).find('.modalQtyInput').val();
+                const unitInput = $(this).find('.modalMeasurementInput').val();
+
+                const qty = parseFraction(qtyInput);
+                const unit = unitInput?.toLowerCase();
+
+                if (!isNaN(qty) && unit) {
+                    map[unit] = qty;
+                }
+            });
+
+            return map;
+        }
+
+        function parseFraction(value) {
+            if (!value) return NaN;
+
+            value = value.trim();
+            if (value.includes('/')) {
+                const parts = value.split(' ');
+                if (parts.length === 2) {
+                    // mixed fraction (e.g. "1 1/2")
+                    const whole = parseFloat(parts[0]);
+                    const [num, denom] = parts[1].split('/').map(Number);
+                    return whole + (num / denom);
+                } else {
                     const [num, denom] = value.split('/').map(Number);
                     return num / denom;
                 }
@@ -2566,6 +2785,7 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
             return parseFloat(value);
         }
 
+>>>>>>> a81479a388fdaaa332aff8828beccb0fd9afc39b
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
             // const AU_UNIT_EQUIVALENTS = {
             //     'cup': 250,
@@ -2603,12 +2823,21 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
 
                 console.log(currentQty, currentUnit);
                 console.log(AU_UNIT_EQUIVALENTS);
+<<<<<<< HEAD
 
                 const normalizedUnitEquivalents = {};
                 Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
                     normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
                 });
 
+=======
+
+                const normalizedUnitEquivalents = {};
+                Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
+                    normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
+                });
+
+>>>>>>> a81479a388fdaaa332aff8828beccb0fd9afc39b
                 // Later in your function
                 const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
                 console.log(baseEquivalent);
@@ -3040,55 +3269,104 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
         });
 
         // Delete Item Button Action
-        $(document).on('click', '.delete-item', function() {
-            const itemId = $(this).data('item-id');
-            const mealId = $(this).data('meal-id');
-            const mealTimeId = $(this).data('meal-time-id');
-            const planId = $(this).data('plan-id');
-            const userId = $(this).data('user-id');
-            let swap_food_id = $(this).data('swapfood-id');
+        // $(document).on('click', '.delete-item', function() {
+        //     const itemId = $(this).data('item-id');
+        //     const mealId = $(this).data('meal-id');
+        //     const mealTimeId = $(this).data('meal-time-id');
+        //     const planId = $(this).data('plan-id');
+        //     const userId = $(this).data('user-id');
+        //     let swap_food_id = $(this).data('swapfood-id');
 
-            const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            const allSwapLis = currentItemRow.find('li');
+        //     const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+        //     const allSwapLis = currentItemRow.find('li');
             
-            // Your delete logic for the item (e.g., show confirmation and delete item)
-            if (confirm('Are you sure you want to delete this item and swap items?')) {
-                console.log('Delete Item:', itemId, mealId, mealTimeId, planId, userId);
-                const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-                const $tableBody = $row.closest('tbody'); // Get the parent tbody
+        //     // Your delete logic for the item (e.g., show confirmation and delete item)
+        //     if (confirm('Are you sure you want to delete this item and swap items?')) {
+        //         console.log('Delete Item:', itemId, mealId, mealTimeId, planId, userId);
+        //         const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+        //         const $tableBody = $row.closest('tbody'); // Get the parent tbody
 
-                // Count remaining <tr> elements in the table
-                const remainingRows = $tableBody.find('tr').length;
+        //         // Count remaining <tr> elements in the table
+        //         const remainingRows = $tableBody.find('tr').length;
 
-                // Uncheck checkboxes in the first and second <td>
-                $row.find('input[type="checkbox"]').prop('checked', false);
+        //         // Uncheck checkboxes in the first and second <td>
+        //         $row.find('input[type="checkbox"]').prop('checked', false);
 
-                // Remove the row
-                $row.remove();
+        //         // Remove the row
+        //         $row.remove();
 
-                // If there are no more rows left, remove the meal from the meal section dropdown
-                if (remainingRows === 1) { // Since we're removing a row, we check before it's removed
-                    $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
-                    const dropdown = `#addMealDropdown${planId}_${mealTimeId}`;
-                    const $select = $(dropdown).find('select'); // Find the select inside the div
+        //         // If there are no more rows left, remove the meal from the meal section dropdown
+        //         if (remainingRows === 1) { // Since we're removing a row, we check before it's removed
+        //             $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+        //             const dropdown = `#addMealDropdown${planId}_${mealTimeId}`;
+        //             const $select = $(dropdown).find('select'); // Find the select inside the div
 
-                    // Correcting the dropdown selection and removing the meal option
-                    $select.find('option[value="' + mealId + '"]').remove();
-                    $select.trigger('change');
-                    // initializeSelect2($select, mealTimeId);
-                }
+        //             // Correcting the dropdown selection and removing the meal option
+        //             $select.find('option[value="' + mealId + '"]').remove();
+        //             $select.trigger('change');
+        //             // initializeSelect2($select, mealTimeId);
+        //         }
 
-                updateFoodCount(itemId, -1, null);
+        //         updateFoodCount(itemId, -1, null);
 
-                allSwapLis.each(function () {
-                    const swapItemId = $(this).data('swap-item-id'); // OR use attr('data-swap-item-id')
-                    console.log('Swap Item ID:', swapItemId);
-                    // updateFoodCount(swapItemId, -1, null);
-                });
+        //         allSwapLis.each(function () {
+        //             const swapItemId = $(this).data('swap-item-id'); // OR use attr('data-swap-item-id')
+        //             console.log('Swap Item ID:', swapItemId);
+        //             // updateFoodCount(swapItemId, -1, null);
+        //         });
                 
-                calculateTotals(planId, mealTimeId, mealId);
-                calculateMealNutrition();
+        //         calculateTotals(planId, mealTimeId, mealId);
+        //         calculateMealNutrition();
+        //     }
+        // });
+
+        let mainDeleteParams = null;
+
+        $(document).on('click', '.delete-item', function () {
+            const $btn = $(this);
+            const itemId = $btn.data('item-id');
+            const mealId = $btn.data('meal-id');
+            const mealTimeId = $btn.data('meal-time-id');
+            const planId = $btn.data('plan-id');
+            const userId = $btn.data('user-id');
+
+            const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+            const $tableBody = $row.closest('tbody');
+            const remainingRows = $tableBody.find('tr').length;
+            const allSwapLis = $row.find('li');
+
+            mainDeleteParams = {
+                $row, $tableBody, remainingRows,
+                itemId, mealId, mealTimeId, planId, allSwapLis
+            };
+
+            new bootstrap.Modal(document.getElementById('deleteMainItemModal')).show();
+            });
+
+            $('#confirmDeleteMainItem').on('click', function () {
+            const { $row, $tableBody, remainingRows, itemId, mealId, mealTimeId, planId, allSwapLis } = mainDeleteParams;
+
+            $row.find('input[type="checkbox"]').prop('checked', false);
+            $row.remove();
+
+            if (remainingRows === 1) {
+                $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+                const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
+                $select.find(`option[value="${mealId}"]`).remove();
+                $select.trigger('change');
             }
+
+            updateFoodCount(itemId, -1, null);
+            allSwapLis.each(function () {
+                const swapItemId = $(this).data('swap-item-id');
+                updateFoodCount(swapItemId, -1, null);
+            });
+
+            calculateTotals(planId, mealTimeId, mealId);
+            calculateMealNutrition();
+
+            mainDeleteParams = null;
+            bootstrap.Modal.getInstance(document.getElementById('deleteMainItemModal')).hide();
         });
 
         $(document).on('click', '.edit-swap-item', function () {
@@ -3141,14 +3419,14 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
             if (!Array.isArray(selectedQtyUnits) || selectedQtyUnits.length === 0) {
                 selectedQtyUnits = [{ qty: swapQty, unit: swapUnit, checked: false }];
             }
-
+            console.log(selectedQtyUnits);
             const buildQtyUnitRows = (units) => {
                 const $container = $(`${modalId} #dynamicQtyMeasurementContainer`).empty();
                 units.forEach(({ qty, unit, checked }, index) => {
                     const row = `
                         <div class="row mb-2 qty-unit-row align-items-center">
                             <div class="col-auto mt-4">
-                                <input type="checkbox" class="form-check-input qtyUnitSelector" ${checked ? 'checked' : '' }>
+                                <input type="checkbox" class="form-check-input qtyUnitSelector" ${String(checked) === 'true' ? 'checked' : '' }>
                             </div>
                             <div class="col-5">
                                 ${index === 0 ? '<label class="form-label">Quantity</label>' : ''}
@@ -3364,43 +3642,88 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
             });
         });
 
+        // $(document).on('click', '.delete-swap-item', function () {
+        //     const button = $(this);
+
+        //     const swapItemId = button.data('swap-item-id');
+        //     const itemId = button.data('item-id');
+        //     const mealId = button.data('meal-id');
+        //     const planId = button.data('plan-id');
+        //     const mealTimeId = button.data('meal-time-id');
+        //     const userId = button.data('user-id');
+
+        //     if (!confirm('Are you sure you want to delete this swap item?')) return;
+
+        //     const $li = button.closest('li');
+        //     const $ul = $li.closest('ul');
+
+        //     // Remove the swap item
+        //     $li.remove();
+        //     // updateFoodCount(swapItemId, -1, null);
+
+        //     // Check if there are any <li> left in the list
+        //     if ($ul.children('li').length === 0) {
+        //         // Add "No swap items available" message
+        //         $ul.append(`
+        //             <li class="d-flex justify-content-between align-items-start mb-2">
+        //                 <div class="col-9">
+        //                     <span class="text-muted">No swap items available</span>
+        //                 </div>
+        //                 <div>
+        //                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+        //                         data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
+        //                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+        //                         title="Add"><i class="icofont-plus text-primary"></i>
+        //                     </button>
+        //                 </div>
+        //             </li>
+        //         `);
+        //     }
+        // });
+
+        let swapDeleteParams = null;
+
         $(document).on('click', '.delete-swap-item', function () {
-            const button = $(this);
-
-            const swapItemId = button.data('swap-item-id');
-            const itemId = button.data('item-id');
-            const mealId = button.data('meal-id');
-            const planId = button.data('plan-id');
-            const mealTimeId = button.data('meal-time-id');
-            const userId = button.data('user-id');
-
-            if (!confirm('Are you sure you want to delete this swap item?')) return;
-
-            const $li = button.closest('li');
+            const $btn = $(this);
+            const $li = $btn.closest('li');
             const $ul = $li.closest('ul');
 
-            // Remove the swap item
-            $li.remove();
-            // updateFoodCount(swapItemId, -1, null);
+            swapDeleteParams = {
+                $li, $ul,
+                itemId: $btn.data('item-id'),
+                planId: $btn.data('plan-id'),
+                mealId: $btn.data('meal-id'),
+                mealTimeId: $btn.data('meal-time-id'),
+                userId: $btn.data('user-id')
+            };
 
-            // Check if there are any <li> left in the list
+            new bootstrap.Modal(document.getElementById('deleteSwapItemModal')).show();
+        });
+
+        $('#confirmDeleteSwapItem').on('click', function () {
+            const { $li, $ul, itemId, planId, mealId, mealTimeId, userId } = swapDeleteParams;
+
+            $li.remove();
+
             if ($ul.children('li').length === 0) {
-                // Add "No swap items available" message
                 $ul.append(`
-                    <li class="d-flex justify-content-between align-items-start mb-2">
-                        <div class="col-9">
-                            <span class="text-muted">No swap items available</span>
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-                                data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-                                title="Add"><i class="icofont-plus text-primary"></i>
-                            </button>
-                        </div>
-                    </li>
+                <li class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="col-9">
+                    <span class="text-muted">No swap items available</span>
+                    </div>
+                    <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+                        data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                        title="Add"><i class="icofont-plus text-primary"></i>
+                    </button>
+                    </div>
+                </li>
                 `);
             }
+
+            swapDeleteParams = null;
+            bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
         });
 
         $(document).ready(function () {
@@ -3687,6 +4010,12 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
             const swapItemId = $dropdown.find('option:selected').val();
             const description = $('#addSwapItemModal #description').val();
 
+            // ✅ Check if food is selected
+            if (!swapItemId || swapItemId === '0') {
+                alert('Please select a food item.');
+                return;
+            }
+
             const anyChecked = $('#addSwapItemModal .qty-unit-row').find('.multiQtyCheckbox:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
@@ -3829,7 +4158,7 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
             // calculateMealNutrition();
         });
 
-         $(document).on('click', '.add-more-swap-item', function () {
+        $(document).on('click', '.add-more-swap-item', function () {
             const btn = $(this);
             const itemId = $(this).data('item-id');
             const mealId = $(this).data('meal-id');
@@ -4630,20 +4959,42 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
     });
 
     $(document).ready(function() {
-        // Initially hide swap item dropdown if is_swiped is no
-        if ($('input[name="is_swiped"]:checked').val() == '1') {
-            $('#swapItemsContainer').show();
-        } else {
-            $('#swapItemsContainer').hide();
+        // Global tooltip initialization function
+        function initializeTooltips() {
+            // First dispose all existing tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+            
+            // Initialize new tooltips
+            $('[data-bs-toggle="tooltip"]').each(function() {
+                const $this = $(this);
+                const description = $this.data('description');
+                
+                // Set both title attributes for consistency
+                $this.attr({
+                    'title': description,
+                    'data-bs-original-title': description
+                });
+                
+                // Initialize Bootstrap tooltip
+                new bootstrap.Tooltip(this, {
+                    trigger: 'hover',
+                    placement: 'top',
+                    html: true
+                });
+            });
         }
 
-        // Show/hide the swap item dropdown based on is_swiped selection
-        $('input[name="is_swiped"]').on('change', function() {
-            if ($(this).val() == '1') {
-                $('#swapItemsContainer').show();
-            } else {
-                $('#swapItemsContainer').hide();
-            }
+        // Initialize tooltips on page load
+        initializeTooltips();
+
+        // Handle dynamic content updates
+        $(document).on('shown.bs.modal', function() {
+            initializeTooltips();
+        });
+
+        // Handle AJAX content updates
+        $(document).ajaxComplete(function() {
+            initializeTooltips();
         });
     });
 
@@ -5137,33 +5488,6 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
         }
     });
 
-    $(document).ready(function() {
-        $('.view-user-profile').on('click', function(e) {
-            e.preventDefault();
-            var userId = $(this).data('user-id');
-            var sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-
-            $.ajax({
-                url: sessionUrl,
-                method: 'GET',
-                success: function(response) {
-                    // If the session is set successfully, redirect to profile
-                    if (response.redirect_url) {
-                        // window.location.href = response.redirect_url;
-                        window.open(response.redirect_url, '_blank');
-
-                    } else {
-                        alert('Something went wrong!');
-                    }
-                },
-                error: function(xhr) {
-                    // alert(xhr.responseText);
-                    alert('Error setting user session.');
-                }
-            });
-        });
-    });
-
     $(document).ready(function () {
         $('#nutritionToggle').on('change', function () {
             var isChecked = $(this).is(':checked') ? 1 : 0;
@@ -5186,6 +5510,30 @@ function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelect
             });
         });
     });
+
+    $(document).ready(function () {
+        $(document).on('click', '.view-info', function (e) {
+            e.preventDefault();
+
+            const $this = $(this);
+            const description = $this.data('description');
+
+            // ✅ Correctly locate the corresponding label text
+            const foodName = $this.closest('.d-flex').find('label').text().trim();
+
+            const modal = $('#itemInfoModal');
+
+            if (modal.length) {
+                modal.find('.modal-title').text(foodName || 'Item Information');
+                modal.find('#modalDescription').text(description || 'No description available.');
+
+                const bsModal = new bootstrap.Modal(modal[0]);
+                bsModal.show();
+            }
+        });
+    });
+
+
 
 </script>
 

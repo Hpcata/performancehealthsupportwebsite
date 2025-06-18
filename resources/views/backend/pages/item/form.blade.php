@@ -46,15 +46,8 @@
             </div>
         </div>
     </div>
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+   <div id="form-error-message" style="color: red; display: none;" class="mb-3"></div>
+
     <div class="row align-item-center">
         <div class="col-md-12">
             <div class="card mb-3">
@@ -69,10 +62,13 @@
                         <div class="row g-3 align-items-center">
                             <!-- Title Field -->
                             <div class="col-md-12">
-                                <label for="title" class="form-label">Title</label>
-                                <input type="text" name="title" class="form-control" id="title" value="{{ $item->title ?? '' }}" required>
+                                <label for="title" class="form-label">Title<small class="text-danger">*</small></label>
+                                <input type="text" name="title" class="form-control" id="title" value="{{ $item->title ?? '' }}" >
                                 <p class="mt-3 px-2" id="subTitle" style="font-size: 16px;"></p>
                                 <p class="nutrition-info mt-2 mb-0 text-muted px-2" style="font-size: 16px;"></p>
+                                @error('title')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Short Description Field -->
@@ -110,7 +106,7 @@
                             </div>
 
                             <div class="col-md-12">
-                                <label for="flag_ids" class="form-label">Select Preferences</label>
+                                <label for="flag_ids" class="form-label">Select Preferences<small class="text-danger">*</small></label>
                                 <select name="flag_ids[]" class="form-select" id="flag_ids" multiple>
                                     @foreach ($flags as $flag)
                                         <option value="{{ $flag->id }}" 
@@ -119,6 +115,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('flag_ids')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- category Field -->
@@ -130,9 +129,27 @@
                                         <option value="{{ $category->id }}" {{ isset($item) && $item->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                     @endforeach
                                 </select>
+                                @error('category_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         --}}
                             <div class="mb-3 d-flex align-items-center gap-2 justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="checkbox" 
+                                        id="lockCheckbox" 
+                                        name="is_locked" 
+                                        value="{{ $item->is_locked ?? 0 }}" 
+                                        class="form-check-input" 
+                                        {{ isset($item) ? ($item->is_locked == 1 ? 'checked' : '') : '' }} />
+
+                                    <label for="lockCheckbox" id="lockLabel" class="form-label mb-0">
+                                        {{ isset($item) ? ($item->is_locked == 1 ? 'Unlock' : 'Lock') : 'Lock' }}
+                                    </label>
+                                    <small class="form-text text-muted">
+                                        (Lock to prevent editing nutrition info. Unlock to allow changes.)
+                                    </small>
+                                </div>
                                 <!-- Right side: Lock icon + Reset button -->
                                 <div class="d-flex align-items-center gap-2 mx-3">
                                     <button type="button" class="btn btn-secondary btn-sm" data-qty="{{ $item->serving_size ?? ''}}" data-unit="{{ $item->serving_size_unit ?? '' }}" data-title="{{ $item->title ?? '' }}" id="resetQty">Reset Qty</button>
@@ -154,13 +171,13 @@
                             <div class="lock-div position-relative" id="lockableBox"> 
                                 <div class="row">
                                     <div class="col-md-12 add-more-container">
-                                        <label class="form-label">Quantity & Measurement</label>
+                                        <label class="form-label">Quantity & Measurement<small class="text-danger">*</small></label>
 
                                         @php
                                             $allUnits = ['g', 'mL', 'ml', 'cup', 'teaspoon', 'tablespoon', 'dessert spoon', 'handful', 'piece', 'pouch', 'tub','slice', 'roll'];
                                         @endphp
 
-                                        @if (!empty($selectedUnits) && count($selectedUnits))
+                                        @if (!empty($selectedUnits) && count($selectedUnits) > 0)
                                             <!-- Loop through selected units -->
                                             @foreach ($selectedUnits as $index => $unitData)
                                                 <div class="row align-items-center mb-2">
@@ -223,6 +240,7 @@
                                                             type="checkbox" 
                                                             class="qty-checkbox me-2" 
                                                             id="main"
+
                                                         >
                                                         <input 
                                                             type="text" 
@@ -252,6 +270,12 @@
                                                 </div> -->
                                             </div>
                                         @endif
+                                        @error('qty')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                        @error('unit')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -273,6 +297,10 @@
                                             <label for="serving_size" class="form-label">Serving Size</label>
                                             <input type="number" name="serving_size" class="form-control d-inline-block d-flex" id="serving_size" value="{{ number_format($item->serving_size ?? '0', 1) }}"  step="0.01" min="0" placeholder="Enter Serving Size">
                                             <!-- <p>Gm</p> -->
+                                            @error('serving_size')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        
                                         </div>
                                         <div class="col-md-2 mt-3">
                                             <label for="serving_size" class="form-label">Serving Size Unit</label>
@@ -281,6 +309,9 @@
                                                 <option value="g" {{ isset($item) && $item->serving_size_unit == 'g' ? 'selected' : ''}}>g</option>
                                                 <option value="ml" {{ isset($item) && $item->serving_size_unit == 'ml' ? 'selected' : ''}}>mL</option>
                                             </select>
+                                            @error('serving_size_unit')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                             <!-- <input type="text" name="serving_size_unit" class="form-control d-inline-block d-flex" id="serving_size_unit" value="{{ $item->serving_size_unit ?? 'gm' }}" placeholder="Enter Serving Size"> -->
                                         </div>
                                         <!-- Carbohydrate Field -->
@@ -610,14 +641,38 @@
         $('#lockCheckbox').on('change', function () {
             console.log('event call');
             if ($(this).is(':checked')) {
-                console.log('true');
+                const rawData = $('#selected_measurements_hidden').val();
+                let data = [];
+
+                try {
+                    data = JSON.parse(rawData);
+                } catch (e) {
+                    alert("Invalid measurement data format.");
+                    $(this).prop('checked', false);
+                    return;
+                }
+
+                // Check if data is null, not an array, or an empty array
+                if (!Array.isArray(data) || data.length === 0) {
+                    alert("Please select quantity and unit before locking.");
+                    $(this).prop('checked', false);
+                    return;
+                }
+
+                // Check for any missing qty or unit values
+                const missingValues = data.some(item => !item.qty || !item.unit);
+                if (missingValues) {
+                    alert("All measurements must have both quantity and unit.");
+                    $(this).prop('checked', false);
+                    return;
+                }
+
                 $('#lockableBox').addClass('locked');
                 $('#lockLabel').text('Unlock');
                 $('#lockIcon').show();
                 // $('#resetQty').prop('disabled',false);
                 $(this).val(1);
 
-                const data = JSON.parse($('#selected_measurements_hidden').val());
                 const $container = $('#dynamicQtyMeasurementContainer');
                 $container.empty();
 
@@ -684,9 +739,41 @@
                         window.location.href = "{{ route('admin.items.index')}}";
                     @endif
                 },
-                error: function () {
-                    alert('Error saving food item.');
+                error: function (xhr) {
+                    $('#loader-2').hide();
+
+                    let alertMessage = '';
+                    let htmlMessage = '';
+
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        const errors = xhr.responseJSON.errors;
+
+                        alertMessage = 'Validation errors:\n';
+                        htmlMessage = '<strong>Validation errors:</strong><ul>';
+
+                        for (const field in errors) {
+                            if (errors.hasOwnProperty(field)) {
+                                const fieldErrors = errors[field].join(', ');
+                                alertMessage += `- ${fieldErrors}\n`;
+                                htmlMessage += `<li>${fieldErrors}</li>`;
+                            }
+                        }
+
+                        htmlMessage += '</ul>';
+
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        alertMessage = 'Error: ' + xhr.responseJSON.message;
+                        htmlMessage = `<strong>Error:</strong> ${xhr.responseJSON.message}`;
+                    } else {
+                        alertMessage = 'An unknown error occurred.';
+                        htmlMessage = 'An unknown error occurred.';
+                    }
+
+                    // Show both
+                    alert(alertMessage);
+                    $('#form-error-message').html(htmlMessage).show();
                 }
+
             });
         });
 
@@ -844,9 +931,9 @@
         let baseFat = '';
         let baseEnergy = '';
         let AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
-
+        let selectedQtyUnit = '';
         @if(isset($item))
-            const selectedQtyUnit = @json($item->selected_qty_unit);
+            selectedQtyUnit = @json($item->selected_qty_unit);
             const title = @json($item->title);
             baseCarb = @json($item->carbs);
             baseProtein = @json($item->protein);
@@ -1830,11 +1917,42 @@
                     AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
                     updateHiddenField();
                 },
-                error: function () {
-                     $('#loader-2').hide();
-                    console.error("Error fetching alternate measurements.");
-                    alert("Error fetching alternate measurements.");
+                error: function (xhr) {
+                    $('#loader-2').hide();
+
+                    let alertMessage = '';
+                    let htmlMessage = '';
+
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        const errors = xhr.responseJSON.errors;
+
+                        alertMessage = 'Validation errors:\n';
+                        htmlMessage = '<strong>Validation errors:</strong><ul>';
+
+                        for (const field in errors) {
+                            if (errors.hasOwnProperty(field)) {
+                                const fieldErrors = errors[field].join(', ');
+                                alertMessage += `- ${fieldErrors}\n`;
+                                htmlMessage += `<li>${fieldErrors}</li>`;
+                            }
+                        }
+
+                        htmlMessage += '</ul>';
+
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        alertMessage = 'Error: ' + xhr.responseJSON.message;
+                        htmlMessage = `<strong>Error:</strong> ${xhr.responseJSON.message}`;
+                    } else {
+                        alertMessage = 'An unknown error occurred.';
+                        htmlMessage = 'An unknown error occurred.';
+                    }
+
+                    // Show both
+                    alert(alertMessage);
+                    $('#form-error-message').html(htmlMessage).show();
                 }
+
+
             });
         });
 

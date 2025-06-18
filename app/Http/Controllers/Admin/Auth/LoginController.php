@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Models\User;
-use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
@@ -53,7 +52,7 @@ class LoginController extends Controller
 
     public function index()
     {
-        // dd(Auth::user()->isSuperAdmin());
+        // Only redirect if user is already authenticated as admin
         if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->is_superadmin == 1) {
             return redirect()->route('admin.purchase-plans.index');
         }
@@ -81,7 +80,7 @@ class LoginController extends Controller
 
         if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $rememberMe)) {
             $request->session()->regenerate();
-            return redirect()->route('dashboard')->with('success', 'You are logged in successfully.');
+            return redirect()->route('admin.purchase-plans.index')->with('success', 'You are logged in successfully.');
         }
 
         return back()->with('error', 'Invalid credentials.');
@@ -125,7 +124,7 @@ class LoginController extends Controller
         // Log in the new admin user
         Auth::guard('admin')->login($user);
 
-        return redirect()->route('dashboard')->with('success', 'Registration successful. You are now logged in.');
+        return redirect()->route('admin.purchase-plans.index')->with('success', 'Registration successful. You are now logged in.');
     }
 
     /**

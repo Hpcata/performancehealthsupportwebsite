@@ -58,83 +58,71 @@ class NutritionAIController extends Controller
 
     public function calculateNutrition(Request $request)
     {
-        // Validate input
         $request->validate([
-            'title'           => 'required|string',
-            'qty'             => 'required',
-            'measurement'     => 'required|string',
-            'carbs'           => 'nullable|numeric|min:0',
-            'protein'         => 'nullable|numeric|min:0',
-            'fat'             => 'nullable|numeric|min:0',
-            'energy'          => 'nullable'
+            'title'       => 'required|string',
+            'qty'         => 'required',
+            'measurement' => 'required|string',
+            'carbs'       => 'nullable|numeric|min:0',
+            'protein'     => 'nullable|numeric|min:0',
+            'fat'         => 'nullable|numeric|min:0',
+            'energy'      => 'nullable'
         ]);
-        // dd($request->input('qty'));
-        // Extract inputs
+
         $title = $request->input('title');
-        // $qty = $request->input('qty');
-        // $qty = $this->convertFractionToDecimal($qty);
         $qtyInput = $request->input('qty');
         $qty = $this->parseFraction($qtyInput);
-
         $measurement = strtolower($request->input('measurement'));
-    
+
         $item = \App\Models\Item::find($request->id);
         $serving_size = $request->input('serving_size');
-        $servings_per_pack = $request->input('servings_per_pack');
         $serving_size_unit = $request->input('serving_size_unit');
-    
-        // Use original base macros (from DB or AI), not passed-in scaled values
+        $servings_per_pack = $request->input('servings_per_pack');
+
+        // Fallback: Use qty and measurement if serving size or unit is missing
+        $serving_size = (!empty($serving_size) && floatval($serving_size) > 0) ? $serving_size : $qty;
+        $serving_size_unit = !empty($serving_size_unit) ? $serving_size_unit : $measurement;
+
+        // Base macros
         $baseCarbs = $item->carbs ?? null;
         $baseProtein = $item->protein ?? null;
         $baseFat = $item->fat ?? null;
         $baseEnergy = floatval($item->energy ?? null) ?? null;
-        
-        // If missing, fetch from AI
-        if ($baseCarbs === null || $baseProtein === null || $baseFat === null || $baseCarbs == 0.00 || $baseProtein == 0.00 || $baseFat == 0.00) {
-            $aiNutrition = $this->fetchFromOpenAI($title, $serving_size, $serving_size_unit); // 100g base
-    
+
+        // Fetch from AI if needed
+        if (is_null($baseCarbs) || is_null($baseProtein) || is_null($baseFat) ||
+            $baseCarbs == 0.00 || $baseProtein == 0.00 || $baseFat == 0.00) {
+
+            $aiNutrition = $this->fetchFromOpenAI($title, $serving_size, $serving_size_unit);
+
             $baseCarbs = $baseCarbs > 0 ? $baseCarbs : $aiNutrition['carbs'];
             $baseProtein = $baseProtein > 0 ? $baseProtein : $aiNutrition['protein'];
             $baseFat = $baseFat > 0 ? $baseFat : $aiNutrition['fat'];
             $baseEnergy = $baseEnergy > 0 ? $baseEnergy : $aiNutrition['energy'];
+
             $serving_size = $serving_size ?: $aiNutrition['serving_size'];
             $serving_size_unit = $serving_size_unit ?: $aiNutrition['serving_size_unit'];
             $servings_per_pack = $servings_per_pack ?: $aiNutrition['servings_per_pack'];
         }
-    
-        // Calculate serving size or servings per pack if one is missing
-        $serving_size = $serving_size ?: null;
-        $servings_per_pack = $servings_per_pack ?: null;
-    
-        if (!$serving_size && $qty && $servings_per_pack) {
-            $serving_size = $qty / $servings_per_pack;
-        } elseif (!$servings_per_pack && $qty && $serving_size) {
-            $servings_per_pack = $qty / $serving_size;
-        }
-    
-        // Convert to grams if unit is non-standard
-        $num_servings = $qty / $serving_size;
 
-        // if($measurement == 'g') {
-        //     $num_servings = $qty / $serving_size;
-        // } else {
-        //     $convertedToGrams = $this->getGramsFromTitle($title, $qty, $measurement);
-        //     dd($convertedToGrams);
-        //     $num_servings = $convertedToGrams / $serving_size;
-        // }
-        
+        // Unit conversion (if needed)
         if (in_array($measurement, ["piece", "tablespoon", "teaspoon", "cup", "handful", "dessert spoon", "pouch", "tub", "slice"])) {
             $convertedToGrams = $this->convertToGrams($title, $qty, $measurement);
-            $num_servings = $convertedToGrams / $serving_size;
+            $qty = $convertedToGrams;
         }
-    
-        // Final macronutrient calculation (based on original per-serving/base values)
+
+        // Final safety net for serving size
+        if (empty($serving_size) || floatval($serving_size) == 0) {
+            $serving_size = $qty;
+        }
+
+        $num_servings = $qty / $serving_size;
+
+        // Nutrition calculation
         $scaledCarbs = $baseCarbs * $num_servings;
         $scaledProtein = $baseProtein * $num_servings;
         $scaledFat = $baseFat * $num_servings;
         $scaledEnergy = $baseEnergy * $num_servings;
-        // dd($scaledCarbs, $scaledProtein, $scaledFat );
-        // Return nutrition data
+
         return response()->json([
             'title' => $title,
             'protein' => round($scaledProtein, 2),
@@ -144,11 +132,108 @@ class NutritionAIController extends Controller
             'converted_qty' => round($num_servings, 2) . " g",
             'measurement' => $measurement,
             'serving_size' => round($serving_size, 2),
-            'serving_size_unit' => $serving_size_unit ?? 'g',
-            'servings_per_pack' => round($servings_per_pack, 2),
+            'serving_size_unit' => $serving_size_unit,
+            'servings_per_pack' => round($servings_per_pack ?? 0, 2),
             'alternate_serving_sizes' => $this->getAlternateServingSizes($title, $qty, $measurement)
         ]);
     }
+
+    // public function calculateNutrition(Request $request)
+    // {
+    //     // Validate input
+    //     $request->validate([
+    //         'title'           => 'required|string',
+    //         'qty'             => 'required',
+    //         'measurement'     => 'required|string',
+    //         'carbs'           => 'nullable|numeric|min:0',
+    //         'protein'         => 'nullable|numeric|min:0',
+    //         'fat'             => 'nullable|numeric|min:0',
+    //         'energy'          => 'nullable'
+    //     ]);
+    //     // dd($request->input('qty'));
+    //     // Extract inputs
+    //     $title = $request->input('title');
+    //     // $qty = $request->input('qty');
+    //     // $qty = $this->convertFractionToDecimal($qty);
+    //     $qtyInput = $request->input('qty');
+    //     $qty = $this->parseFraction($qtyInput);
+
+    //     $measurement = strtolower($request->input('measurement'));
+    
+    //     $item = \App\Models\Item::find($request->id);
+    //     $serving_size = $request->input('serving_size');
+    //     $servings_per_pack = $request->input('servings_per_pack');
+    //     $serving_size_unit = $request->input('serving_size_unit');
+    
+    //     // Use original base macros (from DB or AI), not passed-in scaled values
+    //     $baseCarbs = $item->carbs ?? null;
+    //     $baseProtein = $item->protein ?? null;
+    //     $baseFat = $item->fat ?? null;
+    //     $baseEnergy = floatval($item->energy ?? null) ?? null;
+        
+    //     // If missing, fetch from AI
+    //     if ($baseCarbs === null || $baseProtein === null || $baseFat === null || $baseCarbs == 0.00 || $baseProtein == 0.00 || $baseFat == 0.00) {
+    //         $aiNutrition = $this->fetchFromOpenAI($title, $serving_size, $serving_size_unit); // 100g base
+    
+    //         $baseCarbs = $baseCarbs > 0 ? $baseCarbs : $aiNutrition['carbs'];
+    //         $baseProtein = $baseProtein > 0 ? $baseProtein : $aiNutrition['protein'];
+    //         $baseFat = $baseFat > 0 ? $baseFat : $aiNutrition['fat'];
+    //         $baseEnergy = $baseEnergy > 0 ? $baseEnergy : $aiNutrition['energy'];
+    //         $serving_size = $serving_size ?: $aiNutrition['serving_size'];
+    //         $serving_size_unit = $serving_size_unit ?: $aiNutrition['serving_size_unit'];
+    //         $servings_per_pack = $servings_per_pack ?: $aiNutrition['servings_per_pack'];
+    //     }
+    
+    //     // Calculate serving size or servings per pack if one is missing
+    //     $serving_size = $serving_size ?: null;
+    //     $servings_per_pack = $servings_per_pack ?: null;
+    
+    //     if (!$serving_size && $qty && $servings_per_pack) {
+    //         $serving_size = $qty / $servings_per_pack;
+    //     } elseif (!$servings_per_pack && $qty && $serving_size) {
+    //         if (!$serving_size || floatval($serving_size) == 0) {
+    //             $serving_size = $qty;
+    //         }
+    //         $servings_per_pack = $qty / $serving_size;
+    //     }
+    
+    //     // Convert to grams if unit is non-standard
+    //     $num_servings = $qty / $serving_size;
+
+    //     // if($measurement == 'g') {
+    //     //     $num_servings = $qty / $serving_size;
+    //     // } else {
+    //     //     $convertedToGrams = $this->getGramsFromTitle($title, $qty, $measurement);
+    //     //     dd($convertedToGrams);
+    //     //     $num_servings = $convertedToGrams / $serving_size;
+    //     // }
+        
+    //     if (in_array($measurement, ["piece", "tablespoon", "teaspoon", "cup", "handful", "dessert spoon", "pouch", "tub", "slice"])) {
+    //         $convertedToGrams = $this->convertToGrams($title, $qty, $measurement);
+    //         $num_servings = $convertedToGrams / $serving_size;
+    //     }
+    
+    //     // Final macronutrient calculation (based on original per-serving/base values)
+    //     $scaledCarbs = $baseCarbs * $num_servings;
+    //     $scaledProtein = $baseProtein * $num_servings;
+    //     $scaledFat = $baseFat * $num_servings;
+    //     $scaledEnergy = $baseEnergy * $num_servings;
+    //     // dd($scaledCarbs, $scaledProtein, $scaledFat );
+    //     // Return nutrition data
+    //     return response()->json([
+    //         'title' => $title,
+    //         'protein' => round($scaledProtein, 2),
+    //         'carbs' => round($scaledCarbs, 2),
+    //         'fat' => round($scaledFat, 2),
+    //         'energy' => round($scaledEnergy, 2),
+    //         'converted_qty' => round($num_servings, 2) . " g",
+    //         'measurement' => $measurement,
+    //         'serving_size' => round($serving_size, 2),
+    //         'serving_size_unit' => $serving_size_unit ?? 'g',
+    //         'servings_per_pack' => round($servings_per_pack, 2),
+    //         'alternate_serving_sizes' => $this->getAlternateServingSizes($title, $qty, $measurement)
+    //     ]);
+    // }
 
     private function parseFraction($value)
     {

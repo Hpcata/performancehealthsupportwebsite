@@ -37,47 +37,48 @@ class PaymentController extends Controller
         DB::beginTransaction(); // Start a database transaction
 
         try {
-            // dd($request->all());
-            // Initialize Stripe
+            Log::debug('Stripe payment flow started.', ['request' => $request->all()]);
+
             Stripe::setApiKey(config('services.stripe.secret'));
 
-            // Stripe::setApiKey('sk_test_51QI09cHWqn47bqTG2jBxRszIld9Jh0XITRvFvDLPCpmgQUjls75dfoSw5IBBZiqXZkVz7yVgHLYInFBHN76eeZ9W0071DUatdf');
-
-            // Initialize coupon variables
             $coupon = null;
             $discount = 0;
             $user = null;
 
-            // Check if the user exists by email
+            Log::debug('Checking if user exists by email', ['email' => $validated['email']]);
+
             $user = User::where('email', $validated['email'])->first();
 
             if (!$user) {
-                // If user doesn't exist, create a new user
-                $firstName = explode(' ', $validated['name'])[0]; // First name from full name
-                $lastName = explode(' ', $validated['name'])[1] ?? ''; // Last name from full name
+                Log::debug('User not found. Creating new user.');
 
-                // Create new user with hashed password
+                $firstName = explode(' ', $validated['name'])[0];
+                $lastName = explode(' ', $validated['name'])[1] ?? '';
+
                 $user = User::create([
                     'name' => $validated['name'],
                     'first_name' => $firstName,
                     'last_name' => $lastName,
                     'email' => $validated['email'],
                     'phone' => $validated['phone'],
-                    'password' => Hash::make($validated['password']), // Store hashed password
+                    'password' => Hash::make($validated['password']),
                 ]);
+
+                Log::debug('New user created.', ['user_id' => $user->id]);
             }
 
             $payment = Payment::where('plan_id', $validated['plan_id'])->where('user_id', $user->id)->first();
             if ($payment) {
+                Log::debug('Duplicate plan purchase attempt.', ['user_id' => $user->id, 'plan_id' => $validated['plan_id']]);
                 return response()->json([
                     'success' => false,
                     'message' => 'You have already purchased this plan. Please login to your account to manage your plans.',
-                    
                 ]);
             }
 
-            // Now that we have the user, check for coupon code
-            if ($validated['coupon_code']) {
+            if (!empty($validated['coupon_code'])) {
+                Log::debug('Checking coupon code.', ['coupon_code' => $validated['coupon_code']]);
+
                 $coupon = \App\Models\Coupon::where('code', $validated['coupon_code'])
                     ->where('status', true)
                     ->where('start_date', '<=', now())
@@ -85,58 +86,56 @@ class PaymentController extends Controller
                     ->where('max_uses', '>', 0)
                     ->first();
 
-                // If coupon is found, apply discount
                 if ($coupon) {
-                    // Check if the user has already used the coupon more than allowed
+                    Log::debug('Coupon found.', ['coupon_id' => $coupon->id]);
+
                     $userUsageCount = \App\Models\CouponUsage::where('coupon_id', $coupon->id)
                         ->where('user_id', $user->id)
                         ->count();
 
                     if ($coupon->uses_per_user > 0 && $userUsageCount >= $coupon->uses_per_user) {
+                        Log::debug('User has already used the coupon maximum times.');
                         return response()->json([
                             'valid' => false,
                             'message' => 'You have already used this coupon the maximum allowed times.',
                         ]);
                     }
 
-                    // Apply discount based on coupon type
                     if ($coupon->type == 'percentage' && $coupon->value == 100.00) {
                         $discount = "full";
-                    } elseif($coupon->type == 'percentage') {
+                    } elseif ($coupon->type == 'percentage') {
                         $discount = ($validated['price'] * $coupon->value) / 100;
                     } elseif ($coupon->type == 'fixed') {
                         $discount = $coupon->value;
                     }
+
+                    Log::debug('Discount calculated.', ['discount' => $discount]);
                 } else {
-                    // Return error if coupon is invalid or expired
+                    Log::debug('Invalid or expired coupon code.');
                     return response()->json(['success' => false, 'message' => 'Invalid or expired coupon code.']);
                 }
             }
 
-            if($discount == "full") {
-                $finalPrice = 0;
-            }else {
-                $finalPrice = max(0, $validated['price'] - $discount);
-            }
+            $finalPrice = ($discount == "full") ? 0 : max(0, $validated['price'] - $discount);
+            Log::debug('Final price after discount.', ['final_price' => $finalPrice]);
 
-            // If the discount fully covers the price, skip payment process
             if ($finalPrice <= 0) {
-                // Create a payment record
+                Log::debug('Full discount applied. Skipping Stripe.');
+
                 $paymentId = DB::table('payments')->insertGetId([
                     'user_id' => $user->id,
                     'plan_id' => $validated['plan_id'],
-                    'price' => 0, // Price is 0 due to full discount
+                    'price' => 0,
                     'name' => $validated['name'],
                     'email' => $validated['email'],
                     'phone' => $validated['phone'],
-                    'payment_intent_id' => null, // No payment intent since Stripe is skipped
+                    'payment_intent_id' => null,
                     'status' => 'discount_applied',
-                    'coupon_code' => isset($validated['coupon_code']) ? $validated['coupon_code'] : null,
+                    'coupon_code' => $validated['coupon_code'] ?? null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
 
-                // Track coupon usage
                 if ($coupon) {
                     $coupon->increment('usage_count');
                     \App\Models\CouponUsage::create([
@@ -145,35 +144,38 @@ class PaymentController extends Controller
                     ]);
                 }
 
-                DB::commit(); // Commit the transaction
+                DB::commit();
+                Log::debug('Payment saved with full discount.', ['payment_id' => $paymentId]);
 
                 return response()->json([
                     'success' => true,
                     'message' => 'Payment processed successfully with full discount!',
                     'data' => ['user_id' => $user->id, 'payment_id' => $paymentId],
-                    'redirect_url' => route('front.pre-plan-details') // Redirect to user's dashboard
+                    'redirect_url' => route('front.pre-plan-details')
                 ]);
             }
 
-            // If the price isn't fully discounted, proceed with Stripe payment
+            Log::debug('Creating Stripe payment intent.', ['amount' => $finalPrice * 100]);
+
             $paymentIntent = PaymentIntent::create([
-                'amount' => $finalPrice * 100, // Amount in cents
-                'currency' => 'usd',
+                'amount' => $finalPrice * 100,
+                'currency' => 'aud',
                 'payment_method' => $validated['payment_method_id'],
                 'confirmation_method' => 'manual',
                 'confirm' => true,
-                'return_url' => route('payment.success'), // Optional for redirect methods
+                'return_url' => route('payment.success'),
             ]);
 
-            // Handle payment requires additional action
+            Log::debug('Stripe PaymentIntent created.', ['status' => $paymentIntent->status]);
+
             if ($paymentIntent->status === 'requires_action' && $paymentIntent->next_action->type === 'use_stripe_sdk') {
-                DB::rollBack(); // Rollback transaction in case of additional actions
+                DB::rollBack();
+                Log::debug('Payment requires additional action.');
                 return response()->json([
                     'requires_action' => true,
                     'payment_intent_client_secret' => $paymentIntent->client_secret,
                 ]);
             } elseif ($paymentIntent->status === 'succeeded') {
-                // Save the payment details in the payments table
                 $paymentId = DB::table('payments')->insertGetId([
                     'user_id' => $user->id,
                     'plan_id' => $validated['plan_id'],
@@ -188,7 +190,6 @@ class PaymentController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                // Track coupon usage if used
                 if ($coupon) {
                     $coupon->increment('usage_count');
                     \App\Models\CouponUsage::create([
@@ -197,23 +198,27 @@ class PaymentController extends Controller
                     ]);
                 }
 
-                DB::commit(); // Commit the transaction
+                DB::commit();
+                Log::debug('Payment succeeded and saved.', ['payment_id' => $paymentId]);
 
                 return response()->json([
                     'success' => true,
                     'message' => 'Payment processed successfully!',
                     'data' => ['user_id' => $user->id, 'payment_id' => $paymentId],
-                    'redirect_url' => route('front.pre-plan-details') // Redirect to user's dashboard
+                    'redirect_url' => route('front.pre-plan-details')
                 ]);
             } else {
-                DB::rollBack(); // Rollback transaction if payment fails
+                DB::rollBack();
+                Log::debug('Payment failed.', ['status' => $paymentIntent->status]);
                 return response()->json(['success' => false, 'message' => 'Payment failed.']);
             }
+
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback transaction in case of any exception
-            Log::error('Payment error: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('Payment error caught in catch block: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json(['success' => false, 'message' => 'Payment failed: ' . $e->getMessage()], 500);
         }
+
     }
 
     // public function processPayment(Request $request)
@@ -375,147 +380,280 @@ class PaymentController extends Controller
 
     public function prePlanDetails(Request $request)
     {
-        // dd($request->all());
         $userId = $request->user_id;
         $paymentId = $request->id;
-        return view('front.pre_plan_details', compact('userId', 'paymentId'));
+        // dd($request->all());
+        // Retrieve the user's pre-plan details
+        $prePlan = DB::table('user_pre_plans')
+            ->where('user_id', $userId)
+            ->where('payment_id', $paymentId)
+            ->first();
+
+        // Retrieve all steps completed by the user
+        $completedSteps = DB::table('pre_plan_details')
+            ->where('user_pre_plan_id', $prePlan->id ?? null)
+            ->max('step');
+
+        // Determine the next step
+        if($completedSteps < 9) {
+            $nextStep = $completedSteps + 1;
+        }else {
+            $nextStep = 9;
+        }
+
+        // Retrieve data for all steps to pre-fill the form
+        $stepData = DB::table('pre_plan_details')
+            ->where('user_pre_plan_id', $prePlan->id ?? null)
+            ->get()
+            ->groupBy('step');
+        // dd($nextStep);
+        return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData'));
     }
 
     public function prePlanDetailsSave(Request $request)
     {
-
         $user_id = $request->user_id ?? null;
         $payment_id = $request->payment_id ?? null;
         $questions = $request->input('questions', []);
         $answers = $request->input('ans', []);
-        // dd($request->all());
-        // Step 2: Prepare data for insertion
-        $dataToInsert = [];
-        DB::beginTransaction(); // Start a database transaction
-        try {
+        $step = $request->input('step');
+        $stepFill = $request->input('step_fill') == true ? 1 : 0;
 
-            $prePlanId = DB::table('user_pre_plans')->insertGetId([
-                'payment_id' => $payment_id,
-                'user_id' => $user_id,
-                'dob' => $request->dob,
-                'occupation' => $request->occupation,
-                'address' => $request->address,
-                'culture' => $request->race_ethnicity_culture,
-                'referredBy' => $request->referredBy,
-                'other' => $request->other
-            ]);
+        DB::beginTransaction();
+        // dd($request->all());
+        try {
+            $prePlanId = DB::table('user_pre_plans')
+                ->where('user_id', $user_id)
+                ->where('payment_id', $payment_id)
+                ->value('id');
+            // dd($prePlanId );
+            if (!$prePlanId) {
+                $prePlanId = DB::table('user_pre_plans')->insertGetId([
+                    'payment_id' => $payment_id,
+                    'user_id' => $user_id,
+                    'dob' => $request->ans['personal_details']['dob'] ?? null,
+                    'occupation' => $request->ans['personal_details']['occupation'] ?? null,
+                    'address' => $request->ans['personal_details']['address'] ?? null, // Fixed the double $$ here
+                    'culture' => null,
+                    'referredBy' => $request->ans['personal_details']['referredBy'] ?? null,
+                    'other' => $request->other ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            // Remove old data for this step
+            if ($step !== null) {
+                DB::table('pre_plan_details')
+                    ->where('user_pre_plan_id', $prePlanId)
+                    ->where('step', $step)
+                    ->delete();
+            }
+
+            $dataToInsert = [];
 
             foreach ($questions as $section => $sectionQuestions) {
-                $formattedSection = ucwords(str_replace('_', ' ', $section)); // Format section name
+                $formattedSection = ucwords(str_replace('_', ' ', $section));
                 foreach ($sectionQuestions as $key => $questionText) {
                     $questionAnswers = $answers[$section][$key] ?? null;
-            
+
                     if (is_array($questionText)) {
                         foreach ($questionText as $qsnkey => $subQuestionText) {
                             $subQuestionAnswers = $questionAnswers[$qsnkey] ?? null;
-            
+
                             if (!is_null($subQuestionAnswers)) {
-                                // Ensure subQuestionAnswers is valid JSON
                                 $subQuestionAnswers = is_array($subQuestionAnswers)
                                     ? json_encode($subQuestionAnswers, JSON_THROW_ON_ERROR)
-                                    : json_encode((string) $subQuestionAnswers, JSON_THROW_ON_ERROR);
+                                    : json_encode((string)$subQuestionAnswers, JSON_THROW_ON_ERROR);
                             }
-            
+
                             $dataToInsert[] = [
                                 'user_pre_plan_id' => $prePlanId,
                                 'form_name' => $formattedSection,
                                 'form_slug' => $section,
                                 'question' => $subQuestionText,
                                 'answer' => $subQuestionAnswers,
+                                'step' => $step,
+                                'step_fill' => $stepFill,
                                 'created_at' => now(),
                                 'updated_at' => now(),
                             ];
                         }
                     } else {
-                        // Ensure questionAnswers is valid JSON
-                        $questionAnswers = isset($answers[$section][$key]) 
+                        $questionAnswers = isset($answers[$section][$key])
                             ? (is_array($answers[$section][$key])
                                 ? json_encode($answers[$section][$key], JSON_THROW_ON_ERROR)
-                                : json_encode((string) $answers[$section][$key], JSON_THROW_ON_ERROR))
+                                : json_encode((string)$answers[$section][$key], JSON_THROW_ON_ERROR))
                             : null;
-            
+
                         $dataToInsert[] = [
                             'user_pre_plan_id' => $prePlanId,
                             'form_name' => $formattedSection,
                             'form_slug' => $section,
                             'question' => $questionText,
                             'answer' => $questionAnswers,
+                            'step' => $step,
+                            'step_fill' => $stepFill,
                             'created_at' => now(),
                             'updated_at' => now(),
                         ];
                     }
                 }
             }
-            
-            // Step 3: Insert data into a single table
+
             DB::table('pre_plan_details')->insert($dataToInsert);
 
-            DB::commit(); // Commit the transaction if everything is successful
-
-            // **Handle File Upload**
-            if ($request->hasFile('ans.medical_history.blood_test_file')) {
-                $file = $request->file('ans.medical_history.blood_test_file');
-                
-                $filePath = $file->store('preplan_files', 'public');
-
-                DB::table('pre_plan_question_files')->insert([
-                    'user_pre_plan_id' => $prePlanId,
-                    'form_slug' => 'medical_history',
-                    'question' => 'Have you recently had a blood test?',
-                    'file_path' => $filePath,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-            
-            // **Handle Multiple File Uploads**
-            if ($request->hasFile('ans.physical_measures.bodycomposition')) {
-                foreach ($request->file('ans.physical_measures.bodycomposition') as $file) {
-                    if ($file->isValid()) {
-                        
-                        $filePath = $file->store('preplan_files', 'public');
-
-                        DB::table('pre_plan_question_files')->insert([
-                            'user_pre_plan_id' => $prePlanId,
-                            'form_slug' => 'physical_measures',
-                            'question' => 'Have you recently undertaken a body composition assessment (measure of muscle, body fat)?',
-                            'file_path' => $filePath,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-                    }
-                }
-            }
-
-            $payment = \App\Models\Payment::with('user')->where('id',$payment_id)->first();
-            $email = $payment->user->email;
-            $planName = \App\Models\Plan::where('id', $payment->plan_id)->first()->name;
-            $user = $payment->user;
-
-            Mail::to($email)->send(new PlanPurchaseMail($user, $planName));
-
-            $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
-            Mail::to($adminEmail)->send(new PrePlanDetailsSubmitMail($user, $planName));  // passing 'true' to indicate it's an admin
+            DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Form submitted successfully!',
-                'redirect_url' => route('front.sub-home-page') // Redirect to user's dashboard
+                'message' => 'Step data saved successfully!',
+                'redirect_url' => $step == 9 ? route('front.sub-home-page') : null // example redirect after last step
             ]);
 
-        }  catch (\Exception $e) {
-            dd($e->getMessage());
-            DB::rollBack(); // Rollback transaction in case of any exception
-            Log::error('Payment error: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Payment failed: ' . $e->getMessage()], 500);
+        } catch (\Exception $e) {
+            // dd($e->getMessage());
+            DB::rollBack();
+            Log::error('Error saving step: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
-
     }
+
+    // public function prePlanDetailsSave(Request $request)
+    // {
+
+    //     $user_id = $request->user_id ?? null;
+    //     $payment_id = $request->payment_id ?? null;
+    //     $questions = $request->input('questions', []);
+    //     $answers = $request->input('ans', []);
+    //     // dd($request->all());
+    //     // Step 2: Prepare data for insertion
+    //     $dataToInsert = [];
+    //     DB::beginTransaction(); // Start a database transaction
+    //     try {
+
+    //         $prePlanId = DB::table('user_pre_plans')->insertGetId([
+    //             'payment_id' => $payment_id,
+    //             'user_id' => $user_id,
+    //             'dob' => $request->dob,
+    //             'occupation' => $request->occupation,
+    //             'address' => $request->address,
+    //             'culture' => $request->race_ethnicity_culture,
+    //             'referredBy' => $request->referredBy,
+    //             'other' => $request->other
+    //         ]);
+
+    //         foreach ($questions as $section => $sectionQuestions) {
+    //             $formattedSection = ucwords(str_replace('_', ' ', $section)); // Format section name
+    //             foreach ($sectionQuestions as $key => $questionText) {
+    //                 $questionAnswers = $answers[$section][$key] ?? null;
+            
+    //                 if (is_array($questionText)) {
+    //                     foreach ($questionText as $qsnkey => $subQuestionText) {
+    //                         $subQuestionAnswers = $questionAnswers[$qsnkey] ?? null;
+            
+    //                         if (!is_null($subQuestionAnswers)) {
+    //                             // Ensure subQuestionAnswers is valid JSON
+    //                             $subQuestionAnswers = is_array($subQuestionAnswers)
+    //                                 ? json_encode($subQuestionAnswers, JSON_THROW_ON_ERROR)
+    //                                 : json_encode((string) $subQuestionAnswers, JSON_THROW_ON_ERROR);
+    //                         }
+            
+    //                         $dataToInsert[] = [
+    //                             'user_pre_plan_id' => $prePlanId,
+    //                             'form_name' => $formattedSection,
+    //                             'form_slug' => $section,
+    //                             'question' => $subQuestionText,
+    //                             'answer' => $subQuestionAnswers,
+    //                             'created_at' => now(),
+    //                             'updated_at' => now(),
+    //                         ];
+    //                     }
+    //                 } else {
+    //                     // Ensure questionAnswers is valid JSON
+    //                     $questionAnswers = isset($answers[$section][$key]) 
+    //                         ? (is_array($answers[$section][$key])
+    //                             ? json_encode($answers[$section][$key], JSON_THROW_ON_ERROR)
+    //                             : json_encode((string) $answers[$section][$key], JSON_THROW_ON_ERROR))
+    //                         : null;
+            
+    //                     $dataToInsert[] = [
+    //                         'user_pre_plan_id' => $prePlanId,
+    //                         'form_name' => $formattedSection,
+    //                         'form_slug' => $section,
+    //                         'question' => $questionText,
+    //                         'answer' => $questionAnswers,
+    //                         'created_at' => now(),
+    //                         'updated_at' => now(),
+    //                     ];
+    //                 }
+    //             }
+    //         }
+            
+    //         // Step 3: Insert data into a single table
+    //         DB::table('pre_plan_details')->insert($dataToInsert);
+
+    //         DB::commit(); // Commit the transaction if everything is successful
+
+    //         // **Handle File Upload**
+    //         if ($request->hasFile('ans.medical_history.blood_test_file')) {
+    //             $file = $request->file('ans.medical_history.blood_test_file');
+                
+    //             $filePath = $file->store('preplan_files', 'public');
+
+    //             DB::table('pre_plan_question_files')->insert([
+    //                 'user_pre_plan_id' => $prePlanId,
+    //                 'form_slug' => 'medical_history',
+    //                 'question' => 'Have you recently had a blood test?',
+    //                 'file_path' => $filePath,
+    //                 'created_at' => now(),
+    //                 'updated_at' => now(),
+    //             ]);
+    //         }
+            
+    //         // **Handle Multiple File Uploads**
+    //         if ($request->hasFile('ans.physical_measures.bodycomposition')) {
+    //             foreach ($request->file('ans.physical_measures.bodycomposition') as $file) {
+    //                 if ($file->isValid()) {
+                        
+    //                     $filePath = $file->store('preplan_files', 'public');
+
+    //                     DB::table('pre_plan_question_files')->insert([
+    //                         'user_pre_plan_id' => $prePlanId,
+    //                         'form_slug' => 'physical_measures',
+    //                         'question' => 'Have you recently undertaken a body composition assessment (measure of muscle, body fat)?',
+    //                         'file_path' => $filePath,
+    //                         'created_at' => now(),
+    //                         'updated_at' => now(),
+    //                     ]);
+    //                 }
+    //             }
+    //         }
+
+    //         $payment = \App\Models\Payment::with('user')->where('id',$payment_id)->first();
+    //         $email = $payment->user->email;
+    //         $planName = \App\Models\Plan::where('id', $payment->plan_id)->first()->name;
+    //         $user = $payment->user;
+
+    //         Mail::to($email)->send(new PlanPurchaseMail($user, $planName));
+
+    //         $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
+    //         Mail::to($adminEmail)->send(new PrePlanDetailsSubmitMail($user, $planName));  // passing 'true' to indicate it's an admin
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Form submitted successfully!',
+    //             'redirect_url' => route('front.sub-home-page') // Redirect to user's dashboard
+    //         ]);
+
+    //     }  catch (\Exception $e) {
+    //         dd($e->getMessage());
+    //         DB::rollBack(); // Rollback transaction in case of any exception
+    //         Log::error('Payment error: ' . $e->getMessage());
+    //         return response()->json(['success' => false, 'message' => 'Payment failed: ' . $e->getMessage()], 500);
+    //     }
+
+    // }
 
     public function getRaceEthnicityCultureOptions(Request $request)
     {

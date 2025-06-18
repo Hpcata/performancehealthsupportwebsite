@@ -11,23 +11,32 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'image'];
+    protected $table = 'categories';
 
-    public function mealtimes()
+    protected $fillable = [
+        'name',
+        'order'
+    ];
+
+    public function plans()
     {
-        return $this->belongsToMany(MealTime::class, 'category_mealtime');
+        return $this->belongsToMany(Plan::class, 'plan_category')
+            ->orderBy('categories.order', 'asc');
     }
 
-    // Define the many-to-many relationship
-    public function subcategories()
+    public function meals()
     {
-        return $this->belongsToMany(Subcategory::class, 'category_subcategory', 'category_id', 'sub_category_id');
+        return $this->belongsToMany(Meal::class, 'meal_category');
     }
 
-    // Category has many meal times
-    public function userMealTimes()
+    public function subCategories()
     {
-        return $this->belongsToMany(MealTime::class, 'user_meal_times');
+        return $this->belongsToMany(SubCategory::class, 'subcategory_category');
+    }
+
+    public function userPlans()
+    {
+        return $this->hasMany(UserCategory::class);
     }
 
     // Many-to-many relationship with SubCategory through the user_subcategories pivot table
@@ -35,15 +44,4 @@ class Category extends Model
     // {
     //     return $this->hasMany(SubCategory::class);
     // }
-
-    public function userSubcategories()
-    {
-        return $this->belongsToMany(SubCategory::class, 'user_subcategories', 'user_category_id', 'sub_category_id');
-    }
-
-    // Define the relationship with Meal
-    public function meals()
-    {
-        return $this->belongsToMany(Meal::class, 'meal_category'); // Assuming a pivot table
-    }
 }

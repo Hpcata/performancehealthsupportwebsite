@@ -48,8 +48,8 @@
                                     <td>{{ $plan->name }}</td>
                                     <td>${{ $plan->price }}</td>
                                     <td>
-                                        @if($plan->mealtimes->isNotEmpty())
-                                            {{ $plan->mealtimes->pluck('title')->implode(', ') }}
+                                        @if($plan->categories->isNotEmpty())
+                                            {{ $plan->categories->pluck('title')->implode(', ') }}
                                         @else
                                             <span class="text-muted">No Meal Time</span>
                                         @endif

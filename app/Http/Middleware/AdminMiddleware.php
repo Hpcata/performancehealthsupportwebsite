@@ -17,11 +17,24 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        // Check if user is authenticated and has 'is_superadmin' flag set to 1
-        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->is_superadmin == 1) {
+        // Skip middleware for login routes
+        if ($request->routeIs('index') || $request->routeIs('login') || $request->routeIs('register') || 
+            $request->routeIs('forgot-password') || $request->routeIs('reset-password') ||
+            $request->routeIs('forgot-password-post') || $request->routeIs('reset-password-post')) {
             return $next($request);
         }
-        // Redirect non-superadmin users to the login page with an error message
-        return redirect()->route('index')->with('error', 'You do not have permission to access this area.');
+
+        // Check if user is authenticated
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('index')->with('error', 'Please login first.');
+        }
+
+        // Check if user is superadmin
+        if (Auth::guard('admin')->user()->is_superadmin != 1) {
+            Auth::guard('admin')->logout();
+            return redirect()->route('index')->with('error', 'You do not have permission to access this area.');
+        }
+
+        return $next($request);
     }
 }

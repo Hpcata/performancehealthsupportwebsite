@@ -13,30 +13,23 @@ class UserMeal extends Model
 
     protected $fillable = [
         'user_plan_id',
-        'user_meal_time_id',
         'user_category_id',
-        'user_subcategory_id',
-        'meal_id',
-        'meal_name',
+        'user_sub_category_id',
+        'id'  // This will store meal_id
     ];
 
-    public function userSubcategory()
+    public function userSubCategory()
     {
-        return $this->belongsTo(UserSubcategory::class, 'user_subcategory_id');
+        return $this->belongsTo(UserSubCategory::class, 'user_sub_category_id');
     }
 
     public function meal()
     {
-        return $this->belongsTo(Meal::class, 'meal_id');
+        return $this->belongsTo(Meal::class, 'id');
     }
 
     public function userItems()
     {
         return $this->hasMany(UserItem::class, 'user_meal_id');
-    }
-
-    public function userCategory()
-    {
-        return $this->belongsTo(UserCategory::class, 'user_category_id');
     }
 }

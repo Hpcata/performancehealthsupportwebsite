@@ -17,7 +17,9 @@ class UserPlan extends Model
         'status',
         'modified_by',
         'is_mail_sent',
+        'nutrition_info_flag'
     ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -33,11 +35,6 @@ class UserPlan extends Model
         return $this->belongsTo(User::class, 'modified_by');
     }
 
-    public function userMealTimes()
-    {
-        return $this->hasMany(UserMealTime::class, 'user_plan_id');
-    }
-
     public function userCategories()
     {
         return $this->hasMany(UserCategory::class, 'user_plan_id');
@@ -47,7 +44,6 @@ class UserPlan extends Model
     {
         return $this->hasMany(UserSubCategory::class, 'user_plan_id');
     }
-
 
     public function userMeals()
     {

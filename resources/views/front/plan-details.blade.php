@@ -82,48 +82,38 @@
         <div class="container mb-5">
             <div class="mt-4">
                 <div class="row g-4">
-                    @if($userPlan->userMealTimes->count())
-                        @foreach($userPlan->userMealTimes as $plan)
-                            @if($plan->userMeals && $plan->userMeals->count())
-                                @php
-                                    $hasValidMeal = $plan->userMeals->contains(function ($userMeal) {
-                                        return $userMeal->meal && $userMeal->meal->mealTimes && $userMeal->meal->mealTimes->isNotEmpty();
-                                    });
-                                @endphp
+                    @if($userPlan->userCategories->count())
+                        @foreach($userPlan->userCategories as $plan)
+                            @php
+                                // Determine if this category has at least one valid userMeal
+                                $hasValidMeal = $plan->userMeals->filter(function ($userMeal) {
+                                    return $userMeal->meal && $userMeal->meal->categories && $userMeal->meal->categories->isNotEmpty();
+                                })->count() > 0;
+                            @endphp
+
+                            @if($hasValidMeal)
                                 <div class="col-md-3">
                                     <div class="nutrition-plan-box">
                                         <figure>
-                                            @if(!empty($plan->mealTime) && !empty($plan->mealTime->image))
-                                                <img src="{{ webAssets('storage/' . $plan->mealTime->image) }}" alt="{{ $plan->mealTime->title }}">
+                                            @if(!empty($plan->category) && !empty($plan->category->image))
+                                                <img src="{{ webAssets('storage/' . $plan->category->image) }}" alt="{{ $plan->category->title }}">
                                             @endif
                                         </figure>
-                                        <h5>{{ $plan->mealTime->title }}</h5>
+                                        <h5>{{ $plan->category->title }}</h5>
                                         <p></p>
 
-                                        <a href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" 
+                                        <a href="{{ route('front.meal-time.details', ['id' => $plan->category->id, 'plan_id' => $userPlan->id]) }}" 
                                             class="btn btn-primary view-details-btn"
-                                            data-category-id="{{ $plan->mealTime->id }}" 
-                                            data-category-name="{{ $plan->mealTime->title }}">
-                                                View Details
+                                            data-category-id="{{ $plan->category->id }}" 
+                                            data-category-name="{{ $plan->category->title }}">
+                                            View Details
                                         </a>
-
-                                        {{-- 
-                                        @if(!$hasValidMeal)
-                                            <a href="{{ route('front.meal-time.details', ['id' => $plan->mealTime->id, 'plan_id' => $userPlan->id]) }}" 
-                                            class="btn btn-primary view-details-btn"
-                                            data-category-id="{{ $plan->mealTime->id }}" 
-                                            data-category-name="{{ $plan->mealTime->title }}">
-                                                View Details
-                                            </a>
-                                        @else
-                                            <a href="javascript:void(0);" class="btn btn-primary view-meal-modal" data-meal-time-id="{{ $plan->mealTime->id }}" data-user-meal-time-id="{{ $plan->id }}" data-meal-time-name="{{ $plan->mealTime->title }}">View Details</a>
-                                        @endif
-                                        --}}
                                     </div>
                                 </div>
                             @endif
                         @endforeach
                     @endif
+
                 </div>
             </div>
         </div>

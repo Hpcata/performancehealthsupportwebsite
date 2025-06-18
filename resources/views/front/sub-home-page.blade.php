@@ -41,7 +41,16 @@
             white-space: nowrap;
         }
         
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
 
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 0.875em;
+            display: block;
+            margin-top: 4px;
+        }
     </style>
     @php
         $showHeader = !empty($user->front_logo) && 
@@ -94,7 +103,7 @@
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->type == 'section-1' && $section->enabled == 1)
-                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(private/public/front/images/hero-img-03.jpg);">
+                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(front/images/hero-img-03.jpg);">
                     <div class="container">
                         <div class="text-center">
                             <h1 class="text-white mt-md-3">Sports Nutrition Plans</h1>
@@ -136,7 +145,7 @@
         @endforeach 
     @endif
 
-    <div class="section find-spot-row" style="background-image: url(private/public/front/images/female-athlete.jpg);">
+    <div class="section find-spot-row" style="background-image: url(front/images/female-athlete.jpg);">
         <div class="container">
             <div class="h1 text-center text-white">Find Your Sport</div>
             <div class="spot-search">
@@ -216,7 +225,7 @@
                             <div class="spot-plan-img-box">
                                 <figure>
                                     @if($plan->image)
-                                    <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="">
+                                    <img src="{{ asset('storage/' . $plan->image) }}" alt="">
                                     @else
                                     <img src="{!! frontAssets('images/about-new.png') !!}" alt="">
                                     @endif
@@ -876,57 +885,54 @@
                     <form id="payment-form">
                         <div id="registration-details">
                             <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
+                                <label for="name" class="form-label">Name<small class="text-danger">*</small></label>
                                 <input type="text" class="form-control" id="name" >
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
+                                <label for="email" class="form-label">Email<small class="text-danger">*</small></label>
                                 <input type="email" class="form-control" id="emailId" >
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Phone Number</label>
                                 <input type="text" class="form-control" id="phone" >
+                                <div class="invalid-feedback"></div>
                             </div>
 
                             <!-- New Password Field -->
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
+                                <label for="password" class="form-label">Password<small class="text-danger">*</small></label>
                                 <input type="password" class="form-control" id="password" >
+                                <div class="invalid-feedback"></div>
                                 <small class="form-text text-muted">Password must be at least 8 characters long.</small>
                             </div>
 
                             <!-- Divider -->
                             <hr class="my-4">
                         </div>
-                        <!-- Promo Code Section -->
-                        <div id="coupon-details">
-                            <div class="mb-3">
-                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
-                                    <input type="hidden" class="form-control" id="discount">
-                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
-                                </div>
-                                <small id="promo-message" class="form-text "></small>
+                        <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
+
+                        <!-- Coupon Code -->
+                        <div class="mb-3" id="coupon-details">
+                            <label for="promo-code" class="form-label">Coupon Code</label>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
+                                <input type="hidden" class="form-control" id="discount">
+                                <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
                             </div>
-                        </div>
-                        <div id="payment-details">
-                            
-                            <!-- Stripe Payment Card Section -->
-                            <h6 class="mb-3">Payment Details</h6>
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                            </div>
+                            <small id="promo-message" class="form-text"></small>
                         </div>
 
-                        <!-- Submit Button -->
-                        <!-- <button type="button" id="view-sample-plan" class="btn btn-primary w-100 mt-3">
-                            View Sample Plan
-                        </button> -->
+                        <!-- Card Info -->
+                        <div class="mb-3" id="payment-details">
+                            <label for="card-element" class="form-label">Credit or Debit Card</label>
+                            <div id="card-element" class="border rounded p-3 bg-light">
+                                <!-- Stripe card element will go here -->
+                            </div>
+                            <div id="card-errors" class="text-danger mt-2"></div>
+                        </div>
+                       
                         <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
                             Purchase
                         </button>
@@ -3821,6 +3827,7 @@
 
             $('#purchaseModal').on('hidden.bs.modal', function () {
                 $('#payment-form')[0].reset(); // Reset the form
+                $('#payment-details').show();
                 $('#card-errors').text('');    // Clear Stripe errors
             });
             
@@ -3833,7 +3840,12 @@
                 var price = $(this).data('plan-price');     // Get the plan price (if needed)
                 
                 // Update modal title with plan name (optional)
+<<<<<<< HEAD
                 $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + ' ($' + price + ')');
+=======
+                $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + '($' + price+')');
+
+>>>>>>> a81479a388fdaaa332aff8828beccb0fd9afc39b
                 // Check if the user is authenticated
                 const isAuthenticated = @json(Auth::guard('web')->check());
                 var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};
@@ -3862,6 +3874,49 @@
                 $('#payment-form').off('submit').on('submit', function(event) {
                     event.preventDefault();
 
+                    // Clear previous validation styles
+                    // Validate fields
+                    let errors = [];
+                    let name = $('#name').val().trim();
+                    let email = $('#emailId').val().trim();
+                    // let phone = $('#phone').val().trim();
+                    let password = $('#password').val().trim();
+
+                    // Clear previous validation styles and messages
+                    $('#payment-form input').removeClass('is-invalid');
+                    $('#payment-form .invalid-feedback').text('');
+
+                    // Name
+                    if (!name) {
+                        $('#name').addClass('is-invalid').next('.invalid-feedback').text('Name is required.');
+                        errors++;
+                    }
+
+                    // Email
+                    if (!email) {
+                        $('#emailId').addClass('is-invalid').next('.invalid-feedback').text('Email is required.');
+                        errors++;
+                    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                        $('#emailId').addClass('is-invalid').next('.invalid-feedback').text('Invalid email format.');
+                        errors++;
+                    }
+
+                    // Phone
+                    if (!phone) {
+                        $('#phone').addClass('is-invalid').next('.invalid-feedback').text('Phone number is required.');
+                        errors++;
+                    }
+
+                    // Password
+                    if (!password || password.length < 8) {
+                        $('#password').addClass('is-invalid').next('.invalid-feedback').text('Password must be at least 8 characters.');
+                        errors++;
+                    }
+
+                    if (errors > 0) {
+                        $('#submit').prop('disabled', false);
+                        return;
+                    }
                     // Disable the submit button to prevent multiple clicks
                     $('#submit').prop('disabled', true);
 
@@ -3869,9 +3924,6 @@
                     let discountCode = $('#promo-code').val();
                     console.log(discountCode);
                     let discount = $('#discount').val();
-                    let email = $('#emailId').val();
-                    let name = $('#name').val();
-                    let phone = $('#phone').val();
                     console.log('Email:', email);
                     console.log('Name:', name);
                     console.log('Phone:', phone);

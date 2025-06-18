@@ -587,7 +587,6 @@ class FrontController extends Controller
         return response()->json(['meals' => $result]);
     }
   
-
     public function freeTestSave(Request $request)
     {
         // Validate the incoming test data
@@ -797,7 +796,6 @@ class FrontController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'user_id' => optional($request->user())->id,
             ]);
-
             return response()->json([
                 'valid' => false,
                 'message' => 'An unexpected error occurred. Please try again later.',
