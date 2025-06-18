@@ -20,8 +20,12 @@ class ItemMeal extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['item_id', 'meal_id'];
+    protected $fillable = ['item_id', 'meal_id', 'item_qty', 'item_qty_unit', 'carbs', 'protein', 'fat', 'selected_qty_unit'];
 
+    protected $casts = [
+        'selected_qty_unit' => 'array',
+    ];
+    
     /**
      * Relationship to the Item model.
      */

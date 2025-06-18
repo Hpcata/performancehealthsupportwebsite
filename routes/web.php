@@ -18,7 +18,17 @@ use App\Http\Controllers\Admin\MealTimeController;
 use App\Http\Controllers\Admin\MealController;
 use App\Http\Controllers\Front\PaymentController;
 use App\Http\Controllers\Admin\PurchasePlanController;
-
+use App\Http\Controllers\Admin\ProductController;
+use GuzzleHttp\Client;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Front\ForgotPasswordController;
+use App\Http\Controllers\Admin\NutritionAIController;
+use App\Http\Controllers\Admin\ImageController;
+use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\FlagController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\QuizController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,9 +48,224 @@ Route::get('/check-auth', function () {
     ]);
 });
 
+
+Route::get('/chat', function () {
+    return view('image_form');
+});
+
+Route::get('/fetch-alternate-measurement', function () {
+    Artisan::call('nutrition:alternates');
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Nutrition alternate measurements fetched successfully.',
+    ]);
+});
+
+Route::post('/chat', [ImageController::class, 'chat'])->name('chat');
+Route::get('/generate-image', [ImageController::class, 'generateImageForm']);
+Route::post('/generate-image', [ImageController::class, 'generateImage'])->name('generate-image');
+
+
+Route::post('/nutrition-calculation', [NutritionAIController::class, 'nutritionCalculation'])->name('nutrition.calculate');
+Route::post('/calculate-nutrition', [NutritionAIController::class, 'calculateNutrition'])->name('calculate.nutrition');
+Route::post('/generate-description', [NutritionAIController::class, 'generateDescription'])->name('generate.description');
+
+Route::get('/calculate-nutrition-form', [NutritionAIController::class, 'form'])->name('view.form');
+
+Route::post('/meal-food-nutrition-calculate', [NutritionAIController::class, 'mealFoodNutritionCalculation'])->name('meal.food.nutrition.calculate');
+
+// Route::get('/test-woolworths-api', function () {
+//     // Woolworths API URL
+//     $apiUrl = 'https://www.woolworths.com.au/apis/ui/Search/products/';
+
+//     // Search term to test with
+//     $searchTerm = 'apple';
+
+//     // Guzzle HTTP Client
+//     $client = new Client();
+
+//     try {
+//         // Make the GET request
+//         $response = $client->get($apiUrl, [
+//             'query' => [
+//                 'searchTerm' => $searchTerm,
+//             ],
+//             'headers' => [
+//                 'Accept' => 'application/json',
+//             ],
+//         ]);
+
+//         // Parse the response
+//         $data = json_decode($response->getBody(), true);
+
+//         // Return the response to view or JSON format
+//         return response()->json($data);
+
+//     } catch (\Exception $e) {
+//         // Handle errors
+//         return response()->json(['error' => $e->getMessage()], 500);
+//     }
+// });
+
+// Route::get('/product-search-api', function (Illuminate\Http\Request $request) {
+//     $results = [];
+//     $query = $request->input('query');
+//     $page = $request->input('page', 1);  // Get current page, default to 1 if not provided
+//     $perPage = 20;  // Set items per page, you can adjust this number
+// 	$pagination = [];
+//     if ($query) {
+//         $client = new Client();
+
+//         // Make the request to the API with pagination parameters
+//         $response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/woolworths/product-search', [
+//             'headers' => [
+//                 'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+//                 'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+//             ],
+//             'query' => [
+//                 'query' => $query,
+//                 'page' => $page,  // Page number
+//                 'size' => $perPage,  // Items per page
+//             ],
+//         ]);
+
+//         // Decode the response
+//         $responseBody = json_decode($response->getBody(), true);
+        
+//         // Assuming 'results' contains the product data, and 'total' is the total number of results
+//         $products = $responseBody['results'] ?? [];
+//         $total = $responseBody['total_results'] ?? 0;  // Total number of products in the API response
+//         // dd($products);
+//         // Pagination: Calculate the total number of pages
+//         $totalPages = $responseBody['total_pages'];
+
+//         // Paginate the results in Laravel
+//         $results = collect($products);
+
+//         // Prepare pagination metadata to send to the view
+//         $pagination = [
+//             'current_page' => $page,
+//             'total_pages' => $totalPages,
+//             'total' => $total,
+//             'per_page' => $perPage,
+//         ];
+//     }
+
+//     return view('search', compact('results', 'query', 'pagination'));
+// })->name('search-product');
+
+// Route::post('/add-to-cart', function (Request $request) {
+//     $productId = $request->input('product_id');
+// 	try {
+// 		$client = new Client();
+
+// 		$response = $client->request('POST', 'https://woolworths-products-api.p.rapidapi.com/cart/add', [
+// 			'headers' => [
+// 				'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+// 				'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+// 				'Content-Type' => 'application/json',
+// 			],
+// 			'json' => [
+// 				'product_id' => $productId,
+// 				'quantity' => 1,
+// 			],
+// 		]);
+
+// 		$cartResponse = json_decode($response->getBody(), true);
+// 	} catch (RequestException $e) {
+// 		dd($e->getMessage());
+// 	}
+
+//     return redirect()->route('cart');
+// })->name('add-to-cart');
+
+// Route::get('/cart', function () {
+// 	try {
+// 		$client = new Client();
+// 		$response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/cart', [
+// 			'headers' => [
+// 				'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+// 				'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+// 			],
+// 		]);
+
+// 		$cart = json_decode($response->getBody(), true);
+// 	} catch (RequestException $e) {
+// 		dd($e->getMessage());
+// 	}
+
+//     return view('cart', compact('cart'));
+// })->name('cart');
+
+// Route::get('/product-search', function (Illuminate\Http\Request $request) {
+//     $results = [];
+//     $query = $request->input('query');
+// 	$page = $request->input('page', 1);  // Get current page, default to 1 if not provided
+//     $perPage = 20; 
+// 	$pagination = [];
+//     if ($query) {
+//         $client = new Client();
+// 		// Get the products from the API
+//         $response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/woolworths/product-search', [
+//             'headers' => [
+//                 'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+//                 'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+//             ],
+//             'query' => [
+//                 'query' => $query,
+//                 'page' => $page,  // Page number
+//                 'size' => $perPage,  // Items per page
+//             ],
+//         ]);
+//         $responseBody = json_decode($response->getBody(), true);
+//         $products = $responseBody['results'] ?? [];
+
+//         // Loop through products to get images from each product page
+//         foreach ($products as $key => $product) {
+//             $productUrl = $product['url'];
+            
+// 			if (isset($product['url']) && !empty($product['url'])) {
+// 				try {
+// 					$detailResponse = $client->request('GET', $product['url']);
+// 					$detailHtml = (string) $detailResponse->getBody();
+					
+// 					if (preg_match('/<img[^>]+class="[^"]*main-image-v2[^"]*"[^>]+src="([^"]+)"/i', $detailHtml, $matches)) {
+// 						$products[$key]['image_url'] = $matches[1]; // Image URL extracted from the page
+// 					} else {
+// 						$products[$key]['image_url'] = null; // Default if no image found
+// 					}
+// 				} catch (\Exception $e) {
+// 					\Log::error('Error fetching product details: ' . $e->getMessage());
+// 					$products[$key]['image_url'] = null;
+// 				}
+// 			}
+//         }
+
+//         $total = $responseBody['total_results'] ?? 0;  // Total number of products in the API response
+//         $totalPages = $responseBody['total_pages'];
+
+//         $results = collect($products);
+
+//         $pagination = [
+//             'current_page' => $page,
+//             'total_pages' => $totalPages,
+//             'total' => $total,
+//             'per_page' => $perPage,
+//         ];
+
+//     }
+// 	// echo '<pre>';
+// 	// print_r($results);
+
+//    return view('product-with-image', compact('results', 'query', 'pagination'));
+// })->name('search');
+
+
 Route::get('/login', [AdminAuthController::class, 'index'])->name('index');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login');
 Route::match(['get', 'post'], '/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
 
 // Register
 Route::get('register', [AdminAuthController::class, 'register'])->name('register');
@@ -58,9 +283,12 @@ Route::post('/reset-password', [AdminAuthController::class, 'resetPasswordPost']
 Route::get('/change-password', [AdminAuthController::class, 'changePassword'])->name('change-password');
 Route::post('/change-password', [AdminAuthController::class, 'changePasswordPost'])->name('change-password-post');
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth:admin', 'admin']], function () {
+	Route::get('/woolworths-product-search', [ProductController::class, 'search'])->name('woolworths-product-search');
+	Route::post('/add-food', [ProductController::class, 'addFood'])->name('add-food');
+
 	Route::prefix('admin')->group(function () {
-		Route::get('/', [AdminAuthController::class, 'dashboard'])->name('dashboard');
+		Route::get('/', [AdminAuthController::class, 'index'])->name('dashboard');
 		Route::get('/profile/{id}', [AdminAuthController::class, 'profile'])->name('backend.admin-profile');
     	Route::get('/remove-profile-image/{id}', [AdminAuthController::class, 'removeProfileImage'])->name('remove-profile-image');
     	Route::get('/remove-front-logo/{id}', [AdminAuthController::class, 'removeFrontLogo'])->name('remove-front-logo');
@@ -75,18 +303,6 @@ Route::group(['middleware' => 'auth'], function () {
 			Route::post('/sort-order', [OrganizationController::class, 'sorting'])->name('sort-order');
 		});
 
-    	// Integration Routes
-		// Route::group(['prefix' => 'integrations', 'as' => 'integrations.'], function () {
-		// 	// Route to display the integrations index page
-		// 	Route::get('/', [IntegrationController::class, 'index'])->name('index');
-
-		// 	// Route to handle the integration process (POST request)
-		// 	Route::post('/integration', [IntegrationController::class, 'integrate'])->name('integrate');
-
-		// 	// Route to handle callback
-		// 	Route::get('/callback', [IntegrationController::class, 'handleZoomCallback'])->name('callback');
-		// });
-		
 		// Testimonial routes
 		Route::group(['prefix' => 'testimonials', 'as' => 'testimonials.'], function () {
 			Route::get('/', [TestimonialController::class, 'index'])->name('index');
@@ -101,9 +317,30 @@ Route::group(['middleware' => 'auth'], function () {
 			Route::resource('blogs', BlogController::class);
 		});
 
+		Route::as('admin.')->group(function () {
+			Route::resource('coupons', CouponController::class);
+		});
+
 		Route::get('/site-settings/{slug}', [SiteSettingsController::class, 'index'])->name('site-settings');
 		Route::post('/site-settings-save', [SiteSettingsController::class, 'saveSiteSettings'])->name('save-site-settings');
 		
+		Route::get('/tags', [TagController::class, 'index'])->name('admin.tags.index');
+		Route::get('/tags/create', [TagController::class, 'create'])->name('admin.tags.create');
+		Route::post('/tags', [TagController::class, 'store'])->name('admin.tags.store');
+		Route::get('/tags/{tag}/edit', [TagController::class, 'edit'])->name('admin.tags.edit');
+		Route::PUT('/tags/{tag}', [TagController::class, 'update'])->name('admin.tags.update');
+		Route::delete('/tags/{tag}', [TagController::class, 'destroy'])->name('admin.tags.destroy');
+
+		Route::get('/flags', [FlagController::class, 'index'])->name('admin.flags.index');
+		Route::get('/flags/create', [FlagController::class, 'create'])->name('admin.flags.create');
+		Route::post('/flags', [FlagController::class, 'store'])->name('admin.flags.store');
+		Route::get('/flags/{flag}/edit', [FlagController::class, 'edit'])->name('admin.flags.edit');
+		Route::PUT('/flags/{flag}', [FlagController::class, 'update'])->name('admin.flags.update');
+		Route::delete('/flags/{flag}', [FlagController::class, 'destroy'])->name('admin.flags.destroy');
+		Route::delete('/admin/flags/{flag}/remove-food/{food}', [FlagController::class, 'removeFood'])->name('admin.flags.removeFood');
+		Route::post('/admin/flags/{flag}/add-foods', [FlagController::class, 'addFoods'])->name('admin.flags.addFoods');
+		Route::get('/flags/food/list', [FlagController::class, 'foodLists'])->name('admin.flags.foodList');
+
 		// Route::resource('pages', PageController::class);
 		Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
 		Route::get('/pages/create', [PageController::class, 'create'])->name('pages.create');
@@ -145,7 +382,8 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('items/{item}/edit', [ItemController::class, 'edit'])->name('admin.items.edit');
 		Route::put('items/{item}', [ItemController::class, 'update'])->name('admin.items.update');
 		Route::delete('items/{item}', [ItemController::class, 'destroy'])->name('admin.items.destroy');
-		
+		Route::get('get-food-details', [ItemController::class, 'getFoodDetails'])->name('admin.get-food-details');
+
 		// Plans
 		Route::get('plans', [PlanController::class, 'index'])->name('admin.plans.index');
 		Route::get('plans/create', [PlanController::class, 'create'])->name('admin.plans.create');
@@ -160,7 +398,12 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('meals/{meal}/edit', [MealController::class, 'edit'])->name('admin.meals.edit');
 		Route::put('meals/{meal}', [MealController::class, 'update'])->name('admin.meals.update');
 		Route::delete('meals/{meal}', [MealController::class, 'destroy'])->name('admin.meals.destroy');
-	
+		Route::post('update-meal-name', [MealController::class, 'updateMealName'])->name('admin.update-meal-name');
+		Route::post('meals/generate-image', [MealController::class, 'generateImage'])->name('admin.meals.generate-image');
+		Route::post('meals/edit-image', [MealController::class, 'editImage'])->name('admin.meals.edit-image');
+		Route::get('meals/import/form', [MealController::class, 'viewImport'])->name('admin.meals.import-view');
+		Route::post('/meals/import', [MealController::class, 'import'])->name('admin.meals.import');
+
 		Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
 		Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
 		Route::post('meal-times', [MealTimeController::class, 'store'])->name('admin.meal-times.store');
@@ -174,9 +417,31 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('/purchase-plans/{user}/edit/{plan}', [PurchasePlanController::class, 'edit'])->name('admin.purchase-plans.edit');
 		Route::put('/purchase-plans', [PurchasePlanController::class, 'update'])->name('admin.purchase-plans.update');
 		Route::get('/pre-plan-details/{id}', [PurchasePlanController::class, 'getPrePlanDetails'])->name('admin.pre-plan-details');
+		Route::post('/handle-plan-action', [PurchasePlanController::class, 'handlePlanAction'])->name('admin.handle-plan-action');
+		Route::post('/update-nutrition-flag', [PurchasePlanController::class, 'updateNutritionFalg'])->name('admin.update-nutrition-flag');
 
 		Route::post('/get-meal-items', [PurchasePlanController::class, 'getMealItems'])->name('admin.get-meal-items');
 		Route::post('/get-meals-by-mealtime', [PurchasePlanController::class, 'getMealsByMealTime'])->name('admin.get-meals-by-mealtime');
+		Route::post('/admin/remove-user-meal', [PurchasePlanController::class, 'removeUserMeal'])->name('admin.remove-user-meal');
+
+		Route::get('/get-items', [PurchasePlanController::class, 'getItems'])->name('admin.get-items');
+		Route::post('/get-swap-items', [PurchasePlanController::class, 'getSwapItems'])->name('admin.get-swap-items');
+		Route::post('/add-food', [PurchasePlanController::class, 'addFood'])->name('admin.add-food');
+		Route::post('/save-swap-food', [PurchasePlanController::class, 'saveSwapFood'])->name('admin.save-swap-food');
+		Route::post('/get-swap-foods', [PurchasePlanController::class, 'getSwapFoods'])->name('admin.get-swap-foods');
+		Route::post('/update-swap-foods', [PurchasePlanController::class, 'updateFoodSwapFoods'])->name('admin.update-food-swap-foods');
+		Route::post('/delete-purchase-plan-food', [PurchasePlanController::class, 'deletePurchasePlanFood'])->name('admin.delete-purchase-plan-food');
+
+		Route::get('/admin/user/details', [UserController::class, 'getUserDetails'])->name('admin.user.details');
+
+		// User routes
+		Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+		Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+
+		// Quiz
+		Route::get('/quiz', [QuizController::class, 'index'])->name('admin.quiz.index');
+		Route::post('/quiz', [QuizController::class, 'store'])->name('admin.quiz.store');
+
 	});
 });
 
@@ -187,30 +452,87 @@ Route::POST('/save-query', [FrontController::class, 'save'])->name('save-query')
 Route::get('/action-sport-nutrition-plan', [FrontController::class, 'subHomePage'])->name('front.sub-home-page');
 Route::get('/pre-plan-details', [PaymentController::class, 'prePlanDetails'])->name('front.pre-plan-details');
 Route::post('/pre-plan-details-store', [PaymentController::class, 'prePlanDetailsSave'])->name('front.pre-plan-details.store');
+Route::get('/sample-plan', [FrontController::class, 'samplePlan'])->name('front.sample-plan');
+Route::post('/sample-plan-details-update', [FrontController::class, 'updateSamplePlanDetails'])->name('front.sample-plan-details-update');
+
+Route::get('/get-foods/{key}', [FrontController::class, 'getFoodItems'])->name('front.flag.items');
+
+Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPlanDetails'])->name('front.competition-plan-details');
+Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
+Route::get('/get-default-plan-details/{id}', [FrontPlanController::class, 'getDefaultPlanDetails'])->name('front.get-default-plan-details');
+Route::get('/get-race-ethnicity-culture-options', [PaymentController::class, 'getRaceEthnicityCultureOptions'])->name('front.get-race-ethnicity-culture-options');
+
 // Front auth
+Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
 Route::post('front/login', [FrontController::class, 'login'])->name('front.login');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('front.password.request');
+Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('front.password.reset');
+Route::post('password/reset', [ForgotPasswordController::class, 'reset'])->name('front.password.update');
+Route::post('front/logout', [FrontController::class, 'logout'])->name('front.logout');
+// GET route fallback for expired session
+Route::get('front/logout-guest', function () {
+    return redirect()->route('front.index')->with('info', 'Your session has expired. Please log in again.');
+})->name('front.logout.guest');
 
 //Stripe payment
 Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
 Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
 
+Route::post('/free-test-save', [FrontController::class, 'freeTestSave'])->name('front.submit-free-test');
+Route::post('/validate-coupon-code', [FrontController::class, 'validateCouponCode'])->name('validate.coupon.code');
+
+Route::get('/get-sports-games', [FrontController::class, 'getSportsGames'])->name('front.get-sports-games');
+Route::post('/sport-search', [FrontController::class, 'sportSearch'])->name('front.sport-search');
+
+Route::post('/query', [FrontController::class, 'submitQuery'])->name('front.submit-query');
+
+Route::get('/overseas_travel_nutrition_plan', function () {
+	return view('front.overseas_travel_nutrition_plan');
+})->name('front.overseas_travel_nutrition_plan');
+
 // Plans
 Route::group(['middleware' => 'auth'], function () {
-	Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
+	// Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
+	Route::get('/plans/{id}/details/{user_id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
 	Route::get('/meal-time/{id}/{plan_id}', [FrontPlanController::class, 'mealTimeDetails'])->name('front.meal-time.details');
+	Route::post('/get-meals', [FrontPlanController::class, 'getMealByMealTimes'])->name('front.get-meals');
 
 	//categories
-	Route::get('/subcategory/{id}/meals', [FrontPlanController::class, 'getMeals'])->name('front.subcategory.meals');
-	Route::get('/category/{id}/subcategories', [FrontPlanController::class, 'getSubCategories'])->name('front.category.subcategories');
-	Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
+	Route::get('/category/{id}/meals', [FrontPlanController::class, 'getMeals'])->name('front.category.meals');
+	// Route::get('/category/{id}/subcategories', [FrontPlanController::class, 'getSubCategories'])->name('front.category.subcategories');
+	// Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
 	Route::get('/meal/{id}/items', [FrontPlanController::class, 'getMealItems'])->name('front.meals.items');
 	Route::get('/item/{id}/swap-items', [FrontPlanController::class, 'getSwapItems'])->name('front.items.swap-items');
 
 	Route::get('item/swap', [FrontPlanController::class, 'applySwaps'])->name('front.items.swaps');
-	Route::get('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
+	// Route::get('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
+	Route::post('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
+	Route::get('/plans/preview/{id}', [FrontPlanController::class, 'preview'])->name('plans.preview');
+	Route::post('/plans/preview/', [FrontPlanController::class, 'planPreview'])->name('front.plans.preview');
+
 	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
+	Route::post('/food/quantity/update', [FrontController::class, 'updateFoodQuantity'])->name('front.food-quantity-update');
+
+	Route::post('/save-weight', [FrontController::class, 'saveWeight'])->name('front.save.weight');
+    Route::get('/fetch-weights', [FrontController::class, 'fetchWeights'])->name('front.fetch.weights');
+	Route::get('/fetch/weight/data', [FrontController::class, 'fetchWeightData'])->name('front.fetch.weight.data');
+
+	Route::post('/update-goal', [FrontController::class, 'updateGoals'])->name('front.update.goal');
+    Route::post('/past-goals', [FrontController::class, 'getPastGoals'])->name('front.past.goals');
+
+	Route::post('/upload-report', [FrontController::class, 'uploadReport'])->name('front.upload.report');
+	Route::post('/delete-report', [FrontController::class, 'deleteReport'])->name('front.delete.report');
+
+	Route::get('/user/{user}/plan/{plan}/meals', [FrontPlanController::class, 'ajaxGetMeals'])->name('user.plan.meals');
+
 
 });
+Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');
 
-
+Route::post('/google/check-login', [FrontController::class, 'checkGoogleLogin'])->name('front.google.check-login');
+Route::post('/unlock-result', [FrontController::class, 'unlockFreeTestResult'])->name('front.unlock-result');
+// Quiz tracking routes
+Route::post('/track-quiz-click', [FrontController::class, 'trackQuizClick'])->name('front.track.quiz.click');
+Route::post('/track-quiz-progress', [FrontController::class, 'trackQuizProgress'])->name('front.track.quiz.progress');
+Route::post('/track-quiz-completion', [FrontController::class, 'trackQuizCompletion'])->name('front.track.quiz.completion');

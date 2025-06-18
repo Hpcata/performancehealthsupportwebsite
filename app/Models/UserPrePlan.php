@@ -18,25 +18,32 @@ class UserPrePlan extends Model
         'occupation',
         'address',
         'other',
+        'referredBy',
+        'culture',
         
     ];
 
-   // Relationship with the User model (belongsTo)
-   public function user()
-   {
-       return $this->belongsTo(User::class);
-   }
+    // Relationship with the User model (belongsTo)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-   // Relationship with the Payment model (belongsTo)
-   public function payment()
-   {
-       return $this->belongsTo(Payment::class);
-   }
+    // Relationship with the Payment model (belongsTo)
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
+    }
 
-   // Relationship with the PrePlanDetail model (hasMany)
-   public function prePlanDetails()
-   {
-       return $this->hasMany(PrePlanDetail::class);
-   }
+    // Relationship with the PrePlanDetail model (hasMany)
+    public function prePlanDetails()
+    {
+        return $this->hasMany(PrePlanDetail::class);
+    }
+
+    public function PrePlanQuesionFile()
+    {
+        return $this->hasMany(PrePlanQuesionFile::class);
+    }
 
 }

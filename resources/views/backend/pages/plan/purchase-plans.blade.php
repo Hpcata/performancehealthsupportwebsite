@@ -46,7 +46,10 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Status</th>
+                                <!-- <th>Status</th>
+                                <th>Discount Code</th> -->
+                                <!-- <th>Status</th> -->
+                                <th>Purchase Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -67,14 +70,17 @@
                                 <td>{{ $payment->name }}</td>
                                 <td>{{ $payment->email }}</td>
                                 <td>{{ $payment->phone }}</td>
-                                <td>{{ $payment->status }}</td>
+                                <!-- <td>{{ $payment->status }}</td>
+                                <td>{{ $payment->coupon_code }}</td> -->
+                                <!-- <td>{{ $payment->status }}</td> -->
+                                <td>{{ formatDate($payment->created_at) }}</td>
                                 <td>
                                     <!-- Action link to show payment details -->
-                                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}" >User Details</a>
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary user-pre-plan-details m-1" data-payment-id="{{ $payment->id }}" ><i class="icofont-eye text-primary"></i></a>
                                     @if($isPlanCreated)
-                                    <a href="{{ route('admin.purchase-plans.edit', ['user' => $payment->user_id,'plan' => $payment->id]) }}" class="btn btn-warning btn-sm">Edit Plan</a>
+                                    <a href="{{ route('admin.purchase-plans.edit', ['user' => $payment->user_id,'plan' => $payment->id]) }}" class="btn btn-sm btn-outline-success m-1"><i class="icofont-edit text-success"></i></a>
                                     @else
-                                    <a href="{{ route('admin.purchase-plans.create', $payment->id) }}" class="btn btn-primary btn-sm">Create Plan</a>
+                                    <a href="{{ route('admin.purchase-plans.create', $payment->id) }}" class="btn btn-sm btn-outline-success m-1"><i class="icofont-plus text-success"></i></a>
                                     @endif
                                 </td>
                             </tr>
@@ -103,19 +109,17 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        // Use event delegation to handle dynamically added elements
-        $(document).on('click', '.user-pre-plan-details', function () {
+    $(document).ready(function() {
+        $(document).on('click', '.user-pre-plan-details', function() {
             const paymentId = $(this).data('payment-id');
-            
-            // Debugging log
+
             console.log('Clicked on user-pre-plan-details button with paymentId:', paymentId);
 
             $.ajax({
                 url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                 method: 'GET',
 
-                success: function (response) {
+                success: function(response) {
                     if (response.success) {
                         console.log(response.data);
 
@@ -135,19 +139,21 @@
                                             <p><strong>DOB:</strong> ${userDetails.dob || 'N/A'}</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p><strong>Address:</strong> ${userDetails.address || 'N/A'}</p>
+                                            <p><strong>Postcode:</strong> ${userDetails.address || 'N/A'}</p>
                                             <p><strong>Referred By:</strong> ${userDetails.referredBy || 'N/A'}</p>
-                                            <p><strong>Occupation:</strong> ${userDetails.occupation || 'N/A'}</p>
-                                            <p><strong>Race/Ethnicity/Culture:</strong> ${userDetails.other || 'N/A'}</p>
+                                            <p><strong>Sport:</strong> ${userDetails.occupation || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div><hr>`;
                         }
 
-                        // Loop through the response "data" object to display forms, questions, and answers
                         const formData = response.data;
 
                         Object.keys(formData).forEach(function (formName) {
+                            if (formName === 'Personal Details') {
+                                return;
+                            }
+
                             modalContent += `<div><h4 style="color:#7258db;">${formName}</h4><hr>`;
 
                             const formQuestions = formData[formName];
@@ -156,44 +162,61 @@
                                 let answer = formQuestions[question];
                                 let answerContent = '';
 
-                                // Safely handle different answer types (null, array, object, string)
                                 if (!answer) {
-                                    answerContent = 'N/A'; // Handle null values
+                                    answerContent = ''; // Skip null or empty answers
                                 } else if (Array.isArray(answer)) {
-                                    answerContent = '<ul>';
-                                    answer.forEach(function (item) {
-                                        answerContent += `<li>${item}</li>`;
-                                    });
-                                    answerContent += '</ul>';
-                                } else if (typeof answer === 'object') {
-                                    answerContent = '<ul>';
-                                    for (const [key, value] of Object.entries(answer)) {
-                                        const formattedKey = key
-                                            .replace(/_/g, ' ') // Replace underscores with spaces
-                                            .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize each word
-
-                                        answerContent += `<li>${formattedKey}: `;
-                                        if (Array.isArray(value)) {
-                                            answerContent += '<ul>';
-                                            value.forEach(function (subItem) {
-                                                answerContent += `<li>${subItem}</li>`;
-                                            });
-                                            answerContent += '</ul>';
-                                        } else {
-                                            answerContent += `${value || 'N/A'}`;
-                                        }
-                                        answerContent += '</li>';
+                                    const filtered = answer.filter(item => item !== null && item !== '' && item !== undefined);
+                                    if (filtered.length > 0) {
+                                        answerContent = '<ul>';
+                                        filtered.forEach(function (item) {
+                                            answerContent += `<li>${item}</li>`;
+                                        });
+                                        answerContent += '</ul>';
                                     }
-                                    answerContent += '</ul>';
+                                } else if (typeof answer === 'object') {
+                                    let validEntries = Object.entries(answer).filter(([_, value]) => value !== null && value !== '');
+
+                                    // Sort hunger question if matched
+                                    if (question.includes('hunger/appetite over the day')) {
+                                        const preferredOrder = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
+                                        validEntries.sort((a, b) => preferredOrder.indexOf(a[0]) - preferredOrder.indexOf(b[0]));
+                                    }
+
+                                    if (validEntries.length > 0) {
+                                        answerContent = '<ul>';
+                                        validEntries.forEach(([key, value]) => {
+                                            const formattedKey = key
+                                                .replace(/_/g, ' ')
+                                                .replace(/\b\w/g, char => char.toUpperCase());
+
+                                            answerContent += `<li>${formattedKey}: `;
+                                            if (Array.isArray(value)) {
+                                                const cleanArray = value.filter(subItem => subItem !== null && subItem !== '' && subItem !== undefined);
+                                                if (cleanArray.length > 0) {
+                                                    answerContent += '<ul>';
+                                                    cleanArray.forEach(function (subItem) {
+                                                        answerContent += `<li>${subItem}</li>`;
+                                                    });
+                                                    answerContent += '</ul>';
+                                                }
+                                            } else {
+                                                answerContent += `${value}`;
+                                            }
+                                            answerContent += '</li>';
+                                        });
+                                        answerContent += '</ul>';
+                                    }
                                 } else {
-                                    answerContent = answer || 'N/A'; // Fallback for null values
+                                    answerContent = answer || ''; // Fallback for simple string values
                                 }
 
-                                modalContent += `
-                                    <div>
-                                        <p><strong>Q : ${question}</strong></p>
-                                        <p>${answerContent}</p>
-                                    </div>`;
+                                if (answerContent) {
+                                    modalContent += `
+                                        <div>
+                                            <p><strong>Q : ${question}</strong></p>
+                                            <p>${answerContent}</p>
+                                        </div>`;
+                                }
                             });
 
                             modalContent += `</div><hr>`;
@@ -205,13 +228,116 @@
                         // Show the modal
                         $('#prePlanDetail').modal('show');
                     } else {
-                        alert('Failed to load the data');
+                        if (!response.data) {
+                            alert('Pre plan details not available.');
+                        } else {
+                            alert('Failed to load the data');
+                        }
                     }
                 },
-                error: function () {
+                error: function() {
                     alert('An error occurred while fetching the data.');
                 }
             });
+        });
+
+        // $('button[name="action"][value="view"]').on('click', function(e) {
+        //     e.preventDefault();
+
+        //     var user_id = $(this).data('user-id');  // Assume you set a data attribute with the user's ID on the button
+        //     var payment_id = $(this).data('payment-id');  // Assume you set a data attribute with the user's ID on the button
+
+        //     $.ajax({
+        //         url: '{{ route("admin.handle-plan-action") }}',  // URL to your controller method for storing the form
+        //         method: 'POST',
+        //         data: {
+        //             action: 'view',
+        //             user_id: user_id,
+        //             payment_id : payment_id,
+        //             _token: '{{ csrf_token() }}'
+        //         },
+        //         success: function(response) {
+        //             if (response.status === 'success') {
+        //                 window.open(response.redirect_url, '_blank');
+        //                 // window.location.href = response.redirect_url;  // Redirect to user profile page
+        //             } else {
+        //                 alert('Error: ' + response.message);
+        //             }
+        //         },
+        //         error: function(xhr) {
+        //             alert('Something went wrong!');
+        //         }
+        //     });
+        // });
+
+        // Handle the "Send" button click (Send meal plan)
+        $('button[name="action"][value="send"]').on('click', function(e) {
+            e.preventDefault();
+
+            var $button = $(this);
+            var user_id = $button.data('user-id');
+            var payment_id = $button.data('payment-id');
+            const loader = $('#loader-2');
+            loader.show(); // Show the loader
+            $.ajax({
+                url: '{{ route("admin.handle-plan-action") }}',
+                method: 'POST',
+                data: {
+                    action: 'send',
+                    user_id: user_id,
+                    payment_id: payment_id,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+
+                        // ✅ Remove inline background if any and apply btn-success
+                        $button.css('background-color', '').removeClass('btn-secondary btn-danger').addClass('btn-success');
+
+                        // ✅ Format current date/time
+                        const now = new Date();
+                        const formattedDate = now.toLocaleString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true,
+                        }).replace(',', '');
+
+                        // ✅ Append timestamp below button (or update if already exists)
+                        const timestampId = 'timestamp-' + user_id + '-' + payment_id;
+
+                        if ($('#' + timestampId).length) {
+                            $('#' + timestampId).text(formattedDate);
+                        } else {
+                            $('<div>')
+                                .attr('id', timestampId)
+                                .addClass('mt-2 text-muted')
+                                .css('margin-left', '330px')
+                                .text(formattedDate)
+                                .insertAfter($button);
+                        }
+                        loader.hide();
+                    } else {
+                        alert('Error: ' + response.message);
+                        loader.hide();
+                    }
+                },
+                error: function(xhr) {
+                    alert('Something went wrong!');
+                    loader.hide();
+                }
+            });
+        });
+
+
+        $(document).on('click', '.view-info', function () {
+            // alert('22');
+            var description = $(this).data('description') || 'N/A';
+            $('#modalDescription').text(description);
+            $('#itemInfoModal').modal('show');
         });
     });
 

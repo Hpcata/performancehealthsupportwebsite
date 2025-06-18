@@ -25,10 +25,18 @@
     <link rel="stylesheet" href="{!! frontAssets('css/flatpickr.min.css') !!}">
     <link rel="stylesheet" href="{!! frontAssets('css/glightbox.min.css') !!}">
     <link rel="stylesheet" href="{!! frontAssets('css/style.css') !!}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 	<title>Kerry </title>
     <!-- Hotjar Tracking Code for Bookings PHS -->
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-N2BZFJGB');</script>
+    <!-- End Google Tag Manager -->
+    
     <script>
         (function(h, o, t, j, a, r) {
             h.hj = h.hj || function() {
@@ -45,12 +53,32 @@
             a.appendChild(r);
         })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
     </script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+    <script>
+        // Global AJAX error handler
+        $(document).ajaxError(function(event, jqXHR, settings, error) {
+            if (jqXHR.status === 419 || jqXHR.status === 401) {
+                // Session expired or CSRF token mismatch
+                window.location.href = "{{ route('front.index') }}";
+            }
+        });
+
+        // Add CSRF token to all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
 	@stack('styles')
 	@stack('custom_styles')
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N2BZFJGB"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
    @include('front.includes.header')
    @yield('content')
    @include('front.includes.footer')

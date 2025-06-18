@@ -53,39 +53,45 @@ class LoginController extends Controller
 
     public function index()
     {
-        if (Auth::user() && Auth::user()->isSuperAdmin()) {
-            return redirect()->route('backend.blogs.index');
+        // dd(Auth::user()->isSuperAdmin());
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->is_superadmin == 1) {
+            return redirect()->route('admin.purchase-plans.index');
         }
         return view('backend.pages.auth.login');
     }
 
     public function login(Request $request)
     {
-        // dd($request->all());
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required',
         ]);
+
         $admin = User::where('email', $request->get('email'))->first();
-        if (!isset($admin) || $admin->id < 0) {
-            return redirect()->route('login')->with('error', 'Invalid Credentials.');
+        
+        if (!$admin) {
+            return redirect()->route('index')->with('error', 'Invalid credentials.');
         }
 
         if (!$admin->is_superadmin) {
-            return redirect()->route('login')->with('error', 'You do not have authorization to access this system.');
+            return redirect()->route('index')->with('error', 'You do not have authorization to access this system.');
         }
 
-        $rememberMe = $request->get('remember_me') ? true : false;
+        $rememberMe = $request->has('remember_me');
 
-        if (Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-            return redirect()->route('dashboard')->with('success', 'You are Logged in successfully.');
-        } else {
-            return back()->with('error', 'Whoops! invalid email and password.');
+        if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $rememberMe)) {
+            $request->session()->regenerate();
+            return redirect()->route('dashboard')->with('success', 'You are logged in successfully.');
         }
+
+        return back()->with('error', 'Invalid credentials.');
     }
 
     public function register()
     {
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->is_superadmin == 1) {
+            return redirect()->route('admin.purchase-plans.index');
+        }
         return view('backend.pages.auth.register');
     }
 
@@ -107,15 +113,19 @@ class LoginController extends Controller
         ]);
 
         // Create a new admin user.
-        User::create([
+        $user = User::create([
             'name' => $request->input('first_name') . ' ' . $request->input('last_name'), // Full name of the admin user.
             'first_name' => $request->input('first_name'), // First name of the admin user.
             'last_name' => $request->input('last_name'), // Last name of the admin user.
             'email' => $request->input('email'), // Email of the admin user.
             'password' => Hash::make($request->input('password')), // Hashed password of the admin user.
+            'is_superadmin' => 1, // Set as super admin
         ]);
 
-        return redirect()->route('login')->with('success', 'Registration successful. Please login.');
+        // Log in the new admin user
+        Auth::guard('admin')->login($user);
+
+        return redirect()->route('dashboard')->with('success', 'Registration successful. You are now logged in.');
     }
 
     /**
@@ -126,8 +136,20 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
-        return redirect()->route('login');
+        // Only logout from admin guard
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+            
+            // Invalidate only the admin session
+            $request->session()->forget('admin');
+            
+            // Regenerate CSRF token
+            $request->session()->regenerateToken();
+
+            return redirect()->route('index')->with('success', 'You have been logged out successfully.');
+        }
+
+        return redirect()->route('index')->with('error', 'Unauthorized access.');
     }
 
     /**
@@ -137,7 +159,9 @@ class LoginController extends Controller
      */
     public function forgotPassword()
     {
-        // Return the forgot password view.
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->is_superadmin == 1) {
+            return redirect()->route('admin.purchase-plans.index');
+        }
         return view('backend.pages.auth.forgot-password');
     }
 
@@ -177,7 +201,9 @@ class LoginController extends Controller
      */
     public function resetPassword($token)
     {
-        // Return the reset password view with the token.
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->is_superadmin == 1) {
+            return redirect()->route('admin.purchase-plans.index');
+        }
         return view('backend.pages.auth.new-password', compact('token'));
     }
 
@@ -224,8 +250,10 @@ class LoginController extends Controller
      */
     public function changePassword()
     {
-        // Return the change password view with the admin user
-        return view('backend.pages.auth.change-password', );
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('index');
+        }
+        return view('backend.pages.auth.change-password');
     }
 
     /**
@@ -236,51 +264,46 @@ class LoginController extends Controller
      */
     public function changePasswordPost(Request $request)
     {
-        // Validate the request data.
         $request->validate([
             'current_password' => 'required',
             'new_password' => 'required|confirmed',
         ]);
 
-        // Find the authenticated admin user.
-        $currentAdminUser = Auth::user();
+        $currentAdminUser = Auth::guard('admin')->user();
 
-        // Check if the current password matches the stored password.
         if (Hash::check($request->current_password, $currentAdminUser->password)) {
-            // Update the admin user's password.
             User::where('id', $currentAdminUser->id)->update(['password' => Hash::make($request->new_password)]);
-
-            // Redirect to the admin dashboard with a success message.
             return redirect()->route('dashboard')->with('success', 'Password changed successfully.');
         } else {
-            // Redirect back with an error message.
             return back()->with('error', 'Current password not matched.');
         }
     }
 
     public function profile(Request $request)
     {
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('index');
+        }
+        
         $adminUser = [];
         if ($request->id) {
             $adminUser = User::find($request->id);
         }
-        // dd($adminUser);
-        // $bookingConfiguration = BookingConfiguration::getBookingConfiguration($adminUser->id);
         $bookingConfiguration = null;
-		return view('backend.pages.admin-profile', compact('adminUser','bookingConfiguration'));
+        return view('backend.pages.admin-profile', compact('adminUser', 'bookingConfiguration'));
     }
 
     public function profilePost(Request $request)
     {
-        // dd($request->all());
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('index');
+        }
+
         $request->validate([
-            'first_name' => ['required', 'string', 'max:255'], // First name of the admin user.
-            'last_name' => ['required', 'string', 'max:255'], // Last name of the admin user.
-            'designation' => ['required', 'string', 'max:255'], // designation of the admin user.
-            'business_name' => ['required', 'string', 'max:255'], // business name of the admin user.
-            // 'startTime' => ['required'],
-            // 'endTime' => ['required', 'after:startTime'],
-            // 'day' => ['required'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'designation' => ['required', 'string', 'max:255'],
+            'business_name' => ['required', 'string', 'max:255'],
             'email_signature' => ['required'],
             'description_character_count' => ['required'],
             'about_us_title' => ['required'],
@@ -290,56 +313,45 @@ class LoginController extends Controller
             'copyright_text' => ['required'],
             'qualification_text' => ['required'],
         ]);
+
         $adminUser = User::findOrFail($request->id);
 
-        // If a file is uploaded
         if ($request->hasFile('profile_image')) {
-            // Handle the file upload and store it in the 'public/uploads/profile_images' directory
             $file = $request->file('profile_image');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = 'uploads/profile_images/' . $fileName;
             $file->move(public_path('uploads/profile_images'), $fileName);
         
-            // Optionally delete the old image if it exists
             if ($adminUser->profile_image && file_exists(public_path($adminUser->profile_image))) {
                 unlink(public_path($adminUser->profile_image));
             }
         
-            // Save the new profile image path in the database
             $adminUser->profile_image = $filePath;
         }
 
-        // If a file is uploaded
         if ($request->hasFile('front_logo')) {
-            // Handle the file upload and store it in the 'public/uploads/front_logos' directory
             $file = $request->file('front_logo');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = 'uploads/front_logo/' . $fileName;
             $file->move(public_path('uploads/front_logo'), $fileName);
         
-            // Optionally delete the old image if it exists
             if ($adminUser->front_logo && file_exists(public_path($adminUser->front_logo))) {
                 unlink(public_path($adminUser->front_logo));
             }
         
-            // Save the new profile image path in the database
             $adminUser->front_logo = $filePath;
         }
 
-        // If a file is uploaded
         if ($request->hasFile('about_us_image')) {
-            // Handle the file upload and store it in the 'public/uploads/about_us_image' directory
             $file = $request->file('about_us_image');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = 'uploads/about_us_image/' . $fileName;
             $file->move(public_path('uploads/about_us_image'), $fileName);
         
-            // Optionally delete the old image if it exists
             if ($adminUser->about_us_image && file_exists(public_path($adminUser->about_us_image))) {
                 unlink(public_path($adminUser->about_us_image));
             }
         
-            // Save the new profile image path in the database
             $adminUser->about_us_image = $filePath;
         }
         
@@ -357,64 +369,61 @@ class LoginController extends Controller
             'front_description' => $request->input('front_description'),
             'copyright_text'  => $request->input('copyright_text'),
             'qualification_text' => $request->input('qualification_text'),
+            'profile_image' => $adminUser->profile_image,
         ]);
 
         return redirect()->back()->with('success', 'Profile updated successfully.');
-
     }
     
-    public function removeProfileImage($id){
-        $adminUser = [];
-        if ($id) {
-            $adminUser = User::findOrFail($id);
-            // Check if the user has a profile image
-            if ($adminUser->profile_image && file_exists(public_path($adminUser->profile_image))) {
-                unlink(public_path($adminUser->profile_image));
-            }
-            //Remove image
-            $adminUser->update([
-                'profile_image' => null
-            ]);
+    public function removeProfileImage($id)
+    {
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('index');
         }
+
+        $adminUser = User::findOrFail($id);
+        if ($adminUser->profile_image && file_exists(public_path($adminUser->profile_image))) {
+            unlink(public_path($adminUser->profile_image));
+        }
+        $adminUser->update([
+            'profile_image' => null
+        ]);
         return redirect()->back()->with('success', 'Profile image removed successfully.');
     }
 
-    public function removeFrontLogo($id){
-        $adminUser = [];
-        if ($id) {
-            $adminUser = User::findOrFail($id);
-            // Check if the user has a profile image
-            if ($adminUser->front_logo && file_exists(public_path($adminUser->front_logo))) {
-                unlink(public_path($adminUser->front_logo));
-            }
-            //Remove image
-            $adminUser->update([
-                'front_logo' => null
-            ]);
+    public function removeFrontLogo($id)
+    {
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('index');
         }
+
+        $adminUser = User::findOrFail($id);
+        if ($adminUser->front_logo && file_exists(public_path($adminUser->front_logo))) {
+            unlink(public_path($adminUser->front_logo));
+        }
+        $adminUser->update([
+            'front_logo' => null
+        ]);
         return redirect()->back()->with('success', 'Front Logo removed successfully.');
     }
 
-    public function removeAboutUsImage($id){
-        $adminUser = [];
-        if ($id) {
-            $adminUser = User::findOrFail($id);
-            // Check if the user has a profile image
-            if ($adminUser->about_us_image && file_exists(public_path($adminUser->about_us_image))) {
-                unlink(public_path($adminUser->about_us_image));
-            }
-            //Remove image
-            $adminUser->update([
-                'about_us_image' => null
-            ]);
+    public function removeAboutUsImage($id)
+    {
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('index');
         }
+
+        $adminUser = User::findOrFail($id);
+        if ($adminUser->about_us_image && file_exists(public_path($adminUser->about_us_image))) {
+            unlink(public_path($adminUser->about_us_image));
+        }
+        $adminUser->update([
+            'about_us_image' => null
+        ]);
         return redirect()->back()->with('success', 'About Us Image removed successfully.');
     }
 
     public function dashboard() {
-        return redirect()->route('backend.blogs.index');
-
-		// return view('backend.pages.index');
-	}
-
+        return redirect()->route('admin.purchase-plans.index');
+    }
 }

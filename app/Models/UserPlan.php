@@ -16,6 +16,7 @@ class UserPlan extends Model
         'plan_id',
         'status',
         'modified_by',
+        'is_mail_sent',
     ];
     public function user()
     {

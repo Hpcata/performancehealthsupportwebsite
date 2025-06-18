@@ -8,7 +8,7 @@ class Meal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'image'];
+    protected $fillable = ['title', 'description', 'note', 'image', 'user_id'];
 
     protected $table = 'meals';
 
@@ -26,7 +26,9 @@ class Meal extends Model
 
     public function items()
     {
-        return $this->belongsToMany(Item::class, 'item_meals', 'meal_id', 'item_id')->where('is_swiped', 0);
+        return $this->belongsToMany(Item::class, 'item_meals', 'meal_id', 'item_id')
+                    ->withPivot(['item_qty', 'item_qty_unit', 'carbs', 'protein', 'fat', 'selected_qty_unit']);
+                    // ->where('is_swiped', 0);
     }
 
     // Many-to-many relationship with Item through the user_items pivot table
@@ -38,6 +40,22 @@ class Meal extends Model
     public function userMealItems()
     {
         return $this->belongsToMany(Item::class, 'user_item_meals', 'meal_id', 'item_id')
-        ->wherePivot('is_swiped',0);
+                    ->withPivot(['qty', 'unit', 'selected_qty_unit', 'user_id'])
+                    ->wherePivot('is_swiped',0);
+    }
+
+    public function totalProtein()
+    {
+        return $this->items()->sum('protein');
+    }
+
+    public function totalCarbs()
+    {
+        return $this->items()->sum('carbs');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class); // Uses 'item_tag' pivot table by default
     }
 }

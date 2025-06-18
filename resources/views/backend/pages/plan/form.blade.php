@@ -42,7 +42,10 @@
                             <!-- Description -->
                             <div class="col-md-12">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea id="description" name="description" class="form-control">{{ $plan->description ?? '' }}</textarea>
+                                <div id="editor" class="form-control" style="min-height: 200px;">{{ $plan->description ?? '' }}</div> <!-- CKEditor will use this div -->
+                                <input type="hidden" name="description" id="description" value="{{ $plan->description ?? '' }}"/>
+
+                                <!-- <textarea id="description" name="description" class="form-control">{{ $plan->description ?? '' }}</textarea> -->
                             </div>
 
                             <!-- Meal Times -->
@@ -93,10 +96,40 @@
 </div>
 
 @endsection
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
+
+@endpush
 @push('custom_scripts')
 <script>
 $(document).ready(function() {
-    $('.select2').select2({
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            htmlEncodeOutput: false,    // Prevents encoding of HTML entities
+            entities: false,            // Disables entity encoding
+            basicEntities: false,        // Ensures basic entities like `<`, `>` are not encoded
+
+        })
+        .then(editor => {
+        // When the form is submitted, transfer the content of CKEditor to the hidden field
+            $('form').on('submit', function() {
+                $('#description').val(editor.getData().trim());  // Save clean HTML
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    $('#meal_times').select2({
+        placeholder: "Select meal times",
+        allowClear: true
+    });
+    $('#sub_plan_ids').select2({
         placeholder: "Select meal times",
         allowClear: true
     });

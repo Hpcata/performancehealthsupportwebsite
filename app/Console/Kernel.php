@@ -16,6 +16,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('update:food-serving-sizes');
+        $schedule->command('nutrition:fetch');
+        $schedule->command('nutrition:alternates');
+        $schedule->command('update:food-nutrition-data');
+        $schedule->command('nutrition:fetch-energy');
+
     }
 
     /**

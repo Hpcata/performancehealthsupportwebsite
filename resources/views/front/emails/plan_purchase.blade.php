@@ -8,14 +8,12 @@
     <title>Thank you for your plan purchase!</title>
 </head>
 <body>
-    <h2>Hello {{ $user->name }},</h2>
+    <h2>Hey {{ $user->name }},</h2>
     
-    <p>Thank you for purchasing the {{ $planName }} plan.</p>
+    <p>Thank you for purchasing Sports Nutrition Plans - {{ $planName }} .</p>
 
-    <p>We appreciate your submission. Our team will review it shortly!</p>
+    <p>Our team will review your submission shortly and we will email you when your plan is ready.</p>
 
-    <p>Your plan will be finalized and ready within the next 24 hours.</p>
-
-    <p>Best regards, <br> The Performancehealthsupport Team</p>
+    <p>Best regards, <br> The Performance Health Support Team</p>
 </body>
 </html>

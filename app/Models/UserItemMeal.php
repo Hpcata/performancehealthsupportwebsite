@@ -8,16 +8,22 @@ class UserItemMeal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['useer_id','item_id', 'meal_id'];
+    protected $fillable = ['user_id','item_id', 'meal_id', 'qty', 'unit', 'carbs', 'protein', 'fat', 'energy', 'selected_qty_unit'];
+
+    protected $casts = [
+        'selected_qty_unit' => 'array',
+    ];
 
     public function meals()
     {
-        return $this->belongsToMany(Meal::class, 'user_item_meals');
+        return $this->belongsTo(Meal::class, 'meal_id');
+        // return $this->belongsToMany(Meal::class, 'user_item_meals');
     }
 
     public function items()
     {
-        return $this->belongsToMany(Item::class, 'user_item_meals', 'item_id');
+        return $this->belongsTo(Item::class, 'item_id');
+        // return $this->belongsToMany(Item::class, 'user_item_meals', 'item_id');
     }
 
     public function userswapItems()

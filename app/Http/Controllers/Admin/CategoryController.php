@@ -45,7 +45,7 @@ class CategoryController extends Controller
             'mealtime_ids.*' => 'exists:meal_times,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Create the category

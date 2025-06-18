@@ -12076,7 +12076,7 @@ h4,
 h5,
 .h5,
 .logo {
-  font-family: "Merriweather", serif;
+  font-family: "sans-serif", Helvetica, Arial;
   font-weight: 700;
   color: #3b3b3b;
 }
@@ -14158,7 +14158,7 @@ span.border-heading:after {
 }
 
 .side-phrase{
-  font-family: "Merriweather", serif;;
+   font-family: "sans-serif", Helvetica, Arial;
    position: absolute;
    transform: rotate(-90deg);
    font-size: 76px;
@@ -14540,14 +14540,14 @@ span.border-heading:after {
 .spot-search .btn { font-weight: 700; font-size: 16px; height: 50px; line-height: 50px; padding: 0 1.2rem 0; display: flex; align-items: center; width: 100%; justify-content: center; border-radius: 50px; }
 .spot-search .btn svg { width: 18px; position: relative; fill: #fff; margin: 0 0.5rem 0 0; top: 0; } 
 .select-middle { border-left: 1px solid #bfbfbf; }
-.spot-plan-box { border: 1px solid #C8C8C8; border-radius: 1rem; padding: 10px; height: 100%; display: flex; flex-direction: column; }
+.spot-plan-box { border: 1px solid #C8C8C8; border-radius: 1rem; padding: 10px; height: 90%; display: flex; flex-direction: column; }
 .spot-plan-box h5 { text-align: center; font-size: 1rem; padding: 1rem; line-height: 1.25; margin: 0; }
 .spot-plan-img-box { position: relative; border: 1px solid #C8C8C8; border-radius: 0.5rem; overflow: hidden; margin-bottom: 10px; margin-top: auto; }
 .spot-plan-img-box figure { margin: 0; font-size: 0; }
 .spot-plan-img-box figure img { width: 100%; height: 400px; object-fit: cover; object-position: center center; }
 .spot-plan-info-box { position: absolute; z-index: 2; left: 0; top: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); padding: 1rem; font-size: 0.9rem; overflow: auto; transition: 0.35s all; transform: translateY(40%); opacity: 0; visibility: hidden; }
 .spot-plan-box .btn { width: 100%; font-size: 1rem; }
-.spot-plan-info-box h6 { font-family: "Merriweather", serif; font-weight: 700; font-size: 1.1rem; }
+.spot-plan-info-box h6 { font-family: "sans-serif", Helvetica, Arial; font-weight: 700; font-size: 1.1rem; }
 .spot-plan-info-box ul { padding-left: 1.1rem; margin-bottom: 0.4rem; }
 .spot-plan-box:hover .spot-plan-info-box { opacity: 1; visibility: visible; transform: translateY(0); }
 
@@ -14583,13 +14583,13 @@ span.border-heading:after {
 .bottom-corner { right: 0; top: 100%; }
 .nutrition-plan-text .text-primary { color: #649ef7 !important; display: block; }
 
-.nutrition-bottom-box { position: absolute; bottom: 0; left: 0; background: #fafafa; padding: 30px 30px 0 0; border-radius: 0 80px 0 0; }
+.nutrition-bottom-box { position: absolute; bottom: 0; left: 0; background: #fafafa; padding: 15px 15px 0 0; border-radius: 0 50px 0 0; z-index:1; }
 .nutrition-bottom-box .top-corner, .nutrition-bottom-box .bottom-corner { position: absolute; width: 35px; margin: 0; }
 .nutrition-bottom-box .top-corner { bottom: 100%; left: 0; right: auto; top: auto; }
 .nutrition-bottom-box .bottom-corner { right: auto; top: auto; left: 100%; bottom: 0; }
-.nutrition-athlete-box { display: flex; align-items: center; background: #F0F4F8; padding: 16px; border-radius: 100px; }
-.nutrition-athlete-box figure { margin: 0 0.6rem 0 0; width: 70px; max-width: 70px; min-width: 70px; border-radius: 100px; position: relative; overflow: hidden; border: 5px solid #fff; }
-.nutrition-athlete-box figure img { width: 100%; height: auto; }
+.nutrition-athlete-box { display: flex; align-items: center; background: #F0F4F8; padding: 12px; border-radius: 100px; }
+.nutrition-athlete-box figure { margin: 0 0.6rem 0 0; width: 50px; height: 50px; max-width: 50px; min-width: 50px; border-radius: 100px; position: relative; overflow: hidden; border: 5px solid #fff; }
+.nutrition-athlete-box figure img { width: 100%; height: 100%; object-fit: cover; object-position: center center;}
 .nutrition-athlete-info { font-size: 0.9rem; padding-right: 0.9rem; }
 .nutrition-athlete-box h5 { font-size: 1.1rem; }
 .nutrition-athlete-box h5, .nutrition-athlete-box p { margin: 0; }
@@ -14630,7 +14630,7 @@ span.border-heading:after {
 
 .main-category-list .row > div { width: 280px; margin-right: 16px; }
 .main-category-list .row { position: relative; overflow-x: auto; flex-wrap: nowrap; }
-.category-swap-list-box { position: relative; overflow: hidden; display: flex; align-items: center; border-bottom: 1px solid #dee2e6; margin-bottom: 1rem; padding-bottom: 1rem; }
+.category-swap-list-box { position: relative; /*overflow: hidden;*/ display: flex; align-items: center; border-bottom: 1px solid #dee2e6; margin-bottom: 1rem; padding-bottom: 1rem; }
 .category-swap-list-box:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
 .category-swap-list-box figure { margin: 0 1rem 0 0; max-width: 100px; min-width: 100px; width: 100%; }
 .category-swap-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 130px; padding: 0 0 0 0.6rem; margin-left: auto; }
@@ -14644,7 +14644,7 @@ span.border-heading:after {
 
 .category-item-swap.category-swap-list-box figure { margin-right: 0; }
 .category-item-swap .category-swap-btn { padding-left: 0; }
-.category-swap-list-box figcaption { font-family: "Merriweather", serif; font-weight: 600; text-align: center; letter-spacing: 0.03rem; }
+.category-swap-list-box figcaption { font-family: "sans-serif", Helvetica, Arial; font-weight: 600; text-align: center; letter-spacing: 0.03rem; }
 .apply-changes-btn.btn { font-size: 15px; padding: 0.5rem 1.3rem 0.7rem; border-radius: 0.6rem; }
 
 
@@ -14673,7 +14673,7 @@ span.border-heading:after {
 .steps-list { display: flex; align-items: center; justify-content: center; }
 .round-tab { height: 40px; width: 40px; border: 1px solid #cccccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; background: #fafafa; transition: 0.35s all; }
 
-.wizard-inner a { display: flex; flex-direction: column; align-items: center; font-family: "Merriweather", serif; font-weight: 700; color: #3b3b3b; transition: 0.35s all; text-align: center; width: 80px; position: relative; z-index: 1; }
+.wizard-inner a { display: flex; flex-direction: column; align-items: center; font-family: "sans-serif", Helvetica, Arial; font-weight: 700; color: #3b3b3b; transition: 0.35s all; text-align: center; width: 80px; position: relative; z-index: 1; }
 .wizard-inner a:after { content: ""; position: absolute; top: 20px; right:0; height: 3px; width: 100%; background: #ccc; transition: 0.35s all; z-index: -1; }
 .wizard-inner a:first-child:after { width: 50%; }
 .wizard-inner a:last-child:after { width: 50%; left: 0; right: auto; }
@@ -14716,3 +14716,389 @@ span.border-heading:after {
     .wizard-inner a::after { top: 12px; height: 2px; }
     
 }
+
+.graph-img { max-width: 750px; margin: 0 auto; width: 100%; }
+.graph-img img { width: 100%; height: auto; }
+
+.nutrition-profile-img { max-width: 120px; width: 100%; margin: 0 auto; }
+.nutrition-profile-img figure { position: relative; padding-top: 100%; border-radius: 50%; overflow: hidden; }
+.nutrition-profile-img figure img { position: absolute; left: 0; right: 0; top: 0; bottom: 0; width: 100%; height: 100%; object-position: center center; }
+.nutrition-profile-info ul { margin: 1rem 0 0 0; padding: 0; list-style: none; color: #60748D; line-height: 1.4rem; letter-spacing: 0.025rem; }
+.card-body.nutrition-profile-info { padding: 2rem; }
+.nutrition-profile-info ul li { margin: 0.6rem 0; }
+
+.nutrition-profile-top { display: flex; align-items: center; gap: 10px; }
+.nutrition-profile-top .btn { white-space: nowrap; padding: 0.7rem 1.5rem;  }
+.nutrition-profile-top form { width: 100%; }
+.nutrition-profile-top .form-control { border-color: #60748D; width: 100%; background: #fff; }
+.nutrition-profile-top .form-control, .nutrition-profile-top .btn { border-radius: 10px; font-size: 1rem; height: 50px; letter-spacing: 0.025rem; }
+.nutrition-schedule-list { letter-spacing: 0.025rem; }
+.nutrition-schedule-list h4 { margin: 0 0 1rem 0; }
+.plan-list-info h5 { margin: 0 0 0.3rem 0; font-size: 1.15rem; }
+.plan-list-box { display: flex; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #CFD5DD; }
+.plan-list-box:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+.plan-list-btn { margin-left: auto; }
+.plan-list-btn .btn { font-size: 1rem; }
+.plan-list-img { min-width: 80px; width: 80px; margin-right: 1rem; }
+.plan-list-img figure { position: relative; overflow: hidden; border-radius: 5px; padding-top: 100%; margin: 0; }
+.plan-list-img figure img { position: absolute; left: 0; right: 0; top: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; }
+.plan-list-info ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; color: #60748D; font-weight: 300; }
+.plan-list-info ul li:after { content: "|"; margin: 0 0.5rem; }
+.plan-list-info ul li:last-child:after { display: none; }
+.plan-list-btn .btn.btn-sm { font-size: 0.9rem; padding: 0.3rem 1rem; display: flex; align-items: center; justify-content: center; width: 100%; margin: 0.3rem 0; border-radius: 50px; }
+.plan-list-btn .btn.btn-sm figure { width: 16px; margin: 0 0.4rem 0 0; } 
+.plan-list-btn .btn.btn-sm figure svg { width: 100%; height: auto; vertical-align: top; position: relative; top: 2px; }
+/* .food-swap-list .plan-list-img { min-width: 70px; width: 70px; } */
+.food-swap-list .plan-list-info ul { font-size: 0.9rem; font-weight: 500; }
+.food-swap-list .plan-list-info h5 { font-size: 1.05rem; }
+.modal-header .btn-close { opacity: 1; }
+.bg-theme { background: #649EF7; }
+.ingredient-list { background: #fff; border-radius: 8px; border: 1px solid #CFD5DD; color: #60748D; margin-bottom: 1.5rem; }
+.ingredient-list:last-child { margin-bottom: 0; } 
+.ingredient-list h2 { font-size: 1.25rem; margin-bottom: 0; color: #333;  border-bottom: 1px solid #CFD5DD; padding: 1rem; }
+.ingredient-list ul { list-style: none; padding: 0; margin: 0; }
+.ingredient-list li { display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid #CFD5DD; }
+.ingredient-list li:last-child { border-bottom: none; }
+.ingredient-list .form-check-input[type="checkbox"] { margin-right: 10px; height: 16px; width: 16px; border-radius: 5px; border: 1px solid #60748D; }
+.ingredient-list .form-check-input:checked[type="checkbox"] { background-color: #649EF7; border-color: #649EF7; }
+.ingredient-img { width: 50px; margin-right: 0.6rem; }
+.ingredient-img figure { padding-top: 100%; position: relative; overflow: hidden; border-radius: 4px; margin: 0; }
+.ingredient-img figure img { position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; width: 100%; object-fit: cover; object-position: center center; }
+.ingredient-info { display: flex; align-items: center; }
+.ingredient-info .form-check { min-height: inherit; margin: 0; font-size: 0; display: flex; align-items: center; } 
+.ingredient-list span { flex-grow: 1; font-size: 16px; color: #60748D; }
+.ingredient-list .quantity { color: #60748D; font-size: 14px; text-align: right; }
+.print-list ul { padding-left: 1rem; margin: 0; color: #60748D; font-weight: 300; font-size: 15px; }
+.print-list ul li { margin: 0.4rem 0; }
+.print-list ul li:first-child { margin-top: 0; }
+.print-list ul li:last-child { margin-bottom: 0; }
+
+.nutrition-profile-img { position: relative; }
+.btn.edit-icon { background: #649ef7; color: #fff; border: 0; padding: 0; height: 35px; width: 35px; min-width: 35px;  bottom: 0; right: 0; font-size: 15px; border-radius: 50px; z-index: 2; }
+.btn.edit-icon:hover { background: #3b3b3b; color: #fff; }
+.nutrition-profile-info h4 { display: flex; justify-content: center; align-items: center; } 
+.nutrition-profile-info h4 .btn.edit-icon { position: static; display: flex; align-items: center; justify-content: center; margin: 0 0 0 0.6rem; }
+.nutrition-profile-info p .btn.edit-icon { position: static; display: flex; align-items: center; justify-content: center; margin: 0 0 0 0.6rem; }
+
+@media only screen and (max-width: 991px) {
+    .nutrition-profile-top { flex-wrap: wrap; }
+    .nutrition-profile-top .btn { width: calc(50% - 5px); height: auto; font-size: 0.9rem;}
+    .plan-list-box { flex-wrap: wrap; }
+    .plan-list-btn { margin-left: 0; text-align: center; width: 100%; margin-top: 1rem; }
+    .food-swap-list .plan-list-btn { width: auto; margin-left: auto; }
+}
+@media only screen and (max-width: 767px) {
+    .plan-list-btn .btn { width: 100%; padding: 0.6rem 0.7rem; font-size: 0.9rem; }
+    .ingredient-list h2 { font-size: 1.15rem; }
+    .ingredient-list li { flex-direction: column; align-items: start; }
+    .ingredient-info { width: 100%; }
+    .ingredient-list .quantity { text-align: left; width: 100%; margin-top: 0.5rem; }
+    .nutrition-profile-info h4 { font-size: 1.2rem; }
+    .btn.edit-icon { height: 30px; width: 30px; min-width: 30px; font-size: 13px; bottom: 5px; right: 5px; }
+    .plan-list-info h5 { font-size: 1rem; }
+    .plan-list-info ul { font-size: 15px; }
+
+}
+@media only screen and (max-width: 575px) {
+    .plan-list-info { width: 100%; margin-top: 0.5rem; }
+    .plan-list-btn { margin-top: 0.5rem; }
+    .food-swap-list .plan-list-btn { width: 100%; margin-left: 0; display: flex; gap: 10px; }
+}
+
+@media only screen and (max-width: 479px) {
+    .nutrition-profile-top .btn { width: 100%; }
+    
+}
+
+.category-swap-img { max-width: 100px; min-width: 100px; margin: 0 1rem 0 0; width: 100%; position: relative; z-index: 3; }
+.category-swap-list-box .category-swap-img figure { padding-top: 100%; position: relative; overflow: hidden; min-width: inherit; max-width: inherit; }
+.category-swap-img figure img { position: absolute; top: 0; bottom: 0; right: 0; left: 0; height: 100%; width: 100%; object-fit: cover; object-position: center center; }
+.category-swap-content .form-control.form-control-sm { height: 30px; max-width: 150px; }
+.category-swap-nutrition-hover { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); padding: 0.5rem; opacity: 0; visibility: hidden; transition: 0.35s all; border-radius: 0.25rem; }
+.category-swap-nutrition-hover ul { margin: 0; padding: 0 0 0 0;font-size: 13px; color: #fff; list-style: none; }
+.category-swap-img:hover .category-swap-nutrition-hover { opacity: 1; visibility: visible; }
+
+.info-tootlip { position: absolute; min-width: 170px; background: #3b3b3b; padding: 0.9rem; border-radius: 0.5rem; left: calc(100% + 12px); top: 53%; transform: translateY(-53%); margin-left: 20px; transition: 0.35s all; opacity: 0; visibility: hidden; font-size: 13px; line-height: 1.35; color: #fff; }
+.info-tootlip:before { content: ""; position: absolute; right: 100%; top: 0; bottom: 0; height: 0; width: 0; margin: auto; border-right: 6px solid #3b3b3b; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+.category-swap-img:hover .info-tootlip { opacity: 1; visibility: visible; margin-left: 0; }
+.info-tootlip ul { margin: 0; padding: 0 0 0 15px; }
+.info-tootlip p { margin: 0 0 0.3rem 0; font-weight: 600; }
+
+/* Score Meter CSS
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
+.score-meter-box { max-width: 650px; width: 95%; margin: 4rem auto 0; position: relative; z-index: 1; }
+.score-meter-box svg { width: 100%; height: auto; }
+.meter-arrow { position: absolute; left: 27%; bottom: 1.9%; margin: auto; width: 23%; transform-origin: right center; transform: rotate(0deg); transition: 0.5s all; transition-delay: 0.5s; }
+.meter-arrow svg { fill: #1B1C1E; }
+.score-meter-box:after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; width: 40px; height: 40px; background: #fff; border: 10px solid #1B1C1E; margin: auto; border-radius: 50px; }
+.score-meter-text span { font-size: 1.7rem; font-size: 1.2rem; font-family: "sans-serif", Helvetica, Arial; font-weight: 600; position: absolute; text-align: center; line-height: 1.25; }
+.score-meter-text { position: absolute; top: 1%; left: 1%; right: 1%; bottom: 1%; margin: auto; }
+.meter-text-01 { left: -3%; bottom: 36%; transform: rotate(-70deg); transform-origin: center center; }
+.meter-text-02 { left: 18%; bottom: 92%; transform: rotate(-26deg); transform-origin: center center; }
+.meter-text-03 { right: 21%; bottom: 91%; transform: rotate(26deg); transform-origin: center center; }
+.meter-text-04 { right: -4.2%; bottom: 37%; transform: rotate(70deg); transform-origin: center center; }
+
+.row .score-meter-box { width: 90%; }
+.score-meter-box-2 .meter-text-01 { left: -12%; bottom: 36%; transform: rotate(-64deg); }
+.score-meter-box-2 .meter-text-02 { left: 19%; bottom: 88%; }
+.score-meter-box-2 .meter-text-03 { right: 18%; bottom: 94%; transform: rotate(18deg); }
+.score-meter-box-2 .meter-text-04 { right: -13.2%; bottom: 37%; transform: rotate(65deg); }
+
+.score-meter-box-3 .meter-text-03 { right: 16%; }
+.score-meter-box-3 .meter-text-04 { right: -8.2%; }
+.score-meter-box-3 .meter-text-01 { left: -6%; bottom: 36%; transform: rotate(-67deg); }
+
+
+@media only screen and (max-width: 991px) {
+    .score-meter-text span { font-size: 1rem; }
+}
+@media only screen and (max-width: 767px) {
+    .score-meter-box { max-width: 460px; }
+    .score-meter-box::after { width: 30px; height: 30px; border-width: 7px; }
+}
+@media only screen and (max-width: 575px) {
+    .score-meter-text span { font-size: 1rem; }
+}
+@media only screen and (max-width: 479px) {
+    .score-meter-box::after { width: 22px; height: 22px; border-width: 6px; }
+    .meter-arrow { left: 33%; bottom: 0; width: 18%; }
+}
+.bgradient-bg { position: absolute; left: 1%; right: 1%; top: 1%; bottom: 1%; z-index: -1; }
+
+.score-meter-box.score-meter-out:after, .score-meter-out .meter-arrow { opacity: 0; }
+
+
+.nutrition-profile-info ul li { display: flex; }
+.weight-info { border-radius: 7px; }
+.weight-info h5 { font-family: "Noto Sans", sans-serif; }
+.weight-info h5 span { font-size: 70%; display: inline-block; margin-left: 0.2rem; font-weight: normal; }
+.weight-filter ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; }
+.weight-filter { margin-top: 1rem; }
+.weight-filter ul a { border: 1px solid #CFD5DD; color: #60748D; padding: 0.25rem 0.7rem; display: block; border-left-width: 0; font-size: 0.9rem; font-weight: 500; }
+.weight-filter ul li:first-child a { border-left-width: 1px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; }
+.weight-filter ul li:last-child a { border-top-right-radius: 5px; border-bottom-right-radius: 5px; }
+.weight-filter ul li a:hover, .weight-filter ul li a.active { background: #649EF7; border-color: #649EF7; color: #fff; }
+.graph-img { max-width: 90%; margin: 0 auto; }
+.graph-img svg { width: 100%; height: auto; }
+
+.nutrition-profile-info ul li { display: flex; }
+.nutrition-plan-hero.bg-white .nutrition-bottom-box, .nutrition-plan-hero.bg-white .go-bottom-link { background: #fff; }
+.nutrition-plan-hero.bg-white .nutrition-plan-img-box svg path { fill: #fff; }
+.btn.btn-white { background: #fff; color: #649EF7; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+.btn.btn-white:hover { background: #649EF7; color: #fff; }
+.title-ico { margin: 0 0.5rem 0 0; min-width: 28px; width: 28px; }
+.title-ico svg { width: 100%; height: auto; }
+.gray-bg { background: #CFD5DD; }
+.card-body .talk-expert-box { background: #124E4D; color: #fff; }
+.card-body .talk-expert-box figure { max-width: 200px; width: 100%; }
+.card-body .talk-expert-box figure img { width: 100%; height: auto; }
+.card-body .talk-expert-box h3 { color: #fff; }
+.card-body .talk-expert-box .btn.btn-white { color: #124E4D; background: #fff; display: inline-flex; align-items: center; }
+.card-body .talk-expert-box .btn.btn-white svg { margin: 0.2rem 0 0 0.4rem; }
+
+.card-body .talk-expert-box h6 { font-family: "sans-serif", Helvetica, Arial; font-weight: 500; font-size: 0.875rem; margin: 0 0 1rem 0; } 
+.card-body .talk-expert-box h6 span { color: #2CCC6B; }
+.card-body .kerry-info-box { display: flex; align-items: center; background: #fff; border-radius: 1rem; padding: 1rem; margin-top: 1.2rem; max-width: 767px; }
+.card-body .kerry-info-box figure { max-width: 100px; border-radius: 50%; overflow: hidden; margin: 0 1rem 0 0; min-width: 70px; }
+.card-body .kerry-info { color: #000; }
+.card-body .kerry-info h5 { color: #000; }
+.card-body .kerry-info p { margin-bottom: 0; }
+
+.category-swap-btn .info-tootlip { left: auto; right: calc(100% + 12px); min-width: 150px; max-width: 150px; font-weight: normal; padding: 0.5rem; font-size: 12px; text-align: left; }
+.category-swap-btn { position: relative; }
+.category-swap-btn .btn:hover .info-tootlip { opacity: 1; visibility: visible; margin-left: 0; }
+.category-swap-btn .info-tootlip p { font-weight: normal; }
+.category-swap-btn .btn { position: relative; }
+.category-swap-btn .info-tootlip:before { border-right: 0; border-left: 6px solid #3b3b3b; left: 100%; right: auto; }
+
+.info-tootlip.tooltip-right { left: auto; right: calc(100% + 12px); }
+.info-tootlip.tooltip-right:before { border-right: 0; border-left: 6px solid #3b3b3b; left: 100%; right: auto; }
+
+
+.meter-text-01 { left: -9%; }
+.meter-text-02 { left: 15%; bottom: 95%; transform: rotate(-22deg); }
+.score-meter-box-2 .meter-text-03 { right: 20%; bottom: 88%; transform: rotate(32deg); }
+.score-meter-box-2 .meter-text-04 { right: -6.2%; bottom: 35%; transform: rotate(68deg); }
+.score-meter-box-3 .meter-text-01 { left: -12%; }
+.score-meter-box-3 .meter-text-03 { right: 15%; bottom: 85%; transform: rotate(31deg); }
+.score-meter-box-3 .meter-text-04 { right: -2.2%; }
+
+@media only screen and (max-width: 991px) {
+  .heading .h2.text-nowrap { white-space: normal !important; }
+}
+
+.login-btn.nav-link { height: 30px; width: 30px; background: rgba(255,255,255,0.23); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color:#fff; position: relative; top: -2px; border-radius: 50px;}
+.login-btn.nav-link:hover {color: #3b3b3b; background: #fff; }
+
+div#linkedin-carousel .carousel-inner {
+  max-width: 70%;
+  margin: 0 auto;
+  width: 70%;
+}
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    background-color: #649ef7;
+    border-radius: 50%;
+}
+.linkedin-carousel .carousel-inner { width: 70%; margin: auto; }
+#linkedin-carousel iframe { width: 100%; }
+
+.linkedin-carousel .carousel-control-prev-icon, .linkedin-carousel .carousel-control-next-icon { opacity: 1; cursor: pointer; display: inline-block; position: relative; -webkit-transition: 0.3s all ease; -o-transition: 0.3s all ease; transition: 0.3s all ease; width: 48px; height: 48px; border-radius: 50%; background: #FFFFFF; box-shadow: 0px 0px 17px rgba(0, 0, 0, 0.1); display: inline-flex; align-items: center; justify-content: center; }
+.linkedin-carousel .carousel-control-prev, .linkedin-carousel .carousel-control-next { opacity: 1; }
+.linkedin-carousel .carousel-control-prev-icon:hover { margin-left: -7px; }
+.linkedin-carousel .carousel-control-next-icon:hover { margin-right: -7px; }
+.linkedin-carousel .carousel-control-prev-icon:hover, .linkedin-carousel .carousel-control-next-icon:hover { background: #649ef7; }
+.linkedin-carousel .carousel-control-prev-icon:after, .linkedin-carousel .carousel-control-next-icon:after { content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: 0; border-bottom: 8px solid transparent; border-top: 8px solid transparent; height:0; width:0; margin:auto; -webkit-transition: 0.3s all ease; -o-transition: 0.3s all ease; transition: 0.3s all ease; }
+.linkedin-carousel .carousel-control-prev-icon:after { border-right: 12px solid #649ef7; left: -3px; }
+.linkedin-carousel .carousel-control-next-icon:after { border-left: 12px solid #649ef7; right: -3px; }
+.linkedin-carousel .carousel-control-prev-icon:hover:after { border-right-color: #fff; }
+.linkedin-carousel .carousel-control-next-icon:hover:after { border-left-color: #fff; }
+@media (max-width: 991px) {
+  div#linkedin-carousel .carousel-inner { max-width: 100%; margin: 0 auto; width: 100%; }
+  .linkedin-carousel .carousel-control-prev, .linkedin-carousel .carousel-control-next { position: static; width: auto; margin: 2rem 0.4rem; }
+  .linkedin-carousel.carousel { display: flex; flex-wrap: wrap; justify-content: center; }
+}
+@media (max-width: 767px) {
+  .testimonial-section-main-div .col-12.mx-auto > .row { margin: 0; }
+}
+
+/* Samplan-plan css */
+.nutrition-plan-img-box { max-width: 450px; }
+.bg-lighter { background: #F6F8FC; }
+.profile-box { padding-bottom: 1.5rem; position: relative; }
+.profile-box figure { margin: 0; background: #fff; border-radius: 10px; text-align: center; padding-top: 2rem; }
+.profile-box figure img { width: 100%; height: auto; border-radius: 10px; border-radius: 10px; max-width: 240px; margin: 0 auto;}
+.profile-box .card {position: relative;bottom: 0;left: 0;right: 0;z-index: 2;margin: 0;}
+.top-main-box { display: flex; flex-direction: column; }
+.top-main-box .card { border-radius: 10px; }
+.top-main-box ul li { color: #60748D; margin-bottom: 1rem; position: relative;}
+.top-main-box ul li strong { color: #3B3B3B; display: block; padding-right: 85px; margin-bottom: 0.2rem;}
+.btn-list { display: inline-flex; margin-left: auto; position: absolute; right: 0; top: -7px; }
+.btn-list .btn + .btn { margin-left: 0.4rem; }
+.goal-card ul { padding-left: 0.9rem; }
+.top-main-box .nutrition-profile-info ul li { margin: 0.6rem 0; }
+.profile-box .card ul li:last-child { margin-bottom: 0; }
+.progress-list .progress-box { margin-bottom: 1rem; }
+.progress-box label { font-size: 1rem; font-weight: 400; color: #60748D; display: block; margin-bottom: 0.4rem; }
+.progress-box .progress { background: #E4EAF5; border-radius: 50px; }
+.progress-box .progress .progress-bar { border-radius: 50px; background-color: #649EF7; }
+.intake-card { color: #60748D; font-size: 1.1rem; }
+.intake-card strong { color: #3B3B3B; display: block; margin-bottom: 0.4rem; padding-right: 85px;}
+.intake-card p:last-child { margin-bottom: 0; }
+.sample-list { max-width: 1300px; margin: 0 auto; width: 100%; }
+.sample-list .sample-list-box { margin-bottom: 3rem; }
+.sample-list .sample-list-box:last-child .sample-arrow-img { display: none; }
+.sample-list .sample-list-box .row { flex-direction: row-reverse; }
+.sample-list .sample-list-box:nth-child(2n+2) .row { flex-direction: row; }
+.sample-arrow-img { max-width: 300px; width: 100%; margin: 2rem auto; }
+.sample-arrow-img svg { width: 100%; height: auto; }
+.sample-img figure { margin: 0; text-align: center; }
+.sample-img figure img { width: auto; height: auto; max-width: 100%; }
+.sample-list .sample-list-box:nth-child(2n+2) .sample-arrow-img { -webkit-transform: scaleX(-1); transform: scaleX(-1); }
+.profile-box > .edit-icon { position: absolute; top: 1rem; right: 1rem; z-index: 3; }
+.top-main-box .nutrition-profile-info ul li { display: flex; align-items: center; }
+.top-main-box .nutrition-profile-info ul li .edit-icon { margin-left: auto; }
+.intake-card p { display: flex; align-items: center; }
+.intake-card p .edit-icon { margin-left: auto; }
+
+@media only screen and (max-width: 1199px) {
+
+}
+@media only screen and (max-width: 991px) {
+    .profile-box.h-100 { height: auto !important; }
+    .profile-box { padding-bottom: 1.5rem; }
+}
+@media only screen and (max-width: 767px) {
+    .sample-arrow-img { max-width: 250px; width: 50%; }
+    .sample-content { margin-top: 1.3rem; }
+    .sample-arrow-img { display: none; }
+    .sample-list .sample-list-box {  margin-bottom: 2rem; border-bottom: 1px solid #dedede; padding-bottom: 0.7rem; }
+    .sample-list .sample-list-box:last-child {  margin-bottom: 0; border-bottom: 0; padding-bottom:0; }
+}
+
+
+/* New Css : 10 Feb 2025
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
+.tab-main-box .nutrition-login-images { max-width: 730px; margin: 0 auto; width: 100%; position: relative; padding-left: 20%; }
+.tab-main-box .nutrition-login-images img { width: 100%; height: auto; }
+.tab-main-box .nutrition-login-big { padding: 2rem; background: #EBEDF5; border-radius: 1rem; }
+.tab-main-box .nutrition-login-big figure { position: relative; border-radius: 1rem; overflow: hidden; width: 75%; margin: auto; }
+.tab-main-box .nutrition-login-small { position: absolute; left: 0; top: 50%; transform: translateY(-50%); max-width: 50%; overflow: hidden; border-radius: 1rem; box-shadow: 0 0 25px rgba(0,0,0,0.15); }
+.tab-main-box .nutrition-login-small figure { margin: 0; }
+.tab-main-box .nutrition-login-form { max-width: 490px; width: 100%; }
+.tab-main-box .nutrition-login-form .form-control { border-radius: 10px; border-color: #CCCCCC; }
+.tab-main-box .nutrition-login-form .form-group { margin-bottom: 0.8rem; } 
+.tab-main-box .nutrition-login-form .form-group:last-child { margin-bottom: 0; }
+.tab-main-box .nutrition-login-form .form-group label { font-weight: 600; margin: 0 0 0.3rem 0; }
+.tab-main-box .nutrition-login-form h3 { margin: 0 0 0.9rem 0; }
+.tab-main-box .nutrition-login-book { margin-top: 2rem; }
+.tab-main-box .nutrition-login-book .talk-expert-box { border-radius: 1rem; }
+.tab-main-box .go-bottom-link { z-index: 2; }
+.tab-main-box .nutrition-plan-img figure { padding-top: 100%; z-index: 1; position: relative; }
+.step-tab-box .nutrition-plan-img figure img { position: absolute; left: 0; right: 0; top: 0; bottom: 0; height: 100%; object-fit: cover; object-position: center center; width: 100%; }
+.btn svg {  width: 21px; }
+
+
+.score-meter-out .score-meter-box-frame { filter: blur(5px); }
+.score-meter-out .score-meter-text { z-index: 1; filter: blur(5px); }
+.score-meter-main { position: relative; }
+.score-lock { position: absolute; z-index: 2; left: 0; right: 0; top: 0; bottom: 0; margin: auto; height: 70px; width: 70px; transition: 0.35s all; }
+.score-lock svg path { stroke: #000; }
+.score-lock svg { vertical-align: top; width: 100%; height: auto; }
+.score-meter-locked .unlock-result { transform: scale(1); }
+.score-meter-locked:hover .unlock-result { animation: blink 0.35s; } 
+@keyframes blink { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.score-lock .score-unlock-ico { display: none; }
+.score-meter-main:hover .score-lock .score-lock-ico { display: none; }
+.score-meter-main:hover .score-lock .score-unlock-ico { display: block; }
+
+.modal-body .accordion-button:not(.collapsed) { color: #649ef7; background: rgba(100, 158, 247,0.1); box-shadow: none; outline: none; }
+.modal-body .accordion-button { outline: none !important; box-shadow: none; font-weight: 600; color: #3b3b3b; }
+.modal-body .accordion-button:not(.collapsed):after { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e"); }
+.modal-body .accordion-item { border: 1px solid rgba(0, 0, 0, 0.125) !important; margin: 1rem 0; border-radius: 0.5rem; overflow: hidden; }
+    
+.mealtime-btn-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.mealtime-btn-list ul a {
+  font-size:1rem;
+  padding:0.5rem 1.2rem;
+}
+
+.nutrition-plan-box-overlay {
+    position: absolute;
+    left: 0.7rem;
+    top: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    z-index: 6;
+    background: rgba(255,255,255,0.87);
+    padding: 0.7rem;
+    overflow: auto;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    transition: 0.35s all;
+    transform-origin: center center;
+    transform: scale(0.8);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.nutrition-plan-box:hover .nutrition-plan-box-overlay {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.nutrition-plan-box-text p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+img { max-width: 100%; height: auto; width: auto; }

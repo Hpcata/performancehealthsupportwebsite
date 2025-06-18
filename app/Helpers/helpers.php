@@ -1,6 +1,7 @@
 <?php
 
 // use Route;
+use Carbon\Carbon;
 
 // APP FUNCTIONS
 function appName() {
@@ -37,6 +38,11 @@ function frontAssets($path) {
 	return asset($asset);
 }
 
+function webAssets($path) {
+	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/' . $path : 'private/public/' . $path;
+	return asset($asset);
+}
+
 function adminAssets($path) {
 	$asset = config('constant.ENVIRONMENT') == 'production' ? 'public/admin/' . $path : 'admin/' . $path;
 	return asset($asset);
@@ -52,4 +58,63 @@ function getUserBySlug($slug) {
 
 function frontView($key) {
 	return 'front.' . $key;
+}
+
+if (!function_exists('formatDate')) {
+    /**
+     * Format a date to d-m-Y format.
+     *
+     * @param string|null $date
+     * @return string
+     */
+    function formatDate($date)
+    {
+        if (!$date) {
+            return '';
+        }
+
+        try {
+            return Carbon::parse($date)->format('d-m-Y');
+        } catch (\Exception $e) {
+            return ''; // Return empty if date parsing fails
+        }
+    }
+}
+
+function formatDecimal($value) {
+    // Remove known unwanted text
+    $cleanedValue = str_replace(['Approx.', '<', 'g'], '', $value);
+
+    // Convert to float
+    $numericValue = is_numeric($cleanedValue) ? (float) $cleanedValue : 0;
+
+    // If value is "<1", assume 0.9 (or change as needed)
+    if (strpos($value, '<') !== false) {
+        return $numericValue > 0 ? $numericValue : 0.9;
+    }
+
+    return $numericValue;
+}
+
+// Check if the value is a decimal
+function isDecimal($value) {
+    return is_float($value) || (is_numeric($value) && strpos($value, '.') !== false);
+}
+
+function cleanDecimal($value)
+{
+    // Remove all non-digit/non-dot characters (keep only digits and dot)
+    $cleaned = preg_replace('/[^0-9.]/', '', $value);
+
+    // Fix multiple dots (e.g., '0.330.' -> '0.330')
+    // Remove extra trailing dots
+    $cleaned = rtrim($cleaned, '.');
+
+    // If there are still multiple dots, keep only the first one
+    $parts = explode('.', $cleaned, 3); // allow max 2 parts
+    if (count($parts) > 2) {
+        $cleaned = $parts[0] . '.' . $parts[1];
+    }
+
+    return is_numeric($cleaned) ? (float) $cleaned : 0;
 }

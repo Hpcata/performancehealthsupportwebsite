@@ -20,9 +20,9 @@
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                <h3 class="fw-bold mb-0">Categories List</h3>
+                <h3 class="fw-bold mb-0">Sub Categories List</h3>
                 <a href="{{ route('admin.categories.create') }}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100">
-                    <i class="icofont-plus-circle me-2 fs-6"></i> Add Category
+                    <i class="icofont-plus-circle me-2 fs-6"></i> Add Sub Category
                 </a>
             </div>
         </div>
@@ -37,7 +37,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Title</th>
-                                <th>Meal Times</th>
+                                <th>Category</th>
                                 <th>Image</th>
                                 <th>Description</th>
                                 <th>Created At</th>

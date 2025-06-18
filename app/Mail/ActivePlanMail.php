@@ -27,8 +27,8 @@ class ActivePlanMail extends Mailable
     // Build the message
     public function build()
     {
-        return $this->view('front.emails.plan_purchase')
-                    ->subject('Thank you for purchasing the ' . $this->planName . ' plan!')
+        return $this->view('front.emails.active_plan')
+                    ->subject('Thanks for Joining – Your ' . $this->planName . ' Is Active Now!')
                     ->with([
                         'user' => $this->user,
                         'planName' => $this->planName

@@ -48,7 +48,11 @@ class PlanController extends Controller
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('plans', 'public');
         }
-    
+
+        if (!empty($validated['description'])) {
+            $validated['description'] = html_entity_decode($validated['description']);
+        }
+
         $plan = Plan::create($validated);
     
         if ($request->has('meal_times')) {
@@ -87,6 +91,10 @@ class PlanController extends Controller
             $validated['image'] = $request->file('image')->store('plans', 'public');
         }
     
+        if (!empty($validated['description'])) {
+            $validated['description'] = html_entity_decode($validated['description']);
+        }
+        
         $plan->update($validated);
     
         if ($request->has('meal_times')) {
