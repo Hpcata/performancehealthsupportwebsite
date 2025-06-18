@@ -34,8 +34,6 @@ use App\Models\GoalHistory;
 use App\Mail\SportInterestMail;
 use Carbon\Carbon;
 use GrahamCampbell\ResultType\Success;
-use App\Models\QuizLog;
-use App\Mail\QuizSubmittedMail;
 
 class FrontController extends Controller
 {
@@ -509,11 +507,11 @@ class FrontController extends Controller
     public function getAllMeals(Request $request)
     {
         $userId = $request->user_id;
-    
+
         $userPlan = UserPlan::with([
-            'userMealTimes.mealTime:id,title',
-            'userMealTimes.userCategories.category:id,title',
-            'userMealTimes.userCategories.userMeals' => function ($q) use ($userId) {
+            'userCategories.category:id,title',
+            'userCategories.userSubCategories.subCategory:id,title',
+            'userCategories.userSubCategories.userMeals' => function ($q) use ($userId) {
                 $q->with([
                     'meal' => function ($mealQuery) use ($userId) {
                         $mealQuery->with(['userMealItems' => function ($q2) use ($userId) {
@@ -531,19 +529,35 @@ class FrontController extends Controller
         ])
         ->where('id', $request->user_plan_id)
         ->first();
-    
+
         $result = [];
-    
-        foreach ($userPlan->userMealTimes as $mealTime) {
-            foreach ($mealTime->userCategories as $category) {
-                foreach ($category->userMeals as $userMeal) {
+
+        foreach ($userPlan->userCategories as $mealTime) {
+            $userCategoryId = $mealTime->id;
+
+            foreach ($mealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $category) {
+                $userSubCategoryId = $category->id;
+
+                foreach (
+                    $category->userMeals
+                        ->where('user_plan_id', $userPlan->id)
+                        ->where('user_category_id', $userCategoryId)
+                        ->where('user_sub_category_id', $userSubCategoryId)
+                    as $userMeal
+                ) {
                     $meal = $userMeal->meal;
-                    $userItemMap = $userMeal->userItems->pluck('item_id')->flip(); // Lookup
-    
+
+                    $userItemMap = $userMeal->userItems
+                        ->where('user_plan_id', $userPlan->id)
+                        ->where('user_category_id', $userCategoryId)
+                        ->where('user_sub_category_id', $userSubCategoryId)
+                        ->pluck('id')
+                        ->flip();
+
                     $items = [];
                     foreach ($meal->userMealItems as $mealItem) {
                         if (!$userItemMap->has($mealItem->id)) continue;
-    
+
                         $items[] = [
                             'id' => $mealItem->id,
                             'title' => $mealItem->title,
@@ -554,13 +568,13 @@ class FrontController extends Controller
                             'category' => $mealItem->category->name ?? null,
                         ];
                     }
-    
+
                     if (count($items)) {
                         $result[] = [
-                            'meal_time_id' => $mealTime->mealTime->id,
-                            'meal_time_title' => $mealTime->mealTime->title,
-                            'category_id' => $category->category->id,
-                            'category_title' => $category->category->title,
+                            'meal_time_id' => $mealTime->category->id,
+                            'meal_time_title' => $mealTime->category->title,
+                            'category_id' => $category->subCategory->id,
+                            'category_title' => $category->subCategory->title,
                             'meal_id' => $meal->id,
                             'meal_title' => $meal->title,
                             'items' => $items
@@ -569,9 +583,10 @@ class FrontController extends Controller
                 }
             }
         }
-    
+
         return response()->json(['meals' => $result]);
-    }    
+    }
+  
 
     public function freeTestSave(Request $request)
     {
@@ -641,9 +656,6 @@ class FrontController extends Controller
         $questionnaire->supplement_feedback = $supplementFeedback;
         $questionnaire->save();
 
-        Mail::to('kerry@performancehealthsupport.com')->send(new QuizSubmittedMail($user, $questionnaire));
-        // Mail::to('kartikvadhaiya6656@gmail.com')->send(new QuizSubmittedMail($user, $questionnaire));
-
         // Return success response
         return response()->json(['success' => true, 'message' => 'Test data submitted successfully']);
     
@@ -701,30 +713,40 @@ class FrontController extends Controller
 
     public function validateCouponCode(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string|max:255',
-            'plan_id' => 'nullable|exists:plans,id',
-        ]);
-    
-        $promoCode = $request->input('code');
-        $planId = $request->input('plan_id'); // Get the plan ID
-        $currentDateTime = \Carbon\Carbon::now();
-    
-        // Fetch the coupon with active status and matching code
-        $coupon = \App\Models\Coupon::where('code', $promoCode)
-            ->where('status', 1) // Active status
-            ->first();
-    
-        if ($coupon) {
-            // Check if the coupon is within the valid date range
+        try {
+            $request->validate([
+                'code' => 'required|string|max:255',
+                'plan_id' => 'nullable|exists:plans,id',
+            ]);
+
+            $promoCode = $request->input('code');
+            $planId = $request->input('plan_id');
+            $currentDateTime = \Carbon\Carbon::now();
+
+            Log::info('Validating coupon code', [
+                'code' => $promoCode,
+                'plan_id' => $planId,
+                'user_id' => optional($request->user())->id
+            ]);
+
+            $coupon = \App\Models\Coupon::where('code', $promoCode)
+                ->where('status', 1)
+                ->first();
+
+            if (!$coupon) {
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'Invalid coupon code.',
+                ]);
+            }
+
             if ($currentDateTime->lt($coupon->start_date) || $currentDateTime->gt($coupon->end_date)) {
                 return response()->json([
                     'valid' => false,
                     'message' => 'Coupon is not valid at this time.',
                 ]);
             }
-            
-            // Check if the coupon is applicable to the selected plan
+
             $isPlanApplicable = $coupon->plans()->where('plans.id', $planId)->exists();
             if (!$isPlanApplicable) {
                 return response()->json([
@@ -732,21 +754,19 @@ class FrontController extends Controller
                     'message' => 'This coupon is not applicable to the selected plan.',
                 ]);
             }
-            
-            // Check the max_uses limit
-            if ($coupon->max_uses > 0 && $coupon->max_uses <= $coupon->usage_count) {
+
+            if ($coupon->max_uses > 0 && $coupon->usage_count >= $coupon->max_uses) {
                 return response()->json([
                     'valid' => false,
                     'message' => 'Coupon usage limit has been reached.',
                 ]);
             }
-    
-            // // Check uses_per_user limit
-            if(Auth::user() && !Auth::user()->isSuperAdmin()) {
+
+            if (Auth::check() && !Auth::user()->isSuperAdmin()) {
                 $userUsageCount = \App\Models\CouponUsage::where('coupon_id', $coupon->id)
-                    ->where('user_id', $request->user()->id)
+                    ->where('user_id', Auth::id())
                     ->count();
-        
+
                 if ($coupon->uses_per_user > 0 && $userUsageCount >= $coupon->uses_per_user) {
                     return response()->json([
                         'valid' => false,
@@ -754,22 +774,36 @@ class FrontController extends Controller
                     ]);
                 }
             }
-    
+
             // Coupon is valid
             return response()->json([
                 'valid' => true,
                 'type' => $coupon->type,
                 'discount' => $coupon->value,
             ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            
+            return response()->json([
+                'valid' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+
+            Log::error('Error validating coupon code', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => optional($request->user())->id,
+            ]);
+
+            return response()->json([
+                'valid' => false,
+                'message' => 'An unexpected error occurred. Please try again later.',
+            ], 500);
         }
-    
-        // If no valid coupon was found
-        return response()->json([
-            'valid' => false,
-            'message' => 'Invalid coupon code.',
-        ]);
     }
-    
     public function fetchWeightData(Request $request)
     {
         $userId = $request->user_id;
@@ -1422,25 +1456,22 @@ class FrontController extends Controller
             $nutritionFeedback  = $this->getFeedbackMessage($nutritionScore, 'nutrition-form');
             $sportsFeedback     = $this->getFeedbackMessage($sportsScore, 'sports-form');
             $supplementFeedback = $this->getFeedbackMessage($supplementScore, 'supplement-form');
-            if (!empty($request->testData)) {
-                $questionnaire = new Questionnaire();
-                $questionnaire->user_id = $user->id;
-                $questionnaire->name    = $user->name;
-                $questionnaire->email   = $user->email;
-                $questionnaire->phone   = $request->phone;
-                $questionnaire->question = 'free-test';
-                $questionnaire->answer   = json_encode($request->testData);
-                $questionnaire->nutrition_score      = $nutritionScore;
-                $questionnaire->nutrition_feedback   = $nutritionFeedback;
-                $questionnaire->sports_score         = $sportsScore;
-                $questionnaire->sports_feedback      = $sportsFeedback;
-                $questionnaire->supplement_score     = $supplementScore;
-                $questionnaire->supplement_feedback = $supplementFeedback;
-                $questionnaire->save();
 
-                Mail::to('kerry@performancehealthsupport.com')->send(new QuizSubmittedMail($user, $questionnaire));
+            $questionnaire = new Questionnaire();
+            $questionnaire->user_id = $user->id;
+            $questionnaire->name    = $user->name;
+            $questionnaire->email   = $user->email;
+            $questionnaire->phone   = $request->phone;
+            $questionnaire->question = 'free-test';
+            $questionnaire->answer   = json_encode($request->testData);
+            $questionnaire->nutrition_score      = $nutritionScore;
+            $questionnaire->nutrition_feedback   = $nutritionFeedback;
+            $questionnaire->sports_score         = $sportsScore;
+            $questionnaire->sports_feedback      = $sportsFeedback;
+            $questionnaire->supplement_score     = $supplementScore;
+            $questionnaire->supplement_feedback = $supplementFeedback;
+            $questionnaire->save();
 
-            }
             return response()->json([
                 'status' => 'success',
                 'user_id' => $user->id,
@@ -1458,8 +1489,6 @@ class FrontController extends Controller
                 'password' => Hash::make($request->input('password')), // Hashed password of the admin user.
             ]);
             
-            $user = \App\Models\User::where('email', $request->email)->first();
-
             $nutritionScore  = $request->totalAnswerCounts['nutrition-form'] ?? 0;
             $sportsScore     = $request->totalAnswerCounts['sports-form'] ?? 0;
             $supplementScore = $request->totalAnswerCounts['supplement-form'] ?? 0;
@@ -1483,8 +1512,6 @@ class FrontController extends Controller
             $questionnaire->supplement_score     = $supplementScore;
             $questionnaire->supplement_feedback = $supplementFeedback;
             $questionnaire->save();
-
-            Mail::to('kerry@performancehealthsupport.com')->send(new QuizSubmittedMail($user, $questionnaire));
 
             return response()->json([
                 'status' => 'success',
@@ -1537,82 +1564,6 @@ class FrontController extends Controller
             'success' => true,
             'redirect_url' => route('front.profile', ['id' => $id]) . '?admin_view=1'
         ]);
-    }
-
-    public function trackQuizClick(Request $request)
-    {
-        $ip = $request->ip();
-        $userAgent = $request->header('User-Agent');
-
-        $quizLog = QuizLog::firstOrCreate(
-            ['ip_address' => $ip],
-            [
-                'user_agent' => $userAgent,
-                'free_quiz_clicks' => 0
-            ]
-        );
-
-        $quizLog->increment('free_quiz_clicks');
-
-        return response()->json(['success' => true]);
-    }
-
-    public function trackQuizProgress(Request $request)
-    {
-        $ip = $request->ip();
-        $userAgent = $request->header('User-Agent');
-        $stepData = $request->input('stepData');
-        $currentStep = $request->input('currentStep');
-
-        $quizLog = QuizLog::firstOrCreate(
-            ['ip_address' => $ip],
-            [
-                'user_agent' => $userAgent,
-                'completed_steps' => []
-            ]
-        );
-
-        $completedSteps = $quizLog->completed_steps ?? [];
-        $completedSteps[$currentStep] = $stepData;
-        
-        $quizLog->update([
-            'completed_steps' => $completedSteps
-        ]);
-
-        return response()->json(['success' => true]);
-    }
-
-    public function trackQuizCompletion(Request $request)
-    {
-        $ip = $request->ip();
-        $userAgent = $request->header('User-Agent');
-        $email = $request->input('email');
-        $userId = $request->input('userId');
-
-        $quizLog = QuizLog::firstOrCreate(
-            [
-                'ip_address' => $ip,
-                'email' => $email
-            ],
-            [
-                'user_agent' => $userAgent,
-                'completed_steps' => []
-            ]
-        );
-
-        if ($email) {
-            $quizLog->update([
-                'email' => $email,
-                'user_id' => $userId,
-                'completed_with_email' => true
-            ]);
-        } else {
-            $quizLog->update([
-                'completed_without_email' => true
-            ]);
-        }
-
-        return response()->json(['success' => true]);
     }
 
 }

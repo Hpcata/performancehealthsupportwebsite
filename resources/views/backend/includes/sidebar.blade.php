@@ -18,6 +18,14 @@
 				</a>
 			</li>
 			<li>
+				<a class="m-link {{request()->routeIs('admin.quiz.*') ? 'active' : '' }}" href="{{ route('admin.quiz.index') }}" data-bs-toggle="tooltip" 
+        			data-bs-placement="right" 
+        			title="Quiz">
+					<i class="icofont-page fs-5"></i>
+					<span>Quiz</span>
+				</a>
+			</li>
+			<li>
 				<a class="m-link {{request()->routeIs('pages.*') ? 'active' : '' }}" href="{{ route('pages.index') }}">
 					<i class="icofont-page fs-5"></i>
 					<span>Pages</span>

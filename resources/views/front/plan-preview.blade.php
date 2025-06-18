@@ -105,7 +105,7 @@
     </style>
 </head>
 <body>
-    @if($printAllmeal != 'false')
+    @if($printAllmeal)
         @foreach($userPlans as $userPlan)
             <div class="header">
                 <!-- Sport-specific image based on the sport the user is training for -->
@@ -278,9 +278,8 @@
     @else
         @foreach($userPlans as $userPlan)
             @php
-                $planId = $userPlan->plan_id;
-                $selectedMealTimes = $groupedData[$planId] ?? null;
-                dd($selectedMealTimes);
+            $planId = $userPlan->id;
+            $selectedMealTimes = $groupedData[$planId] ?? null;
             @endphp
 
             @if ($selectedMealTimes)

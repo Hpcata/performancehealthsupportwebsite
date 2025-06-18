@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\FlagController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\QuizController;
 
 /*
 |--------------------------------------------------------------------------
@@ -437,6 +438,10 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
 		Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
+		// Quiz
+		Route::get('/quiz', [QuizController::class, 'index'])->name('admin.quiz.index');
+		Route::post('/quiz', [QuizController::class, 'store'])->name('admin.quiz.store');
+
 	});
 });
 
@@ -520,6 +525,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/delete-report', [FrontController::class, 'deleteReport'])->name('front.delete.report');
 
 	Route::get('/user/{user}/plan/{plan}/meals', [FrontPlanController::class, 'ajaxGetMeals'])->name('user.plan.meals');
+
 
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');

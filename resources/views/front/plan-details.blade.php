@@ -200,7 +200,7 @@
         </div>
     </div>
 
-     <!-- Meal Modal -->
+    <!-- Meal Modal -->
     <div class="modal fade" id="mealModel" tabindex="-1" aria-labelledby="subcategoryItemsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -383,7 +383,7 @@
             const planId = $(this).data("plan-id");
             const userId = $(this).data("user-id");
             // Set form action for download button
-            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
+            // $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
 
             $("#downloadPdfForm input[name='user_id']").val(userId);
 

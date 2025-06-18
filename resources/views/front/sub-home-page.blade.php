@@ -2329,7 +2329,7 @@
                                             <h3 class="text-center mt-1 text-black supplement-percentage d-none"></h3>
 
                                             <div class="text-center mt-4">
-                                                <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="supplement">
+                                                <!-- <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="supplement">
                                                     <svg width="21" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="supplement-lock">
                                                         <path d="M8.16667 12.834V8.16732C8.16667 6.62022 8.78125 5.13649 9.87521 4.04253C10.9692 2.94857 12.4529 2.33398 14 2.33398C15.5471 2.33398 17.0308 2.94857 18.1248 4.04253C19.2188 5.13649 19.8333 6.62022 19.8333 8.16732V12.834M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                                     </svg> 
@@ -2337,7 +2337,7 @@
                                                     <path d="M19.8333 8.16732C19.8333 6.62022 19.2188 5.13649 18.1248 4.04253C17.0308 2.94857 15.5471 2.33398 14 2.33398C12.4529 2.33398 10.9692 2.94857 9.87521 4.04253C8.78125 5.13649 8.16667 6.62022 8.16667 8.16732V10M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                                     </svg>
                                                     Unlock Results
-                                                </a>
+                                                </a> -->
                                             </div>
                                         </div>
                                     </div>
@@ -2380,7 +2380,7 @@
                                             <h3 class="text-center mt-1 text-black sports-percentage d-none"></h3>
 
                                             <div class="text-center mt-4">
-                                                <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="sport">
+                                                <!-- <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="sport">
                                                     <svg width="21" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="sport-lock">
                                                         <path d="M8.16667 12.834V8.16732C8.16667 6.62022 8.78125 5.13649 9.87521 4.04253C10.9692 2.94857 12.4529 2.33398 14 2.33398C15.5471 2.33398 17.0308 2.94857 18.1248 4.04253C19.2188 5.13649 19.8333 6.62022 19.8333 8.16732V12.834M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                                     </svg>
@@ -2388,7 +2388,7 @@
                                                     <path d="M19.8333 8.16732C19.8333 6.62022 19.2188 5.13649 18.1248 4.04253C17.0308 2.94857 15.5471 2.33398 14 2.33398C12.4529 2.33398 10.9692 2.94857 9.87521 4.04253C8.78125 5.13649 8.16667 6.62022 8.16667 8.16732V10M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                                 </svg>  
                                                     Unlock Results
-                                                </a>
+                                                </a> -->
                                             </div>
                                         </div>
                                     </div>
@@ -2520,7 +2520,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detailsModalLabel">Enter Your Details</h5>
+                    <h5 class="modal-title" id="detailsModalLabel">Get your results instantly.  </h5>
                     <button type="button" class="btn-close detail-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -2528,7 +2528,7 @@
                         <input type="hidden" id="formType" name="formType">
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">Name:</label>
+                            <label for="name" class="form-label">First Name:</label>
                             <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="mb-3">
@@ -2543,10 +2543,10 @@
                             <label for="mobile" class="form-label">Mobile:</label>
                             <input type="text" class="form-control" id="mobile" name="mobile" required>
                         </div>
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label for="password" class="form-label">Password:</label>
                             <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
+                        </div> -->
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
@@ -3008,82 +3008,117 @@
             }
 
             // Function to update meter-arrow rotation dynamically based on the answer count
+            // function updateMeterArrows(type) {
+            //     console.log('type', type);
+            //     if (type == 'nutrition-form') {
+            //         let degree = 5.14285714;
+            //         let totalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * degree); // Ensure non-negative
+            //         const maxTotal = 35;
+            //         const percentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / maxTotal) * 100);
+                    
+            //         console.log("Degree:", totalDegree);
+            //         console.log(Math.round(percentage));
+                    
+            //         $('.nutrition-percentage').text(Math.round(percentage) + "%");
+            //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + totalDegree + 'deg)');
+            //     }
+
+            //     if (type == 'sport') {
+            //         const maxTotal = 15;
+            //         const degree = 180 / maxTotal;
+            //         let totalDegree = Math.max(0, totalAnswerCounts['sports-form'] * degree); // Ensure non-negative
+            //         const percentage = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal) * 100);
+                    
+            //         // console.log("Degree:", totalDegree);
+            //         // console.log(Math.round(percentage));
+                    
+            //         $('.sports-percentage').text(Math.round(percentage) + "%");
+            //         $('.score-meter-box-2').removeClass('score-meter-out');
+            //         $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree + 'deg)');
+
+            //         const maxTotal1 = 5;
+            //         const degree1 = 180 / maxTotal1;
+            //         let totalDegree1 = Math.max(0, totalAnswerCounts['supplement-form'] * degree1); // Ensure non-negative
+            //         const percentage1 = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal1) * 100);
+                    
+            //         // console.log("Degree:", totalDegree1);
+            //         // console.log(Math.round(percentage1));
+                    
+            //         $('.supplement-percentage').text(Math.round(percentage1) + "%");
+            //         $('.score-meter-box-3').removeClass('score-meter-out');
+            //         $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree1 + 'deg)');
+
+            //         let nutritiondegree = 5.14285714;
+            //         let nutritiontotalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * nutritiondegree); // Ensure non-negative
+            //         const nutritionmaxTotal = 35;
+            //         const nutritionpercentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / nutritionmaxTotal) * 100);
+                    
+            //         $('.nutrition-percentage').text(Math.round(nutritionpercentage) + "%");
+            //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + nutritiontotalDegree + 'deg)');
+            //     }
+
+            //     if (type == 'supplement') {
+            //         const maxTotal = 5;
+            //         const degree = 180 / maxTotal;
+            //         let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
+            //         const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
+                    
+            //         // console.log("Degree:", totalDegree);
+            //         // console.log(Math.round(percentage));
+                    
+            //         $('.supplement-percentage').text(Math.round(percentage) + "%");
+            //         $('.score-meter-box-3').removeClass('score-meter-out');
+            //         $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
+
+            //         const maxTotal2 = 15;
+            //         const degree2 = 180 / maxTotal2;
+            //         let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
+            //         const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
+                    
+            //         // console.log("Degree:", totalDegree2);
+            //         // console.log(Math.round(percentage2));
+                    
+            //         $('.sports-percentage').text(Math.round(percentage2) + "%");
+            //         $('.score-meter-box-2').removeClass('score-meter-out');
+            //         $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree2 + 'deg)');
+
+            //         let nutritiondegree = 5.14285714;
+            //         let nutritiontotalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * nutritiondegree); // Ensure non-negative
+            //         const nutritionmaxTotal = 35;
+            //         const nutritionpercentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / nutritionmaxTotal) * 100);
+                    
+            //         $('.nutrition-percentage').text(Math.round(nutritionpercentage) + "%");
+            //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + nutritiontotalDegree + 'deg)');
+            //     }
+            //     // Reset the totalAnswerCount for future submissions
+            // }
+
             function updateMeterArrows(type) {
-                // Calculate the degree of rotation for each form based on the total count
-                // const nutritionDegree = totalAnswerCounts['nutrition-form'] * 6; // Rotate 6 degrees per answer
-                // const sportsDegree = totalAnswerCounts['sports-form'] * 6;
-                // const supplementDegree = totalAnswerCounts['supplement-form'] * 6;
+                const maxTotal = 5;
+                const degree = 180 / maxTotal;
+                let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
+                const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
+                
+                $('.supplement-percentage').text(Math.round(percentage) + "%");
+                $('.score-meter-box-3').removeClass('score-meter-out');
+                $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
 
-                // Update the rotation of the meter arrows in real-time
-                // document.querySelector('.meter-arrow.nutrition-result').style.transform = `rotate(${nutritionDegree}deg)`;
-                // document.querySelector('.meter-arrow.sport-result').style.transform = `rotate(${sportsDegree}deg)`;
-                // document.querySelector('.meter-arrow.supplement-result').style.transform = `rotate(${supplementDegree}deg)`;
-                console.log('type', type);
-                if (type == 'nutrition-form') {
-                    let degree = 5.14285714;
-                    let totalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * degree); // Ensure non-negative
-                    const maxTotal = 35;
-                    const percentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / maxTotal) * 100);
-                    
-                    console.log("Degree:", totalDegree);
-                    console.log(Math.round(percentage));
-                    
-                    $('.nutrition-percentage').text(Math.round(percentage) + "%");
-                    $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + totalDegree + 'deg)');
-                }
+                const maxTotal2 = 15;
+                const degree2 = 180 / maxTotal2;
+                let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
+                const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
+                
+                $('.sports-percentage').text(Math.round(percentage2) + "%");
+                $('.score-meter-box-2').removeClass('score-meter-out');
+                $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree2 + 'deg)');
 
-                if (type == 'sport') {
-                    const maxTotal = 15;
-                    const degree = 180 / maxTotal;
-                    let totalDegree = Math.max(0, totalAnswerCounts['sports-form'] * degree); // Ensure non-negative
-                    const percentage = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal) * 100);
-                    
-                    // console.log("Degree:", totalDegree);
-                    // console.log(Math.round(percentage));
-                    
-                    $('.sports-percentage').text(Math.round(percentage) + "%");
-                    $('.score-meter-box-2').removeClass('score-meter-out');
-                    $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree + 'deg)');
-
-                    const maxTotal1 = 5;
-                    const degree1 = 180 / maxTotal1;
-                    let totalDegree1 = Math.max(0, totalAnswerCounts['supplement-form'] * degree1); // Ensure non-negative
-                    const percentage1 = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal1) * 100);
-                    
-                    // console.log("Degree:", totalDegree1);
-                    // console.log(Math.round(percentage1));
-                    
-                    $('.supplement-percentage').text(Math.round(percentage1) + "%");
-                    $('.score-meter-box-3').removeClass('score-meter-out');
-                    $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree1 + 'deg)');
-                }
-
-                if (type == 'supplement') {
-                    const maxTotal = 5;
-                    const degree = 180 / maxTotal;
-                    let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
-                    const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
-                    
-                    // console.log("Degree:", totalDegree);
-                    // console.log(Math.round(percentage));
-                    
-                    $('.supplement-percentage').text(Math.round(percentage) + "%");
-                    $('.score-meter-box-3').removeClass('score-meter-out');
-                    $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
-
-                    const maxTotal2 = 15;
-                    const degree2 = 180 / maxTotal2;
-                    let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
-                    const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
-                    
-                    // console.log("Degree:", totalDegree2);
-                    // console.log(Math.round(percentage2));
-                    
-                    $('.sports-percentage').text(Math.round(percentage2) + "%");
-                    $('.score-meter-box-2').removeClass('score-meter-out');
-                    $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree2 + 'deg)');
-                }
-                // Reset the totalAnswerCount for future submissions
+                let nutritiondegree = 5.14285714;
+                let nutritiontotalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * nutritiondegree); // Ensure non-negative
+                const nutritionmaxTotal = 35;
+                const nutritionpercentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / nutritionmaxTotal) * 100);
+                
+                $('.nutrition-percentage').text(Math.round(nutritionpercentage) + "%");
+                $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + nutritiontotalDegree + 'deg)');
             }
 
             // Event listener for step navigation buttons (previous/next steps)
@@ -3152,6 +3187,9 @@
                 // localStorage.setItem("testStepsData", JSON.stringify(stepsData));
                 localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
 
+                $('#detailsModal').modal('show');
+                $('#TakeTestModel').removeClass('blur-background'); // Remove blur
+
                 // console.log("Total Answer Counts by Form: ", totalAnswerCounts);
 
                 // $('#div9').css('display', 'block');
@@ -3160,21 +3198,24 @@
 
                 // updateMeterArrows('nutrition-form');
 
-                google.accounts.id.initialize({
-                    client_id: "293809303653-og7a8udbu78o7gjaffkm7vq1jjoh3cnl.apps.googleusercontent.com", // Replace with your real client ID
-                    callback: handleCredentialResponse
-                });
+                // google.accounts.id.initialize({
+                //     client_id: "293809303653-og7a8udbu78o7gjaffkm7vq1jjoh3cnl.apps.googleusercontent.com", // Replace with your real client ID
+                //     callback: handleCredentialResponse
+                // });
 
-                google.accounts.id.prompt((notification) => {
-                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                        // User closed the One Tap prompt or it was not displayed
-                        // openManualRegistrationModal(); // Your function to show the modal
-                        console.log("Opening manual registration modal...");
-                        registerModal.modal('show'); 
-                        $('#registerModal').css('z-index', '1060');
-                        $('#TakeTestModel').addClass('blur-background');
-                    }
-                });
+                // google.accounts.id.prompt((notification) => {
+                //     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                //         // User closed the One Tap prompt or it was not displayed
+                //         // openManualRegistrationModal(); // Your function to show the modal
+                //         console.log("Opening manual registration modal...");
+                //         // registerModal.modal('show'); 
+                //         $('#detailsModal').modal('show');
+
+                //         // $('#registerModal').css('z-index', '1060');
+                //         $('#TakeTestModel').addClass('blur-background');
+                //     }
+                // });
+
             });
 
             function handleCredentialResponse(response) {
@@ -3264,168 +3305,15 @@
                 .catch(error => console.error("Error Saving Questionnaire Data:", error));
             }
 
-            // Handle form submission
             $('#detailsForm').on('submit', function (e) {
                 e.preventDefault(); // Prevent default form submission
-                const stepsData = JSON.parse(localStorage.getItem("testStepsData"));
-                const totalAnswerCounts = JSON.parse(localStorage.getItem("totalAnswerCounts"));
-                console.log(stepsData);
-                console.log(totalAnswerCounts);
+                
                 let type = $('#formType').val() // Retrieve stored type (sports or supplement)
-                console.log(type);
                 let email = $('#detailsForm').find('#email').val();
                 let name = $('#detailsForm').find('#name').val();
-                let password = $('#detailsForm').find('#password').val();
-                let mobile = $('#detailsForm').find('#mobile').val();
-                // $('#detailsModal').modal('hide');
-                // $('#TakeTestModel').removeClass('blur-background');
+                let phone = $('#detailsForm').find('#mobile').val();
+                let password = null;
 
-                // Update meter arrow based on form type
-                // updateMeterArrows(type);
-            
-                // Simulate AJAX request to submit form data
-                $.ajax({
-                    url: '{{ route("front.unlock-result") }}', // Replace with actual API URL
-                    method: 'POST',
-                    data: {
-                        email: email,
-                        name: name,
-                        password: password,
-                        phone: mobile,
-                        type: type, // Include the type (sports or supplement)
-                        testData: stepsData,
-                        totalAnswerCounts: totalAnswerCounts,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function (response) {
-                        if(response.status == "success") {
-                            console.log("Form submitted successfully!", response);
-                            
-                            // Track completion
-                            $.ajax({
-                                url: "{{ route('front.track.quiz.completion') }}",
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                },
-                                data: {
-                                    userId: response.user_id,
-                                    email: email
-                                },
-                                success: function(response) {
-                                    console.log('Quiz completion tracked');
-                                }
-                            });
-                            // Close modal
-                            $('#detailsModal').modal('hide');
-                            $('#TakeTestModel').removeClass('blur-background');
-
-                            updateMeterArrows(type);
-
-                            // if(type == "sport") {
-                                $('.sport-plan .score-lock').addClass('d-none');
-                                $('.sports-percentage').removeClass('d-none');
-
-                                // Hide sport-lock and show sport-unlock
-                                $('.sport-plan .sport-lock').addClass('d-none');
-                                $('.sport-plan .sport-unlock').removeClass('d-none');
-                                $('.sport-plan .unlock-result').addClass('d-none');
-
-                                // Hide supplement-lock and show supplement-unlock
-                                $('.supplement-plan .supplement-lock').addClass('d-none');
-                                $('.supplement-plan .score-lock').addClass('d-none');
-                                $('.supplement-plan .supplement-unlock').removeClass('d-none');
-                                $('.supplement-percentage').removeClass('d-none');
-                                $('.supplement-plan .unlock-result').addClass('d-none');
-                            // }
-                            // if(type == "supplement") {
-                            //     $('.supplement-plan .score-lock').addClass('d-none');
-
-                            //     // Hide supplement-lock and show supplement-unlock
-                            //     $('.supplement-plan .supplement-lock').addClass('d-none');
-                            //     $('.supplement-plan .supplement-unlock').removeClass('d-none');
-                            // }
-
-                            localStorage.removeItem("testStepsData");
-                            localStorage.removeItem("totalAnswerCounts");
-
-                            $('#detailsForm')[0].reset();
-                        }else {
-                            alert(response.message);
-                            $('.supplement-plan .unlock-result').removeClass('d-none');
-                            $('.sport-plan .unlock-result').removeClass('d-none');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        alert("Error: ", error);
-                        console.log("Error submitting form:", error);
-                        $('.supplement-plan .unlock-result').removeClass('d-none');
-                        $('.sport-plan .unlock-result').removeClass('d-none');
-                    }
-                });
-            });
-
-            // submitButton.addEventListener("click", () => {
-
-            //     currentStep = 8;
-            //     updateModalTitle(currentStep);
-
-            //     if (!validateStep(currentStep)) {
-            //         return; // Stop submission if validation fails
-            //     }
-
-            //     // Collect step data for all steps and store them in local storage
-            //     const stepsData = {}; // Object to store all steps data
-            //     totalAnswerCounts = 0; // Reset the total count before collecting new data
-
-            //     // Collect step data for all steps and store them in local storage
-            //     for (let step = 1; step <= 8; step++) {
-            //         const stepData = collectStepData(step);
-
-            //         // Store step data in local storage
-            //         localStorage.setItem(`step-${step}-data`, JSON.stringify(stepData));
-            //         stepsData[`step-${step}`] = stepData;  // Merge collected data into stepsData object
-            //     }
-            //     console.log(stepsData);
-            //     // Save all the collected test data to localStorage
-            //     localStorage.setItem("testStepsData", JSON.stringify(stepsData));
-            //     localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
-
-            //     console.log("Total Answer Count: ", totalAnswerCounts);
-
-            //     // Save the total answer count to localStorage (can be used for final processing or API call)
-            //     $('#div9').css('display', 'block');
-            //     $('#div8').css('display', 'none');
-            //     $('#step-9').addClass('active');
-                
-
-            //     // Update meter arrows one last time
-            //     updateMeterArrows();
-
-            //     totalAnswerCounts = 0;
-               
-            // });
-
-            // $('.last-step').click(function () {
-            //     if (currentModal) {
-            //         currentModal.modal('hide'); // Close the current modal using jQuery
-            //     }
-
-            //     if (registerModal) {
-            //         registerModal.modal('show'); // Open the register modal using jQuery
-            //     }
-            // })
-            // Registration form submit handler
-            registerForm.submit(function (event) {
-                event.preventDefault();
-
-                // Capture the registration form data (name, email, password)
-                const name = $("#register-name").val();
-                const email = $("#register-email").val();
-                const phone = $("#register-phone").val();
-                const password = $("#register-password").val();
-
-                // Get test data from localStorage
                 const testData = JSON.parse(localStorage.getItem("testStepsData"));
                 const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
 
@@ -3482,10 +3370,25 @@
                                     $('#step-9').addClass('active');
 
                                     updateMeterArrows('nutrition-form');
+
+                                    $('.sport-plan .score-lock').addClass('d-none');
+                                    $('.sports-percentage').removeClass('d-none');
+
+                                    // Hide sport-lock and show sport-unlock
+                                    $('.sport-plan .sport-lock').addClass('d-none');
+                                    $('.sport-plan .sport-unlock').removeClass('d-none');
+                                    $('.sport-plan .unlock-result').addClass('d-none');
+
+                                    // Hide supplement-lock and show supplement-unlock
+                                    $('.supplement-plan .supplement-lock').addClass('d-none');
+                                    $('.supplement-plan .score-lock').addClass('d-none');
+                                    $('.supplement-plan .supplement-unlock').removeClass('d-none');
+                                    $('.supplement-percentage').removeClass('d-none');
+                                    $('.supplement-plan .unlock-result').addClass('d-none');
                                     // Clear localStorage and close the modal
                                     localStorage.removeItem("testStepsData");
                                     localStorage.removeItem("totalAnswerCounts");
-                                    registerModal.modal('hide'); // Close the register modal
+                                    $('#detailsModal').modal('hide'); // Close the register modal
                                     $('#TakeTestModel').removeClass('blur-background');
                                     // showThankYouModal();
                                 },
@@ -3499,7 +3402,7 @@
                             // Clear localStorage and close the modal
                             localStorage.removeItem("testStepsData");
                             localStorage.removeItem("totalAnswerCounts");
-                            registerModal.modal('hide'); // Close the register modal
+                            $('#detailsModal').modal('hide');
                             $('#TakeTestModel').removeClass('blur-background');
                             // loginModal.modal('show');
 
@@ -3509,7 +3412,204 @@
                         alert("Error registering.");
                     }
                 });
-            });
+            })
+
+            // // Handle form submission
+            // $('#detailsForm').on('submit', function (e) {
+            //     e.preventDefault(); // Prevent default form submission
+            //     const stepsData = JSON.parse(localStorage.getItem("testStepsData"));
+            //     const totalAnswerCounts = JSON.parse(localStorage.getItem("totalAnswerCounts"));
+            //     // console.log(stepsData);
+            //     // console.log(totalAnswerCounts);
+            //     let type = $('#formType').val() // Retrieve stored type (sports or supplement)
+            //     // console.log(type);
+            //     let email = $('#detailsForm').find('#email').val();
+            //     let name = $('#detailsForm').find('#name').val();
+            //     // let password = $('#detailsForm').find('#password').val();
+            //     let mobile = $('#detailsForm').find('#mobile').val();
+            //     // $('#detailsModal').modal('hide');
+            //     // $('#TakeTestModel').removeClass('blur-background');
+
+            //     // Update meter arrow based on form type
+            //     // updateMeterArrows(type);
+            
+            //     // Simulate AJAX request to submit form data
+            //     $.ajax({
+            //         url: '{{ route("front.unlock-result") }}', // Replace with actual API URL
+            //         method: 'POST',
+            //         data: {
+            //             email: email,
+            //             name: name,
+            //             password: password,
+            //             phone: mobile,
+            //             type: type, // Include the type (sports or supplement)
+            //             testData: stepsData,
+            //             totalAnswerCounts: totalAnswerCounts,
+            //             _token: "{{ csrf_token() }}"
+            //         },
+            //         success: function (response) {
+            //             if(response.status == "success") {
+            //                 console.log("Form submitted successfully!", response);
+                            
+            //                 // Track completion
+            //                 $.ajax({
+            //                     url: "{{ route('front.track.quiz.completion') }}",
+            //                     method: 'POST',
+            //                     headers: {
+            //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            //                     },
+            //                     data: {
+            //                         userId: response.user_id,
+            //                         email: email
+            //                     },
+            //                     success: function(response) {
+            //                         console.log('Quiz completion tracked');
+            //                     }
+            //                 });
+            //                 // Close modal
+            //                 $('#detailsModal').modal('hide');
+            //                 $('#TakeTestModel').removeClass('blur-background');
+
+            //                 updateMeterArrows(type);
+
+            //                 // if(type == "sport") {
+            //                     $('.sport-plan .score-lock').addClass('d-none');
+            //                     $('.sports-percentage').removeClass('d-none');
+
+            //                     // Hide sport-lock and show sport-unlock
+            //                     $('.sport-plan .sport-lock').addClass('d-none');
+            //                     $('.sport-plan .sport-unlock').removeClass('d-none');
+            //                     $('.sport-plan .unlock-result').addClass('d-none');
+
+            //                     // Hide supplement-lock and show supplement-unlock
+            //                     $('.supplement-plan .supplement-lock').addClass('d-none');
+            //                     $('.supplement-plan .score-lock').addClass('d-none');
+            //                     $('.supplement-plan .supplement-unlock').removeClass('d-none');
+            //                     $('.supplement-percentage').removeClass('d-none');
+            //                     $('.supplement-plan .unlock-result').addClass('d-none');
+            //                 // }
+            //                 // if(type == "supplement") {
+            //                 //     $('.supplement-plan .score-lock').addClass('d-none');
+
+            //                 //     // Hide supplement-lock and show supplement-unlock
+            //                 //     $('.supplement-plan .supplement-lock').addClass('d-none');
+            //                 //     $('.supplement-plan .supplement-unlock').removeClass('d-none');
+            //                 // }
+
+            //                 localStorage.removeItem("testStepsData");
+            //                 localStorage.removeItem("totalAnswerCounts");
+
+            //                 $('#detailsForm')[0].reset();
+            //             }else {
+            //                 alert(response.message);
+            //                 $('.supplement-plan .unlock-result').removeClass('d-none');
+            //                 $('.sport-plan .unlock-result').removeClass('d-none');
+            //             }
+            //         },
+            //         error: function (xhr, status, error) {
+            //             alert("Error: ", error);
+            //             console.log("Error submitting form:", error);
+            //             $('.supplement-plan .unlock-result').removeClass('d-none');
+            //             $('.sport-plan .unlock-result').removeClass('d-none');
+            //         }
+            //     });
+            // });
+
+            // Registration form submit handler
+            // registerForm.submit(function (event) {
+            //     event.preventDefault();
+
+            //     // Capture the registration form data (name, email, password)
+            //     const name = $("#register-name").val();
+            //     const email = $("#register-email").val();
+            //     const phone = $("#register-phone").val();
+            //     const password = $("#register-password").val();
+
+            //     // Get test data from localStorage
+            //     const testData = JSON.parse(localStorage.getItem("testStepsData"));
+            //     const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
+
+            //     // Prepare data for submission
+            //     const registrationData = {
+            //         name,
+            //         email,
+            //         password,
+            //         phone
+            //     };
+
+            //     // Simulate API request to register the user
+            //     $.ajax({
+            //         url: "{{ route('front.register') }}",
+            //         method: "POST",
+            //         contentType: "application/json",
+            //         headers: {
+            //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            //         },
+            //         data: JSON.stringify(registrationData),
+            //         success: function (data) {
+            //             if (data.success) {
+            //                 const userId = data.user.id;
+
+            //                 // Now, associate the user ID with the test form data and save it to the database
+            //                 $.ajax({
+            //                     url: "{{ route('front.submit-free-test') }}",
+            //                     method: "POST",
+            //                     contentType: "application/json",
+            //                     headers: {
+            //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            //                     },
+            //                     data: JSON.stringify({ userId, name, email, phone, testData, totalAnswerCount }),
+            //                     success: function () {
+            //                         // alert("Registration and Test Data Submission Successful!");
+            //                         // Track completion
+            //                         $.ajax({
+            //                             url: "{{ route('front.track.quiz.completion') }}",
+            //                             method: 'POST',
+            //                             headers: {
+            //                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            //                             },
+            //                             data: {
+            //                                 userId: userId,
+            //                                 email: email
+            //                             },
+            //                             success: function(response) {
+            //                                 console.log('Quiz completion tracked');
+            //                             }
+            //                         });
+
+            //                         $('#div9').css('display', 'block');
+            //                         $('#div8').css('display', 'none');
+            //                         $('#step-9').addClass('active');
+
+            //                         updateMeterArrows('nutrition-form');
+            //                         // Clear localStorage and close the modal
+            //                         localStorage.removeItem("testStepsData");
+            //                         localStorage.removeItem("totalAnswerCounts");
+            //                         registerModal.modal('hide'); // Close the register modal
+            //                         $('#TakeTestModel').removeClass('blur-background');
+            //                         // showThankYouModal();
+            //                     },
+            //                     error: function () {
+            //                         alert("Error submitting test data.");
+            //                     }
+            //                 });
+            //             } else {
+            //                 alert(data.message);
+
+            //                 // Clear localStorage and close the modal
+            //                 localStorage.removeItem("testStepsData");
+            //                 localStorage.removeItem("totalAnswerCounts");
+            //                 registerModal.modal('hide'); // Close the register modal
+            //                 $('#TakeTestModel').removeClass('blur-background');
+            //                 // loginModal.modal('show');
+
+            //             }
+            //         },
+            //         error: function () {
+            //             alert("Error registering.");
+            //         }
+            //     });
+            // });
 
             // Login form submit handler
             loginForm.submit(function (event) {
@@ -3733,9 +3833,9 @@
                 var price = $(this).data('plan-price');     // Get the plan price (if needed)
                 
                 // Update modal title with plan name (optional)
-                ('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + '($' + price+')');
+                $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + ' ($' + price + ')');
                 // Check if the user is authenticated
-                var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+                const isAuthenticated = @json(Auth::guard('web')->check());
                 var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};
                 console.log('Authenticated and not admin, User ID:', userId);
 
@@ -3748,7 +3848,7 @@
                     $('#payment-details').show();
                     @if(Auth::check())
                         $('#name').val('{{ Auth::user()->first_name }} {{Auth::user()->last_name }}');  // Pre-fill name field
-                        $('#email').val('{{ Auth::user()->email }}');  // Pre-fill email field
+                        $('#emailId').val('{{ Auth::user()->email }}');  // Pre-fill email field
                         $('#phone').val('{{ Auth::user()->phone ?? "" }}');  // Pre-fill phone field, use empty string if null
                     @endif
                     // Show the modal
