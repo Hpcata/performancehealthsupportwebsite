@@ -211,7 +211,7 @@
         <div class="container">
             <h2 class="heading mb-3 d-flex">
                 <div class="mt-2 h2 text-nowrap">Nutrition plans built by <br> Sports Nutrition expert, <br>
-                    Kerry O’Bryan
+                    Kerry O'Bryan
                 </div>
                 <span class="border-heading"></span>
             </h2>
@@ -392,7 +392,7 @@
                                                                             <h3>History</h3>
                                                                             <p>Nutrition + Medical History 
                                                                                 Dietary preferences, supplement use, and medical screening information are recorded. 
-                                                                                You can also create your own ‘BioHealth Passport’ where blood test results and scans etc can be uploaded.
+                                                                                You can also create your own 'BioHealth Passport' where blood test results and scans etc can be uploaded.
                                                                             </p>
                                                                         </div>
                                                                     </div>
@@ -575,7 +575,7 @@
                                                                     <div class="col-md-5 col-lg-4">
                                                                         <div class="sample-content">
                                                                             <h3>Competition + Injury / Surgery Plans</h3>
-                                                                            <p>Whether you’re getting organised for a comp or recovering from injury, a custom nutrition plan will ensure your nutrition is optimised for peak performance or fast healing.</p>
+                                                                            <p>Whether you're getting organised for a comp or recovering from injury, a custom nutrition plan will ensure your nutrition is optimised for peak performance or fast healing.</p>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-7 col-lg-8">
@@ -796,7 +796,7 @@
             <div class="col-lg-12" data-aos="fade-up">
                 <h2 class="heading mb-3  d-flex align-items-start" data-aos="fade-up" data-aos-delay="100">
                     <div class="text-nowrap">Teams and organisations<br>
-                        who I’ve worked with
+                        who I've worked with
                     </div>
 
                     <span class="border-heading"></span>
@@ -1149,51 +1149,99 @@
                                             <tbody>
                                                 <tr>
                                                     <td>Chicken</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][chicken]" value="0" id="Chicken-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][chicken]" value="1" id="Chicken-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][chicken]" value="0" id="Chicken-3"></td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="High" data-correct="0" type="radio" name="ans[nutrition-Q-1][chicken]" value="0" id="Chicken-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Low" data-correct="1" type="radio" name="ans[nutrition-Q-1][chicken]" value="1" id="Chicken-2">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-1][chicken]" value="0" id="Chicken-3">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Baked beans</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="1" id="Bakedbeans-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="0" id="Bakedbeans-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="0" id="Bakedbeans-3"></td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="1" id="Bakedbeans-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="0" id="Bakedbeans-2">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-1][baked_beans]" value="0" id="Bakedbeans-3">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Grain bread</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="1" id="GrainBread-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="0" id="GrainBread-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="0" id="GrainBread-3"></td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="1" id="GrainBread-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="0" id="GrainBread-2">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-1][grain_bread]" value="0" id="GrainBread-3">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Avocado</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][avocado]" value="0" id="Avocado-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][avocado]" value="1" id="Avocado-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][avocado]" value="0" id="Avocado-3"></td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="High" data-correct="0" type="radio" name="ans[nutrition-Q-1][avocado]" value="0" id="Avocado-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Low" data-correct="1" type="radio" name="ans[nutrition-Q-1][avocado]" value="1" id="Avocado-2">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-1][avocado]" value="0" id="Avocado-3">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Weet-bix</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="1" id="Weet-bix-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="0" id="Weet-bix-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="0" id="Weet-bix-3"></td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="1" id="Weet-bix-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="0" id="Weet-bix-2">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-1][weet_bix]" value="0" id="Weet-bix-3">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Fruit yoghurt</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="1" id="FruitYoghurt-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="0" id="FruitYoghurt-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="0" id="FruitYoghurt-3"></td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="1" id="FruitYoghurt-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="0" id="FruitYoghurt-2">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-1][fruit_yoghurt]" value="0" id="FruitYoghurt-3">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Crumpets</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][crumpets]" value="1" id="Crumpets-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][crumpets]" value="0" id="Crumpets-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][crumpets]" value="0" id="Crumpets-3"></td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-1][crumpets]" value="1" id="Crumpets-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-1][crumpets]" value="0" id="Crumpets-2">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-1][crumpets]" value="0" id="Crumpets-3">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Cream</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][cream]" value="0" id="Cream-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][cream]" value="1" id="Cream-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-1][cream]" value="0" id="Cream-3"></td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="High" data-correct="0" type="radio" name="ans[nutrition-Q-1][cream]" value="0" id="Cream-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Low" data-correct="1" type="radio" name="ans[nutrition-Q-1][cream]" value="1" id="Cream-2">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-1][cream]" value="0" id="Cream-3">
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -1207,11 +1255,11 @@
                         <div class="step-tab-box nutrition-form" id="div2" style="display: block;">
                             <div class="card">
                                 <div class="p-3 card-header bg-white">
-                                <div class="d-flex align-items-center">
-                                    <h5 class="m-0">2. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">protein</strong>?
-                                    <span>(Select one answer per food)</span></h5>
-                                    <span class="ms-2 general-error-message text-danger"> </span>
-                                </div>
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="m-0">2. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">protein</strong>?
+                                        <span>(Select one answer per food)</span></h5>
+                                        <span class="ms-2 general-error-message text-danger"> </span>
+                                    </div>
                                     <input type="hidden" name="questions[nutrition-Q-2]" value="Do you think these foods are high or low in protein?" />
                                 </div>
                                 <div class="card-body p-0">
@@ -1228,59 +1276,60 @@
                                             <tbody>
                                                 <tr>
                                                     <td>Salmon</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][salmon]" value="1" id="Salmon-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][salmon]" value="0" id="Salmon-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][salmon]" value="0" id="Salmon-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-2][salmon]" value="1" id="Salmon-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-2][salmon]" value="0" id="Salmon-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][salmon]" value="0" id="Salmon-3"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Baked beans</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="1" id="Bakedbeans-11"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="0" id="Bakedbeans-12"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="0" id="Bakedbeans-13"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="1" id="Bakedbeans-11"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="0" id="Bakedbeans-12"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][baked_beans]" value="0" id="Bakedbeans-13"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Fruit</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][fruit]" value="0" id="Fruit-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][fruit]" value="1" id="Fruit-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][fruit]" value="0" id="Fruit-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="0" type="radio" name="ans[nutrition-Q-2][fruit]" value="0" id="Fruit-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="1" type="radio" name="ans[nutrition-Q-2][fruit]" value="1" id="Fruit-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][fruit]" value="0" id="Fruit-3"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Hummus</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][hummus]" value="0" id="Hummus-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][hummus]" value="1" id="Hummus-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][hummus]" value="0" id="Hummus-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="0" type="radio" name="ans[nutrition-Q-2][hummus]" value="0" id="Hummus-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="1" type="radio" name="ans[nutrition-Q-2][hummus]" value="1" id="Hummus-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][hummus]" value="0" id="Hummus-3"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Cornflakes cereal</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="0" id="CornflakesCereal-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="1" id="CornflakesCereal-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="0" id="CornflakesCereal-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="0" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="0" id="CornflakesCereal-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="1" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="1" id="CornflakesCereal-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][cornflakes_cereal]" value="0" id="CornflakesCereal-3"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Almonds</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almonds]" value="1" id="Almonds-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almonds]" value="0" id="Almonds-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almonds]" value="0" id="Almonds-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-2][almonds]" value="1" id="Almonds-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-2][almonds]" value="0" id="Almonds-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][almonds]" value="0" id="Almonds-3"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Flavoured milk</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="1" id="FlavouredMilk-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="0" id="FlavouredMilk-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="0" id="FlavouredMilk-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="1" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="1" id="FlavouredMilk-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="0" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="0" id="FlavouredMilk-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][flavoured_milk]" value="0" id="FlavouredMilk-3"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Ice cream</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="0" id="IceCream-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="1" id="IceCream-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="0" id="IceCream-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="0" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="0" id="IceCream-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="1" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="1" id="IceCream-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][ice_cream]" value="0" id="IceCream-3"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Almond/oat milk</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="0" id="Almond-oat-milk-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="1" id="Almond-oat-milk-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="0" id="Almond-oat-milk-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="High" data-correct="0" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="0" id="Almond-oat-milk-1"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Low" data-correct="1" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="1" id="Almond-oat-milk-2"></td>
+                                                    <td class="text-center"><input class="form-check-input" data-option="Unsure" data-correct="0" type="radio" name="ans[nutrition-Q-2][almond_oat_milk]" value="0" id="Almond-oat-milk-3"></td>
                                                 </tr>
                                             </tbody>
+
                                         </table>
                                     </div>
                                 </div>
@@ -1293,62 +1342,140 @@
                         <div class="step-tab-box nutrition-form" id="div3" style="display: block;">
                             <div class="card">
                                 <div class="p-3 card-header bg-white">
-                                <div class="d-flex align-items-center">
-                                    <h5 class="m-0">3. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">fat</strong>? 
-                                    <span>(Select one answer per food)</span></h5>
-                                    <span class="ms-2 general-error-message text-danger"> </span>
-                                </div>
-                                    <input type="hidden" name="questions[nutrition-Q-3]" value="Do you think these foods are high or low in fat?" />
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="m-0">3. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">fat</strong>? 
+                                        <span>(Select one answer per food)</span></h5>
+                                        <span class="ms-2 general-error-message text-danger"> </span>
+                                        <input type="hidden" name="questions[nutrition-Q-3]" value="Do you think these foods are high or low in fat?" />
+                                    </div>
                                 </div>
                                 <div class="card-body p-0">
                                     <div class="table-responsive">
                                         <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th class="text-center">High</th>
-                                                    <th class="text-center">Low</th>
-                                                    <th class="text-center">Unsure</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Avocado</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][avocado]" value="1" id="Avocado-11"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][avocado]" value="0" id="Avocado-12"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][avocado]" value="0" id="Avocado-13"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Baked beans</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][backed_beans]" value="0" id="BakedBeans-21"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][backed_beans]" value="1" id="BakedBeans-22"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][backed_beans]" value="0" id="BakedBeans-23"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cottage cheese</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cottage_cheese]" value="0" id="CottageCheese-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cottage_cheese]" value="1" id="CottageCheese-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cottage_cheese]" value="0" id="CottageCheese-3"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Peanut butter</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][peanut_butter]" value="1" id="PeanutButter-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][peanut_butter]" value="0" id="PeanutButter-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][peanut_butter]" value="0" id="PeanutButter-3"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Crumpets</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][crumpets]" value="0" id="Crumpets-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][crumpets]" value="1" id="Crumpets-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][crumpets]" value="0" id="Crumpets-3"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cheddar/Tatsy cheese</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="1" id="CheddarTatsyCheese-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="0" id="CheddarTatsyCheese-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="0" id="CheddarTatsyCheese-3"></td>
-                                                </tr>
-                                            </tbody>
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="text-center">High</th>
+                                                <th class="text-center">Low</th>
+                                                <th class="text-center">Unsure</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Avocado</td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][avocado]" value="1"
+                                                        id="Avocado-11" data-option="High"  data-correct="1">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][avocado]" value="0"
+                                                        id="Avocado-12" data-option="Low"   data-correct="0">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][avocado]" value="0"
+                                                        id="Avocado-13" data-option="Unsure" data-correct="0">
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Baked beans</td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][baked_beans]" value="0"
+                                                        id="BakedBeans-21" data-option="High" data-correct="0">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][baked_beans]" value="1"
+                                                        id="BakedBeans-22" data-option="Low"  data-correct="1">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][baked_beans]" value="0"
+                                                        id="BakedBeans-23" data-option="Unsure" data-correct="0">
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Cottage cheese</td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][cottage_cheese]" value="0"
+                                                        id="CottageCheese-1" data-option="High" data-correct="0">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][cottage_cheese]" value="1"
+                                                        id="CottageCheese-2" data-option="Low"  data-correct="1">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][cottage_cheese]" value="0"
+                                                        id="CottageCheese-3" data-option="Unsure" data-correct="0">
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Peanut butter</td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][peanut_butter]" value="1"
+                                                        id="PeanutButter-1" data-option="High" data-correct="1">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][peanut_butter]" value="0"
+                                                        id="PeanutButter-2" data-option="Low"  data-correct="0">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][peanut_butter]" value="0"
+                                                        id="PeanutButter-3" data-option="Unsure" data-correct="0">
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Crumpets</td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][crumpets]" value="0"
+                                                        id="Crumpets-1" data-option="High" data-correct="0">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][crumpets]" value="1"
+                                                        id="Crumpets-2" data-option="Low"  data-correct="1">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][crumpets]" value="0"
+                                                        id="Crumpets-3" data-option="Unsure" data-correct="0">
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Cheddar/Tatsy cheese</td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="1"
+                                                        id="CheddarTatsyCheese-1" data-option="High" data-correct="1">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="0"
+                                                        id="CheddarTatsyCheese-2" data-option="Low"  data-correct="0">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="ans[nutrition-Q-3][cheddar_tatsy_cheese]" value="0"
+                                                        id="CheddarTatsyCheese-3" data-option="Unsure" data-correct="0">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
                                         </table>
                                     </div>
                                 </div>
@@ -1381,47 +1508,48 @@
                                             <tbody>
                                                 <tr>
                                                     <td>Butter</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="0" id="Butter-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="1" id="Butter-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="0" id="Butter-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="0" id="Butter-1" data-option="High" data-correct="0"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="1" id="Butter-2" data-option="Low" data-correct="1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][butter]" value="0" id="Butter-3" data-option="Unsure" data-correct="0"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Extra virgin olive oil</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="1" id="OliveOil-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="0" id="OliveOil-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="0" id="OliveOil-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="1" id="OliveOil-1" data-option="High" data-correct="1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="0" id="OliveOil-2" data-option="Low" data-correct="0"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][extra_virgin_olive_oil]" value="0" id="OliveOil-3" data-option="Unsure" data-correct="0"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Whole milk</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="0" id="WholeMilk-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="1" id="WholeMilk-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="0" id="WholeMilk-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="0" id="WholeMilk-1" data-option="High" data-correct="0"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="1" id="WholeMilk-2" data-option="Low" data-correct="1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][whole_milk]" value="0" id="WholeMilk-3" data-option="Unsure" data-correct="0"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Potato crisps</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="0" id="PotatoCrisps-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="1" id="PotatoCrisps-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="0" id="PotatoCrisps-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="0" id="PotatoCrisps-1" data-option="High" data-correct="0"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="1" id="PotatoCrisps-2" data-option="Low" data-correct="1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][potato_crisps]" value="0" id="PotatoCrisps-3" data-option="Unsure" data-correct="0"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Salmon</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="1" id="Salmon-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="0" id="Salmon-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="0" id="Salmon-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="1" id="Salmon-1" data-option="High" data-correct="1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="0" id="Salmon-2" data-option="Low" data-correct="0"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][salmon]" value="0" id="Salmon-3" data-option="Unsure" data-correct="0"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Dark chocolate</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="0" id="DarkChocolate-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="1" id="DarkChocolate-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="0" id="DarkChocolate-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="0" id="DarkChocolate-1" data-option="High" data-correct="0"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="1" id="DarkChocolate-2" data-option="Low" data-correct="1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][dark_chocolate]" value="0" id="DarkChocolate-3" data-option="Unsure" data-correct="0"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Macadamia nuts</td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="1" id="MacadamiaNuts-1"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="0" id="MacadamiaNuts-2"></td>
-                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="0" id="MacadamiaNuts-3"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="1" id="MacadamiaNuts-1" data-option="High" data-correct="1"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="0" id="MacadamiaNuts-2" data-option="Low" data-correct="0"></td>
+                                                    <td class="text-center"><input class="form-check-input" type="radio" name="ans[nutrition-Q-4][macadamia_nuts]" value="0" id="MacadamiaNuts-3" data-option="Unsure" data-correct="0"></td>
                                                 </tr>
                                             </tbody>
+
                                         </table>
                                     </div>
                                 </div>
@@ -1497,6 +1625,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Question 6 -->
                                     <div class="p-3 card-header bg-white">
                                         <h5 class="m-0">6. Approximately how many decisions do we make every day about what we eat? </h5>
                                         <input type="hidden" name="questions[nutrition-Q-6]" value="Approximately how many decisions do we make every day about what we eat?" />
@@ -1505,103 +1634,83 @@
                                         <div class="row px-2 align-items-center">
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="0" id="decision1">
-                                                    <label class="form-check-label" for="decision1">
-                                                    50-100
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="decision1" name="ans[nutrition-Q-6][every_day_decisions_eat]">
+                                                    <label class="form-check-label" for="decision1">50-100</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="0" id="decision2">
-                                                    <label class="form-check-label" for="decision2">
-                                                    100-150
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="decision2" name="ans[nutrition-Q-6][every_day_decisions_eat]">
+                                                    <label class="form-check-label" for="decision2">100-150</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="0" id="decision3">
-                                                    <label class="form-check-label" for="decision3">
-                                                    150-200
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="decision3" name="ans[nutrition-Q-6][every_day_decisions_eat]">
+                                                    <label class="form-check-label" for="decision3">150-200</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="1" id="decision4">
-                                                    <label class="form-check-label" for="decision4">
-                                                    Over 200
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="1" data-option="Correct" data-correct="1" id="decision4" name="ans[nutrition-Q-6][every_day_decisions_eat]">
+                                                    <label class="form-check-label" for="decision4">Over 200</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-6][every_day_decisions_eat]" value="0" id="decision5">
-                                                    <label class="form-check-label" for="decision5">
-                                                        Unsure
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Unsure" data-correct="0" id="decision5" name="ans[nutrition-Q-6][every_day_decisions_eat]">
+                                                    <label class="form-check-label" for="decision5">Unsure</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Question 7 -->
                                     <div class="p-3 card-header bg-white">
                                         <h5 class="m-0">7. Which of the following is NOT a 'Macronutrient'? </h5>
-                                        
                                         <input type="hidden" name="questions[nutrition-Q-7]" value="Which of the following is NOT a 'Macronutrient'?" />
                                     </div>
                                     <div class="card-body p-0">
                                         <div class="row px-2 align-items-center">
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="1" id="Macronutrien1">
-                                                    <label class="form-check-label" for="Macronutrien1">
-                                                    Iron 
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="1" data-option="Correct" data-correct="1" id="Macronutrien1" name="ans[nutrition-Q-7][macronutrient]">
+                                                    <label class="form-check-label" for="Macronutrien1">Iron</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="Macronutrien2">
-                                                    <label class="form-check-label" for="Macronutrien2">
-                                                    Carbohydrate
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="Macronutrien2" name="ans[nutrition-Q-7][macronutrient]">
+                                                    <label class="form-check-label" for="Macronutrien2">Carbohydrate</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="Macronutrien3">
-                                                    <label class="form-check-label" for="Macronutrien3">
-                                                    Protein 
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="Macronutrien3" name="ans[nutrition-Q-7][macronutrient]">
+                                                    <label class="form-check-label" for="Macronutrien3">Protein</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="Macronutrien4">
-                                                    <label class="form-check-label" for="Macronutrien4">
-                                                    Alcohol 
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="Macronutrien4" name="ans[nutrition-Q-7][macronutrient]">
+                                                    <label class="form-check-label" for="Macronutrien4">Alcohol</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="Macronutrien5">
-                                                    <label class="form-check-label" for="Macronutrien5">
-                                                    Fat 
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="Macronutrien5" name="ans[nutrition-Q-7][macronutrient]">
+                                                    <label class="form-check-label" for="Macronutrien5">Fat</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-7][macronutrient]" value="0" id="Macronutrien6">
-                                                    <label class="form-check-label" for="Macronutrien6">
-                                                        Unsure
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Unsure" data-correct="0" id="Macronutrien6" name="ans[nutrition-Q-7][macronutrient]">
+                                                    <label class="form-check-label" for="Macronutrien6">Unsure</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Question 8 -->
                                     <div class="p-3 card-header bg-white">
                                         <h5 class="m-0">8. Which of these foods has the most calcium? </h5>
                                         <input type="hidden" name="questions[nutrition-Q-8]" value="Which of these foods has the most calcium?" />
@@ -1610,46 +1719,38 @@
                                         <div class="row px-2 align-items-center">
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="0" id="calciu1">
-                                                    <label class="form-check-label" for="calciu1">
-                                                    Baby spinach, 1 cup
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="calciu1" name="ans[nutrition-Q-8][most_calcium]">
+                                                    <label class="form-check-label" for="calciu1">Baby spinach, 1 cup</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="1" id="calcium2">
-                                                    <label class="form-check-label" for="calcium2">
-                                                    Firm tofu, 100g
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="1" data-option="Correct" data-correct="1" id="calcium2" name="ans[nutrition-Q-8][most_calcium]">
+                                                    <label class="form-check-label" for="calcium2">Firm tofu, 100g</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="0" id="calciu3">
-                                                    <label class="form-check-label" for="calciu3">
-                                                    Tuna, small tin, 90 g  
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="calciu3" name="ans[nutrition-Q-8][most_calcium]">
+                                                    <label class="form-check-label" for="calciu3">Tuna, small tin, 90 g</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="0" id="calcium4">
-                                                    <label class="form-check-label" for="calcium4">
-                                                    Almonds, 1/2 cup  
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="calcium4" name="ans[nutrition-Q-8][most_calcium]">
+                                                    <label class="form-check-label" for="calcium4">Almonds, 1/2 cup</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-8][most_calcium]" value="0" id="calcium5">
-                                                    <label class="form-check-label" for="calcium5">
-                                                        Unsure
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Unsure" data-correct="0" id="calcium5" name="ans[nutrition-Q-8][most_calcium]">
+                                                    <label class="form-check-label" for="calcium5">Unsure</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Question 9 -->
                                     <div class="p-3 card-header bg-white">
                                         <h5 class="m-0">9. Which of these foods has the most fibre? </h5>
                                         <input type="hidden" name="questions[nutrition-Q-9]" value="Which of these foods has the most fibre?" />
@@ -1658,46 +1759,37 @@
                                         <div class="row px-2 align-items-center">
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="0" id="fibre1">
-                                                    <label class="form-check-label" for="fibre1">
-                                                    Banana, 1 large
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="fibre1" name="ans[nutrition-Q-9][most_fibre]">
+                                                    <label class="form-check-label" for="fibre1">Banana, 1 large</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="1" id="fibre2">
-                                                    <label class="form-check-label" for="fibre2">
-                                                    Raw oats, 1/2 cup
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="1" data-option="Correct" data-correct="1" id="fibre2" name="ans[nutrition-Q-9][most_fibre]">
+                                                    <label class="form-check-label" for="fibre2">Raw oats, 1/2 cup</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="0" id="fibre3">
-                                                    <label class="form-check-label" for="fibre3">
-                                                    Cashews, 1 handful 
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="fibre3" name="ans[nutrition-Q-9][most_fibre]">
+                                                    <label class="form-check-label" for="fibre3">Cashews, 1 handful</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="0" id="fibre4">
-                                                    <label class="form-check-label" for="fibre4">
-                                                    Broccoli, 1/2 cup 
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="fibre4" name="ans[nutrition-Q-9][most_fibre]">
+                                                    <label class="form-check-label" for="fibre4">Broccoli, 1/2 cup</label>
                                                 </div>
                                             </div>
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="ans[nutrition-Q-9][most_fibre]" value="0" id="fibre5">
-                                                    <label class="form-check-label" for="fibre5">
-                                                        Unsure
-                                                    </label>
+                                                    <input class="form-check-input" type="radio" value="0" data-option="Unsure" data-correct="0" id="fibre5" name="ans[nutrition-Q-9][most_fibre]">
+                                                    <label class="form-check-label" for="fibre5">Unsure</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="bg-white text-end py-3 card-footer d-flex px-4">
                                         <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="4">Back</button>
                                         <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="6">Next</button>
@@ -1720,19 +1812,19 @@
                                             <!-- Left Column -->
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein1">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein1" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="protein1">
                                                         A very similar amount
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="1" id="protein2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="1" id="protein2" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="protein2">
                                                         Up to 2 times (2x) more
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein3">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein3" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="protein3">
                                                         3-4 times (3-4x) more
                                                     </label>
@@ -1743,13 +1835,13 @@
                                             <!-- Right Column -->
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein4">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein4" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="protein4">
                                                         5 times (5x) more
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein5">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein5" data-option="Unsure" data-correct="0">
                                                     <label class="form-check-label" for="protein5">
                                                         Unsure
                                                     </label>
@@ -1766,19 +1858,19 @@
                                         <div class="col-md-6">
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed1">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed1" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed1">
                                                         Loss of appetite
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed2">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed2" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed2">
                                                         More injuries and/or illness
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed3">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed3" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed3">
                                                         Poor performance or recovery
                                                     </label>
@@ -1789,19 +1881,19 @@
                                         <div class="col-md-6">
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed4">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed4" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed4">
                                                         Weight loss
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed5">
+                                                    <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed5" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed5">
                                                         Menstrual cycle changes (if not on the pill)
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="checkbox" value="0" name="ans[sports-nutrition-Q-2][]" id="diagnosed6">
+                                                    <input class="form-check-input" type="checkbox" value="0" name="ans[sports-nutrition-Q-2][]" id="diagnosed6" data-option="Unsure" data-correct="0">
                                                     <label class="form-check-label" for="diagnosed6">
                                                         Unsure
                                                     </label>
@@ -1818,19 +1910,19 @@
                                         <div class="col-md-6">
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest1">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest1" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest1">
                                                         Protein-based foods like dairy, eggs, meat, tofu
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest2">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest2" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest2">
                                                         Take away foods
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest3">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest3" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest3">
                                                         Lollies, chips and chocolate bars
                                                     </label>
@@ -1841,19 +1933,19 @@
                                         <div class="col-md-6">
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="1" id="bloodTest4">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="1" id="bloodTest4" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="bloodTest4">
                                                         Carbohydrate-based foods like rice, pasta, bread
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest5">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest5" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest5">
                                                         Fat-containing foods like avocado, nuts
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
-                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest6">
+                                                    <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest6" data-option="Unsure" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest6">
                                                         Unsure
                                                     </label>
@@ -1880,219 +1972,166 @@
                                     </div>
                                     <div class="card-body p-0">
                                         <div class="row px-2">
-                                            <!-- Left Column -->
+                                            <!-- Question 4 -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest1">
-                                                        <label class="form-check-label" for="bodyTest1">
-                                                            Fuel for low to moderate intensity exercise
-                                                        </label>
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest1" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="bodyTest1">Fuel for low to moderate intensity exercise</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest2">
-                                                        <label class="form-check-label" for="bodyTest2">
-                                                            Fuel for moderate to high intensity exercise
-                                                        </label>
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest2" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="bodyTest2">Fuel for moderate to high intensity exercise</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest3">
-                                                        <label class="form-check-label" for="bodyTest3">
-                                                            Delivery of oxygen to muscles
-                                                        </label>
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest3" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="bodyTest3">Delivery of oxygen to muscles</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="1" id="bodyTest4">
-                                                        <label class="form-check-label" for="bodyTest4">
-                                                            Muscle growth and repair
-                                                        </label>
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="1" id="bodyTest4" data-option="Correct" data-correct="1">
+                                                        <label class="form-check-label" for="bodyTest4">Muscle growth and repair</label>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Right Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest5">
-                                                        <label class="form-check-label" for="bodyTest5">
-                                                            A healthy digestive system
-                                                        </label>
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest5" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="bodyTest5">A healthy digestive system</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest6">
-                                                        <label class="form-check-label" for="bodyTest6">
-                                                            Strong bones
-                                                        </label>
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest6" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="bodyTest6">Strong bones</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest7">
-                                                        <label class="form-check-label" for="bodyTest7">
-                                                            Hydration
-                                                        </label>
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest7" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="bodyTest7">Hydration</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest8">
-                                                        <label class="form-check-label" for="bodyTest8">
-                                                            Unsure
-                                                        </label>
+                                                        <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest8" data-option="Unsure" data-correct="0">
+                                                        <label class="form-check-label" for="bodyTest8">Unsure</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
+                                        <!-- Question 5 -->
                                         <div class="p-3 card-header bg-white">
                                             <h5 class="m-0">5. Which of the following statements about the role of carbohydrates is NOT correct?</h5>
                                             <input type="hidden" name="questions[sports-nutrition-Q-5]" value="Which of the following statements about the role of carbohydrates is NOT correct?" />
                                         </div>
                                         <div class="row px-2">
-                                            <!-- Left Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest1">
-                                                        <label class="form-check-label" for="carbTest1">
-                                                            Support decision making
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest1" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="carbTest1">Support decision making</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest2">
-                                                        <label class="form-check-label" for="carbTest2">
-                                                            Helping maintain competition performance levels
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest2" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="carbTest2">Helping maintain competition performance levels</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest3">
-                                                        <label class="form-check-label" for="carbTest3">
-                                                        Assists fuelling and recovery from training sessions 
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest3" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="carbTest3">Assists fuelling and recovery from training sessions</label>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Right Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="1" id="carbTest4">
-                                                        <label class="form-check-label" for="carbTest4">
-                                                        Major factor for gaining body fat
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="1" id="carbTest4" data-option="Correct" data-correct="1">
+                                                        <label class="form-check-label" for="carbTest4">Major factor for gaining body fat</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="1" id="carbTest5">
-                                                        <label class="form-check-label" for="carbTest5">
-                                                        Increases inflammation in the body
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="1" id="carbTest5" data-option="Correct" data-correct="1">
+                                                        <label class="form-check-label" for="carbTest5">Increases inflammation in the body</label>
                                                     </div>
-
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="0" id="carbTest6">
-                                                        <label class="form-check-label" for="carbTest6">
-                                                            Unsure
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="0" id="carbTest6" data-option="Unsure" data-correct="0">
+                                                        <label class="form-check-label" for="carbTest6">Unsure</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Question 6 -->
                                         <div class="p-3 card-header bg-white">
                                             <h5 class="m-0">6. What main fuels do muscles use during training?</h5>
                                             <input type="hidden" name="questions[sports-nutrition-Q-6]" value="What main fuels do muscles use during training?" />
                                         </div>
                                         <div class="row px-2">
-                                            <!-- Left Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training1">
-                                                        <label class="form-check-label" for="training1">
-                                                        Protein
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training1" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="training1">Protein</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="1" id="training2">
-                                                        <label class="form-check-label" for="training2">
-                                                        Carbs
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="1" id="training2" data-option="Correct" data-correct="1">
+                                                        <label class="form-check-label" for="training2">Carbs</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="1" id="training3">
-                                                        <label class="form-check-label" for="training3">
-                                                        Fat
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="1" id="training3" data-option="Correct" data-correct="1">
+                                                        <label class="form-check-label" for="training3">Fat</label>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Right Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training4">
-                                                        <label class="form-check-label" for="training4">
-                                                        Iron
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training4" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="training4">Iron</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training5">
-                                                        <label class="form-check-label" for="training5">
-                                                        Water
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training5" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="training5">Water</label>
                                                     </div>
-
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="0" id="training6">
-                                                        <label class="form-check-label" for="training6">
-                                                            Unsure
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="0" id="training6" data-option="Unsure" data-correct="0">
+                                                        <label class="form-check-label" for="training6">Unsure</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Question 7 -->
                                         <div class="p-3 card-header bg-white">
-                                            <h5 class="m-0">7. Which statements about iron are correct? </h5>
+                                            <h5 class="m-0">7. Which statements about iron are correct?</h5>
                                             <input type="hidden" name="questions[sports-nutrition-Q-7]" value="Which statements about iron are correct?" />
                                         </div>
                                         <div class="row px-2">
-                                            <!-- Left Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement1">
-                                                        <label class="form-check-label" for="statement1">
-                                                        Females need over twice the amount of iron per day as men
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement1" data-option="Correct" data-correct="1">
+                                                        <label class="form-check-label" for="statement1">Females need over twice the amount of iron per day as men</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement2">
-                                                        <label class="form-check-label" for="statement2">
-                                                        Vegetarian athletes are higher risk of low iron as plants less iron in the food and it's harder to absorb
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement2" data-option="Correct" data-correct="1">
+                                                        <label class="form-check-label" for="statement2">Vegetarian athletes are higher risk of low iron as plants less iron in the food and it's harder to absorb</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement3">
-                                                        <label class="form-check-label" for="statement3">
-                                                        Female athletes are higher risk of low iron due to losing extra iron through periods
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement3" data-option="Correct" data-correct="1">
+                                                        <label class="form-check-label" for="statement3">Female athletes are higher risk of low iron due to losing extra iron through periods</label>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Right Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="-1" id="statement4">
-                                                        <label class="form-check-label" for="statement4">
-                                                        Iron deficiency improves over time as the athletete matures
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="-1" id="statement4" data-option="Wrong" data-correct="0">
+                                                        <label class="form-check-label" for="statement4">Iron deficiency improves over time as the athlete matures</label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="0" id="statement5">
-                                                        <label class="form-check-label" for="statement5">
-                                                            Unsure
-                                                        </label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="0" id="statement5" data-option="Unsure" data-correct="0">
+                                                        <label class="form-check-label" for="statement5">Unsure</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="bg-white text-end py-3 card-footer d-flex px-4">
                                         <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="6">Back</button>
                                         <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="8">Next</button>
@@ -2100,12 +2139,14 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Updated div with corrected data-option and data-correct -->
                         <div class="step-tab-box supplement-form" id="div8" style="display: none;">
                             <div class="card">
                                 <div class="card">
                                     <div class="p-3 card-header bg-white">
                                         <div class="d-flex align-items-center">
-                                            <h5 class="m-0">1. Which of the following statements about 'supplements' are true?  </h5>
+                                            <h5 class="m-0">1. Which of the following statements about 'supplements' are true?</h5>
                                             <span class="text-danger general-error-message"></span>
                                         </div>
                                         <input type="hidden" name="questions[supplements-Q-1]" value="Which of the following statements about 'supplements' are true?" />
@@ -2116,21 +2157,21 @@
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements1">
+                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="supplements1">
-                                                        All athletes should use supplements to perform at their best 
+                                                            All athletes should use supplements to perform at their best 
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements2">
+                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements2" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="supplements2">
-                                                        It is not possible to consume enough nutrients through eating food alone (without supplements)
+                                                            It is not possible to consume enough nutrients through eating food alone (without supplements)
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements3">
+                                                        <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements3" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="supplements3">
-                                                        Athletes should check with a Sports Dietitian before taking supplements                                                
+                                                            Athletes should check with a Sports Dietitian before taking supplements                                                
                                                         </label>
                                                     </div>
                                                 </div>
@@ -2139,19 +2180,19 @@
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements4">
+                                                        <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements4" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="supplements4">
-                                                        Eating a wide range of foods provides most athletes with the vitamins and minerals they need 
+                                                            Eating a wide range of foods provides most athletes with the vitamins and minerals they need 
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements5">
+                                                        <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements5" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="supplements5">
-                                                        Most supplements available in Australia are safe for athletes to use 
+                                                            Most supplements available in Australia are safe for athletes to use 
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" value="0" name="ans[supplements-Q-1][]" id="supplements6">
+                                                        <input class="form-check-input" type="checkbox" value="0" name="ans[supplements-Q-1][]" id="supplements6" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="supplements6">
                                                             Unsure
                                                         </label>
@@ -2159,110 +2200,106 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Question 2 -->
                                         <div class="p-3 card-header bg-white">
-                                            <h5 class="m-0">2. When choosing a supplement, you should? </h5>
+                                            <h5 class="m-0">2. When choosing a supplement, you should?</h5>
                                             <input type="hidden" name="questions[supplements-Q-2]" value="When choosing a supplement, you should?" />
                                         </div>
                                         <div class="row px-2">
-                                            <!-- Left Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes1">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes1">
-                                                        Use supplements used by professional athletes
+                                                            Use supplements used by professional athletes
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes2">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes2" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes2">
-                                                        Check with a mate for their opinion                                                     </label>
+                                                            Check with a mate for their opinion
+                                                        </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="1" id="athletes3">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="1" id="athletes3" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="athletes3">
-                                                        Choose a product that has had third party batch testing                                                     
-                                                    </label>
+                                                            Choose a product that has had third party batch testing
+                                                        </label>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Right Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes4">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes4" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes4">
-                                                        Check with a naturopath 
+                                                            Check with a naturopath
                                                         </label>
                                                     </div>
-                                                    <!-- <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="0.5" id="carbTest4">
-                                                        <label class="form-check-label" for="carbTest4">
-                                                        Check with a Sports Dietitian 
-                                                        </label>
-                                                    </div> -->
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes5">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes5" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes5">
-                                                        Ask staff at the local supplement store 
+                                                            Ask staff at the local supplement store 
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="0" id="athletes6">
+                                                        <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="0" id="athletes6" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="athletes6">
-                                                        Unsure 
+                                                            Unsure
                                                         </label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Question 3 -->
                                         <div class="p-3 card-header bg-white">
-                                            <h5 class="m-0">3. Regarding vitamin and minerals supplements, which statements are true? </h5>
+                                            <h5 class="m-0">3. Regarding vitamin and minerals supplements, which statements are true?</h5>
                                             <input type="hidden" name="questions[supplements-Q-3]" value="Regarding vitamin and minerals supplements, which statements are true?" />
                                         </div>
                                         <div class="row px-2">
-                                            <!-- Left Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="vitamin1">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="vitamin1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="vitamin1">
                                                             They are safe for all athletes to use 
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="1" id="vitamin2">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="1" id="vitamin2" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="vitamin2">
-                                                        Can assist athletes to correct a deficiency diagnosed by a Medical professional
+                                                            Can assist athletes to correct a deficiency diagnosed by a Medical professional
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="vitamin3">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="vitamin3" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="vitamin3">
-                                                        Vegetarians and vegans are not at risk of vitamin and mineral deficiences                                                    
-                                                    </label>
+                                                            Vegetarians and vegans are not at risk of vitamin and mineral deficiences
+                                                        </label>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Right Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="1" id="vitamin4">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="1" id="vitamin4" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="vitamin4">
-                                                        May be recommended for international competition where food variety is limited 
+                                                            May be recommended for international competition where food variety is limited
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="0" id="vitamin5">
+                                                        <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="0" id="vitamin5" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="vitamin5">
-                                                        Unsure 
+                                                            Unsure
                                                         </label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="bg-white text-end py-3 card-footer d-flex px-4">
                                         <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="7">Back</button>
                                         <button id="next" type="button" class="btn btn-primary ms-auto submit-free-test">Next</button>
@@ -2270,6 +2307,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="step-tab-box" id="div9" style="display: none;">
                             <div class="">
                                 <div class="align-items-center flex-column mb-4 row">
@@ -2526,7 +2564,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detailsModalLabel">Get your results instantly.  </h5>
+                    <h5 class="modal-title" id="detailsModalLabel">Get your results instantly. </h5>
                     <button type="button" class="btn-close detail-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -2569,7 +2607,7 @@
                 </div>
                 <div class="modal-body">
                     <p id="confirmationMessage"></p>
-                    <p>We’d love to send you some nutrition information specific to your sport. Please enter your details below:</p>
+                    <p>We'd love to send you some nutrition information specific to your sport. Please enter your details below:</p>
                     <form id="userDetailsForm">
                         <div class="form-group mt-3">
                             <label for="userName"><strong>Name:</strong></label>
@@ -2744,21 +2782,747 @@
             });
         });
 
+        // $(document).ready(function () {
+        //     let currentQuizId = null;
+
+        //     // Handle Take Free Test button click
+        //     $('#takeFreeTest').on('click', function() {
+        //         $.ajax({
+        //             url: "{{ route('front.quiz.start') }}",
+        //             method: 'POST',
+        //             headers: {
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //             success: function(response) {
+        //                 console.log('Quiz start response:', response); // Debug log
+        //                 if (response.success) {
+        //                     currentQuizId = response.quiz_id;
+        //                     console.log('Quiz started with ID:', currentQuizId); // Debug log
+        //                     $('#TakeTestModel').modal('show');
+        //                 } else {
+        //                     alert('Error starting quiz: ' + response.message);
+        //                 }
+        //             },
+        //             error: function(xhr) {
+        //                 console.error('Error starting quiz:', xhr.responseText);
+        //                 alert('Error starting quiz. Please try again.');
+        //             }
+        //         });
+        //     });
+
+        //     $('.unlock-result').on('click', function () {
+        //         let type = $(this).data('type'); // Get data-type (sports or supplement)
+
+        //         $('#formType').val(type); // Store type in the hidden input field
+
+        //         $('#TakeTestModel').addClass('blur-background'); // Add blur effect
+        //         $('#detailsModal').modal('show'); // Show modal
+        //         $('.sport-plan .unlock-result').removeClass('btn-dark').addClass('btn-primary');
+        //         $('.supplement-plan .unlock-result').removeClass('btn-dark').addClass('btn-primary');
+
+        //     });
+
+        //     $('.detail-modal-close').on('click', function () {
+        //         $('#detailsModal').modal('hide');
+        //         $('#TakeTestModel').removeClass('blur-background'); // Remove blur
+        //         $type = $('#formType').val();
+        //         $('.sport-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
+        //         $('.supplement-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
+        //         // if (type === 'sport') {
+        //         //     $('.sport-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
+        //         // }
+        //         // if (type === 'supplement') {
+        //         //     $('.supplement-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
+        //         // }
+        //     })
+        //     let totalAnswerCount = 0;  // Initialize totalAnswerCount to 0 globally for the entire script
+
+        //     // Initialize all the necessary variables
+        //     const stepCircles = document.querySelectorAll('.tab-steps');
+        //     const stepTabs = document.querySelectorAll(".step-tab-box");
+        //     const showStepButtons = document.querySelectorAll('.showStepTab');
+        //     const submitButton = document.querySelector(".submit-free-test"); // Submit button for final submission
+        //     const registerModal = $("#registerModal"); // Registration/Login modal
+        //     const loginModal = $("#testLoginModal"); // Registration/Login modal
+        //     const registerForm = $("#register-form"); // Registration form
+        //     const loginForm = $("#test-login-form"); // Login form
+        //     const loginLink = $(".login-link"); // Login link in Register modal
+        //     const registerLink = $(".register-link"); // Register link in Login modal
+        //     const currentModal = $("#TakeTestModel"); // Current modal for test steps
+
+        //     const stepsData = {};  // Object to store all steps data
+
+        //     // Initially, show only the first step-tab-box
+        //     stepTabs.forEach((tab, index) => {
+        //         tab.style.display = index === 0 ? "block" : "none";
+        //     });
+
+        //     // Function to validate fields in the current step
+        //     function validateStep(stepIndex) {
+        //         const stepTab = stepTabs[stepIndex]; // Get current step tab
+        //         const inputs = stepTab.querySelectorAll('input, textarea, select');
+        //         let isValid = true;
+        //         const errorMessage = "* Please select an answer for this question.";
+
+        //         // Loop through each input to validate
+        //         inputs.forEach(input => {
+        //             if (input.type === 'radio' || input.type === 'checkbox') {
+        //                 const name = input.name;
+        //                 const checkedInputs = stepTab.querySelectorAll(`input[name="${name}"]:checked`);
+        //                 if (checkedInputs.length === 0) {
+        //                     isValid = false;
+        //                     const cardBody = input.closest('.card-body');
+        //                     if (cardBody) {
+        //                         let errorMessageSpan = cardBody.querySelector('.general-error-message');
+        //                         if (!errorMessageSpan) {
+        //                             errorMessageSpan = document.createElement("span");
+        //                             errorMessageSpan.className = "text-danger general-error-message m-3";
+        //                             cardBody.appendChild(errorMessageSpan);
+        //                         }
+        //                         errorMessageSpan.textContent = errorMessage;
+        //                         errorMessageSpan.style.display = "block";
+        //                     }
+        //                 }
+        //             }
+        //         });
+
+        //         return isValid;
+        //     }
+
+        //     function collectStepData(stepIndex) {
+        //         const stepTab = stepTabs[stepIndex];
+        //         const answers = {};
+                
+        //         // Get the form type (nutrition-form, sports-form, etc.)
+        //         const formType = Array.from(stepTab.classList).find(cls => cls.endsWith('-form'));
+        //         if (!formType) return answers;
+
+        //         // Map form type to form_slug
+        //         const formSlugMap = {
+        //             'nutrition-form': 'nutrition',
+        //             'sports-form': 'sports',
+        //             'supplement-form': 'supplements'
+        //         };
+        //         const formSlug = formSlugMap[formType];
+
+        //         // Handle nutrition form questions (first 4 steps)
+        //         if (formType === 'nutrition-form' && stepIndex < 4) {
+        //             const table = stepTab.querySelector('table');
+        //             if (table) {
+        //                 const rows = table.querySelectorAll('tbody tr');
+        //                 rows.forEach(row => {
+        //                     const foodName = row.querySelector('td:first-child').textContent.trim();
+        //                     const selectedRadio = row.querySelector('input[type="radio"]:checked');
+                            
+        //                     if (selectedRadio) {
+        //                         const optionType = selectedRadio.getAttribute('data-option'); // 'Low', 'High', or 'Unsure'
+        //                         const value = selectedRadio.value || '0';
+        //                         const correct = selectedRadio.getAttribute('data-correct') || '0';
+
+        //                         answers[foodName] = {
+        //                             value: value,
+        //                             option: optionType,
+        //                             correct: parseInt(correct),
+        //                             form_slug: formSlug
+        //                         };
+        //                     }
+        //                 });
+        //             }
+        //         }
+        //         // Handle other form types
+        //         else {
+        //             const inputs = stepTab.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');
+        //             inputs.forEach(input => {
+        //                 const questionDiv = input.closest('.card');
+        //                 const questionText = questionDiv.querySelector('h5').textContent.trim();
+                        
+        //                 answers[questionText] = {
+        //                     value: input.value || '0',
+        //                     option: input.getAttribute('data-option') || input.value,
+        //                     correct: parseInt(input.getAttribute('data-correct') || '0'),
+        //                     form_slug: formSlug
+        //                 };
+        //             });
+        //         }
+
+        //         return answers;
+        //     }
+
+        //     const totalAnswerCounts = {}; 
+
+        //     function updateAnswerCount(formClass, value) {
+        //         if (!totalAnswerCounts[formClass]) {
+        //             totalAnswerCounts[formClass] = 0; // Initialize if not set
+        //         }
+
+        //         console.log(`Before Update: ${formClass} =`, totalAnswerCounts[formClass], `Value =`, value);
+
+        //         if (value === 1 || value === 0.5 || value === -1) {
+        //             totalAnswerCounts[formClass] += value;
+        //         }
+
+        //         console.log(`After Update: ${formClass} =`, totalAnswerCounts[formClass]);
+        //     }
+
+        //     function updateModalTitle(stepIndex) {
+        //         const titles = [
+        //             "Nutrition Knowledge Questions",  // Step 0
+        //             "Sports Nutrition Principles",   // Step 1
+        //             "Supplement Knowledge",          // Step 2
+        //         ];
+        //         console.log('step - ',stepIndex);
+        //         const modalTitle = document.getElementById('testModalLabel');
+        //         if (modalTitle) {
+        //             if (stepIndex < 5) {
+        //                 modalTitle.textContent = "Nutrition Knowledge Questions";
+        //             }else if (stepIndex == 5 ){
+        //                 modalTitle.textContent = "Sports Nutrition Principles";
+        //             }else if(stepIndex == 6){
+        //                 modalTitle.textContent = "Sports Nutrition Principles";
+        //             } else if (stepIndex == 7 ) {
+        //                 modalTitle.textContent = "Supplement Knowledge";
+        //             } else if (stepIndex == 8 ) {
+        //                 modalTitle.textContent = "Your Results";  // Default title for other steps
+        //             }
+        //         }
+        //     }
+
+        //     function updateMeterArrows(type) {
+        //         const maxTotal = 5;
+        //         const degree = 180 / maxTotal;
+        //         let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
+        //         const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
+                
+        //         $('.supplement-percentage').text(Math.round(percentage) + "%");
+        //         $('.score-meter-box-3').removeClass('score-meter-out');
+        //         $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
+
+        //         const maxTotal2 = 15;
+        //         const degree2 = 180 / maxTotal2;
+        //         let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
+        //         const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
+                
+        //         $('.sports-percentage').text(Math.round(percentage2) + "%");
+        //         $('.score-meter-box-2').removeClass('score-meter-out');
+        //         $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree2 + 'deg)');
+
+        //         let nutritiondegree = 5.14285714;
+        //         let nutritiontotalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * nutritiondegree); // Ensure non-negative
+        //         const nutritionmaxTotal = 35;
+        //         const nutritionpercentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / nutritionmaxTotal) * 100);
+                
+        //         $('.nutrition-percentage').text(Math.round(nutritionpercentage) + "%");
+        //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + nutritiontotalDegree + 'deg)');
+        //     }
+
+        //     // Event listener for step navigation buttons (previous/next steps)
+        //     showStepButtons.forEach(button => {
+        //         button.addEventListener("click", () => {
+        //             const targetStep = parseInt(button.getAttribute("target"));
+                    
+        //             // Save current step data
+        //             const stepData = collectStepData(currentStep);
+        //             console.log('Current step data:', stepData);
+                    
+        //             // Check if stepData has any answers
+        //             if (Object.keys(stepData).length > 0) {
+        //                 console.log('Saving step data with quiz ID:', currentQuizId); // Debug log
+                        
+        //                 // Save to localStorage
+        //                 localStorage.setItem(`step-${currentStep}-data`, JSON.stringify(stepData));
+                        
+        //                 // Update total answer counts
+        //                 Object.keys(stepData).forEach(key => {
+        //                     const answer = stepData[key];
+        //                     if (answer.correct === 1) {
+        //                         const formType = Array.from(stepTabs[currentStep].classList).find(cls => cls.endsWith('-form'));
+        //                         if (formType) {
+        //                             totalAnswerCounts[formType] = (totalAnswerCounts[formType] || 0) + 1;
+        //                         }
+        //                     }
+        //                 });
+                        
+        //                 // Save total counts
+        //                 localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
+
+        //                 // Get question text from hidden inputs
+        //                 const form = document.querySelector(`#div${currentStep}`);
+        //                 const questionInputs = form.querySelectorAll("input[type='hidden'][name^='questions']");
+        //                 const questions = Array.from(questionInputs).map(input => input.value);
+
+        //                 // Format data for database
+        //                 const formattedAnswers = questions.map((questionText, index) => ({
+        //                     question: questionText,
+        //                     question_index: index + 1,
+        //                     step: currentStep + 1,
+        //                     form_slug: Object.values(stepData)[0].form_slug, // Get form_slug from first answer
+        //                     answer: stepData
+        //                 }));
+
+        //                 // Save to database
+        //                 $.ajax({
+        //                     url: "{{ route('front.quiz.save-step') }}",
+        //                     method: 'POST',
+        //                     headers: {
+        //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                     },
+        //                     data: {
+        //                         quiz_id: currentQuizId,
+        //                         step: currentStep + 1,
+        //                         questions: questions,
+        //                         answers: formattedAnswers
+        //                     },
+        //                     success: function(response) {
+        //                         if (response.success) {
+        //                             console.log('Step data saved successfully');
+                                    
+        //                             // Move to next step
+        //                             const nextStep = currentStep + 1;
+                                    
+        //                             // Update UI
+        //                             updateModalTitle(nextStep);
+        //                             stepCircles.forEach((step, index) => {
+        //                                 step.classList.toggle('active', index <= nextStep);
+        //                             });
+        //                             stepTabs.forEach((tab, index) => {
+        //                                 tab.style.display = index === nextStep ? "block" : "none";
+        //                             });
+        //                             currentStep = nextStep;
+
+        //                             // Scroll to top
+        //                             const modalBody = $('#TakeTestModel .modal-body');
+        //                             modalBody.scrollTop(0);
+        //                         } else {
+        //                             console.error('Error saving step:', response.message);
+        //                             alert('Error saving step: ' + response.message);
+        //                         }
+        //                     },
+        //                     error: function(xhr) {
+        //                         console.error('Error saving step:', xhr.responseText);
+        //                         alert('Error saving step. Please try again.');
+        //                     }
+        //                 });
+        //             } else {
+        //                 // If no data to save, just update the UI
+        //                 updateModalTitle(targetStep);
+        //                 stepCircles.forEach((step, index) => {
+        //                     step.classList.toggle('active', index <= targetStep);
+        //                 });
+        //                 stepTabs.forEach((tab, index) => {
+        //                     tab.style.display = index === targetStep ? "block" : "none";
+        //                 });
+        //                 currentStep = targetStep;
+
+        //                 // Scroll to top
+        //                 const modalBody = $('#TakeTestModel .modal-body');
+        //                 modalBody.scrollTop(0);
+        //             }
+        //         });
+        //     });
+
+        //     submitButton.addEventListener("click", () => {
+        //         currentStep = 8;
+        //         updateModalTitle(currentStep);
+
+        //         if (!validateStep(currentStep)) {
+        //             return; // Stop submission if validation fails
+        //         }
+
+        //         // const stepsData = {};
+        //         Object.keys(totalAnswerCounts).forEach(form => totalAnswerCounts[form] = 0); // Reset total counts per form
+
+        //         // Collect step data for all steps
+        //         for (let step = 1; step <= 8; step++) {
+        //             const stepData = collectStepData(step);
+
+        //             localStorage.setItem(`step-${step}-data`, JSON.stringify(stepData));
+        //             stepsData[`step-${step}`] = stepData;
+        //         }
+
+        //         // Save all data to local storage
+        //         // localStorage.setItem("testStepsData", JSON.stringify(stepsData));
+        //         localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
+
+        //         $('#detailsModal').modal('show');
+        //         $('#TakeTestModel').removeClass('blur-background'); // Remove blur
+
+        //         // console.log("Total Answer Counts by Form: ", totalAnswerCounts);
+
+        //         // $('#div9').css('display', 'block');
+        //         // $('#div8').css('display', 'none');
+        //         // $('#step-9').addClass('active');
+
+        //         // updateMeterArrows('nutrition-form');
+
+        //         // google.accounts.id.initialize({
+        //         //     client_id: "293809303653-og7a8udbu78o7gjaffkm7vq1jjoh3cnl.apps.googleusercontent.com", // Replace with your real client ID
+        //         //     callback: handleCredentialResponse
+        //         // });
+
+        //         // google.accounts.id.prompt((notification) => {
+        //         //     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        //         //         // User closed the One Tap prompt or it was not displayed
+        //         //         // openManualRegistrationModal(); // Your function to show the modal
+        //         //         console.log("Opening manual registration modal...");
+        //         //         // registerModal.modal('show'); 
+        //         //         $('#detailsModal').modal('show');
+
+        //         //         // $('#registerModal').css('z-index', '1060');
+        //         //         $('#TakeTestModel').addClass('blur-background');
+        //         //     }
+        //         // });
+
+        //     });
+
+        //     function handleCredentialResponse(response) {
+        //         console.log("Google User Token:", response.credential);
+
+        //         // First, verify Google login
+        //         fetch('{{ route("front.google.check-login") }}', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //             body: JSON.stringify({ token: response.credential })
+        //         })
+        //         .then(res => res.json())
+        //         .then(data => {
+        //             console.log("User Data:", data);
+
+        //             if (data.status == "logged_in") {
+        //                 // Track completion
+        //                 $.ajax({
+        //                     url: "{{ route('front.track.quiz.completion') }}",
+        //                     method: 'POST',
+        //                     headers: {
+        //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                     },
+        //                     data: {
+        //                         userId: user_id,
+        //                         email: $('#email').val()
+        //                     },
+        //                     success: function(response) {
+        //                         console.log('Quiz completion tracked');
+        //                     }
+        //                 });
+        //                 // Google login successful, now send questionnaire data
+        //                 sendQuestionnaireData(data.user_id);
+        //             } else {
+        //                 alert("Login failed, Please try again.");
+        //                 console.error("Google Login Failed");
+        //             }
+        //         })
+        //         .catch(error => console.error("Error in Google Login:", error));
+        //     }
+
+        //     function sendQuestionnaireData(user_id) {
+        //         const stepsData = JSON.parse(localStorage.getItem("testStepsData"));
+        //         const totalAnswerCounts = JSON.parse(localStorage.getItem("totalAnswerCounts"));
+        //         console.log(stepsData);
+        //         console.log(user_id);
+        //         if (!stepsData || !totalAnswerCounts) {
+        //             console.error("No questionnaire data found!");
+        //             return;
+        //         }
+
+        //         fetch('{{ route("front.submit-free-test") }}', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //             body: JSON.stringify({
+        //                 userId: user_id,
+        //                 testData: stepsData,
+        //                 totalAnswerCount: totalAnswerCounts
+        //             })
+        //         })
+        //         .then(res => res.json())
+        //         .then(response => {
+        //             if (response.success) {
+        //                 console.log("Questionnaire Data Saved Successfully:", response);
+                        
+        //                 // Move to the next step after saving data
+        //                 $('#div9').css('display', 'block');
+        //                 $('#div8').css('display', 'none');
+        //                 $('#step-9').addClass('active');
+        //                 alert(response.message);
+        //                 updateMeterArrows('nutrition-form');
+        //                 localStorage.removeItem("testStepsData");
+        //                 localStorage.removeItem("totalAnswerCounts");
+        //             } else {
+        //                 alert(response.message);
+        //                 console.error("Failed to Save Questionnaire Data:", response.message);
+        //                 localStorage.removeItem("testStepsData");
+        //                 localStorage.removeItem("totalAnswerCounts");
+        //             }
+        //         })
+        //         .catch(error => console.error("Error Saving Questionnaire Data:", error));
+        //     }
+
+        //     $('#detailsForm').on('submit', function (e) {
+        //         e.preventDefault(); // Prevent default form submission
+                
+        //         let type = $('#formType').val() // Retrieve stored type (sports or supplement)
+        //         let email = $('#detailsForm').find('#email').val();
+        //         let name = $('#detailsForm').find('#name').val();
+        //         let phone = $('#detailsForm').find('#mobile').val();
+        //         let password = null;
+
+        //         const testData = JSON.parse(localStorage.getItem("testStepsData"));
+        //         const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
+
+        //         // Prepare data for submission
+        //         const registrationData = {
+        //             name,
+        //             email,
+        //             password,
+        //             phone
+        //         };
+
+        //         // Simulate API request to register the user
+        //         $.ajax({
+        //             url: "{{ route('front.register') }}",
+        //             method: "POST",
+        //             contentType: "application/json",
+        //             headers: {
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //             data: JSON.stringify(registrationData),
+        //             success: function (data) {
+        //                 if (data.success) {
+        //                     const userId = data.user.id;
+
+        //                     // Now, associate the user ID with the test form data and save it to the database
+        //                     $.ajax({
+        //                         url: "{{ route('front.submit-free-test') }}",
+        //                         method: "POST",
+        //                         contentType: "application/json",
+        //                         headers: {
+        //                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                         },
+        //                         data: JSON.stringify({ userId, name, email, phone, testData, totalAnswerCount }),
+        //                         success: function () {
+        //                             // alert("Registration and Test Data Submission Successful!");
+        //                             // Track completion
+        //                             $.ajax({
+        //                                 url: "{{ route('front.track.quiz.completion') }}",
+        //                                 method: 'POST',
+        //                                 headers: {
+        //                                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                                 },
+        //                                 data: {
+        //                                     userId: userId,
+        //                                     email: email
+        //                                 },
+        //                                 success: function(response) {
+        //                                     console.log('Quiz completion tracked');
+        //                                 }
+        //                             });
+
+        //                             $('#div9').css('display', 'block');
+        //                             $('#div8').css('display', 'none');
+        //                             $('#step-9').addClass('active');
+
+        //                             updateMeterArrows('nutrition-form');
+
+        //                             $('.sport-plan .score-lock').addClass('d-none');
+        //                             $('.sports-percentage').removeClass('d-none');
+
+        //                             // Hide sport-lock and show sport-unlock
+        //                             $('.sport-plan .sport-lock').addClass('d-none');
+        //                             $('.sport-plan .sport-unlock').removeClass('d-none');
+        //                             $('.sport-plan .unlock-result').addClass('d-none');
+
+        //                             // Hide supplement-lock and show supplement-unlock
+        //                             $('.supplement-plan .supplement-lock').addClass('d-none');
+        //                             $('.supplement-plan .score-lock').addClass('d-none');
+        //                             $('.supplement-plan .supplement-unlock').removeClass('d-none');
+        //                             $('.supplement-percentage').removeClass('d-none');
+        //                             $('.supplement-plan .unlock-result').addClass('d-none');
+        //                             // Clear localStorage and close the modal
+        //                             localStorage.removeItem("testStepsData");
+        //                             localStorage.removeItem("totalAnswerCounts");
+        //                             $('#detailsModal').modal('hide'); // Close the register modal
+        //                             $('#TakeTestModel').removeClass('blur-background');
+        //                             // showThankYouModal();
+        //                         },
+        //                         error: function () {
+        //                             alert("Error submitting test data.");
+        //                         }
+        //                     });
+        //                 } else {
+        //                     alert(data.message);
+
+        //                     // Clear localStorage and close the modal
+        //                     localStorage.removeItem("testStepsData");
+        //                     localStorage.removeItem("totalAnswerCounts");
+        //                     $('#detailsModal').modal('hide');
+        //                     $('#TakeTestModel').removeClass('blur-background');
+        //                     // loginModal.modal('show');
+
+        //                 }
+        //             },
+        //             error: function () {
+        //                 alert("Error registering.");
+        //             }
+        //         });
+        //     })
+
+        //     // Login form submit handler
+        //     loginForm.submit(function (event) {
+        //         event.preventDefault();
+
+        //         const testData = JSON.parse(localStorage.getItem("testStepsData"));
+        //         const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
+
+        //         // Capture the login form data (email, password)
+        //         const email = $("#test-login-email").val();
+        //         const password = $("#test-login-password").val();
+        //         console.log(email);
+        //         console.log(password);
+        //         // Prepare data for login submission
+        //         const loginData = {
+        //             email,
+        //             password
+        //         };
+
+        //         // Simulate API request to log the user in
+        //         $.ajax({
+        //             url: "{{ route('front.login') }}",
+        //             method: "POST",
+        //             contentType: "application/json",
+        //             data: JSON.stringify(loginData),
+        //             headers: {
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //             success: function (data) {
+        //                 if (data.success) {
+        //                     const userId = data.user.id;
+        //                     const name = data.user.name;
+        //                     // Handle success (store user data, etc.)
+        //                     if(data.freeTest) {
+        //                         alert("Your free test has already been taken. so your results sent to your email.");
+        //                         // Clear localStorage and close the modal
+        //                         localStorage.removeItem("testStepsData");
+        //                         localStorage.removeItem("totalAnswerCounts");
+
+        //                         loginModal.modal('hide'); // Close the register modal
+        //                         showThankYouModal();
+        //                     } else {
+        //                         $.ajax({
+        //                             url: "{{ route('front.submit-free-test') }}",
+        //                             method: "POST",
+        //                             contentType: "application/json",
+        //                             headers: {
+        //                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                             },
+        //                             data: JSON.stringify({ userId, name, email, testData ,totalAnswerCount}),
+        //                             success: function () {
+        //                                 // alert("Registration and Test Data Submission Successful!");
+
+        //                                 // Clear localStorage and close the modal
+        //                                 localStorage.removeItem("testStepsData");
+        //                                 localStorage.removeItem("totalAnswerCounts");
+
+        //                                 loginModal.modal('hide'); // Close the register modal
+        //                                 showThankYouModal();
+        //                             },
+        //                             error: function () {
+        //                                 alert("Error submitting test data.");
+        //                             }
+        //                         });
+        //                     }
+
+        //                     // Close the login modal
+        //                     loginModal.modal('hide');
+        //                 } else {
+        //                     alert("Login failed.");
+        //                 }
+        //             },
+        //             error: function () {
+        //                 alert("Error logging in.");
+        //             }
+        //         });
+        //     });
+
+        //     // Switch to the login modal from the register modal
+        //     loginLink.click(function () {
+        //         registerModal.modal('hide');
+        //         loginModal.modal('show');
+        //     });
+
+        //     // Switch to the register modal from the login modal
+        //     registerLink.click(function () {
+        //         loginModal.modal('hide');
+        //         registerModal.modal('show');
+        //     });
+
+        //     // Add this after your existing registration modal code
+        //     $('#registerModal').on('hidden.bs.modal', function () {
+        //         // Check if we have test data in localStorage (indicating quiz was completed)
+        //         const testData = JSON.parse(localStorage.getItem("testStepsData"));
+        //         if (testData) {
+        //             // Track completion without email
+        //             $.ajax({
+        //                 url: "{{ route('front.track.quiz.completion') }}",
+        //                 method: 'POST',
+        //                 headers: {
+        //                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                 },
+        //                 data: {
+        //                     userId: null,
+        //                     email: null
+        //                 },
+        //                 success: function(response) {
+        //                     console.log('Quiz completion tracked (modal closed)');
+        //                 }
+        //             });
+        //         }
+        //         $('#TakeTestModel').removeClass('blur-background');
+        //     });
+
+        //     function showThankYouModal() {
+        //         // Set dynamic content
+        //         const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
+        //         const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
+        //         // Set the modal message
+        //         $('#thankYouMessage').text(thankYouMessage);
+                
+        //         // Set the URL for the plan button dynamically
+        //         $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
+        //         $('#thankYouModal').modal('show');
+        //     }
+        // });
+
         $(document).ready(function () {
+           
+            let currentQuizId = null;
             // Show the modal on clicking the start test button
             $('#takeFreeTest').on('click', function () {
                 // Track quiz click
                 $.ajax({
-                    url: "{{ route('front.track.quiz.click') }}",
+                    url: "{{ route('front.quiz.start') }}",
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        console.log('Quiz click tracked');
+                        console.log('Quiz start response:', response); // Debug log
+                        if (response.success) {
+                            currentQuizId = response.quiz_id;
+                            console.log('Quiz started with ID:', currentQuizId); // Debug log
+                            $('#TakeTestModel').modal('show');
+                        } else {
+                            alert('Error starting quiz: ' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error starting quiz:', xhr.responseText);
+                        alert('Error starting quiz. Please try again.');
                     }
                 });
-                $('#TakeTestModel').modal('show');
             });
 
             $('.unlock-result').on('click', function () {
@@ -2874,12 +3638,15 @@
             }
 
             function collectStepData(currentStep) {
+                console.log(currentStep);
                 const form = document.querySelector(`#div${currentStep}`);
+                console.log(form);
                 if (!form) return {};
 
                 const stepData = JSON.parse(localStorage.getItem("testStepsData")) || {};
                 const formClass = Array.from(form.classList).find(cls => cls.endsWith('-form'));
-
+                console.log(stepData);
+                console.log(formClass);
                 if (!formClass) {
                     console.error('Form class not found for step:', currentStep);
                     return {};
@@ -2897,7 +3664,9 @@
 
                     stepData[formClass][questionText] = {};
 
-                    // Handle Table-based Questions
+                    // ─────────────────────────────────────────
+                    // 1. TABLE-based Questions (with radios)
+                    // ─────────────────────────────────────────
                     const cardContainer = questionInput.closest(".card");
                     if (cardContainer) {
                         const table = cardContainer.querySelector("table");
@@ -2905,52 +3674,73 @@
                             const rows = table.querySelectorAll("tbody tr");
 
                             rows.forEach(row => {
-                                const foodNameElem = row.querySelector("td:first-child");
+                                const foodNameElem   = row.querySelector("td:first-child");
                                 const selectedAnswer = row.querySelector("input[type='radio']:checked");
 
-                                if (foodNameElem) {
-                                    const foodName = foodNameElem.textContent.trim();
-                                    const answerValue = parseFloat(selectedAnswer ? selectedAnswer.value : "0") || 0;
+                                if (foodNameElem && selectedAnswer) {
+                                    const foodName    = foodNameElem.textContent.trim();
+                                    const answerValue = parseFloat(selectedAnswer.value) || 0;
+                                    const optionType  = selectedAnswer.dataset.option || null;
+                                    const correctFlag = parseInt(selectedAnswer.dataset.correct || 0);
 
-                                    stepData[formClass][questionText][foodName] = answerValue;
+                                    stepData[formClass][questionText][foodName] = {
+                                        value: answerValue,
+                                        option: optionType,
+                                        correct: correctFlag
+                                    };
+
                                     updateAnswerCount(formClass, answerValue);
                                 }
                             });
                         }
                     }
 
-                    // Handle Non-Table Radio Button Questions
+                    // ─────────────────────────────────────────
+                    // 2. Regular Radio Buttons (outside tables)
+                    // ─────────────────────────────────────────
                     form.querySelectorAll(`input[type="radio"][name^='ans[${questionInput.name.replace("questions[", "").replace("]", "")}]']:checked`)
                         .forEach(radio => {
                             const labelElem = radio.closest(".form-check")?.querySelector("label") || form.querySelector(`label[for="${radio.id}"]`);
                             if (!labelElem) return;
 
-                            const label = labelElem.textContent.trim();
+                            const label       = labelElem.textContent.trim();
                             const answerValue = parseFloat(radio.value) || 0;
+                            const optionType  = radio.dataset.option || null;
+                            const correctFlag = parseInt(radio.dataset.correct || 0);
 
-                            stepData[formClass][questionText][label] = answerValue;
+                            stepData[formClass][questionText][label] = {
+                                value: answerValue,
+                                option: optionType,
+                                correct: correctFlag
+                            };
+
                             updateAnswerCount(formClass, answerValue);
                         });
 
-                    // Handle Checkboxes
+                    // ─────────────────────────────────────────
+                    // 3. Checkbox Handling (if used)
+                    // ─────────────────────────────────────────
                     form.querySelectorAll(`input[type="checkbox"][name^='ans[${questionInput.name.replace("questions[", "").replace("]", "")}]']:checked`)
                         .forEach(checkbox => {
                             const labelElem = checkbox.closest("label") || form.querySelector(`label[for="${checkbox.id}"]`);
                             if (!labelElem) return;
 
-                            const labelText = labelElem.textContent.trim();
-                            const checkboxValue = parseFloat(checkbox.value) || 0;
+                            const labelText   = labelElem.textContent.trim();
+                            const checkboxVal = parseFloat(checkbox.value) || 0;
+                            const optionType  = checkbox.dataset.option || null;
+                            const correctFlag = parseInt(checkbox.dataset.correct || 0);
 
-                            if (!stepData[formClass][questionText][labelText]) {
-                                stepData[formClass][questionText][labelText] = checkboxValue;
-                            } else {
-                                stepData[formClass][questionText][labelText] += checkboxValue;
-                            }
+                            stepData[formClass][questionText][labelText] = {
+                                value: checkboxVal,
+                                option: optionType,
+                                correct: correctFlag
+                            };
 
-                            updateAnswerCount(formClass, checkboxValue);
+                            updateAnswerCount(formClass, checkboxVal);
                         });
                 });
 
+                console.log(stepData);
                 localStorage.setItem("testStepsData", JSON.stringify(stepData));
 
                 console.log(`Step Data Collected for ${formClass}:`, stepData);
@@ -2971,6 +3761,81 @@
                 });
 
                 return stepData;
+            }
+
+            function collectCurrentStepData(currentStep) {
+                console.log(currentStep);
+                const form = document.querySelector(`#div${currentStep}`);
+                if (!form) return {};
+
+                const formClass = Array.from(form.classList).find(cls => cls.endsWith('-form'));
+                if (!formClass) {
+                    console.error('Form class not found for step:', currentStep);
+                    return {};
+                }
+
+                const currentStepData = {};
+                currentStepData[formClass] = {};
+
+                const questionInputs = form.querySelectorAll("input[type='hidden'][name^='questions']");
+                questionInputs.forEach(questionInput => {
+                    const questionText = questionInput.value;
+                    if (!questionText) return;
+
+                    currentStepData[formClass][questionText] = {};
+
+                    // ─ Table-based answers ─
+                    const cardContainer = questionInput.closest(".card");
+                    if (cardContainer) {
+                        const table = cardContainer.querySelector("table");
+                        if (table) {
+                            const rows = table.querySelectorAll("tbody tr");
+                            rows.forEach(row => {
+                                const foodNameElem   = row.querySelector("td:first-child");
+                                const selectedAnswer = row.querySelector("input[type='radio']:checked");
+
+                                if (foodNameElem && selectedAnswer) {
+                                    const foodName = foodNameElem.textContent.trim();
+                                    currentStepData[formClass][questionText][foodName] = {
+                                        value: parseFloat(selectedAnswer.value) || 0,
+                                        option: selectedAnswer.dataset.option || null,
+                                        correct: parseInt(selectedAnswer.dataset.correct || 0)
+                                    };
+                                }
+                            });
+                        }
+                    }
+
+                    // ─ Normal radio buttons ─
+                    form.querySelectorAll(`input[type="radio"][name^='ans[${questionInput.name.replace("questions[", "").replace("]", "")}]']:checked`)
+                        .forEach(radio => {
+                            const labelElem = radio.closest(".form-check")?.querySelector("label") || form.querySelector(`label[for="${radio.id}"]`);
+                            if (!labelElem) return;
+
+                            const label = labelElem.textContent.trim();
+                            currentStepData[formClass][questionText][label] = {
+                                value: parseFloat(radio.value) || 0,
+                                option: radio.dataset.option || null,
+                                correct: parseInt(radio.dataset.correct || 0)
+                            };
+                        });
+
+                    // ─ Checkboxes ─
+                    form.querySelectorAll(`input[type="checkbox"][name^='ans[${questionInput.name.replace("questions[", "").replace("]", "")}]']:checked`)
+                        .forEach(checkbox => {
+                            const labelElem = checkbox.closest("label") || form.querySelector(`label[for="${checkbox.id}"]`);
+                            if (!labelElem) return;
+
+                            const label = labelElem.textContent.trim();
+                            currentStepData[formClass][questionText][label] = {
+                                value: parseFloat(checkbox.value) || 0,
+                                option: checkbox.dataset.option || null,
+                                correct: parseInt(checkbox.dataset.correct || 0)
+                            };
+                        });
+                });
+                console.log(currentStepData);
+                return currentStepData;
             }
 
             const totalAnswerCounts = {}; 
@@ -3013,92 +3878,6 @@
                 }
             }
 
-            // Function to update meter-arrow rotation dynamically based on the answer count
-            // function updateMeterArrows(type) {
-            //     console.log('type', type);
-            //     if (type == 'nutrition-form') {
-            //         let degree = 5.14285714;
-            //         let totalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * degree); // Ensure non-negative
-            //         const maxTotal = 35;
-            //         const percentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / maxTotal) * 100);
-                    
-            //         console.log("Degree:", totalDegree);
-            //         console.log(Math.round(percentage));
-                    
-            //         $('.nutrition-percentage').text(Math.round(percentage) + "%");
-            //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + totalDegree + 'deg)');
-            //     }
-
-            //     if (type == 'sport') {
-            //         const maxTotal = 15;
-            //         const degree = 180 / maxTotal;
-            //         let totalDegree = Math.max(0, totalAnswerCounts['sports-form'] * degree); // Ensure non-negative
-            //         const percentage = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal) * 100);
-                    
-            //         // console.log("Degree:", totalDegree);
-            //         // console.log(Math.round(percentage));
-                    
-            //         $('.sports-percentage').text(Math.round(percentage) + "%");
-            //         $('.score-meter-box-2').removeClass('score-meter-out');
-            //         $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree + 'deg)');
-
-            //         const maxTotal1 = 5;
-            //         const degree1 = 180 / maxTotal1;
-            //         let totalDegree1 = Math.max(0, totalAnswerCounts['supplement-form'] * degree1); // Ensure non-negative
-            //         const percentage1 = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal1) * 100);
-                    
-            //         // console.log("Degree:", totalDegree1);
-            //         // console.log(Math.round(percentage1));
-                    
-            //         $('.supplement-percentage').text(Math.round(percentage1) + "%");
-            //         $('.score-meter-box-3').removeClass('score-meter-out');
-            //         $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree1 + 'deg)');
-
-            //         let nutritiondegree = 5.14285714;
-            //         let nutritiontotalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * nutritiondegree); // Ensure non-negative
-            //         const nutritionmaxTotal = 35;
-            //         const nutritionpercentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / nutritionmaxTotal) * 100);
-                    
-            //         $('.nutrition-percentage').text(Math.round(nutritionpercentage) + "%");
-            //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + nutritiontotalDegree + 'deg)');
-            //     }
-
-            //     if (type == 'supplement') {
-            //         const maxTotal = 5;
-            //         const degree = 180 / maxTotal;
-            //         let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
-            //         const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
-                    
-            //         // console.log("Degree:", totalDegree);
-            //         // console.log(Math.round(percentage));
-                    
-            //         $('.supplement-percentage').text(Math.round(percentage) + "%");
-            //         $('.score-meter-box-3').removeClass('score-meter-out');
-            //         $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
-
-            //         const maxTotal2 = 15;
-            //         const degree2 = 180 / maxTotal2;
-            //         let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
-            //         const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
-                    
-            //         // console.log("Degree:", totalDegree2);
-            //         // console.log(Math.round(percentage2));
-                    
-            //         $('.sports-percentage').text(Math.round(percentage2) + "%");
-            //         $('.score-meter-box-2').removeClass('score-meter-out');
-            //         $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree2 + 'deg)');
-
-            //         let nutritiondegree = 5.14285714;
-            //         let nutritiontotalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * nutritiondegree); // Ensure non-negative
-            //         const nutritionmaxTotal = 35;
-            //         const nutritionpercentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / nutritionmaxTotal) * 100);
-                    
-            //         $('.nutrition-percentage').text(Math.round(nutritionpercentage) + "%");
-            //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + nutritiontotalDegree + 'deg)');
-            //     }
-            //     // Reset the totalAnswerCount for future submissions
-            // }
-
             function updateMeterArrows(type) {
                 const maxTotal = 5;
                 const degree = 180 / maxTotal;
@@ -3136,12 +3915,29 @@
                         console.log("Validation failed for step:", currentStep);
                         return; // Stop progression if validation fails
                     }
+                    console.log(currentStep);
                     // Collect data for the current step
-                    collectStepData(currentStep);
-
-                    // Update the meter arrows dynamically as the user progresses
-                    // updateMeterArrows('nutrition-form');
-
+                   // ✅ 1. Collect data from current step
+                    const stepJson = collectStepData(currentStep);
+                    const currentStepJson = collectCurrentStepData(currentStep + 1);
+                    // console.log(currentStepJson);
+                    // ✅ 2. Send to backend
+                    $.ajax({
+                        url: "{{ route('front.quiz.save-step') }}",
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        data: {
+                            quiz_id: currentQuizId,
+                            step: currentStep+1,
+                            stepData: JSON.stringify(currentStepJson)
+                        },
+                        success: function (response) {
+                            console.log('Step saved successfully:', response);
+                        },
+                        error: function (xhr) {
+                            console.error('Failed to save step:', xhr.responseText);
+                        }
+                    });
                     // Update modal title dynamically based on the step
                     updateModalTitle(targetStep);
 
@@ -3189,6 +3985,25 @@
                     stepsData[`step-${step}`] = stepData;
                 }
 
+                const step8Data = collectCurrentStepData(8); // returns a minimal object
+                console.log("Collected Step 8 Data:", step8Data);
+
+                $.ajax({
+                    url: "{{ route('front.quiz.save-step') }}",
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    data: {
+                        quiz_id: currentQuizId,
+                        step: 8,
+                        stepData: JSON.stringify(step8Data)
+                    },
+                    success: function (response) {
+                        console.log('Step saved successfully:', response);
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to save step:', xhr.responseText);
+                    }
+                });
                 // Save all data to local storage
                 // localStorage.setItem("testStepsData", JSON.stringify(stepsData));
                 localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
@@ -3196,31 +4011,6 @@
                 $('#detailsModal').modal('show');
                 $('#TakeTestModel').removeClass('blur-background'); // Remove blur
 
-                // console.log("Total Answer Counts by Form: ", totalAnswerCounts);
-
-                // $('#div9').css('display', 'block');
-                // $('#div8').css('display', 'none');
-                // $('#step-9').addClass('active');
-
-                // updateMeterArrows('nutrition-form');
-
-                // google.accounts.id.initialize({
-                //     client_id: "293809303653-og7a8udbu78o7gjaffkm7vq1jjoh3cnl.apps.googleusercontent.com", // Replace with your real client ID
-                //     callback: handleCredentialResponse
-                // });
-
-                // google.accounts.id.prompt((notification) => {
-                //     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                //         // User closed the One Tap prompt or it was not displayed
-                //         // openManualRegistrationModal(); // Your function to show the modal
-                //         console.log("Opening manual registration modal...");
-                //         // registerModal.modal('show'); 
-                //         $('#detailsModal').modal('show');
-
-                //         // $('#registerModal').css('z-index', '1060');
-                //         $('#TakeTestModel').addClass('blur-background');
-                //     }
-                // });
 
             });
 
@@ -3343,65 +4133,49 @@
                     success: function (data) {
                         if (data.success) {
                             const userId = data.user.id;
-
-                            // Now, associate the user ID with the test form data and save it to the database
+                            
                             $.ajax({
-                                url: "{{ route('front.submit-free-test') }}",
-                                method: "POST",
-                                contentType: "application/json",
+                                url: "{{ route('front.quiz.complete') }}",
+                                method: 'POST',
                                 headers: {
                                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                                 },
-                                data: JSON.stringify({ userId, name, email, phone, testData, totalAnswerCount }),
-                                success: function () {
-                                    // alert("Registration and Test Data Submission Successful!");
-                                    // Track completion
-                                    $.ajax({
-                                        url: "{{ route('front.track.quiz.completion') }}",
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                        },
-                                        data: {
-                                            userId: userId,
-                                            email: email
-                                        },
-                                        success: function(response) {
-                                            console.log('Quiz completion tracked');
-                                        }
-                                    });
-
-                                    $('#div9').css('display', 'block');
-                                    $('#div8').css('display', 'none');
-                                    $('#step-9').addClass('active');
-
-                                    updateMeterArrows('nutrition-form');
-
-                                    $('.sport-plan .score-lock').addClass('d-none');
-                                    $('.sports-percentage').removeClass('d-none');
-
-                                    // Hide sport-lock and show sport-unlock
-                                    $('.sport-plan .sport-lock').addClass('d-none');
-                                    $('.sport-plan .sport-unlock').removeClass('d-none');
-                                    $('.sport-plan .unlock-result').addClass('d-none');
-
-                                    // Hide supplement-lock and show supplement-unlock
-                                    $('.supplement-plan .supplement-lock').addClass('d-none');
-                                    $('.supplement-plan .score-lock').addClass('d-none');
-                                    $('.supplement-plan .supplement-unlock').removeClass('d-none');
-                                    $('.supplement-percentage').removeClass('d-none');
-                                    $('.supplement-plan .unlock-result').addClass('d-none');
-                                    // Clear localStorage and close the modal
-                                    localStorage.removeItem("testStepsData");
-                                    localStorage.removeItem("totalAnswerCounts");
-                                    $('#detailsModal').modal('hide'); // Close the register modal
-                                    $('#TakeTestModel').removeClass('blur-background');
-                                    // showThankYouModal();
+                                data: {
+                                    quiz_id: currentQuizId,
+                                    userId: userId,
+                                    totalAnswerCounts: totalAnswerCounts
                                 },
-                                error: function () {
-                                    alert("Error submitting test data.");
+                                success: function(response) {
+                                    console.log('Quiz completion tracked');
                                 }
                             });
+
+                            $('#div9').css('display', 'block');
+                            $('#div8').css('display', 'none');
+                            $('#step-9').addClass('active');
+
+                            updateMeterArrows('nutrition-form');
+
+                            $('.sport-plan .score-lock').addClass('d-none');
+                            $('.sports-percentage').removeClass('d-none');
+
+                            // Hide sport-lock and show sport-unlock
+                            $('.sport-plan .sport-lock').addClass('d-none');
+                            $('.sport-plan .sport-unlock').removeClass('d-none');
+                            $('.sport-plan .unlock-result').addClass('d-none');
+
+                            // Hide supplement-lock and show supplement-unlock
+                            $('.supplement-plan .supplement-lock').addClass('d-none');
+                            $('.supplement-plan .score-lock').addClass('d-none');
+                            $('.supplement-plan .supplement-unlock').removeClass('d-none');
+                            $('.supplement-percentage').removeClass('d-none');
+                            $('.supplement-plan .unlock-result').addClass('d-none');
+                            // Clear localStorage and close the modal
+                            localStorage.removeItem("testStepsData");
+                            localStorage.removeItem("totalAnswerCounts");
+                            $('#detailsModal').modal('hide'); // Close the register modal
+                            $('#TakeTestModel').removeClass('blur-background');
+                              
                         } else {
                             alert(data.message);
 
@@ -3419,203 +4193,6 @@
                     }
                 });
             })
-
-            // // Handle form submission
-            // $('#detailsForm').on('submit', function (e) {
-            //     e.preventDefault(); // Prevent default form submission
-            //     const stepsData = JSON.parse(localStorage.getItem("testStepsData"));
-            //     const totalAnswerCounts = JSON.parse(localStorage.getItem("totalAnswerCounts"));
-            //     // console.log(stepsData);
-            //     // console.log(totalAnswerCounts);
-            //     let type = $('#formType').val() // Retrieve stored type (sports or supplement)
-            //     // console.log(type);
-            //     let email = $('#detailsForm').find('#email').val();
-            //     let name = $('#detailsForm').find('#name').val();
-            //     // let password = $('#detailsForm').find('#password').val();
-            //     let mobile = $('#detailsForm').find('#mobile').val();
-            //     // $('#detailsModal').modal('hide');
-            //     // $('#TakeTestModel').removeClass('blur-background');
-
-            //     // Update meter arrow based on form type
-            //     // updateMeterArrows(type);
-            
-            //     // Simulate AJAX request to submit form data
-            //     $.ajax({
-            //         url: '{{ route("front.unlock-result") }}', // Replace with actual API URL
-            //         method: 'POST',
-            //         data: {
-            //             email: email,
-            //             name: name,
-            //             password: password,
-            //             phone: mobile,
-            //             type: type, // Include the type (sports or supplement)
-            //             testData: stepsData,
-            //             totalAnswerCounts: totalAnswerCounts,
-            //             _token: "{{ csrf_token() }}"
-            //         },
-            //         success: function (response) {
-            //             if(response.status == "success") {
-            //                 console.log("Form submitted successfully!", response);
-                            
-            //                 // Track completion
-            //                 $.ajax({
-            //                     url: "{{ route('front.track.quiz.completion') }}",
-            //                     method: 'POST',
-            //                     headers: {
-            //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            //                     },
-            //                     data: {
-            //                         userId: response.user_id,
-            //                         email: email
-            //                     },
-            //                     success: function(response) {
-            //                         console.log('Quiz completion tracked');
-            //                     }
-            //                 });
-            //                 // Close modal
-            //                 $('#detailsModal').modal('hide');
-            //                 $('#TakeTestModel').removeClass('blur-background');
-
-            //                 updateMeterArrows(type);
-
-            //                 // if(type == "sport") {
-            //                     $('.sport-plan .score-lock').addClass('d-none');
-            //                     $('.sports-percentage').removeClass('d-none');
-
-            //                     // Hide sport-lock and show sport-unlock
-            //                     $('.sport-plan .sport-lock').addClass('d-none');
-            //                     $('.sport-plan .sport-unlock').removeClass('d-none');
-            //                     $('.sport-plan .unlock-result').addClass('d-none');
-
-            //                     // Hide supplement-lock and show supplement-unlock
-            //                     $('.supplement-plan .supplement-lock').addClass('d-none');
-            //                     $('.supplement-plan .score-lock').addClass('d-none');
-            //                     $('.supplement-plan .supplement-unlock').removeClass('d-none');
-            //                     $('.supplement-percentage').removeClass('d-none');
-            //                     $('.supplement-plan .unlock-result').addClass('d-none');
-            //                 // }
-            //                 // if(type == "supplement") {
-            //                 //     $('.supplement-plan .score-lock').addClass('d-none');
-
-            //                 //     // Hide supplement-lock and show supplement-unlock
-            //                 //     $('.supplement-plan .supplement-lock').addClass('d-none');
-            //                 //     $('.supplement-plan .supplement-unlock').removeClass('d-none');
-            //                 // }
-
-            //                 localStorage.removeItem("testStepsData");
-            //                 localStorage.removeItem("totalAnswerCounts");
-
-            //                 $('#detailsForm')[0].reset();
-            //             }else {
-            //                 alert(response.message);
-            //                 $('.supplement-plan .unlock-result').removeClass('d-none');
-            //                 $('.sport-plan .unlock-result').removeClass('d-none');
-            //             }
-            //         },
-            //         error: function (xhr, status, error) {
-            //             alert("Error: ", error);
-            //             console.log("Error submitting form:", error);
-            //             $('.supplement-plan .unlock-result').removeClass('d-none');
-            //             $('.sport-plan .unlock-result').removeClass('d-none');
-            //         }
-            //     });
-            // });
-
-            // Registration form submit handler
-            // registerForm.submit(function (event) {
-            //     event.preventDefault();
-
-            //     // Capture the registration form data (name, email, password)
-            //     const name = $("#register-name").val();
-            //     const email = $("#register-email").val();
-            //     const phone = $("#register-phone").val();
-            //     const password = $("#register-password").val();
-
-            //     // Get test data from localStorage
-            //     const testData = JSON.parse(localStorage.getItem("testStepsData"));
-            //     const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
-
-            //     // Prepare data for submission
-            //     const registrationData = {
-            //         name,
-            //         email,
-            //         password,
-            //         phone
-            //     };
-
-            //     // Simulate API request to register the user
-            //     $.ajax({
-            //         url: "{{ route('front.register') }}",
-            //         method: "POST",
-            //         contentType: "application/json",
-            //         headers: {
-            //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            //         },
-            //         data: JSON.stringify(registrationData),
-            //         success: function (data) {
-            //             if (data.success) {
-            //                 const userId = data.user.id;
-
-            //                 // Now, associate the user ID with the test form data and save it to the database
-            //                 $.ajax({
-            //                     url: "{{ route('front.submit-free-test') }}",
-            //                     method: "POST",
-            //                     contentType: "application/json",
-            //                     headers: {
-            //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            //                     },
-            //                     data: JSON.stringify({ userId, name, email, phone, testData, totalAnswerCount }),
-            //                     success: function () {
-            //                         // alert("Registration and Test Data Submission Successful!");
-            //                         // Track completion
-            //                         $.ajax({
-            //                             url: "{{ route('front.track.quiz.completion') }}",
-            //                             method: 'POST',
-            //                             headers: {
-            //                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            //                             },
-            //                             data: {
-            //                                 userId: userId,
-            //                                 email: email
-            //                             },
-            //                             success: function(response) {
-            //                                 console.log('Quiz completion tracked');
-            //                             }
-            //                         });
-
-            //                         $('#div9').css('display', 'block');
-            //                         $('#div8').css('display', 'none');
-            //                         $('#step-9').addClass('active');
-
-            //                         updateMeterArrows('nutrition-form');
-            //                         // Clear localStorage and close the modal
-            //                         localStorage.removeItem("testStepsData");
-            //                         localStorage.removeItem("totalAnswerCounts");
-            //                         registerModal.modal('hide'); // Close the register modal
-            //                         $('#TakeTestModel').removeClass('blur-background');
-            //                         // showThankYouModal();
-            //                     },
-            //                     error: function () {
-            //                         alert("Error submitting test data.");
-            //                     }
-            //                 });
-            //             } else {
-            //                 alert(data.message);
-
-            //                 // Clear localStorage and close the modal
-            //                 localStorage.removeItem("testStepsData");
-            //                 localStorage.removeItem("totalAnswerCounts");
-            //                 registerModal.modal('hide'); // Close the register modal
-            //                 $('#TakeTestModel').removeClass('blur-background');
-            //                 // loginModal.modal('show');
-
-            //             }
-            //         },
-            //         error: function () {
-            //             alert("Error registering.");
-            //         }
-            //     });
-            // });
 
             // Login form submit handler
             loginForm.submit(function (event) {
@@ -4338,6 +4915,267 @@
             //         }
             //     });
             // });
+        });
+
+        $(document).ready(function() {
+            // let currentStep = 0;
+            // let currentQuizId = null;
+
+            // // Handle Take Free Test button click
+            // $('#takeFreeTest').on('click', function() {
+            //     $.ajax({
+            //         url: "{{ route('front.quiz.start') }}",
+            //         method: 'POST',
+            //         headers: {
+            //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            //         },
+            //         success: function(response) {
+            //             console.log('Quiz start response:', response); // Debug log
+            //             if (response.success) {
+            //                 currentQuizId = response.quiz_id;
+            //                 console.log('Quiz started with ID:', currentQuizId); // Debug log
+            //                 $('#TakeTestModel').modal('show');
+            //             } else {
+            //                 alert('Error starting quiz: ' + response.message);
+            //             }
+            //         },
+            //         error: function(xhr) {
+            //             console.error('Error starting quiz:', xhr.responseText);
+            //             alert('Error starting quiz. Please try again.');
+            //         }
+            //     });
+            // });
+
+            // Handle step navigation
+            // $('.showStepTab').off('click').on('click', function() {
+            //     const targetStep = parseInt($(this).attr('target'), 10) - 1;
+
+            //     if (targetStep > currentStep && !validateStep(currentStep)) {
+            //         return;
+            //     }
+
+            //     // Save current step data
+            //     const stepData = collectStepData(currentStep);
+            //     if (stepData.length > 0) {
+            //         $.ajax({
+            //             url: "{{ route('front.quiz.save-step') }}",
+            //             method: 'POST',
+            //             headers: {
+            //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            //             },
+            //             data: {
+            //                 quiz_id: currentQuizId,
+            //                 step: currentStep + 1,
+            //                 answers: stepData
+            //             },
+            //             success: function(response) {
+            //                 if (response.success) {
+            //                     // Update UI
+            //                     updateModalTitle(targetStep);
+            //                     stepCircles.forEach((step, index) => {
+            //                         step.classList.toggle('active', index <= targetStep);
+            //                     });
+            //                     stepTabs.forEach((tab, index) => {
+            //                         tab.style.display = index === targetStep ? "block" : "none";
+            //                     });
+            //                     currentStep = targetStep;
+
+            //                     // Scroll to top
+            //                     const modalBody = $('#TakeTestModel .modal-body');
+            //                     modalBody.scrollTop(0);
+            //                 }
+            //             },
+            //             error: function() {
+            //                 alert('Error saving step. Please try again.');
+            //             }
+            //         });
+            //     } else {
+            //         // If no data to save, just update the UI
+            //         updateModalTitle(targetStep);
+            //         stepCircles.forEach((step, index) => {
+            //             step.classList.toggle('active', index <= targetStep);
+            //         });
+            //         stepTabs.forEach((tab, index) => {
+            //             tab.style.display = index === targetStep ? "block" : "none";
+            //         });
+            //         currentStep = targetStep;
+
+            //         // Scroll to top
+            //         const modalBody = $('#TakeTestModel .modal-body');
+            //         modalBody.scrollTop(0);
+            //     }
+            // });
+
+            // Handle quiz abandonment
+            $('#TakeTestModel').on('hidden.bs.modal', function() {
+                if (currentQuizId) {
+                    $.ajax({
+                        url: "{{ route('front.quiz.abandon') }}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        data: {
+                            quiz_id: currentQuizId
+                        }
+                    });
+                }
+            });
+        });
+
+        // Update the back button click handler
+        $('.back-btn').click(function() {
+            if (currentStep > 0) {
+                const prevStep = currentStep - 1;
+                updateModalTitle(prevStep);
+                stepCircles.forEach((step, index) => {
+                    step.classList.toggle('active', index <= prevStep);
+                });
+                stepTabs.forEach((tab, index) => {
+                    tab.style.display = index === prevStep ? "block" : "none";
+                });
+                currentStep = prevStep;
+
+                // Scroll to top
+                const modalBody = $('#TakeTestModel .modal-body');
+                modalBody.scrollTop(0);
+            }
+        });
+
+        // Next button click handler - only handles navigation
+        $('.next-btn').click(function() {
+            const targetStep = currentStep + 1;
+            
+            // Update UI
+            updateModalTitle(targetStep);
+            stepCircles.forEach((step, index) => {
+                step.classList.toggle('active', index <= targetStep);
+            });
+            stepTabs.forEach((tab, index) => {
+                tab.style.display = index === targetStep ? "block" : "none";
+            });
+            currentStep = targetStep;
+
+            // Scroll to top
+            const modalBody = $('#TakeTestModel .modal-body');
+            modalBody.scrollTop(0);
+        });
+
+        // Show step button click handler - handles saving data
+        $('.show-step-btn').click(function() {
+            const targetStep = parseInt($(this).data('step')) - 1;
+            const stepData = {};
+            const rows = document.querySelectorAll(`#div${currentStep} .row`);
+            
+            rows.forEach(row => {
+                const selectedRadio = row.querySelector('input[type="radio"]:checked');
+                if (selectedRadio) {
+                    const foodName = row.querySelector('.food-name').textContent.trim();
+                    const option = selectedRadio.value;
+                    const correct = selectedRadio.getAttribute('data-correct');
+                    const value = selectedRadio.getAttribute('data-value');
+                    const formSlug = selectedRadio.getAttribute('data-form-slug');
+                    
+                    stepData[foodName] = {
+                        value: value,
+                        option: option,
+                        correct: correct,
+                        form_slug: formSlug
+                    };
+                }
+            });
+            
+            console.log('Current step data:', stepData);
+            
+            // Check if stepData has any answers
+            if (Object.keys(stepData).length > 0) {
+                console.log('Saving step data with quiz ID:', currentQuizId);
+                
+                // Save to localStorage
+                localStorage.setItem(`step-${currentStep}-data`, JSON.stringify(stepData));
+                
+                // Update total answer counts
+                Object.keys(stepData).forEach(key => {
+                    const answer = stepData[key];
+                    if (answer.correct === 1) {
+                        const formType = Array.from(stepTabs[currentStep].classList).find(cls => cls.endsWith('-form'));
+                        if (formType) {
+                            totalAnswerCounts[formType] = (totalAnswerCounts[formType] || 0) + 1;
+                        }
+                    }
+                });
+                
+                // Save total counts
+                localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
+
+                // Get question text from hidden inputs
+                const form = document.querySelector(`#div${currentStep}`);
+                const questionInputs = form.querySelectorAll("input[type='hidden'][name^='questions']");
+                const questions = Array.from(questionInputs).map(input => input.value);
+
+                // Format data for database
+                const formattedAnswers = questions.map((questionText, index) => ({
+                    question: questionText,
+                    question_index: index + 1,
+                    step: currentStep + 1,
+                    form_slug: Object.values(stepData)[0].form_slug,
+                    answer: stepData
+                }));
+
+                // Save to database
+                $.ajax({
+                    url: "{{ route('front.quiz.save-step') }}",
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    data: {
+                        quiz_id: currentQuizId,
+                        step: currentStep + 1,
+                        questions: questions,
+                        answers: formattedAnswers
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            console.log('Step data saved successfully');
+                            // Only update UI after successful save
+                            updateModalTitle(targetStep);
+                            stepCircles.forEach((step, index) => {
+                                step.classList.toggle('active', index <= targetStep);
+                            });
+                            stepTabs.forEach((tab, index) => {
+                                tab.style.display = index === targetStep ? "block" : "none";
+                            });
+                            currentStep = targetStep;
+
+                            // Scroll to top
+                            const modalBody = $('#TakeTestModel .modal-body');
+                            modalBody.scrollTop(0);
+                        } else {
+                            console.error('Error saving step:', response.message);
+                            alert('Error saving step: ' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error saving step:', xhr.responseText);
+                        alert('Error saving step. Please try again.');
+                    }
+                });
+            } else {
+                // If no answers, just navigate
+                updateModalTitle(targetStep);
+                stepCircles.forEach((step, index) => {
+                    step.classList.toggle('active', index <= targetStep);
+                });
+                stepTabs.forEach((tab, index) => {
+                    tab.style.display = index === targetStep ? "block" : "none";
+                });
+                currentStep = targetStep;
+
+                // Scroll to top
+                const modalBody = $('#TakeTestModel .modal-body');
+                modalBody.scrollTop(0);
+            }
         });
     </script>
 

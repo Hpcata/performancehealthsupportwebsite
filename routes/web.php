@@ -28,7 +28,12 @@ use App\Http\Controllers\Admin\FlagController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\QuizController;
+<<<<<<< Updated upstream
 use Illuminate\Support\Facades\Auth;
+=======
+use App\Http\Controllers\Front\QuizController as FrontQuizController;
+
+>>>>>>> Stashed changes
 
 /*
 |--------------------------------------------------------------------------
@@ -353,3 +358,11 @@ Route::get('/overseas_travel_nutrition_plan', function () {
 
 Route::get('/admin/check-frontend-login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'checkFrontendLogin'])->name('admin.check-frontend-login');
 Route::get('/admin/set-user-session/{id}', [App\Http\Controllers\Admin\Auth\LoginController::class, 'setUserSession'])->name('admin.set-user-session');
+
+// Quiz Routes
+Route::prefix('quiz')->group(function () {
+    Route::post('/start', [FrontQuizController::class, 'startQuiz'])->name('front.quiz.start');
+    Route::post('/save-step', [FrontQuizController::class, 'saveStep'])->name('front.quiz.save-step');
+    Route::post('/complete', [FrontQuizController::class, 'completeQuiz'])->name('front.quiz.complete');
+    Route::post('/abandon', [FrontQuizController::class, 'abandonQuiz'])->name('front.quiz.abandon');
+});
