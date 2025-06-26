@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class QuizController extends Controller
 {
@@ -184,7 +186,17 @@ class QuizController extends Controller
                 'supplements_feedback' => $supplementFeedback,
                 'completed_at' => now()
             ]);
+            try {
+                $user = User::find($request->user_id);
+                $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
+                Mail::to($adminEmail)->send(new \App\Mail\QuizSubmittedMail($user, $quiz));
 
+                Mail::to($user->email)->send(new \App\Mail\FreeTestResultMail($user, $quiz));
+
+            } catch (\Exception $e) {
+                Log::error('Quiz completed mail send error. ' .$e->getMessage());
+            }
+ 
             // Here you can add code to send email notifications, etc.
 
             return response()->json([

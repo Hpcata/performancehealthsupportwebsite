@@ -7,7 +7,7 @@
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">{{ isset($subCategory) ? 'Edit Sub Category' : 'Create Sub Category' }}</h3>
                 <div class="col-auto d-flex w-sm-100">
-                    <a type="button" href="{{ route('admin.categories.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
+                    <a type="button" href="{{ route('admin.subcategories.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
                 </div>
             </div>
         </div>
@@ -16,10 +16,11 @@
         <div class="col-md-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <form action="{{ isset($subCategory) ? route('admin.categories.update', $subCategory) : route('admin.categories.store') }}" 
-                          method="POST" enctype="multipart/form-data">
+                    <form  action="{{ isset($subCategory) && $subCategory->id ? route('admin.subcategories.update', $subCategory->id) : route('admin.subcategories.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @if (isset($subCategory)) @method('PUT') @endif
+                            @if(isset($subCategory) && $subCategory->id)
+                                 @method('PUT') 
+                            @endif
 
                         <div class="row g-3 align-items-center">
                             <!-- Mealtime Selection (Multiple Select) -->
@@ -33,12 +34,18 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('mealtime_ids')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Title Field -->
                             <div class="col-md-12">
                                 <label for="title" class="form-label">Title</label>
                                 <input type="text" name="title" class="form-control" value="{{ $subCategory->title ?? '' }}" required>
+                                @error('title')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Description Field -->

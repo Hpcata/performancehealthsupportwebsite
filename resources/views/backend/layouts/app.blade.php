@@ -1,6 +1,6 @@
 <!doctype html>
 <html class="no-js" lang="en" dir="ltr">
-
+<?php header('Cache-Control: no-cache, max-age=0, must-revalidate, no-store'); ?>
 <head>
 <meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -201,7 +201,7 @@
 							</div>
 						</div>
 						<div class="modal-footer justify-content-start">
-							<button type="button" class="btn btn-white border lift" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-white border lift" data-bs-dismiss="modal">Close</button>
 							<button type="button" class="btn btn-primary lift">Save Changes</button>
 						</div>
 					</div>
@@ -215,7 +215,7 @@
 	</div>
 <!-- jQuery -->
 	<!-- Jquery Core Js -->
-	<script src="https://cdn.tiny.cloud/1/o535leb8vnodazy5nobagicugtcgf1mt2tt4phm6pq5juq08/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+	<script src="https://cdn.tiny.cloud/1/szrx9k170icaql0d40hu6euk46v017qd55txbsvwac74hcdq/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 	<script src="{!! backendAssets('dist/assets/bundles/libscripts.bundle.js') !!}"></script>

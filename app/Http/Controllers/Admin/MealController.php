@@ -24,8 +24,15 @@ class MealController extends Controller
 
             // Apply search filter if a search term is provided
             if ($request->has('search') && !empty($request->search)) {
-                $query->whereHas('subCategories', function ($q) use ($request) {
-                    $q->where('title', 'LIKE', '%' . $request->search . '%'); // Search by category name
+                $searchTerm = $request->search;
+
+                $query->where(function ($q) use ($searchTerm) {
+                    // Search in Meal title
+                    $q->where('title', 'LIKE', '%' . $searchTerm . '%')
+                    // Or in Subcategory title
+                    ->orWhereHas('subCategories', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('title', 'LIKE', '%' . $searchTerm . '%');
+                    });
                 });
             }
 
@@ -37,15 +44,13 @@ class MealController extends Controller
             }
 
             $meals = $query->get();
-            // dd($meals);
-            // Get filtered meals
-            // $meals = $query->select('id', 'title as name')->get();
 
             return response()->json([
                 'success' => true,
                 'meals' => $meals
             ]);
         }
+
 
         $subCategories = SubCategory::all(); // Fetch categories for dropdown
         // $meals = Meal::with('categories','items')->get(); // Eager load subCategories
@@ -64,17 +69,25 @@ class MealController extends Controller
     
     public function store(Request $request)
     {
+        try {
+
+       
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'categories' => 'nullable|array',
-            'categories.*' => 'exists:categories,id',
+            // 'categories' => 'nullable|array',
+            // 'categories.*' => 'exists:categories,id',
             'food_ids' => 'nullable|array',
             'food_ids.*' => 'integer|exists:items,id',
             'note' => 'nullable'
+        ],[
+            'title.required' => 'The meal title is required.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
+            'image.max' => 'The image may not be larger than 2MB.',
         ]);
-    
+        // dd($request->all());
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('meals', 'public');
         } elseif ($request->filled('generated_image')) {
@@ -131,94 +144,6 @@ class MealController extends Controller
             $meal->items()->sync($foodItems);
         }
     
-        $userIds = UserItemMeal::getUniqueUserIds();
-    
-        // if ($userIds->isNotEmpty()) {
-        //     foreach ($userIds as $userId) {
-        //         $hasActivePlan = \DB::table('user_plans')
-        //             ->where('user_id', $userId)
-        //             ->where('status', 'active')
-        //             ->exists();
-    
-        //         if ($hasActivePlan) {
-        //             foreach ($request->food_ids as $index => $foodId) {
-        //                 $selectedQtyUnitRaw = $selectedQtyUnitsArray[$index];
-        //                 $decodedQtyUnits = json_decode($selectedQtyUnitRaw, true);
-    
-        //                 if (empty($decodedQtyUnits)) {
-        //                     $item = \App\Models\Item::find($foodId);
-        //                     if ($item) {
-        //                         $decodedQtyUnits = [[
-        //                             'qty' => $item->qty ?? '',
-        //                             'unit' => $item->unit ?? '',
-        //                             'checked' => 'true'
-        //                         ]];
-        //                         $selectedQtyUnitsArray[$index] = json_encode($decodedQtyUnits);
-        //                     }
-        //                 }
-    
-        //                 $firstQty = '';
-        //                 $firstUnit = '';
-    
-        //                 if (is_array($decodedQtyUnits) && count($decodedQtyUnits) > 0) {
-        //                     $firstQty = $decodedQtyUnits[0]['qty'] ?? '';
-        //                     $firstUnit = $decodedQtyUnits[0]['unit'] ?? '';
-        //                 }
-    
-        //                 $exists = UserItemMeal::where('user_id', $userId)
-        //                     ->where('meal_id', $meal->id)
-        //                     ->where('item_id', $foodId)
-        //                     ->exists();
-    
-        //                 $item = Item::find($foodId);
-    
-        //                 if (!$exists) {
-        //                     UserItemMeal::create([
-        //                         'user_id' => $userId,
-        //                         'item_id' => $foodId,
-        //                         'meal_id' => $meal->id,
-        //                         'qty' => $firstQty,
-        //                         'unit' => $firstUnit,
-        //                         'carbs' => $request->carbs[$index] ?? '0',
-        //                         'fat' => $request->fat[$index] ?? '0',
-        //                         'protein' => $request->protein[$index] ?? '0',
-        //                         'is_swiped' => isset($item->is_swiped) ? $item->is_swiped : 0,
-        //                         'selected_qty_unit' => $decodedQtyUnits
-        //                     ]);
-        //                 }
-
-        //                 // ✅ Create UserItemSwap entries if item has swapItems
-        //                 if ($item && $item->swapItems()->exists()) {
-        //                     foreach ($item->swapItems as $swapItem) {
-        //                         $alreadyExists = \App\Models\UserItemSwap::where('user_id', $userId)
-        //                             ->where('meal_id', $meal->id)
-        //                             ->where('item_id', $item->id)
-        //                             ->where('swap_item_id', $swapItem->id)
-        //                             ->exists();
-
-        //                         if (!$alreadyExists) {
-        //                             \App\Models\UserItemSwap::create([
-        //                                 'user_id' => $userId,
-        //                                 'meal_id' => $meal->id,
-        //                                 'item_id' => $item->id,
-        //                                 'swap_item_id' => $swapItem->id,
-        //                                 'qty' => $firstQty,
-        //                                 'unit' => $firstUnit,
-        //                                 'carbs' => $request->carbs[$index] ?? '0',
-        //                                 'fat' => $request->fat[$index] ?? '0',
-        //                                 'protein' => $request->protein[$index] ?? '0',
-        //                                 'energy' => $request->energy[$index] ?? '0',
-        //                                 'selected_qty_unit' => $decodedQtyUnits
-        //                             ]);
-        //                         }
-        //                     }
-        //                 }
-
-        //             }
-        //         }
-        //     }
-        // }
-    
         if ($request->has('categories')) {
             $meal->subCategories()->sync($request->categories);
         }
@@ -228,6 +153,10 @@ class MealController extends Controller
         }
         
         return redirect()->route('admin.meals.index')->with('success', 'Meal created successfully.');
+         } catch(\Exception $e) {
+            dd($e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while processing your request: ' . $e->getMessage());
+        }
     }
     
 
@@ -258,6 +187,11 @@ class MealController extends Controller
             // 'food_qty.*' => 'string|max:50',
             // 'food_qty_unit' => 'nullable|array',
             // 'food_qty_unit.*' => 'string|max:50',
+        ],[
+            'title.required' => 'The meal title is required.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
+            'image.max' => 'The image may not be larger than 2MB.',
         ]);
         // dd($request->all());
         if ($request->hasFile('image')) {
@@ -469,131 +403,139 @@ class MealController extends Controller
 
     public function updateMealName(Request $request)
     {
-        $validated = $request->validate([
-            'meal_id' => 'required|integer',
-            'plan_id' => 'required|integer',
-            'user_id' => 'required|integer',
-            'meal_time_id' => 'required|integer',
-            'meal_name' => 'required|string|max:255',
-        ]);
+        try{
 
-        $meal = Meal::find($validated['meal_id']);
+            $validated = $request->validate([
+                'meal_id' => 'required|integer',
+                'plan_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'meal_time_id' => 'required|integer',
+                'meal_name' => 'required|string|max:255',
+            ]);
 
-        // Find User Plan
-        $userPlan = \App\Models\UserPlan::where('user_id', $validated['user_id'])
-            ->where('plan_id', $validated['plan_id'])
-            ->first();
+            $meal = Meal::find($validated['meal_id']);
 
-        if (!$userPlan) {
-            return response()->json(['success' => false, 'message' => 'User plan not found.'], 404);
-        }
+            // Find User Plan
+            $userPlan = \App\Models\UserPlan::where('user_id', $validated['user_id'])
+                ->where('plan_id', $validated['plan_id'])
+                ->first();
 
-        // Find User Meal Time
-        $userMealTime = \App\Models\UserCategory::where('user_plan_id', $userPlan->id)
-            ->where('category_id', $validated['meal_time_id'])
-            ->first();
+            if (!$userPlan) {
+                return response()->json(['success' => false, 'message' => 'User plan not found.'], 404);
+            }
+// dd($userPlan);
+            // Find User Meal Time
+            $userMealTime = \App\Models\UserCategory::where('user_plan_id', $userPlan->id)
+                ->where('id', $validated['meal_time_id'])
+                ->first();
+            // dd($userMealTime);
+            if ($userMealTime) {
+                $userMeal = \App\Models\UserMeal::where('user_category_id', $userMealTime->id)
+                                ->where('id', $validated['meal_id'])
+                                ->where('user_plan_id', $userPlan->id)
+                                ->first();
+                // dd($userMeal);
+                $existingMeal = \App\Models\Meal::where('title', trim($validated['meal_name']))
+                                ->where('user_id', $validated['user_id'])
+                                ->first();
 
-        if ($userMealTime) {
-            $userMeal = \App\Models\UserMeal::where('user_category_id', $userMealTime->id)
-                            ->where('meal_id', $validated['meal_id'])
-                            ->where('user_plan_id', $userPlan->id)
-                            ->first();
-
-            $existingMeal = \App\Models\Meal::where('title', trim($validated['meal_name']))
-                            ->where('user_id', $validated['user_id'])
-                            ->first();
-
-            if (!$existingMeal) {
-                // Create a new meal
-                $newMeal = new \App\Models\Meal();
-                $newMeal->title = $validated['meal_name'];
-                $newMeal->user_id = $validated['user_id'];
-                $newMeal->save();
-    
-                // Attach existing categories if available
-                if ($meal->subCategories) {
-                    $newMeal->subCategories()->attach($meal->subCategories->pluck('id')->toArray());
-                }
-
-                if($meal->items) {
-                    $syncData = [];
-
-                    foreach ($meal->items as $item) {
-                        $syncData[$item->id] = [
-                            'item_qty' => $item->pivot->item_qty,
-                            'item_qty_unit' => $item->pivot->item_qty_unit,
-                            'carbs' => $item->pivot->carbs,
-                            'protein' => $item->pivot->protein,
-                            'fat' => $item->pivot->fat,
-                            'selected_qty_unit' => $item->pivot->selected_qty_unit,
-                        ];
+                if (!$existingMeal) {
+                    // Create a new meal
+                    $newMeal = new \App\Models\Meal();
+                    $newMeal->title = $validated['meal_name'];
+                    $newMeal->user_id = $validated['user_id'];
+                    $newMeal->save();
+        
+                    // Attach existing categories if available
+                    if ($meal->subCategories) {
+                        $newMeal->subCategories()->attach($meal->subCategories->pluck('id')->toArray());
                     }
 
-                    $newMeal->items()->sync($syncData);
-                    // $newMeal->items()->attach($meal->items->pluck('id')->toArray());
-                }
-    
-                // Clone meal items
-                $existingMealItems = \App\Models\UserItemMeal::where('user_id', $validated['user_id'])
-                    ->where('meal_id', $validated['meal_id'])
-                    ->get();
+                    if($meal->items) {
+                        $syncData = [];
 
-                $existingMealSwapItems = \App\Models\UserItemSwap::where('user_id', $validated['user_id'])
-                    ->where('meal_id', $validated['meal_id'])
-                    ->get();
-                // dd($existingMealSwapItems);
-                foreach ($existingMealItems as $existingMealItem) {
-                    \App\Models\UserItemMeal::create([
-                        'user_id' => $validated['user_id'],
+                        foreach ($meal->items as $item) {
+                            $syncData[$item->id] = [
+                                'item_qty' => $item->pivot->item_qty,
+                                'item_qty_unit' => $item->pivot->item_qty_unit,
+                                'carbs' => $item->pivot->carbs,
+                                'protein' => $item->pivot->protein,
+                                'fat' => $item->pivot->fat,
+                                'selected_qty_unit' => $item->pivot->selected_qty_unit,
+                            ];
+                        }
+
+                        $newMeal->items()->sync($syncData);
+                        // $newMeal->items()->attach($meal->items->pluck('id')->toArray());
+                    }
+        
+                    // Clone meal items
+                    $existingMealItems = \App\Models\UserItemMeal::where('user_id', $validated['user_id'])
+                        ->where('meal_id', $validated['meal_id'])
+                        ->get();
+
+                    $existingMealSwapItems = \App\Models\UserItemSwap::where('user_id', $validated['user_id'])
+                        ->where('meal_id', $validated['meal_id'])
+                        ->get();
+                    // dd($existingMealSwapItems);
+                    foreach ($existingMealItems as $existingMealItem) {
+                        \App\Models\UserItemMeal::create([
+                            'user_id' => $validated['user_id'],
+                            'meal_id' => $newMeal->id,
+                            'item_id' => $existingMealItem->item_id,
+                            'qty' => $existingMealItem->qty,
+                            'unit' => $existingMealItem->unit,
+                            'carbs' => $existingMealItem->carbs,
+                            'fat' => $existingMealItem->fat,
+                            'protein' => $existingMealItem->protein,
+                            'selected_qty_unit' => $existingMealItem->selected_qty_unit,
+                        ]);
+                    }
+
+                    foreach ($existingMealSwapItems as $existingMealSwapItem) {
+                        \App\Models\UserItemSwap::create([
+                            'user_id' => $validated['user_id'],
+                            'meal_id' => $newMeal->id,
+                            'item_id' => $existingMealSwapItem->item_id,
+                            'swap_item_id' => $existingMealSwapItem->swap_item_id,
+                            'qty' => $existingMealSwapItem->qty,
+                            'unit' => $existingMealSwapItem->unit,
+                            'carbs' => $existingMealSwapItem->carbs,
+                            'fat' => $existingMealSwapItem->fat,
+                            'protein' => $existingMealSwapItem->protein,
+                            'selected_qty_unit' => $existingMealSwapItem->selected_qty_unit,
+                        ]);
+                    }
+
+                    if ($userMeal) {
+                        $userMeal->update(['id' => $newMeal->id, 'meal_name' => $newMeal->title]);
+                    }
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Meal name updated successfully.',
                         'meal_id' => $newMeal->id,
-                        'item_id' => $existingMealItem->item_id,
-                        'qty' => $existingMealItem->qty,
-                        'unit' => $existingMealItem->unit,
-                        'carbs' => $existingMealItem->carbs,
-                        'fat' => $existingMealItem->fat,
-                        'protein' => $existingMealItem->protein,
-                        'selected_qty_unit' => $existingMealItem->selected_qty_unit,
+                        'meal_name' => $newMeal->title
+                    ]);
+                }else {
+                    if ($userMeal) {
+                        $userMeal->update(['id' => $existingMeal->id, 'meal_name' => $existingMeal->title]);
+                    }
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Meal name updated successfully.',
+                        'meal_id' => $existingMeal->id,
+                        'meal_name' => $existingMeal->title
                     ]);
                 }
-
-                foreach ($existingMealSwapItems as $existingMealSwapItem) {
-                    \App\Models\UserItemSwap::create([
-                        'user_id' => $validated['user_id'],
-                        'meal_id' => $newMeal->id,
-                        'item_id' => $existingMealSwapItem->item_id,
-                        'swap_item_id' => $existingMealSwapItem->swap_item_id,
-                        'qty' => $existingMealSwapItem->qty,
-                        'unit' => $existingMealSwapItem->unit,
-                        'carbs' => $existingMealSwapItem->carbs,
-                        'fat' => $existingMealSwapItem->fat,
-                        'protein' => $existingMealSwapItem->protein,
-                        'selected_qty_unit' => $existingMealSwapItem->selected_qty_unit,
-                    ]);
-                }
-
-                if ($userMeal) {
-                    $userMeal->update(['meal_id' => $newMeal->id, 'meal_name' => $newMeal->title]);
-                }
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Meal name updated successfully.',
-                    'meal_id' => $newMeal->id,
-                    'meal_name' => $newMeal->title
-                ]);
-            }else {
-                if ($userMeal) {
-                    $userMeal->update(['meal_id' => $existingMeal->id, 'meal_name' => $existingMeal->title]);
-                }
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Meal name updated successfully.',
-                    'meal_id' => $existingMeal->id,
-                    'meal_name' => $existingMeal->title
-                ]);
             }
-        }
 
-        return response()->json(['success' => false, 'message' => 'Meal not updated.']);
+        } catch (\Exception $e) {
+            // dd($e->getMessage());
+            // Log the error message for debugging
+            \Log::error('Error updating meal name: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
+        // return response()->json(['success' => false, 'message' => 'Meal not updated.']);
     }
 
     // public function updateMealName(Request $request)

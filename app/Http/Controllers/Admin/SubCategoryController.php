@@ -46,6 +46,14 @@ class SubCategoryController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ], [
+            'mealtime_ids.required' => 'Please select at least one mealtime.',
+            'mealtime_ids.array' => 'Invalid format for mealtimes.',
+            'mealtime_ids.*.exists' => 'One or more selected mealtimes are invalid.',
+            'title.required' => 'The subcategory title is required.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
+            'image.max' => 'The image may not be larger than 2MB.',
         ]);
 
         // Create the category
@@ -60,7 +68,7 @@ class SubCategoryController extends Controller
             $subCategory->save();
         }
 
-        return redirect()->route('admin.categories.index')->with('success', 'SubCategory created successfully.');
+        return redirect()->route('admin.subcategories.index')->with('success', 'SubCategory created successfully.');
     }
 
     /**
@@ -69,9 +77,9 @@ class SubCategoryController extends Controller
      * @param  \App\Models\SubCategory  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(SubCategory $subCategory)
+    public function edit($id)
     {
-        // dd($subCategory);
+        $subCategory = SubCategory::find($id);
         $categories = Category::all();
         // dd($subcategory->categories->pluck('id')->toArray());
         return view('backend.pages.category.form', compact('subCategory', 'categories'));
@@ -84,7 +92,7 @@ class SubCategoryController extends Controller
      * @param  \App\Models\SubCategory  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SubCategory $subCategory)
+    public function update(Request $request, $id)
     {
         $data = $request->validate([
             'mealtime_ids' => 'required|array',
@@ -92,7 +100,17 @@ class SubCategoryController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
+        ],[
+            'mealtime_ids.required' => 'Please select at least one mealtime.',
+            'mealtime_ids.array' => 'Invalid format for mealtimes.',
+            'mealtime_ids.*.exists' => 'One or more selected mealtimes are invalid.',
+            'title.required' => 'The subcategory title is required.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
+            'image.max' => 'The image may not be larger than 2MB.',
         ]);
+
+        $subCategory = SubCategory::find($id);
 
         // Update the category
         $subCategory->update($data);
@@ -110,7 +128,7 @@ class SubCategoryController extends Controller
             $subCategory->save();
         }
 
-        return redirect()->route('admin.categories.index')->with('success', 'SubCategory updated successfully.');
+        return redirect()->route('admin.subcategories.index')->with('success', 'SubCategory updated successfully.');
     }
 
     /**
@@ -119,8 +137,9 @@ class SubCategoryController extends Controller
      * @param  \App\Models\SubCategory  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SubCategory $subCategory)
+    public function destroy($id)
     {
+        $subCategory = SubCategory::find($id);
         // Delete the category image if exists
         if ($subCategory->image) {
             Storage::delete('public/' . $subCategory->image);
@@ -130,6 +149,6 @@ class SubCategoryController extends Controller
         $subCategory->categories()->detach();
         $subCategory->delete();
 
-        return redirect()->route('admin.categories.index')->with('success', 'SubCategory deleted successfully.');
+        return redirect()->route('admin.subcategories.index')->with('success', 'SubCategory deleted successfully.');
     }
 }

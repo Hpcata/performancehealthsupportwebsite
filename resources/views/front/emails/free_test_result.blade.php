@@ -8,15 +8,24 @@
     <title>Nutrition Plan Free Test</title>
 </head>
 <body>
-    <h2>Hello {{$user->name}},</h2>
+    <h2>Hello {{ $user->name }},</h2>
     
-    <p>Thank you for submitting your free test results.</p>
+    <p>Thank you for completing your free nutrition test!</p>
 
     <!-- <p>We appreciate your submission. Our team will review it shortly!</p> -->
 
-    <p>Score : {{$user->nutrition_score}}</p>
-    <p>Feedback : {{ $user->nutrition_feedback }}</p>
+    <p>Nutrition Score : {{ $quiz->nutrition_score}}</p>
+    <p>Nutrition Feedback : {{ $quiz->nutrition_feedback }}</p>
+
+    <p>Supplement Score : {{ $quiz->supplements_score}}</p>
+    <p>Supplement Feedback : {{ $quiz->supplements_feedback }}</p>
+
+    <p>Sports Score : {{ $quiz->sports_score}}</p>
+    <p>Sports Feedback : {{ $quiz->sports_feedback }}</p>
 
     <p>Please review the details above.</p>
+
+    <p style="margin-top: 30px;">Best regards,<br><strong>The Performance Health Team</strong></p>
+
 </body>
 </html>

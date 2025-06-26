@@ -530,3 +530,5 @@
 .zindex-popover { z-index: 1040; }
 div.dataTables_wrapper div.dataTables_filter input { border-color: #d7c5c5; }
 .sidebar.sidebar-mini .brand-icon .logo-text { display:none; }
+.sidebar.sidebar-mini .menu-list .m-link:hover span { font-size: 15px; width: auto; left: 60%; white-space: nowrap; padding: 10px 20px; }
+.sidebar .menu-list { overflow: inherit; }

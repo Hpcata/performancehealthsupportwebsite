@@ -24,7 +24,7 @@ class UserSubCategory extends Model
 
     public function subCategory()
     {
-        return $this->belongsTo(SubCategory::class, 'id');
+        return $this->hasOne(SubCategory::class, 'id', 'id');
     }
 
     public function userMeals()

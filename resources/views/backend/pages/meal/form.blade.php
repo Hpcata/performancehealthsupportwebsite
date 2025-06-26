@@ -43,6 +43,9 @@
                             <div class="col-md-12">
                                 <label for="title" class="form-label">Title</label>
                                 <input type="text" name="title" id="title" class="form-control" value="{{ $meal->title ?? '' }}" required>
+                                @error('title')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                             
                             <!-- Description Field -->
@@ -252,6 +255,9 @@
                             <div class="col-md-12">
                                 <label for="image" class="form-label">Image</label>
                                 <input type="file" name="image" class="form-control">
+                                @error('image')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                                 @if (isset($meal) && $meal->image)
                                 <img src="{{ asset('private/public/storage/' . $meal->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;" id="existing-meal-image">
                                 @endif

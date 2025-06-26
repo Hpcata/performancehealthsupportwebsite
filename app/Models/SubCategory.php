@@ -11,6 +11,7 @@ class SubCategory extends Model
     protected $table = 'sub_categories';
 
     protected $fillable = [
+        'id',
         'title',
         'description',
         'image',
@@ -18,7 +19,7 @@ class SubCategory extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'subcategory_category', 'category_id');
+        return $this->belongsToMany(Category::class, 'subcategory_category');
     }
 
     public function meals()

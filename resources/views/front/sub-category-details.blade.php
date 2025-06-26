@@ -22,21 +22,26 @@
                 
                 <div class="mt-2 mealtime-btn-list">
                     <ul class="">
-                        @if($userPlan->userCategories->count() > 0)
-                            @foreach($userPlan->userCategories as $plan)
+                       @if($userPlan->userCategories->where('user_plan_id', $userPlan->id)->count() > 0)
+                            {{-- ❶  Keep only one UserCategory per category‑id --}}
+                            @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
+
                                 @php
-                                    // Check if category has any valid meals (with linked meal and meal categories)
-                                    $hasValidMeal = $plan->userMeals->filter(function ($userMeal) {
-                                        return $userMeal->meal && $userMeal->meal->categories && $userMeal->meal->categories->isNotEmpty();
-                                    })->count() > 0;
+                                    $hasValidMeal = $userCategory->userSubCategories()
+                                        ->where('user_plan_id', $userPlan->id)
+                                        ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                                            $q->where('user_plan_id', $userPlan->id)
+                                                ->where('user_category_id', $userCategory->id);
+                                        })
+                                        ->exists();
                                 @endphp
 
-                                @if($hasValidMeal)
+                                @if ($hasValidMeal && $userCategory->category)
                                     <li class="m-2">
-                                        <a class="@if($userMealTime->category->id == $plan->category->id) active btn btn-outline-primary btn-sm text-white @else bg-white btn btn-outline-secondary text-black @endif"
+                                        <a class="@if($userMealTime->category->id == $userCategory->category->id) active btn btn-outline-primary btn-sm text-white @else bg-white btn btn-outline-secondary text-black @endif"
                                         aria-current="page"
-                                        href="{{ route('front.meal-time.details', ['id' => $plan->category->id, 'plan_id' => $userPlan->id]) }}">
-                                            {{ $plan->category->title }}
+                                        href="{{ route('front.meal-time.details', ['id' => $userCategory->category->id, 'plan_id' => $userPlan->id]) }}">
+                                            {{ $userCategory->category->title }}
                                         </a>
                                     </li>
                                 @endif
@@ -66,6 +71,8 @@
             <div class="row g-0">
                 
                 @foreach($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $item)
+                <?php //dd($userMealTime); ?>
+           
                     @if($item->userMeals->where('user_plan_id', $userPlan->id) && $item->userMeals->where('user_plan_id', $userPlan->id)->count() > 0)
                     <div class="col-md-3">
                         <div class="nutrition-plan-box h-100 d-flex flex-column">
@@ -1353,9 +1360,9 @@
                 }).join(' or ');
 
                 printListContent += `
-                    <li style="margin: 0;">
-                        <input type="checkbox" style="margin-right: 6px;" />
-                        ${itemName} <strong>QTY:</strong> ${qtyText}
+                    <li style="margin: 0; padding: 4px 0; font-size: 16px; line-height: 1.8; display: flex; align-items: center;">
+                        <span style="display: inline-block; width: 26px; font-size: 40px; line-height: 1;">&#9633;</span>
+                        <span style="flex: 1;">${itemName} <strong>QTY:</strong> ${qtyText}</span>
                     </li>
                 `;
             }
@@ -1373,43 +1380,29 @@
     $(document).on('click', '#ShippingPrintModal .btn-primary', function () {
         let pdfContent = '';
 
-        // Loop through each category block
         $('#ShippingPrintModal .print-list h6').each(function () {
             const categoryTitle = $(this).text().trim();
             const itemList = $(this).next('ul');
-            let checkedItems = '';
-            let uncheckedItems = '';
+
+            let itemsHtml = '';
 
             itemList.find('li').each(function () {
-                const checkbox = $(this).find('input[type="checkbox"]');
-                const isChecked = checkbox.is(':checked');
-                const itemText = $(this).clone().children().remove().end().text().trim();
-
-                if (isChecked) {
-                    checkedItems += `
-                        <li style="list-style-type: none; margin: 0;">
-                            <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>
-                            ${itemText}
-                        </li>`;
-                } else {
-                    uncheckedItems += `<li style="margin-left: 20px;">${itemText}</li>`;
-                }
+                const itemHtml = $(this).html(); // ✅ Keep the existing square + text
+                itemsHtml += `<li style="list-style-type: none;">${itemHtml}</li>`;
             });
 
-            const categoryBlock = `
+            pdfContent += `
                 <div>
                     <h6 style="margin-bottom: 5px;">${categoryTitle}</h6>
                     <ul style="padding-left: 20px;">
-                        ${checkedItems}${uncheckedItems}
+                        ${itemsHtml}
                     </ul>
                 </div><br/>
             `;
-
-            pdfContent += categoryBlock;
         });
 
         if (pdfContent.trim() === '') {
-            pdfContent = '<p>No items selected.</p>';
+            pdfContent = '<p>No items found.</p>';
         }
 
         const pdfContainer = `

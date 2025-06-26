@@ -18,7 +18,7 @@
             <h3 class="fw-bold mb-0">Categories</h3>
         </div>
         <div class="col-auto">
-            <a href="{{ route('admin.meal-times.create') }}" class="btn btn-primary">Create Category</a>
+            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">Create Category</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -50,10 +50,10 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.meal-times.edit', $category) }}" class="btn btn-outline-success btn-sm">
+                            <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-outline-success btn-sm">
                                 <i class="icofont-edit text-success"></i>
                             </a>
-                            <form action="{{ route('admin.meal-times.destroy', $category) }}" method="POST" class="d-inline-block">
+                            <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="d-inline-block">
                                 @csrf 
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure?')"><i class="icofont-ui-delete text-danger"></i>

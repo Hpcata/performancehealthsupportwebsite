@@ -3,8 +3,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Mockery\Matcher\Subset;
-use App\Models\MealTime;
 use App\Models\SubCategory;
 
 class Category extends Model
@@ -14,7 +12,9 @@ class Category extends Model
     protected $table = 'categories';
 
     protected $fillable = [
-        'name',
+        'title',
+        'description',
+        'image',
         'order'
     ];
 

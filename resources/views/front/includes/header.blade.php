@@ -170,6 +170,7 @@ $headerData = json_decode($setting['meta_value'], true);
         </div>
     </div>
 </div>
+
 <script>
     function handleLogout(event) {
         event.preventDefault();

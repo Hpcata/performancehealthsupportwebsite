@@ -15,6 +15,7 @@
 		"guzzlehttp/guzzle": "^7.0.1",
 		"laravel/framework": "^9.0",
 		"laravel/sanctum": "^2.11",
+		"laravel/telescope": "^5.9",
 		"laravel/tinker": "^2.5",
 		"stripe/stripe-php": "^16.3",
 		"vinkla/hashids": "^10.0"

@@ -190,7 +190,7 @@
                                         <div class="no-form-floating form-floating my-3">
                                             <h5>List any dietary vitamins or supplements you are <strong>currently</strong> taking (if any):</h5>
                                             <input type="hidden" name="questions[medical_history][vitamins_supplements]" value="List any dietary vitamins or supplements you are currently taking (if any):">
-                                            <input type="text" class="form-control" name="ans[medical_history][vitamins_supplements]" placeholder="Eg: Swisse Vitamin C, Musashi Whey Protein Powder or Nil">
+                                            <input type="text" class="form-control" name="ans[medical_history][vitamins_supplements]" placeholder="Eg: Swisse Vitamin C, Musashi Whey Protein Powder, Nil">
                                             <small class="text-muted">(Use commas to separate items. Eg: Swisse Vitamin C, Musashi Whey Protein Powder or Nil.)</small>
 
                                         </div>
@@ -821,7 +821,8 @@
                                     </div>
                                     <div class="col-md-12">
                                         <h5>2. Legumes & Beans</h5>
-                                        <input type="hidden" name="questions[food_preference][legumes_beans_and_pulses]" value="Legumes &  Beans" />
+                                        <input type="hidden" name="questions[food_preference][legumes_beans_and_pulses]" 
+                                        value="Legumes & Beans" />
                                         <div class="form-floating my-3">
                                              <div class="row row-cols-1 row-cols-md-4 g-2">
                                                 <div class="col">
@@ -2043,7 +2044,7 @@
                 $('#drink_alcohol_drinks').prop('required', false);
             }
         } else {
-            $('#drink_alcohol_no').prop('checked', true);
+            $('#drink_alcohol_no').prop('checked', false);
             $('#drinkAlcoholInput').hide();
             $('#drink_alcohol_days').prop('required', false);
             $('#drink_alcohol_drinks').prop('required', false);
@@ -2251,9 +2252,23 @@
 
         function validateStep(stepIndex) {
             const stepTab = stepTabs[stepIndex];
-            console.log(stepTab);
             const inputs = stepTab.querySelectorAll("input, select, textarea");
             let isValid = true;
+
+            // ✅ Special case: group validation for intensity fields
+            const intensityInputs = stepTab.querySelectorAll('input[name^="ans[physical_activity_and_exercise][intensity]"]');
+            if (intensityInputs.length > 0) {
+                const hasAnyValue = Array.from(intensityInputs).some(i => i.value.trim() !== "");
+
+                intensityInputs.forEach(i => i.style.border = ""); // Reset borders
+
+                if (!hasAnyValue) {
+                    intensityInputs.forEach(i => {
+                        i.style.border = "1px solid red";
+                    });
+                    isValid = false;
+                }
+            }
 
             inputs.forEach(input => {
                 if (input.name === "ans[personal_details][referredBy]") return;
@@ -2262,43 +2277,43 @@
                 const isHidden = input.offsetParent === null || getComputedStyle(input).display === 'none';
                 if (input.disabled || isHidden) return;
 
+                // Skip intensity group (already validated above)
+                if (input.name.startsWith("ans[physical_activity_and_exercise][intensity]")) return;
+
                 input.style.border = "";
 
-                const skipValidationQuestion = stepTab.querySelector('input[name="questions[physical_activity_and_exercise][intensity]"]');
-                if (skipValidationQuestion && input.name.includes("physical_activity_and_exercise][intensity")) return;
-
-                if ((input.type === "text" || input.type === "date" || input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "select") && !input.value.trim()) {
+                if ((input.type === "text" || input.type === "number" || input.type === "date" ||
+                    input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "select") &&
+                    !input.value.trim()) {
                     
-                    if(stepIndex === 6) {
+                    if (stepIndex === 6) {
                         const isRequiredIfChecked = input.classList.contains('required-if-checked');
                         const relatedCheckboxId = input.id + '_checkbox';
                         const relatedCheckbox = document.getElementById(relatedCheckboxId);
 
-                        const isActuallyRequired = input.hasAttribute('required') || (isRequiredIfChecked && relatedCheckbox && relatedCheckbox.checked);
+                        const isActuallyRequired = input.hasAttribute('required') ||
+                            (isRequiredIfChecked && relatedCheckbox && relatedCheckbox.checked);
 
-                        // ✅ Only validate these inputs if required (either natively or conditionally)
-                        if (isActuallyRequired && !input.value.trim()) {
+                        if (isActuallyRequired) {
                             input.style.border = "1px solid red";
                             isValid = false;
                         }
-                    }else {
+                    } else {
                         input.style.border = "1px solid red";
                         isValid = false;
                     }
                 }
 
-                if ((input.type === "radio" || input.type === "checkbox") && !document.querySelector(`input[name="${input.name}"]:checked`)) {
+                if ((input.type === "radio" || input.type === "checkbox") &&
+                    !document.querySelector(`input[name="${input.name}"]:checked`)) {
                     
-
-                    if(stepIndex === 6) {
+                    if (stepIndex === 6) {
                         const isActuallyRequired = input.hasAttribute('required');
-
-                        // ✅ Only validate these inputs if required (either natively or conditionally)
-                        if (isActuallyRequired && !input.value.trim()) {
+                        if (isActuallyRequired) {
                             input.style.border = "1px solid red";
                             isValid = false;
                         }
-                    }else {
+                    } else {
                         input.style.border = "1px solid red";
                         isValid = false;
                     }
@@ -2307,6 +2322,94 @@
 
             return isValid;
         }
+
+        // function validateStep(stepIndex) {
+        //     const stepTab = stepTabs[stepIndex];
+        //     const inputs = stepTab.querySelectorAll("input, select, textarea");
+        //     let isValid = true;
+
+        //     // -------------------------
+        //     // INTENSITY FIELD HANDLING
+        //     // -------------------------
+        //     // const intensityFields = [
+        //     //     stepTab.querySelector('input[name="ans[physical_activity_and_exercise][intensity][Low Intensity]"]'),
+        //     //     stepTab.querySelector('input[name="ans[physical_activity_and_exercise][intensity][Moderate Intensity]"]'),
+        //     //     stepTab.querySelector('input[name="ans[physical_activity_and_exercise][intensity][High Intensity]"]')
+        //     // ].filter(Boolean); // remove nulls
+
+        //     // const isIntensityStep = stepTab.querySelector('input[name="questions[physical_activity_and_exercise][intensity]"]');
+
+        //     // if (isIntensityStep) {
+        //     //     const anyFilled = intensityFields.some(field => field.value.trim() !== '');
+        //     //     if (!anyFilled) {
+        //     //         // If none are filled, mark all 3 as invalid
+        //     //         intensityFields.forEach(field => {
+        //     //             field.style.border = "1px solid red";
+        //     //         });
+        //     //         isValid = false;
+        //     //     } else {
+        //     //         // If at least one is filled, clear all borders
+        //     //         intensityFields.forEach(field => {
+        //     //             field.style.border = "";
+        //     //         });
+        //     //     }
+        //     // }
+
+        //     // -------------------------
+        //     // OTHER FIELD VALIDATION
+        //     // -------------------------
+        //     inputs.forEach(input => {
+        //         const isHidden = input.offsetParent === null || getComputedStyle(input).display === 'none';
+        //         if (input.disabled || isHidden) return;
+
+        //         // Skip referral field
+        //         if (input.name === "ans[personal_details][referredBy]") return;
+
+        //         // Skip validation for intensity fields (already handled)
+        //         if (input.name?.startsWith("ans[physical_activity_and_exercise][intensity]")) return;
+
+        //         input.style.border = "";
+
+        //         const isTextInput =
+        //             input.type === "text" ||
+        //             input.type === "date" ||
+        //             input.type === "number" ||
+        //             input.tagName.toLowerCase() === "textarea" ||
+        //             input.tagName.toLowerCase() === "select";
+
+        //         if (isTextInput && !input.value.trim()) {
+        //             if (stepIndex === 6) {
+        //                 const isRequiredIfChecked = input.classList.contains('required-if-checked');
+        //                 const relatedCheckboxId = input.id + '_checkbox';
+        //                 const relatedCheckbox = document.getElementById(relatedCheckboxId);
+        //                 const isActuallyRequired = input.hasAttribute('required') || (isRequiredIfChecked && relatedCheckbox?.checked);
+
+        //                 if (isActuallyRequired) {
+        //                     input.style.border = "1px solid red";
+        //                     isValid = false;
+        //                 }
+        //             } else {
+        //                 input.style.border = "1px solid red";
+        //                 isValid = false;
+        //             }
+        //         }
+
+        //         if ((input.type === "radio" || input.type === "checkbox") && !document.querySelector(`input[name="${input.name}"]:checked`)) {
+        //             if (stepIndex === 6) {
+        //                 if (input.hasAttribute('required')) {
+        //                     input.style.border = "1px solid red";
+        //                     isValid = false;
+        //                 }
+        //             } else {
+        //                 input.style.border = "1px solid red";
+        //                 isValid = false;
+        //             }
+        //         }
+        //     });
+
+        //     return isValid;
+        // }
+
 
         function saveStepData(stepIndex, callback) {
             const stepTab = stepTabs[stepIndex];
@@ -2348,9 +2451,29 @@
                     if (res.success) {
                         if (res.redirect_url) {
                             $('#thankYouModal').modal('show');
-                            setTimeout(() => {
-                                window.location.href = res.redirect_url;
-                            }, 3000);
+                            // setTimeout(() => {
+                            //     window.location.href = res.redirect_url;
+                            // }, 3000);
+
+                            $.ajax({
+                                url: "{{ route('front.questionnaire.send-mail') }}",
+                                method: "POST",
+                                data: {
+                                    user_id: $('input[name="user_id"]').val(),
+                                    payment_id: $('input[name="payment_id"]').val(),
+                                    _token: '{{ csrf_token() }}'
+                                },
+                                success: function(mailRes) {
+                                    if (mailRes.success) {
+                                        console.log("Mail sent successfully.");
+                                    } else {
+                                        console.error("Mail send failed:", mailRes.message);
+                                    }
+                                },
+                                error: function() {
+                                    console.error("Error sending mail. Try again.");
+                                }
+                            });
                         } else {
                             stepTabs.forEach((tab, i) => {
                                 tab.style.display = i === targetStep ? "block" : "none";
@@ -2505,13 +2628,29 @@
         function validateField(input) {
             if (!input || !input.name) return;
 
+            // ✅ Handle special case: Intensity group
+            if (input.name.startsWith("ans[physical_activity_and_exercise][intensity]")) {
+                const allIntensityInputs = document.querySelectorAll('input[name^="ans[physical_activity_and_exercise][intensity]"]');
+
+                const hasValue = Array.from(allIntensityInputs).some(i => i.value.trim() !== "");
+
+                allIntensityInputs.forEach(i => {
+                    i.style.border = hasValue ? "" : "1px solid red";
+                });
+
+                return;
+            }
+
             let isValid = true;
 
-            if ((input.type === "text" || input.type === "date" || input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "select")) {
+            if (
+                input.type === "text" || input.type === "number" || input.type === "date" ||
+                input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "select"
+            ) {
                 isValid = input.value.trim() !== "";
             }
 
-            if ((input.type === "radio" || input.type === "checkbox")) {
+            if (input.type === "radio" || input.type === "checkbox") {
                 const checked = document.querySelector(`input[name="${input.name}"]:checked`);
                 isValid = !!checked;
             }
@@ -2519,17 +2658,17 @@
             if (isValid) {
                 input.style.border = "";
 
+                // For radio/checkbox group
                 if (input.type === "radio" || input.type === "checkbox") {
                     const group = document.querySelectorAll(`input[name="${input.name}"]`);
                     group.forEach(el => el.style.border = "");
                 }
             }
         }
+
             
         $('#thankYouModal').on('hidden.bs.modal', function () {
-            if (redirectUrl) {
-                window.location.href = redirectUrl;
-            }
+            window.location.href =  "{{ route('front.sub-home-page') }}"; // Redirect to home after modal is closed
         })
 
         // Prefill food checkboxes + hidden inputs on page load
@@ -2670,6 +2809,7 @@
 
         // Confirm button in modal
         document.getElementById('confirmFoodSelection').addEventListener('click', function () {
+            console.log('main');
             if (!selectedFoodKey || !selectedFoodGroup) return;
 
             const selectedItems = document.querySelectorAll('.sub-food-checkbox:checked');
@@ -2769,13 +2909,26 @@
         function setSelection(group, key, name) {
             const groupKey = key || group; // fallback if no nested group
 
+            if(group == "Oils / Butter") {
+                group = "oils_butter";
+            }
+            if(group == "Legumes & Beans") {
+                group = "legumes_beans_and_pulses";
+            }
             const checkbox = document.querySelector(
                 `.food-checkbox[data-food-group="${group.toLowerCase()}"][data-food-key="${groupKey}"]`
             );
-
+            
             if (checkbox) {
                 checkbox.checked = true;
                 checkbox.classList.add("selected"); // optional for visual effect
+                const label = checkbox.nextElementSibling;
+                const editIcon = label && label.nextElementSibling && label.nextElementSibling.classList.contains('edit-icon')
+                    ? label.nextElementSibling
+                    : null;
+                if (editIcon) {
+                    editIcon.classList.remove('d-none');
+                }
             } else {
                 console.warn(`Checkbox not found for group=${group}, key=${key}, name=${name}`);
             }
@@ -2840,9 +2993,9 @@
     // Add edit icon to labels when checkbox is checked
     document.querySelectorAll('.food-checkbox').forEach(checkbox => {
         const label = checkbox.nextElementSibling;
-        console.log(label);
+        console.log('label');
         const editIcon = document.createElement('i');
-        editIcon.className = 'fas fa-edit edit-icon';
+        editIcon.className = 'fas fa-edit edit-icon d-none';
         editIcon.title = 'Edit selection';
         label.parentNode.insertBefore(editIcon, label.nextSibling);
 
@@ -2937,10 +3090,23 @@
                 }
             });
         });
+
+        checkbox.addEventListener('change', function() {
+            if (!this.checked) {
+                const label = this.nextElementSibling;
+                const editIcon = label && label.nextElementSibling && label.nextElementSibling.classList.contains('edit-icon')
+                    ? label.nextElementSibling
+                    : null;
+                if (editIcon) {
+                    editIcon.classList.add('d-none');
+                }
+            }
+        });
     });
 
     // Modify the confirm button click handler
     document.getElementById('confirmFoodSelection').addEventListener('click', function() {
+        console.log('second');
         if (!selectedFoodKey || !selectedFoodGroup || !activeFoodCheckbox) return;
 
         const selectedItems = document.querySelectorAll('.sub-food-checkbox:checked');
@@ -2954,6 +3120,14 @@
         // If no items selected, uncheck the main checkbox
         if (selectedItems.length === 0) {
             activeFoodCheckbox.checked = false;
+            // Hide the edit icon if no selection
+            const label = activeFoodCheckbox.nextElementSibling;
+            const editIcon = label && label.nextElementSibling && label.nextElementSibling.classList.contains('edit-icon')
+                ? label.nextElementSibling
+                : null;
+            if (editIcon) {
+                editIcon.classList.add('d-none');
+            }
             userConfirmed = true;
             $('#foodModal').modal('hide');
             return;
@@ -2976,6 +3150,14 @@
 
         // Ensure main checkbox is checked
         activeFoodCheckbox.checked = true;
+        // Show the edit icon for this checkbox
+        const label = activeFoodCheckbox.nextElementSibling;
+        const editIcon = label && label.nextElementSibling && label.nextElementSibling.classList.contains('edit-icon')
+            ? label.nextElementSibling
+            : null;
+        if (editIcon) {
+            editIcon.classList.remove('d-none');
+        }
         userConfirmed = true;
         $('#foodModal').modal('hide');
     });

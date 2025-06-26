@@ -23,7 +23,11 @@
         box-shadow: none !important;
         border: none !important;
     }
-
+    /* Blur the rest of the page when the modal is open */
+    .blur-background {
+        filter: blur(5px); /* Adjust the blur value */
+        transition: filter 0.3s ease-in-out;
+    }
 </style>
     <div class="nutrition-plan-hero bg-white py-4">
         <div class="container">
@@ -168,7 +172,7 @@
                                     <div class="card-body nutrition-profile-info">
                                         <h4 class="text-center">
                                             <span class="mx-auto">{{ $profileDetails['Name'] ?? 'Nill' }}</span>
-                                            <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editNameModal"
+                                            <button class="btn btn-light edit-icon" id="editNameButton"
                                                 data-form-name="profile_name" data-question="Name" data-answer="{{ $profileDetails['Name'] ?? 'Nill' }}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -194,7 +198,7 @@
                                                 <li><a href="#" class="text-decoration-underline" id="weight-tracking">Track Your Weight</a></li>
                                                 <li>
                                                     Height: {{ !empty($profileDetails['Height (cm):']) ? $profileDetails['Height (cm):'] : 'N/A' }} cm
-                                                    <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editHeightModal"
+                                                    <button class="btn btn-light edit-icon" id="editHeightButton"
                                                         data-type="physical_measures" data-form-name="physical_measures"
                                                         data-question="Height (cm):" data-answer="{{ $profileDetails['Height (cm):'] ?? 'Nill' }}">
                                                         <i class="fas fa-edit"></i>
@@ -521,7 +525,7 @@
                                                     Complete Your Profile
                                                 </a>
                                                 @endif
-                                                @if($discount && !request()->get('admin_view') == 1)
+                                                @if($discount && !$adminView)
                                                     @if($isMailSend)
                                                         <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
                                                         data-bs-toggle="tooltip">
@@ -537,7 +541,7 @@
                                                             Buy Plan
                                                         </a>
                                                     @endif
-                                                @elseif($successPayment && !request()->get('admin_view') == 1)
+                                                @elseif($successPayment && !$adminView)
                                                     @if($isMailSend)
                                                         <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
                                                         data-bs-toggle="tooltip">
@@ -550,7 +554,7 @@
                                                         View Plan
                                                         </a>
                                                     @endif
-                                                @elseif(($discount || $successPayment) && request()->get('admin_view') == 1)
+                                                @elseif(($discount || $successPayment) && $adminView)
                                                     <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
                                                     >
                                                     View Plan
@@ -725,14 +729,16 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-3 text-center">
-                            <img id="imagePreview" src="{{ asset($user->profile_image) }}" alt="Current Profile Image" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
+                            @if(isset($user->profile_image))
+                                <img id="imagePreview" src="{{ asset('private/public/'.$user->profile_image) }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
+                            @endif
                         </div>
                         <div class="mb-3">
                             <label for="profileImageInput" class="form-label">Upload New Image</label>
-                            <input type="file" class="form-control" id="profileImageInput" name="profile_image" accept="image/*">
+                            <input type="file" class="form-control" id="profileImageInput" name="profile_image" accept="image/*" style="height: auto; border-radius: 5px;">
                             <input type="hidden" class="form-control" id="profileId" name="id" value="{{ $user->id }}">
                         </div>
-                        <button type="button" class="btn btn-primary" onclick="submitProfileUpdate()">Save Changes</button>
+                        <button type="button" class="btn btn-primary" onclick="submitProfileUpdate('profile_image')">Save Changes</button>
                     </form>
                 </div>
             </div>
@@ -756,7 +762,7 @@
                             <input type="text" class="form-control" id="profileNameInput" name="name" value="{{ $user->name }}">
                             <input type="hidden" class="form-control" id="profileId" name="id" value="{{ $user->id }}">
                         </div>
-                        <button type="button" class="btn btn-primary" onclick="submitProfileUpdate()">Save Changes</button>
+                        <button type="button" class="btn btn-primary" onclick="submitProfileUpdate('name')">Save Changes</button>
                     </form>
                 </div>
             </div>
@@ -764,7 +770,7 @@
     </div>
 
     <!--Weight trak Modal -->
-    <div class="modal fade" id="WeightModal" tabindex="-1" aria-labelledby="WeightModalLabel" aria-hidden="true">
+    <div class="modal" id="WeightModal" tabindex="-1" aria-labelledby="WeightModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -957,8 +963,7 @@
     </div>
 </div>
 
-
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1184,6 +1189,22 @@
         </div>
     </div>
 
+    <div class="modal" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-top">
+            <div class="modal-content" style="z-index: 1100;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Validation Errors</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="errorModalBody">
+                <!-- Error messages will be injected here -->
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
@@ -1214,123 +1235,140 @@
         }
     });
 
-    function submitProfileUpdate() {
+    function submitProfileUpdate(type) {
         const formData = new FormData();
-        const profileIdInput = document.getElementById('profileId');
-        // Add profile image if it exists
-        const profileImageInput = document.getElementById('profileImageInput');
-        if (profileImageInput.files[0]) {
-            formData.append('profile_image', profileImageInput.files[0]);
+        // Get user ID from either modal (whichever is present)
+        
+        const profileIdInput = $('#editImageModal #profileId').val() || $('#editNameModal #profileId').val();
+        formData.append('user_id', profileIdInput);
+        if(type === 'profile_image') {
+            formData.append('type', 'profile_image');
+            // Handle profile image
+            const profileImageInput = document.querySelector('#editImageModal #profileImageInput');
+            if (profileImageInput && profileImageInput.files.length > 0) {
+                formData.append('profile_image', profileImageInput.files[0]);
+            }
+            formData.append('profile_image', '');
+        } else if (type === 'name') {
+            formData.append('type', 'name');
+
+            const profileNameInput = $('#editNameModal #profileNameInput').val();
+            if (profileNameInput) {
+                formData.append('name', profileNameInput);
+            }
         }
-
-        // Add name
-        const profileNameInput = document.getElementById('profileNameInput');
-        if (profileNameInput.value) {
-            formData.append('name', profileNameInput.value);
-        }
-
-        formData.append('user_id', profileIdInput.value);
-
-        // Send AJAX request
+        
         fetch("{{ route('front.profile.update') }}", {
-            method: 'POST', // or 'PUT' if using PUT method
+            method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
             },
             body: formData
         })
-        .then(response => response.json())
+        .then(async (response) => {
+            if (!response.ok) {
+                const errorData = await response.json();
+                let message = '';
+
+                if (response.status === 422 && errorData.errors) {
+                    message += '<ul>';
+                    Object.values(errorData.errors).forEach(err => {
+                        message += `<li style="color: red;">${err[0]}</li>`;
+                    });
+                    message += '</ul>';
+                } else if (errorData.message) {
+                    message = `<p style="color:red;">${errorData.message}</p>`;
+                } else {
+                    message = `<p style="color:red;">Unexpected error (${response.status})</p>`;
+                }
+
+                // Show error in modal
+                $('#errorModalBody').html(message);
+                const errorModal = new bootstrap.Modal(document.getElementById('errorModal'), {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                errorModal.show();
+
+                // Add background blur
+                $('#editImageModal').addClass('blur-background');
+
+                throw new Error('Validation or server error');
+            }
+
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                // Update UI elements based on server response
                 if (data.new_image_url) {
                     document.getElementById('currentProfileImage').src = data.new_image_url;
                 }
                 if (data.new_name) {
                     document.querySelector('h4.text-center').textContent = data.new_name;
                 }
+
                 alert('Profile updated successfully!');
-                // Close all modals
-                // Close all modals
+
+                // Hide any open modal
                 const modals = document.querySelectorAll('.modal.show');
                 modals.forEach(modal => {
                     const modalInstance = bootstrap.Modal.getInstance(modal);
                     if (modalInstance) modalInstance.hide();
                 });
 
-                // Reload the page to reflect all updates (optional)
-                setTimeout(() => {
-                    location.reload();
-                }, 500); 
+                setTimeout(() => location.reload(), 500);
             } else {
                 alert('Error updating profile');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+
     }
 
     $(document).ready(function () {
-        // Handle the click event for the "Edit Profile Image" button
         $('.edit-profile-image').on('click', function () {
-            $('#editImageModal').modal('show'); // Show the modal
+            $('#editImageModal').modal('show'); 
         });
 
-        // Handle the click event for the "Edit Name" button
         $('#editNameButton').on('click', function () {
-            $('#editNameModal').modal('show'); // Show the modal
+            $('#editNameModal').modal('show'); 
         });
 
         $('#editHeightButton').on('click', function (event) {
-            var button = $(this); // Button that triggered the modal
-            var question = button.data('question'); // Extract the question (e.g., "Height (cm):")
-            var answer = button.data('answer'); // Extract the answer (Height value)
-            var formName = button.data('form-name'); // Extract the answer (Height value)
-            // Populate the modal fields with the data attributes            
-            $('#editHeightModal').find('#heightQuestion').val(question); // Populate the question field (read-only)
-            $('#editHeightModal').find('#heightAnswer').val(answer); // Populate the height value in the input field
-            $('#editHeightModal').find('#formName').val(formName); // Populate the height value in the input field
-            $('#editHeightModal').modal('show'); // Show the modal
+            var button = $(this);
+            var question = button.data('question');
+            var answer = button.data('answer');
+            var formName = button.data('form-name');
+            $('#editHeightModal').find('#heightQuestion').val(question);
+            $('#editHeightModal').find('#heightAnswer').val(answer);
+            $('#editHeightModal').find('#formName').val(formName);
+            $('#editHeightModal').modal('show'); 
         });
     });
-
-    // Handle opening the edit modal and populating the fields with data
-    // $('#editHeightModal').on('show.bs.modal', function (event) {
-    //     var button = $(event.relatedTarget); // Button that triggered the modal
-    //     var question = button.data('question'); // Extract the question (e.g., "Height (cm):")
-    //     var answer = button.data('answer'); // Extract the answer (Height value)
-    //     var formName = button.data('form-name'); // Extract the answer (Height value)
-        
-    //     var modal = $(this);
-    //     modal.find('#heightQuestion').val(question); // Populate the question field (read-only)
-    //     modal.find('#heightAnswer').val(answer); // Populate the height value in the input field
-    //     modal.find('#formName').val(formName); // Populate the height value in the input field
-    // });
-
-    // Handle form submission to update the height
     $('#editHeightForm').on('submit', function (e) {
         e.preventDefault();
         
-        var updatedHeight = $('#heightAnswer').val(); // Get the new height value
-        
-        // AJAX request to update the height (You should change the URL and method as per your requirement)
+        var updatedHeight = $('#heightAnswer').val();
         let formData = {
             form_name: $('#formName').val(),
             question: $('#heightQuestion').val(),
             answer: $('#heightAnswer').val(),
             type: "height",
             user_id: userId,
-            _token: '{{ csrf_token() }}' // CSRF protection
+            _token: '{{ csrf_token() }}'
         };
 
         $.ajax({
-            url: "{{ route('front.sample-plan-details-update') }}", // Laravel route to handle updates
+            url: "{{ route('front.sample-plan-details-update') }}",
             type: "POST",
             data: formData,
             success: function(response) {
                 if (response.success) {
                     alert('Updated successfully!');
-                    $('#editModal').modal('hide'); // Close modal
-                    location.reload(); // Refresh page to reflect changes (or update UI dynamically)
+                    $('#editHeightModal').modal('hide');
+                    location.reload();
                 } else {
                     alert('Error updating!');
                 }
@@ -1342,18 +1380,16 @@
     
     });
 
-
     $(document).off('change', '#selectAllCheckbox').on('change', '#selectAllCheckbox', function () {
-        let isChecked = $(this).is(':checked'); // Check if "Select All" is checked
+        let isChecked = $(this).is(':checked');
 
-        // Toggle all checkboxes based on the state of "Select All"
         $('.meal-item-checkbox').prop('checked', isChecked);
         $('.meal-checkbox').prop('checked', isChecked);
     });
 
     $(document).on('change', '.meal-item-checkbox', function () {
-        let allItems = $('.meal-item-checkbox'); // All item checkboxes
-        let allChecked = allItems.length === allItems.filter(':checked').length; // Check if all are selected
+        let allItems = $('.meal-item-checkbox');
+        let allChecked = allItems.length === allItems.filter(':checked').length;
 
         // Set the global "Select All" checkbox state
         $('#selectAllCheckbox').prop('checked', allChecked);
@@ -1516,7 +1552,6 @@
                 let qtyRaw = match[1].trim();
                 let unit = match[2].trim();
 
-                // Convert unicode fraction to numeric
                 const unicodeFractions = {
                     '¼': 0.25,
                     '½': 0.5,
@@ -1525,7 +1560,6 @@
 
                 let qty = unicodeFractions[qtyRaw] ?? null;
 
-                // If still null, try numeric or x/y string
                 if (qty === null) {
                     if (qtyRaw.includes('/')) {
                         const parts = qtyRaw.split('/');
@@ -1551,7 +1585,6 @@
             });
         });
 
-        // Generate HTML content
         let printListContent = '';
         for (let [category, items] of Object.entries(aggregatedItems)) {
             printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;
@@ -1564,7 +1597,6 @@
                         const roundedTotal = Math.round(total * 100) / 100;
                         let fraction = '';
 
-                        // Convert to nearest known fraction
                         if (roundedTotal === 0.25) fraction = '¼';
                         else if (roundedTotal === 0.5) fraction = '½';
                         else if (roundedTotal === 0.75) fraction = '¾';
@@ -1592,89 +1624,6 @@
         $('#ShippingPrintModal .print-list').html(printListContent);
     });
 
-    // $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
-    //     let aggregatedItems = {};
-
-    //     $('#ShoppingModal .meal-item-checkbox:checked').each(function () {
-    //         const listItem = $(this).closest('li');
-    //         const itemName = listItem.find('.ingredient-info span strong').text().trim() || "Unknown Item";
-    //         const category = listItem.find('input[type="hidden"]#category').val()?.trim() || "Uncategorized";
-
-    //         // Look for the QTY text inside the ingredient-info block
-    //         const qtyContainer = listItem.find('.ingredient-info .flex-grow-1 > div.d-flex');
-
-    //         if (qtyContainer.length === 0) return;
-
-    //         // Get plain text from inside this container (e.g., "QTY: 50g or 1 cup")
-    //         const fullText = qtyContainer.text().trim();
-    //         const qtyTextMatch = fullText.match(/QTY:\s*(.+)/i);
-    //         if (!qtyTextMatch) return;
-
-    //         const qtyText = qtyTextMatch[1];
-    //         const qtyParts = qtyText.split(" or ").map(part => part.trim());
-
-    //         qtyParts.forEach(part => {
-    //             const match = part.match(/^([\d/.]+)\s*([a-zA-Z\s]+)$/); // updated regex
-    //             if (!match) return;
-
-    //             let qtyRaw = match[1].trim();
-    //             let unit = match[2].trim();
-
-    //             // Convert fraction to decimal (e.g., 1/2 -> 0.5)
-    //             let qty;
-    //             if (qtyRaw.includes('/')) {
-    //                 const parts = qtyRaw.split('/');
-    //                 if (parts.length === 2) {
-    //                     const numerator = parseFloat(parts[0]);
-    //                     const denominator = parseFloat(parts[1]);
-    //                     if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
-    //                         qty = numerator / denominator;
-    //                     }
-    //                 }
-    //             } else {
-    //                 qty = parseFloat(qtyRaw);
-    //             }
-
-    //             if (!qty || isNaN(qty)) return;
-
-    //             // Save into aggregation
-    //             if (!aggregatedItems[category]) aggregatedItems[category] = {};
-    //             if (!aggregatedItems[category][itemName]) aggregatedItems[category][itemName] = {};
-    //             if (!aggregatedItems[category][itemName][unit]) aggregatedItems[category][itemName][unit] = 0;
-
-    //             aggregatedItems[category][itemName][unit] += qty;
-    //         });
-
-    //     });
-
-    //     let printListContent = '';
-    //     for (let [category, items] of Object.entries(aggregatedItems)) {
-    //         printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;
-
-    //         for (let [itemName, unitMap] of Object.entries(items)) {
-    //             const qtyText = Object.entries(unitMap)
-    //                 .map(([unit, total]) => `${Math.round(total)}${['g', 'ml', 'mL'].includes(unit) ? unit : ' ' + unit}`)
-    //                 .join(' or ');
-
-    //             printListContent += `
-    //                 <li style="margin: 0;">
-    //                     <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>
-    //                     ${itemName} <strong>QTY:</strong> ${qtyText}
-    //                 </li>
-    //             `;
-    //         }
-
-    //         printListContent += `</ul><br/>`;
-    //     }
-
-
-    //     if (printListContent === '') {
-    //         printListContent = '<p>No items selected.</p>';
-    //     }
-
-    //     $('#ShippingPrintModal .print-list').html(printListContent);
-    // });
-
     $(document).on('change', '.meal-checkbox', function () {
         const mealContainer = $(this).closest('.ingredient-list'); // Find the relevant meal container
         const isChecked = $(this).is(':checked'); // Check if "Meal Checkbox" is selected
@@ -1683,63 +1632,6 @@
         mealContainer.find('.meal-item-checkbox').prop('checked', isChecked);
     });
    
-    // $(document).on('click', '.btn-primary[data-bs-target="#ShippingPrintModal"]', function () {
-    //     let aggregatedItems = {};
-
-    //     // Collect all checked items
-    //     $('#ShoppingModal .meal-item-checkbox:checked').each(function () {
-    //         const listItem = $(this).closest('li');  // Correct reference for each item
-    //         const itemName = listItem.find('.ingredient-info span').text().trim() || "Unknown Item";
-    //         const quantityText = listItem.find('.quantity').text().trim() || "QTY: 0";
-    //         const category = listItem.find('input[type="hidden"]#category').val().trim() || "Uncategorized";
-
-    //         // Extract quantity and unit with better regex logic
-    //         const quantityMatch = quantityText.match(/QTY:\s*([\d\/.]+)\s*([a-zA-Z]*)/i);
-    //         let rawQuantity = quantityMatch && quantityMatch[1] ? quantityMatch[1] : "0";
-    //         let unit = quantityMatch && quantityMatch[2] ? quantityMatch[2].trim() : '';
-
-    //         // Correct conversion for fractional values
-    //         let quantity = 0;
-    //         if (rawQuantity.includes('/')) {
-    //             const [numerator, denominator] = rawQuantity.split('/').map(Number);
-    //             quantity = numerator / denominator;
-    //         } else {
-    //             quantity = parseFloat(rawQuantity);
-    //         }
-
-    //         // Ensure category exists in the aggregated structure
-    //         if (!aggregatedItems[category]) {
-    //             aggregatedItems[category] = {};
-    //         }
-
-    //         // Aggregate quantities within the category
-    //         if (aggregatedItems[category][itemName]) {
-    //             aggregatedItems[category][itemName].quantity += quantity;
-    //             aggregatedItems[category][itemName].unit = unit;
-    //         } else {
-    //             aggregatedItems[category][itemName] = { quantity, unit };
-    //         }
-    //     });
-
-    //     // Generate the HTML for the aggregated list by category
-    //     let printListContent = '';
-    //     for (let [category, items] of Object.entries(aggregatedItems)) {
-    //         printListContent += `<h6>${category}</h6><ul style="list-style-type: none;">`;  // Removed dot style
-    //         for (let [itemName, data] of Object.entries(items)) {
-    //             printListContent += `
-    //                 <li style="margin: 0;">
-    //                     <!-- Right tick mark icon added here -->
-    //                     <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>  
-    //                     ${itemName} <strong>| QTY:</strong> ${data.quantity} ${data.unit}
-    //                 </li>
-    //             `;
-    //         }
-    //         printListContent += `</ul><br/>`;
-    //     }
-
-    //     // Populate the print modal with the aggregated list
-    //     $('#ShippingPrintModal .print-list').html(printListContent);
-    // });
 
     $(document).on('click', '#ShippingPrintModal .btn-primary', function () {
         // Get the content of the print list
@@ -1821,6 +1713,11 @@
             });
         });
 
+        $('#errorModal').on('hidden.bs.modal', function () {
+            $('#WeightModal').removeClass('blur-background');
+            $('#editImageModal').removeClass('blur-background');
+        });
+
         // Save or Update Weight
         $('#saveWeight').on('click', function (e) {
             e.preventDefault();
@@ -1848,7 +1745,25 @@
                     }
                 },
                 error: function (xhr) {
-                    alert('Error: ' + xhr.responseJSON.message);
+                    let message = '';
+                    if (xhr.status === 422) {
+                        // Laravel validation error
+                        const errors = xhr.responseJSON.errors;
+                        message += '<ul>';
+                        $.each(errors, function(key, value) {
+                            message += `<li style="color: red;">${value[0]}</li>`;
+                        });
+                        message += '</ul>';
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = `<p style="color: red;">${xhr.responseJSON.message}</p>`;
+                    } else {
+                        message = `<p style="color: red;">Unexpected Error (${xhr.status}): ${error}</p>`;
+                    }
+                    
+                    $('#errorModalBody').html(message);
+                    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                    errorModal.show();  
+                    $('#WeightModal').addClass('blur-background');
                 }
             });
         });
@@ -2108,7 +2023,7 @@
             // Update modal title with plan name (optional)
             $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name')+ '($' + price+')');
             $('#plan-description').text(description);
-            // Show the modal
+            
             $('#purchaseModal #coupon-details').show();
             $('#purchaseModal').modal('show');
 
@@ -2293,7 +2208,7 @@
             $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name'));
 
             $('#purchaseModal #coupon-details').hide();
-            // Show the modal
+            
             $('#purchaseModal').modal('show');
             let name = $('#purchaseModal #name').val();
             let email = $('#purchaseModal #email').val();

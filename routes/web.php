@@ -9,11 +9,12 @@ use App\Http\Controllers\Admin\Auth\LoginController as AdminAuthController;
 use App\Http\Controllers\Admin\SiteSettingsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\SectionController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Front\PlanController as FrontPlanController;
-use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\MealTimeController;
 use App\Http\Controllers\Admin\MealController;
 use App\Http\Controllers\Front\PaymentController;
 use App\Http\Controllers\Admin\PurchasePlanController;
@@ -23,17 +24,12 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Front\ForgotPasswordController;
 use App\Http\Controllers\Admin\NutritionAIController;
 use App\Http\Controllers\Admin\ImageController;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\FlagController;
-use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\QuizController;
-<<<<<<< Updated upstream
-use Illuminate\Support\Facades\Auth;
-=======
 use App\Http\Controllers\Front\QuizController as FrontQuizController;
-
->>>>>>> Stashed changes
 
 /*
 |--------------------------------------------------------------------------
@@ -48,9 +44,11 @@ use App\Http\Controllers\Front\QuizController as FrontQuizController;
 
 Route::get('/check-auth', function () {
     return response()->json([
-        'authenticated' => Auth::guard('web')->check()
+        'authenticated' => \Auth::check(),
+        'user' => \Auth::user()
     ]);
-})->name('check-auth');
+});
+
 
 Route::get('/chat', function () {
     return view('image_form');
@@ -69,13 +67,201 @@ Route::post('/chat', [ImageController::class, 'chat'])->name('chat');
 Route::get('/generate-image', [ImageController::class, 'generateImageForm']);
 Route::post('/generate-image', [ImageController::class, 'generateImage'])->name('generate-image');
 
+
 Route::post('/nutrition-calculation', [NutritionAIController::class, 'nutritionCalculation'])->name('nutrition.calculate');
-Route::post('/generate-description', [NutritionAIController::class, 'generateDescription'])->name('generate.description');
 Route::post('/calculate-nutrition', [NutritionAIController::class, 'calculateNutrition'])->name('calculate.nutrition');
+Route::post('/generate-description', [NutritionAIController::class, 'generateDescription'])->name('generate.description');
 
 Route::get('/calculate-nutrition-form', [NutritionAIController::class, 'form'])->name('view.form');
 
 Route::post('/meal-food-nutrition-calculate', [NutritionAIController::class, 'mealFoodNutritionCalculation'])->name('meal.food.nutrition.calculate');
+
+// Route::get('/test-woolworths-api', function () {
+//     // Woolworths API URL
+//     $apiUrl = 'https://www.woolworths.com.au/apis/ui/Search/products/';
+
+//     // Search term to test with
+//     $searchTerm = 'apple';
+
+//     // Guzzle HTTP Client
+//     $client = new Client();
+
+//     try {
+//         // Make the GET request
+//         $response = $client->get($apiUrl, [
+//             'query' => [
+//                 'searchTerm' => $searchTerm,
+//             ],
+//             'headers' => [
+//                 'Accept' => 'application/json',
+//             ],
+//         ]);
+
+//         // Parse the response
+//         $data = json_decode($response->getBody(), true);
+
+//         // Return the response to view or JSON format
+//         return response()->json($data);
+
+//     } catch (\Exception $e) {
+//         // Handle errors
+//         return response()->json(['error' => $e->getMessage()], 500);
+//     }
+// });
+
+// Route::get('/product-search-api', function (Illuminate\Http\Request $request) {
+//     $results = [];
+//     $query = $request->input('query');
+//     $page = $request->input('page', 1);  // Get current page, default to 1 if not provided
+//     $perPage = 20;  // Set items per page, you can adjust this number
+// 	$pagination = [];
+//     if ($query) {
+//         $client = new Client();
+
+//         // Make the request to the API with pagination parameters
+//         $response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/woolworths/product-search', [
+//             'headers' => [
+//                 'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+//                 'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+//             ],
+//             'query' => [
+//                 'query' => $query,
+//                 'page' => $page,  // Page number
+//                 'size' => $perPage,  // Items per page
+//             ],
+//         ]);
+
+//         // Decode the response
+//         $responseBody = json_decode($response->getBody(), true);
+        
+//         // Assuming 'results' contains the product data, and 'total' is the total number of results
+//         $products = $responseBody['results'] ?? [];
+//         $total = $responseBody['total_results'] ?? 0;  // Total number of products in the API response
+//         // dd($products);
+//         // Pagination: Calculate the total number of pages
+//         $totalPages = $responseBody['total_pages'];
+
+//         // Paginate the results in Laravel
+//         $results = collect($products);
+
+//         // Prepare pagination metadata to send to the view
+//         $pagination = [
+//             'current_page' => $page,
+//             'total_pages' => $totalPages,
+//             'total' => $total,
+//             'per_page' => $perPage,
+//         ];
+//     }
+
+//     return view('search', compact('results', 'query', 'pagination'));
+// })->name('search-product');
+
+// Route::post('/add-to-cart', function (Request $request) {
+//     $productId = $request->input('product_id');
+// 	try {
+// 		$client = new Client();
+
+// 		$response = $client->request('POST', 'https://woolworths-products-api.p.rapidapi.com/cart/add', [
+// 			'headers' => [
+// 				'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+// 				'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+// 				'Content-Type' => 'application/json',
+// 			],
+// 			'json' => [
+// 				'product_id' => $productId,
+// 				'quantity' => 1,
+// 			],
+// 		]);
+
+// 		$cartResponse = json_decode($response->getBody(), true);
+// 	} catch (RequestException $e) {
+// 		dd($e->getMessage());
+// 	}
+
+//     return redirect()->route('cart');
+// })->name('add-to-cart');
+
+// Route::get('/cart', function () {
+// 	try {
+// 		$client = new Client();
+// 		$response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/cart', [
+// 			'headers' => [
+// 				'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+// 				'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+// 			],
+// 		]);
+
+// 		$cart = json_decode($response->getBody(), true);
+// 	} catch (RequestException $e) {
+// 		dd($e->getMessage());
+// 	}
+
+//     return view('cart', compact('cart'));
+// })->name('cart');
+
+// Route::get('/product-search', function (Illuminate\Http\Request $request) {
+//     $results = [];
+//     $query = $request->input('query');
+// 	$page = $request->input('page', 1);  // Get current page, default to 1 if not provided
+//     $perPage = 20; 
+// 	$pagination = [];
+//     if ($query) {
+//         $client = new Client();
+// 		// Get the products from the API
+//         $response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/woolworths/product-search', [
+//             'headers' => [
+//                 'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
+//                 'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
+//             ],
+//             'query' => [
+//                 'query' => $query,
+//                 'page' => $page,  // Page number
+//                 'size' => $perPage,  // Items per page
+//             ],
+//         ]);
+//         $responseBody = json_decode($response->getBody(), true);
+//         $products = $responseBody['results'] ?? [];
+
+//         // Loop through products to get images from each product page
+//         foreach ($products as $key => $product) {
+//             $productUrl = $product['url'];
+            
+// 			if (isset($product['url']) && !empty($product['url'])) {
+// 				try {
+// 					$detailResponse = $client->request('GET', $product['url']);
+// 					$detailHtml = (string) $detailResponse->getBody();
+					
+// 					if (preg_match('/<img[^>]+class="[^"]*main-image-v2[^"]*"[^>]+src="([^"]+)"/i', $detailHtml, $matches)) {
+// 						$products[$key]['image_url'] = $matches[1]; // Image URL extracted from the page
+// 					} else {
+// 						$products[$key]['image_url'] = null; // Default if no image found
+// 					}
+// 				} catch (\Exception $e) {
+// 					\Log::error('Error fetching product details: ' . $e->getMessage());
+// 					$products[$key]['image_url'] = null;
+// 				}
+// 			}
+//         }
+
+//         $total = $responseBody['total_results'] ?? 0;  // Total number of products in the API response
+//         $totalPages = $responseBody['total_pages'];
+
+//         $results = collect($products);
+
+//         $pagination = [
+//             'current_page' => $page,
+//             'total_pages' => $totalPages,
+//             'total' => $total,
+//             'per_page' => $perPage,
+//         ];
+
+//     }
+// 	// echo '<pre>';
+// 	// print_r($results);
+
+//    return view('product-with-image', compact('results', 'query', 'pagination'));
+// })->name('search');
+
 
 Route::get('/login', [AdminAuthController::class, 'index'])->name('index');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login');
@@ -98,8 +284,7 @@ Route::post('/reset-password', [AdminAuthController::class, 'resetPasswordPost']
 Route::get('/change-password', [AdminAuthController::class, 'changePassword'])->name('change-password');
 Route::post('/change-password', [AdminAuthController::class, 'changePasswordPost'])->name('change-password-post');
 
-// Admin routes
-Route::group(['middleware' => ['admin']], function () {
+Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 	Route::get('/woolworths-product-search', [ProductController::class, 'search'])->name('woolworths-product-search');
 	Route::post('/add-food', [ProductController::class, 'addFood'])->name('add-food');
 
@@ -176,20 +361,20 @@ Route::group(['middleware' => ['admin']], function () {
 		Route::delete('/sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy');
 
 		// Category
-		Route::get('sub-categories', [SubCategoryController::class, 'index'])->name('admin.categories.index');
-    	Route::get('sub-categories/create', [SubCategoryController::class, 'create'])->name('admin.categories.create');
-    	Route::post('sub-categories', [SubCategoryController::class, 'store'])->name('admin.categories.store');
-    	Route::get('sub-categories/{subCategory}/edit', [SubCategoryController::class, 'edit'])->name('admin.categories.edit');
-    	Route::put('sub-categories/{subCategory}', [SubCategoryController::class, 'update'])->name('admin.categories.update');
-    	Route::delete('sub-categories/{subCategory}', [SubCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+		Route::get('categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+    	Route::get('categories/create', [CategoryController::class, 'create'])->name('admin.categories.create');
+    	Route::post('categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+    	Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
+    	Route::put('categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
+    	Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
 
 		// Subcategory
-		// Route::get('sub-categories', [SubCategoryController::class, 'index'])->name('admin.subcategories.index');
-    	// Route::get('sub-categories/create', [SubCategoryController::class, 'create'])->name('admin.subcategories.create');
-    	// Route::post('sub-categories', [SubCategoryController::class, 'store'])->name('admin.subcategories.store');
-    	// Route::get('sub-categories/{id}/edit', [SubCategoryController::class, 'edit'])->name('admin.subcategories.edit');
-    	// Route::put('sub-categories/{id}', [SubCategoryController::class, 'update'])->name('admin.subcategories.update');
-    	// Route::delete('sub-categories/{id}', [SubCategoryController::class, 'destroy'])->name('admin.subcategories.destroy');
+		Route::get('sub-categories', [SubCategoryController::class, 'index'])->name('admin.subcategories.index');
+    	Route::get('sub-categories/create', [SubCategoryController::class, 'create'])->name('admin.subcategories.create');
+    	Route::post('sub-categories', [SubCategoryController::class, 'store'])->name('admin.subcategories.store');
+    	Route::get('sub-categories/{subcategory}/edit', [SubCategoryController::class, 'edit'])->name('admin.subcategories.edit');
+    	Route::put('sub-categories/{subcategory}', [SubCategoryController::class, 'update'])->name('admin.subcategories.update');
+    	Route::delete('sub-categories/{subcategory}', [SubCategoryController::class, 'destroy'])->name('admin.subcategories.destroy');
 
 		// Items
 		Route::get('items', [ItemController::class, 'index'])->name('admin.items.index');
@@ -198,8 +383,6 @@ Route::group(['middleware' => ['admin']], function () {
 		Route::get('items/{item}/edit', [ItemController::class, 'edit'])->name('admin.items.edit');
 		Route::put('items/{item}', [ItemController::class, 'update'])->name('admin.items.update');
 		Route::delete('items/{item}', [ItemController::class, 'destroy'])->name('admin.items.destroy');
-		Route::get('items/import/form', [ItemController::class, 'viewImport'])->name('admin.items.import-view');
-		Route::post('/items/import', [ItemController::class, 'import'])->name('admin.items.import');
 		Route::get('get-food-details', [ItemController::class, 'getFoodDetails'])->name('admin.get-food-details');
 
 		// Plans
@@ -222,12 +405,12 @@ Route::group(['middleware' => ['admin']], function () {
 		Route::get('meals/import/form', [MealController::class, 'viewImport'])->name('admin.meals.import-view');
 		Route::post('/meals/import', [MealController::class, 'import'])->name('admin.meals.import');
 
-		Route::get('categories', [CategoryController::class, 'index'])->name('admin.meal-times.index');
-		Route::get('categories/create', [CategoryController::class, 'create'])->name('admin.meal-times.create');
-		Route::post('categories', [CategoryController::class, 'store'])->name('admin.meal-times.store');
-		Route::get('categories/{id}/edit', [CategoryController::class, 'edit'])->name('admin.meal-times.edit');
-		Route::put('categories/{id}', [CategoryController::class, 'update'])->name('admin.meal-times.update');
-		Route::delete('categories/{id}', [CategoryController::class, 'destroy'])->name('admin.meal-times.destroy');
+		// Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
+		// Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
+		// Route::post('meal-times', [MealTimeController::class, 'store'])->name('admin.meal-times.store');
+		// Route::get('meal-times/{id}/edit', [MealTimeController::class, 'edit'])->name('admin.meal-times.edit');
+		// Route::put('meal-times/{id}', [MealTimeController::class, 'update'])->name('admin.meal-times.update');
+		// Route::delete('meal-times/{id}', [MealTimeController::class, 'destroy'])->name('admin.meal-times.destroy');
 		
 		Route::get('/purchase-plans', [PurchasePlanController::class, 'index'])->name('admin.purchase-plans.index');
 		Route::get('/purchase-plans/{id}/create', [PurchasePlanController::class, 'create'])->name('admin.purchase-plans.create');
@@ -249,7 +432,7 @@ Route::group(['middleware' => ['admin']], function () {
 		Route::post('/get-swap-foods', [PurchasePlanController::class, 'getSwapFoods'])->name('admin.get-swap-foods');
 		Route::post('/update-swap-foods', [PurchasePlanController::class, 'updateFoodSwapFoods'])->name('admin.update-food-swap-foods');
 		Route::post('/delete-purchase-plan-food', [PurchasePlanController::class, 'deletePurchasePlanFood'])->name('admin.delete-purchase-plan-food');
-
+		Route::post('/update-swap-item', [PurchasePlanController::class, 'updateSwapItem'])->name('admin.update-swap-item');
 		Route::get('/admin/user/details', [UserController::class, 'getUserDetails'])->name('admin.user.details');
 
 		// User routes
@@ -270,8 +453,11 @@ Route::POST('/save-query', [FrontController::class, 'save'])->name('save-query')
 Route::get('/action-sport-nutrition-plan', [FrontController::class, 'subHomePage'])->name('front.sub-home-page');
 Route::get('/pre-plan-details', [PaymentController::class, 'prePlanDetails'])->name('front.pre-plan-details');
 Route::post('/pre-plan-details-store', [PaymentController::class, 'prePlanDetailsSave'])->name('front.pre-plan-details.store');
+Route::post('/questionnaire/send-mail', [PaymentController::class, 'questionnaireSendMail'])->name('front.questionnaire.send-mail');
+
 Route::get('/sample-plan', [FrontController::class, 'samplePlan'])->name('front.sample-plan');
 Route::post('/sample-plan-details-update', [FrontController::class, 'updateSamplePlanDetails'])->name('front.sample-plan-details-update');
+
 Route::get('/get-foods/{key}', [FrontController::class, 'getFoodItems'])->name('front.flag.items');
 
 Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPlanDetails'])->name('front.competition-plan-details');
@@ -286,7 +472,6 @@ Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEm
 Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('front.password.reset');
 Route::post('password/reset', [ForgotPasswordController::class, 'reset'])->name('front.password.update');
 Route::post('front/logout', [FrontController::class, 'logout'])->name('front.logout');
-
 // GET route fallback for expired session
 Route::get('front/logout-guest', function () {
     return redirect()->route('front.index')->with('info', 'Your session has expired. Please log in again.');
@@ -304,11 +489,16 @@ Route::post('/sport-search', [FrontController::class, 'sportSearch'])->name('fro
 
 Route::post('/query', [FrontController::class, 'submitQuery'])->name('front.submit-query');
 
+Route::get('/overseas_travel_nutrition_plan', function () {
+	return view('front.overseas_travel_nutrition_plan');
+})->name('front.overseas_travel_nutrition_plan');
+
 // Plans
 Route::group(['middleware' => 'auth'], function () {
 	// Route::get('/plans/{id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
 	Route::get('/plans/{id}/details/{user_id}', [FrontPlanController::class, 'show'])->name('front.plans.details');
 	Route::get('/meal-time/{id}/{plan_id}', [FrontPlanController::class, 'mealTimeDetails'])->name('front.meal-time.details');
+	Route::post('/get-meals', [FrontPlanController::class, 'getMealByMealTimes'])->name('front.get-meals');
 
 	//categories
 	Route::get('/category/{id}/meals', [FrontPlanController::class, 'getMeals'])->name('front.category.meals');
@@ -316,7 +506,6 @@ Route::group(['middleware' => 'auth'], function () {
 	// Route::get('/subcategory/{id}/items', [FrontPlanController::class, 'getSubcategoryItems'])->name('front.subcategories.items');
 	Route::get('/meal/{id}/items', [FrontPlanController::class, 'getMealItems'])->name('front.meals.items');
 	Route::get('/item/{id}/swap-items', [FrontPlanController::class, 'getSwapItems'])->name('front.items.swap-items');
-	Route::post('/get-meals', [FrontPlanController::class, 'getMealByMealTimes'])->name('front.get-meals');
 
 	Route::get('item/swap', [FrontPlanController::class, 'applySwaps'])->name('front.items.swaps');
 	// Route::get('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
@@ -340,8 +529,6 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/user/{user}/plan/{plan}/meals', [FrontPlanController::class, 'ajaxGetMeals'])->name('user.plan.meals');
 
-	// Route::get('/overseas_travel_nutrition_plan', [FrontController::class, 'fetchWeights'])->name('front.fetch.weights');
-	
 
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');
@@ -352,12 +539,6 @@ Route::post('/unlock-result', [FrontController::class, 'unlockFreeTestResult'])-
 Route::post('/track-quiz-click', [FrontController::class, 'trackQuizClick'])->name('front.track.quiz.click');
 Route::post('/track-quiz-progress', [FrontController::class, 'trackQuizProgress'])->name('front.track.quiz.progress');
 Route::post('/track-quiz-completion', [FrontController::class, 'trackQuizCompletion'])->name('front.track.quiz.completion');
-Route::get('/overseas_travel_nutrition_plan', function () {
-	return view('front.overseas_travel_nutrition_plan');
-})->name('front.overseas_travel_nutrition_plan');
-
-Route::get('/admin/check-frontend-login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'checkFrontendLogin'])->name('admin.check-frontend-login');
-Route::get('/admin/set-user-session/{id}', [App\Http\Controllers\Admin\Auth\LoginController::class, 'setUserSession'])->name('admin.set-user-session');
 
 // Quiz Routes
 Route::prefix('quiz')->group(function () {

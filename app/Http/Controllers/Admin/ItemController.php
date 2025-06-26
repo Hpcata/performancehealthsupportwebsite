@@ -76,7 +76,7 @@ class ItemController extends Controller
             'fat' => 'nullable|numeric',
             'serving_per_pack' => 'nullable|numeric',
             'serving_size' => 'required|numeric',
-            'category_id' => 'required|exists:food_categories,id',
+            'category_id' => 'nullable',
             'serving_size_unit' => 'required',
             'unit'  => 'required',
             // 'selected_qty_unit' => 'nullable|array',
@@ -86,8 +86,8 @@ class ItemController extends Controller
             'sugars' => 'nullable',
             'dietary_fibre' => 'nullable',
             'sodium' => 'nullable',
-            'flag_ids' => 'required',
-            'category_id' => 'required',
+            // 'flag_ids' => 'nullable',
+            // 'category_id' => 'required',
             // 'is_locked' => 'nullable|boolean'
         ]);
         

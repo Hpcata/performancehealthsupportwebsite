@@ -57,7 +57,9 @@
             /* display: inline-block; */
             max-width: 100%;
         }
-
+        .food-label{
+            font-weight:normal !important;
+        }
     </style>
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -82,7 +84,7 @@
                     @csrf
                     <input type="hidden" name="foodSelections" id="foodSelectionsInput">
                     <div class="row">
-                        <div class="panel-group col-7" id="accordion">
+                        <div class="panel-group col-8" id="accordion">
                             
                             <!-- Main Plan -->
                             @foreach ($plans as $plan)
@@ -153,14 +155,14 @@
                             @endforeach
                         </div>
                         
-                        <div class="col-5">
+                        <div class="col-4">
                             <div style="max-height: 90vh; overflow-y: auto; overflow-x: hidden; border: 1px solid #ddd; padding: 10px; border-radius: 8px; position: sticky; top:15px;">
                                 <h4>Food Prefrences</h4>
                                 <span class="">
-                                    Key : 
-                                    <span style="color: black;">Black- Athlete Preferences</span>, 
-                                    <span style="color: #7258db;">Purple- Included Preferences </span> , 
-                                    <span style="color: #198754;">Green- Recommendations</span>
+                                    <strong>Key: </strong>
+                                    <p class="mb-0" style="color: black; font-size:15px;">Athlete Preferences</p>
+                                    <p class="mb-0" style="color: #7258db; font-size:15px;">Included Preferences </p> 
+                                    <p class="mb-0" style="color: #198754; font-size:15px;">Recommendations</p>
                                 </span>
                                 <div class="category-section mb-3" id="category-section">
                                     @php
@@ -206,7 +208,7 @@
                                                                             data-food-id="{{ $foodId ?? '' }}"
                                                                             data-food-name="{{ $foodTitle }}"
                                                                             {{ $foodId ? '' : 'disabled title="Food not found"' }}>
-                                                                        <label class="form-check-label" for="setp5Food{{ $foodId ?? md5($foodTitle) }}">
+                                                                        <label class="form-check-label food-label" for="setp5Food{{ $foodId ?? md5($foodTitle) }}">
                                                                             {{ $foodTitle }}
                                                                         </label>
                                                                     </div>
@@ -248,7 +250,7 @@
                                                                                 id="setp5Food{{ $foodId }}"
                                                                                 data-food-id="{{ $foodId }}"
                                                                                 data-food-name="{{ $foodTitle }}">
-                                                                            <label class="form-check-label" for="setp5Food{{ $foodId }}">
+                                                                            <label class="form-check-label food-label" for="setp5Food{{ $foodId }}">
                                                                                 {{ $foodTitle }}
                                                                             </label>
                                                                         </div>
@@ -275,7 +277,10 @@
                         <button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
                         <button type="submit" class="btn btn-success" name="action" value="save_exit">Save & Exit</button>
                          <!-- Button to view user profile (with user_id as data attribute) -->
-                        <button type="button" class="btn btn-success view-user-profile" data-user-id="{{ $payment->user_id }}">View User Profile</button>
+                        <!-- <button type="button" class="btn btn-success view-user-profile" data-user-id="{{ $payment->user_id }}">View User Profile</button> -->
+                        <a href="{{ route('front.profile', ['id' => $payment->user_id, 'admin_view' => 1]) }}"
+                            target="_blank" class="btn btn-success" >View User Profile
+                        </a>
                     </div>
                 </form>
                 </div>
@@ -289,7 +294,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Pre Plan Details</h4>
+                <h4 class="modal-title">Questionnaire</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -332,6 +337,7 @@
                     <input type="hidden" id="editPlanId">
                     <input type="hidden" id="editMealTimeId">
                     <input type="hidden" id="description">
+                    <input type="hidden" id="ratio">
 
                     <div class="mb-3">
                         <label for="editItemName" class="form-label">Food Name</label>
@@ -673,7 +679,7 @@
 </div>
 
 <!-- Main Item Delete Modal -->
-<div class="modal fade" id="deleteMainItemModal" tabindex="-1" aria-labelledby="deleteMainItemModalLabel" aria-hidden="true">
+<div class="modal" id="deleteMainItemModal" tabindex="-1" aria-labelledby="deleteMainItemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -690,7 +696,7 @@
 </div>
 
 <!-- Swap Item Delete Modal -->
-<div class="modal fade" id="deleteSwapItemModal" tabindex="-1" aria-labelledby="deleteSwapItemModalLabel" aria-hidden="true">
+<div class="modal " id="deleteSwapItemModal" tabindex="-1" aria-labelledby="deleteSwapItemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -723,7 +729,7 @@
 <script>
 
     const preSelectedFoods = @json($preplanSlectedFoods);
-    // console.log(preSelectedFoods);
+    
     document.addEventListener('DOMContentLoaded', function () {
         let hasUnsavedChanges = false;
         let intendedHref = ''; // Store the intended link URL
@@ -917,17 +923,12 @@
         $(document).on('click', '.user-pre-plan-details', function () {
             const paymentId = $(this).data('payment-id');
             
-            // Debugging log
-            console.log('Clicked on user-pre-plan-details button with paymentId:', paymentId);
-
             $.ajax({
                 url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                 method: 'GET',
 
                 success: function(response) {
                     if (response.success) {
-                        console.log(response.data);
-
                         let modalContent = '';
 
                         // Add User Details at the top
@@ -954,78 +955,129 @@
 
                         const formData = response.data;
 
+                        const foodGroups = response.foodGroups || {}; // assuming this comes from AJAX response
+
                         Object.keys(formData).forEach(function (formName) {
-                            if (formName === 'Personal Details') {
-                                return;
-                            }
+                            if (formName === 'Personal Details') return;
 
                             modalContent += `<div><h4 style="color:#7258db;">${formName}</h4><hr>`;
-
                             const formQuestions = formData[formName];
 
                             Object.keys(formQuestions).forEach(function (question) {
                                 let answer = formQuestions[question];
                                 let answerContent = '';
 
+                                if (formName === 'Food Preference') {
+                                    const expectedGroups = foodGroups;
+                                    const groupNameRaw = question;
+
+                                    const clean = s => (s || '').toString().trim();
+                                    const normal = s => clean(s).replace(/\s{2,}/g, ' ');
+                                    const hasAny = v => {
+                                        if (Array.isArray(v)) return v.filter(x => clean(x)).length > 0;
+                                        if (typeof v === 'string') return clean(v) !== '';
+                                        return false;
+                                    };
+
+                                    const groupKey = normal(groupNameRaw);
+                                    const expectedSubs = expectedGroups[groupKey] || [];
+                                    const userValue = answer;
+                                    const groupMissing = (userValue === null);
+
+                                    answerContent = '<ul>';
+
+                                    if (groupMissing) {
+                                        answerContent += `<li class="text-danger">Not selected</li>`;
+                                    } else {
+                                        if (Array.isArray(userValue)) {
+                                            const nonEmpty = userValue.filter(x => clean(x));
+                                            answerContent += `<li class="${nonEmpty.length ? '' : 'text-danger'}">
+                                                ${nonEmpty.length ? nonEmpty.join(', ') : 'Not selected'}
+                                            </li>`;
+                                        } else if (typeof userValue === 'object') {
+                                            expectedSubs.forEach(sub => {
+                                                const subKey = normal(sub);
+                                                const provided = Object.prototype.hasOwnProperty.call(userValue, subKey);
+                                                let valueBlock = ' — Not selected';
+                                                let css = 'text-danger';
+
+                                                if (provided) {
+                                                    const val = userValue[subKey];
+                                                    if (Array.isArray(val)) {
+                                                        const ok = val.filter(x => clean(x));
+                                                        if (ok.length) {
+                                                            css = '';
+                                                            valueBlock = '<ul>' + ok.map(v => `<li>${v}</li>`).join('') + '</ul>';
+                                                        }
+                                                    } else if (typeof val === 'string' && clean(val) !== '') {
+                                                        css = '';
+                                                        valueBlock = `: ${val}`;
+                                                    }
+                                                }
+                                                answerContent += `<li class="${css}">${subKey}${valueBlock}</li>`;
+                                            });
+                                        } else if (typeof userValue === 'string') {
+                                            answerContent += `<li>${clean(userValue)}</li>`;
+                                        }
+                                    }
+
+                                    answerContent += '</ul>';
+
+                                    modalContent += `
+                                        <div>
+                                            <p><strong>Q : ${groupNameRaw}</strong></p>
+                                            <div>${answerContent}</div>
+                                        </div>`;
+                                    return; // Skip default logic
+                                }
+
+                                // ========== DEFAULT LOGIC FOR OTHER FORMS ==========
                                 if (!answer) {
-                                    answerContent = ''; // Skip null or empty answers
+                                    answerContent = '<span class="text-danger">Not selected</span>';
                                 } else if (Array.isArray(answer)) {
-                                    const filtered = answer.filter(item => item !== null && item !== '' && item !== undefined);
-                                    if (filtered.length > 0) {
-                                        answerContent = '<ul>';
-                                        filtered.forEach(function (item) {
-                                            answerContent += `<li>${item}</li>`;
-                                        });
-                                        answerContent += '</ul>';
+                                    const filtered = answer.filter(item => item);
+                                    if (filtered.length) {
+                                        answerContent = '<ul>' + filtered.map(i => `<li>${i}</li>`).join('') + '</ul>';
                                     }
                                 } else if (typeof answer === 'object') {
-                                    let validEntries = Object.entries(answer).filter(([_, value]) => value !== null && value !== '');
-
-                                    // Sort hunger question if matched
+                                    let valid = Object.entries(answer).filter(([_, v]) => v);
                                     if (question.includes('hunger/appetite over the day')) {
-                                        const preferredOrder = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
-                                        validEntries.sort((a, b) => preferredOrder.indexOf(a[0]) - preferredOrder.indexOf(b[0]));
+                                        const order = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
+                                        valid.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
                                     }
-
-                                    if (validEntries.length > 0) {
+                                    if (valid.length) {
                                         answerContent = '<ul>';
-                                        validEntries.forEach(([key, value]) => {
-                                            const formattedKey = key
-                                                .replace(/_/g, ' ')
-                                                .replace(/\b\w/g, char => char.toUpperCase());
-
-                                            answerContent += `<li>${formattedKey}: `;
-                                            if (Array.isArray(value)) {
-                                                const cleanArray = value.filter(subItem => subItem !== null && subItem !== '' && subItem !== undefined);
-                                                if (cleanArray.length > 0) {
-                                                    answerContent += '<ul>';
-                                                    cleanArray.forEach(function (subItem) {
-                                                        answerContent += `<li>${subItem}</li>`;
-                                                    });
-                                                    answerContent += '</ul>';
+                                        valid.forEach(([k, v]) => {
+                                            const keyLabel = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                            if (Array.isArray(v)) {
+                                                const sub = v.filter(x => x);
+                                                if (sub.length) {
+                                                    answerContent += `<li><strong>${keyLabel}</strong><ul>${sub.map(s => `<li>${s}</li>`).join('')}</ul></li>`;
                                                 }
                                             } else {
-                                                answerContent += `${value}`;
+                                                answerContent += `<li><strong>${keyLabel}:</strong> ${v}</li>`;
                                             }
-                                            answerContent += '</li>';
                                         });
                                         answerContent += '</ul>';
                                     }
                                 } else {
-                                    answerContent = answer || ''; // Fallback for simple string values
+                                    answerContent = answer;
                                 }
 
                                 if (answerContent) {
+                                    if(question != '' && question != null && question != undefined) {
                                     modalContent += `
                                         <div>
                                             <p><strong>Q : ${question}</strong></p>
                                             <p>${answerContent}</p>
                                         </div>`;
+                                    }
                                 }
                             });
 
-                            modalContent += `</div><hr>`;
+                            modalContent += '</div><hr>';
                         });
+
 
                         // Set the content inside the modal
                         $('#prePlanDetail .modal-body').html(modalContent);
@@ -1118,7 +1170,6 @@
                 },
                 success: function (data) {
                     if (data) {
-                        console.log(data);
                         setTimeout(() => {
                             resultDiv.find('.protein').val(data.protein);
                             resultDiv.find('.carbs').val(data.carbs);
@@ -1152,274 +1203,12 @@
                 }
             });
         }
-
-        function handleItemChange() {
-            let foodId = $('#foodId').val();
-            console.log('Food Id :', foodId);
-            loading.show();
-            fetchItemDetails(foodId, function (item) {
-                $('#foodCarbs').val(item.carbs);
-                $('#foodProtein').val(item.protein);
-                $('#foodFat').val(item.fat);
-                $('#foodName').val(item.title);
-                $('#foodServingSize').val(item.serving_size);
-                $('#foodServingSizeUnit').val(item.serving_size_unit);
-                $('#foodServingPerPack').val(item.serving_per_pack);
-
-                const data = {
-                    title: $('#foodName').val(),
-                    carbs: $('#foodCarbs').val(),
-                    protein: $('#foodProtein').val(),
-                    fat: $('#foodFat').val(),
-                    qty: $('#foodQuantity').val(),
-                    measurement: $('#itemMeasurement').val(),
-                    serving_size: $('#foodServingSize').val(),
-                    serving_size_unit: $('#foodServingSizeUnit').val(),
-                    serving_per_pack: $('#foodServingPerPack').val(),
-                };
-
-                // calculateNutrition(data, $('#itemNutritionResult'));
-                $.ajax({
-                    url: "{{ route('calculate.nutrition') }}",
-                    type: 'POST',
-                    data: data,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function (data) {
-                        if (data) {
-                            console.log(data);
-                            setTimeout(() => {
-                                $('#itemNutritionResult .protein').val(data.protein);
-                                $('#itemNutritionResult .carbs').val(data.carbs);
-                                $('#itemNutritionResult .fat').val(data.fat);
-                                $('#itemNutritionResult .serving_size').val(data.fat);
-                                $('#itemNutritionResult .serving_size_unit').val(data.fat);
-                                $('#itemNutritionResult .serving_per_pack').val(data.fat);
-                            }, 500);
-                            loading.hide();
-                        } else {
-                            $('#itemNutritionResult').html(`<p class="error">Error: Could not calculate.</p>`).addClass('error').show();
-                            loading.hide();
-                        }
-                    },
-                    error: function () {
-                        console.error("Error: Unable to connect to the server.");
-                        loading.hide();
-                    }
-                });
-                setTimeout(() => {
-                    loading.hide();
-                }, 500);
-            });
-        }
-
-        function handleSwapItemChange() {
-            let foodId = $('#swapFoods').val();
-            $('#swapFoodsModal').find('.error').hide();
-
-            loading.show();
-            fetchItemDetails(foodId, function (item) {
-                $('#foodCarbs').val(item.carbs);
-                $('#foodProtein').val(item.protein);
-                $('#foodFat').val(item.fat);
-                $('#foodName').val(item.title);
-                $('#foodServingSize').val(item.serving_size);
-                $('#foodServingSizeUnit').val(item.serving_size_unit);
-                $('#foodServingPerPack').val(item.serving_per_pack);
-
-                const data = {
-                    title: $('#foodName').val(),
-                    carbs: $('#foodCarbs').val(),
-                    protein: $('#foodProtein').val(),
-                    fat: $('#foodFat').val(),
-                    qty: $('#swapFoodQty').val(),
-                    measurement: $('#swapMeasurement').val(),
-                    serving_size: $('#foodServingSize').val(),
-                    serving_size_unit: $('#foodServingSizeUnit').val(),
-                    serving_per_pack: $('#foodServingPerPack').val(),
-                };
-
-                // calculateNutrition(data, $('#swapNutritionResult'));
-
-                $.ajax({
-                    url: "{{ route('calculate.nutrition') }}",
-                    type: 'POST',
-                    data: data,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function (data) {
-                        if (data) {
-                            console.log(data);
-                            setTimeout(() => {
-                                $('#swapNutritionResult .protein').val(data.protein);
-                                $('#swapNutritionResult .carbs').val(data.carbs);
-                                $('#swapNutritionResult .fat').val(data.fat);
-                                $('#swapNutritionResult .serving_size').val(data.fat);
-                                $('#swapNutritionResult .serving_size_unit').val(data.fat);
-                                $('#swapNutritionResult .serving_per_pack').val(data.fat);
-                            }, 500);
-                            loading.hide();
-                        } else {
-                            $('#swapNutritionResult').html(`<p class="error">Error: Could not calculate.</p>`).addClass('error').show();
-                            loading.hide();
-                        }
-                    },
-                    error: function () {
-                        console.error("Error: Unable to connect to the server.");
-                        loading.hide();
-                    }
-                });
-                setTimeout(() => {
-                    loading.hide();
-                }, 500);
-            });
-        }
-
-        function handleEditItemChange() {
-            loading.show();
-            let foodId = $('#editFoodId').val();
-            fetchItemDetails(foodId, function (item) {
-                $('#editFoodCarbs').val(item.carbs);
-                $('#editFoodProtein').val(item.protein);
-                $('#editFoodFat').val(item.fat);
-                $('#editFoodName').val(item.title);
-                $('#editFoodServingSize').val(item.serving_size);
-                $('#editFoodServingSizeUnit').val(item.serving_size_unit);
-                $('#editFoodServingPerPack').val(item.serving_per_pack);
-
-                const data = {
-                    id: $('#editFoodId').val(),
-                    title: $('#editFoodName').val(),
-                    carbs: $('#editFoodCarbs').val(),
-                    protein: $('#editFoodProtein').val(),
-                    fat: $('#editFoodFat').val(),
-                    qty: $('#itemQty').val(),
-                    measurement: $('#itemUnit').val(),
-                    serving_size: $('#editFoodServingSize').val(),
-                    serving_size_unit: $('#editFoodServingSizeUnit').val(),
-                    serving_per_pack: $('#editFoodServingPerPack').val(),
-                };
-
-                // calculateNutrition(data, $('#editItemNutritionResult'));
-                $.ajax({
-                    url: "{{ route('calculate.nutrition') }}",
-                    type: 'POST',
-                    data: data,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function (data) {
-                        if (data) {
-                            console.log(data);
-                            setTimeout(() => {
-                                $('#editItemNutritionResult .protein').val(data.protein);
-                                $('#editItemNutritionResult .carbs').val(data.carbs);
-                                $('#editItemNutritionResult .fat').val(data.fat);
-                                $('#editItemNutritionResult .serving_size').val(data.fat);
-                                $('#editItemNutritionResult .serving_size_unit').val(data.fat);
-                                $('#editItemNutritionResult .serving_per_pack').val(data.fat);
-                            }, 500);
-                            loading.hide();
-                        } else {
-                            $('#editItemNutritionResult').html(`<p class="error">Error: Could not calculate.</p>`).addClass('error').show();
-                            loading.hide();
-                        }
-                    },
-                    error: function () {
-                        console.error("Error: Unable to connect to the server.");
-                        loading.hide();
-                    }
-                });
-            });
-        }
-
-        function handleEditSwapItemChange() {
-            loading.show();
-            let foodId = $('#swapItems').val();
-            fetchItemDetails(foodId, function (item) {
-                $('#editFoodCarbs').val(item.carbs);
-                $('#editFoodProtein').val(item.protein);
-                $('#editFoodFat').val(item.fat);
-                $('#editFoodName').val(item.title);
-                $('#editFoodServingSize').val(item.serving_size);
-                $('#editFoodServingSizeUnit').val(item.serving_size_unit);
-                $('#editFoodServingPerPack').val(item.serving_per_pack);
-
-                const data = {
-                    id: $('#editFoodId').val(),
-                    title: $('#editFoodName').val(),
-                    carbs: $('#editFoodCarbs').val(),
-                    protein: $('#editFoodProtein').val(),
-                    fat: $('#editFoodFat').val(),
-                    qty: $('#swapItemQty').val(),
-                    measurement: $('#swapItemUnit').val(),
-                    serving_size: $('#editFoodServingSize').val(),
-                    serving_size_unit: $('#editFoodServingSizeUnit').val(),
-                    serving_per_pack: $('#editFoodServingPerPack').val(),
-                };
-
-                $.ajax({
-                    url: "{{ route('calculate.nutrition') }}",
-                    type: 'POST',
-                    data: data,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function (data) {
-                        if (data) {
-                           console.log(data);
-                            setTimeout(() => {
-                                $('#swapProtein').val(data.protein);
-                                $('#swapCarbs').val(data.carbs);
-                                $('#swapFat').val(data.fat);
-                                $('#swapServingSize').val(data.serving_size);
-                                $('#swapServingSizeUnit').val(data.serving_size_unit);
-                                $('#swapServingPerPack').val(data.serving_per_pack);
-                            }, 500);
-                            loading.hide();
-                        } else {
-                            $('#editSwapItemNutritionResult').html(`<p class="error">Error: Could not calculate.</p>`).addClass('error').show();
-                            loading.hide();
-                        }
-                    },
-                    error: function () {
-                        console.error("Error: Unable to connect to the server.");
-                        loading.hide();
-                    }
-                });
-            });
-        }
-
-        // Attach event listeners (only runs when user interacts)
-        $('#itemMeasurement').on('change', handleItemChange);
-        $('#swapMeasurement').on('change', handleSwapItemChange);
-        $('#itemUnit').on('change', handleEditItemChange);
-        $('#swapItemUnit').on('change', handleEditSwapItemChange);
-
-        $('#foodQuantity').on('change', function () {
-            $('#itemMeasurement').val('');
-        });
-        $('#swapFoodQty').on('change', function () {
-            $('#swapMeasurement').val('');
-        });
-        $('#itemQty').on('change', function () {
-            $('#itemUnit').val('');
-        });
-        $('#swapItemQty').on('change', function () {
-            $('#swapItemUnit').val('');
-        });
+       
         // Ensure modals reset on close
         $('#swapFoodsModal, #editItemModal').on('hidden.bs.modal', function () {
             $(this).find('input').val(''); // Reset all input fields
             $(this).find('select').val(''); // Reset all select fields
             $(this).find('.error').hide(); // Hide error messages
-        });
-
-        $('#swapFoodsModal').on('shown.bs.modal', function () {
-            handleItemChange();  // Call food nutrition function
-            handleSwapItemChange();
         });
 
         $('#swapFoodsModal').on('hidden.bs.modal', function () {
@@ -1481,36 +1270,69 @@
             calculateMealNutrition();
         });
 
-        // Function to initialize Select2 with AJAX search
         function initializeSelect2(mealSelect, mealTimeId) {
             mealSelect.select2({
-                placeholder: 'Search meals...',
+                placeholder: 'Search meals…',
                 allowClear: true,
+
+                /* 1️⃣  AJAX config – we pass ALL the fields we’ll need later */
                 ajax: {
                     url: '{{ route("admin.get-meals-by-mealtime") }}',
                     type: 'POST',
                     dataType: 'json',
                     delay: 250,
-                    data: function (params) {
-                        return {
-                            meal_time_id: mealTimeId,
-                            user_id: userId,
-                            plan_id: planID,
-                            search: params.term || '', // Search keyword
-                            _token: '{{ csrf_token() }}'
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data.meals.map(meal => ({
-                                id: meal.id,
-                                text: meal.name
-                            }))
-                        };
-                    },
+                    data: params => ({
+                        meal_time_id: mealTimeId,
+                        user_id: userId,
+                        search: params.term ?? '',
+                        _token: '{{ csrf_token() }}'
+                    }),
+                    processResults: data => ({
+                        results: data.meals.map(m => ({
+                            id     : m.id,
+                            text   : m.name,      // keeps keyboard navigation working
+                            image  : m.image,
+                            energy : m.energy,    // kJ
+                            protein: m.protein,   // g
+                            carbs  : m.carbs,     // g
+                            fat    : m.fat        // g
+                        }))
+                    }),
                     cache: true
-                }
+                },
+
+                /* 2️⃣  Tell Select2 how to render each piece of data */
+                templateResult   : formatMeal,        // dropdown rows
+                templateSelection: sel => sel.text,   // text after user picks
+                escapeMarkup     : m => m             // DON’T auto‑escape → allow our HTML
             });
+        }
+
+        /* Renders one row inside the dropdown */
+        function formatMeal(meal) {
+            if (meal.loading) return meal.text;      // built‑in “loading…” row
+
+            const img   = meal.image
+                ? `<img src="${meal.image}" class="s2-meal-img me-2" style="width: 30px; height: 30px;">`
+                : '';
+            const macro = (val, label) => val != null
+                ? `<span class="me-1">${label}:${Number(val).toFixed(1)}${label === 'Energy' ? 'kJ' : 'g'}</span>`
+                : '';
+
+            return `
+                <div class="d-flex align-items-start">
+                    ${img}
+                    <div>
+                        <div>${meal.text}</div>
+                        <small class="text-muted">
+                            ${macro(meal.energy, 'Energy')}
+                            ${macro(meal.protein,'Protein')}
+                            ${macro(meal.carbs , 'Carbs')}
+                            ${macro(meal.fat   , 'Fat')}
+                        </small>
+                    </div>
+                </div>
+            `;
         }
         
         // Function to calculate nutrition
@@ -1548,10 +1370,6 @@
                 grandTotalFat += totalFat;
                 grandTotalEnergy += totalEnergy;
 
-                // console.log(`Meal Details:
-                // - Total Carb: ${totalCarbs.toFixed(2)}g
-                // - Total Protein: ${totalProtein.toFixed(2)}g
-                // - Total Fat: ${totalFat.toFixed(2)}g`);
             });
 
             $('#allCarbsTotal').text(`${Math.round(grandTotalCarbs)}g`);
@@ -1566,7 +1384,7 @@
         }
 
         let userId = $('#user_id').val();
-        console.log(userId);
+        
         let planID = 0;
         let mealtimeID = 0;
         // Step 2: Handle meal selection changes
@@ -1655,7 +1473,6 @@
                             
                             calculateMealNutrition();
                             response.data.forEach(item => {
-                                console.log(item);
                                 // ✅ Increment count for each item in the meal
                                 updateFoodCount(item.id, 1, 'purple', item.name, null);  
 
@@ -1705,16 +1522,21 @@
                         <i class="toggle-arrow icofont-simple-down ms-2 me-2"></i>
                         <input type="text"
                             value="${mealName}"
-                            class="editable-meal-name form-control border-0 p-0"
+                            class="editable-meal-name form-control border-0 shadow-none p-0"
                             data-meal-time-id="${mealTimeId}"
                             data-meal-id="${mealId}"
                             data-plan-id="${planId}"
                             data-user-id="${userId}"
                             style="font-weight: bold; font-size: 14px; color: #6610f2; width: 100%;" />
                     </div>
-
+                    <p class="mb-2 meal-total-bar" style="font-size: 14px; color:grey;"><strong>
+                        Meal Total: Energy: <span class="totalEnergy">${(totalEnergy)}kJ</span> | 
+                        Protein: <span class="totalProtein">${Math.round(totalProtein)}g</span> | 
+                        Carb: <span class="totalCarbs">${Math.round(totalCarbs)}g</span> | 
+                        Fat: <span class="totalFat">${Math.round(totalFat)}g</span>
+                        </strong>
+                    </p>
                     <div class="meal-content">
-                    <p style="font-size: 14px; color:grey"><strong>Meal Total: Energy: <span class="totalEnergy">${(totalEnergy)}kJ</span> | Protein: <span class="totalProtein">${Math.round(totalProtein)}g</span> | Carb: <span class="totalCarbs">${Math.round(totalCarbs)}g</span> | Fat: <span class="totalFat">${Math.round(totalFat)}g</span></strong></p>
                         <small class="text-muted"> NOTE: ${mealNote ?? 'Nil'}</small>
                         <div class="table-responsive">
                             <table class="table table-bordered">
@@ -1959,7 +1781,6 @@
                                 checked: false
                             }];
                         }
-                        console.log(energy);
                         // Macros
                         $('#mealFoodAddModal #foodCarbs').val(foodItem.carbs || 0);
                         $('#mealFoodAddModal #foodProtein').val(foodItem.protein || 0);
@@ -2648,7 +2469,6 @@
                 .replace(/[^a-z0-9\s-]/g, '')  // Remove everything except letters, numbers, spaces, and dashes
                 .replace(/\s+/g, '-');
 
-                console.log(categoryId);
                 let categoryRow = $(`#category-row-${categoryId}`);
                 
                 // If category row doesn't exist, create it
@@ -2688,7 +2508,7 @@
                             id="setp5Food${foodId}"
                             data-food-id="${foodId}"
                             data-food-name="${foodTitle}">
-                        <label class="form-check-label" for="setp5Food${foodId}">
+                        <label class="form-check-label food-label" for="setp5Food${foodId}">
                             ${foodTitle}
                         </label>
                     </div>
@@ -2929,7 +2749,7 @@
             // };
 
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
-            console.log(AU_UNIT_EQUIVALENTS);
+            
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
             if ($rows.length === 0) return;
@@ -2947,34 +2767,20 @@
                 const currentQty = parseFraction(currentQtyRaw);
                 if (!currentQty || !currentUnit) return;
 
-                console.log(currentQty, currentUnit);
-                console.log(AU_UNIT_EQUIVALENTS);
-<<<<<<< HEAD
-
                 const normalizedUnitEquivalents = {};
                 Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
                     normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
                 });
 
-=======
-
-                const normalizedUnitEquivalents = {};
-                Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
-                    normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
-                });
-
->>>>>>> a81479a388fdaaa332aff8828beccb0fd9afc39b
                 // Later in your function
                 const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
-                console.log(baseEquivalent);
+               
                 if (!baseEquivalent) {
                     console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
                 const ratio = currentQty / baseEquivalent;
-                console.log(ratio);
-                console.log(modal);
-                console.log(baseCarbs * ratio);
+               
                 $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalProtein`).text((Math.round(baseProtein * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalFat`).text((Math.round(baseFat * ratio * 10) / 10) + 'g');
@@ -3224,11 +3030,11 @@
                         </div>
                         <div class="col-5">
                             ${index === 0 ? '<label class="form-label">Quantity</label>' : ''}
-                            <input type="text" class="form-control modalQtyInput" value="${qty}">
+                            <input type="text" class="form-control modalQtyInput" value="${qty}" data-original-qty="${qty}">
                         </div>
                         <div class="col-5">
                             ${index === 0 ? '<label class="form-label">Measurement</label>' : ''}
-                            <input type="text" class="form-control modalMeasurementInput" value="${unit}">
+                            <input type="text" class="form-control modalMeasurementInput" value="${unit}" data-original-unit="${unit}">
                         </div>
                     </div>
                 `;
@@ -3242,6 +3048,28 @@
 
             const modal = new bootstrap.Modal(document.getElementById('editItemModal'));
             modal.show();
+
+            let ratio = null;
+            $container.find('.modalQtyInput').on('input', function () {
+                const $row = $(this).closest('.qty-unit-row');
+                const newQty = parseFraction($(this).val());
+                const newUnit = $row.find('.modalMeasurementInput').val().trim().toLowerCase();
+                const originalQty = parseFraction($(this).data('original-qty'));
+                const originalUnit = $row.find('.modalMeasurementInput').data('original-unit')?.trim().toLowerCase();
+
+                if (isNaN(newQty) || isNaN(originalQty) || !originalUnit || !newUnit) return;
+
+                let ratio = originalQty / newQty;
+
+                // if (originalUnit !== newUnit && unitRatios?.[originalUnit] && unitRatios?.[newUnit]) {
+                //     const unitRatio = unitRatios[newUnit] / unitRatios[originalUnit];
+                //     ratio *= unitRatio;
+                // }
+
+                $('#editItemModal #ratio').val(ratio);
+                console.log(`Ratio compared to original row: ${ratio}`);
+                // Optionally: update nutrition or UI here
+            });
 
             setupDynamicMeasurementSync('#editItemModal');
             setTimeout(() => {
@@ -3378,7 +3206,100 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        console.log('Food updated successfully');
+                        const $updatedRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+                        const $swapListItems = $updatedRow.find('td').eq(1).find('li[data-swap-item-id]');
+
+                        $swapListItems.each(function () {
+                            const $swapLi = $(this);
+                            const swapItemId = $swapLi.data('swap-item-id');
+                            const ratio = parseFloat($('#editItemModal #ratio').val());
+
+                            // Get the first <p> that has "(100g or 1 cup)" style text
+                            const $quantityP = $swapLi.find('p').first();
+                            let originalText = $quantityP.text().trim();
+
+                            // Remove surrounding parentheses and split by 'or'
+                            if (originalText.startsWith('(') && originalText.endsWith(')')) {
+                                originalText = originalText.slice(1, -1);
+                            }
+
+                            const parts = originalText.split('or').map(part => part.trim());
+                            const updatedParts = parts.map(part => {
+                                const match = part.match(/^([\d./]+)\s*(\w+)$/);  // e.g. "100g" or "1 cup"
+                                if (!match) return part;  // if format is unexpected, return as-is
+
+                                let [_, qty, unit] = match;
+
+                                // Convert fractions like 1/2
+                                if (qty.includes('/')) {
+                                    const [num, denom] = qty.split('/');
+                                    qty = parseFloat(num) / parseFloat(denom);
+                                } else {
+                                    qty = parseFloat(qty);
+                                }
+
+                                if (isNaN(qty)) return part;
+
+                                const newQty = (qty / ratio).toFixed(2).replace(/\.00$/, '');
+                                return `${newQty} ${unit}`;
+                            });
+
+                            // Set updated text back with parentheses
+                            $quantityP.text(`(${updatedParts.join(' or ')})`);
+
+                            const swapInput = $swapLi.find('input[type="checkbox"]');
+                            const swapEnergy = parseFloat(swapInput.data('energy')) || 0;
+                            const swapProtein = parseFloat(swapInput.data('protein')) || 0;
+                            const swapCarbs = parseFloat(swapInput.data('carbs')) || 0;
+                            const swapFat = parseFloat(swapInput.data('fat')) || 0;
+
+                            // Get ratio (you may calculate based on qty/unit or use directly)
+
+                            // Adjust values
+                            const adjustedEnergy = (swapEnergy / ratio).toFixed(2);
+                            const adjustedProtein = Math.round(swapProtein / ratio);
+                            const adjustedCarbs = Math.round(swapCarbs / ratio);
+                            const adjustedFat = Math.round(swapFat / ratio);
+
+                            // Prepare data for backend
+                            const swapData = {
+                                swap_item_id: swapItemId,
+                                item_id: itemId,
+                                plan_id: planId,
+                                meal_id: mealId,
+                                meal_time_id: mealTimeId,
+                                user_id: userId,
+                                food_energy: adjustedEnergy,
+                                food_protein: adjustedProtein,
+                                food_carbs: adjustedCarbs,
+                                food_fat: adjustedFat,
+                                ratio: ratio,
+                                _token: '{{ csrf_token() }}'
+                            };
+
+                            // AJAX call to update swap item in DB
+                            $.ajax({
+                                url: '{{ route("admin.update-swap-item") }}',
+                                method: 'POST',
+                                data: swapData,
+                                success: function (resp) {
+                                    if (resp.success) {
+                                        // Update nutrition info in HTML
+                                        const $nutritionP = $swapLi.find('p').last();
+                                        $nutritionP.html(
+                                            `Energy: ${adjustedEnergy}kJ | Protein: ${adjustedProtein}g | Carb: ${adjustedCarbs}g | Fat: ${adjustedFat}g`
+                                        );
+                                    } else {
+                                        console.warn(`Swap item ${swapItemId} failed to update in DB`);
+                                    }
+                                },
+                                error: function () {
+                                    console.error(`Error updating swap item ${swapItemId}`);
+                                }
+                            });
+                        });
+
+                        console.log('Main food and swap items updated successfully.');
                     } else {
                         alert('Failed to update food.');
                     }
@@ -3735,29 +3656,25 @@
 
         // Confirm delete for swap item
         $('#confirmDeleteSwapItem').on('click', function () {
-            const { $li, $ul, swapItemId, itemId, mealId, planId, mealTimeId, userId } = swapDeleteParams;
+            const { $li, $ul, swapItemId } = swapDeleteParams;
 
+            // Remove the deleted swap item
             $li.remove();
             updateFoodCount(swapItemId, -1, null);
 
-            if ($ul.children('li').length === 0) {
-                $ul.append(`
-                <li class="d-flex justify-content-between align-items-start mb-2">
-                    <div class="col-9">
-                    <span class="text-muted">No swap items available</span>
-                    </div>
-                    <div>
-                    <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-                        data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-                        title="Add"><i class="icofont-plus text-primary"></i>
-                    </button>
-                    </div>
-                </li>
-                `);
+            // Check if only one <li> remains (which is the 'Add More' button container)
+            const $remainingItems = $ul.find('li').not($li);
+            if ($remainingItems.length === 1 && $remainingItems.find('.add-more-swap-item').length) {
+                const $messageLi = $remainingItems.first(); // Get that existing LI
+                const $col9 = $messageLi.find('.col-9');
+
+                // Inject the message into the .col-9 div
+                $col9.html('<span class="text-muted">No swap items available</span>');
             }
 
             swapDeleteParams = null;
+
+            // Hide the modal
             bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
         });
 
@@ -3888,20 +3805,19 @@
 
                 selectedQtyUnits.forEach(({ qty, unit, checked }, index) => {
                     const row = `
-                       <div class="row mb-2 qty-unit-row align-items-center">
-                            <div class="col-auto mt-4">
-                                <input type="radio" name="primaryQty" class="form-check-input primaryQtySelector" ${checked ? 'checked' : ''}>
+                        <div class="row mb-2 qty-unit-row align-items-end">
+                            <div class="col-1 text-center mb-3">
+                                <input type="checkbox" class="form-check-input qtyUnitSelector" ${checked ? 'checked' : '' }>
                             </div>
                             <div class="col-5">
                                 ${index === 0 ? '<label class="form-label">Quantity</label>' : ''}
-                                <input type="text" class="form-control modalQtyInput" value="${qty}" data-base-qty="${qty}">
+                                <input type="text" class="form-control modalQtyInput" value="${qty}">
                             </div>
                             <div class="col-5">
                                 ${index === 0 ? '<label class="form-label">Measurement</label>' : ''}
                                 <input type="text" class="form-control modalMeasurementInput" value="${unit}">
                             </div>
                         </div>
-
                     `;
                     $container.append(row);
                 });
@@ -4784,7 +4700,7 @@
             const $mealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
            
             const $tableBody = $mealContainer.find('.items-table-body');
-            console.log($tableBody);
+           
             $.ajax({
                 url: '{{ route("admin.add-food") }}',
                 type: 'POST',
@@ -4859,7 +4775,7 @@
 
                         swapItemsHTML += `
                             <li class="d-flex justify-content-between align-items-start mt-1">
-                                <div class="col-9"></div>
+                                <div class="col-9">></div>
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
@@ -4969,7 +4885,7 @@
                 //     totalFat += parseFloat($swapInput.data('fat')) || 0;
                 // });
             });
-            console.log(totalCarbs, totalProtein, totalFat, totalEnergy);
+           
             // Update totals in the specific meal container
             $(`${mealContainerId} .totalCarbs`).text(Math.round(totalCarbs)+'g');
             $(`${mealContainerId} .totalProtein`).text(Math.round(totalProtein)+'g');
@@ -5036,7 +4952,6 @@
                 const query = $('#searchFoodQuery').val().trim();
                 const searchType = $('#searchFoodType').val();
 
-                console.log(query, searchType, mealId, mealTimeId, userId, planId);
                 // If query is empty, show alert
                 if (query === '') {
                     alert('Please enter a search term.');
@@ -5464,7 +5379,6 @@
         });
     });
     
-
     document.addEventListener('DOMContentLoaded', () => {
         const mealTimeCheckboxes = document.querySelectorAll('.meal-time-checkbox');
 

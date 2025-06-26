@@ -106,7 +106,7 @@
                             </div>
 
                             <div class="col-md-12">
-                                <label for="flag_ids" class="form-label">Select Preferences<small class="text-danger">*</small></label>
+                                <label for="flag_ids" class="form-label">Select Preferences</label>
                                 <select name="flag_ids[]" class="form-select" id="flag_ids" multiple>
                                     @foreach ($flags as $flag)
                                         <option value="{{ $flag->id }}" 
@@ -370,20 +370,6 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <input type="checkbox" 
-                                    id="lockCheckbox" 
-                                    name="is_locked" 
-                                    value="{{ $item->is_locked ?? 0 }}" 
-                                    class="form-check-input" 
-                                    {{ isset($item) ? ($item->is_locked == 1 ? 'checked' : '') : '' }} />
-
-                                <label for="lockCheckbox" id="lockLabel" class="form-label mb-0">
-                                    {{ isset($item) ? ($item->is_locked == 1 ? 'Unlock' : 'Lock') : 'Lock' }}
-                                </label>
-                                <small class="form-text text-muted">
-                                    (Lock to prevent editing nutrition info. Unlock to allow changes.)
-                                </small>
-                                    
                                 <img class="pull-right mt-1" id="lockIcon" src="{{ asset('private/public/uploads/lock.png') }}" alt="Lock Icon" />
                             </div>
                             <!-- Is Swapped Field -->

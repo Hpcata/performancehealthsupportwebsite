@@ -40,17 +40,9 @@
         .purchase-now-btn {
             white-space: nowrap;
         }
-        
-        .is-invalid {
-            border-color: #dc3545 !important;
-        }
+        .coupon-link           { text-decoration:none; cursor:pointer; color:#000; text-decoration:underline;}
+        .coupon-link.active    { color:#000; text-decoration:underline; }
 
-        .invalid-feedback {
-            color: #dc3545;
-            font-size: 0.875em;
-            display: block;
-            margin-top: 4px;
-        }
     </style>
     @php
         $showHeader = !empty($user->front_logo) && 
@@ -103,7 +95,7 @@
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->type == 'section-1' && $section->enabled == 1)
-                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(front/images/hero-img-03.jpg);">
+                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(private/public/front/images/hero-img-03.webp);">
                     <div class="container">
                         <div class="text-center">
                             <h1 class="text-white mt-md-3">Sports Nutrition Plans</h1>
@@ -128,7 +120,7 @@
                             <div class="col-md-6">
                                 <div class="">  
                                     <figure class="m-0">
-                                        <img class="w-100" src="{!! frontAssets('images/about-new.png') !!}" alt="">
+                                        <img class="w-100" src="{!! frontAssets('images/about-new.webp') !!}" alt="">
                                     </figure>
                                 </div>
                             </div>
@@ -145,7 +137,7 @@
         @endforeach 
     @endif
 
-    <div class="section find-spot-row" style="background-image: url(front/images/female-athlete.jpg);">
+    <div class="section find-spot-row" style="background-image: url(private/public/front/images/female-athlete.webp);">
         <div class="container">
             <div class="h1 text-center text-white">Find Your Sport</div>
             <div class="spot-search">
@@ -225,9 +217,9 @@
                             <div class="spot-plan-img-box">
                                 <figure>
                                     @if($plan->image)
-                                    <img src="{{ asset('storage/' . $plan->image) }}" alt="">
+                                    <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="">
                                     @else
-                                    <img src="{!! frontAssets('images/about-new.png') !!}" alt="">
+                                    <img src="{!! frontAssets('images/about-new.webp') !!}" alt="">
                                     @endif
                                 </figure>
                                 <div class="spot-plan-info-box">
@@ -298,7 +290,7 @@
                                 <div class="nutrition-login-images p-0">
                                     <div class="nutrition-login-big">
                                         <figure class="w-100">
-                                            <img src="{{ frontAssets('images/your-purchased-plan-0001.png') }}" alt="">
+                                            <img src="{{ frontAssets('images/your-purchased-plan-0001.webp') }}" alt="">
                                         </figure>
                                     </div>
                                     <!-- <div class="nutrition-login-small">
@@ -344,7 +336,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/create-profile-img-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/create-profile-img-01.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -370,7 +362,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/goal-img-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/goal-img-01.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -399,7 +391,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/intake-img-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/intake-img-01.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -425,7 +417,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/food-preferences-img-001.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/food-preferences-img-001.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -451,7 +443,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/your-purchased-plan-0001.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/your-purchased-plan-0001.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -477,7 +469,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/customise-your-plan-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/customise-your-plan-01.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -503,7 +495,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/select-shopping-list-001.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/select-shopping-list-001.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -529,7 +521,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/print-shopping-list-001.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/print-shopping-list-001.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -581,7 +573,7 @@
                                                                     <div class="col-md-7 col-lg-8">
                                                                         <div class="sample-img">
                                                                             <figure>
-                                                                                <img src="{{ frontAssets('images/competition-plan-01.png') }}" alt="">
+                                                                                <img src="{{ frontAssets('images/competition-plan-01.webp') }}" alt="">
                                                                             </figure>
                                                                         </div>
                                                                     </div>
@@ -619,7 +611,7 @@
                                 <div class="nutrition-login-images p-0">
                                     <div class="nutrition-login-big">
                                         <figure class="w-100">
-                                            <img src="{{ frontAssets('images/nutrition-login-plans-big.png') }}" alt="">
+                                            <img src="{{ frontAssets('images/nutrition-login-plans-big.webp') }}" alt="">
                                         </figure>
                                     </div>
                                     <!-- <div class="nutrition-login-small">
@@ -674,7 +666,7 @@
                                     <div class="col-lg-6">
                                         <div class="kerry-info-box">
                                             <figure>
-                                                <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png" alt="">
+                                                <img src="{{ frontAssets('images/hero01.webp') }}" alt="">
                                             </figure>
                                             <div class="kerry-info">
                                                 <h5>Kerry O'Bryan</h5>
@@ -753,7 +745,7 @@
                 <div class="border-heading d-block position-relative using-my-heading mt-0"></div>
             </h2>
         </div>
-        <div class="col-12 mx-auto">
+       <div class="col-12 mx-auto">
             <div class="row">
                 <div class="col-xl-6 col-lg-8 col-md-10 px-md-0 px-4 mx-auto position-relative">
                     <div class="wide-slider-testimonial-wrap-two">
@@ -761,19 +753,10 @@
                         <div id="linkedin-carousel" class="carousel slide linkedin-carousel" data-bs-ride="carousel">
                             <div class="carousel-inner justify-content-center align-items-center w-100">
                                 <!-- LinkedIn Feed 1 -->
-                                <div class="carousel-item active">
-                                    <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312" 
-                                        height="867" 
-                                        width="504" 
-                                        allowfullscreen="" 
-                                        title="LinkedIn Feed 1">
-                                    </iframe>
-                                </div>
+                                <div class="carousel-item active" id="linkedin-feed-1"></div>
                                 <!-- LinkedIn Feed 2 -->
-                                <div class="carousel-item">
-                                    <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360" height="729" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
-                                </div>
-                                <!-- LinkedIn Feed 3 -->
+                                <div class="carousel-item" id="linkedin-feed-2"></div>
+                                <!-- More items if needed -->
                             </div>
                             <!-- Carousel Controls -->
                             <button class="carousel-control-prev" type="button" data-bs-target="#linkedin-carousel" data-bs-slide="prev">
@@ -864,14 +847,13 @@
                         </form>
                     </div>
                 </div>
-                <img src="{!! frontAssets('images/contact.png') !!}" alt="Image" class="img-fluid img-contact">
+                <img src="{!! frontAssets('images/contact.webp') !!}" alt="Image" class="img-fluid img-contact">
 
             </div>
 
         </div>
     </div>
 
-    <!-- Purchase Modal -->
     <!-- Sign-Up Modal (Purchase Modal) -->
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -881,40 +863,56 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Sign In Link -->
+                    <div class="mb-3" id="already-signed-in">
+                        <small>Already have an account? <a href="#" id="show-login-modal">Sign In</a></small>
+                    </div>
+                   
                     <!-- User info form -->
                     <form id="payment-form">
                         <div id="registration-details">
+                            <h6 class="mb-3" style="font-weight: 800;">Create Account</h6>
                             <div class="mb-3">
-                                <label for="name" class="form-label">Name<small class="text-danger">*</small></label>
+                                <label for="name" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="name" >
-                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email<small class="text-danger">*</small></label>
+                                <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="emailId" >
-                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Phone Number</label>
                                 <input type="text" class="form-control" id="phone" >
-                                <div class="invalid-feedback"></div>
                             </div>
 
                             <!-- New Password Field -->
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password<small class="text-danger">*</small></label>
+                                <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" >
-                                <div class="invalid-feedback"></div>
                                 <small class="form-text text-muted">Password must be at least 8 characters long.</small>
                             </div>
 
                             <!-- Divider -->
                             <hr class="my-4">
                         </div>
-                        <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
 
-                        <!-- Coupon Code -->
-                        <div class="mb-3" id="coupon-details">
+                        <div id="signed-in-details" class="d-none">
+                            <p class="mb-2" style="font-size: 15px;" >Signed In as</p>
+                            <!-- <div class="mb-3"> -->
+                                <p id="signed-in-email" style="font-weight: 500;"></p>
+                            <!-- </div> -->
+                            <hr>
+                        </div>
+
+                        <h6 class="mb-2" style="font-weight: 800;">Payment Details</h6>
+                        
+                        <div class="mb-3 mt-3">
+                            <small>
+                                <a href="#" id="toggle-coupon-link" class="coupon-link">Add a Coupon Code</a>
+                            </small>
+                        </div>
+                        <!-- Promo Code Section -->
+                        <div class="mb-3 d-none" id="coupon-details">
                             <label for="promo-code" class="form-label">Coupon Code</label>
                             <div class="d-flex gap-2">
                                 <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
@@ -923,25 +921,25 @@
                             </div>
                             <small id="promo-message" class="form-text"></small>
                         </div>
-
-                        <!-- Card Info -->
-                        <div class="mb-3" id="payment-details">
-                            <label for="card-element" class="form-label">Credit or Debit Card</label>
-                            <div id="card-element" class="border rounded p-3 bg-light">
-                                <!-- Stripe card element will go here -->
+                        <div id="payment-details">
+                            <!-- Stripe Payment Card Section -->
+                            <div class="mb-3">
+                                <label for="card-element" class="form-label">Credit or Debit Card</label>
+                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
+                                    <!-- A Stripe Element will be inserted here. -->
+                                </div>
+                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
                             </div>
-                            <div id="card-errors" class="text-danger mt-2"></div>
                         </div>
-                       
+
+                        <!-- Submit Button -->
+                        <!-- <button type="button" id="view-sample-plan" class="btn btn-primary w-100 mt-3">
+                            View Sample Plan
+                        </button> -->
                         <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
                             Purchase
                         </button>
                     </form>
-
-                    <!-- Sign In Link -->
-                    <div class="mt-3 text-center">
-                        <small>Already have an account? <a href="#" id="show-login-modal">Sign In</a></small>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1064,7 +1062,7 @@
         </div>
     </div>
     <!-- Thank You Modal -->
-    <div class="modal show" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
+    <div class="modal" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-center">
                 <div class="modal-header border-0">
@@ -1077,9 +1075,9 @@
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
                     <p class="mb-2" id="thankYouMessage">Your payment was successful.</p>
                     <p class="mb-2">Your plan will be created by Kez and sent via email in the coming days.</p>
-                    <a href="#" id="planUrlLink" class="btn btn-primary mt-2">Order Your Personalised Plan</a>
+                    <!-- <a href="#" id="planUrlLink" class="btn btn-primary mt-2">Order Your Personalised Plan</a> -->
 
-                    <!-- <button type="button" class="btn btn-primary w-50 mt-3" data-bs-dismiss="modal">Close</button> -->
+                    <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -2471,7 +2469,7 @@
                                                 <div class="col-lg-5">
                                                     <div class="">
                                                         <figure class="m-auto" style="max-width: inherit;">
-                                                            <img src="{!! frontAssets('images/purchase-plan-image.png') !!}" class="img-fluid" alt="">
+                                                            <img src="{!! frontAssets('images/purchase-plan-image.webp') !!}" class="img-fluid" alt="">
                                                         </figure>
                                                         <!-- <div class="kerry-info">
                                                             <h5>Kerry O'Bryan</h5>
@@ -2503,7 +2501,7 @@
                                                 <div class="col-lg-5">
                                                     <div class="">
                                                         <figure class="m-auto" style="max-width: inherit;">
-                                                            <img src="{!! frontAssets('images/your-purchased-plan-0001.png') !!}" class="img-fluid" alt="">
+                                                            <img src="{!! frontAssets('images/your-purchased-plan-0001.webp') !!}" class="img-fluid" alt="">
                                                         </figure>
                                                         <!-- <div class="kerry-info">
                                                             <h5>Kerry O'Bryan</h5>
@@ -2535,7 +2533,7 @@
                                                 <div class="col-lg-6">
                                                     <div class="kerry-info-box">
                                                         <figure>
-                                                            <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png" alt="" class="img-fluid">
+                                                            <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.webp" alt="" class="img-fluid">
                                                         </figure>
                                                         <div class="kerry-info">
                                                             <h5>Kerry O'Bryan</h5>
@@ -2645,11 +2643,76 @@
         </div>
     </div>
 
+    <div class="modal" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-top">
+            <div class="modal-content" style="z-index: 1100;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Validation Errors</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="errorModalBody">
+                <!-- Error messages will be injected here -->
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
+
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <script>
+        setTimeout(function () {
+            document.getElementById("linkedin-feed-1").innerHTML = `
+                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312" 
+                        height="867" 
+                        width="504" 
+                        allowfullscreen="" 
+                        title="LinkedIn Feed 1">
+                </iframe>
+            `;
+            document.getElementById("linkedin-feed-2").innerHTML = `
+                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360" 
+                        height="729" 
+                        width="504" 
+                        frameborder="0" 
+                        allowfullscreen="" 
+                        title="Embedded post">
+                </iframe>
+            `;
+        }, 5000);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleLink = document.getElementById('toggle-coupon-link');
+            const couponDetails = document.getElementById('coupon-details');
+            const promoInput = document.getElementById('promo-code');
+            const promoMessage = document.getElementById('promo-message');
+
+            if (toggleLink) {
+                toggleLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const isHidden = couponDetails.classList.contains('d-none');
+
+                    // Toggle coupon section visibility
+                    couponDetails.classList.toggle('d-none');
+
+                    // Update link text
+                    toggleLink.textContent = isHidden ? 'Remove a Coupon Code' : 'Add a Coupon Code';
+
+                    // If hiding, clear input and promo message
+                    if (!isHidden) {
+                        promoInput.value = '';
+                        if (promoMessage) {
+                            promoMessage.style.display = 'none'; // or promoMessage.innerHTML = ''
+                        }
+                    }
+                });
+            }
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             const purchaseModal = document.getElementById('purchaseModal');
 
@@ -2665,6 +2728,10 @@
                 // Clear any validation messages or applied promo codes
                 document.getElementById('promo-message').textContent = "";
                 document.getElementById('discount').value = "";
+                document.getElementById('coupon-details').classList.add('d-none'); // Hide coupon details
+                document.getElementById('toggle-coupon-link').classList.remove('active'); // Reset link style
+                document.getElementById('payment-details').style.removeProperty('display');
+
             });
         });
 
@@ -2680,6 +2747,12 @@
             // Perform any additional actions on close
             $('#TakeTestModel').removeClass('blur-background');
         });
+
+        $('#errorModal').on('hidden.bs.modal', function () {
+            $('#purchaseModal').removeClass('blur-background');
+
+        });
+
         $(document).ready(function () {
             $('.sample-plan-modal').on('click', function () {
                 $('#sample-plan-modal').modal('show');
@@ -2782,722 +2855,7 @@
             });
         });
 
-        // $(document).ready(function () {
-        //     let currentQuizId = null;
-
-        //     // Handle Take Free Test button click
-        //     $('#takeFreeTest').on('click', function() {
-        //         $.ajax({
-        //             url: "{{ route('front.quiz.start') }}",
-        //             method: 'POST',
-        //             headers: {
-        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //             },
-        //             success: function(response) {
-        //                 console.log('Quiz start response:', response); // Debug log
-        //                 if (response.success) {
-        //                     currentQuizId = response.quiz_id;
-        //                     console.log('Quiz started with ID:', currentQuizId); // Debug log
-        //                     $('#TakeTestModel').modal('show');
-        //                 } else {
-        //                     alert('Error starting quiz: ' + response.message);
-        //                 }
-        //             },
-        //             error: function(xhr) {
-        //                 console.error('Error starting quiz:', xhr.responseText);
-        //                 alert('Error starting quiz. Please try again.');
-        //             }
-        //         });
-        //     });
-
-        //     $('.unlock-result').on('click', function () {
-        //         let type = $(this).data('type'); // Get data-type (sports or supplement)
-
-        //         $('#formType').val(type); // Store type in the hidden input field
-
-        //         $('#TakeTestModel').addClass('blur-background'); // Add blur effect
-        //         $('#detailsModal').modal('show'); // Show modal
-        //         $('.sport-plan .unlock-result').removeClass('btn-dark').addClass('btn-primary');
-        //         $('.supplement-plan .unlock-result').removeClass('btn-dark').addClass('btn-primary');
-
-        //     });
-
-        //     $('.detail-modal-close').on('click', function () {
-        //         $('#detailsModal').modal('hide');
-        //         $('#TakeTestModel').removeClass('blur-background'); // Remove blur
-        //         $type = $('#formType').val();
-        //         $('.sport-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-        //         $('.supplement-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-        //         // if (type === 'sport') {
-        //         //     $('.sport-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-        //         // }
-        //         // if (type === 'supplement') {
-        //         //     $('.supplement-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-        //         // }
-        //     })
-        //     let totalAnswerCount = 0;  // Initialize totalAnswerCount to 0 globally for the entire script
-
-        //     // Initialize all the necessary variables
-        //     const stepCircles = document.querySelectorAll('.tab-steps');
-        //     const stepTabs = document.querySelectorAll(".step-tab-box");
-        //     const showStepButtons = document.querySelectorAll('.showStepTab');
-        //     const submitButton = document.querySelector(".submit-free-test"); // Submit button for final submission
-        //     const registerModal = $("#registerModal"); // Registration/Login modal
-        //     const loginModal = $("#testLoginModal"); // Registration/Login modal
-        //     const registerForm = $("#register-form"); // Registration form
-        //     const loginForm = $("#test-login-form"); // Login form
-        //     const loginLink = $(".login-link"); // Login link in Register modal
-        //     const registerLink = $(".register-link"); // Register link in Login modal
-        //     const currentModal = $("#TakeTestModel"); // Current modal for test steps
-
-        //     const stepsData = {};  // Object to store all steps data
-
-        //     // Initially, show only the first step-tab-box
-        //     stepTabs.forEach((tab, index) => {
-        //         tab.style.display = index === 0 ? "block" : "none";
-        //     });
-
-        //     // Function to validate fields in the current step
-        //     function validateStep(stepIndex) {
-        //         const stepTab = stepTabs[stepIndex]; // Get current step tab
-        //         const inputs = stepTab.querySelectorAll('input, textarea, select');
-        //         let isValid = true;
-        //         const errorMessage = "* Please select an answer for this question.";
-
-        //         // Loop through each input to validate
-        //         inputs.forEach(input => {
-        //             if (input.type === 'radio' || input.type === 'checkbox') {
-        //                 const name = input.name;
-        //                 const checkedInputs = stepTab.querySelectorAll(`input[name="${name}"]:checked`);
-        //                 if (checkedInputs.length === 0) {
-        //                     isValid = false;
-        //                     const cardBody = input.closest('.card-body');
-        //                     if (cardBody) {
-        //                         let errorMessageSpan = cardBody.querySelector('.general-error-message');
-        //                         if (!errorMessageSpan) {
-        //                             errorMessageSpan = document.createElement("span");
-        //                             errorMessageSpan.className = "text-danger general-error-message m-3";
-        //                             cardBody.appendChild(errorMessageSpan);
-        //                         }
-        //                         errorMessageSpan.textContent = errorMessage;
-        //                         errorMessageSpan.style.display = "block";
-        //                     }
-        //                 }
-        //             }
-        //         });
-
-        //         return isValid;
-        //     }
-
-        //     function collectStepData(stepIndex) {
-        //         const stepTab = stepTabs[stepIndex];
-        //         const answers = {};
-                
-        //         // Get the form type (nutrition-form, sports-form, etc.)
-        //         const formType = Array.from(stepTab.classList).find(cls => cls.endsWith('-form'));
-        //         if (!formType) return answers;
-
-        //         // Map form type to form_slug
-        //         const formSlugMap = {
-        //             'nutrition-form': 'nutrition',
-        //             'sports-form': 'sports',
-        //             'supplement-form': 'supplements'
-        //         };
-        //         const formSlug = formSlugMap[formType];
-
-        //         // Handle nutrition form questions (first 4 steps)
-        //         if (formType === 'nutrition-form' && stepIndex < 4) {
-        //             const table = stepTab.querySelector('table');
-        //             if (table) {
-        //                 const rows = table.querySelectorAll('tbody tr');
-        //                 rows.forEach(row => {
-        //                     const foodName = row.querySelector('td:first-child').textContent.trim();
-        //                     const selectedRadio = row.querySelector('input[type="radio"]:checked');
-                            
-        //                     if (selectedRadio) {
-        //                         const optionType = selectedRadio.getAttribute('data-option'); // 'Low', 'High', or 'Unsure'
-        //                         const value = selectedRadio.value || '0';
-        //                         const correct = selectedRadio.getAttribute('data-correct') || '0';
-
-        //                         answers[foodName] = {
-        //                             value: value,
-        //                             option: optionType,
-        //                             correct: parseInt(correct),
-        //                             form_slug: formSlug
-        //                         };
-        //                     }
-        //                 });
-        //             }
-        //         }
-        //         // Handle other form types
-        //         else {
-        //             const inputs = stepTab.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');
-        //             inputs.forEach(input => {
-        //                 const questionDiv = input.closest('.card');
-        //                 const questionText = questionDiv.querySelector('h5').textContent.trim();
-                        
-        //                 answers[questionText] = {
-        //                     value: input.value || '0',
-        //                     option: input.getAttribute('data-option') || input.value,
-        //                     correct: parseInt(input.getAttribute('data-correct') || '0'),
-        //                     form_slug: formSlug
-        //                 };
-        //             });
-        //         }
-
-        //         return answers;
-        //     }
-
-        //     const totalAnswerCounts = {}; 
-
-        //     function updateAnswerCount(formClass, value) {
-        //         if (!totalAnswerCounts[formClass]) {
-        //             totalAnswerCounts[formClass] = 0; // Initialize if not set
-        //         }
-
-        //         console.log(`Before Update: ${formClass} =`, totalAnswerCounts[formClass], `Value =`, value);
-
-        //         if (value === 1 || value === 0.5 || value === -1) {
-        //             totalAnswerCounts[formClass] += value;
-        //         }
-
-        //         console.log(`After Update: ${formClass} =`, totalAnswerCounts[formClass]);
-        //     }
-
-        //     function updateModalTitle(stepIndex) {
-        //         const titles = [
-        //             "Nutrition Knowledge Questions",  // Step 0
-        //             "Sports Nutrition Principles",   // Step 1
-        //             "Supplement Knowledge",          // Step 2
-        //         ];
-        //         console.log('step - ',stepIndex);
-        //         const modalTitle = document.getElementById('testModalLabel');
-        //         if (modalTitle) {
-        //             if (stepIndex < 5) {
-        //                 modalTitle.textContent = "Nutrition Knowledge Questions";
-        //             }else if (stepIndex == 5 ){
-        //                 modalTitle.textContent = "Sports Nutrition Principles";
-        //             }else if(stepIndex == 6){
-        //                 modalTitle.textContent = "Sports Nutrition Principles";
-        //             } else if (stepIndex == 7 ) {
-        //                 modalTitle.textContent = "Supplement Knowledge";
-        //             } else if (stepIndex == 8 ) {
-        //                 modalTitle.textContent = "Your Results";  // Default title for other steps
-        //             }
-        //         }
-        //     }
-
-        //     function updateMeterArrows(type) {
-        //         const maxTotal = 5;
-        //         const degree = 180 / maxTotal;
-        //         let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
-        //         const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
-                
-        //         $('.supplement-percentage').text(Math.round(percentage) + "%");
-        //         $('.score-meter-box-3').removeClass('score-meter-out');
-        //         $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
-
-        //         const maxTotal2 = 15;
-        //         const degree2 = 180 / maxTotal2;
-        //         let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
-        //         const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
-                
-        //         $('.sports-percentage').text(Math.round(percentage2) + "%");
-        //         $('.score-meter-box-2').removeClass('score-meter-out');
-        //         $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree2 + 'deg)');
-
-        //         let nutritiondegree = 5.14285714;
-        //         let nutritiontotalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * nutritiondegree); // Ensure non-negative
-        //         const nutritionmaxTotal = 35;
-        //         const nutritionpercentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / nutritionmaxTotal) * 100);
-                
-        //         $('.nutrition-percentage').text(Math.round(nutritionpercentage) + "%");
-        //         $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + nutritiontotalDegree + 'deg)');
-        //     }
-
-        //     // Event listener for step navigation buttons (previous/next steps)
-        //     showStepButtons.forEach(button => {
-        //         button.addEventListener("click", () => {
-        //             const targetStep = parseInt(button.getAttribute("target"));
-                    
-        //             // Save current step data
-        //             const stepData = collectStepData(currentStep);
-        //             console.log('Current step data:', stepData);
-                    
-        //             // Check if stepData has any answers
-        //             if (Object.keys(stepData).length > 0) {
-        //                 console.log('Saving step data with quiz ID:', currentQuizId); // Debug log
-                        
-        //                 // Save to localStorage
-        //                 localStorage.setItem(`step-${currentStep}-data`, JSON.stringify(stepData));
-                        
-        //                 // Update total answer counts
-        //                 Object.keys(stepData).forEach(key => {
-        //                     const answer = stepData[key];
-        //                     if (answer.correct === 1) {
-        //                         const formType = Array.from(stepTabs[currentStep].classList).find(cls => cls.endsWith('-form'));
-        //                         if (formType) {
-        //                             totalAnswerCounts[formType] = (totalAnswerCounts[formType] || 0) + 1;
-        //                         }
-        //                     }
-        //                 });
-                        
-        //                 // Save total counts
-        //                 localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
-
-        //                 // Get question text from hidden inputs
-        //                 const form = document.querySelector(`#div${currentStep}`);
-        //                 const questionInputs = form.querySelectorAll("input[type='hidden'][name^='questions']");
-        //                 const questions = Array.from(questionInputs).map(input => input.value);
-
-        //                 // Format data for database
-        //                 const formattedAnswers = questions.map((questionText, index) => ({
-        //                     question: questionText,
-        //                     question_index: index + 1,
-        //                     step: currentStep + 1,
-        //                     form_slug: Object.values(stepData)[0].form_slug, // Get form_slug from first answer
-        //                     answer: stepData
-        //                 }));
-
-        //                 // Save to database
-        //                 $.ajax({
-        //                     url: "{{ route('front.quiz.save-step') }}",
-        //                     method: 'POST',
-        //                     headers: {
-        //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                     },
-        //                     data: {
-        //                         quiz_id: currentQuizId,
-        //                         step: currentStep + 1,
-        //                         questions: questions,
-        //                         answers: formattedAnswers
-        //                     },
-        //                     success: function(response) {
-        //                         if (response.success) {
-        //                             console.log('Step data saved successfully');
-                                    
-        //                             // Move to next step
-        //                             const nextStep = currentStep + 1;
-                                    
-        //                             // Update UI
-        //                             updateModalTitle(nextStep);
-        //                             stepCircles.forEach((step, index) => {
-        //                                 step.classList.toggle('active', index <= nextStep);
-        //                             });
-        //                             stepTabs.forEach((tab, index) => {
-        //                                 tab.style.display = index === nextStep ? "block" : "none";
-        //                             });
-        //                             currentStep = nextStep;
-
-        //                             // Scroll to top
-        //                             const modalBody = $('#TakeTestModel .modal-body');
-        //                             modalBody.scrollTop(0);
-        //                         } else {
-        //                             console.error('Error saving step:', response.message);
-        //                             alert('Error saving step: ' + response.message);
-        //                         }
-        //                     },
-        //                     error: function(xhr) {
-        //                         console.error('Error saving step:', xhr.responseText);
-        //                         alert('Error saving step. Please try again.');
-        //                     }
-        //                 });
-        //             } else {
-        //                 // If no data to save, just update the UI
-        //                 updateModalTitle(targetStep);
-        //                 stepCircles.forEach((step, index) => {
-        //                     step.classList.toggle('active', index <= targetStep);
-        //                 });
-        //                 stepTabs.forEach((tab, index) => {
-        //                     tab.style.display = index === targetStep ? "block" : "none";
-        //                 });
-        //                 currentStep = targetStep;
-
-        //                 // Scroll to top
-        //                 const modalBody = $('#TakeTestModel .modal-body');
-        //                 modalBody.scrollTop(0);
-        //             }
-        //         });
-        //     });
-
-        //     submitButton.addEventListener("click", () => {
-        //         currentStep = 8;
-        //         updateModalTitle(currentStep);
-
-        //         if (!validateStep(currentStep)) {
-        //             return; // Stop submission if validation fails
-        //         }
-
-        //         // const stepsData = {};
-        //         Object.keys(totalAnswerCounts).forEach(form => totalAnswerCounts[form] = 0); // Reset total counts per form
-
-        //         // Collect step data for all steps
-        //         for (let step = 1; step <= 8; step++) {
-        //             const stepData = collectStepData(step);
-
-        //             localStorage.setItem(`step-${step}-data`, JSON.stringify(stepData));
-        //             stepsData[`step-${step}`] = stepData;
-        //         }
-
-        //         // Save all data to local storage
-        //         // localStorage.setItem("testStepsData", JSON.stringify(stepsData));
-        //         localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
-
-        //         $('#detailsModal').modal('show');
-        //         $('#TakeTestModel').removeClass('blur-background'); // Remove blur
-
-        //         // console.log("Total Answer Counts by Form: ", totalAnswerCounts);
-
-        //         // $('#div9').css('display', 'block');
-        //         // $('#div8').css('display', 'none');
-        //         // $('#step-9').addClass('active');
-
-        //         // updateMeterArrows('nutrition-form');
-
-        //         // google.accounts.id.initialize({
-        //         //     client_id: "293809303653-og7a8udbu78o7gjaffkm7vq1jjoh3cnl.apps.googleusercontent.com", // Replace with your real client ID
-        //         //     callback: handleCredentialResponse
-        //         // });
-
-        //         // google.accounts.id.prompt((notification) => {
-        //         //     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        //         //         // User closed the One Tap prompt or it was not displayed
-        //         //         // openManualRegistrationModal(); // Your function to show the modal
-        //         //         console.log("Opening manual registration modal...");
-        //         //         // registerModal.modal('show'); 
-        //         //         $('#detailsModal').modal('show');
-
-        //         //         // $('#registerModal').css('z-index', '1060');
-        //         //         $('#TakeTestModel').addClass('blur-background');
-        //         //     }
-        //         // });
-
-        //     });
-
-        //     function handleCredentialResponse(response) {
-        //         console.log("Google User Token:", response.credential);
-
-        //         // First, verify Google login
-        //         fetch('{{ route("front.google.check-login") }}', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //             },
-        //             body: JSON.stringify({ token: response.credential })
-        //         })
-        //         .then(res => res.json())
-        //         .then(data => {
-        //             console.log("User Data:", data);
-
-        //             if (data.status == "logged_in") {
-        //                 // Track completion
-        //                 $.ajax({
-        //                     url: "{{ route('front.track.quiz.completion') }}",
-        //                     method: 'POST',
-        //                     headers: {
-        //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                     },
-        //                     data: {
-        //                         userId: user_id,
-        //                         email: $('#email').val()
-        //                     },
-        //                     success: function(response) {
-        //                         console.log('Quiz completion tracked');
-        //                     }
-        //                 });
-        //                 // Google login successful, now send questionnaire data
-        //                 sendQuestionnaireData(data.user_id);
-        //             } else {
-        //                 alert("Login failed, Please try again.");
-        //                 console.error("Google Login Failed");
-        //             }
-        //         })
-        //         .catch(error => console.error("Error in Google Login:", error));
-        //     }
-
-        //     function sendQuestionnaireData(user_id) {
-        //         const stepsData = JSON.parse(localStorage.getItem("testStepsData"));
-        //         const totalAnswerCounts = JSON.parse(localStorage.getItem("totalAnswerCounts"));
-        //         console.log(stepsData);
-        //         console.log(user_id);
-        //         if (!stepsData || !totalAnswerCounts) {
-        //             console.error("No questionnaire data found!");
-        //             return;
-        //         }
-
-        //         fetch('{{ route("front.submit-free-test") }}', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //             },
-        //             body: JSON.stringify({
-        //                 userId: user_id,
-        //                 testData: stepsData,
-        //                 totalAnswerCount: totalAnswerCounts
-        //             })
-        //         })
-        //         .then(res => res.json())
-        //         .then(response => {
-        //             if (response.success) {
-        //                 console.log("Questionnaire Data Saved Successfully:", response);
-                        
-        //                 // Move to the next step after saving data
-        //                 $('#div9').css('display', 'block');
-        //                 $('#div8').css('display', 'none');
-        //                 $('#step-9').addClass('active');
-        //                 alert(response.message);
-        //                 updateMeterArrows('nutrition-form');
-        //                 localStorage.removeItem("testStepsData");
-        //                 localStorage.removeItem("totalAnswerCounts");
-        //             } else {
-        //                 alert(response.message);
-        //                 console.error("Failed to Save Questionnaire Data:", response.message);
-        //                 localStorage.removeItem("testStepsData");
-        //                 localStorage.removeItem("totalAnswerCounts");
-        //             }
-        //         })
-        //         .catch(error => console.error("Error Saving Questionnaire Data:", error));
-        //     }
-
-        //     $('#detailsForm').on('submit', function (e) {
-        //         e.preventDefault(); // Prevent default form submission
-                
-        //         let type = $('#formType').val() // Retrieve stored type (sports or supplement)
-        //         let email = $('#detailsForm').find('#email').val();
-        //         let name = $('#detailsForm').find('#name').val();
-        //         let phone = $('#detailsForm').find('#mobile').val();
-        //         let password = null;
-
-        //         const testData = JSON.parse(localStorage.getItem("testStepsData"));
-        //         const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
-
-        //         // Prepare data for submission
-        //         const registrationData = {
-        //             name,
-        //             email,
-        //             password,
-        //             phone
-        //         };
-
-        //         // Simulate API request to register the user
-        //         $.ajax({
-        //             url: "{{ route('front.register') }}",
-        //             method: "POST",
-        //             contentType: "application/json",
-        //             headers: {
-        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //             },
-        //             data: JSON.stringify(registrationData),
-        //             success: function (data) {
-        //                 if (data.success) {
-        //                     const userId = data.user.id;
-
-        //                     // Now, associate the user ID with the test form data and save it to the database
-        //                     $.ajax({
-        //                         url: "{{ route('front.submit-free-test') }}",
-        //                         method: "POST",
-        //                         contentType: "application/json",
-        //                         headers: {
-        //                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                         },
-        //                         data: JSON.stringify({ userId, name, email, phone, testData, totalAnswerCount }),
-        //                         success: function () {
-        //                             // alert("Registration and Test Data Submission Successful!");
-        //                             // Track completion
-        //                             $.ajax({
-        //                                 url: "{{ route('front.track.quiz.completion') }}",
-        //                                 method: 'POST',
-        //                                 headers: {
-        //                                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                                 },
-        //                                 data: {
-        //                                     userId: userId,
-        //                                     email: email
-        //                                 },
-        //                                 success: function(response) {
-        //                                     console.log('Quiz completion tracked');
-        //                                 }
-        //                             });
-
-        //                             $('#div9').css('display', 'block');
-        //                             $('#div8').css('display', 'none');
-        //                             $('#step-9').addClass('active');
-
-        //                             updateMeterArrows('nutrition-form');
-
-        //                             $('.sport-plan .score-lock').addClass('d-none');
-        //                             $('.sports-percentage').removeClass('d-none');
-
-        //                             // Hide sport-lock and show sport-unlock
-        //                             $('.sport-plan .sport-lock').addClass('d-none');
-        //                             $('.sport-plan .sport-unlock').removeClass('d-none');
-        //                             $('.sport-plan .unlock-result').addClass('d-none');
-
-        //                             // Hide supplement-lock and show supplement-unlock
-        //                             $('.supplement-plan .supplement-lock').addClass('d-none');
-        //                             $('.supplement-plan .score-lock').addClass('d-none');
-        //                             $('.supplement-plan .supplement-unlock').removeClass('d-none');
-        //                             $('.supplement-percentage').removeClass('d-none');
-        //                             $('.supplement-plan .unlock-result').addClass('d-none');
-        //                             // Clear localStorage and close the modal
-        //                             localStorage.removeItem("testStepsData");
-        //                             localStorage.removeItem("totalAnswerCounts");
-        //                             $('#detailsModal').modal('hide'); // Close the register modal
-        //                             $('#TakeTestModel').removeClass('blur-background');
-        //                             // showThankYouModal();
-        //                         },
-        //                         error: function () {
-        //                             alert("Error submitting test data.");
-        //                         }
-        //                     });
-        //                 } else {
-        //                     alert(data.message);
-
-        //                     // Clear localStorage and close the modal
-        //                     localStorage.removeItem("testStepsData");
-        //                     localStorage.removeItem("totalAnswerCounts");
-        //                     $('#detailsModal').modal('hide');
-        //                     $('#TakeTestModel').removeClass('blur-background');
-        //                     // loginModal.modal('show');
-
-        //                 }
-        //             },
-        //             error: function () {
-        //                 alert("Error registering.");
-        //             }
-        //         });
-        //     })
-
-        //     // Login form submit handler
-        //     loginForm.submit(function (event) {
-        //         event.preventDefault();
-
-        //         const testData = JSON.parse(localStorage.getItem("testStepsData"));
-        //         const totalAnswerCount = JSON.parse(localStorage.getItem("totalAnswerCounts"));
-
-        //         // Capture the login form data (email, password)
-        //         const email = $("#test-login-email").val();
-        //         const password = $("#test-login-password").val();
-        //         console.log(email);
-        //         console.log(password);
-        //         // Prepare data for login submission
-        //         const loginData = {
-        //             email,
-        //             password
-        //         };
-
-        //         // Simulate API request to log the user in
-        //         $.ajax({
-        //             url: "{{ route('front.login') }}",
-        //             method: "POST",
-        //             contentType: "application/json",
-        //             data: JSON.stringify(loginData),
-        //             headers: {
-        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //             },
-        //             success: function (data) {
-        //                 if (data.success) {
-        //                     const userId = data.user.id;
-        //                     const name = data.user.name;
-        //                     // Handle success (store user data, etc.)
-        //                     if(data.freeTest) {
-        //                         alert("Your free test has already been taken. so your results sent to your email.");
-        //                         // Clear localStorage and close the modal
-        //                         localStorage.removeItem("testStepsData");
-        //                         localStorage.removeItem("totalAnswerCounts");
-
-        //                         loginModal.modal('hide'); // Close the register modal
-        //                         showThankYouModal();
-        //                     } else {
-        //                         $.ajax({
-        //                             url: "{{ route('front.submit-free-test') }}",
-        //                             method: "POST",
-        //                             contentType: "application/json",
-        //                             headers: {
-        //                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                             },
-        //                             data: JSON.stringify({ userId, name, email, testData ,totalAnswerCount}),
-        //                             success: function () {
-        //                                 // alert("Registration and Test Data Submission Successful!");
-
-        //                                 // Clear localStorage and close the modal
-        //                                 localStorage.removeItem("testStepsData");
-        //                                 localStorage.removeItem("totalAnswerCounts");
-
-        //                                 loginModal.modal('hide'); // Close the register modal
-        //                                 showThankYouModal();
-        //                             },
-        //                             error: function () {
-        //                                 alert("Error submitting test data.");
-        //                             }
-        //                         });
-        //                     }
-
-        //                     // Close the login modal
-        //                     loginModal.modal('hide');
-        //                 } else {
-        //                     alert("Login failed.");
-        //                 }
-        //             },
-        //             error: function () {
-        //                 alert("Error logging in.");
-        //             }
-        //         });
-        //     });
-
-        //     // Switch to the login modal from the register modal
-        //     loginLink.click(function () {
-        //         registerModal.modal('hide');
-        //         loginModal.modal('show');
-        //     });
-
-        //     // Switch to the register modal from the login modal
-        //     registerLink.click(function () {
-        //         loginModal.modal('hide');
-        //         registerModal.modal('show');
-        //     });
-
-        //     // Add this after your existing registration modal code
-        //     $('#registerModal').on('hidden.bs.modal', function () {
-        //         // Check if we have test data in localStorage (indicating quiz was completed)
-        //         const testData = JSON.parse(localStorage.getItem("testStepsData"));
-        //         if (testData) {
-        //             // Track completion without email
-        //             $.ajax({
-        //                 url: "{{ route('front.track.quiz.completion') }}",
-        //                 method: 'POST',
-        //                 headers: {
-        //                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                 },
-        //                 data: {
-        //                     userId: null,
-        //                     email: null
-        //                 },
-        //                 success: function(response) {
-        //                     console.log('Quiz completion tracked (modal closed)');
-        //                 }
-        //             });
-        //         }
-        //         $('#TakeTestModel').removeClass('blur-background');
-        //     });
-
-        //     function showThankYouModal() {
-        //         // Set dynamic content
-        //         const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
-        //         const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
-        //         // Set the modal message
-        //         $('#thankYouMessage').text(thankYouMessage);
-                
-        //         // Set the URL for the plan button dynamically
-        //         $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
-        //         $('#thankYouModal').modal('show');
-        //     }
-        // });
-
         $(document).ready(function () {
-           
             let currentQuizId = null;
             // Show the modal on clicking the start test button
             $('#takeFreeTest').on('click', function () {
@@ -3556,14 +2914,14 @@
             const stepCircles = document.querySelectorAll('.tab-steps');
             const stepTabs = document.querySelectorAll(".step-tab-box");
             const showStepButtons = document.querySelectorAll('.showStepTab');
-            const submitButton = document.querySelector(".submit-free-test"); // Submit button for final submission
-            const registerModal = $("#registerModal"); // Registration/Login modal
-            const loginModal = $("#testLoginModal"); // Registration/Login modal
-            const registerForm = $("#register-form"); // Registration form
-            const loginForm = $("#test-login-form"); // Login form
-            const loginLink = $(".login-link"); // Login link in Register modal
-            const registerLink = $(".register-link"); // Register link in Login modal
-            const currentModal = $("#TakeTestModel"); // Current modal for test steps
+            const submitButton = document.querySelector(".submit-free-test");
+            const registerModal = $("#registerModal");
+            const loginModal = $("#testLoginModal");
+            const registerForm = $("#register-form");
+            const loginForm = $("#test-login-form");
+            const loginLink = $(".login-link");
+            const registerLink = $(".register-link");
+            const currentModal = $("#TakeTestModel");
 
             // Initialize totalAnswerCounts for each form with default values of 0
             // let totalAnswerCounts = {
@@ -4009,9 +3367,7 @@
                 localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
 
                 $('#detailsModal').modal('show');
-                $('#TakeTestModel').removeClass('blur-background'); // Remove blur
-
-
+                $('#TakeTestModel').addClass('blur-background'); // Add blur effect
             });
 
             function handleCredentialResponse(response) {
@@ -4142,7 +3498,7 @@
                                 },
                                 data: {
                                     quiz_id: currentQuizId,
-                                    userId: userId,
+                                    user_id: userId,
                                     totalAnswerCounts: totalAnswerCounts
                                 },
                                 success: function(response) {
@@ -4194,6 +3550,21 @@
                 });
             })
 
+            $('#TakeTestModel').on('hidden.bs.modal', function() {
+                if (currentQuizId) {
+                    $.ajax({
+                        url: "{{ route('front.quiz.abandon') }}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        data: {
+                            quiz_id: currentQuizId
+                        }
+                    });
+                }
+            });
+            
             // Login form submit handler
             loginForm.submit(function (event) {
                 event.preventDefault();
@@ -4365,263 +3736,141 @@
             });
         });
     
-        // Add this JavaScript code to your page
-        $(document).ready(function() {
-            // var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
-            var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
-            var elements = stripe.elements();
-            var style = {
-                base: {
-                    color: '#32325d',
-                    border:'1px solid #32325d',
-                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                    fontSmoothing: 'antialiased',
-                    fontSize: '16px',
-                    '::placeholder': {
-                        color: '#aab7c4'
-                    }
-                },
-                invalid: {
-                    color: '#fa755a',
-                    iconColor: '#fa755a'
-                }
-            };
-
-            // Create card element
-            var card = elements.create('card', { style: style });
-            var cardErrors = document.getElementById('card-errors');
-            card.mount('#card-element');
-
-            // Handle card input changes
-            card.on('change', function(event) {
-                var displayError = document.getElementById('card-errors');
-                if (event.error) {
-                    displayError.textContent = event.error.message;
-                } else {
-                    displayError.textContent = '';
-                }
-            });
-
-            $('#purchaseModal').on('hidden.bs.modal', function () {
-                $('#payment-form')[0].reset(); // Reset the form
-                $('#payment-details').show();
-                $('#card-errors').text('');    // Clear Stripe errors
-            });
-            
-            // Event listener for the 'Purchase Now' button
-            $('body').on('click', '.purchase-now-btn', function () {
-                // alert('Payment button clicked');
-                // e.preventDefault();
-
-                var planId = $(this).data('plan-id');  // Get the plan ID
-                var price = $(this).data('plan-price');     // Get the plan price (if needed)
-                
-                // Update modal title with plan name (optional)
-<<<<<<< HEAD
-                $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + ' ($' + price + ')');
-=======
-                $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + '($' + price+')');
-
->>>>>>> a81479a388fdaaa332aff8828beccb0fd9afc39b
-                // Check if the user is authenticated
-                const isAuthenticated = @json(Auth::guard('web')->check());
-                var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};
-                console.log('Authenticated and not admin, User ID:', userId);
-
-                var isAdmin = {{ Auth::check() && Auth::user()->is_superadmin == 1 ? 'true' : 'false' }};
-                if (isAuthenticated && !isAdmin) {
-                    console.log('Authenticated and not admin');
-
-                   
-                    $('#registration-details').hide();
-                    $('#payment-details').show();
-                    @if(Auth::check())
-                        $('#name').val('{{ Auth::user()->first_name }} {{Auth::user()->last_name }}');  // Pre-fill name field
-                        $('#emailId').val('{{ Auth::user()->email }}');  // Pre-fill email field
-                        $('#phone').val('{{ Auth::user()->phone ?? "" }}');  // Pre-fill phone field, use empty string if null
-                    @endif
-                    // Show the modal
-                }
-                console.log(isAuthenticated);
-                console.log(isAdmin);
-                // Show the modal
-                $('#purchaseModal').modal('show');
-
-                // Handle the form submission
-                $('#payment-form').off('submit').on('submit', function(event) {
-                    event.preventDefault();
-
-                    // Clear previous validation styles
-                    // Validate fields
-                    let errors = [];
-                    let name = $('#name').val().trim();
-                    let email = $('#emailId').val().trim();
-                    // let phone = $('#phone').val().trim();
-                    let password = $('#password').val().trim();
-
-                    // Clear previous validation styles and messages
-                    $('#payment-form input').removeClass('is-invalid');
-                    $('#payment-form .invalid-feedback').text('');
-
-                    // Name
-                    if (!name) {
-                        $('#name').addClass('is-invalid').next('.invalid-feedback').text('Name is required.');
-                        errors++;
-                    }
-
-                    // Email
-                    if (!email) {
-                        $('#emailId').addClass('is-invalid').next('.invalid-feedback').text('Email is required.');
-                        errors++;
-                    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-                        $('#emailId').addClass('is-invalid').next('.invalid-feedback').text('Invalid email format.');
-                        errors++;
-                    }
-
-                    // Phone
-                    if (!phone) {
-                        $('#phone').addClass('is-invalid').next('.invalid-feedback').text('Phone number is required.');
-                        errors++;
-                    }
-
-                    // Password
-                    if (!password || password.length < 8) {
-                        $('#password').addClass('is-invalid').next('.invalid-feedback').text('Password must be at least 8 characters.');
-                        errors++;
-                    }
-
-                    if (errors > 0) {
-                        $('#submit').prop('disabled', false);
-                        return;
-                    }
-                    // Disable the submit button to prevent multiple clicks
-                    $('#submit').prop('disabled', true);
-
-                    // Create a PaymentMethod with Stripe's API
-                    let discountCode = $('#promo-code').val();
-                    console.log(discountCode);
-                    let discount = $('#discount').val();
-                    console.log('Email:', email);
-                    console.log('Name:', name);
-                    console.log('Phone:', phone);
-                    
-                    if(discount == 100.00) {
-                        $.ajax({
-                            url: '{{ route("process.payment") }}',
-                            method: 'POST',
-                            data: {
-                                plan_id: planId,
-                                price: price,
-                                name: $('#name').val(),
-                                email: $('#emailId').val(),
-                                phone: $('#phone').val(),
-                                password: $('#password').val(),
-                                coupon_code: discountCode,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function (response) {
-                                if (response.success) {
-                                    // Close the modal
-                                    $('#purchaseModal').modal('hide');
-                                    $('#submit').prop('disabled', false);
-                                    var user_id = response.data.user_id;
-                                    var payment_id = response.data.payment_id;
-
-                                    // Redirect the user if a URL is provided
-                                    if (response.redirect_url) {
-                                        var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
-                                        setTimeout(function () {
-                                            window.location.href = redirectUrlWithUserId;
-                                        }, 3000);
-                                    }else {
-                                        alert('Error: Redirect url not found.');
-                                    }
-                                } else {
-                                    // Show error message for failed payment
-                                    if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
-                                        alert('You have already purchased this plan. Please login to your account to manage your plans.');
-                                        $('#purchaseModal').modal('hide');
-
-                                        $('html, body').animate({
-                                            scrollTop: $('#nutrition-login-section').offset().top
-                                        }, 500); // 1000ms for smooth scrolling
-                                    } else {
-                                        alert('Payment failed: ' + response.message);
-                                    }
-                                    $('#submit').prop('disabled', false);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                $('#submit').prop('disabled', false);
-
-                                if (xhr.status === 422) {
-                                    // Display Laravel validation errors
-                                    let errors = xhr.responseJSON.errors;
-                                    let errorMessage = 'Please correct the following errors:\n';
-
-                                    $.each(errors, function(key, value) {
-                                        errorMessage += `- ${value[0]}\n`;
-                                    });
-
-                                    alert(errorMessage);
-                                } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                                    alert(`Error: ${xhr.responseJSON.message}`);
-                                } else {
-                                    alert(`Unexpected Error (${xhr.status}): ${error}`);
-                                }
+        setTimeout(function () {
+            const script = document.createElement('script');
+            script.src = "https://js.stripe.com/v3/";
+            script.onload = function () {
+                // Add this JavaScript code to your page
+                $(document).ready(function() {
+                    // var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+                    var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
+                    var elements = stripe.elements();
+                    var style = {
+                        base: {
+                            color: '#32325d',
+                            border:'1px solid #32325d',
+                            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                            fontSmoothing: 'antialiased',
+                            fontSize: '16px',
+                            '::placeholder': {
+                                color: '#aab7c4'
                             }
-                        });
-                    }else {
-                        stripe.createPaymentMethod({
-                            type: 'card',
-                            card: card,
-                            billing_details: {
-                                name: $('#name').val(),
-                                email: $('#emailId').val(),
-                                phone: $('#phone').val(),
-                            },
-                        }).then(function(result) {
-                            if (result.error) {
-                                // Display error in the card element
-                                cardErrors.textContent = result.error.message;
-                                $('#submit').prop('disabled', false);
-                            } else {
-                                // Call the server to create the PaymentIntent
+                        },
+                        invalid: {
+                            color: '#fa755a',
+                            iconColor: '#fa755a'
+                        }
+                    };
+
+                    // Create card element
+                    var card = elements.create('card', { style: style });
+                    var cardErrors = document.getElementById('card-errors');
+                    card.mount('#card-element');
+
+                    // Handle card input changes
+                    card.on('change', function(event) {
+                        var displayError = document.getElementById('card-errors');
+                        if (event.error) {
+                            displayError.textContent = event.error.message;
+                        } else {
+                            displayError.textContent = '';
+                        }
+                    });
+
+                    $('#purchaseModal').on('hidden.bs.modal', function () {
+                        $('#payment-form')[0].reset(); // Reset the form
+                        $('#card-errors').text('');    // Clear Stripe errors
+                    });
+                    
+                    // Event listener for the 'Purchase Now' button
+                    $('body').on('click', '.purchase-now-btn', function () {
+                        // alert('Payment button clicked');
+                        // e.preventDefault();
+
+                        var planId = $(this).data('plan-id');  // Get the plan ID
+                        var price = $(this).data('plan-price');     // Get the plan price (if needed)
+                        
+                        // Update modal title with plan name (optional)
+                        $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + ' ($' + price + ')');
+                        // Check if the user is authenticated
+                        const isAuthenticated = @json(Auth::guard('web')->check());
+                        var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};
+                        console.log('Authenticated and not admin, User ID:', userId);
+
+                        var isAdmin = {{ Auth::check() && Auth::user()->is_superadmin == 1 ? 'true' : 'false' }};
+                        if (isAuthenticated && !isAdmin) {
+                            console.log('Authenticated and not admin');
+
+                            $('#registration-details').hide();
+                            $('#payment-details').show();
+                            $('#signed-in-details').removeClass('d-none');
+                            $('#already-signed-in').addClass('d-none');
+                            @if(Auth::check())
+                                $('#name').val('{{ Auth::user()->first_name }} {{Auth::user()->last_name }}');  // Pre-fill name field
+                                $('#emailId').val('{{ Auth::user()->email }}');  // Pre-fill email field
+                                $('#phone').val('{{ Auth::user()->phone ?? "" }}');  // Pre-fill phone field, use empty string if null
+                                $('#signed-in-email').text('{{ Auth::user()->email }}');  // Pre-fill signed-in email field
+                            @endif
+                            // Show the modal
+                        }
+                        console.log(isAuthenticated);
+                        console.log(isAdmin);
+                        // Show the modal
+                        $('#purchaseModal').modal('show');
+
+                        // Handle the form submission
+                        $('#payment-form').off('submit').on('submit', function(event) {
+                            event.preventDefault();
+
+                            // Disable the submit button to prevent multiple clicks
+                            $('#submit').prop('disabled', true);
+
+                            // Create a PaymentMethod with Stripe's API
+                            let discountCode = $('#promo-code').val();
+                            console.log(discountCode);
+                            let discount = $('#discount').val();
+                            let email = $('#emailId').val();
+                            let name = $('#name').val();
+                            let phone = $('#phone').val();
+                            console.log('Email:', email);
+                            console.log('Name:', name);
+                            console.log('Phone:', phone);
+                            
+                            if(discount == 100.00) {
                                 $.ajax({
-                                    url: '{{ route("process.payment") }}', // Define the route to process the payment
+                                    url: '{{ route("process.payment") }}',
                                     method: 'POST',
                                     data: {
-                                        payment_method_id: result.paymentMethod.id,
                                         plan_id: planId,
                                         price: price,
-                                        name: name,
-                                        email: email,
-                                        phone: phone,
+                                        name: $('#name').val(),
+                                        email: $('#emailId').val(),
+                                        phone: $('#phone').val(),
                                         password: $('#password').val(),
                                         coupon_code: discountCode,
                                         _token: '{{ csrf_token() }}'
                                     },
-                                    success: function(response) {
+                                    success: function (response) {
                                         if (response.success) {
-                                            // Handle successful payment
-                                            // alert('Payment successful!');
+                                            // Close the modal
                                             $('#purchaseModal').modal('hide');
-                                            // $('#thankYouModal').modal('show');
                                             $('#submit').prop('disabled', false);
+                                            var user_id = response.data.user_id;
+                                            var payment_id = response.data.payment_id;
 
-                                            var user_id = response.data.user_id;  // Assuming the backend sends the user_id
-                                            var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
-
-                                            // Check if there's a redirect URL provided
-                                            if (response.redirect_url) {
-
-                                                var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
-                                                // Redirect the user to the provided URL after a delay (optional)
-                                                setTimeout(function() {
-                                                    window.location.href = redirectUrlWithUserId;
-                                                }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                            if(response.data.submit_questionnaire) {
+                                                // Redirect the user if a URL is provided
+                                                if (response.redirect_url) {
+                                                    var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                                    setTimeout(function () {
+                                                        window.location.href = redirectUrlWithUserId;
+                                                    }, 3000);
+                                                }else {
+                                                    alert('Error: Redirect url not found.');
+                                                }
+                                            } else {
+                                                $('#thankYouModal').modal('show');
                                             }
-                                            $('#submit').prop('disabled', true);
                                         } else {
                                             // Show error message for failed payment
                                             if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
@@ -4635,93 +3884,203 @@
                                                 alert('Payment failed: ' + response.message);
                                             }
                                             $('#submit').prop('disabled', false);
-
                                         }
                                     },
                                     error: function(xhr, status, error) {
-                                        $('#submit').prop('disabled', false);
+                                        $('#submit').prop('disabled', false); // Re-enable the submit button
+
+                                        let message = '';
 
                                         if (xhr.status === 422) {
-                                            // Display Laravel validation errors
-                                            let errors = xhr.responseJSON.errors;
-                                            let errorMessage = 'Please correct the following errors:\n';
-
+                                            // Laravel validation error
+                                            const errors = xhr.responseJSON.errors;
+                                            message += '<ul>';
                                             $.each(errors, function(key, value) {
-                                                errorMessage += `- ${value[0]}\n`;
+                                                message += `<li style="color: red;">${value[0]}</li>`;
                                             });
-
-                                            alert(errorMessage);
+                                            message += '</ul>';
                                         } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                                            alert(`Error: ${xhr.responseJSON.message}`);
+                                            message = `<p style="color: red;">${xhr.responseJSON.message}</p>`;
                                         } else {
-                                            alert(`Unexpected Error (${xhr.status}): ${error}`);
+                                            message = `<p style="color: red;">Unexpected Error (${xhr.status}): ${error}</p>`;
                                         }
+
+                                        $('#errorModalBody').html(message);
+                                        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                                        errorModal.show();
+                                        $('#purchaseModal').addClass('blur-background');
+
+                                    }
+
+                                });
+                            }else {
+                                stripe.createPaymentMethod({
+                                    type: 'card',
+                                    card: card,
+                                    billing_details: {
+                                        name: $('#name').val(),
+                                        email: $('#emailId').val(),
+                                        phone: $('#phone').val(),
+                                    },
+                                }).then(function(result) {
+                                    if (result.error) {
+                                        // Display error in the card element
+                                        cardErrors.textContent = result.error.message;
+                                        $('#submit').prop('disabled', false);
+                                    } else {
+                                        // Call the server to create the PaymentIntent
+                                        $.ajax({
+                                            url: '{{ route("process.payment") }}', // Define the route to process the payment
+                                            method: 'POST',
+                                            data: {
+                                                payment_method_id: result.paymentMethod.id,
+                                                plan_id: planId,
+                                                price: price,
+                                                name: name,
+                                                email: email,
+                                                phone: phone,
+                                                password: $('#password').val(),
+                                                coupon_code: discountCode,
+                                                _token: '{{ csrf_token() }}'
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    // Handle successful payment
+                                                    // alert('Payment successful!');
+                                                    $('#purchaseModal').modal('hide');
+                                                    // $('#thankYouModal').modal('show');
+                                                    $('#submit').prop('disabled', false);
+                                                    if(response.data.submit_questionnaire) {
+                                                        
+                                                        var user_id = response.data.user_id;  // Assuming the backend sends the user_id
+                                                        var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
+
+                                                        // Check if there's a redirect URL provided
+                                                        if (response.redirect_url) {
+
+                                                            var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
+                                                            // Redirect the user to the provided URL after a delay (optional)
+                                                            setTimeout(function() {
+                                                                window.location.href = redirectUrlWithUserId;
+                                                            }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                                        }
+                                                        // $('#submit').prop('disabled', true);
+                                                    } else {
+                                                        $('#thankYouModal').modal('show');
+                                                    }
+                                                } else {
+                                                    // Show error message for failed payment
+                                                    if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
+                                                        alert('You have already purchased this plan. Please login to your account to manage your plans.');
+                                                        $('#purchaseModal').modal('hide');
+
+                                                        $('html, body').animate({
+                                                            scrollTop: $('#nutrition-login-section').offset().top
+                                                        }, 500); // 1000ms for smooth scrolling
+                                                    } else {
+                                                        alert('Payment failed: ' + response.message);
+                                                    }
+                                                    $('#submit').prop('disabled', false);
+
+                                                }
+                                            },
+                                            error: function(xhr, status, error) {
+                                                $('#submit').prop('disabled', false); // Re-enable the submit button
+
+                                                let message = '';
+
+                                                if (xhr.status === 422) {
+                                                    // Laravel validation error
+                                                    const errors = xhr.responseJSON.errors;
+                                                    message += '<ul>';
+                                                    $.each(errors, function(key, value) {
+                                                        message += `<li style="color: red;">${value[0]}</li>`;
+                                                    });
+                                                    message += '</ul>';
+                                                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                                    message = `<p style="color: red;">${xhr.responseJSON.message}</p>`;
+                                                } else {
+                                                    message = `<p style="color: red;">Unexpected Error (${xhr.status}): ${error}</p>`;
+                                                }
+
+                                                $('#errorModalBody').html(message);
+                                                const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                                                errorModal.show();
+                                                $('#purchaseModal').addClass('blur-background');
+
+                                            }
+
+                                        });
                                     }
                                 });
                             }
                         });
-                    }
-                });
-                
-                $('#view-sample-plan').click(function () {
-                    // var planId = $(this).data('plan-id');
-                    
-                    $('#samplePlanModalLabel').text('Loading...');
-                    $('#samplePlanModalBody').html('<p>Loading details...</p>');
-                    $('#samplePlanModal').modal('show');
+                        
+                        $('#view-sample-plan').click(function () {
+                            // var planId = $(this).data('plan-id');
+                            
+                            $('#samplePlanModalLabel').text('Loading...');
+                            $('#samplePlanModalBody').html('<p>Loading details...</p>');
+                            $('#samplePlanModal').modal('show');
 
-                    $.ajax({
-                        url: '{{ route("front.get-default-plan-details", ":id") }}'.replace(':id', planId),
-                        method: 'GET',
-                        success: function (response) {
-                            if (response.error) {
-                                $('#samplePlanModalBody').html('<p>' + response.error + '</p>');
-                                return;
-                            }
+                            $.ajax({
+                                url: '{{ route("front.get-default-plan-details", ":id") }}'.replace(':id', planId),
+                                method: 'GET',
+                                success: function (response) {
+                                    if (response.error) {
+                                        $('#samplePlanModalBody').html('<p>' + response.error + '</p>');
+                                        return;
+                                    }
 
-                            // Build the modal content for main plan
-                            const mainPlan = response.mainPlan;
-                            let modalContent = `<h5>${mainPlan.name}</h5>`;
-                            // modalContent += `<p>Price: $${mainPlan.price}</p>`;
-                            modalContent += buildMealTimeHtml(mainPlan.mealTimes);
+                                    // Build the modal content for main plan
+                                    const mainPlan = response.mainPlan;
+                                    let modalContent = `<h5>${mainPlan.name}</h5>`;
+                                    // modalContent += `<p>Price: $${mainPlan.price}</p>`;
+                                    modalContent += buildMealTimeHtml(mainPlan.mealTimes);
 
-                            // Build the modal content for subPlans
-                            if (response.subPlans.length > 0) {
-                                modalContent += `<h5></h5>`;
-                                response.subPlans.forEach(function (subPlan) {
-                                    modalContent += `<div class="mt-3"><h6>Sub Plan: ${subPlan.name}</h6>`;
-                                    modalContent += `<p>Price: $${subPlan.price}</p>`;
-                                    modalContent += buildMealTimeHtml(subPlan.mealTimes);
-                                    modalContent += `</div>`;
-                                });
-                            }
+                                    // Build the modal content for subPlans
+                                    if (response.subPlans.length > 0) {
+                                        modalContent += `<h5></h5>`;
+                                        response.subPlans.forEach(function (subPlan) {
+                                            modalContent += `<div class="mt-3"><h6>Sub Plan: ${subPlan.name}</h6>`;
+                                            modalContent += `<p>Price: $${subPlan.price}</p>`;
+                                            modalContent += buildMealTimeHtml(subPlan.mealTimes);
+                                            modalContent += `</div>`;
+                                        });
+                                    }
 
-                            $('#samplePlanModalLabel').text('Plan Details: ' + mainPlan.name);
-                            $('#samplePlanModalBody').html(modalContent);
-                        },
-                        error: function () {
-                            $('#samplePlanModalBody').html('<p>Error fetching plan details. Please try again later.</p>');
-                        }
-                    });
-                });
+                                    $('#samplePlanModalLabel').text('Plan Details: ' + mainPlan.name);
+                                    $('#samplePlanModalBody').html(modalContent);
+                                },
+                                error: function () {
+                                    $('#samplePlanModalBody').html('<p>Error fetching plan details. Please try again later.</p>');
+                                }
+                            });
+                        });
 
-                // Function to build HTML for mealTimes, categories, meals, and items
-                function buildMealTimeHtml(mealTimes) {
-                    let html = `<ul>`;
-                    mealTimes.forEach(function (mealTime) {
-                        html += `<li><strong>${mealTime.title}</strong> (Meal Time)<ul>`;
+                        // Function to build HTML for mealTimes, categories, meals, and items
+                        function buildMealTimeHtml(mealTimes) {
+                            let html = `<ul>`;
+                            mealTimes.forEach(function (mealTime) {
+                                html += `<li><strong>${mealTime.title}</strong> (Meal Time)<ul>`;
 
-                        mealTime.categories.forEach(function (category) {
-                            html += `<li><strong>${category.name}</strong> (Category)<ul>`;
+                                mealTime.categories.forEach(function (category) {
+                                    html += `<li><strong>${category.name}</strong> (Category)<ul>`;
 
-                            category.meals.forEach(function (meal) {
-                                html += `<li><strong>${meal.name}</strong> (Meal)<ul>`;
+                                    category.meals.forEach(function (meal) {
+                                        html += `<li><strong>${meal.name}</strong> (Meal)<ul>`;
 
-                                meal.items.forEach(function (item) {
-                                    html += `<li>${item.name} (Food)<ul>`;
+                                        meal.items.forEach(function (item) {
+                                            html += `<li>${item.name} (Food)<ul>`;
 
-                                    item.swapItems.forEach(function (swapItem) {
-                                        html += `<li>${swapItem.name} (Swap Food)</li>`;
+                                            item.swapItems.forEach(function (swapItem) {
+                                                html += `<li>${swapItem.name} (Swap Food)</li>`;
+                                            });
+
+                                            html += `</ul></li>`;
+                                        });
+
+                                        html += `</ul></li>`;
                                     });
 
                                     html += `</ul></li>`;
@@ -4729,72 +4088,72 @@
 
                                 html += `</ul></li>`;
                             });
-
-                            html += `</ul></li>`;
-                        });
-
-                        html += `</ul></li>`;
-                    });
-                    html += `</ul>`;
-                    return html;
-                }
-
-                document.getElementById('apply-promo-code').addEventListener('click', function () {
-                    const promoCode = document.getElementById('promo-code').value.trim();
-
-                    if (promoCode === '') {
-                        // Show error if promo code is empty
-                        document.getElementById('promo-message').textContent = 'Please enter a coupon code.';
-                        document.getElementById('promo-message').classList.add('text-danger');
-                        document.getElementById('promo-message').classList.remove('text-success');
-                        return;
-                    }
-
-                    // AJAX request to validate promo code
-                    fetch('{{ route("validate.coupon.code") }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({ code: promoCode, plan_id: planId })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        let msg = ''; // Declare the message variable outside the conditional blocks
-
-                        if (data.valid) {
-                            if(data.type == 'percentage') {
-                                msg = `Coupon code applied! ${data.discount}% discount.`;
-                                if(data.discount === "100.00" || data.discount == 100.00) {
-                                    $('#discount').val(data.discount);
-                                    $('#payment-details').hide();
-                                }
-                            }else {
-                                msg = `Coupon code applied! $${data.discount} discount.`;
-                            }
-                            $('#discount').val(data.discount);
-                            // Promo code is valid
-                            document.getElementById('promo-message').textContent = msg;
-                            document.getElementById('promo-message').classList.add('text-success');
-                            document.getElementById('promo-message').classList.remove('text-danger');
-                        } else {
-                            // Promo code is invalid or expired
-                            document.getElementById('promo-message').textContent = data.message;
-                            document.getElementById('promo-message').classList.add('text-danger');
-                            document.getElementById('promo-message').classList.remove('text-success');
+                            html += `</ul>`;
+                            return html;
                         }
-                    })
-                    .catch(error => {
-                        alert('Error: ', error);
-                        console.error('Error:', error);
-                        document.getElementById('promo-message').textContent = 'Something went wrong. Please try again.';
-                        document.getElementById('promo-message').classList.add('text-danger');
-                        document.getElementById('promo-message').classList.remove('text-success');
+
+                        document.getElementById('apply-promo-code').addEventListener('click', function () {
+                            const promoCode = document.getElementById('promo-code').value.trim();
+
+                            if (promoCode === '') {
+                                // Show error if promo code is empty
+                                document.getElementById('promo-message').textContent = 'Please enter a coupon code.';
+                                document.getElementById('promo-message').classList.add('text-danger');
+                                document.getElementById('promo-message').classList.remove('text-success');
+                                return;
+                            }
+
+                            // AJAX request to validate promo code
+                            fetch('{{ route("validate.coupon.code") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({ code: promoCode, plan_id: planId })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                let msg = ''; // Declare the message variable outside the conditional blocks
+
+                                if (data.valid) {
+                                    if(data.type == 'percentage') {
+                                        msg = `Coupon code applied! ${data.discount}% discount.`;
+                                        if(data.discount === "100.00" || data.discount == 100.00) {
+                                            $('#discount').val(data.discount);
+                                            $('#payment-details').hide();
+                                        }
+                                    }else {
+                                        msg = `Coupon code applied! $${data.discount} discount.`;
+                                    }
+                                    $('#discount').val(data.discount);
+                                    // Promo code is valid
+                                    document.getElementById('promo-message').textContent = msg;
+                                    document.getElementById('promo-message').classList.add('text-success');
+                                    document.getElementById('promo-message').classList.remove('text-danger');
+                                } else {
+                                    // Promo code is invalid or expired
+                                    document.getElementById('promo-message').textContent = data.message;
+                                    document.getElementById('promo-message').classList.add('text-danger');
+                                    document.getElementById('promo-message').classList.remove('text-success');
+                                }
+                            })
+                            .catch(error => {
+                                alert('Error: ', error);
+                                console.error('Error:', error);
+                                document.getElementById('promo-message').textContent = 'Something went wrong. Please try again.';
+                                document.getElementById('promo-message').classList.add('text-danger');
+                                document.getElementById('promo-message').classList.remove('text-success');
+                            });
+                        });
                     });
                 });
-            });
-        });
+            };
+            script.onerror = function () {
+                console.error("Failed to load Stripe.js");
+            };
+            document.head.appendChild(script);
+        }, 5000);
 
         // Submit Login Form
         $('#login-form').submit(function(event) {
@@ -4915,112 +4274,6 @@
             //         }
             //     });
             // });
-        });
-
-        $(document).ready(function() {
-            // let currentStep = 0;
-            // let currentQuizId = null;
-
-            // // Handle Take Free Test button click
-            // $('#takeFreeTest').on('click', function() {
-            //     $.ajax({
-            //         url: "{{ route('front.quiz.start') }}",
-            //         method: 'POST',
-            //         headers: {
-            //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            //         },
-            //         success: function(response) {
-            //             console.log('Quiz start response:', response); // Debug log
-            //             if (response.success) {
-            //                 currentQuizId = response.quiz_id;
-            //                 console.log('Quiz started with ID:', currentQuizId); // Debug log
-            //                 $('#TakeTestModel').modal('show');
-            //             } else {
-            //                 alert('Error starting quiz: ' + response.message);
-            //             }
-            //         },
-            //         error: function(xhr) {
-            //             console.error('Error starting quiz:', xhr.responseText);
-            //             alert('Error starting quiz. Please try again.');
-            //         }
-            //     });
-            // });
-
-            // Handle step navigation
-            // $('.showStepTab').off('click').on('click', function() {
-            //     const targetStep = parseInt($(this).attr('target'), 10) - 1;
-
-            //     if (targetStep > currentStep && !validateStep(currentStep)) {
-            //         return;
-            //     }
-
-            //     // Save current step data
-            //     const stepData = collectStepData(currentStep);
-            //     if (stepData.length > 0) {
-            //         $.ajax({
-            //             url: "{{ route('front.quiz.save-step') }}",
-            //             method: 'POST',
-            //             headers: {
-            //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            //             },
-            //             data: {
-            //                 quiz_id: currentQuizId,
-            //                 step: currentStep + 1,
-            //                 answers: stepData
-            //             },
-            //             success: function(response) {
-            //                 if (response.success) {
-            //                     // Update UI
-            //                     updateModalTitle(targetStep);
-            //                     stepCircles.forEach((step, index) => {
-            //                         step.classList.toggle('active', index <= targetStep);
-            //                     });
-            //                     stepTabs.forEach((tab, index) => {
-            //                         tab.style.display = index === targetStep ? "block" : "none";
-            //                     });
-            //                     currentStep = targetStep;
-
-            //                     // Scroll to top
-            //                     const modalBody = $('#TakeTestModel .modal-body');
-            //                     modalBody.scrollTop(0);
-            //                 }
-            //             },
-            //             error: function() {
-            //                 alert('Error saving step. Please try again.');
-            //             }
-            //         });
-            //     } else {
-            //         // If no data to save, just update the UI
-            //         updateModalTitle(targetStep);
-            //         stepCircles.forEach((step, index) => {
-            //             step.classList.toggle('active', index <= targetStep);
-            //         });
-            //         stepTabs.forEach((tab, index) => {
-            //             tab.style.display = index === targetStep ? "block" : "none";
-            //         });
-            //         currentStep = targetStep;
-
-            //         // Scroll to top
-            //         const modalBody = $('#TakeTestModel .modal-body');
-            //         modalBody.scrollTop(0);
-            //     }
-            // });
-
-            // Handle quiz abandonment
-            $('#TakeTestModel').on('hidden.bs.modal', function() {
-                if (currentQuizId) {
-                    $.ajax({
-                        url: "{{ route('front.quiz.abandon') }}",
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        data: {
-                            quiz_id: currentQuizId
-                        }
-                    });
-                }
-            });
         });
 
         // Update the back button click handler

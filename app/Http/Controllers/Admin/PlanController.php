@@ -40,7 +40,7 @@ class PlanController extends Controller
             'subtitle' => 'nullable|string|max:255',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'meal_times' => 'nullable|array', // Validate meal times
             'meal_times.*' => 'exists:categories,id',
         ]);
@@ -79,9 +79,9 @@ class PlanController extends Controller
             'subtitle' => 'nullable|string|max:255',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'meal_times' => 'nullable|array',
-            'meal_times.*' => 'exists:meal_times,id',
+            'meal_times.*' => 'exists:categories,id',
         ]);
         // dd($request->all());
         if ($request->hasFile('image')) {

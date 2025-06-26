@@ -5,7 +5,7 @@
 @section('content')
 <style>
 .meal-checkbox {
-    position: absolute;
+    /* position: absolute; */
     top: 10px;
     right: 10px;
     z-index: 10;
@@ -61,7 +61,7 @@
                             <a href="javascript:void(0);" class="" id="">Competition Plan</a>
                             <a href="javascript:void(0);" class="" id="">Injury Plan</a>
                             <a href="javascript:void(0);"
-                                class="btn btn-primary"
+                                class="btn"
                                 id="showAllMeals"
                                 data-user-id="{{ $user->id }}"
                                 data-plan-id="{{ $plan->id }}"
@@ -78,47 +78,56 @@
        <a href="{{ route('front.profile', ['id' => $user->id]) }}" class="btn btn-primary">Back</a> 
     </div> -->
     <div class="section pt-md-3">
-        @foreach($userPlans as $userPlan)
+    @foreach ($userPlans as $userPlan)
+    @php  //dd($userPlan->userCategories); @endphp
         <div class="container mb-5">
-            <div class="mt-4">
-                <div class="row g-4">
-                    @if($userPlan->userCategories->count())
-                        @foreach($userPlan->userCategories as $plan)
-                            @php
-                                // Determine if this category has at least one valid userMeal
-                                $hasValidMeal = $plan->userMeals->filter(function ($userMeal) {
-                                    return $userMeal->meal && $userMeal->meal->categories && $userMeal->meal->categories->isNotEmpty();
-                                })->count() > 0;
-                            @endphp
+            <div class="row g-4">
+                @foreach ($userPlan->userCategories as $userCategory)
 
-                            @if($hasValidMeal)
-                                <div class="col-md-3">
-                                    <div class="nutrition-plan-box">
-                                        <figure>
-                                            @if(!empty($plan->category) && !empty($plan->category->image))
-                                                <img src="{{ webAssets('storage/' . $plan->category->image) }}" alt="{{ $plan->category->title }}">
-                                            @endif
-                                        </figure>
-                                        <h5>{{ $plan->category->title }}</h5>
-                                        <p></p>
+                    @php
+                        $validSubCategories = $userCategory->userSubCategories->filter(
+                            function ($subCategory) use ($userPlan, $userCategory) {
+                                return $subCategory->userMeals
+                                    ->where('user_plan_id',        $userPlan->id)
+                                    ->where('user_category_id',    $userCategory->id)
+                                    ->where('user_sub_category_id', $subCategory->id)
+                                    ->isNotEmpty();
+                            }
+                        );
 
-                                        <a href="{{ route('front.meal-time.details', ['id' => $plan->category->id, 'plan_id' => $userPlan->id]) }}" 
-                                            class="btn btn-primary view-details-btn"
-                                            data-category-id="{{ $plan->category->id }}" 
-                                            data-category-name="{{ $plan->category->title }}">
-                                            View Details
-                                        </a>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
+                        $hasValidMeal = $validSubCategories->isNotEmpty();
+                    @endphp
+
+                    @if ($hasValidMeal && $userCategory->category)
+                        <div class="col-md-3">  
+                            <div class="nutrition-plan-box">
+                                <figure>
+                                    @if ($userCategory->category->image)
+                                        <img src="{{ webAssets('storage/' . $userCategory->category->image) }}"
+                                             alt="{{ $userCategory->category->title }}">
+                                    @endif
+                                </figure>
+
+                                <h5>{{ $userCategory->category->title }}</h5>
+
+                                <a href="{{ route('front.meal-time.details', [
+                                        'id'      => $userCategory->id,
+                                        'plan_id' => $userPlan->id
+                                    ]) }}"
+                                   class="btn btn-primary view-details-btn"
+                                   data-category-id="{{ $userCategory->id }}"
+                                   data-category-name="{{ $userCategory->category->title }}">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
                     @endif
 
-                </div>
+                @endforeach
             </div>
         </div>
-        @endforeach
-    </div>
+    @endforeach
+</div>
 
     <!-- Modal -->
     <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
@@ -182,6 +191,7 @@
                     <form id="downloadPdfForm" method="POST" target="_blank">
                         @csrf
                         <input type="hidden" name="user_id" value="">
+                        <input type="hidden" name="grouped_data" value="">
                         <button type="submit" class="btn btn-success">Download PDF</button>
                     </form>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -373,8 +383,7 @@
             const planId = $(this).data("plan-id");
             const userId = $(this).data("user-id");
             // Set form action for download button
-            // $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
-
+            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
             $("#downloadPdfForm input[name='user_id']").val(userId);
 
             // Load the preview content from the controller
@@ -625,9 +634,9 @@
                 }).join(' or ');
 
                 printListContent += `
-                    <li style="margin: 0;">
-                        <input type="checkbox" style="margin-right: 6px;" />
-                        ${itemName} <strong>QTY:</strong> ${qtyText}
+                    <li style="margin: 0; padding: 4px 0; font-size: 16px; line-height: 1.8; display: flex; align-items: center;">
+                        <span style="display: inline-block; width: 26px; font-size: 40px; line-height: 1;">&#9633;</span>
+                        <span style="flex: 1;">${itemName} <strong>QTY:</strong> ${qtyText}</span>
                     </li>
                 `;
             }
@@ -653,43 +662,29 @@
     $(document).on('click', '#ShippingPrintModal .btn-primary', function () {
         let pdfContent = '';
 
-        // Loop through each category block
         $('#ShippingPrintModal .print-list h6').each(function () {
             const categoryTitle = $(this).text().trim();
             const itemList = $(this).next('ul');
-            let checkedItems = '';
-            let uncheckedItems = '';
+
+            let itemsHtml = '';
 
             itemList.find('li').each(function () {
-                const checkbox = $(this).find('input[type="checkbox"]');
-                const isChecked = checkbox.is(':checked');
-                const itemText = $(this).clone().children().remove().end().text().trim();
-
-                if (isChecked) {
-                    checkedItems += `
-                        <li style="list-style-type: none; margin: 0;">
-                            <span style="margin-right: 2px; font-size: 18px; color: green;">&#10003;</span>
-                            ${itemText}
-                        </li>`;
-                } else {
-                    uncheckedItems += `<li style="margin-left: 20px;">${itemText}</li>`;
-                }
+                const itemHtml = $(this).html(); // ✅ Keep the existing square + text
+                itemsHtml += `<li style="list-style-type: none;">${itemHtml}</li>`;
             });
 
-            const categoryBlock = `
+            pdfContent += `
                 <div>
                     <h6 style="margin-bottom: 5px;">${categoryTitle}</h6>
                     <ul style="padding-left: 20px;">
-                        ${checkedItems}${uncheckedItems}
+                        ${itemsHtml}
                     </ul>
                 </div><br/>
             `;
-
-            pdfContent += categoryBlock;
         });
 
         if (pdfContent.trim() === '') {
-            pdfContent = '<p>No items selected.</p>';
+            pdfContent = '<p>No items found.</p>';
         }
 
         const pdfContainer = `
@@ -1452,8 +1447,10 @@
             data.categories.forEach(category => {
                 const catId = category.id;
                 const catName = category.name;
-                const meals = Array.isArray(category.meals) ? category.meals : [];
-
+                const meals = Array.isArray(category.meals)
+                                    ? category.meals
+                                    : Object.values(category.meals || {});
+                console.log(meals);
                 if (meals.length === 0) return; // Skip empty categories
 
                 // Append Category Title
@@ -1474,7 +1471,7 @@
                                     <img src="${meal.image_url}" alt="${meal.title}" class="img-fluid">
                                     
                                     <!-- Checkbox at top-right -->
-                                    <input type="checkbox" class="select-meal-checkbox form-check-input" data-meal-id="${meal.id}" data-user-category-id="${category.user_category_id}" data-user-meal-time-id="${category.user_meal_time_id}" data-user-plan-id="${category.user_plan_id}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 20px; height: 20px;">
+                                    <input type="checkbox" class="select-meal-checkbox form-check-input" data-meal-id="${meal.id}" data-user-category-id="${category.user_category_id}" data-user-sub-category-id="${category.user_sub_category_id}" data-user-plan-id="${category.user_plan_id}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 20px; height: 20px;">
                                 
                                 </figure>
                                 <h5 class="mb-3 mt-2 text-center">${meal.title}</h5>
@@ -1499,23 +1496,22 @@
             const groupedData = {};
 
             $('.select-meal-checkbox:checked').each(function () {
-                const mealId = $(this).data('meal-id');
-                const userPlanId = $(this).data('user-plan-id');
-                const userMealTimeId = $(this).data('user-meal-time-id');
-                const userCategoryId = $(this).data('user-category-id');
+                const mealId           = $(this).data('meal-id');
+                const userPlanId       = $(this).data('user-plan-id');
+                const userCategoryId   = $(this).data('user-category-id');
+                const userSubCatId     = $(this).data('user-sub-category-id');   // ← make sure this data‑attr exists
 
-                if (!groupedData[userPlanId]) {
-                    groupedData[userPlanId] = {};
-                }
-                if (!groupedData[userPlanId][userMealTimeId]) {
-                    groupedData[userPlanId][userMealTimeId] = {};
-                }
-                if (!groupedData[userPlanId][userMealTimeId][userCategoryId]) {
-                    groupedData[userPlanId][userMealTimeId][userCategoryId] = [];
-                }
+                groupedData[userPlanId]                     ??= {};
+                groupedData[userPlanId][userCategoryId]     ??= {};
+                groupedData[userPlanId][userCategoryId][userSubCatId] ??= [];
 
-                groupedData[userPlanId][userMealTimeId][userCategoryId].push(mealId);
+                groupedData[userPlanId][userCategoryId][userSubCatId].push(mealId);
             });
+
+            let planId = user.plan_id;
+            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
+            $("#downloadPdfForm input[name='user_id']").val(userId);
+            $("#downloadPdfForm input[name='grouped_data']").val(JSON.stringify(groupedData));
 
             // Send grouped data to Laravel and receive HTML response
             fetch("{{ route('front.plans.preview') }}", {
@@ -1533,7 +1529,7 @@
             .then(res => res.text())
             .then(html => {
                 console.log('12');
-                console.log(html);
+                // console.log(html);
                 // Inject returned HTML into modal
                 mealsModal.hide();
                 $("#plan-preview-body").html(html);
@@ -1545,8 +1541,6 @@
             }); 
         });
 
-
     });
-
 </script>
 @endsection

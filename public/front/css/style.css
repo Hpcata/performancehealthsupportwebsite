@@ -13203,7 +13203,8 @@ textarea {
   font-size: 35px;
 }
 .slider-added-imges{
-  height: 300px; width:200px; object-fit:cover; object-position:top;
+  height: 300px; width:200px; object-fit:cover; object-position:top; max-width: none;
+
 }
 .wide-slider-testimonial-wrap-one,
 .wide-slider-testimonial-wrap-two,

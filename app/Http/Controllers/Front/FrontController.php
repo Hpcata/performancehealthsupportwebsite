@@ -23,7 +23,6 @@ use Exception;
 use Hash;
 use App\Models\UserPlan;
 use Illuminate\Support\Facades\File;
-use Validator;
 use App\Models\Questionnaire;
 use App\Models\WeightTracking;
 use App\Models\Payment;
@@ -34,6 +33,8 @@ use App\Models\GoalHistory;
 use App\Mail\SportInterestMail;
 use Carbon\Carbon;
 use GrahamCampbell\ResultType\Success;
+use App\Mail\SportInterestMailAdmin;
+use Illuminate\Support\Facades\Validator;
 
 class FrontController extends Controller
 {
@@ -401,50 +402,39 @@ class FrontController extends Controller
                 ->where('user_pre_plan_id', $prePlan->id ?? null)
                 ->max('step');
                 
-                if($completedSteps == 9 || $completedSteps == null) {
+                if($completedSteps == 9) {
                     $profileSetUp = 1;
                 }
             }
-            // dd($profileSetUp);
-            return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan', 'payment', 'profileSetUp'));
+
+            $adminView = $request->input('admin_view') == 1 ? true : false;
+            
+            return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan', 'payment', 'profileSetUp', 'adminView'));
         }
     }
 
     public function updateProfile(Request $request)
     {
         $user = User::find($request->user_id);
+        $rules = []; // Initialize the $rules array
+        // dd($request->all());
+        if ($request->has('name')) {
+            $rules['name'] = 'string|max:255';
+        }
 
-        // Validate the request
-        // $request->validate([
-        //     'first_name' => 'required|string|max:255',
-        //     'last_name' => 'required|string|max:255',
-        //     'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-        //     'password' => 'nullable|min:8',
-        //     'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image file
-        // ]);
+        if ($request->type === 'profile_image') {
+            $rules['profile_image'] = 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048';
+        }
 
-        // // Update user details
-        // $user->name = ucfirst($request->first_name) . ' ' . ucfirst($request->last_name);
-        // $user->first_name = $request->first_name;
-        // $user->last_name = $request->last_name;
-        // $user->email = $request->email;
+        $validator = Validator::make($request->all(), $rules);
 
-        // // Check if password is provided and update it
-        // if ($request->filled('password')) {
-        //     $user->password = \Hash::make($request->password);
-        // }
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
-        // Handle profile image upload
-        // if ($request->hasFile('profile_image')) {
-        //     // Delete the old profile image if it exists
-        //     if ($user->profile_image) {
-        //         \Storage::delete($user->profile_image);
-        //     }
-
-        //     // Store the new image
-        //     $imagePath = $request->file('profile_image')->store('profile_images','public');
-        //     $user->profile_image = $imagePath;
-        // }
         if ($request->filled('name')) {
             $user->name = $request->name;
             $user->first_name = explode(' ', $request->name)[0] ?? ('');
@@ -1097,6 +1087,8 @@ class FrontController extends Controller
 
         // Send email with sport-specific nutrition info
         Mail::to($request->email)->send(new SportInterestMail($interest));
+        Mail::to('kerry@performancehealthsupport.com')->send(new SportInterestMailAdmin($interest));
+        // Mail::to('kartikvadhaiya6656@gmail.com')->send(new SportInterestMailAdmin($interest));
 
         return response()->json(['message' => 'Thank you! We will send you relevant nutrition information.'], 200);
     }
@@ -1219,8 +1211,14 @@ class FrontController extends Controller
                     'start_date' => implode(', ', $startDates),
                     'end_date' => implode(', ', $endDates)
                 ]);
+            }elseif ($type == 'height') {
+                // dd($type);
+                $prePlanDetail->update([
+                    'answer' => json_encode($answer),
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
+                ]);
             }
-          
         } else {
             // Create a new record if none exists
             $userPrePlan = UserPrePlan::firstOrCreate([
@@ -1279,6 +1277,7 @@ class FrontController extends Controller
             ]);
 
             PrePlanDetail::create([
+                'form_name' => 'Nutrition Goals',
                 'user_pre_plan_id' => $userPrePlan->id,
                 'form_slug' => 'nutrition_goals',
                 'question' => $question,

@@ -144,7 +144,7 @@
                 <div class="col-lg-5  mb-md-2 mb-lg-0 mb-sm-0 mb-0">
                     <div class="image-stack mb-5 mb-lg-0">
                         <div class="image-stack__item image-stack__item--bottom" data-aos="fade-up">
-                            <img src="{!! frontAssets('images/about-new.png') !!}" alt="Image" class="img-fluid " style="border-radius: 20px;">
+                            <img src="{!! frontAssets('images/about-new.webp') !!}" alt="Image" class="img-fluid " style="border-radius: 20px;">
                         </div>
 
                     </div>
@@ -967,7 +967,7 @@
                             </a></p>
                     </div>
                 </div>
-                <img src="{!! frontAssets('images/contact.png') !!}" alt="Image" class="img-fluid img-contact">
+                <img src="{!! frontAssets('images/contact.webp') !!}" alt="Image" class="img-fluid img-contact">
 
             </div>
 

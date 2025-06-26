@@ -36,9 +36,9 @@
                     <!-- 🔹 Category Filter Dropdown -->
                     <div class="row mb-3">
                         <div class="col-md-12 d-flex justify-content-end align-items-center">
-                            <label for="categoryFilter" class="form-label mb-0 me-2">Filter by Category:</label>
+                            <label for="categoryFilter" class="form-label mb-0 me-2">Filter by Sub Category:</label>
                             <select id="categoryFilter" class="form-control w-auto">
-                                <option value="">All Categories</option>
+                                <option value="">All Sub Categories</option>
                                 @foreach($subCategories as $category)
                                     <option value="{{ $category->id }}">{{ $category->title }}</option>
                                 @endforeach
@@ -52,12 +52,13 @@
                                 <th>ID</th>
                                 <th>Title</th>
                                 <th>Image</th>
+                                <th>Total Energy (kJ)</th>
                                 <th>Total Protein (g)</th>
                                 <th>Total Carbs (g)</th>
                                 <th>Total Fat (g)</th>
                                 <th>Description</th>
                                 <!-- <th>Created At</th> -->
-                                <th>Categories</th>
+                                <th>Sub Categories</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -100,6 +101,13 @@
                 {
                     data: "items",
                     render: function (data) {
+                        let totalEnergy = data.reduce((sum, item) => sum + parseFloat(item.energy || 0), 0);
+                        return totalEnergy.toFixed(2) + " kJ";
+                    }
+                },
+                {
+                    data: "items",
+                    render: function (data) {
                         let totalProtein = data.reduce((sum, item) => sum + parseFloat(item.protein || 0), 0);
                         return totalProtein.toFixed(2) + " g";
                     }
@@ -132,7 +140,7 @@
                         if (Array.isArray(categories) && categories.length > 0) {
                             return categories.map(cat => cat.title).join(", ");
                         }
-                        return "No Category";
+                        return "No Sub Category";
                     }
                 },
                 {

@@ -7,14 +7,14 @@
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold">{{ isset($category) ? 'Edit Category' : 'Create Category' }}</h3>
                 <div class="col-auto">
-                    <a href="{{ route('admin.meal-times.index') }}" class="btn btn-primary">Back</a>
+                    <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
     </div>
     <div class="card mt-3">
         <div class="card-body">
-            <form action="{{ isset($category) ? route('admin.meal-times.update', $category) : route('admin.meal-times.store') }}" 
+            <form action="{{ isset($category) ? route('admin.categories.update', $category) : route('admin.categories.store') }}" 
                   method="POST" enctype="multipart/form-data">
                 @csrf
                 @if (isset($category)) @method('PUT') @endif

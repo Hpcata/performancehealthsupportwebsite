@@ -34,7 +34,7 @@ class CategoryController extends Controller
     {
         $rules = [
             'title' => 'required|string|max:255',
-            'time' => 'required',
+            // 'time' => 'required',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'order' => 'nullable|integer', // Optional order field
@@ -43,8 +43,6 @@ class CategoryController extends Controller
         // Define custom error messages (optional)
         $messages = [
             'title.required' => 'The title is mandatory.',
-            'time.required' => 'The time field is required.',
-            'time.date_format' => 'The time must be in the format HH:mm.',
             'image.image' => 'The uploaded file must be an image.',
         ];
 
@@ -53,6 +51,7 @@ class CategoryController extends Controller
 
         // Check for validation errors
         if ($validator->fails()) {
+            // dd($validator->errors());
             return redirect()->back()
                 ->withErrors($validator) // Pass validation errors
                 ->withInput();          // Retain old input values
@@ -68,10 +67,11 @@ class CategoryController extends Controller
     
             Category::create($validatedData);
 
-            return redirect()->route('admin.meal-times.index')
-                ->with('success', 'Category updated successfully.');
+            return redirect()->route('admin.categories.index')
+                ->with('success', 'Category created successfully.');
 
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->back()
                 ->with('error', 'Something went wrong: ' . $e->getMessage());
         }
@@ -81,7 +81,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id, Category $category)
+    public function edit($id)
     {
        // dd($id);
        $category = Category::findOrFail($id); // Fetch the Category record
@@ -91,15 +91,15 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
         // Fetch the Category record by ID
-        $category = Category::findOrFail($request->id);
+        $category = Category::findOrFail($id);
 
         // Define validation rules
         $rules = [
             'title' => 'required|string|max:255',
-            'time' => 'required',
+            // 'time' => 'required',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'order' => 'nullable|integer', // Optional order field
@@ -109,8 +109,6 @@ class CategoryController extends Controller
         // Define custom error messages (optional)
         $messages = [
             'title.required' => 'The title is mandatory.',
-            'time.required' => 'The time field is required.',
-            'time.date_format' => 'The time must be in the format HH:mm.',
             'image.image' => 'The uploaded file must be an image.',
         ];
 
@@ -140,7 +138,7 @@ class CategoryController extends Controller
             // Update the Category record with validated data
             $category->update($validatedData);
 
-            return redirect()->route('admin.meal-times.index')
+            return redirect()->route('admin.categories.index')
                 ->with('success', 'Category updated successfully.');
 
         } catch (\Exception $e) {
@@ -152,7 +150,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category, $id)
+    public function destroy(Request $request, $id)
     {
         
         try {
@@ -161,7 +159,7 @@ class CategoryController extends Controller
                 Storage::disk('public')->delete($category->image);
             }
             $category->delete();
-            return redirect()->route('admin.meal-times.index')->with('success', 'Category deleted.');
+            return redirect()->route('admin.categories.index')->with('success', 'Category deleted.');
         } catch (\Exception $e) {
             // dd($e->getMessage());
             \Log::error('Delete Error: ' . $e->getMessage());

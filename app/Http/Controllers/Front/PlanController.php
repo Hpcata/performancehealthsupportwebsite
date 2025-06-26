@@ -23,57 +23,72 @@ use Illuminate\Support\Facades\Log;
 class PlanController extends Controller
 {
     public function show(Request $request, $id)
-    {
-        // Find the plan and handle if not found
-        $plan = Plan::find($id);
-        if (!$plan) {
-            return redirect()->back()->with('error', 'Plan not found.');
-        }
+{
+    $plan = Plan::find($id);
+    if (!$plan) return back()->with('error', 'Plan not found.');
 
-        // Get sub plans if they exist
-        $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
+    $user = User::find($request->user_id);
+    if (!$user) return back()->with('error', 'User not found.');
 
-        // Find the user and handle if not found
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return redirect()->back()->with('error', 'User not found.');
-        }
+    $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
 
-        try {
-            // Load user plans and relationships
-            $userPlans = UserPlan::with([
-                'plan',
-                'userCategories.category', // ensure mealTime is loaded
-                'userCategories.userSubCategories.userMeals.userItems'
-            ])
-            ->where('user_id', $user->id)
-            ->where(function ($query) use ($id, $subPlans) {
-                $query->where('plan_id', $id)
-                    ->orWhereIn('plan_id', $subPlans);
-            })
-            ->get();
+    $userPlans = UserPlan::where('user_id', $user->id)
+        ->where(function ($query) use ($id, $subPlans) {
+            $query->where('plan_id', $id)
+                  ->orWhereIn('plan_id', $subPlans);
+        })
+        ->get();
 
-            // Sort userMealTimes by mealTime.order
-            $userPlans->each(function ($userPlan) {
-                $userPlan->userCategories = $userPlan->userCategories
-                    ->sortBy(fn($mt) => $mt->category->order ?? 0)
-                    ->values(); // reindex
-            });
-
-            return view('front.plan-details', compact('userPlans', 'plan', 'user'));
-        } catch (\Exception $e) {
-            \Log::error('Error in PlanController@show: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'An error occurred while loading the plan details.');
-        }
+    foreach ($userPlans as $userPlan) {
+        $userPlan->load([
+            'plan',
+            'userCategories' => function ($query) use ($userPlan) {
+                $query->where('user_plan_id', $userPlan->id)
+                      ->whereHas('userSubCategories', function ($subQ) use ($userPlan) {
+                          $subQ->where('user_plan_id', $userPlan->id)
+                               ->whereHas('userMeals', fn ($mealQ) =>
+                                   $mealQ->where('user_plan_id', $userPlan->id)
+                               );
+                      })
+                      ->with([
+                          'category',
+                          'userSubCategories' => function ($subQ) use ($userPlan) {
+                              $subQ->where('user_plan_id', $userPlan->id)
+                                   ->whereHas('userMeals', fn ($mealQ) =>
+                                       $mealQ->where('user_plan_id', $userPlan->id)
+                                   )
+                                   ->with(['userMeals' => fn ($mealQ) =>
+                                       $mealQ->where('user_plan_id', $userPlan->id)
+                                   ]);
+                          }
+                        ]);
+                    //   ->orderByRaw('COALESCE(`order`, 0)');
+            }
+        ]);
     }
+    // dd($userPlans->toArray());
 
+    return view('front.plan-details', compact('userPlans', 'plan', 'user'));
+}
 
     public function mealTimeDetails(Request $request, $id, $plan_id)
     {
-        $userPlan = UserPlan::with('plan', 
-        'userCategories.userSubCategories.userMeals.userItems')->where('id', $plan_id)->first();
+        // $userPlan = UserPlan::with('plan', 
+        // 'userCategories.userSubCategories.userMeals')->where('id', $plan_id)->first();
 
-        $userMealTime = UserCategory::with('userSubCategories.userMeals.userItems')->where('id', $id)
+        $userPlan = UserPlan::with([
+            'plan',
+            // ---- userCategories sorted by categories.order -------------
+            'userCategories' => function ($q) {
+                $q->leftJoin('categories', 'categories.id', '=', 'user_categories.category_id')
+                ->orderBy('categories.order')
+                ->select('user_categories.*');          // keep only UC columns
+            },
+            'userCategories.category',                     // still eager‑load the Category model
+            'userCategories.userSubCategories.userMeals'
+        ])->where('id', $plan_id)->first();
+        
+        $userMealTime = UserCategory::with('userSubCategories.userMeals')->where('id', $id)
         ->where('user_plan_id', $plan_id)
         ->first();
         // dd($userMealTime);
@@ -809,7 +824,8 @@ class PlanController extends Controller
         //     'mealTimes.categories.subcategories.meals.items.swapItems',  // Load related data
         // ])->findOrFail($id);
         $plan = Plan::find($id);
-        
+        $groupedData = json_decode($request->grouped_data, true); // ← decoded as associative array
+
         $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
 
         $userPlans = UserPlan::with('plan', 
@@ -823,7 +839,7 @@ class PlanController extends Controller
 
         // Sort userMealTimes by mealTime.order ASC
         $userPlans->each(function ($userPlan) {
-            $userPlan->userCategories = $userPlan->userCategories
+            $userPlan->userCategories = $userPlan->userCategories->where('user_plan_id', $userPlan->id)
                 ->sortBy(fn($mt) => $mt->category->order ?? 0)
                 ->values(); // reindex
         });
@@ -831,7 +847,7 @@ class PlanController extends Controller
         // Pass the plan data to the Blade view for rendering the PDF
         // $pdf = PDF::loadView('front.plan-pdf', compact('userPlans'));
         // $pdf->setOption('enable-local-file-access', true);
-        $pdf = Pdf::loadView('front.plan-pdf', compact('userPlans'))
+        $pdf = Pdf::loadView('front.plan-pdf', compact('userPlans', 'groupedData'))
         ->setPaper('A4', 'portrait'); // Set page size and layout
 
         // Download the generated PDF
@@ -855,7 +871,7 @@ class PlanController extends Controller
 
             // Sort userMealTimes by mealTime.order ASC
         $userPlans->each(function ($userPlan) {
-            $userPlan->userCategories = $userPlan->userCategories
+            $userPlan->userCategories = $userPlan->userCategories->where('user_plan_id', $userPlan->id)
                 ->sortBy(fn($mt) => $mt->mealTime->order ?? 0)
                 ->values(); // reindex
         });
@@ -871,7 +887,7 @@ class PlanController extends Controller
         $plan = Plan::find($request->plan_id);
         $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
 
-        $userPlans = UserPlan::with('plan', 'userMealTimes.userCategories.userMeals.userItems')
+        $userPlans = UserPlan::with('plan', 'userCategories.userSubCategories.userMeals.userItems')
             ->where('user_id', $request->user_id)
             ->where(function ($query) use ($request, $subPlans) {
                 $query->where('plan_id', $request->plan_id)
@@ -881,7 +897,7 @@ class PlanController extends Controller
 
         // Sort userMealTimes
         $userPlans->each(function ($userPlan) {
-            $userPlan->userMealTimes = $userPlan->userMealTimes
+            $userPlan->userCategories = $userPlan->userCategories->where('user_plan_id', $userPlan->id)
                 ->sortBy(fn($mt) => $mt->mealTime->order ?? 0)
                 ->values();
         });
@@ -978,50 +994,61 @@ class PlanController extends Controller
         return response()->json(['meals' => $meals]);
     }
 
-     public function ajaxGetMeals(User $user, Plan $plan)
+    public function ajaxGetMeals(User $user, Plan $plan)
     {
         $userPlan = UserPlan::with([
-            'userMealTimes.userCategories.userMeals.meal',
+            'userCategories.userSubCategories.userMeals.meal',
         ])
         ->where('user_id', $user->id)
         ->where('plan_id', $plan->id)
         ->firstOrFail();
 
-        $categories = $userPlan->userMealTimes;
-
         $result = [];
 
-        foreach ($userPlan->userMealTimes as $mealTime) {
-            foreach ($mealTime->userCategories as $userCategory) {
-                $categoryName = optional($userCategory->category)->title;
+        $addedSubCategoryIds = [];
 
-                $meals = $userCategory->userMeals->map(function ($userMeal) {
-                    $meal = optional($userMeal->meal);
-                    return [
-                        'id' => $meal->id,
-                        'title' => $meal->title,
-                        'description' => $meal->description,
-                        'image_url' => $meal && $meal->image
-                            ? asset('private/public/storage/'.$meal->image)
-                            : 'https://via.placeholder.com/300x200?text=No+Image',
-                    ];
-                });
+        foreach ($userPlan->userCategories as $userCategory) {
+            foreach ($userCategory->userSubCategories as $userSubCategory) {
+
+                // Skip duplicate subcategory entries
+                if (in_array($userSubCategory->id, $addedSubCategoryIds)) {
+                    continue;
+                }
+
+                $addedSubCategoryIds[] = $userSubCategory->id;
+
+                $categoryName = optional($userSubCategory->subCategory)->title;
+
+                $meals = $userSubCategory->userMeals
+                    ->where('user_plan_id', $userPlan->id)
+                    ->map(function ($userMeal) {
+                        $meal = optional($userMeal->meal);
+                        return [
+                            'id'          => $meal->id,
+                            'title'       => $meal->title,
+                            'description' => $meal->description,
+                            'image_url'   => $meal && $meal->image
+                                ? asset('private/public/storage/' . $meal->image)
+                                : 'https://via.placeholder.com/300x200?text=No+Image',
+                        ];
+                    })
+                    ->unique('id') // Remove duplicate meals by ID
+                    ->values();
 
                 $result[] = [
-                    'user_plan_id' => $userPlan->id,
-                    'user_meal_time_id' => $mealTime->id,
-                    'user_category_id' => $userCategory->id,
-                    'meal_time_id' => $mealTime->meal_time_id,
-                    'id' => $userCategory->category_id,
-                    'name' => $categoryName,
-                    'meals' => $meals,
+                    'user_plan_id'         => $userPlan->id,
+                    'user_category_id'     => $userCategory->id,
+                    'user_sub_category_id' => $userSubCategory->id,
+                    'category_id'          => $userCategory->id ?? null,
+                    'id'                   => $userSubCategory->id,
+                    'name'                 => $categoryName,
+                    'meals'                => $meals,
                 ];
             }
         }
-        // dd($result);
+
         return response()->json([
             'categories' => $result
         ]);
-    }
-
+    }  
 }
