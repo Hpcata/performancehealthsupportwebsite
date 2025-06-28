@@ -15103,3 +15103,11 @@ div#linkedin-carousel .carousel-inner {
 }
 
 img { max-width: 100%; height: auto; width: auto; }
+
+.forgot-password-link {
+  display: inline-block; /* Ensures the link can have a defined size */
+  min-width: 48px; /* Minimum width */
+  min-height: 48px; /* Minimum height */
+  padding: 10px; /* Adds internal spacing to make the target larger */
+  text-decoration: none; /* Optional: Remove underline if desired */
+}

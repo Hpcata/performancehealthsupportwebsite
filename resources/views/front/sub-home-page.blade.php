@@ -146,6 +146,7 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4">
                             <div class="form-select-box">
+                                <label for="sport" class='d-none'>Select Your Sport</label>
                                 <select class="form-control" name="sport" id="sport" required>
                                     <option value="">Select Your Sport</option>
                                     <option value="action_sports">Action Sports</option>
@@ -164,6 +165,7 @@
                         </div>
                          <div class="col-lg-4 col-md-4 select-middle">
                             <div class="form-select-box">
+                                <label for="state" class='d-none'>Choose Your State</label>
                                 <select class="form-control" name="state" required>
                                     <option value="">Choose Your State</option>
                                     <option value="New South Wales">New South Wales (NSW)</option>
@@ -179,6 +181,7 @@
                         </div>
                         <div class="col-lg-3 col-md-4 select-middle">
                             <div class="form-select-box">
+                                <label for="sport_game" class='d-none'>Select Your Sport Game</label>
                                 <select class="form-control" name="sport_game" id="sport_game" required>
                                     <option value="">Select Your Sport Game</option>
                                 </select>
@@ -626,23 +629,22 @@
                                 <div class="nutrition-login-form mt-4 mt-md-0">
                                     <h3>Sign In</h3>
                                     <form action="#" id="front-page-login-form">
-                                        <div class="form-group">
-                                            <label>Email</label>
-                                            <input type="text" class="form-control" id="front-page-login-email">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Password</label>
-                                            <input type="password" class="form-control" id="front-page-login-password">
-                                        </div>
-                                        <div class="form-group">
-                                            <a href="javascript:void(0);" id="forgot-password">Forgot Password?</a>
-                                        </div>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary">Sign In</button>
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="front-page-login-email">Email</label>
+                                        <input type="text" class="form-control" id="front-page-login-email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="front-page-login-password">Password</label>
+                                        <input type="password" class="form-control" id="front-page-login-password">
+                                    </div>
+                                    <div class="form-group">
+                                        <a href="javascript:void(0);" id="forgot-password" class="forgot-password-link">Forgot Password?</a>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">Sign In</button>
+                                    </div>
                                     </form>
-                                    </br>
-                                
+                                    <br>
                                 </div>
                             </div>
                         </div>

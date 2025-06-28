@@ -42,13 +42,13 @@ $(document).ready(function() {
 
                                         <h3 class="text-center">
 
-                                            <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="">${item.name}</a>
+                                            <a href="https://booking.biohealthpassport.com.au/kerry-obryan" tabindex="-1" class="">${item.name}</a>
 
                                         </h3>
 
                                     </div>
 
-                                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan">
+                                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" tabindex="-1">
                                         `;
                                         html += `<div class="booking-type-box">
                                         <img src="https://booking.biohealthpassport.com.au/.${item.thumbnail_image}" alt="${item.name}" class="img-fluid">`;
@@ -62,7 +62,7 @@ $(document).ready(function() {
 
                                     <div data-aos="fade-up">
 
-                                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100">
+                                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100" tabindex="-1">
 
                                             <span class="me-1">View Services </span>
 
@@ -232,7 +232,7 @@ $(document).ready(function() {
 
                                     <p class="mb-1">${testimonial.review}</p>
 
-                                    <h5 class="mb-0">${testimonial.name}</h5>
+                                    <h3 style="font-size: 1.25rem;" class="mb-0">${testimonial.name}</h3>
 
                                     <p class="position mb-0">${testimonial.designation}</p>
 

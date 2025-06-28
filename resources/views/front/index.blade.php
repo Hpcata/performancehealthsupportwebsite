@@ -191,7 +191,7 @@
                     </h2>
                 </div>
             </div>
-            <div class="service-sec d-flex" id="bookingtypecontainer"></div>
+            <div class="service-sec d-flex" id="bookingtypecontainer" ></div>
             <!--<div class="service-sec d-flex">-->
             <!--	<div class="media-entry p-0" data-aos="fade-up" data-aos-delay="100">-->
             <!--		<div class="text-services">-->
@@ -315,7 +315,7 @@
 
             <!--</div>-->
             <div class="col-12 text-center mt-5" style="text-align: center !important;">
-                <div id="prevnext-service-one">
+                <div id="prevnext-service-one" role="region" aria-label="Service Navigation">
                     <span class="prev me-1" data-controls="prev">
                         <svg width="14" height="16" viewBox="0 0 14 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
