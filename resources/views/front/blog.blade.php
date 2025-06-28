@@ -31,7 +31,7 @@
                         <div class="blog-list-box">
                             <div class="blog-post-img">
                                 <figure>
-                                    <a href="#">
+                                    <a href="#" title="{{ $blog->title }}">
                                         <img src="{{ asset($blog->image) }}" alt="">
                                     </a>
                                 </figure>
