@@ -531,7 +531,7 @@ class PurchasePlanController extends Controller
                             ->whereIn('id', $mealsToRemove)
                             ->delete();
                     }
-                    // dd($request->all());
+                   
                     if (isset($request->meal_times[$planId])) {
                         foreach (array_unique($request->meal_times[$planId]) as $mealTimeId) {
                             $userMealTimeId = \DB::table('user_categories')->updateOrInsert(
@@ -559,7 +559,7 @@ class PurchasePlanController extends Controller
             
                                     if (isset($meals[$planId][$mealTimeId][$categoryId])) {
                                         foreach ($meals[$planId][$mealTimeId][$categoryId] as $mealId) {
-                                            // ✅ FIX: Check for meal with full context (meal_time + category)
+                                           
                                             $userMeal = \DB::table('user_meals')->where([
                                                 'user_plan_id' => $userPlan->id,
                                                 'user_category_id' => $userMealTime->id,
@@ -593,9 +593,9 @@ class PurchasePlanController extends Controller
                                                 ->where('meal_id', $mealId)
                                                 ->where('item_id', $mealItem->item_id)
                                                 ->first();
-                                                // dd($mealExist);
+                                                
                                                 if (!$mealExist) {
-                                                    // Insert meal items for the user
+                                                   
                                                     UserItemMeal::create([
                                                         'user_id' => $request->user_id,
                                                         'meal_id' => $mealId,
@@ -659,14 +659,7 @@ class PurchasePlanController extends Controller
                                             $itemsToRemove = array_diff($existingItems, $currentItems);
                                             // dd($itemsToRemove);
                                             if (!empty($itemsToRemove)) {
-                                                \DB::table('user_items')
-                                                    ->where('user_plan_id', $userPlan->id)
-                                                    ->where('user_category_id', $userMealTime->id)
-                                                    ->where('user_sub_category_id', $userCategory->id)
-                                                    ->where('user_meal_id', $userMealId)
-                                                    ->whereIn('id', $itemsToRemove)
-                                                    ->delete();
-            
+                                                
                                                 \DB::table('user_item_meals')
                                                     ->where('user_id', $request->user_id)
                                                     ->where('meal_id', $mealId)
@@ -685,6 +678,14 @@ class PurchasePlanController extends Controller
                                                 ->where('meal_id', $mealId)
                                                 ->whereNotIn('item_id', $currentItems)
                                                 ->delete();
+
+                                            \DB::table('user_items')
+                                                ->where('user_plan_id', $userPlan->id)
+                                                ->where('user_category_id', $userMealTime->id)
+                                                ->where('user_sub_category_id', $userCategory->id)
+                                                ->where('user_meal_id', $userMealId)
+                                                ->delete();
+            
                                             // dd($currentItems);
                                             foreach ($currentItems as $itemId) {
                                                 \DB::table('user_items')->updateOrInsert(
@@ -704,9 +705,11 @@ class PurchasePlanController extends Controller
                                                     ->where('user_meal_id', $userMealId)
                                                     ->where('id', $itemId)
                                                     ->first();
-                                                // dd($userItemId);
+                                              
                                                 $existingSwapItems = \DB::table('user_swap_items')
                                                     ->where('user_plan_id', $userPlan->id)
+                                                    ->where('user_category_id', $userMealTime->id)
+                                                    ->where('user_sub_category_id', $userCategory->id)
                                                     ->where('user_meal_id', $userMealId)
                                                     ->where('user_item_id', $userItem->id)
                                                     ->pluck('id')
@@ -715,15 +718,14 @@ class PurchasePlanController extends Controller
                                                 $currentSwapItems = isset($swapItems[$planId][$mealTimeId][$categoryId][$mealId][$itemId])
                                                     ? $swapItems[$planId][$mealTimeId][$categoryId][$mealId][$itemId]
                                                     : [];
-                                                // dd($itemId);
-                                                    // dd($currentSwapItems);
+                                               
                                                 $p = \DB::table('user_item_swaps')
                                                     ->where('user_id', $request->user_id)
                                                     ->where('item_id', $itemId)
                                                     ->where('meal_id', $mealId)
                                                     ->whereNotIn('swap_item_id', $currentSwapItems)
                                                     ->delete();
-                                                // dd($p);
+                                               
                                                 $swapItemsToRemove = array_diff($existingSwapItems, $currentSwapItems);
                                                 // dd($swapItemsToRemove);
                                                 if (!empty($swapItemsToRemove)) {
@@ -792,7 +794,7 @@ class PurchasePlanController extends Controller
         }
     }
 
-     public function edit(User $user, $planId)
+    public function edit(User $user, $planId)
     {
         // \DB::enableQueryLog();
         // dd("Edit User Plan");
@@ -829,21 +831,22 @@ class PurchasePlanController extends Controller
             $totalEnergy = 0;
 
             foreach ($userPlans as $userPlan) {
-                // dd($userPlan->userCategories);
                 foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory) {
-                    // dd($userCategory);
                     $selectedMeals[$userPlan->plan_id][$userCategory->id] = 
                         $userCategory->userMeals->where('user_plan_id', $userPlan->id)->pluck('id')->toArray();
 
-                    foreach($userCategory->userSubCategories->where('user_plan_id', $userPlan->id) as $userSubCategory) {
-                        foreach ($userSubCategory->userMeals->where('user_plan_id', $userPlan->id) as $userMeal) {
+                    foreach($userCategory->userSubCategories->where('user_plan_id', $userPlan->id)->where('user_category_id', $userCategory->id) as $userSubCategory) {
+                        foreach ($userSubCategory->userMeals->where('user_plan_id', $userPlan->id)->where('user_category_id', $userCategory->id) as $userMeal) {
                             $mealId = $userMeal->id;
-                            // Store user items
                             $selectedItems[$userCategory->id][$mealId] = 
-                                $userMeal->userItems->pluck('id')->toArray();
+                                $userMeal->userItems->where('user_plan_id', $userPlan->id)
+                                            ->where('user_category_id', $userCategory->id)
+                                            ->where('user_sub_category_id', $userSubCategory->id)
+                                            ->pluck('id')->toArray();
 
-                            // Calculate Nutritional Values for Items
-                            foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem) {
+                            foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id)
+                                                ->where('user_category_id', $userCategory->id)
+                                                ->where('user_sub_category_id', $userSubCategory->id) as $userItem) {
                                 $item = Item::find($userItem->id);
                                 if ($item) {
                                     $totalCarbs += $item->carbs ?? 0;
@@ -852,9 +855,10 @@ class PurchasePlanController extends Controller
                                     $totalEnergy += floatval($item->energy ?? 0);
                                 }
 
-                                // Store user swap items
                                 $selectedSwapItems[$userCategory->id][$mealId][$userItem->id] = 
-                                    $userItem->userSwapItems->pluck('id')->toArray();
+                                    $userItem->userSwapItems->where('user_plan_id', $userPlan->id)
+                                                ->where('user_category_id', $userCategory->id)
+                                                ->where('user_sub_category_id', $userSubCategory->id)->pluck('id')->toArray();
                             }
                         }
                     }
@@ -935,9 +939,10 @@ class PurchasePlanController extends Controller
                 'totalCarbs', 'totalFat', 'totalProtein', 'totalEnergy', 'otherFoods', 'foodPreferences'
             ));
         } catch (\Exception $e) {
-            dd($e);
+            dd($e->getMessage());
         }
     }
+
     public function update(Request $request)
     {
         // dd($request->all());
@@ -1304,14 +1309,6 @@ class PurchasePlanController extends Controller
                                             $itemsToRemove = array_diff($existingItems, $currentItems);
                                             
                                             if (!empty($itemsToRemove)) {
-                                                \DB::table('user_items')
-                                                    ->where('user_plan_id', $userPlan->id)
-                                                    ->where('user_category_id', $userMealTime->id)
-                                                    ->where('user_sub_category_id', $userCategory->id)
-                                                    ->where('user_meal_id', $userMealId)
-                                                    ->whereIn('id', $itemsToRemove)
-                                                    ->delete();
-            
                                                 \DB::table('user_item_meals')
                                                     ->where('user_id', $request->user_id)
                                                     ->where('meal_id', $mealId)
@@ -1329,6 +1326,14 @@ class PurchasePlanController extends Controller
                                                 ->where('user_id', $request->user_id)
                                                 ->where('meal_id', $mealId)
                                                 ->whereNotIn('item_id', $currentItems)
+                                                ->delete();
+
+                                            $existingItems = \DB::table('user_items')
+                                                ->where('user_meal_id', $userMealId)
+                                                ->where('user_plan_id', $userPlan->id)
+                                                ->where('user_category_id', $userMealTime->id)
+                                                ->where('user_sub_category_id', $userCategory->id)
+                                                //->pluck('id')
                                                 ->delete();
                                             // dd($currentItems);
                                             foreach ($currentItems as $itemId) {
@@ -1434,7 +1439,7 @@ class PurchasePlanController extends Controller
             return redirect()->back()->with('success', 'User Plan updated successfully.');
 
         } catch (\Exception $e) {
-            // dd($e->getMessage());
+            dd($e->getMessage());
             \DB::rollBack();
             \Log::error('Error updating User Plan: ' . $e->getMessage());
             \Log::error('Request Data: ', $request->all());
@@ -3073,7 +3078,9 @@ class PurchasePlanController extends Controller
             try {
                 Mail::to($email)->send(new ActivePlanMail($user, $planName));
 
-                $userPlan->update(['is_mail_sent' => 1]);
+                $userPlan->update(['is_mail_sent' => 1,
+                    'mail_sent_at' => now()
+                ]);
                 $userPlan->save();
 
                 return response()->json([

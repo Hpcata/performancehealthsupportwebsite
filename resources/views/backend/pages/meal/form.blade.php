@@ -107,15 +107,13 @@
                                     <table class="table table-bordered" id="food-table">
                                         <thead>
                                             <tr>
+                                                <th style="width: 30px"></th>
                                                 <th>Food</th>
-                                                <!-- <th>Quantity</th>
-                                                <th>Measurement</th> -->
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="sortable-food-items">
                                             @if(isset($meal) && $meal->items->count() > 0)
-                                                
                                                 @foreach ($meal->items as $item)
                                                     @php
                                                         $quantityInfo = '';
@@ -152,6 +150,9 @@
                                                     @endphp
 
                                                     <tr class="food-row">
+                                                        <td class="drag-handle p-0" style="cursor: move; text-align: center; vertical-align: middle;">
+                                                            <i class="icofont-expand-alt" style="font-size:30px;"></i>
+                                                        </td>
                                                         <td>
                                                             <select name="food_ids[]" class="form-control select2 food-select">
                                                                 <option value="">Select Food</option>
@@ -201,10 +202,14 @@
                                                         <input type="hidden" class="hidden-energy" name="energy[]" value="{{ floatval($item->energy) }}">
                                                         <input type="hidden" class="hidden-serving-size" name="serving_size[]" value="{{$item->serving_size}}">
                                                         <input type="hidden" class="hidden-serving-size-unit" name="serving_size_unit[]" value="{{$item->serving_size_unit}}">
+                                                        <input type="hidden" class="food-order-input" name="food_order[]" value="{{ $loop->index }}">
                                                     </tr>
                                                 @endforeach
                                             @else
                                                 <tr class="food-row">
+                                                    <td class="drag-handle p-0" style="cursor: move; text-align: center; vertical-align: middle;">
+                                                        <i class="icofont-expand-alt" style="font-size:30px;"></i>
+                                                    </td>
                                                     <td>
                                                         <select name="food_ids[]" class="form-control food-select" required>
                                                             <option value="">Select Food</option>
@@ -228,6 +233,7 @@
                                                     <input type="hidden" class="hidden-energy" name="energy[]" value="0">
                                                     <input type="hidden" class="hidden-serving-size" name="serving_size[]" value="0">
                                                     <input type="hidden" class="hidden-serving-size-unit" name="serving_size_unit[]" value="0">
+                                                    <input type="hidden" class="food-order-input" name="food_order[]" value="0">
                                                 </tr>
                                             @endif
                                         </tbody>
@@ -337,69 +343,13 @@
 
 @push('scripts')
 	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+
 @endpush
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     let hasUnsavedChanges = false;
-    //     let intendedHref = ''; // Store the intended link URL
-
-    //     // Track changes in form fields
-    //     document.querySelectorAll('input, textarea, select').forEach(input => {
-    //         input.addEventListener('input', () => {
-    //             hasUnsavedChanges = true;
-    //         });
-    //     });
-
-    //     // Custom navigation detection
-    //     document.querySelectorAll('a').forEach(anchor => {
-    //         anchor.addEventListener('click', function (event) {
-    //             if (hasUnsavedChanges) {
-    //                 event.preventDefault(); // Prevent immediate navigation
-                    
-    //                 // Correctly capture the intended URL
-    //                 const clickedLink = event.target.closest('a'); 
-                    
-    //                 if (clickedLink) {
-    //                     intendedHref = clickedLink.href;
-    //                     console.log('Intended Link:', intendedHref); // ✅ Correctly logs the clicked link URL
-    //                     document.getElementById('saveMealModal').style.display = 'block'; // Show modal
-    //                 }
-    //             }
-    //         });
-    //     });
-
-    //     // Suppress browser's default popup for page reload/close
-    //     window.addEventListener('beforeunload', function (event) {
-    //         if (hasUnsavedChanges) {
-    //             event.preventDefault();
-    //         }
-    //     });
-
-    //     // Modal Button: "Save Changes"
-    //     document.getElementById('saveChanges').addEventListener('click', function () {
-    //         hasUnsavedChanges = false;
-    //         document.getElementById('mealForm').submit();
-    //         document.getElementById('saveMealModal').style.display = 'none';
-    //     });
-
-    //     // Modal Button: "No Leave"
-    //     document.getElementById('leaveWithoutSaving').addEventListener('click', function () {
-    //         hasUnsavedChanges = false;
-
-    //         // Correctly redirect to the stored intended URL (like Food link)
-    //         if (intendedHref) {
-    //             window.location.href = intendedHref;
-    //         }
-    //     });
-
-    //     // Form submit bypasses the unsaved warning
-    //     document.getElementById('mealForm').addEventListener('submit', function () {
-    //         hasUnsavedChanges = false;
-    //     });
-    // });
     document.addEventListener('DOMContentLoaded', function () {
         const descInput = document.getElementById('description');
         const countDisplay = document.getElementById('desc-count');
@@ -505,111 +455,30 @@
             const preselectedFoods = @json($meal->items->pluck('id'));
             $('#food_ids').val(preselectedFoods).trigger('change');
         @endif
-    });
-    $(document).ready(function () {
-        // function initializeSelect2() {
-        //     $('.food-select').not('.select2-hidden-accessible').select2({
-        //         placeholder: "Search and select foods",
-        //         minimumInputLength: 1,
-        //         width: '100%',
-        //         allowClear: true,
-        //         ajax: {
-        //             url: '{{ route("admin.items.index") }}',
-        //             dataType: 'json',
-        //             delay: 250,
-        //             data: function(params) {
-        //                 return { query: params.term };
-        //             },
-        //             processResults: function(response) {
-        //                 return {
-        //                     results: response.items.map(function(item) {
-        //                         return {
-        //                             id: item.id,
-        //                             text: item.title,
-        //                             qty: item.qty || '',  // Fetch default quantity
-        //                             measurement: item.unit || '', // Fetch default measurement
-        //                             serving_size: item.serving_size,
-        //                             serving_size_unit: item.serving_size_unit,
-        //                             protein: item.protein,
-        //                             carbs: item.carbs,
-        //                             fat: item.fat,
-        //                             energy: item.energy,
-        //                             image: item.image,
-        //                             selected_qty_unit: item.selected_qty_unit || []  // Ensure it's an array
-        //                         };
-        //                     })
-        //                 };
-        //             },
-        //             cache: true
-        //         }
-        //     }).on('select2:select', function (e) {
-        //         const selectedFood = e.params.data;
-        //         const row = $(this).closest('tr');
-        //         const carb = parseFloat(selectedFood.carbs).toFixed(2);
-        //         const protein = parseFloat(selectedFood.protein).toFixed(2);
-        //         const fat = parseFloat(selectedFood.fat).toFixed(2);
-        //         const numericEnergy = parseFloat(selectedFood.energy || '0').toFixed(2);
-                
-        //         row.find('.edit-food').data('carbs', selectedFood.carbs)
-        //         row.find('.edit-food').data('protein', selectedFood.protein)
-        //         row.find('.edit-food').data('fat', selectedFood.fat)
-        //         row.find('.edit-food').data('serving-size', selectedFood.serving_size)
-        //         row.find('.edit-food').data('serving-size-unit', selectedFood.serving_size_unit)
-        //         row.find('.edit-food').data('energy', numericEnergy)
 
-        //         row.find('.hidden-selected-qty-unit').val(selectedFood.selected_qty_unit);
-        //         row.find('.hidden-protein').val(selectedFood.protein);
-        //         row.find('.hidden-carbs').val(selectedFood.carbs);
-        //         row.find('.hidden-fat').val(selectedFood.fat);
-        //         row.find('.hidden-energy').val(numericEnergy);
-        //         row.find('.hidden-serving-size').val(selectedFood.serving_size);
-        //         row.find('.hidden-serving-size-unit').val(selectedFood.serving_size_unit);
-        //         row.find('.nutrition-info').text(`Energy: ${numericEnergy}kJ, Protein: ${protein}g, Carb: ${carb}g, Fat: ${fat}g`);
+         // Initialize Sortable
+        const sortable = new Sortable(document.getElementById('sortable-food-items'), {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            onEnd: function(evt) {
+                updateFoodOrder();
+            }
+        });
 
-        //         let selectedUnits = [];
+        // Function to update food order
+        function updateFoodOrder() {
+            $('.food-row').each(function(index) {
+                let $row = $(this);
+                $row.find('.food-order-input').remove();
+                $row.append(`<input type="hidden" class="food-order-input" name="food_order[]" value="${index}">`);
+            });
+        }
 
-        //         try {
-        //             if (typeof selectedFood.selected_qty_unit === 'string') {
-        //                 selectedUnits = JSON.parse(selectedFood.selected_qty_unit.replace(/&quot;/g, '"'));
-        //             } else if (Array.isArray(selectedFood.selected_qty_unit)) {
-        //                 selectedUnits = selectedFood.selected_qty_unit;
-        //             }
-        //         } catch (err) {
-        //             console.error('Error parsing selected_qty_unit:', err);
-        //         }
-        //         // ✅ Filter by checked: true and format spacing
-        //         let displayQty = '';
-        //         const filteredUnits = selectedUnits.filter(unit => unit.checked === true);
-
-        //         if (filteredUnits.length > 0) {
-        //             displayQty = filteredUnits
-        //                 .map(unit => {
-        //                     const needsNoSpace = ['g', 'ml', 'mL'].includes(unit.unit);
-        //                     return needsNoSpace
-        //                         ? `${unit.qty}${unit.unit}`
-        //                         : `${unit.qty} ${unit.unit}`;
-        //                 })
-        //                 .join(' or ');
-        //         } else if (selectedFood.qty && selectedFood.measurement) {
-        //             const needsNoSpace = ['g', 'ml', 'mL'].includes(selectedFood.measurement);
-        //             displayQty = needsNoSpace
-        //                 ? `${selectedFood.qty}${selectedFood.measurement}`
-        //                 : `${selectedFood.qty} ${selectedFood.measurement}`;
-        //         }
-
-        //         const displayTitle = selectedFood.text || '';
-
-        //         // Set hidden field value as escaped JSON
-        //         row.find('.hidden-selected-qty-unit').val(JSON.stringify(selectedUnits));
-
-        //         // Display formatted title + qty
-        //         row.find('.food-title-qty').html(`<strong>${displayTitle} ${displayQty}</strong>`);
-
-        //         updateTotalNutrition();
-
-        //     });
-        // }
-         function initializeSelect2() {
+        // Initialize order on page load
+        updateFoodOrder();
+       
+        function initializeSelect2() {
             $('.food-select').not('.select2-hidden-accessible').select2({
                 placeholder: "Search and select foods",
                 minimumInputLength: 1,
@@ -766,6 +635,9 @@
         $('#add-food').click(function () {
             const newFoodRow = `
                 <tr class="food-row">
+                    <td class="drag-handle p-0" style="cursor: move; text-align: center; vertical-align: middle;">
+                        <i class="icofont-expand-alt" style="font-size:30px;"></i>
+                    </td>
                     <td>
                         <select name="food_ids[]" class="form-control food-select" required>
                             <option value="">Select Food</option>
@@ -777,9 +649,11 @@
                         <p class="nutrition-info mt-2 mb-0 text-muted">Energy: 0kJ, Protein: 0g, Carb: 0g, Fat: 0g</p>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-outline-success edit-food" data-carbs="" data-protein="" data-fat="" data-energy="" data-serving-size="" data-serving-size-unit=""><i class="icofont-edit text-success"></i>
+                        <button type="button" class="btn btn-outline-success edit-food" data-carbs="" data-protein="" data-fat="" data-serving-size="" data-serving-size-unit="">
+                            <i class="icofont-edit text-success"></i>
                         </button>
-                        <button type="button" class="btn btn-outline-danger remove-food"><i class="icofont-ui-delete text-danger"></i>
+                        <button type="button" class="btn btn-outline-danger remove-food">
+                            <i class="icofont-ui-delete text-danger"></i>
                         </button>
                     </td>
                     <input type="hidden" class="hidden-selected-qty-unit" name="selected_qty_unit[]" value="">
@@ -789,16 +663,18 @@
                     <input type="hidden" class="hidden-energy" name="energy[]" value="0">
                     <input type="hidden" class="hidden-serving-size" name="serving_size[]" value="0">
                     <input type="hidden" class="hidden-serving-size-unit" name="serving_size_unit[]" value="0">
+                    <input type="hidden" class="food-order-input" name="food_order[]" value="0">
                 </tr>
             `;
             $('#food-table tbody').append(newFoodRow);
-
+            updateFoodOrder();
             // Initialize Select2 for the newly added row
             initializeSelect2();
         });
 
         $(document).on('click', '.remove-food', function () {
             $(this).closest('tr').remove();
+            updateFoodOrder();
             updateTotalNutrition();
 
         });
@@ -1218,26 +1094,6 @@
                 }
             });
         });
-        // $('#title').on('blur', function () {
-        //     let title = $(this).val();
-        //     if (title.trim() !== "") {
-        //         $.ajax({
-        //             url: "{{ route('admin.meals.generate-image') }}",
-        //             method: "POST",
-        //             data: {
-        //                 _token: "{{ csrf_token() }}",
-        //                 title: title
-        //             },
-        //             success: function (response) {
-        //                 if (response.image_url) {
-        //                     $('#meal-image-preview').attr('src', response.image_url).show();
-        //                     $('#generated_image').val(response.image_url); // Store for form submission
-        //                     $('#image-preview-container').show();
-        //                 }
-        //             }
-        //         });
-        //     }
-        // });
     });
 
 </script>

@@ -30,6 +30,17 @@
     object-fit: contain;
     cursor: pointer;
 }
+
+#loader-2 {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.7);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -488,7 +499,7 @@
     </div>
 </div>
 <div id="loader-2" style="display: none;">
-    <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" alt="Loading..." />
+    <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" width="100px" height="100px" alt="Loading..." />
 </div>
 @push('styles')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
@@ -763,30 +774,6 @@
             });
         });
 
-        // $('#save-edit-food').on('click', function () {
-        //     const updatedData = [];
-
-        //     $('#dynamicQtyMeasurementContainer .row').each(function () {
-        //         const qty = parseFloat($(this).find('.modal-qty').val());
-        //         const unit = $(this).find('.modal-unit').val();
-        //         const checked = $(this).find('.modal-checked').is(':checked');
-
-        //         if (!isNaN(qty) && unit !== '') {
-        //             updatedData.push({ qty, unit, checked });
-        //         }
-        //     });
-
-        //     $('#selected_measurements_hidden').val(JSON.stringify(updatedData));
-        //     hasUnsavedChanges = false;
-        //     $('#editFoodModal').modal('hide');
-
-        //     const formData = $('#foodForm').serialize();
-
-        //     $.post('/food/update', formData, function (response) {
-        //         window.location.href = `/food/edit/${response.foodId}`; // or any success path
-        //     });
-        // });
-
         // Cancel confirm
         $('#cancel-confirm').on('click', function () {
             $('#confirmSaveModal').modal('hide');
@@ -952,154 +939,6 @@
             }
         }
 
-        // $('#resetQty').on('click', function () {
-        //     const selectedQty = $(this).data('qty');
-        //     const selectedUnit = $(this).data('unit');
-        //     const title = $(this).data('title');
-
-        //     // Set hidden or visible fields if necessary
-           
-        //     // Update the checkbox dataset
-        //     $('.qty-checkbox').data('qty', selectedQty).data('unit', selectedUnit);
-
-        //     const data = {
-        //         id: $('input[name="id"]').val(),
-        //         title: $('input[name="title"]').val(),
-        //         carbs: null,
-        //         protein: null,
-        //         fat: null,
-        //         energy: null,
-        //         qty: selectedQty,
-        //         measurement: selectedUnit,
-        //         serving_size: $('input[name="serving_size"]').val(),
-        //         serving_per_pack: $('input[name="serving_per_pack"]').val(),
-        //     };
-
-        //     // Call your existing function
-        //     $.ajax({
-        //         url: "{{ route('calculate.nutrition') }}",
-        //         type: 'POST',
-        //         data: data,
-        //         headers: {
-        //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //         },
-        //         success: function (data) {
-        //             // Update nutrition values
-        //                 $('#carbs').val(parseFloat(data.carbs).toFixed(2));
-        //                 $('#protein').val(parseFloat(data.protein).toFixed(2));
-        //                 $('#fat').val(parseFloat(data.fat).toFixed(2));
-        //                 $('#energy').val(parseFloat(data.energy).toFixed(2) + 'kJ');
-
-        //             // Remove all alt-* rows
-        //             $('.alt-qty-checkbox, .alt-qty-input, .alt-unit-dropdown')
-        //                 .closest('.row.align-items-center')
-        //                 .remove();
-
-        //             const mainRow = $('.qty-checkbox').closest('.row.align-items-center');
-
-        //             if (data.alternate_serving_sizes && Object.keys(data.alternate_serving_sizes).length > 0) {
-                        
-        //                 const entries = Object.keys(data.alternate_serving_sizes).map(key => [key, data.alternate_serving_sizes[key]]);
-
-        //                 entries.forEach(([unitKey, combined], index) => {
-        //                     const [qtyVal, unitVal] = combined.split(" ");
-
-        //                     const addMoreButton = (index === 0)
-        //                         ? `<button type="button" id="add-more" class="btn btn-primary">Add More</button><small class="text-danger">*This will not adjust other measurements</small>`
-        //                         : `<div style="height: 38px;"></div>`;
-
-        //                     const rowHtml = `
-        //                         <div class="row align-items-center mb-2">
-        //                             <div class="col-md-4">
-        //                                 <div class="d-flex align-items-center">
-        //                                     <input 
-        //                                         type="checkbox" 
-        //                                         class="alt-qty-checkbox me-2 alternate-measurement-checkbox" 
-        //                                         data-qty="${qtyVal}" 
-        //                                         data-unit="${unitVal}" 
-        //                                         id="${unitKey}" 
-        //                                         >
-        //                                     <input 
-        //                                         type="text" 
-        //                                         class="form-control alt-qty-input alternate-qty-input" 
-        //                                         value="${qtyVal}" 
-        //                                         placeholder="Enter quantity">
-        //                                 </div>
-        //                             </div>
-        //                             <div class="col-md-4">
-        //                                 <select class="form-control alt-unit-dropdown mt-1 alternate-measurement-dropdown alt-measurement-wrapper">
-        //                                     <option value="${unitVal}" selected>${unitVal}</option>
-        //                                 </select>
-        //                             </div>
-        //                             <div class="col-md-4">
-        //                                 ${addMoreButton}
-        //                             </div>
-        //                         </div>
-        //                     `;
-
-        //                     mainRow.after(rowHtml);
-        //                 });
-
-        //                 // Add static "Add New" row at the end
-        //                 const addRowHtml = `
-        //                     <div class="row align-items-center mb-2 add-new-field d-none">
-        //                         <div class="col-md-4">
-        //                             <div class="d-flex align-items-center alt-qty-wrapper">
-        //                                 <input type="checkbox" class="alt-qty-checkbox me-2 alternate-measurement-checkbox" data-qty="" data-unit="" id="new-qty-checkbox">
-        //                                 <input type="text" class="form-control alt-qty-input alternate-qty-input" id="add-new-qty" value="">
-        //                             </div>
-        //                         </div>
-        //                         <div class="col-md-4">
-        //                             <input type="text" class="form-control alt-unit-dropdown mt-1 alternate-measurement-dropdown alt-measurement-wrapper" id="add-new-unit" value="">
-        //                         </div>
-        //                         <div class="col-md-4">
-        //                             <button type="button" class="btn btn-danger remove-qty text-white">Remove</button>
-        //                         </div>
-        //                     </div>
-        //                 `;
-        //                 mainRow.siblings('.row.align-items-center').last().after(addRowHtml);
-
-        //                 // Enable Add More button functionality
-        //                 $('#add-more').off('click').on('click', function () {
-        //                     $('.add-new-field').removeClass('d-none'); // Show the Add New Field
-        //                     $(this).prop('disabled', true); // Disable Add More button after showing Add New field
-        //                 });
-        //                 $('.remove-qty').off('click').on('click', function () {
-                           
-        //                    $(this).closest('.add-new-field').remove();
-
-        //                    $('#add-new-qty').val('');
-        //                    $('#add-new-unit').val('');
-        //                    $('#add-more').prop('disabled', false);
-        //                    updateHiddenField();
-
-        //                });
-        //             }
-
-        //             // Update main input states
-        //             $('#qty').val(selectedQty);
-        //             $('#measurement').val(selectedUnit);
-
-        //             $('.qty-checkbox').data('qty', qty).data('unit', selectedUnit);
-
-        //             setupNutritionSync(
-        //                 parseFloat(parseFloat(data.carbs).toFixed(2)),
-        //                 parseFloat(parseFloat(data.protein).toFixed(2)),
-        //                 parseFloat(parseFloat(data.fat).toFixed(2)),
-        //                 parseFloat(parseFloat(data.energy).toFixed(2))
-        //             );
-
-        //             setupDynamicMeasurementSync();
-
-        //             AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
-        //             updateHiddenField();
-        //         },
-        //         error: function () {
-        //             console.error("Error fetching alternate measurements.");
-        //         }
-        //     });
-        // });
-
         $('#measurement').on('change', function () {
             const selectedMeasurement = $(this).val();
             const qty = $('input[name="qty"]').val();
@@ -1119,143 +958,6 @@
             updateHiddenField();
         }
 
-        // function fetchAlternateMeasurements(selectedMeasurement, qty) {
-        //     const data = {
-        //         id: $('input[name="id"]').val(),
-        //         title: $('input[name="title"]').val(),
-        //         carbs: $('input[name="carbs"]').val(),
-        //         protein: $('input[name="protein"]').val(),
-        //         fat: $('input[name="fat"]').val(),
-        //         energy: $('input[name="energy"]').val(),
-        //         qty: qty,
-        //         measurement: selectedMeasurement,
-        //         serving_size: $('input[name="serving_size"]').val(),
-        //         serving_per_pack: $('input[name="serving_per_pack"]').val(),
-        //     };
-
-        //     $.ajax({
-        //         url: "{{ route('calculate.nutrition') }}",
-        //         type: 'POST',
-        //         data: data,
-        //         headers: {
-        //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //         },
-        //         success: function (data) {
-        //             // Update nutrition values
-        //             $('#carbs').val(parseFloat(data.carbs).toFixed(2));
-        //             $('#protein').val(parseFloat(data.protein).toFixed(2));
-        //             $('#fat').val(parseFloat(data.fat).toFixed(2));
-        //             $('#energy').val(parseFloat(data.energy).toFixed(2) + 'kJ');
-
-        //             // Remove all alt-* rows
-        //             $('.alt-qty-checkbox, .alt-qty-input, .alt-unit-dropdown')
-        //                 .closest('.row.align-items-center')
-        //                 .remove();
-
-        //             const mainRow = $('.qty-checkbox').closest('.row.align-items-center');
-
-        //             if (data.alternate_serving_sizes && Object.keys(data.alternate_serving_sizes).length > 0) {
-                        
-        //                 const entries = Object.keys(data.alternate_serving_sizes).map(key => [key, data.alternate_serving_sizes[key]]);
-
-        //                 entries.forEach(([unitKey, combined], index) => {
-        //                     const [qtyVal, unitVal] = combined.split(" ");
-
-        //                     const addMoreButton = (index === 0)
-        //                         ? `<button type="button" id="add-more" class="btn btn-primary">Add More</button><small class="text-danger">*This will not adjust other measurements</small>`
-        //                         : `<div style="height: 38px;"></div>`;
-
-        //                     const rowHtml = `
-        //                         <div class="row align-items-center mb-2">
-        //                             <div class="col-md-4">
-        //                                 <div class="d-flex align-items-center">
-        //                                     <input 
-        //                                         type="checkbox" 
-        //                                         class="alt-qty-checkbox me-2 alternate-measurement-checkbox" 
-        //                                         data-qty="${qtyVal}" 
-        //                                         data-unit="${unitVal}" 
-        //                                         id="${unitKey}" 
-        //                                         >
-        //                                     <input 
-        //                                         type="text" 
-        //                                         class="form-control alt-qty-input alternate-qty-input" 
-        //                                         value="${qtyVal}" 
-        //                                         placeholder="Enter quantity">
-        //                                 </div>
-        //                             </div>
-        //                             <div class="col-md-4">
-        //                                 <select class="form-control alt-unit-dropdown mt-1 alternate-measurement-dropdown alt-measurement-wrapper">
-        //                                     <option value="${unitVal}" selected>${unitVal}</option>
-        //                                 </select>
-        //                             </div>
-        //                             <div class="col-md-4">
-        //                                 ${addMoreButton}
-        //                             </div>
-        //                         </div>
-        //                     `;
-
-        //                     mainRow.after(rowHtml);
-        //                 });
-
-        //                 // Add static "Add New" row at the end
-        //                 const addRowHtml = `
-        //                     <div class="row align-items-center mb-2 add-new-field d-none">
-        //                         <div class="col-md-4">
-        //                             <div class="d-flex align-items-center alt-qty-wrapper">
-        //                                 <input type="checkbox" class="alt-qty-checkbox me-2 alternate-measurement-checkbox" data-qty="" data-unit="" id="new-qty-checkbox">
-        //                                 <input type="text" class="form-control alt-qty-input alternate-qty-input" id="add-new-qty" value="">
-        //                             </div>
-        //                         </div>
-        //                         <div class="col-md-4">
-        //                             <input type="text" class="form-control alt-unit-dropdown mt-1 alternate-measurement-dropdown alt-measurement-wrapper" id="add-new-unit" value="">
-        //                         </div>
-        //                         <div class="col-md-4">
-        //                             <button type="button" class="btn btn-danger remove-qty text-white">Remove</button>
-        //                         </div>
-        //                     </div>
-        //                 `;
-        //                 mainRow.siblings('.row.align-items-center').last().after(addRowHtml);
-
-        //                 // Enable Add More button functionality
-        //                 $('#add-more').off('click').on('click', function () {
-        //                     $('.add-new-field').removeClass('d-none'); // Show the Add New Field
-        //                     $(this).prop('disabled', true); // Disable Add More button after showing Add New field
-        //                 });
-        //                 $('.remove-qty').off('click').on('click', function () {
-                           
-        //                     $(this).closest('.add-new-field').remove();
-
-        //                     $('#add-new-qty').val('');
-        //                     $('#add-new-unit').val('');
-        //                     $('#add-more').prop('disabled', false);
-        //                     updateHiddenField();
-
-        //                 });
-        //             }
-
-        //             // Update main input states
-        //             $('#qty').val(qty);
-        //             $('#measurement').val(selectedMeasurement);
-        //             $('.qty-checkbox').data('qty', qty).data('unit', selectedMeasurement);
-
-        //             setupNutritionSync(
-        //                 parseFloat(parseFloat(data.carbs).toFixed(2)),
-        //                 parseFloat(parseFloat(data.protein).toFixed(2)),
-        //                 parseFloat(parseFloat(data.fat).toFixed(2)),
-        //                 parseFloat(parseFloat(data.energy).toFixed(2))
-        //             );
-
-        //             setupDynamicMeasurementSync();
-
-        //             AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
-        //             updateHiddenField();
-        //         },
-        //         error: function () {
-        //             console.error("Error fetching alternate measurements.");
-        //         }
-        //     });
-        // }
-
         function fetchAlternateMeasurements(selectedMeasurement, qty) {
             const data = {
                 id: $('input[name="id"]').val(),
@@ -1268,6 +970,8 @@
                 serving_size: $('input[name="serving_size"]').val(),
                 serving_per_pack: $('input[name="serving_per_pack"]').val(),
             };
+
+            $('#loader-2').show();
 
             $.ajax({
                 url: "{{ route('calculate.nutrition') }}",
@@ -1350,8 +1054,13 @@
 
                     AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
                     updateHiddenField();
+
+                    // Hide loader after success
+                    $('#loader-2').hide();
                 },
                 error: function () {
+                    // Hide loader after success
+                    $('#loader-2').hide();
                     console.error("Error fetching alternate measurements.");
                 }
             });
@@ -1949,92 +1658,8 @@
         });
 
         $(document).on('blur', '.alt-unit-dropdown', function () {
-            console.log('111');
             updateHiddenField();
         });
-
-        // $('#add-more').off('click').on('click', function () {
-        //     $('.add-new-field').removeClass('d-none'); // Show the new input row
-        //     $(this).prop('disabled', true); // Disable Add More button
-        // });
-
-        // $('#add-more').off('click').on('click', function () {
-        //     const $addMoreBtn = $(this);
-
-        //     // // Clone the last visible alt qty wrapper
-        //     // const $lastQty = $('.alt-qty-wrapper:not(.add-new-field)').last();
-        //     // const $newQty = $lastQty.clone();
-
-        //     // // Clone the corresponding select
-        //     // const $lastUnit = $('select.alt-unit-dropdown:not(.add-new-field)').last();
-        //     // const $newUnit = $lastUnit.clone();
-
-        //     // // Reset the values
-        //     // $newQty.find('.alt-qty-checkbox')
-        //     //     .prop('checked', false)
-        //     //     .removeAttr('data-qty')
-        //     //     .removeAttr('data-unit')
-        //     //     .removeAttr('id');
-        //     // $newQty.find('.alt-qty-input').val('');
-        //     // $newUnit.val('').removeAttr('id');
-
-        //     // // Create a remove button
-        //     // const $removeButton = $('<button class="remove-btn btn btn-danger mt-2 pull-right">Remove</button>');
-
-        //     // // Remove field handler
-        //     // $removeButton.on('click', function () {
-        //     //     $newQty.remove();
-        //     //     $newUnit.remove();
-        //     //     $removeButton.remove();
-        //     //     $addMoreBtn.prop('disabled', false); // Enable the button again
-        //     // });
-
-        //     // // Insert the cloned fields and remove button
-        //     // $newQty.insertAfter($lastQty);
-        //     // $newUnit.insertAfter($lastUnit);
-        //     // $newUnit.after($removeButton);
-
-        //     // Disable the Add More button
-        //     $('.add-new-field').removeClass('d-none');
-        //     $addMoreBtn.prop('disabled', true);
-        // });
-
-        // $('.remove-qty').on('click', function () {
-        //     // Clone the template and remove the "d-none" class to make it visible
-        //     // const $lastQty = $('.alt-qty-wrapper:not(.add-new-field)').last();
-        //     // const $newQty = $lastQty.remove();
-
-        //     // // Clone the corresponding select
-        //     // const $lastUnit = $('select.alt-unit-dropdown:not(.add-new-field)').last();
-        //     // const $newUnit = $lastUnit.remove();
-        //     $(this).closest('.add-new-field').remove();
-
-        //     $('#add-new-qty').val('');
-        //     $('#add-new-unit').val('');
-        //     $('#add-more').prop('disabled', false);
-        //     updateHiddenField();
-
-        // });
-
-        // $(document).ready(function () {
-        //     $(document).on('blur', '#add-new-unit', function (e) {
-        //         e.preventDefault();
-        //         const qty = $('#add-new-qty').val();
-        //         const unit = $('#add-new-unit').val();
-        //         const title = $('#title').val();
-
-        //         $('#new-qty-checkbox').data('unit', unit);
-        //         $('#new-qty-checkbox').data('qty', qty);
-
-        //         if (!qty || !unit || !title) {
-        //             console.warn('Missing inputs');
-        //             return;
-        //         }
-                
-        //         updateHiddenField();
-        //         AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
-        //     });
-        // });
 
     });
 

@@ -1,6 +1,7 @@
 @extends(frontView('layouts.app'))
 
-@section('title', '$page->title')
+@section('title', 'Sports Nutrition Plan & Diet for Athletes | Performance Health')
+@section('meta_description', 'Get a personalised athlete meal plan with Performance Health Support. Expert sports nutrition plans and diet strategies tailored to fuel performance and recovery.')
 
 @section('content')
     <style>
@@ -737,7 +738,7 @@
         </div>
     </section>
     
-    <section class="section pb-3 pt-4 my-3 testimonial-section-main-div">
+{{--    <section class="section pb-3 pt-4 my-3 testimonial-section-main-div">
         <div class="col-lg-12 text-center mb-5" data-aos="fade-up" style="text-align: center !important;">
             <h2 class="heading mb-5 d-flex align-items-center justify-content-center" data-aos="fade-up" data-aos-delay="100">
                 <div class="border-heading-top position-relative"></div>
@@ -773,7 +774,7 @@
             </div>
         </div>
     </section>
-
+--}}
     <div class="section py-5 client-sec">
         <div class="container">
             <div class="col-lg-12" data-aos="fade-up">
@@ -2659,10 +2660,9 @@
             </div>
         </div>
     </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-
     <script>
         setTimeout(function () {
             document.getElementById("linkedin-feed-1").innerHTML = `
@@ -2696,18 +2696,16 @@
 
                     const isHidden = couponDetails.classList.contains('d-none');
 
-                    // Toggle coupon section visibility
                     couponDetails.classList.toggle('d-none');
 
-                    // Update link text
                     toggleLink.textContent = isHidden ? 'Remove a Coupon Code' : 'Add a Coupon Code';
 
-                    // If hiding, clear input and promo message
                     if (!isHidden) {
                         promoInput.value = '';
                         if (promoMessage) {
-                            promoMessage.style.display = 'none'; // or promoMessage.innerHTML = ''
+                            promoMessage.textContent = '';
                         }
+                        document.getElementById('payment-details').style.removeProperty('display');
                     }
                 });
             }
@@ -3778,21 +3776,38 @@
                     });
 
                     $('#purchaseModal').on('hidden.bs.modal', function () {
-                        $('#payment-form')[0].reset(); // Reset the form
-                        $('#card-errors').text('');    // Clear Stripe errors
+                        $('#payment-form')[0].reset();
+                        $('#card-errors').text('');
+                        // Reset coupon UI
+                        const toggleLink = document.getElementById('toggle-coupon-link');
+                        const couponDetails = document.getElementById('coupon-details');
+                        const promoInput = document.getElementById('promo-code');
+                        const promoMessage = document.getElementById('promo-message');
+
+                        if (couponDetails && !couponDetails.classList.contains('d-none')) {
+                            couponDetails.classList.add('d-none');
+                        }
+
+                        if (toggleLink) {
+                            toggleLink.textContent = 'Add a Coupon Code';
+                        }
+
+                        if (promoInput) {
+                            promoInput.value = '';
+                        }
+
+                        if (promoMessage) {
+                            promoMessage.textContent = '';
+                        }
                     });
                     
                     // Event listener for the 'Purchase Now' button
                     $('body').on('click', '.purchase-now-btn', function () {
-                        // alert('Payment button clicked');
-                        // e.preventDefault();
 
-                        var planId = $(this).data('plan-id');  // Get the plan ID
-                        var price = $(this).data('plan-price');     // Get the plan price (if needed)
+                        var planId = $(this).data('plan-id');
+                        var price = $(this).data('plan-price');
                         
-                        // Update modal title with plan name (optional)
                         $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + ' ($' + price + ')');
-                        // Check if the user is authenticated
                         const isAuthenticated = @json(Auth::guard('web')->check());
                         var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};
                         console.log('Authenticated and not admin, User ID:', userId);
@@ -3806,26 +3821,22 @@
                             $('#signed-in-details').removeClass('d-none');
                             $('#already-signed-in').addClass('d-none');
                             @if(Auth::check())
-                                $('#name').val('{{ Auth::user()->first_name }} {{Auth::user()->last_name }}');  // Pre-fill name field
-                                $('#emailId').val('{{ Auth::user()->email }}');  // Pre-fill email field
-                                $('#phone').val('{{ Auth::user()->phone ?? "" }}');  // Pre-fill phone field, use empty string if null
-                                $('#signed-in-email').text('{{ Auth::user()->email }}');  // Pre-fill signed-in email field
+                                $('#name').val('{{ Auth::user()->first_name }} {{Auth::user()->last_name }}');
+                                $('#emailId').val('{{ Auth::user()->email }}');
+                                $('#phone').val('{{ Auth::user()->phone ?? "" }}');
+                                $('#signed-in-email').text('{{ Auth::user()->email }}');
                             @endif
-                            // Show the modal
+                           
                         }
-                        console.log(isAuthenticated);
-                        console.log(isAdmin);
-                        // Show the modal
+                       
                         $('#purchaseModal').modal('show');
 
                         // Handle the form submission
                         $('#payment-form').off('submit').on('submit', function(event) {
                             event.preventDefault();
 
-                            // Disable the submit button to prevent multiple clicks
                             $('#submit').prop('disabled', true);
 
-                            // Create a PaymentMethod with Stripe's API
                             let discountCode = $('#promo-code').val();
                             console.log(discountCode);
                             let discount = $('#discount').val();
@@ -3852,14 +3863,12 @@
                                     },
                                     success: function (response) {
                                         if (response.success) {
-                                            // Close the modal
                                             $('#purchaseModal').modal('hide');
                                             $('#submit').prop('disabled', false);
                                             var user_id = response.data.user_id;
                                             var payment_id = response.data.payment_id;
 
                                             if(response.data.submit_questionnaire) {
-                                                // Redirect the user if a URL is provided
                                                 if (response.redirect_url) {
                                                     var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
                                                     setTimeout(function () {
@@ -3872,14 +3881,13 @@
                                                 $('#thankYouModal').modal('show');
                                             }
                                         } else {
-                                            // Show error message for failed payment
                                             if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
                                                 alert('You have already purchased this plan. Please login to your account to manage your plans.');
                                                 $('#purchaseModal').modal('hide');
 
                                                 $('html, body').animate({
                                                     scrollTop: $('#nutrition-login-section').offset().top
-                                                }, 500); // 1000ms for smooth scrolling
+                                                }, 500);
                                             } else {
                                                 alert('Payment failed: ' + response.message);
                                             }
@@ -3887,12 +3895,11 @@
                                         }
                                     },
                                     error: function(xhr, status, error) {
-                                        $('#submit').prop('disabled', false); // Re-enable the submit button
+                                        $('#submit').prop('disabled', false);
 
                                         let message = '';
 
                                         if (xhr.status === 422) {
-                                            // Laravel validation error
                                             const errors = xhr.responseJSON.errors;
                                             message += '<ul>';
                                             $.each(errors, function(key, value) {
@@ -3924,13 +3931,11 @@
                                     },
                                 }).then(function(result) {
                                     if (result.error) {
-                                        // Display error in the card element
                                         cardErrors.textContent = result.error.message;
                                         $('#submit').prop('disabled', false);
                                     } else {
-                                        // Call the server to create the PaymentIntent
                                         $.ajax({
-                                            url: '{{ route("process.payment") }}', // Define the route to process the payment
+                                            url: '{{ route("process.payment") }}',
                                             method: 'POST',
                                             data: {
                                                 payment_method_id: result.paymentMethod.id,
@@ -3945,38 +3950,33 @@
                                             },
                                             success: function(response) {
                                                 if (response.success) {
-                                                    // Handle successful payment
-                                                    // alert('Payment successful!');
+                                                    
                                                     $('#purchaseModal').modal('hide');
-                                                    // $('#thankYouModal').modal('show');
                                                     $('#submit').prop('disabled', false);
                                                     if(response.data.submit_questionnaire) {
                                                         
-                                                        var user_id = response.data.user_id;  // Assuming the backend sends the user_id
-                                                        var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
+                                                        var user_id = response.data.user_id;
+                                                        var payment_id = response.data.payment_id;
 
-                                                        // Check if there's a redirect URL provided
                                                         if (response.redirect_url) {
 
                                                             var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
-                                                            // Redirect the user to the provided URL after a delay (optional)
                                                             setTimeout(function() {
                                                                 window.location.href = redirectUrlWithUserId;
-                                                            }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                                            }, 3000);
                                                         }
-                                                        // $('#submit').prop('disabled', true);
                                                     } else {
                                                         $('#thankYouModal').modal('show');
                                                     }
                                                 } else {
-                                                    // Show error message for failed payment
+                                                   
                                                     if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
                                                         alert('You have already purchased this plan. Please login to your account to manage your plans.');
                                                         $('#purchaseModal').modal('hide');
 
                                                         $('html, body').animate({
                                                             scrollTop: $('#nutrition-login-section').offset().top
-                                                        }, 500); // 1000ms for smooth scrolling
+                                                        }, 500);
                                                     } else {
                                                         alert('Payment failed: ' + response.message);
                                                     }
@@ -3985,12 +3985,11 @@
                                                 }
                                             },
                                             error: function(xhr, status, error) {
-                                                $('#submit').prop('disabled', false); // Re-enable the submit button
+                                                $('#submit').prop('disabled', false);
 
                                                 let message = '';
 
                                                 if (xhr.status === 422) {
-                                                    // Laravel validation error
                                                     const errors = xhr.responseJSON.errors;
                                                     message += '<ul>';
                                                     $.each(errors, function(key, value) {
@@ -4007,9 +4006,7 @@
                                                 const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                                                 errorModal.show();
                                                 $('#purchaseModal').addClass('blur-background');
-
                                             }
-
                                         });
                                     }
                                 });
@@ -4114,7 +4111,7 @@
                             })
                             .then(response => response.json())
                             .then(data => {
-                                let msg = ''; // Declare the message variable outside the conditional blocks
+                                let msg = '';
 
                                 if (data.valid) {
                                     if(data.type == 'percentage') {
@@ -4122,17 +4119,18 @@
                                         if(data.discount === "100.00" || data.discount == 100.00) {
                                             $('#discount').val(data.discount);
                                             $('#payment-details').hide();
+                                        }else {
+                                            $('#discount').val(data.discount);
+                                            $('#payment-details').show();
                                         }
                                     }else {
                                         msg = `Coupon code applied! $${data.discount} discount.`;
                                     }
                                     $('#discount').val(data.discount);
-                                    // Promo code is valid
                                     document.getElementById('promo-message').textContent = msg;
                                     document.getElementById('promo-message').classList.add('text-success');
                                     document.getElementById('promo-message').classList.remove('text-danger');
                                 } else {
-                                    // Promo code is invalid or expired
                                     document.getElementById('promo-message').textContent = data.message;
                                     document.getElementById('promo-message').classList.add('text-danger');
                                     document.getElementById('promo-message').classList.remove('text-success');
@@ -4140,7 +4138,6 @@
                             })
                             .catch(error => {
                                 alert('Error: ', error);
-                                console.error('Error:', error);
                                 document.getElementById('promo-message').textContent = 'Something went wrong. Please try again.';
                                 document.getElementById('promo-message').classList.add('text-danger');
                                 document.getElementById('promo-message').classList.remove('text-success');
@@ -4155,49 +4152,44 @@
             document.head.appendChild(script);
         }, 5000);
 
-        // Submit Login Form
         $('#login-form').submit(function(event) {
-            event.preventDefault(); // Prevent the form from submitting the normal way
+            event.preventDefault();
 
-            // Disable the Submit Button to avoid multiple clicks
             $('#login-submit').prop('disabled', true);
 
             // Get the form data
             var email = $('#login-email').val();
             var password = $('#login-password').val();
 
-            // Send the data to the backend for validation
             $.ajax({
-                url: '{{ route("front.login") }}', // This is the route for handling login (update with your actual route if different)
+                url: '{{ route("front.login") }}',
                 method: 'POST',
                 data: {
                     email: email,
                     password: password,
-                    _token: '{{ csrf_token() }}' // CSRF token for protection
+                    _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
                     if (response.success) {
                         if(response.message == 'Plan not purchased.') {
                             alert('Please complete your profile.');
                         }
-                        // If login is successful, redirect to the given URL
                         window.location.href = response.redirect_url;
                     }
                 },error: function(xhr) {
                     var response = xhr.responseJSON;
 
-                    // Show error messages for validation errors
                     if (response.message) {
                         if(response.message == 'CSRF token mismatch.') {
                             $('#login-error').text('Your session has expired. Please reload the page and login again.'); 
                         }else {
-                            $('#login-error').text(response.message); // Display error message in #login-error div
+                            $('#login-error').text(response.message);
                         }
                     } else {
-                        $('#login-error').text('Something went wrong. Please try again.'); // General error message
+                        $('#login-error').text('Something went wrong. Please try again.');
                     }
 
-                    $('#login-submit').prop('disabled', false); // Re-enable submit button
+                    $('#login-submit').prop('disabled', false);
                 }
             });
         });
@@ -4234,24 +4226,24 @@
 
         // Show Sign-In Modal when clicking "Sign In" link in the Sign-Up Modal
         $('#show-login-modal').click(function(e) {
-            e.preventDefault(); // Prevent default link action
-            $('#purchaseModal').modal('hide'); // Hide the sign-up modal
-            $('#loginModal').modal('show'); // Show the sign-in modal
+            e.preventDefault();
+            $('#purchaseModal').modal('hide');
+            $('#loginModal').modal('show');
         });
 
         // Show Sign-Up Modal when clicking "Sign Up" link in the Sign-In Modal
         $('#show-signup-modal').click(function(e) {
-            e.preventDefault(); // Prevent default link action
-            $('#loginModal').modal('hide'); // Hide the sign-in modal
-            $('#registerModal').modal('hide'); // Show the sign-up modal
-            $('#purchaseModal').modal('show'); // Show the sign-up modal
+            e.preventDefault();
+            $('#loginModal').modal('hide');
+            $('#registerModal').modal('hide');
+            $('#purchaseModal').modal('show');
         });
 
         $(document).ready(function() {
             $('body').on('click', '#forgot-password', function(e) {
                 e.preventDefault();
                 
-                $('#forgotPasswordModal').modal('show'); // Show the modal
+                $('#forgotPasswordModal').modal('show');
                 $('#forgotPasswordForm').reset();
             });
 

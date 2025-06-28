@@ -1,6 +1,7 @@
 @extends(frontView('layouts.app'))
 
-@section('title', 'Home')
+@section('title', 'Best Sports Nutritionist & Dietitians Australia | Kerry O’Bryan')
+@section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
 @php
@@ -336,7 +337,6 @@
 
         </div>
     </div>
-
 
     <div class="section section-3 pt-3 pb-0" data-aos="fade-up" data-aos-delay="100">
         <!--	<div class="container position-relative likndin-section"> -->
@@ -937,34 +937,36 @@
 
                     <div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
                         <p>Let us know your concerns and we will get back to you with</p>
+                        <form id="query-form" >
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="query-name" placeholder="Your name">
+                                <label for="floatingInput">Name</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="query-email" placeholder="name@example.com">
+                                <label for="floatingInput">Email address</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="query-phone" placeholder="Mobile number">
+                                <label for="floatingInput">Mobile number</label>
+                            </div>
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="query-message" rows="3"></textarea>
+                                <label for="floatingTextarea">What is your question?</label>
+                            </div>
 
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" placeholder="Your name">
-                            <label for="floatingInput">Name</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" placeholder="Mobile number">
-                            <label for="floatingInput">Mobile number</label>
-                        </div>
-                        <div class="form-floating">
-                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" rows="3"></textarea>
-                            <label for="floatingTextarea">What is your question?</label>
-                        </div>
 
-
-                        <!-- <div class="col-12">
-							<input type="submit" value="Send Message" class="btn btn-primary">
-						</div> -->
-                        <p class="my-4" data-aos="fade-up" data-aos-delay="200"><a href="#" class="btn btn-primary">Submit
-                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white" />
-                                    <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </a></p>
+                            <!-- <div class="col-12">
+                                <input type="submit" value="Send Message" class="btn btn-primary">
+                            </div> -->
+                            <p class="my-4" data-aos="fade-up" data-aos-delay="200"><a href="#" class="btn btn-primary" id="submit-query">Submit
+                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white" />
+                                        <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </p>
+                        </form>
                     </div>
                 </div>
                 <img src="{!! frontAssets('images/contact.webp') !!}" alt="Image" class="img-fluid img-contact">
@@ -974,8 +976,55 @@
         </div>
     </div>
 
+<script>
+    $(document).ready(function() {
+        $("#submit-query").click(function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            // Capture form data
+            let name = $("#query-name").val().trim();
+            let email = $("#query-email").val().trim();
+            let phone = $("#query-phone").val().trim();
+            let message = $("#query-message").val().trim();
+            let _token = "{{ csrf_token() }}";
+
+            // Basic validation
+            if (name === "" || email === "" || phone === "" || message === "") {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // AJAX request
+            $.ajax({
+                url: "{{ route('front.submit-query') }}", // Laravel route
+                type: "POST",
+                data: {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    message: message,
+                    _token: _token // CSRF Token
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.status === "success") {
+                        alert("Your query has been submitted successfully!");
+                        $("#query-form")[0].reset(); // Clear the form
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("Something went wrong. Please try again.");
+                }
+            });
+        });
+    });
+</script>
 @endsection
 
 @push('scripts')
 <script type="text/javascript" src="{{ url('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
 @endpush
+

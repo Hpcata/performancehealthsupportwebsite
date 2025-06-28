@@ -70,98 +70,100 @@ class MealController extends Controller
     public function store(Request $request)
     {
         try {
-
        
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            // 'categories' => 'nullable|array',
-            // 'categories.*' => 'exists:categories,id',
-            'food_ids' => 'nullable|array',
-            'food_ids.*' => 'integer|exists:items,id',
-            'note' => 'nullable'
-        ],[
-            'title.required' => 'The meal title is required.',
-            'image.image' => 'The file must be an image.',
-            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
-            'image.max' => 'The image may not be larger than 2MB.',
-        ]);
-        // dd($request->all());
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('meals', 'public');
-        } elseif ($request->filled('generated_image')) {
-            $imageUrl = $request->generated_image;
-            $imageContents = file_get_contents($imageUrl);
-            $imageName = 'meals/' . uniqid() . '.jpg';
-    
-            Storage::disk('public')->put($imageName, $imageContents);
-            $data['image'] = $imageName;
-        }
-    
-        $meal = Meal::create($data);
-        $meal->tags()->sync($request->input('tag_ids')); // attaches tags via pivot
-
-        $selectedQtyUnitsArray = $request->selected_qty_unit;
-    
-        if ($request->has('food_ids') && !empty($request->food_ids)) {
-            $foodItems = [];
-    
-            foreach ($request->food_ids as $index => $foodId) {
-                $selectedQtyUnitRaw = $selectedQtyUnitsArray[$index];
-                $decodedQtyUnits = json_decode($selectedQtyUnitRaw, true);
-    
-                if (empty($decodedQtyUnits)) {
-                    $item = \App\Models\Item::find($foodId);
-                    if ($item) {
-                        $decodedQtyUnits = [[
-                            'qty' => $item->qty ?? '',
-                            'unit' => $item->unit ?? '',
-                            'checked' => 'true'
-                        ]];
-                        $selectedQtyUnitsArray[$index] = json_encode($decodedQtyUnits);
-                    }
-                }
-    
-                $firstQty = '';
-                $firstUnit = '';
-    
-                if (is_array($decodedQtyUnits) && count($decodedQtyUnits) > 0) {
-                    $firstQty = $decodedQtyUnits[0]['qty'] ?? '';
-                    $firstUnit = $decodedQtyUnits[0]['unit'] ?? '';
-                }
-    
-                $foodItems[$foodId] = [
-                    'item_qty' => $firstQty,
-                    'item_qty_unit' => $firstUnit,
-                    'protein' => $request->protein[$index] ?? '0',
-                    'carbs' => $request->carbs[$index] ?? '0',
-                    'fat' => $request->fat[$index] ?? '0',
-                    'selected_qty_unit' => json_encode($decodedQtyUnits ?? [])
-                ];
+            $data = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                // 'categories' => 'nullable|array',
+                // 'categories.*' => 'exists:categories,id',
+                'food_ids' => 'nullable|array',
+                'food_ids.*' => 'integer|exists:items,id',
+                'note' => 'nullable'
+            ],[
+                'title.required' => 'The meal title is required.',
+                'image.image' => 'The file must be an image.',
+                'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
+                'image.max' => 'The image may not be larger than 2MB.',
+            ]);
+            // dd($request->all());
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image')->store('meals', 'public');
+            } elseif ($request->filled('generated_image')) {
+                $imageUrl = $request->generated_image;
+                $imageContents = file_get_contents($imageUrl);
+                $imageName = 'meals/' . uniqid() . '.jpg';
+        
+                Storage::disk('public')->put($imageName, $imageContents);
+                $data['image'] = $imageName;
             }
-    
-            $meal->items()->sync($foodItems);
-        }
-    
-        if ($request->has('categories')) {
-            $meal->subCategories()->sync($request->categories);
-        }
         
-        if ($request->has('meal_times')) {
-            $meal->categories()->sync($request->meal_times); // Sync subcategories
-        }
+            $meal = Meal::create($data);
+            $meal->tags()->sync($request->input('tag_ids')); // attaches tags via pivot
+
+            $selectedQtyUnitsArray = $request->selected_qty_unit;
+            $foodOrder = $request->input('food_order', []);
+            if ($request->has('food_ids') && !empty($request->food_ids)) {
+                $foodItems = [];
         
-        return redirect()->route('admin.meals.index')->with('success', 'Meal created successfully.');
-         } catch(\Exception $e) {
+                foreach ($request->food_ids as $index => $foodId) {
+                    $selectedQtyUnitRaw = $selectedQtyUnitsArray[$index];
+                    $decodedQtyUnits = json_decode($selectedQtyUnitRaw, true);
+        
+                    if (empty($decodedQtyUnits)) {
+                        $item = \App\Models\Item::find($foodId);
+                        if ($item) {
+                            $decodedQtyUnits = [[
+                                'qty' => $item->qty ?? '',
+                                'unit' => $item->unit ?? '',
+                                'checked' => 'true'
+                            ]];
+                            $selectedQtyUnitsArray[$index] = json_encode($decodedQtyUnits);
+                        }
+                    }
+        
+                    $firstQty = '';
+                    $firstUnit = '';
+        
+                    if (is_array($decodedQtyUnits) && count($decodedQtyUnits) > 0) {
+                        $firstQty = $decodedQtyUnits[0]['qty'] ?? '';
+                        $firstUnit = $decodedQtyUnits[0]['unit'] ?? '';
+                    }
+        
+                    $foodItems[$foodId] = [
+                        'order' => $foodOrder[$index] ?? 0,
+                        'item_qty' => $firstQty,
+                        'item_qty_unit' => $firstUnit,
+                        'protein' => $request->protein[$index] ?? '0',
+                        'carbs' => $request->carbs[$index] ?? '0',
+                        'fat' => $request->fat[$index] ?? '0',
+                        'selected_qty_unit' => json_encode($decodedQtyUnits ?? [])
+                    ];
+                }
+        
+                $meal->items()->sync($foodItems);
+            }
+        
+            if ($request->has('categories')) {
+                $meal->subCategories()->sync($request->categories);
+            }
+            
+            if ($request->has('meal_times')) {
+                $meal->categories()->sync($request->meal_times); // Sync subcategories
+            }
+            
+            return redirect()->route('admin.meals.index')->with('success', 'Meal created successfully.');
+        } catch(\Exception $e) {
             dd($e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while processing your request: ' . $e->getMessage());
         }
     }
     
-
     public function edit(Meal $meal)
     {
+        $meal->load(['items' => function($query) {
+            $query->orderBy('item_meals.order');
+        }]);
         $subCategories = SubCategory::all(); // Fetch all subcategories
         $foods = Item::all();
         $tags = Tag::all();
@@ -221,6 +223,8 @@ class MealController extends Controller
         // ✅ Clear old food items before adding new ones to prevent duplicates
         $meal->items()->detach();
         $selectedQtyUnitsArray = $request->selected_qty_unit;
+        $foodOrder = $request->input('food_order', []);
+
         // ✅ Sync food items with quantities in the pivot table
         if ($request->has('food_ids') && !empty($request->food_ids)) {
             $foodItems = [];
@@ -252,6 +256,7 @@ class MealController extends Controller
                 }
         
                 $foodItems[$foodId] = [
+                    'order' => $foodOrder[$index] ?? 0,
                     'item_qty' => $firstQty,
                     'item_qty_unit' => $firstUnit,
                     'protein' => $request->protein[$index] ?? '0',
@@ -264,7 +269,7 @@ class MealController extends Controller
         
             $meal->items()->sync($foodItems);
         }
-         
+
         if ($request->has('food_ids')) {
             $userIds = UserItemMeal::getUniqueUserIds();
     

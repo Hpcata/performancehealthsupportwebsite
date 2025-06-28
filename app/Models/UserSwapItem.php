@@ -12,6 +12,8 @@ class UserSwapItem extends Model
     protected $fillable = [
         'user_plan_id',
         'user_meal_id',
+        'user_category_id',
+        'user_sub_category_id',
         'user_item_id',
         'id'  // This will store swap_item_id
     ];

@@ -1,6 +1,7 @@
 @extends(frontView('layouts.app'))
 
-@section('title', 'Blog')
+@section('title', 'Health & Sports Nutrition Blog | Performance Health')
+@section('meta_description', 'Explore expert tips on athlete nutrition, healthy ageing, performance training, and diet plans. Stay updated with the latest from Performance Health Support.')
 
 @section('content')
     <div class="page-title-row section-row" style="background-image: url('{{ frontAssets('images/blog-title-img.jpg') }}');">

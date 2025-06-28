@@ -29,6 +29,10 @@ $headerData = json_decode($setting['meta_value'], true);
                         <li class="nav-item">
                             <a class="nav-link restriction-page" id="{{ strtolower($title) }}" href="{{ route($link, $slug ? ['page_slug' => $slug] : []) }}">{{ $title }}</a>
                         </li>
+                    @elseif($title == 'Contact')
+                        <li class="nav-item">
+                            <a class="nav-link restriction-page " id="contact-us" href="{{ route('front.index') }}#contact" > Contact</a>
+                        </li>
                     @else
                         @if(Auth::check() && Auth::user()->is_superadmin == 0) 
                         <li class="nav-item dropdown">
