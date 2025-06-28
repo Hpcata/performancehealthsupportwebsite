@@ -3,13 +3,16 @@
 
 <head>
     <!-- Required meta tags -->
+    <title>@yield('title') </title>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <meta name="author" content="Untree.co">
     <link rel="shortcut icon" href="{!! frontAssets('favicon.png') !!}">
 
-    <meta name="description" content="" />
+    <meta name="description" content="@yield('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')">
+
     <meta name="keywords" content="bootstrap, bootstrap5" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

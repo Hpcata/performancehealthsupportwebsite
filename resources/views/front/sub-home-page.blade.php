@@ -1,6 +1,7 @@
 @extends(frontView('layouts.app'))
 
-@section('title', '$page->title')
+@section('title', 'Sports Nutrition Plan & Diet for Athletes | Performance Health')
+@section('meta_description', 'Get a personalised athlete meal plan with Performance Health Support. Expert sports nutrition plans and diet strategies tailored to fuel performance and recovery.')
 
 @section('content')
     <style>
@@ -857,67 +858,43 @@
                     </div>
                 </div>
             </div>
-        </section>
-
-        <section class="section pb-3 pt-4 my-3 testimonial-section-main-div">
-            <div class="col-lg-12 text-center mb-5" data-aos="fade-up" style="text-align: center !important;">
-                <h2 class="heading mb-5 d-flex align-items-center justify-content-center" data-aos="fade-up"
-                    data-aos-delay="100">
-                    <div class="border-heading-top position-relative"></div>
-                    <div class="text-nowrap">LinkedIn Feed</div>
-                    <div class="border-heading d-block position-relative using-my-heading mt-0"></div>
-                </h2>
-            </div>
-            <div class="col-12 mx-auto">
-                <div class="row">
-                    <div class="col-xl-6 col-lg-8 col-md-10 px-md-0 px-4 mx-auto position-relative">
-                        <div class="wide-slider-testimonial-wrap-two">
-                            <!-- Bootstrap Carousel for Multiple LinkedIn Feeds -->
-                            <div id="linkedin-carousel" class="carousel slide linkedin-carousel" data-bs-ride="carousel">
-                                <div class="carousel-inner justify-content-center align-items-center w-100">
-                                    <!-- LinkedIn Feed 1 -->
-                                    <div class="carousel-item active" id="linkedin-feed-1"></div>
-                                    <!-- LinkedIn Feed 2 -->
-                                    <div class="carousel-item" id="linkedin-feed-2"></div>
-                                    <!-- More items if needed -->
-                                </div>
-                                <!-- Carousel Controls -->
-                                <button class="carousel-control-prev" type="button" data-bs-target="#linkedin-carousel"
-                                    data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#linkedin-carousel"
-                                    data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
+        </div>
+    </section>
+    
+{{--    <section class="section pb-3 pt-4 my-3 testimonial-section-main-div">
+        <div class="col-lg-12 text-center mb-5" data-aos="fade-up" style="text-align: center !important;">
+            <h2 class="heading mb-5 d-flex align-items-center justify-content-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="border-heading-top position-relative"></div>
+                <div class="text-nowrap">LinkedIn Feed</div>
+                <div class="border-heading d-block position-relative using-my-heading mt-0"></div>
+            </h2>
+        </div>
+       <div class="col-12 mx-auto">
+            <div class="row">
+                <div class="col-xl-6 col-lg-8 col-md-10 px-md-0 px-4 mx-auto position-relative">
+                    <div class="wide-slider-testimonial-wrap-two">
+                        <!-- Bootstrap Carousel for Multiple LinkedIn Feeds -->
+                        <div id="linkedin-carousel" class="carousel slide linkedin-carousel" data-bs-ride="carousel">
+                            <div class="carousel-inner justify-content-center align-items-center w-100">
+                                <!-- LinkedIn Feed 1 -->
+                                <div class="carousel-item active" id="linkedin-feed-1"></div>
+                                <!-- LinkedIn Feed 2 -->
+                                <div class="carousel-item" id="linkedin-feed-2"></div>
+                                <!-- More items if needed -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <div class="section py-5 client-sec">
-            <div class="container">
-                <div class="col-lg-12" data-aos="fade-up">
-                    <h2 class="heading mb-3  d-flex align-items-start" data-aos="fade-up" data-aos-delay="100">
-                        <div class="text-nowrap">Teams and organisations<br>
-                            who I've worked with
-                        </div>
-
-                        <span class="border-heading"></span>
-                    </h2>
-                </div>
-
-            </div>
-            <article class="wrapper">
-                <div class="marquee-main">
-
-                    <div class="marquee" id="marquee-top">
-                        <div class="marquee__group"></div>
-                        <div aria-hidden="true" class="marquee__group"></div>
+        </div>
+    </section>
+--}}
+    <div class="section py-5 client-sec">
+        <div class="container">
+            <div class="col-lg-12" data-aos="fade-up">
+                <h2 class="heading mb-3  d-flex align-items-start" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-nowrap">Teams and organisations<br>
+                        who I've worked with
                     </div>
 
                     <div class="marquee marquee--reverse" id="marquee-bottom">
@@ -3280,30 +3257,30 @@
                 </div>
             </div>
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </div>
 
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-        <script>
-            setTimeout(function () {
-                document.getElementById("linkedin-feed-1").innerHTML = `
-                    <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312"
-                            height="867"
-                            width="504"
-                            allowfullscreen=""
-                            title="LinkedIn Feed 1">
-                    </iframe>
-                `;
-                document.getElementById("linkedin-feed-2").innerHTML = `
-                    <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360"
-                            height="729"
-                            width="504"
-                            frameborder="0"
-                            allowfullscreen=""
-                            title="Embedded post">
-                    </iframe>
-                `;
-            }, 5000);
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        setTimeout(function () {
+            document.getElementById("linkedin-feed-1").innerHTML = `
+                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312" 
+                        height="867" 
+                        width="504" 
+                        allowfullscreen="" 
+                        title="LinkedIn Feed 1">
+                </iframe>
+            `;
+            document.getElementById("linkedin-feed-2").innerHTML = `
+                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360" 
+                        height="729" 
+                        width="504" 
+                        frameborder="0" 
+                        allowfullscreen="" 
+                        title="Embedded post">
+                </iframe>
+            `;
+        }, 5000);
 
             document.addEventListener('DOMContentLoaded', function () {
                 const toggleLink = document.getElementById('toggle-coupon-link');
@@ -3317,94 +3294,16 @@
 
                         const isHidden = couponDetails.classList.contains('d-none');
 
-                        // Toggle coupon section visibility
-                        couponDetails.classList.toggle('d-none');
+                    couponDetails.classList.toggle('d-none');
 
-                        // Update link text
-                        toggleLink.textContent = isHidden ? 'Remove a Coupon Code' : 'Add a Coupon Code';
+                    toggleLink.textContent = isHidden ? 'Remove a Coupon Code' : 'Add a Coupon Code';
 
-                        // If hiding, clear input and promo message
-                        if (!isHidden) {
-                            promoInput.value = '';
-                            if (promoMessage) {
-                                promoMessage.style.display = 'none'; // or promoMessage.innerHTML = ''
-                            }
+                    if (!isHidden) {
+                        promoInput.value = '';
+                        if (promoMessage) {
+                            promoMessage.textContent = '';
                         }
-                    });
-                }
-            });
-
-            document.addEventListener("DOMContentLoaded", function () {
-                const purchaseModal = document.getElementById('purchaseModal');
-
-                purchaseModal.addEventListener('hidden.bs.modal', function () {
-                    // Reset the form inside the modal
-                    document.getElementById('payment-form').reset();
-
-                    // Reset Stripe card element (if applicable)
-                    if (typeof stripe !== "undefined" && typeof card !== "undefined") {
-                        card.clear();
-                    }
-
-                    // Clear any validation messages or applied promo codes
-                    document.getElementById('promo-message').textContent = "";
-                    document.getElementById('discount').value = "";
-                    document.getElementById('coupon-details').classList.add('d-none'); // Hide coupon details
-                    document.getElementById('toggle-coupon-link').classList.remove('active'); // Reset link style
-                    document.getElementById('payment-details').style.removeProperty('display');
-
-                });
-            });
-
-            $('#registerModal').on('hidden.bs.modal', function () {
-                console.log("Register modal closed");
-                // Perform any additional actions on close
-                $('#TakeTestModel').removeClass('blur-background');
-
-            });
-
-            $('#detailsModal').on('hidden.bs.modal', function () {
-                console.log("Details modal closed");
-                // Perform any additional actions on close
-                $('#TakeTestModel').removeClass('blur-background');
-            });
-
-            $('#errorModal').on('hidden.bs.modal', function () {
-                $('#purchaseModal').removeClass('blur-background');
-
-            });
-
-            $(document).ready(function () {
-                $('.sample-plan-modal').on('click', function () {
-                    $('#sample-plan-modal').modal('show');
-                });
-            });
-            $(document).ready(function () {
-                $("#sport").change(function () {
-                    let selectedSport = $(this).val();
-                    let sportGameSelect = $("#sport_game");
-
-                    if (selectedSport) {
-                        $.ajax({
-                            url: "{{ route('front.get-sports-games') }}", // Replace with your actual route URL to,
-                            type: "GET",
-                            data: { category: selectedSport },
-                            dataType: "json",
-                            success: function (response) {
-                                sportGameSelect.html('<option value="">Select Your Sport Game</option>'); // Reset dropdown
-
-                                if (Array.isArray(response)) {
-                                    $.each(response, function (index, game) {
-                                        sportGameSelect.append(`<option value="${game}">${game}</option>`);
-                                    });
-                                }
-                            },
-                            error: function (xhr) {
-                                console.error("Error fetching sports games:", xhr.responseText);
-                            }
-                        });
-                    } else {
-                        sportGameSelect.html('<option value="">Select Your Sport Game</option>');
+                        document.getElementById('payment-details').style.removeProperty('display');
                     }
                 });
 
@@ -4677,6 +4576,432 @@
                                         $('#samplePlanModalBody').html('<p>Error fetching plan details. Please try again later.</p>');
                                     }
                                 });
+                            }
+
+                            // Close the login modal
+                            loginModal.modal('hide');
+                        } else {
+                            alert("Login failed.");
+                        }
+                    },
+                    error: function () {
+                        alert("Error logging in.");
+                    }
+                });
+            });
+
+            // Switch to the login modal from the register modal
+            loginLink.click(function () {
+                registerModal.modal('hide');
+                loginModal.modal('show');
+            });
+
+            // Switch to the register modal from the login modal
+            registerLink.click(function () {
+                loginModal.modal('hide');
+                registerModal.modal('show');
+            });
+
+            // Add this after your existing registration modal code
+            $('#registerModal').on('hidden.bs.modal', function () {
+                // Check if we have test data in localStorage (indicating quiz was completed)
+                const testData = JSON.parse(localStorage.getItem("testStepsData"));
+                if (testData) {
+                    // Track completion without email
+                    $.ajax({
+                        url: "{{ route('front.track.quiz.completion') }}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        data: {
+                            userId: null,
+                            email: null
+                        },
+                        success: function(response) {
+                            console.log('Quiz completion tracked (modal closed)');
+                        }
+                    });
+                }
+                $('#TakeTestModel').removeClass('blur-background');
+            });
+
+            function showThankYouModal() {
+                // Set dynamic content
+                const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
+                const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
+                // Set the modal message
+                $('#thankYouMessage').text(thankYouMessage);
+                
+                // Set the URL for the plan button dynamically
+                $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
+                $('#thankYouModal').modal('show');
+            }
+        });
+
+        $(document).ready(function() {
+            $("#submit-query").click(function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                // Capture form data
+                let name = $("#query-name").val().trim();
+                let email = $("#query-email").val().trim();
+                let phone = $("#query-phone").val().trim();
+                let message = $("#query-message").val().trim();
+                let _token = "{{ csrf_token() }}";
+
+                // Basic validation
+                if (name === "" || email === "" || phone === "" || message === "") {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+
+                // AJAX request
+                $.ajax({
+                    url: "{{ route('front.submit-query') }}", // Laravel route
+                    type: "POST",
+                    data: {
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        message: message,
+                        _token: _token // CSRF Token
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.status === "success") {
+                            alert("Your query has been submitted successfully!");
+                            $("#query-form")[0].reset(); // Clear the form
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert("Something went wrong. Please try again.");
+                    }
+                });
+            });
+        });
+    
+        setTimeout(function () {
+            const script = document.createElement('script');
+            script.src = "https://js.stripe.com/v3/";
+            script.onload = function () {
+                // Add this JavaScript code to your page
+                $(document).ready(function() {
+                    // var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+                    var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
+                    var elements = stripe.elements();
+                    var style = {
+                        base: {
+                            color: '#32325d',
+                            border:'1px solid #32325d',
+                            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                            fontSmoothing: 'antialiased',
+                            fontSize: '16px',
+                            '::placeholder': {
+                                color: '#aab7c4'
+                            }
+                        },
+                        invalid: {
+                            color: '#fa755a',
+                            iconColor: '#fa755a'
+                        }
+                    };
+
+                    // Create card element
+                    var card = elements.create('card', { style: style });
+                    var cardErrors = document.getElementById('card-errors');
+                    card.mount('#card-element');
+
+                    // Handle card input changes
+                    card.on('change', function(event) {
+                        var displayError = document.getElementById('card-errors');
+                        if (event.error) {
+                            displayError.textContent = event.error.message;
+                        } else {
+                            displayError.textContent = '';
+                        }
+                    });
+
+                    $('#purchaseModal').on('hidden.bs.modal', function () {
+                        $('#payment-form')[0].reset();
+                        $('#card-errors').text('');
+                        // Reset coupon UI
+                        const toggleLink = document.getElementById('toggle-coupon-link');
+                        const couponDetails = document.getElementById('coupon-details');
+                        const promoInput = document.getElementById('promo-code');
+                        const promoMessage = document.getElementById('promo-message');
+
+                        if (couponDetails && !couponDetails.classList.contains('d-none')) {
+                            couponDetails.classList.add('d-none');
+                        }
+
+                        if (toggleLink) {
+                            toggleLink.textContent = 'Add a Coupon Code';
+                        }
+
+                        if (promoInput) {
+                            promoInput.value = '';
+                        }
+
+                        if (promoMessage) {
+                            promoMessage.textContent = '';
+                        }
+                    });
+                    
+                    // Event listener for the 'Purchase Now' button
+                    $('body').on('click', '.purchase-now-btn', function () {
+
+                        var planId = $(this).data('plan-id');
+                        var price = $(this).data('plan-price');
+                        
+                        $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + ' ($' + price + ')');
+                        const isAuthenticated = @json(Auth::guard('web')->check());
+                        var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};
+                        console.log('Authenticated and not admin, User ID:', userId);
+
+                        var isAdmin = {{ Auth::check() && Auth::user()->is_superadmin == 1 ? 'true' : 'false' }};
+                        if (isAuthenticated && !isAdmin) {
+                            console.log('Authenticated and not admin');
+
+                            $('#registration-details').hide();
+                            $('#payment-details').show();
+                            $('#signed-in-details').removeClass('d-none');
+                            $('#already-signed-in').addClass('d-none');
+                            @if(Auth::check())
+                                $('#name').val('{{ Auth::user()->first_name }} {{Auth::user()->last_name }}');
+                                $('#emailId').val('{{ Auth::user()->email }}');
+                                $('#phone').val('{{ Auth::user()->phone ?? "" }}');
+                                $('#signed-in-email').text('{{ Auth::user()->email }}');
+                            @endif
+                           
+                        }
+                       
+                        $('#purchaseModal').modal('show');
+
+                        // Handle the form submission
+                        $('#payment-form').off('submit').on('submit', function(event) {
+                            event.preventDefault();
+
+                            $('#submit').prop('disabled', true);
+
+                            let discountCode = $('#promo-code').val();
+                            console.log(discountCode);
+                            let discount = $('#discount').val();
+                            let email = $('#emailId').val();
+                            let name = $('#name').val();
+                            let phone = $('#phone').val();
+                            console.log('Email:', email);
+                            console.log('Name:', name);
+                            console.log('Phone:', phone);
+                            
+                            if(discount == 100.00) {
+                                $.ajax({
+                                    url: '{{ route("process.payment") }}',
+                                    method: 'POST',
+                                    data: {
+                                        plan_id: planId,
+                                        price: price,
+                                        name: $('#name').val(),
+                                        email: $('#emailId').val(),
+                                        phone: $('#phone').val(),
+                                        password: $('#password').val(),
+                                        coupon_code: discountCode,
+                                        _token: '{{ csrf_token() }}'
+                                    },
+                                    success: function (response) {
+                                        if (response.success) {
+                                            $('#purchaseModal').modal('hide');
+                                            $('#submit').prop('disabled', false);
+                                            var user_id = response.data.user_id;
+                                            var payment_id = response.data.payment_id;
+
+                                            if(response.data.submit_questionnaire) {
+                                                if (response.redirect_url) {
+                                                    var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                                    setTimeout(function () {
+                                                        window.location.href = redirectUrlWithUserId;
+                                                    }, 3000);
+                                                }else {
+                                                    alert('Error: Redirect url not found.');
+                                                }
+                                            } else {
+                                                $('#thankYouModal').modal('show');
+                                            }
+                                        } else {
+                                            if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
+                                                alert('You have already purchased this plan. Please login to your account to manage your plans.');
+                                                $('#purchaseModal').modal('hide');
+
+                                                $('html, body').animate({
+                                                    scrollTop: $('#nutrition-login-section').offset().top
+                                                }, 500);
+                                            } else {
+                                                alert('Payment failed: ' + response.message);
+                                            }
+                                            $('#submit').prop('disabled', false);
+                                        }
+                                    },
+                                    error: function(xhr, status, error) {
+                                        $('#submit').prop('disabled', false);
+
+                                        let message = '';
+
+                                        if (xhr.status === 422) {
+                                            const errors = xhr.responseJSON.errors;
+                                            message += '<ul>';
+                                            $.each(errors, function(key, value) {
+                                                message += `<li style="color: red;">${value[0]}</li>`;
+                                            });
+                                            message += '</ul>';
+                                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                            message = `<p style="color: red;">${xhr.responseJSON.message}</p>`;
+                                        } else {
+                                            message = `<p style="color: red;">Unexpected Error (${xhr.status}): ${error}</p>`;
+                                        }
+
+                                        $('#errorModalBody').html(message);
+                                        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                                        errorModal.show();
+                                        $('#purchaseModal').addClass('blur-background');
+
+                                    }
+
+                                });
+                            }else {
+                                stripe.createPaymentMethod({
+                                    type: 'card',
+                                    card: card,
+                                    billing_details: {
+                                        name: $('#name').val(),
+                                        email: $('#emailId').val(),
+                                        phone: $('#phone').val(),
+                                    },
+                                }).then(function(result) {
+                                    if (result.error) {
+                                        cardErrors.textContent = result.error.message;
+                                        $('#submit').prop('disabled', false);
+                                    } else {
+                                        $.ajax({
+                                            url: '{{ route("process.payment") }}',
+                                            method: 'POST',
+                                            data: {
+                                                payment_method_id: result.paymentMethod.id,
+                                                plan_id: planId,
+                                                price: price,
+                                                name: name,
+                                                email: email,
+                                                phone: phone,
+                                                password: $('#password').val(),
+                                                coupon_code: discountCode,
+                                                _token: '{{ csrf_token() }}'
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    
+                                                    $('#purchaseModal').modal('hide');
+                                                    $('#submit').prop('disabled', false);
+                                                    if(response.data.submit_questionnaire) {
+                                                        
+                                                        var user_id = response.data.user_id;
+                                                        var payment_id = response.data.payment_id;
+
+                                                        if (response.redirect_url) {
+
+                                                            var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
+                                                            setTimeout(function() {
+                                                                window.location.href = redirectUrlWithUserId;
+                                                            }, 3000);
+                                                        }
+                                                    } else {
+                                                        $('#thankYouModal').modal('show');
+                                                    }
+                                                } else {
+                                                   
+                                                    if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
+                                                        alert('You have already purchased this plan. Please login to your account to manage your plans.');
+                                                        $('#purchaseModal').modal('hide');
+
+                                                        $('html, body').animate({
+                                                            scrollTop: $('#nutrition-login-section').offset().top
+                                                        }, 500);
+                                                    } else {
+                                                        alert('Payment failed: ' + response.message);
+                                                    }
+                                                    $('#submit').prop('disabled', false);
+
+                                                }
+                                            },
+                                            error: function(xhr, status, error) {
+                                                $('#submit').prop('disabled', false);
+
+                                                let message = '';
+
+                                                if (xhr.status === 422) {
+                                                    const errors = xhr.responseJSON.errors;
+                                                    message += '<ul>';
+                                                    $.each(errors, function(key, value) {
+                                                        message += `<li style="color: red;">${value[0]}</li>`;
+                                                    });
+                                                    message += '</ul>';
+                                                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                                    message = `<p style="color: red;">${xhr.responseJSON.message}</p>`;
+                                                } else {
+                                                    message = `<p style="color: red;">Unexpected Error (${xhr.status}): ${error}</p>`;
+                                                }
+
+                                                $('#errorModalBody').html(message);
+                                                const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                                                errorModal.show();
+                                                $('#purchaseModal').addClass('blur-background');
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        
+                        $('#view-sample-plan').click(function () {
+                            // var planId = $(this).data('plan-id');
+                            
+                            $('#samplePlanModalLabel').text('Loading...');
+                            $('#samplePlanModalBody').html('<p>Loading details...</p>');
+                            $('#samplePlanModal').modal('show');
+
+                            $.ajax({
+                                url: '{{ route("front.get-default-plan-details", ":id") }}'.replace(':id', planId),
+                                method: 'GET',
+                                success: function (response) {
+                                    if (response.error) {
+                                        $('#samplePlanModalBody').html('<p>' + response.error + '</p>');
+                                        return;
+                                    }
+
+                                    // Build the modal content for main plan
+                                    const mainPlan = response.mainPlan;
+                                    let modalContent = `<h5>${mainPlan.name}</h5>`;
+                                    // modalContent += `<p>Price: $${mainPlan.price}</p>`;
+                                    modalContent += buildMealTimeHtml(mainPlan.mealTimes);
+
+                                    // Build the modal content for subPlans
+                                    if (response.subPlans.length > 0) {
+                                        modalContent += `<h5></h5>`;
+                                        response.subPlans.forEach(function (subPlan) {
+                                            modalContent += `<div class="mt-3"><h6>Sub Plan: ${subPlan.name}</h6>`;
+                                            modalContent += `<p>Price: $${subPlan.price}</p>`;
+                                            modalContent += buildMealTimeHtml(subPlan.mealTimes);
+                                            modalContent += `</div>`;
+                                        });
+                                    }
+
+                                    $('#samplePlanModalLabel').text('Plan Details: ' + mainPlan.name);
+                                    $('#samplePlanModalBody').html(modalContent);
+                                },
+                                error: function () {
+                                    $('#samplePlanModalBody').html('<p>Error fetching plan details. Please try again later.</p>');
+                                }
                             });
 
                             // Function to build HTML for mealTimes, categories, meals, and items

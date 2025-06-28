@@ -1,6 +1,7 @@
 @extends(frontView('layouts.app'))
 
-@section('title', 'Home')
+@section('title', 'Best Sports Nutritionist & Dietitians Australia | Kerry O’Bryan')
+@section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
     @php
@@ -211,6 +212,9 @@
         </div>
     </div>
 
+    <div class="section section-3 pt-3 pb-0" data-aos="fade-up" data-aos-delay="100">
+    </div>
+
     <section class="section pb-3 pt-4 my-3 testimonial-section-main-div">
         <div class="col-lg-12 text-center mb-5" data-aos="fade-up" style="text-align: center !important;">
             <h2 class="heading mb-5  d-flex align-items-center justify-content-center" data-aos="fade-up" data-aos-delay="100">
@@ -327,8 +331,56 @@
 
         </div>
     </div>
+
+<script>
+    $(document).ready(function() {
+        $("#submit-query").click(function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            // Capture form data
+            let name = $("#query-name").val().trim();
+            let email = $("#query-email").val().trim();
+            let phone = $("#query-phone").val().trim();
+            let message = $("#query-message").val().trim();
+            let _token = "{{ csrf_token() }}";
+
+            // Basic validation
+            if (name === "" || email === "" || phone === "" || message === "") {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // AJAX request
+            $.ajax({
+                url: "{{ route('front.submit-query') }}", // Laravel route
+                type: "POST",
+                data: {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    message: message,
+                    _token: _token // CSRF Token
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.status === "success") {
+                        alert("Your query has been submitted successfully!");
+                        $("#query-form")[0].reset(); // Clear the form
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("Something went wrong. Please try again.");
+                }
+            });
+        });
+    });
+</script>
 @endsection
 
 @push('scripts')
 <script type="text/javascript" src="{{ url('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
 @endpush
+

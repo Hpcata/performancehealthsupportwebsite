@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
     .hidden-checkbox {
         display: none;
@@ -311,7 +312,7 @@
                         @php
                             $firstUserPlan = $userPlans->first(); // Get the first record
                             $isMailSent = ($firstUserPlan && $firstUserPlan->is_mail_sent == 1);
-                            $mailSentAt = $firstUserPlan ? $firstUserPlan->updated_at : null;
+                            $mailSentAt = $firstUserPlan ? $firstUserPlan->mail_sent_at : null;
                             //dd($firstUserPlan);
                         @endphp
 
@@ -335,11 +336,11 @@
                             {{ $isMailSent ? 'Sent to Customer' : 'Send to Customer' }}
                             </button>
 
-                            @if($isMailSent)
+                            @if($isMailSent && !is_null($mailSentAt))
                                 <div id="timestamp-{{ $payment->user_id }}-{{ $payment->id }}"
                                     class="mt-2 text-muted"
                                     style="margin-left: 330px;">
-                                        {{ \Carbon\Carbon::parse($mailSentAt)->format('d/m/Y h:i A') }}
+                                    {{ \Carbon\Carbon::parse($mailSentAt)->timezone('UTC')->format('d/m/Y h:i A') }}
                                 </div>
                             @endif
 
@@ -1014,56 +1015,48 @@
                                 let answer = formQuestions[question];
                                 let answerContent = '';
 
+                                // === FOOD PREFERENCE HANDLING ===
                                 if (formName === 'Food Preference') {
                                     const expectedGroups = foodGroups;
                                     const groupNameRaw = question;
 
                                     const clean = s => (s || '').toString().trim();
                                     const normal = s => clean(s).replace(/\s{2,}/g, ' ');
-                                    const hasAny = v => {
-                                        if (Array.isArray(v)) return v.filter(x => clean(x)).length > 0;
-                                        if (typeof v === 'string') return clean(v) !== '';
-                                        return false;
-                                    };
 
                                     const groupKey = normal(groupNameRaw);
                                     const expectedSubs = expectedGroups[groupKey] || [];
                                     const userValue = answer;
-                                    const groupMissing = (userValue === null);
 
                                     answerContent = '<ul>';
 
-                                    if (groupMissing) {
+                                    if (userValue === null || userValue === undefined) {
                                         answerContent += `<li class="text-danger">Not selected</li>`;
                                     } else {
                                         if (Array.isArray(userValue)) {
                                             const nonEmpty = userValue.filter(x => clean(x));
-                                            answerContent += `<li class="${nonEmpty.length ? '' : 'text-danger'}">
-                                                ${nonEmpty.length ? nonEmpty.join(', ') : 'Not selected'}
-                                            </li>`;
+                                            if (nonEmpty.length) {
+                                                nonEmpty.forEach(item => {
+                                                    answerContent += `<li>${item}</li>`;
+                                                });
+                                            } else {
+                                                answerContent += `<li class="text-danger">Not selected</li>`;
+                                            }
                                         } else if (typeof userValue === 'object') {
                                             expectedSubs.forEach(sub => {
                                                 const subKey = normal(sub);
-                                                const provided = Object.prototype.hasOwnProperty.call(userValue, subKey);
-                                                let valueBlock = ' — Not selected';
-                                                let css = 'text-danger';
-
-                                                if (provided) {
-                                                    const val = userValue[subKey];
-                                                    if (Array.isArray(val)) {
-                                                        const ok = val.filter(x => clean(x));
-                                                        if (ok.length) {
-                                                            css = '';
-                                                            valueBlock = '<ul>' + ok.map(v => `<li>${v}</li>`).join('') + '</ul>';
-                                                        }
-                                                    } else if (typeof val === 'string' && clean(val) !== '') {
-                                                        css = '';
-                                                        valueBlock = `: ${val}`;
+                                                const val = userValue[subKey];
+                                                if (Array.isArray(val)) {
+                                                    const cleanItems = val.filter(x => x && x !== 'null' && x !== null);
+                                                    if (cleanItems.length) {
+                                                        answerContent += `<li><strong>${subKey}</strong><ul>${cleanItems.map(v => `<li>${v}</li>`).join('')}</ul></li>`;
                                                     }
+                                                } else if (typeof val === 'string' && clean(val) !== '' && val !== 'null') {
+                                                    answerContent += `<li><strong>${subKey}:</strong> ${val}</li>`;
+                                                } else {
+                                                    answerContent += `<li class="text-danger">${subKey} — Not selected</li>`;
                                                 }
-                                                answerContent += `<li class="${css}">${subKey}${valueBlock}</li>`;
                                             });
-                                        } else if (typeof userValue === 'string') {
+                                        } else {
                                             answerContent += `<li>${clean(userValue)}</li>`;
                                         }
                                     }
@@ -1075,10 +1068,10 @@
                                             <p><strong>Q : ${groupNameRaw}</strong></p>
                                             <div>${answerContent}</div>
                                         </div>`;
-                                    return; // Skip default logic
+                                    return; // skip to next question
                                 }
 
-                                // ========== DEFAULT LOGIC FOR OTHER FORMS ==========
+                                // === DEFAULT LOGIC FOR OTHER FORMS ===
                                 if (!answer) {
                                     answerContent = '<span class="text-danger">Not selected</span>';
                                 } else if (Array.isArray(answer)) {
@@ -1087,38 +1080,46 @@
                                         answerContent = '<ul>' + filtered.map(i => `<li>${i}</li>`).join('') + '</ul>';
                                     }
                                 } else if (typeof answer === 'object') {
-                                    let valid = Object.entries(answer).filter(([_, v]) => v);
-                                    if (question.includes('hunger/appetite over the day')) {
-                                        const order = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
-                                        valid.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
-                                    }
-                                    if (valid.length) {
-                                        answerContent = '<ul>';
-                                        valid.forEach(([k, v]) => {
-                                            const keyLabel = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                                            if (Array.isArray(v)) {
-                                                const sub = v.filter(x => x);
-                                                if (sub.length) {
-                                                    answerContent += `<li><strong>${keyLabel}</strong><ul>${sub.map(s => `<li>${s}</li>`).join('')}</ul></li>`;
+                                    // special case: { answer: 'Yes', date: '3 months ago' }
+                                    if ('answer' in answer && 'date' in answer) {
+                                        answerContent = `
+                                            <ul>
+                                                <li><strong>Answer:</strong> ${answer.answer}</li>
+                                                <li><strong>Date:</strong> ${answer.date}</li>
+                                            </ul>`;
+                                    } else {
+                                        let valid = Object.entries(answer).filter(([_, v]) => v);
+                                        if (question.includes('hunger/appetite over the day')) {
+                                            const order = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
+                                            valid.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
+                                        }
+                                        if (valid.length) {
+                                            answerContent = '<ul>';
+                                            valid.forEach(([k, v]) => {
+                                                const keyLabel = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                                if (Array.isArray(v)) {
+                                                    const sub = v.filter(x => x);
+                                                    if (sub.length) {
+                                                        answerContent += `<li><strong>${keyLabel}</strong><ul>${sub.map(s => `<li>${s}</li>`).join('')}</ul></li>`;
+                                                    }
+                                                } else {
+                                                    answerContent += `<li><strong>${keyLabel}:</strong> ${v}</li>`;
                                                 }
-                                            } else {
-                                                answerContent += `<li><strong>${keyLabel}:</strong> ${v}</li>`;
-                                            }
-                                        });
-                                        answerContent += '</ul>';
+                                            });
+                                            answerContent += '</ul>';
+                                        }
                                     }
                                 } else {
                                     answerContent = answer;
                                 }
 
-                                if (answerContent) {
-                                    if(question != '' && question != null && question != undefined) {
+                                // Append question + answer block
+                                if (answerContent && question) {
                                     modalContent += `
                                         <div>
                                             <p><strong>Q : ${question}</strong></p>
                                             <p>${answerContent}</p>
                                         </div>`;
-                                    }
                                 }
                             });
 
@@ -1261,9 +1262,7 @@
                         if (response.success) {
                             mealSelect.empty(); // Clear previous options
 
-                            const sortedMealIds = selectedMealsArray
-                                .map(id => parseInt(id))
-                                .sort((a, b) => a - b);
+                            const orderedMealIds = selectedMealsArray.map(id => parseInt(id));
 
                             // Create a map for quick lookup
                             const mealMap = {};
@@ -1271,8 +1270,8 @@
                                 mealMap[meal.id] = meal;
                             });
 
-                            // Add selected meals in sorted order
-                            sortedMealIds.forEach(mealId => {
+                            // Add selected meals in the order from preSelectedMeals
+                            orderedMealIds.forEach(mealId => {
                                 const meal = mealMap[mealId];
                                 if (meal) {
                                     mealSelect.append(new Option(meal.name, meal.id, true, true));
@@ -1281,12 +1280,12 @@
 
                             // Add remaining unselected meals
                             response.meals.forEach(meal => {
-                                if (!sortedMealIds.includes(meal.id)) {
+                                if (!orderedMealIds.includes(meal.id)) {
                                     mealSelect.append(new Option(meal.name, meal.id, false, false));
                                 }
                             });
 
-                            const stringIds = sortedMealIds.map(String);
+                            const stringIds = orderedMealIds.map(String);
                             mealSelect.val(stringIds).trigger('change');
                             previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
                         }
@@ -1423,7 +1422,7 @@
                 placeholder: 'Search meals…',
                 allowClear: true,
 
-                /* 1️⃣  AJAX config – we pass ALL the fields we’ll need later */
+                /* 1️⃣  AJAX config – we pass ALL the fields we'll need later */
                 ajax: {
                     url: '{{ route("admin.purchase-plans.get-meals-by-mealtime") }}',
                     type: 'POST',
@@ -1452,13 +1451,13 @@
                 /* 2️⃣  Tell Select2 how to render each piece of data */
                 templateResult   : formatMeal,        // dropdown rows
                 templateSelection: sel => sel.text,   // text after user picks
-                escapeMarkup     : m => m             // DON’T auto‑escape → allow our HTML
+                escapeMarkup     : m => m             // DON'T auto‑escape → allow our HTML
             });
         }
 
         /* Renders one row inside the dropdown */
         function formatMeal(meal) {
-            if (meal.loading) return meal.text;      // built‑in “loading…” row
+            if (meal.loading) return meal.text;      // built‑in "loading…" row
 
             const img   = meal.image
                 ? `<img src="${meal.image}" class="s2-meal-img me-2" style="width: 30px; height: 30px;">`
@@ -1497,7 +1496,7 @@
                 let totalEnergy = 0;
 
                 $(this).find('.items-table-body tr').each(function () {
-                    const $firstTd = $(this).find('td').first();
+                    const $firstTd = $(this).find('td').eq(1);
                     const $input = $firstTd.find('input');
 
                     totalCarbs += parseFloat($input.data('carbs')) || 0;
@@ -1576,83 +1575,89 @@
                 }
             });
 
-            // Create a promise array to handle sequential meal creation
-            const mealCreationPromises = newMeals.map((mealId, index) => {
+            const orderedMealIds = currentSelectedMeals.map(id => parseInt(id));
+            const mealContainers = {}; // Store containers by mealId
+
+            // For each mealId, fetch and create the container as you already do:
+            const mealCreationPromises = orderedMealIds.map((mealId, index) => {
                 return new Promise((resolve, reject) => {
-                    // setTimeout(() => {
-                        $.ajax({
-                            url: '{{ route("admin.purchase-plans.get-meal-items") }}',
-                            method: 'POST',
-                            data: {
-                                meal_id: mealId,
-                                user_id: userId,
-                                plan_id: planId,
-                                meal_time_id: mealTimeId,
-                                type: 'edit',
-                                _token: '{{ csrf_token() }}',
-                                _t: new Date().getTime()  // prevents caching
+                    $.ajax({
+                        url: '{{ route("admin.purchase-plans.get-meal-items") }}',
+                        method: 'POST',
+                        data: {
+                            meal_id: mealId,
+                            user_id: userId,
+                            plan_id: planId,
+                            meal_time_id: mealTimeId,
+                            type: 'edit',
+                            _token: '{{ csrf_token() }}',
+                            _t: new Date().getTime()  // prevents caching
 
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    const mealName = response.meal_name;
-                                    const mealId = response.meal_id;
-                                    const mealNote = response.meal_note;
-                                    const items = response.data;
-                                    const mealContainer = createMealContainer(
-                                        planId,
-                                        mealTimeId,
-                                        response.meal_id,
-                                        response.meal_name,
-                                        response.meal_note,
-                                        response.data,
-                                        userId,
-                                        preSelectedItems,
-                                        preSelectedSwapItems,
-                                        response.total_carbs,
-                                        response.total_fat,
-                                        response.total_protein,
-                                        response.total_energy
-                                    );
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                const mealName = response.meal_name;
+                                const mealId = response.meal_id;
+                                const mealNote = response.meal_note;
+                                const items = response.data;
+                                const mealContainer = createMealContainer(
+                                    planId,
+                                    mealTimeId,
+                                    response.meal_id,
+                                    response.meal_name,
+                                    response.meal_note,
+                                    response.data,
+                                    userId,
+                                    preSelectedItems,
+                                    preSelectedSwapItems,
+                                    response.total_carbs,
+                                    response.total_fat,
+                                    response.total_protein,
+                                    response.total_energy
+                                );
 
-                                    // Add a sequential order class
-                                    mealContainer.addClass(`meal-order-${index + 1}`);
+                                // Add a sequential order class
+                                mealContainer.addClass(`meal-order-${index + 1}`);
 
-                                    selectedMealsContainer.append(mealContainer);
-                                    calculateMealNutrition();
+                                selectedMealsContainer.append(mealContainer);
+                                calculateMealNutrition();
 
-                                    // Update food counts for items and swap items
-                                    response.data.forEach(item => {
-                                        if(item.is_new) {
-                                            updateFoodCount(item.id, 1, 'green', item.name, null, item.is_new);
-                                        } else {
-                                            updateFoodCount(item.id, 1, 'purple', item.name, null, item.is_new);
-                                        }
-                                    });
+                                // Update food counts for items and swap items
+                                response.data.forEach(item => {
+                                    if(item.is_new) {
+                                        updateFoodCount(item.id, 1, 'green', item.name, null, item.is_new);
+                                    } else {
+                                        updateFoodCount(item.id, 1, 'purple', item.name, null, item.is_new);
+                                    }
+                                });
 
-                                    // Trigger meal added event
-                                    $(document).trigger('mealAdded', [planId, mealTimeId, mealId]);
-                                    resolve();
-                                } else {
-                                    reject('Failed to fetch meal details');
-                                }
-                            },
-                            error: function() {
-                                reject('Error while fetching meal details');
+                                // Trigger meal added event
+                                $(document).trigger('mealAdded', [planId, mealTimeId, mealId]);
+                                resolve();
+                            } else {
+                                reject('Failed to fetch meal details');
                             }
-                        });
-                    // }, index * 300); // Add 300ms delay between each meal creation
+                        },
+                        error: function() {
+                            reject('Error while fetching meal details');
+                        }
+                    });
                 });
             });
 
-            // Handle all meal creations
-            Promise.all(mealCreationPromises)
-                .catch(error => {
-                    console.error('Error creating meals:', error);
+            Promise.all(mealCreationPromises).then(() => {
+                // After all AJAX calls, append containers in the correct order
+                const selectedMealsContainer = $(`#selectedMeals${planId}_${mealTimeId} .list-group`);
+                selectedMealsContainer.empty();
+                orderedMealIds.forEach(mealId => {
+                    if (mealContainers[mealId]) {
+                        selectedMealsContainer.append(mealContainers[mealId]);
+                    }
                 });
+                calculateMealNutrition();
+            });
         });
-
-        // Helper to format and round qty based on unit
+            // Helper to format and round qty based on unit
         function formatQtys(qty, unit) {
             const noSpaceUnits = ['g', 'ml', 'mL'];
             const isNoSpace = noSpaceUnits.includes(unit);
@@ -1689,7 +1694,7 @@
                         <small class="text-muted"> NOTE: ${mealNote ?? 'Nil'}</small>
                         <div class="table-responsive">
                             <table class="table table-bordered">
-                                <thead><tr><th>Food</th><th>Swap Foods</th></tr></thead>
+                                <thead><tr><th></th><th>Food</th><th>Swap Foods</th></tr></thead>
                                 <tbody class="items-table-body"></tbody>
                             </table>
                             <button type="button" class="btn btn-primary add-more-food mb-2"
@@ -1703,35 +1708,42 @@
             `);
 
             const tableBody = mealContainer.find('.items-table-body');
+            let orderedItemIds = [];
+            if (preSelectedItems && preSelectedItems[mealTimeId] && preSelectedItems[mealTimeId][mealId]) {
+                orderedItemIds = preSelectedItems[mealTimeId][mealId].map(id => parseInt(id));
+            }
+            const itemMap = {};
+            items.forEach(item => { itemMap[item.id] = item; });
 
-            items.forEach(item => {
-                const isSelectedItem = preSelectedItems?.[mealTimeId]?.[mealId]?.includes(item.id);
-                const swapsFoods = item.swapItems || [];
+            orderedItemIds.forEach(itemId => {
+                const item = itemMap[itemId];
+                if (item) {
+                    const swapsFoods = item.swapItems || [];
 
-                let selectedQtyUnits = [];
-                try {
-                    selectedQtyUnits = typeof item.selected_qty_unit === 'string'
-                        ? JSON.parse(item.selected_qty_unit)
-                        : (Array.isArray(item.selected_qty_unit) ? item.selected_qty_unit : []);
-                } catch (e) {
-                    console.warn('Invalid JSON in item.selected_qty_unit:', item.selected_qty_unit, e);
-                }
+                    let selectedQtyUnits = [];
+                    try {
+                        selectedQtyUnits = typeof item.selected_qty_unit === 'string'
+                            ? JSON.parse(item.selected_qty_unit)
+                            : (Array.isArray(item.selected_qty_unit) ? item.selected_qty_unit : []);
+                    } catch (e) {
+                        console.warn('Invalid JSON in item.selected_qty_unit:', item.selected_qty_unit, e);
+                    }
 
-                const checkedQtyUnits = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
-                const qtyUnitDisplay = checkedQtyUnits.length
-                ? `(${checkedQtyUnits.map(({qty, unit}) => {
-                    const formattedQty = formatQtys(qty, unit);
-                    const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
-                    const display = `${formattedQty}${space}${unit}`;
-                    return display;
-                    }).join(' or ')})`
-                : (() => {
-                    const {qty, unit} = item; // fallback
-                    const formattedQty = formatQtys(qty, unit);
-                    const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
-                    const display = `${formattedQty}${space}${unit}`;
-                    return `(${display})`;
-                    })();
+                    const checkedQtyUnits = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
+                    const qtyUnitDisplay = checkedQtyUnits.length
+                    ? `(${checkedQtyUnits.map(({qty, unit}) => {
+                        const formattedQty = formatQtys(qty, unit);
+                        const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                        const display = `${formattedQty}${space}${unit}`;
+                        return display;
+                        }).join(' or ')})`
+                    : (() => {
+                        const {qty, unit} = item; // fallback
+                        const formattedQty = formatQtys(qty, unit);
+                        const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                        const display = `${formattedQty}${space}${unit}`;
+                        return `(${display})`;
+                        })();
 
                 let swapItemsHTML = '';
                 if (swapsFoods.length > 0) {
@@ -1739,137 +1751,341 @@
                         const isSelectedSwapItem = preSelectedSwapItems?.[mealTimeId]?.[mealId]?.[item.id]?.includes(swapItem.id);
                         let selectedQtyUnits = [];
 
-                        try {
-                            selectedQtyUnits = typeof swapItem.selected_qty_unit === 'string'
-                                ? JSON.parse(swapItem.selected_qty_unit)
-                                : (Array.isArray(swapItem.selected_qty_unit) ? swapItem.selected_qty_unit : []);
-                        } catch (e) {
-                            console.warn('Invalid JSON in swapItem.selected_qty_unit:', swapItem.selected_qty_unit, e);
-                        }
+                            try {
+                                selectedQtyUnits = typeof swapItem.selected_qty_unit === 'string'
+                                    ? JSON.parse(swapItem.selected_qty_unit)
+                                    : (Array.isArray(swapItem.selected_qty_unit) ? swapItem.selected_qty_unit : []);
+                            } catch (e) {
+                                console.warn('Invalid JSON in swapItem.selected_qty_unit:', swapItem.selected_qty_unit, e);
+                            }
 
-                        const checkedQtyUnitSwapItems = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
-                        const swapItemQtyUnitDisplay = checkedQtyUnitSwapItems.length
-                        ? `(${checkedQtyUnitSwapItems.map(({qty, unit}) => {
-                            const formattedQty = formatQtys(qty, unit);
-                            const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
-                            const display = `${formattedQty}${space}${unit}`;
-                            return display;
-                            }).join(' or ')})`
-                        : (() => {
-                            const {qty, unit} = item; // fallback
-                            const formattedQty = formatQtys(qty, unit);
-                            const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
-                            const display = `${formattedQty}${space}${unit}`;
-                            return `(${display})`;
-                            })();
+                            const checkedQtyUnitSwapItems = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
+                            const swapItemQtyUnitDisplay = checkedQtyUnitSwapItems.length
+                            ? `(${checkedQtyUnitSwapItems.map(({qty, unit}) => {
+                                const formattedQty = formatQtys(qty, unit);
+                                const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                                const display = `${formattedQty}${space}${unit}`;
+                                return display;
+                                }).join(' or ')})`
+                            : (() => {
+                                const {qty, unit} = item; // fallback
+                                const formattedQty = formatQtys(qty, unit);
+                                const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                                const display = `${formattedQty}${space}${unit}`;
+                                return `(${display})`;
+                                })();
 
-                        return `
-                            <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
+                                console.log('swapItemQtyUnitDisplay:', swapItemQtyUnitDisplay);
+                            return `
+                                <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
+                                    <div class="d-flex justify-content-between align-items-start mb-0">
+                                        <div class="col-9">
+                                            <div class="d-flex align-items-start">
+                                                <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
+                                                    data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy ?? 0)}">
+                                                <label class="form-check-label">${swapItem.name}</label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary view-info"
+                                                data-swap-item-id="${swapItem.id}" data-swapItem-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${swapItem.description}"  data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="${swapItem.description}">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
+                                                data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
+                                                data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
+                                                title="Edit"><i class="icofont-edit"></i></button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
+                                                data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Delete">
+                                                <i class="icofont-ui-delete"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <p class="px-2 mb-2 fw-bold">${swapItemQtyUnitDisplay}</p>
+                                            <p class="mb-0 px-2">Energy: ${parseFloat(swapItem.energy ?? 0)}kJ | Protein: ${Math.round(swapItem.protein)}g | Carb: ${Math.round(swapItem.carbs)}g | Fat: ${Math.round(swapItem.fat)}g</p>
+                                        </div>
+                                    </div>
+                                </li>`;
+                        }).join('');
+
+                        swapItemsHTML += `
+                            <li class="d-flex justify-content-between align-items-start mt-1">
+                                <div class="col-9"></div>
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+                                        data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        title="Add More"><i class="icofont-plus"></i></button>
+                                </div>
+                            </li>`;
+
+                    } else {
+                        swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="col-9">
+                                <span class="text-muted">No swap items available</span>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+                                    data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    title="Add"><i class="icofont-plus"></i>
+                                </button>
+                            </div>
+                        </li>`;
+                    }
+
+                    tableBody.append(`
+                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}" data-item-id="${item.id}">
+                            <td width="30" class="align-middle text-center">
+                                <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                            </td>
+                            <td class="text-wrap" width="50%">
                                 <div class="d-flex justify-content-between align-items-start mb-0">
                                     <div class="col-9">
                                         <div class="d-flex align-items-start">
-                                            <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                value="${swapItem.id}" class="form-check-input me-2 d-none" checked
-                                                data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy ?? 0)}">
-                                            <label class="form-check-label">${swapItem.name}</label>
+                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
+                                                value="${item.id}" class="form-check-input me-2 d-none" checked
+                                                data-carbs="${item.carbs}" data-protein="${item.protein}" data-fat="${item.fat}" data-energy="${parseFloat(item.energy ?? 0)}">
+                                            <label class="form-check-label flex-grow-1">
+                                              ${item.name}
+                                            </label>
                                         </div>
                                     </div>
                                     <div>
                                         <button type="button" class="btn btn-sm btn-outline-primary view-info"
-                                            data-swap-item-id="${swapItem.id}" data-swapItem-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${swapItem.description}"  data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="${swapItem.description}">
-                                            <i class="fas fa-info-circle text-primary"></i>
+                                            data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${item.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}">
+                                            <i class="fas fa-info-circle"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
-                                            data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
-                                            data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
-                                            title="Edit"><i class="icofont-edit text-success"></i></button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
-                                            data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Delete">
-                                            <i class="icofont-ui-delete text-danger"></i>
-                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-success edit-item"
+                                            data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}" 
+                                            data-selected-qty-unit='${JSON.stringify(item.selected_qty_unit)}'
+                                            title="Edit"><i class="icofont-edit"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-item"
+                                            data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"  
+                                            title="Delete"><i class="icofont-ui-delete"></i></button>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <p class="px-2 mb-2 fw-bold">${swapItemQtyUnitDisplay}</p>
-                                        <p class="mb-0 px-2">Energy: ${parseFloat(swapItem.energy ?? 0)}kJ | Protein: ${Math.round(swapItem.protein)}g | Carb: ${Math.round(swapItem.carbs)}g | Fat: ${Math.round(swapItem.fat)}g</p>
+                                        <p class="px-2 mb-2 fw-bold">${qtyUnitDisplay}</p>
+                                        <p class="px-2 mb-0">Energy: ${parseFloat((item.energy ?? 0))}kJ | Protein: ${Math.round(item.protein)}g | Carb: ${Math.round(item.carbs)}g | Fat: ${Math.round(item.fat)}g</p>
                                     </div>
+                                </div>
+                            </td>
+                            <td width="50%">
+                                <ul class="list-unstyled">${swapItemsHTML}</ul>
+                            </td>
+                        </tr>
+                    `);
+                }
+            });
+            items.forEach(item => {
+                if (!orderedItemIds.includes(item.id)) {
+                    const swapsFoods = item.swapItems || [];
+
+                    let selectedQtyUnits = [];
+                    try {
+                        selectedQtyUnits = typeof item.selected_qty_unit === 'string'
+                            ? JSON.parse(item.selected_qty_unit)
+                            : (Array.isArray(item.selected_qty_unit) ? item.selected_qty_unit : []);
+                    } catch (e) {
+                        console.warn('Invalid JSON in item.selected_qty_unit:', item.selected_qty_unit, e);
+                    }
+
+                    const checkedQtyUnits = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
+                    const qtyUnitDisplay = checkedQtyUnits.length
+                    ? `(${checkedQtyUnits.map(({qty, unit}) => {
+                        const formattedQty = formatQtys(qty, unit);
+                        const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                        const display = `${formattedQty}${space}${unit}`;
+                        return display;
+                        }).join(' or ')})`
+                    : (() => {
+                        const {qty, unit} = item; // fallback
+                        const formattedQty = formatQtys(qty, unit);
+                        const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                        const display = `${formattedQty}${space}${unit}`;
+                        return `(${display})`;
+                        })();
+
+                    let swapItemsHTML = '';
+                    console.log('swapsFoods:', swapsFoods);
+                    if (swapsFoods.length > 0) {
+                        swapItemsHTML = swapsFoods.map(swapItem => {
+                            const isSelectedSwapItem = preSelectedSwapItems?.[mealTimeId]?.[mealId]?.[item.id]?.includes(swapItem.id);
+                            let selectedQtyUnits = [];
+
+                            try {
+                                selectedQtyUnits = typeof swapItem.selected_qty_unit === 'string'
+                                    ? JSON.parse(swapItem.selected_qty_unit)
+                                    : (Array.isArray(swapItem.selected_qty_unit) ? swapItem.selected_qty_unit : []);
+                            } catch (e) {
+                                console.warn('Invalid JSON in swapItem.selected_qty_unit:', swapItem.selected_qty_unit, e);
+                            }
+
+                            const checkedQtyUnitSwapItems = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
+                            const swapItemQtyUnitDisplay = checkedQtyUnitSwapItems.length
+                            ? `(${checkedQtyUnitSwapItems.map(({qty, unit}) => {
+                                const formattedQty = formatQtys(qty, unit);
+                                const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                                const display = `${formattedQty}${space}${unit}`;
+                                return display;
+                                }).join(' or ')})`
+                            : (() => {
+                                const {qty, unit} = item; // fallback
+                                const formattedQty = formatQtys(qty, unit);
+                                const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                                const display = `${formattedQty}${space}${unit}`;
+                                return `(${display})`;
+                                })();
+
+                                console.log('swapItemQtyUnitDisplay:', swapItemQtyUnitDisplay);
+                            return `
+                                <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
+                                    <div class="d-flex justify-content-between align-items-start mb-0">
+                                        <div class="col-9">
+                                            <div class="d-flex align-items-start">
+                                                <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
+                                                    data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy ?? 0)}">
+                                                <label class="form-check-label">${swapItem.name}</label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary view-info"
+                                                data-swap-item-id="${swapItem.id}" data-swapItem-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${swapItem.description}"  data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="${swapItem.description}">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
+                                                data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
+                                                data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
+                                                title="Edit"><i class="icofont-edit"></i></button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
+                                                data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Delete">
+                                                <i class="icofont-ui-delete"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <p class="px-2 mb-2 fw-bold">${swapItemQtyUnitDisplay}</p>
+                                            <p class="mb-0 px-2">Energy: ${parseFloat(swapItem.energy ?? 0)}kJ | Protein: ${Math.round(swapItem.protein)}g | Carb: ${Math.round(swapItem.carbs)}g | Fat: ${Math.round(swapItem.fat)}g</p>
+                                        </div>
+                                    </div>
+                                </li>`;
+                        }).join('');
+
+                        swapItemsHTML += `
+                            <li class="d-flex justify-content-between align-items-start mt-1">
+                                <div class="col-9"></div>
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+                                        data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
-                    }).join('');
 
-                    swapItemsHTML += `
-                        <li class="d-flex justify-content-between align-items-start mt-1">
-                            <div class="col-9"></div>
+                    } else {
+                        swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="col-9">
+                                <span class="text-muted">No swap items available</span>
+                            </div>
                             <div>
-                                <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
+                                <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                    title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    title="Add"><i class="icofont-plus"></i>
+                                </button>
                             </div>
                         </li>`;
+                    }
 
-                } else {
-                    swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
-                        <div class="col-9">
-                            <span class="text-muted">No swap items available</span>
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-                                data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                title="Add"><i class="icofont-plus text-primary"></i>
-                            </button>
-                        </div>
-                    </li>`;
-                }
-
-                tableBody.append(`
-                    <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}">
-                        <td class="text-wrap" width="50%">
-                            <div class="d-flex justify-content-between align-items-start mb-0">
-                                <div class="col-9">
-                                    <div class="d-flex align-items-start">
-                                        <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
-                                            value="${item.id}" class="form-check-input me-2 d-none" checked
-                                            data-carbs="${item.carbs}" data-protein="${item.protein}" data-fat="${item.fat}" data-energy="${parseFloat(item.energy ?? 0)}">
-                                        <label class="form-check-label flex-grow-1">${item.name}</label>
+                    tableBody.append(`
+                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}" data-item-id="${item.id}">
+                            <td width="30" class="align-middle text-center">
+                                <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                            </td>
+                            <td class="text-wrap" width="50%">
+                                <div class="d-flex justify-content-between align-items-start mb-0">
+                                    <div class="col-9">
+                                        <div class="d-flex align-items-start">
+                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
+                                                value="${item.id}" class="form-check-input me-2 d-none" checked
+                                                data-carbs="${item.carbs}" data-protein="${item.protein}" data-fat="${item.fat}" data-energy="${parseFloat(item.energy ?? 0)}">
+                                            <label class="form-check-label flex-grow-1">
+                                              ${item.name}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-sm btn-outline-primary view-info"
+                                            data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${item.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-success edit-item"
+                                            data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}" 
+                                            data-selected-qty-unit='${JSON.stringify(item.selected_qty_unit)}'
+                                            title="Edit"><i class="icofont-edit"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-item"
+                                            data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"  
+                                            title="Delete"><i class="icofont-ui-delete"></i></button>
                                     </div>
                                 </div>
-                                <div>
-                                    <button type="button" class="btn btn-sm btn-outline-primary view-info"
-                                        data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${item.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}">
-                                        <i class="fas fa-info-circle text-primary"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-success edit-item"
-                                        data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}"
-                                        data-selected-qty-unit='${JSON.stringify(item.selected_qty_unit)}'
-                                        title="Edit"><i class="icofont-edit text-success"></i></button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger delete-item"
-                                        data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"
-                                        title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
+                                <div class="row">
+                                    <div class="col">
+                                        <p class="px-2 mb-2 fw-bold">${qtyUnitDisplay}</p>
+                                        <p class="px-2 mb-0">Energy: ${parseFloat((item.energy ?? 0))}kJ | Protein: ${Math.round(item.protein)}g | Carb: ${Math.round(item.carbs)}g | Fat: ${Math.round(item.fat)}g</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <p class="px-2 mb-2 fw-bold">${qtyUnitDisplay}</p>
-                                    <p class="px-2 mb-0">Energy: ${parseFloat((item.energy ?? 0))}kJ | Protein: ${Math.round(item.protein)}g | Carb: ${Math.round(item.carbs)}g | Fat: ${Math.round(item.fat)}g</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td width="50%">
-                            <ul class="list-unstyled">${swapItemsHTML}</ul>
-                        </td>
-                    </tr>
-                `);
+                            </td>
+                            <td width="50%">
+                                <ul class="list-unstyled">${swapItemsHTML}</ul>
+                            </td>
+                        </tr>
+                    `);
+                }
+            });
 
+            // Get the DOM element for the table body
+            const tableBodyEl = tableBody[0];
+
+            // Destroy previous Sortable instance if any (to avoid duplicates)
+            if (tableBodyEl._sortable) {
+                tableBodyEl._sortable.destroy();
+            }
+
+            // Initialize SortableJS
+            tableBodyEl._sortable = Sortable.create(tableBodyEl, {
+                animation: 150,
+                handle: '.drag-handle', // Only allow dragging by the handle
+                onEnd: function (evt) {
+                    // Get the new order of item IDs
+                    const newOrder = [];
+                    $(tableBodyEl).find('tr').each(function () {
+                        newOrder.push($(this).data('item-id'));
+                    });
+                    // Store newOrder as needed (e.g., in a hidden input or JS variable)
+                    // Example: window.currentItemOrder = newOrder;
+                    console.log('New order:', newOrder);
+                }
             });
 
             $('[data-bs-toggle="tooltip"]').tooltip('dispose').tooltip();
@@ -1943,7 +2159,7 @@
                                     selectedQtyUnits = rawJson; // Already parsed
                                 }
                             }
-                        } catch (e) {
+                    } catch (e) {
                             console.warn('Invalid selected_qty_unit JSON:', e);
                         }
 
@@ -2113,17 +2329,17 @@
                                                     <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                                         data-swap-item-id="${swapItem.id}" data-item-id="${swapItem.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${swapItem.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${swapItem.description}">
-                                                        <i class="fas fa-info-circle text-primary"></i>
+                                                        <i class="fas fa-info-circle"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                                         data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
                                                         data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
-                                                        title="Edit"><i class="icofont-edit text-success"></i></button>
+                                                        title="Edit"><i class="icofont-edit"></i></button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                                         data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Delete">
-                                                        <i class="icofont-ui-delete text-danger"></i>
+                                                        <i class="icofont-ui-delete"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -2143,8 +2359,8 @@
                                         <div>
                                             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                title="Add More"><i class="icofont-plus"></i></button>
                                         </div>
                                     </li>`;
                             } else {
@@ -2155,13 +2371,16 @@
                                             <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Add">
-                                                <i class="icofont-plus text-primary"></i>
+                                                <i class="icofont-plus"></i>
                                             </button>
                                         </div>
                                     </li>`;
                             }
                             const rowHTML = `
-                                <tr id="itemRow_${planID}_${mealTimeId}_${mealId}_${item.id}">
+                                <tr id="itemRow_${planID}_${mealTimeId}_${mealId}_${item.id}" data-item-id="${item.id}">
+                                    <td width="30" class="align-middle text-center">
+                                        <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                                    </td>
                                     <td class="text-wrap" width="50%">
                                         <div class="d-flex justify-content-between align-items-start mb-0">
                                             <div class="col-9">
@@ -2176,17 +2395,17 @@
                                                 <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                                     data-swap-item-id="${item.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                     data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${item.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}">
-                                                    <i class="fas fa-info-circle text-primary"></i>
+                                                    <i class="fas fa-info-circle"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                     data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}"
                                                     data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                                    title="Edit"><i class="icofont-edit text-success"></i></button>
+                                                    title="Edit"><i class="icofont-edit"></i></button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                     data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                    title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
+                                                    title="Delete"><i class="icofont-ui-delete"></i></button>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -2222,7 +2441,7 @@
                 return `(${checked.map(q => {
                     const unit = q.unit || '';
                     const qty = q.qty || '';
-                    const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
+                        const space = ['g', 'ml', 'mL'].includes(unit) ? '' : ' ';
                     const formattedQty = formatQty(qty, unit);
                     return `${formattedQty}${space}${unit}`;
                 }).join(' or ')})`;
@@ -2677,7 +2896,7 @@
             $('#editItemName').val(name);
             $('#editItemModal #description').val(description);
 
-            let selectedQtyUnits = [];
+                            let selectedQtyUnits = [];
             let rawJson = btn.attr('data-selected-qty-unit');
             try {
                 if (rawJson && rawJson !== "null") {
@@ -2821,18 +3040,18 @@
                     <div>
                         <button type="button" class="btn btn-sm btn-outline-primary view-info"
                             data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
-                            <i class="fas fa-info-circle text-primary"></i>
+                            <i class="fas fa-info-circle"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
                             data-meal-time-id="${mealTimeId}" data-user-id=""
                             data-item-qty="" data-item-unit=""
                             data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                            title="Edit"><i class="icofont-edit text-success"></i></button>
+                            title="Edit"><i class="icofont-edit"></i></button>
                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
                             data-meal-time-id="${mealTimeId}" data-user-id="" title="Delete">
-                            <i class="icofont-ui-delete text-danger"></i></button>
+                            <i class="icofont-ui-delete"></i></button>
                     </div>
                 </div>
                 <div class="row">
@@ -2844,8 +3063,7 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            // console.log(currentItemRow);
-            currentItemRow.find('td:nth-child(2)').html(updatedHTML);
+            currentItemRow.find('td:nth-child(3)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
@@ -3054,7 +3272,7 @@
             const baseFat = parseFloat(checkbox.data('fat')) || 0;
             const baseEnergy = parseFloat(checkbox.data('energy')) || 0;
 
-            const name = btn.closest('tr').find('td').first().find('label').text().split('(')[0].trim();
+            const name = btn.closest('tr').find('td').eq(1).find('label').text().split('(')[0].trim();
             $(`${modalId} #editItemName`).val(name);
 
             $('#editMainItemId').val(itemId);
@@ -3078,7 +3296,7 @@
                 if (rawJson && rawJson !== "null") {
                     selectedQtyUnits = JSON.parse(rawJson);
                 }
-            } catch (e) {
+                            } catch (e) {
                 console.warn('Invalid selected_qty_unit JSON:', e);
             }
 
@@ -3235,18 +3453,18 @@
                         <div>
                             <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                 data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
-                                <i class="fas fa-info-circle text-primary"></i>
+                                <i class="fas fa-info-circle"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}"
                                 data-swap-qty="${qty}" data-swap-unit="${unit}"
                                 data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                                title="Edit"><i class="icofont-edit"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}" title="Delete">
-                                <i class="icofont-ui-delete text-danger"></i></button>
+                                <i class="icofont-ui-delete"></i></button>
                         </div>
                     </div>
                     <div class="row">
@@ -3259,7 +3477,7 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            const liToReplace = currentItemRow.find(`td:nth-child(2) li[data-swap-item-id="${previousSwapItemId}"]`);
+            const liToReplace = currentItemRow.find(`td:nth-child(3) li[data-swap-item-id="${previousSwapItemId}"]`);
             liToReplace.replaceWith(updatedLI);
             $('[data-bs-toggle="tooltip"]').tooltip();
 
@@ -3469,7 +3687,7 @@
             const description = $(this).data('description');
 
             // Set item name
-            const name = btn.closest('tr').find('td').first().find('label').text().split('(')[0].trim();
+            const name = btn.closest('tr').find('td').eq(1).find('label').text().split('(')[0].trim();
             $(`${modalId} #itemName`).val(name);
 
             $(`${modalId} .modal-title`).text('Add Swap Food');
@@ -3694,18 +3912,18 @@
                         <div>
                             <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                 data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
-                                <i class="fas fa-info-circle text-primary"></i>
+                                <i class="fas fa-info-circle"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}"
                                 data-swap-qty="${qty}" data-swap-unit="${unit}"
                                 data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                                title="Edit"><i class="icofont-edit"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}" title="Delete">
-                                <i class="icofont-ui-delete text-danger"></i></button>
+                                <i class="icofont-ui-delete"></i></button>
                         </div>
                     </div>
                     <div class="row">
@@ -3720,15 +3938,15 @@
                     <div>
                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                            title="Add More"><i class="icofont-plus text-primary"></i></button>
+                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                            title="Add More"><i class="icofont-plus"></i></button>
                     </div>
                 </li>
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
             // Find and replace only the current <li> using swapItemId
-            const liToReplace = currentItemRow.find(`td:nth-child(2) ul`);
+            const liToReplace = currentItemRow.find(`td:nth-child(3) ul`);
             liToReplace.replaceWith(updatedLI);
             $('[data-bs-toggle="tooltip"]').tooltip();
             // updateFoodCount(swapItemId, 1, 'green');
@@ -3784,7 +4002,7 @@
             const description = $(this).data('description');
 
             // Set item name
-            const name = btn.closest('tr').find('td').first().find('label').text().split('(')[0].trim();
+            const name = btn.closest('tr').find('td').eq(1).find('label').text().split('(')[0].trim();
             $(`${modalId} #itemName`).val(name);
 
             $(`${modalId} .modal-title`).text('Add Swap Food');
@@ -4003,18 +4221,18 @@
                         <div>
                             <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                 data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
-                                <i class="fas fa-info-circle text-primary"></i>
+                                <i class="fas fa-info-circle"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}"
                                 data-swap-qty="${qty}" data-swap-unit="${unit}"
                                 data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                                title="Edit"><i class="icofont-edit"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}" title="Delete">
-                                <i class="icofont-ui-delete text-danger"></i></button>
+                                <i class="icofont-ui-delete"></i></button>
                         </div>
                     </div>
                     <div class="row">
@@ -4027,7 +4245,7 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            const swapItemsContainer = currentItemRow.find(`td:nth-child(2) ul`);
+            const swapItemsContainer = currentItemRow.find(`td:nth-child(3)`);
 
             // Check if there are any existing swap items
             const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
@@ -4039,7 +4257,6 @@
                 // If no existing items, replace the entire content
                 swapItemsContainer.html(updatedLI);
             }
-
             $('[data-bs-toggle="tooltip"]').tooltip();
 
             const modalEl = document.getElementById('addMoreSwapItemModal');
@@ -4347,7 +4564,7 @@
                                         <div class="col-9">
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
                                                     data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${swapItem.energy}">
                                                 <label class="form-check-label">${swapItem.title}</label>
                                             </div>
@@ -4355,17 +4572,17 @@
                                         <div>
                                             <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                                 data-description="${swapItem.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${swapItem.description}">
-                                                <i class="fas fa-info-circle text-primary"></i>
+                                                <i class="fas fa-info-circle"></i>
                                             </button>
                                             <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                                 data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
                                                 data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
-                                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                                                title="Edit"><i class="icofont-edit"></i></button>
                                             <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                                 data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Delete">
-                                                <i class="icofont-ui-delete text-danger"></i>
+                                                <i class="icofont-ui-delete"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -4390,8 +4607,8 @@
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                        title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
                     } else {
@@ -4402,13 +4619,16 @@
                                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Add">
-                                        <i class="icofont-plus text-primary"></i>
+                                        <i class="icofont-plus"></i>
                                     </button>
                                 </div>
                             </li>`;
                     }
                     const rowHTML = `
-                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}">
+                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}" data-item-id="${item.id}">
+                            <td width="30" class="align-middle text-center">
+                                <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                            </td>
                             <td class="text-wrap" width="50%">
                                 <div class="d-flex justify-content-between align-items-start mb-0">
                                     <div class="col-9">
@@ -4424,17 +4644,17 @@
                                         <button type="button" class="btn btn-sm btn-outline-primary"
                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="${item.description}">
-                                            <i class="fas fa-info-circle text-primary"></i>
+                                            <i class="fas fa-info-circle"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${qty}" data-item-unit="${unit}"
                                             data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                            title="Edit"><i class="icofont-edit text-success"></i></button>
+                                            title="Edit"><i class="icofont-edit"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                            title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
+                                            title="Delete"><i class="icofont-ui-delete"></i></button>
                                     </div>
                                 </div>
                                     <div class="row">
@@ -4477,7 +4697,7 @@
                 const $row = $(this);
 
                 // Find checked input inside first <td> (main item)
-                const $mainItemInput = $row.find('td:first input[type="checkbox"]:checked');
+                const $mainItemInput = $row.find('td').eq(1).find('input[type="checkbox"]:checked');
                 if ($mainItemInput.length) {
                     totalCarbs += parseFloat($mainItemInput.data('carbs')) || 0;
                     totalProtein += parseFloat($mainItemInput.data('protein')) || 0;
@@ -4533,7 +4753,7 @@
                     selectedValues.push(response.meal_id); // Add updated meal ID to selection
                     mealDropdown.val(selectedValues).trigger('change'); // Restore selection with updated name
                     // window.location.reload();
-                } else {
+                    } else {
                     console.error(response.message);
                     alert('Failed to update meal name.');
                 }
@@ -4821,7 +5041,7 @@
                                 '<span class="text-muted">No swap items available</span>';
 
                             tableBody.append(`
-                                <tr data-food-id="${food.id}">
+                                <tr data-food-id="${food.id}" data-item-id="${food.id}" data-item-id="${food.id}">
                                     <td width="45%">
                                         <div class="d-flex align-items-start">
                                             <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
@@ -4838,8 +5058,8 @@
                                                 <div>
                                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                                         data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                        title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                        title="Add More"><i class="icofont-plus"></i></button>
                                                 </div>
                                             </li>
                                         </ul>
@@ -4848,7 +5068,7 @@
                                         <button type="button" class="btn btn-sm btn-outline-primary"
                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="${food.description}">
-                                            <i class="fas fa-info-circle text-primary"></i>
+                                            <i class="fas fa-info-circle"></i>
                                         </button>
                                         <button class="btn btn-sm edit-food btn-outline-success"
                                                 data-food-id="${food.id}"
@@ -4859,13 +5079,13 @@
                                                 data-swapfood-unit="${swapFoods[0]?.unit || ''}"
                                                 data-food-qty="${food.qty}"
                                                 data-food-unit="${food.unit}">
-                                            <i class="icofont-edit text-success"></i>
+                                            <i class="icofont-edit"></i>
                                         </button>
                                         <button class="btn  btn-sm delete-food btn-outline-danger"
                                                 data-food-id="${food.id}"
                                                 data-meal-id="${mealId}"
                                                 data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}">
-                                            <i class="icofont-ui-delete text-danger"></i>
+                                            <i class="icofont-ui-delete"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -4943,50 +5163,50 @@
 
                             // Since swap items are not available, show the message
                             const swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
-                                                    <div class="col-9">
-                                                        <span class="text-muted">No swap items available</span>
-                                                    </div>
-                                                    <div>
-                                                        <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
+                            <div class="col-9">
+                                <span class="text-muted">No swap items available</span>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                                             data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                            title="Add"><i class="icofont-plus text-primary"></i>
-                                                        </button>
-                                                    </div>
-                                                </li>`;
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    title="Add"><i class="icofont-plus"></i>
+                                </button>
+                            </div>
+                        </li>`;
 
                             // Append the single food item row to the table
-                            tableBody.append(`
-                                <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${food.id}">
-                                    <td class="text-wrap" width="50%">
-                                        <div class="d-flex justify-content-between align-items-start mb-0">
-                                            <div class="col-9">
-                                                <div class="d-flex align-items-start">
-                                                    <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
-                                                        value="${food.id}" class="form-check-input me-2 d-none" checked
-                                                        data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}">
-                                                    <label class="form-check-label flex-grow-1">${food.title}</label>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn btn-sm btn-outline-primary"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="${food.description}">
-                                                    <i class="fas fa-info-circle text-primary"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-sm btn-outline-success edit-item"
-                                                    data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${food.qty}" data-item-unit="${food.unit}"
-                                                    data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                                    title="Edit"><i class="icofont-edit text-success"></i></button>
-                                                <button type="button" class="btn btn-sm btn-outline-danger delete-item"
-                                                    data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                    title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
-                                            </div>
+                    tableBody.append(`
+                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${food.id}" data-item-id="${item.id}">
+                            <td class="text-wrap" width="50%">
+                                <div class="d-flex justify-content-between align-items-start mb-0">
+                                    <div class="col-9">
+                                        <div class="d-flex align-items-start">
+                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
+                                                value="${food.id}" class="form-check-input me-2 d-none" checked
+                                                data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}">
+                                            <label class="form-check-label flex-grow-1">${food.title}</label>
                                         </div>
-                                        <div class="row">
-                                            <div class="col">
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="${food.description}">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-success edit-item"
+                                            data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${food.qty}" data-item-unit="${food.unit}"
+                                            data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
+                                            title="Edit"><i class="icofont-edit"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-item"
+                                            data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
+                                        title="Delete"><i class="icofont-ui-delete"></i></button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
                                                 <p class="px-2 mb-2 fw-bold">(${
                                                     typeof food.qty === 'string' && food.qty.includes('/')
                                                         ? food.qty
@@ -4998,14 +5218,14 @@
                                                 }${["g", "ml", "mL"].includes(food.unit) ? food.unit : ' ' + food.unit})
                                                 </p>
                                                 <p class="mb-0 px-2">Energy: ${parseFloat(food.protein)}kJ | Protein: ${Math.round(food.protein)}g | Carb: ${Math.round(food.carbs)}g | Fat: ${Math.round(food.fat)}g</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td width="50%">
-                                        <ul class="list-unstyled">${swapItemsHTML}</ul>
-                                    </td>
-                                </tr>
-                            `);
+                                    </div>
+                                </div>
+                            </td>
+                            <td width="50%">
+                                <ul class="list-unstyled">${swapItemsHTML}</ul>
+                            </td>
+                        </tr>
+                    `);
                         // }
                         updateFoodCount(food.id, 1, 'green');
                         calculateTotals(planId, mealTimeId, mealId);
