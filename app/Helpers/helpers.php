@@ -39,7 +39,7 @@ function frontAssets($path) {
 }
 
 function webAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/' . $path : 'private/public/' . $path;
+	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/' . $path : 'public/' . $path;
 	return asset($asset);
 }
 
