@@ -34,7 +34,7 @@ function backendRoutePut($key, $args = []) {
 }
 
 function frontAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/front/' . $path : 'front/' . $path;
+	$asset = config('constant.ENVIRONMENT') == 'production' ? 'front/' . $path : 'front/' . $path;
 	return asset($asset);
 }
 

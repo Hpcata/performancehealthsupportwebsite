@@ -19,63 +19,69 @@ use App\Models\User;
 use App\Models\UserCategory;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
+use App\Services\ActivityTracker;
+use App\Models\TrackingType;
 
 class PlanController extends Controller
 {
     public function show(Request $request, $id)
-{
-    $plan = Plan::find($id);
-    if (!$plan) return back()->with('error', 'Plan not found.');
+    {
+        $plan = Plan::find($id);
+        if (!$plan) return back()->with('error', 'Plan not found.');
 
-    $user = User::find($request->user_id);
-    if (!$user) return back()->with('error', 'User not found.');
+        $user = User::find($request->user_id);
+        if (!$user) return back()->with('error', 'User not found.');
 
-    $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
+        $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
 
-    $userPlans = UserPlan::where('user_id', $user->id)
-        ->where(function ($query) use ($id, $subPlans) {
-            $query->where('plan_id', $id)
-                  ->orWhereIn('plan_id', $subPlans);
-        })
-        ->get();
+        $userPlans = UserPlan::where('user_id', $user->id)
+            ->where(function ($query) use ($id, $subPlans) {
+                $query->where('plan_id', $id)
+                    ->orWhereIn('plan_id', $subPlans);
+            })
+            ->get();
 
-    foreach ($userPlans as $userPlan) {
-        $userPlan->load([
-            'plan',
-            'userCategories' => function ($query) use ($userPlan) {
-                $query->where('user_plan_id', $userPlan->id)
-                      ->whereHas('userSubCategories', function ($subQ) use ($userPlan) {
-                          $subQ->where('user_plan_id', $userPlan->id)
-                               ->whereHas('userMeals', fn ($mealQ) =>
-                                   $mealQ->where('user_plan_id', $userPlan->id)
-                               );
-                      })
-                      ->with([
-                          'category',
-                          'userSubCategories' => function ($subQ) use ($userPlan) {
-                              $subQ->where('user_plan_id', $userPlan->id)
-                                   ->whereHas('userMeals', fn ($mealQ) =>
-                                       $mealQ->where('user_plan_id', $userPlan->id)
-                                   )
-                                   ->with(['userMeals' => fn ($mealQ) =>
-                                       $mealQ->where('user_plan_id', $userPlan->id)
-                                   ]);
-                          }
-                        ]);
-                    //   ->orderByRaw('COALESCE(`order`, 0)');
-            }
+        foreach ($userPlans as $userPlan) {
+            $userPlan->load([
+                'plan',
+                'userCategories' => function ($query) use ($userPlan) {
+                    $query->where('user_plan_id', $userPlan->id)
+                        ->whereHas('userSubCategories', function ($subQ) use ($userPlan) {
+                            $subQ->where('user_plan_id', $userPlan->id)
+                                ->whereHas('userMeals', fn ($mealQ) =>
+                                    $mealQ->where('user_plan_id', $userPlan->id)
+                                );
+                        })
+                        ->with([
+                            'category',
+                            'userSubCategories' => function ($subQ) use ($userPlan) {
+                                $subQ->where('user_plan_id', $userPlan->id)
+                                    ->whereHas('userMeals', fn ($mealQ) =>
+                                        $mealQ->where('user_plan_id', $userPlan->id)
+                                    )
+                                    ->with(['userMeals' => fn ($mealQ) =>
+                                        $mealQ->where('user_plan_id', $userPlan->id)
+                                    ]);
+                            }
+                            ]);
+                        //   ->orderByRaw('COALESCE(`order`, 0)');
+                }
+            ]);
+        }
+
+        $click = ActivityTracker::click('view_plan_button_click', $user->id);
+
+        ActivityTracker::log(TrackingType::PLAN_VIEWED, $user->id, [
+            'user_click_id' => $click->id,
+            'section_element_id' => $click->section_element_id,
+            'plan_id' => $plan->id,
         ]);
-    }
-    // dd($userPlans->toArray());
 
-    return view('front.plan-details', compact('userPlans', 'plan', 'user'));
-}
+        return view('front.plan-details', compact('userPlans', 'plan', 'user'));
+    }
 
     public function mealTimeDetails(Request $request, $id, $plan_id)
     {
-        // $userPlan = UserPlan::with('plan', 
-        // 'userCategories.userSubCategories.userMeals')->where('id', $plan_id)->first();
-
         $userPlan = UserPlan::with([
             'plan',
             // ---- userCategories sorted by categories.order -------------
@@ -91,7 +97,7 @@ class PlanController extends Controller
         $userMealTime = UserCategory::with('userSubCategories.userMeals')->where('id', $id)
         ->where('user_plan_id', $plan_id)
         ->first();
-        // dd($userMealTime);
+       
         // $mealtime = MealTime::with('categories','categories.subcategories')->findOrFail($id);
         return view('front.sub-category-details', compact('userMealTime','userPlan'));
     }
@@ -122,19 +128,17 @@ class PlanController extends Controller
 
     public function getMeals(Request $request, $id)
     {
-        // Validate required parameters
         $request->validate([
             'user_category_id' => 'required|integer',
             'user_plan_id' => 'required|integer',
         ]);
 
-        // Load the UserSubCategory along with related meals and their items
         $categories = \App\Models\UserSubCategory::with('userMeals.meal') // Ensure 'meal' relation is loaded
             ->where('user_plan_id', $request->user_plan_id)
             ->where('user_category_id', $request->user_category_id)
             ->where('id', $id)
             ->get();
-        // dd($categories);
+
         if ($categories->isEmpty()) {
             return response()->json([
                 'success' => false,
@@ -143,7 +147,6 @@ class PlanController extends Controller
             ], 404);
         }
 
-        // Flatten all userMeals from each sub-category and transform them
         $meals = $categories->flatMap(function ($subCategory) use($request, $id){
             return $subCategory->userMeals->where('user_plan_id', $request->user_plan_id)
             ->where('user_category_id', $request->user_category_id)
@@ -161,7 +164,7 @@ class PlanController extends Controller
                     'user_sub_category_id' => $userMeal->user_sub_category_id
                 ];
             });
-        })->values(); // Reset the keys
+        })->values();
 
         return response()->json([
             'success' => true,
@@ -187,7 +190,6 @@ class PlanController extends Controller
 
     public function getMealItems(Request $request)
     {
-        // Fetch the meal with its items and filtered relationships
         $userMeal = \App\Models\UserMeal::with([
             'userItems' => function ($query) use ($request) {
                 $query->where('user_plan_id', $request->user_plan_id)
@@ -247,14 +249,13 @@ class PlanController extends Controller
                     : 'https://via.placeholder.com/300x200?text=No+Image',
                 'swapItems' => $userItem->userSwapItems,
             ];
-        })->values(); // Reset keys to numeric indexes
+        })->values();
 
         return response()->json([
             'meal' => $userMeal->meal->title,
             'items' => $items,
         ]);
     }
-
 
     // public function getMealItems(Request $request)
     // {
@@ -612,7 +613,6 @@ class PlanController extends Controller
     
     public function applySwaps(Request $request)
     {
-        // Validate request inputs
         $request->validate([
             'meal_id' => 'required|exists:meals,id',
             'swaps' => 'required|array',
@@ -631,7 +631,6 @@ class PlanController extends Controller
         $userPlanId = $request->user_plan_id;
         $userMealId = $request->user_meal_id;
 
-        // dd($request->all());
         try {
             \DB::beginTransaction();
 
@@ -744,7 +743,7 @@ class PlanController extends Controller
                     ->where('user_sub_category_id', $subCategoryId)
                     ->where('user_meal_id', $userMealId)
                     ->first();
-                // dd($userItem);
+
                 if ($userItem) {
                     $userMealId = $userItem->user_meal_id;
 
@@ -794,6 +793,22 @@ class PlanController extends Controller
                     throw new \Exception("Item to swap not found in the meal for swap_id {$swap['swap_id']}");
                 }
             }
+
+            $click = ActivityTracker::click('button_applied_swap', $request->user_id);
+
+            ActivityTracker::log(TrackingType::PRODUCT_SWAP, $request->user_id, [
+                'user_click_id' => $click->id,
+                'section_element_id' => $click->section_element_id,
+                'meal_id' => $mealId,
+                'meal_name' => $mealName,
+                'swaps' => $swaps,
+                'user_plan_id' => $userPlanId,
+                'user_meal_id' => $userMealId,
+                'user_category_id' => $categoryId,
+                'user_sub_category_id' => $subCategoryId,
+                'user_id' => $userId,
+                'action' => 'apply_swaps',
+            ]);
 
             \DB::commit();
 
@@ -1049,5 +1064,31 @@ class PlanController extends Controller
         return response()->json([
             'categories' => $result
         ]);
-    }  
+    }
+
+    public function trackClick(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $click = \App\Services\ActivityTracker::click('button_meal_smart_swap', $request->user_id);
+
+        ActivityTracker::log(TrackingType::PRODUCT_SWAP, $request->user_id, [
+            'section_element_id' => $click->section_element_id,
+            'user_click_id' => $click->id,
+            'meal_id' => $request->meal_id ?? null,
+            'meal_name' => $request->meal_name ?? null,
+            'user_plan_id' => $request->user_plan_id ?? null,
+            'user_meal_id' => $request->user_meal_id ?? null,
+            'user_category_id' => $request->user_category_id ?? null,
+            'user_sub_category_id' => $request->user_sub_category_id ?? null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $click,
+            'message' => 'Click tracked successfully.',
+        ]);
+    }
 }

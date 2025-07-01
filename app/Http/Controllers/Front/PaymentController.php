@@ -12,11 +12,14 @@ use App\Models\User;
 use Hash;
 use Str;
 use Auth;
-use App\Models\UserPlan;
+use App\Models\UserPrePlan;
 use App\Mail\PlanPurchaseMail;
 use App\Mail\PrePlanDetailsSubmitMail;
 use App\Models\Payment;
+use App\Models\Quiz;
 use GuzzleHttp\Client;
+use App\Services\ActivityTracker;
+use App\Models\TrackingType;
 
 class PaymentController extends Controller
 {
@@ -321,12 +324,30 @@ class PaymentController extends Controller
 
                     if ($coupon->type === 'percentage' && $coupon->value == 100.00) {
                         $discount = 'full';
+                        $sectionElement = 'full_discount';
+                        $couponType = TrackingType::FREE_PLAN_COUPON;
                     } elseif ($coupon->type === 'percentage') {
                         $discount = ($validated['price'] * $coupon->value) / 100;
+                        $sectionElement = 'percentage_discount';
+                        $couponType = TrackingType::COUPON_APPLIED;
                     } elseif ($coupon->type === 'fixed') {
                         $discount = $coupon->value;
+                        $sectionElement = 'fixed_discount';
+                        $couponType = TrackingType::COUPON_APPLIED;
                     }
 
+                    $click = ActivityTracker::click($sectionElement, $user->id);
+
+                    // Log in trackings with click reference
+                    ActivityTracker::log($couponType, $user->id, [
+                        'user_click_id' => $click->id,
+                        'section_element_id' => $click->section_element_id,
+                        'coupon_code' => $validated['coupon_code'],
+                        'coupon_id' => $coupon->id,
+                        'discount' => $discount,
+                        'plan_id' => $validated['plan_id'],
+                    ]);
+                    
                 } else {
                     return response()->json(['success' => false, 'message' => 'Invalid or expired coupon code.']);
                 }
@@ -637,6 +658,17 @@ class PaymentController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                $click = ActivityTracker::click('questionnaire_started', $user_id);
+
+                // Log in trackings with click reference
+                ActivityTracker::log(TrackingType::QUESTIONNAIRE_STARTED, $user_id, [
+                    'user_click_id' => $click->id,
+                    'section_element_id' => $click->section_element_id,
+                    'questionnaire_completed' => false,
+                    'questionnaire_id' => $prePlanId,
+                    'payment_id' => $payment_id,
+                ]);
             }
 
             // Remove old data for this step
@@ -706,15 +738,20 @@ class PaymentController extends Controller
             $email = $payment->user->email;
             $planName = \App\Models\Plan::where('id', $payment->plan_id)->first()->name;
             $user = $payment->user;
-            // try {
-            //     Mail::to($email)->send(new PlanPurchaseMail($user, $planName));
-    
-            //     $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
-            //     Mail::to($adminEmail)->send(new PrePlanDetailsSubmitMail($user, $planName));  // passing 'true' to indicate it's an admin
-            // } catch (\Exception $e) {
-            //     Log::error('Error saving step: ' . $e->getMessage());
-            // }
 
+            if($step == 9) {
+                $click = ActivityTracker::click('questionnaire_completed', $user->id);
+
+                // Log in trackings with click reference
+                ActivityTracker::log(TrackingType::QUESTIONNAIRE_COMPLETED, $user->id, [
+                    'user_click_id' => $click->id,
+                    'section_element_id' => $click->section_element_id,
+                    'questionnaire_completed' => true,
+                    'questionnaire_id' => $prePlanId,
+                    'payment_id' => $payment_id,
+                ]);
+            }
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Step data saved successfully!',
@@ -929,6 +966,10 @@ class PaymentController extends Controller
         if (!$user || !$payment || !$plan) {
             return response()->json(['success' => false, 'message' => 'Invalid data.']);
         }
+
+        $userPrePlan = UserPrePlan::where('user_id', $user->id)
+            ->where('payment_id', $payment->id)
+            ->first();
 
         try {
             Mail::to($user->email)->send(new PlanPurchaseMail($user, $plan->name));

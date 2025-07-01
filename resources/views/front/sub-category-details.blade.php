@@ -243,7 +243,6 @@
         const $itemsSwapContainer = $('#itemsSwapContainer');
         const $itemsSwapLoadingSpinner = $('#itemsSwapLoadingSpinner');
 
-        // Handle click event to fetch subcategories
         $('body').on('click', '.view-details-btn', function () {
             const subCategoryId = $(this).data('sub-category-id');
             const subCategoryName = $(this).data('sub-category-name');
@@ -254,21 +253,18 @@
                 return;
             }
 
-            // Update modal title
             $mealModalLabel.text(subCategoryName);
 
-            // Clear previous subcategories and show loading spinner
             $mealModelContainer.empty().hide();
             $mealModelLoadingSpinner.show();
 
-            // Fetch subcategories via AJAX
             $.ajax({
                 url: '{{ route('front.category.meals', ':id') }}'.replace(':id', subCategoryId) + `?user_category_id=${userCategoryId}&user_plan_id=${userPlanId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
                     if (data.meals && data.meals.length > 0) {
-                        // Populate subcategories into the modal
+                        
                         let mealCard = '';
                         $.each(data.meals, function (index, meal) {
                             mealCard = `
@@ -294,7 +290,7 @@
                         </div>`;
                             $mealModelContainer.append(mealCard);
                         });
-                        // Append last card: "Purchase More Meals" only
+                        
                         const purchaseMoreCard = `
                             <div class="col-sm-6 col-lg-4 d-none">
                                 <div class="nutrition-plan-box h-100 d-flex flex-column justify-content-center align-items-center">
@@ -321,7 +317,6 @@
                 }
             });
 
-            // Show the modal
             $mealModel.modal('show');
         });
 
@@ -334,6 +329,27 @@
             const userSubCategoryId = $(this).data('sub-category-id');
             const userCategoryId = $(this).data('category-id');
 
+            $.ajax({
+                url: '{{ route("front.track.click") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    meal_id: mealId,
+                    meal_name: mealName,
+                    user_meal_id: userMealId,
+                    user_plan_id: userPlanId,
+                    user_sub_category_id: userSubCategoryId,
+                    user_category_id: userCategoryId,
+                    user_id: userId
+                },
+                success: function (response) {
+                    console.log('Click tracked successfully:', response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error tracking click:', error);
+                }
+            });
+            
             if (!mealId || !mealName) {
                 console.error('Invalid meal data.');
                 return;

@@ -12,11 +12,13 @@ use Illuminate\Support\Facades\Validator;
 use DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-
+use App\Services\ActivityTracker;
+use App\Models\TrackingType;
 class QuizController extends Controller
 {
     public function startQuiz(Request $request)
     {
+        // dd($request->all());
         try {
             $quiz = Quiz::create([
                 'user_id' => null,
@@ -26,11 +28,20 @@ class QuizController extends Controller
                 'started_at' => now()
             ]);
 
+            $click = ActivityTracker::click('quiz_button_click', null);
+
+            // Log in trackings with click reference
+            ActivityTracker::log(TrackingType::QUIZ_BUTTON_CLICK, null, [
+                'user_click_id' => $click->id,
+                'section_element_id' => $click->section_element_id,
+            ]);
+
             return response()->json([
                 'success' => true,
                 'quiz_id' => $quiz->id
             ]);
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error starting quiz: ' . $e->getMessage()
@@ -86,6 +97,17 @@ class QuizController extends Controller
                 }
             }
         });
+
+        if($request->step == 1) {
+            $click = ActivityTracker::click('quiz_started', null);
+
+            // Log in trackings with click reference
+            ActivityTracker::log(TrackingType::QUIZ_STARTED, null, [
+                'user_click_id' => $click->id,
+                'section_element_id' => $click->section_element_id,
+                'quiz_id' => $quiz->id,
+            ]);
+        }
 
         return response()->json([
             'success' => true,
@@ -186,9 +208,20 @@ class QuizController extends Controller
                 'supplements_feedback' => $supplementFeedback,
                 'completed_at' => now()
             ]);
+
+            $click = ActivityTracker::click('quiz_submit_button_click', $request->user_id);
+
+            // Log in trackings with click reference
+            ActivityTracker::log(TrackingType::QUIZ_COMPLETED, $request->user_id, [
+                'user_click_id' => $click->id,
+                'section_element_id' => $click->section_element_id,
+                'quiz_id' => $quiz->id,
+            ]);
+
             try {
                 $user = User::find($request->user_id);
-                $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
+                // $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
+                $adminEmail = 'kartikvadhaiya6656@gmail.com'; // Set admin email address
                 Mail::to($adminEmail)->send(new \App\Mail\QuizSubmittedMail($user, $quiz));
 
                 Mail::to($user->email)->send(new \App\Mail\FreeTestResultMail($user, $quiz));
