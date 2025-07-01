@@ -37,10 +37,27 @@ class PurchasePlanController extends Controller
     public function index()
     {
         // Fetch payments with pagination (you can adjust per page as needed)
-        $payments = Payment::with('plan')->get();
-        // dd($payments);
+        $payments = Payment::with('plan:id,name')->get();
+        $planIds = array_unique(array_column($payments->toArray(), 'plan_id'));
+        $userIds = array_unique(array_column($payments->toArray(), 'user_id'));
+
+        $useWisePlanData = [];
+        if($userIds && $planIds) {
+            $userPlanQuery = UserPlan::select([
+                'id',
+                'user_id',
+                'plan_id'
+            ])->whereIn('user_id', $userIds)->whereIn('plan_id', $planIds)->get()->toArray();
+
+            if($userPlanQuery) {
+                foreach($userPlanQuery as $plan) {
+                    $useWisePlanData[$plan['user_id']][] = $plan['plan_id'];
+                }
+            }
+        }
+
         // Return the view with the payments data
-        return view('backend.pages.plan.purchase-plans', compact('payments'));
+        return view('backend.pages.plan.purchase-plans', compact('payments', 'useWisePlanData'));
     }
 
     public function create($id)
