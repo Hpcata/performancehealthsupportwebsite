@@ -4,66 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Plan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-        }
         body {
             font-family: Arial, sans-serif;
             line-height: 1.2;
             margin: 0;
             padding: 0;
         }
+
         h1, h2, h3 {
             color: #333;
         }
+
         .meal-plan {
             margin-bottom: 3px;
         }
+
         .meal-time {
             margin-bottom: 3px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         table, th, td {
             border: 1px solid #ddd;
         }
+
         th, td {
             padding: 5px;
             text-align: left;
         }
+
         td img {
             width: 80px;
             height: 80px;
         }
+
         td:first-child {
             text-align: center;
             width: 15%;
         }
+
         td:nth-child(2) {
             padding-left: 10px;
             width: 42%;
         }
+
         td:nth-child(3) {
             width: 43%;
             padding-left: 10px;
         }
+
         ul {
             padding-left: 10px;
             margin: 0;
         }
+
         li {
             margin: 5px 0;
         }
+
+        /* Header Style */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            width: 100%; /* Full width for sport image */
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .header h2 {
+            color: #333;
+            font-size: 28px;
+            margin-top: 10px;
+        }
+
+        .header .headline {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* Footer Style */
         .footer {
             text-align: center;
             position: fixed;
             bottom: 20px;
             width: 100%;
         }
+
         .footer img {
             width: 150px; /* Adjust size of the logo */
         }
@@ -72,30 +107,15 @@
 <body>
     @if($printAllmeal)
         @foreach($userPlans as $userPlan)
-            <header class="bg-[#0b2d48] rounded-3xl lg:rounded-[50px] overflow-hidden shadow-lg">
-                <div class="flex flex-col lg:flex-row">
-                    <!-- Left Side: Info -->
-                    <div class="p-8 lg:p-12 lg:w-1/2 text-white">
-                        <div class="flex items-center gap-4">
-                            <div class="bg-[#2c75d8] text-white font-bold p-4 rounded-lg">
-                                <span class="text-3xl">PHS</span>
-                            </div>
-                            <p class="text-xs font-light tracking-wider">PERFORMANCE<br>HEALTH SUPPORT</p>
-                        </div>
-                        <h1 class="text-4xl md:text-5xl font-bold mt-6">{{ $userPlan->user->first_name }}'s</h1>
-                        <p class="text-3xl md:text-4xl font-light text-slate-300">{{ $userPlan->plan->name }}</p>
-                    </div>
+            <div class="header">
+                @if($userPlan->user_id == 66)
+                    <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
+                @else
+                    <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
+                @endif
+                <h2 style="color: #333">{{ $userPlan->plan->name }}</h2>
+            </div>
 
-                    <!-- Right Side: Image -->
-                    <div class="lg:w-1/2 min-h-[250px] bg-cover bg-center header-bg-image" >
-                        @if($userPlan->user_id == 66)
-                            <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
-                        @else
-                            <img src="{{ asset($userPrePlan->sport_image) ?? url('front/images/about-new.png') }}" alt="Sport Image">
-                        @endif
-                    </div>
-                </div>
-            </header>
             <div class="meal-plan">
                 @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userMealTime)
                     @php
