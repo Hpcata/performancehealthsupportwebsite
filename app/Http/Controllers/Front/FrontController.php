@@ -51,19 +51,14 @@ class FrontController extends Controller
     }
 
     public function index()
-    {
-        
-        $plans = \App\Models\Plan::all();
-        //dd($plans);
-        $page = \App\Models\Page::with('sections')->where('slug', 'home')->first();
-       
+    { 
         $requirements = [];
     
         $disabledDay = json_encode([]);
        
         $organization = [];
         $testimonials = [];
-        return view('front.index', compact('requirements','page', 'plans','disabledDay','organization','testimonials'));
+        return view('front.index', compact('requirements','disabledDay','organization','testimonials'));
     }
 
     public function save(QueryRequest $request)

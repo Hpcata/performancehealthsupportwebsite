@@ -55,14 +55,12 @@
                         </thead>
                         <tbody>
                             @foreach($payments as $payment)
-                            @php
-
-                            $isPlanCreated = false;
-                            $userPlan = \App\Models\UserPlan::where('user_id', $payment->user_id)->where('plan_id', $payment->plan_id)->first();
-                            if($userPlan) {
-                                $isPlanCreated = true;
-                            }
-                            @endphp
+                                @php
+                                    $isPlanCreated = false;
+                                    if(array_key_exists($payment->user_id, $useWisePlanData) && in_array($payment->plan_id, $useWisePlanData[$payment->user_id])) {
+                                        $isPlanCreated = true;
+                                    }
+                                @endphp
                             <tr>
                                 <td>{{ $payment->id }}</td>
                                 <td>{{ $payment->plan->name ?? 'N/A' }}</td> <!-- Assuming you have a 'name' field in Plan model -->
