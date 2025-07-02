@@ -130,31 +130,14 @@
 <body>
     @if (empty($groupedData))
         @foreach($userPlans as $userPlan)
-            <header class="bg-[#0b2d48] rounded-3xl lg:rounded-[50px] overflow-hidden shadow-lg">
-                <div class="flex flex-col lg:flex-row">
-                    <!-- Left Side: Info -->
-                    <div class="p-8 lg:p-12 lg:w-1/2 text-white">
-                        <div class="flex items-center gap-4">
-                            <div class="bg-[#2c75d8] text-white font-bold p-4 rounded-lg">
-                                <span class="text-3xl">PHS</span>
-                            </div>
-                            <p class="text-xs font-light tracking-wider">PERFORMANCE<br>HEALTH SUPPORT</p>
-                        </div>
-                        <h1 class="text-4xl md:text-5xl font-bold mt-6">Zach's</h1>
-                        <p class="text-3xl md:text-4xl font-light text-slate-300">{{ $userPlan->plan->name }}</p>
-                    </div>
-
-                    <!-- Right Side: Image -->
-                    <div class="lg:w-1/2 min-h-[250px] bg-cover bg-center "  style="background-image: url('{{ $userPlan->user_id == 66 ? asset('private/public/front/images/plan-67.png') : asset('front/images/about-new.png') }}');">
->
-                        @if($userPlan->user_id == 66)
-                            <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
-                        @else
-                            <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
-                        @endif
-                    </div>
-                </div>
-            </header>
+            <div class="header">
+                @if($userPlan->user_id == 66)
+                    <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
+                @else
+                    <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
+                @endif
+                <h2 style="color: #333">{{ $userPlan->plan->name }}</h2>
+            </div>
 
             <div class="meal-plan">
                 @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userMealTime)
