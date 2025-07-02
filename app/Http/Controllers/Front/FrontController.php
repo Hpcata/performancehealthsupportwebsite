@@ -1708,4 +1708,46 @@ class FrontController extends Controller
         ]);
     }
 
+    public function updateSport(Request $request)
+    {
+        $request->validate([
+            'sport' => 'required|string|max:255',
+            'sport_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+    
+        $userPrePlan = UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $request->payment_id)->first();
+        
+        $userPrePlan->occupation = $request->sport;
+
+        if ($request->hasFile('sport_image')) {
+            $file = $request->file('sport_image');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = 'uploads/sport_images/' . $fileName;
+            $directoryPath = public_path('uploads/sport_images');
+
+            // Create directory if not exists
+            if (!File::exists($directoryPath)) {
+                File::makeDirectory($directoryPath, 0777, true, true);
+            }
+
+            // Move new image
+            $file->move($directoryPath, $fileName);
+
+            // Delete old image if exists
+            if ($userPrePlan->sport_image && file_exists(public_path($userPrePlan->sport_image))) {
+                unlink(public_path($userPrePlan->sport_image));
+            }
+
+            // Save new image path
+            $userPrePlan->sport_image = $filePath;
+        }
+        $userPrePlan->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sport updated successfully!',
+            'userPrePlan' => $userPrePlan,
+        ]);
+    }
+
 }
