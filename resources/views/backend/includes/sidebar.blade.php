@@ -86,7 +86,15 @@
 					<span>Preferences</span>
 				</a>
 			</li>
-
+			<li>
+				<a class="m-link {{request()->routeIs('admin.sports-categories.*') ? 'active' : '' }}" href="{{ route('admin.sports-categories.index') }}">
+					<i class="icofont-abc fs-5"></i>
+					<span>Sport Categories</span>
+				</a>
+			</li>
+			<li>
+				<a class="m-link {{request()->routeIs('admin.sport-games.*') ? 'active' : '' }}" href="{{ route('admin.sport-games.index') }}"><i class="icofont-football fs-5"></i> <span>Sport Games</span></a>
+			</li>
 			<li>
 				<a class="m-link {{request()->routeIs('backend.blogs.*') ? 'active' : '' }}" href="{{ route('backend.blogs.index') }}"><i class="icofont-copy fs-5"></i> <span>Blog Page</span></a>
 			</li>
