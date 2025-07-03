@@ -31,8 +31,11 @@
                     <label for="sport_category_id" class="form-label">Sport Category</label>
                     <select class="form-control select2" name="sport_category_id" id="sport_category_id" required>
                         <option value="">Select Sport Category</option>
-                        @foreach ($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                         @foreach($categories as $category)
+                            <option value="{{ $category->id }}"
+                                @if(isset($game) && $game->categories->contains($category->id)) selected @endif>
+                                {{ $category->name }}
+                            </option>
                         @endforeach
                     </select>
                     @error('sport_category_id')
@@ -43,11 +46,17 @@
                 <div class="mb-3">
                     <label for="image" class="form-label">Image</label>
                     <small class="form-text text-muted">
-                        Only image files are allowed (.jpg, .jpeg, .png, .gif, .webp). Max size: 2MB.
+                        Only image files are allowed (.jpg, .jpeg, .png, .gif, .webp). Max size: 2MB and dimensions 300 x 200 px.
                     </small>
                     <input type="file" name="image" class="form-control" accept="image/*">
-                    @if (isset($game) && $game->image_path)
-                        <img src="{{ asset('storage/' . $game->image_path) }}" class="img-thumbnail mt-3" style="max-height: 150px;">
+                    @if(isset($game))
+                        @php
+                            $categoryId = old('sport_category_id', $game->categories->first()->id ?? null);
+                            $pivot = $categoryId ? $game->categories->find($categoryId)?->pivot : null;
+                        @endphp
+                        @if($pivot && $pivot->image_path)
+                            <img src="{{ asset('storage/' . $pivot->image_path) }}" width="100" class="mt-2">
+                        @endif
                     @endif
                     @error('image')
                         <div class="text-danger">{{ $message }}</div>

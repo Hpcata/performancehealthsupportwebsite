@@ -38,12 +38,24 @@
                         <tr>
                             <td>{{ $game->id }}</td>
                             <td>{{ $game->name }}</td>
-                            <td>{{ $game->category->name ?? 'N/A' }}</td>
                             <td>
-                                @if($game->image_path)
-                                    <img src="{{ asset('storage/' . $game->image_path) }}" alt="{{ $game->name }}" width="80" height="80">
+                                @if($game->categories->isNotEmpty())
+                                    {{ $game->categories->pluck('name')->join(', ') }}
                                 @else
-                                    <span>No image</span>
+                                    N/A
+                                @endif
+                            </td>
+                            <td>
+                                @if(isset($game))
+                                    @php
+                                        $categoryId = old('sport_category_id', $game->categories->first()->id ?? null);
+                                        $pivot = $categoryId ? $game->categories->find($categoryId)?->pivot : null;
+                                    @endphp
+                                    @if($pivot && $pivot->image_path)
+                                        <img src="{{ asset('storage/' . $pivot->image_path) }}" width="80" height="80">
+                                    @else
+                                        <span>No image</span>
+                                    @endif
                                 @endif
                             </td>
                             <td>

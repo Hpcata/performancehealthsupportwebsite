@@ -17,6 +17,7 @@ use App\Mail\PlanPurchaseMail;
 use App\Mail\PrePlanDetailsSubmitMail;
 use App\Models\Payment;
 use App\Models\Quiz;
+use App\Models\SportCategory;
 use GuzzleHttp\Client;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
@@ -624,8 +625,10 @@ class PaymentController extends Controller
             ->where('user_pre_plan_id', $prePlan->id ?? null)
             ->get()
             ->groupBy('step');
+        
+        $sportCategories = SportCategory::all();
         // dd($nextStep);
-        return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData'));
+        return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
     }
 
     public function prePlanDetailsSave(Request $request)
@@ -766,195 +769,6 @@ class PaymentController extends Controller
         }
     }
 
-    // public function prePlanDetailsSave(Request $request)
-    // {
-
-    //     $user_id = $request->user_id ?? null;
-    //     $payment_id = $request->payment_id ?? null;
-    //     $questions = $request->input('questions', []);
-    //     $answers = $request->input('ans', []);
-    //     // dd($request->all());
-    //     // Step 2: Prepare data for insertion
-    //     $dataToInsert = [];
-    //     DB::beginTransaction(); // Start a database transaction
-    //     try {
-
-    //         $prePlanId = DB::table('user_pre_plans')->insertGetId([
-    //             'payment_id' => $payment_id,
-    //             'user_id' => $user_id,
-    //             'dob' => $request->dob,
-    //             'occupation' => $request->occupation,
-    //             'address' => $request->address,
-    //             'culture' => $request->race_ethnicity_culture,
-    //             'referredBy' => $request->referredBy,
-    //             'other' => $request->other
-    //         ]);
-
-    //         foreach ($questions as $section => $sectionQuestions) {
-    //             $formattedSection = ucwords(str_replace('_', ' ', $section)); // Format section name
-    //             foreach ($sectionQuestions as $key => $questionText) {
-    //                 $questionAnswers = $answers[$section][$key] ?? null;
-            
-    //                 if (is_array($questionText)) {
-    //                     foreach ($questionText as $qsnkey => $subQuestionText) {
-    //                         $subQuestionAnswers = $questionAnswers[$qsnkey] ?? null;
-            
-    //                         if (!is_null($subQuestionAnswers)) {
-    //                             // Ensure subQuestionAnswers is valid JSON
-    //                             $subQuestionAnswers = is_array($subQuestionAnswers)
-    //                                 ? json_encode($subQuestionAnswers, JSON_THROW_ON_ERROR)
-    //                                 : json_encode((string) $subQuestionAnswers, JSON_THROW_ON_ERROR);
-    //                         }
-            
-    //                         $dataToInsert[] = [
-    //                             'user_pre_plan_id' => $prePlanId,
-    //                             'form_name' => $formattedSection,
-    //                             'form_slug' => $section,
-    //                             'question' => $subQuestionText,
-    //                             'answer' => $subQuestionAnswers,
-    //                             'created_at' => now(),
-    //                             'updated_at' => now(),
-    //                         ];
-    //                     }
-    //                 } else {
-    //                     // Ensure questionAnswers is valid JSON
-    //                     $questionAnswers = isset($answers[$section][$key]) 
-    //                         ? (is_array($answers[$section][$key])
-    //                             ? json_encode($answers[$section][$key], JSON_THROW_ON_ERROR)
-    //                             : json_encode((string) $answers[$section][$key], JSON_THROW_ON_ERROR))
-    //                         : null;
-            
-    //                     $dataToInsert[] = [
-    //                         'user_pre_plan_id' => $prePlanId,
-    //                         'form_name' => $formattedSection,
-    //                         'form_slug' => $section,
-    //                         'question' => $questionText,
-    //                         'answer' => $questionAnswers,
-    //                         'created_at' => now(),
-    //                         'updated_at' => now(),
-    //                     ];
-    //                 }
-    //             }
-    //         }
-            
-    //         // Step 3: Insert data into a single table
-    //         DB::table('pre_plan_details')->insert($dataToInsert);
-
-    //         DB::commit(); // Commit the transaction if everything is successful
-
-    //         // **Handle File Upload**
-    //         if ($request->hasFile('ans.medical_history.blood_test_file')) {
-    //             $file = $request->file('ans.medical_history.blood_test_file');
-                
-    //             $filePath = $file->store('preplan_files', 'public');
-
-    //             DB::table('pre_plan_question_files')->insert([
-    //                 'user_pre_plan_id' => $prePlanId,
-    //                 'form_slug' => 'medical_history',
-    //                 'question' => 'Have you recently had a blood test?',
-    //                 'file_path' => $filePath,
-    //                 'created_at' => now(),
-    //                 'updated_at' => now(),
-    //             ]);
-    //         }
-            
-    //         // **Handle Multiple File Uploads**
-    //         if ($request->hasFile('ans.physical_measures.bodycomposition')) {
-    //             foreach ($request->file('ans.physical_measures.bodycomposition') as $file) {
-    //                 if ($file->isValid()) {
-                        
-    //                     $filePath = $file->store('preplan_files', 'public');
-
-    //                     DB::table('pre_plan_question_files')->insert([
-    //                         'user_pre_plan_id' => $prePlanId,
-    //                         'form_slug' => 'physical_measures',
-    //                         'question' => 'Have you recently undertaken a body composition assessment (measure of muscle, body fat)?',
-    //                         'file_path' => $filePath,
-    //                         'created_at' => now(),
-    //                         'updated_at' => now(),
-    //                     ]);
-    //                 }
-    //             }
-    //         }
-
-    //         $payment = \App\Models\Payment::with('user')->where('id',$payment_id)->first();
-    //         $email = $payment->user->email;
-    //         $planName = \App\Models\Plan::where('id', $payment->plan_id)->first()->name;
-    //         $user = $payment->user;
-
-    //         Mail::to($email)->send(new PlanPurchaseMail($user, $planName));
-
-    //         $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
-    //         Mail::to($adminEmail)->send(new PrePlanDetailsSubmitMail($user, $planName));  // passing 'true' to indicate it's an admin
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Form submitted successfully!',
-    //             'redirect_url' => route('front.sub-home-page') // Redirect to user's dashboard
-    //         ]);
-
-    //     }  catch (\Exception $e) {
-    //         dd($e->getMessage());
-    //         DB::rollBack(); // Rollback transaction in case of any exception
-    //         Log::error('Payment error: ' . $e->getMessage());
-    //         return response()->json(['success' => false, 'message' => 'Payment failed: ' . $e->getMessage()], 500);
-    //     }
-
-    // }
-
-    public function getRaceEthnicityCultureOptions(Request $request)
-    {
-        try {
-            // Initialize Guzzle HTTP client
-            $client = new Client([
-                'base_uri' => 'https://api.openai.com/v1/',
-                'headers' => [
-                    'Authorization' => 'Bearer '. config('services.openai.key'),
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
-            
-            // Define the request payload for OpenAI
-            $payload = [
-                'model' => 'gpt-4',
-                'messages' => [
-                    ['role' => 'system', 'content' => 'You are an expert data generator.'],
-                    ['role' => 'user', 'content' => 'List the top 20 most common races, ethnicities, and cultures in Australia, formatted as JSON with "value" and "label" fields for each item.'],
-                ],
-            ];
-
-            // Make the POST request to OpenAI API
-            $response = $client->post('chat/completions', [
-                'json' => $payload,
-            ]);
-
-            // Parse the response
-            $responseBody = json_decode($response->getBody()->getContents(), true);
-
-            // Extract content from OpenAI response
-            $content = $responseBody['choices'][0]['message']['content'] ?? null;
-
-            if (!$content) {
-                return response()->json(['error' => 'Failed to retrieve content from OpenAI.'], 500);
-            }
-
-            // Convert content to an associative array
-            $options = json_decode($content, true);
-
-            // Validate JSON and limit to top 20 options
-            if (json_last_error() !== JSON_ERROR_NONE || !is_array($options)) {
-                return response()->json(['error' => 'Invalid AI response format.'], 500);
-            }
-
-            $options = array_slice($options, 0, 20);
-
-            return response()->json(['options' => $options]);
-        } catch (\Exception $e) {
-            // Handle exceptions
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
     public function questionnaireSendMail(Request $request)
     {
         $userId = $request->input('user_id');
@@ -983,4 +797,5 @@ class PaymentController extends Controller
             return response()->json(['success' => false, 'message' => 'Mail send failed.']);
         }
     }
+
 }

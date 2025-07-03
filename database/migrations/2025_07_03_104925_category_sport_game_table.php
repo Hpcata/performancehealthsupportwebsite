@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sport_games', function (Blueprint $table) {
+        Schema::create('category_sport_game', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('image_path')->nullable();
+            $table->foreignId('sport_category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('sport_game_id')->constrained()->onDelete('cascade');
+            $table->string('image_path')->nullable(); // 👈 Store image for this relation
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sport_games');
+        Schema::dropIfExists('category_sport_game');
     }
 };

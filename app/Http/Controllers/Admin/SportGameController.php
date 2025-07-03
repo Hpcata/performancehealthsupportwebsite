@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class SportGameController extends Controller
 {
     public function index() {
-        $games = SportGame::with('category')->get();
+        $games = SportGame::with('categories')->get();
         return view('backend.pages.sport-games.index', compact('games'));
     }
 
@@ -23,7 +23,7 @@ class SportGameController extends Controller
         $request->validate([
             'name' => 'required',
             'sport_category_id' => 'required|exists:sport_categories,id',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|dimensions:width=300,height=200|max:2048',
         ]);
 
         $imagePath = null;
@@ -31,18 +31,20 @@ class SportGameController extends Controller
             $imagePath = $request->file('image')->store('sport_games', 'public');
         }
 
-        SportGame::create([
+        $game = SportGame::create([
             'name' => $request->name,
-            'sport_category_id' => $request->sport_category_id,
-            'image_path' => $imagePath,
         ]);
 
+        $game->categories()->attach($request->sport_category_id, [
+            'image_path' => $imagePath,
+        ]);
+        
         return redirect()->route('admin.sport-games.index')->with('success', 'Sport Game created.');
     }
 
      public function edit($id)
     {
-        $game = SportGame::findOrFail($id);
+        $game = SportGame::with('categories')->findOrFail($id);
         $categories = SportCategory::all();
         return view('backend.pages.sport-games.form', compact('game', 'categories'));
     }
@@ -52,26 +54,30 @@ class SportGameController extends Controller
         $request->validate([
             'name' => 'required',
             'sport_category_id' => 'required|exists:sport_categories,id',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|dimensions:width=300,height=200|max:2048',
         ]);
 
         $game = SportGame::findOrFail($id);
+        $game->update(['name' => $request->name]);
 
-        // Handle image update
+        $imagePath = null;
+       
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($game->image_path && Storage::disk('public')->exists($game->image_path)) {
-                Storage::disk('public')->delete($game->image_path);
+            // Delete old if exists
+            $existing = $game->categories()->where('sport_category_id', $request->sport_category_id)->first();
+            if ($existing && $existing->pivot->image_path && Storage::disk('public')->exists($existing->pivot->image_path)) {
+                Storage::disk('public')->delete($existing->pivot->image_path);
             }
 
             $imagePath = $request->file('image')->store('sport_games', 'public');
-            $game->image_path = $imagePath;
+        } else {
+            $existing = $game->categories()->where('sport_category_id', $request->sport_category_id)->first();
+            $imagePath = $existing->pivot->image_path ?? null;
         }
 
-        $game->update([
-            'name' => $request->name,
-            'sport_category_id' => $request->sport_category_id,
-            'image_path' => $game->image_path, // already updated above if needed
+        // Sync single category
+        $game->categories()->sync([
+            $request->sport_category_id => ['image_path' => $imagePath],
         ]);
 
         return redirect()->route('admin.sport-games.index')->with('success', 'Sport Game updated.');
