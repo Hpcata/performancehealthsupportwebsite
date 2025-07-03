@@ -1,194 +1,178 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Plan</title>
+	<title>PHS - nutrition plan print</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<meta name="description" content="">
+	<meta name="author" content="">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"> -->
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.2;
-            margin: 0;
-            padding: 0;
-        }
+        button { display: block; margin: 20px auto; }
 
-        h1, h2, h3 {
-            color: #333;
-        }
+        /* =Box Sizing
+        ========================================================================================*/
+        * { -webkit-box-sizing:border-box; -moz-box-sizing: border-box; -o-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; }
+        *:before, *:after { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -o-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; }
+        input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="search"], textarea, select, input[type="button"], input[type="submit"], button { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -o-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box;  }
 
-        .meal-plan {
-            margin-bottom: 3px;
-        }
 
-        .meal-time {
-            margin-bottom: 3px;
-        }
+        /* =Deafult Tag & General Classes
+        ========================================================================================*/
+        html, body { -webkit-font-smoothing:antialiased; -moz-font-smoothing:antialiased; -ms-font-smoothing:antialiased; font-smoothing:antialiased; /* Fix for webkit rendering */ -webkit-text-size-adjust:100%; height: 100%; }
+        html { overflow-y: inherit !important; }
+        body { font-size:10px; line-height:1.45; font-weight: 400; font-family: 'sans-serif', Arial, Helvetica; color:#222222; letter-spacing: 0.025rem; background: #fff; padding: 0; margin: 0; }
+        img { vertical-align:top; border:0; }
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 { line-height:1.3; margin:0 0 0.8rem; font-weight: 700; }
+        h1 span, h2 span, h3 span, h4 span, h5 span, h6 span, .h1 span, .h2 span, .h3 span, .h4 span, .h5 span, .h6 span { font-weight: 500; }
+        h1, .h1 { font-size:22px; }
+        h2, .h2 { font-size:1.5rem; }
+        h3, .h3 { font-size:1.25rem; }
+        h4, .h4 { font-size:1.525rem; }
+        h5, .h5 { font-size:12px; }
+        h6, .h6 { font-size:10px; }
+        ul:last-child { margin: 0; }
+        ul, ol { padding-left: 0.6rem; }
+        ul li, ol li { line-height:1.45; margin-bottom: 0.35rem; }
+        p { margin:0 0 0.8rem 0; }
+        p:last-child { margin:0 0 0 0; }
+        .text-white { color: #fff; }  
+        .text-primary { color:#4078DD !important; }
+        .mt-20 { margin-top: 20px; }
+        .fw-500 { font-weight: 500; }
+        .mb-2 { margin-bottom: .5rem !important; }
+        .me-2 { margin-right: .5rem !important; }
+        .me-1 { margin-right: .3rem !important; }
+        .align-items-center { align-items: center !important; }
+        .d-flex { display: flex !important; }
+        .flex-wrap { flex-wrap: wrap !important; }
+        .rounded-circle { border-radius: 50% !important; }
+        .d-inline-block { display: inline-block !important; }
+        .pl-2 { padding-left: 0.5rem; }
+        
+        /* =Header Css
+        ========================================================================================*/
+        #header { margin-bottom: 2rem; }
+        .header-box { padding: 1.5rem; background: #3B3B3B; border-radius: 1.5rem; position: relative; z-index: 1; overflow: hidden; margin-bottom: 20px; }
+        .header-img { position: absolute; right: 0; top: 0; bottom: 0; width: 59%; z-index: -1; background-repeat: no-repeat; background-size: cover; background-position: 50% 32%; border-top-left-radius: 90px; }
+        .logo { max-width: 119px; width: 100%; margin: 0 0 32px 0; }
+        .logo img { width: 100%; height: auto; }
+        .header-box h5 { margin-bottom: 10px; }
+        .header-box h1 { margin: 0; }
+        .bg-light { background-color: #F5F5F5 !important; }
+        .row { display: flex; flex-wrap: wrap; margin-left: -6px; margin-right: -6px; }
+        .row > * { flex-shrink: 0; width: 100%; max-width: 100%; padding-right: 6px; padding-left: 6px; }
+        .col-xl-3 { flex: 0 0 auto; width: 25%; }
+        .col-xl-9 { flex: 0 0 auto; width: 75%; }
+        .col-md-6 { flex: 0 0 auto; width: 50%; }
+        .col-md-4 { flex: 0 0 auto; width: 33.3333333333%; }
+        .w-3 { width: 5px; }
+        .h-3 { height: 5px; }
+        .bg-amber-400 { background: #8CC900; }
+        .bg-sky-500 { background: #0D99FF; }
+        .bg-emerald-500 { background:#F1B020 ; }
+        .bg-rose-400 { background: #EB4C60; }
+        .img-square { border-radius: 15px; overflow: hidden; padding-top: 100%; position: relative; margin: 0; }
+        .img-square img { position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: auto; width: 100%; height: 100%; object-fit: cover; object-position: center center; }
+        .card-box { padding: 12px; border-radius: 18px; margin:0 0 8px 0; }
+        .card-box h6 { margin-bottom: 0.35rem; }
+        footer { padding-top: 1rem; padding-bottom: 1rem; margin-top: 2rem; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        /* =Footer page Css
+        ========================================================================================*/
+        .f-logo { max-width: 120px; width: 100%; margin: 0; }
+        .f-logo img { width: 100%; height: auto; }
+        .text-center { text-align: center !important; }
+        .text-md-end { text-align: right !important; }
+        .page-number { width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50px; background: #709EF1; font-size: 10px; font-weight: 600; }
 
-        table, th, td {
-            border: 1px solid #ddd;
-        }
+        #pdf-content { width: 720px; margin: auto; padding: 2rem; font-family: sans-serif; }
 
-        th, td {
-            padding: 5px;
-            text-align: left;
-        }
-
-        td img {
-            width: 80px;
-            height: 80px;
-        }
-
-        td:first-child {
-            text-align: center;
-            width: 15%;
-        }
-
-        td:nth-child(2) {
-            padding-left: 10px;
-            width: 42%;
-        }
-
-        td:nth-child(3) {
-            width: 43%;
-            padding-left: 10px;
-        }
-
-        ul {
-            padding-left: 10px;
-            margin: 0;
-        }
-
-        li {
-            margin: 5px 0;
-        }
-
-        /* Header Style */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header img {
-            width: 100%; /* Full width for sport image */
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .header h2 {
-            color: #333;
-            font-size: 28px;
-            margin-top: 10px;
-        }
-
-        .header .headline {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        /* Footer Style */
-        .footer {
-            text-align: center;
-            position: fixed;
-            bottom: 20px;
-            width: 100%;
-        }
-
-        .footer img {
-            width: 150px; /* Adjust size of the logo */
-        }
-
-        /* Preview Container */
-        #previewContainer {
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            display: none;
-        }
-
-        /* Generate PDF Button */
-        #generatePdfBtn {
-            display: none;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        #generatePdfBtn:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
-    @if (empty($groupedData))
-        @foreach($userPlans as $userPlan)
-            <div class="header">
-                @if($userPlan->user_id == 66)
-                    <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
-                @else
-                    <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
-                @endif
-                <h2 style="color: #333">{{ $userPlan->plan->name }}</h2>
-            </div>
 
-            <div class="meal-plan">
-                @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userMealTime)
+    <div id="pdf-content">
+        @foreach($userPlans as $userPlan)
+            <div class="header-box">
+                <figure class="logo">
+                    <img src="{{ frontAssets('images/logo.svg') }}" alt="">
+                </figure>
+                <h5 class="text-white">{{ $userPlan->user->first_name }}’s</h5>
+                <h1 class="text-white">Nutrition Plan <span>| {{ $userPlan->plan->name }}</span></h1>
+                <div class="header-img" style="background-image: url('{{ frontAssets('print-plan/images/header-bg.jpg') }}');"></div>
+            </div>
+                
+            @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userMealTime)
+                @php
+                    $hasMeals = false;
+                    foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $subCategory) {
+                        if ($subCategory->userMeals
+                            ->where('user_plan_id', $userPlan->id)
+                            ->where('user_category_id', $userMealTime->id)
+                            ->where('user_sub_category_id', $subCategory->id)
+                            ->count()) {
+                            $hasMeals = true;
+                            break;
+                        }
+                    }
+                @endphp
+
+                @if($hasMeals)
                     @php
-                        $hasMeals = false;
+                        $allMeals = collect();
+
                         foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $subCategory) {
-                            if ($subCategory->userMeals
+                            $subMeals = $subCategory->userMeals
                                 ->where('user_plan_id', $userPlan->id)
                                 ->where('user_category_id', $userMealTime->id)
-                                ->where('user_sub_category_id', $subCategory->id)
-                                ->count()) {
-                                $hasMeals = true;
-                                break;
-                            }
+                                ->where('user_sub_category_id', $subCategory->id);
+
+                            $allMeals = $allMeals->merge($subMeals);
                         }
+
+                        $sortedMeals = $allMeals->sortBy(function($userMeal) {
+                            return (int) $userMeal->id;
+                        });
+                    
+                        $groupedMeals = $sortedMeals->groupBy('user_sub_category_id');
                     @endphp
 
-                    @if($hasMeals)
-                        <div class="meal-time">
-                            <h5>{{ $userMealTime->category->title }}</h5>
-                            <table>
-                                <tbody>
-                                    @php
-                                        $allMeals = collect();
+                    @foreach ($groupedMeals as $subCategoryId => $mealsGroup)
+                        @php
+                            $subCategory = $userMealTime->userSubCategories
+                                ->where('user_plan_id', $userPlan->id)
+                                ->where('id', $subCategoryId)
+                                ->first();
+                        @endphp
 
-                                        foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $subCategory) {
-                                            $subMeals = $subCategory->userMeals
-                                                ->where('user_plan_id', $userPlan->id)
-                                                ->where('user_category_id', $userMealTime->id)
-                                                ->where('user_sub_category_id', $subCategory->id);
-
-                                            $allMeals = $allMeals->merge($subMeals);
-                                        }
-
-                                        $sortedMeals = $allMeals->sortBy(function($userMeal) {
-                                            return (int) $userMeal->id;
-                                        });
-                                    @endphp
-
-                                    @foreach ($sortedMeals as $userMeal)
-                                        <tr>
-                                            <td>
-                                                <img src="{{ url('private/public/storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
-                                            </td>
-                                            <td>
-                                                {{ $userMeal->meal->title }}
+                        <h5 class="text-primary mt-20">
+                            {{ $userMealTime->category->title }}
+                            @if ($subCategory)
+                                <span>| {{ $subCategory->subCategory->title ?? 'Subcategory' }}</span>
+                            @endif
+                        </h5>
+                        @foreach ($mealsGroup as $userMeal)
+                            <div class="card-box bg-light">
+                                <div class="row g-4">
+                                    <div class="col-xl-3">
+                                        <figure class="img-square">
+                                            <img src="{{ url('storage/'.$userMeal->meal->image ?? '') }}" alt="">
+                                        </figure>
+                                    </div>
+                                    <div class="col-xl-9">
+                                        <div class="row g-4">
+                                            <div class="col-md-6">
+                                                <h6>{{ $userMeal->meal->title }}</h6>
                                                 @if ($userMeal->meal->description)
-                                                    <br><span style="font-size: 12px; color: #666;">{{ $userMeal->meal->description }}</span>
+                                                <p class="fw-500">{{ $userMeal->meal->description }}</p>
                                                 @endif
                                                 @if ($userMeal->meal->note)
-                                                    <br><span class="mt-3" style="font-size: 12px; color: #666;"><strong>Note:</strong> {{ $userMeal->meal->note }}</span>
+                                                <p><strong>Note:</strong> {{ $userMeal->meal->note }}</p>
                                                 @endif
 
                                                 @php
@@ -203,9 +187,7 @@
                                                         ->where('user_category_id', $userMealTime->id)
                                                         ->where('user_sub_category_id', $userMeal->user_sub_category_id);
                                                     foreach ($userItems as $userItem) {
-                                                        $matchedItem = $userMeal->meal->userMealItems->firstWhere('id', $userItem->id);
                                                         $item = $userMeal->meal->userMealItems->firstWhere('id', $userItem->id);
-                                                    
                                                         $carbsTotal += round(floatval($item->pivot->carbs ?? 0));
                                                         $proteinTotal += round(floatval($item->pivot->protein ?? 0));
                                                         $fatTotal += round(floatval($item->pivot->fat ?? 0));
@@ -214,255 +196,124 @@
                                                 @endphp
 
                                                 @if ($userPlan->nutrition_info_flag == 1)
-                                                    <br>
-                                                    <span class="mt-3" style="font-size: 12px; color: #666;"><strong>Meal Total: 
-                                                        Energy: {{ round($energyTotal) }}kJ |
-                                                        Protein: {{ round($proteinTotal) }}g |
-                                                        Carb: {{ round($carbsTotal) }}g |
-                                                        Fat: {{ round($fatTotal) }}g</strong>
-                                                    </span>
+                                                <div class="mt-4 d-flex flex-wrap text-slate-700">
+                                                    <div class="d-flex align-items-center me-2 mb-2">
+                                                        <span class="d-inline-block w-3 h-3 rounded-circle bg-amber-400 me-1"></span>
+                                                        Energy: {{ round($energyTotal) }}kJ
+                                                    </div>
+                                                    <div class="d-flex align-items-center me-2 mb-2">
+                                                        <span class="d-inline-block w-3 h-3 rounded-circle bg-rose-400 me-1"></span>
+                                                        Protein: {{ round($proteinTotal) }}g
+                                                    </div>
+                                                    <div class="d-flex align-items-center me-2 mb-2">
+                                                        <span class="d-inline-block w-3 h-3 rounded-circle bg-emerald-500 me-1"></span>
+                                                        Carb: {{ round($carbsTotal) }}g
+                                                    </div>
+                                                    <div class="d-flex align-items-center me-2 mb-2">
+                                                        <span class="d-inline-block w-3 h-3 rounded-circle bg-sky-500 me-1"></span>
+                                                        Fat: {{ round($fatTotal) }}g
+                                                    </div>
+                                                </div>
                                                 @endif
-                                            </td>
-                                            <td>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <h6>Ingredients</h6>
                                                 <ul>
-                                                    @foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem)
-                                                        @php
-                                                            $matchedItem = $userMeal->meal->userMealItems
-                                                                ->filter(fn ($item) => $item->id == $userItem->id && $item->pivot->user_id == $userPlan->user_id)
-                                                                ->first();
+                                                @foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem)
+                                                    @php
+                                                        $matchedItem = $userMeal->meal->userMealItems
+                                                            ->filter(fn ($item) => $item->id == $userItem->id && $item->pivot->user_id == $userPlan->user_id)
+                                                            ->first();
 
-                                                            $selectedQty = $matchedItem->pivot->selected_qty_unit ?? null;
-                                                            if (is_string($selectedQty)) {
-                                                                $decoded = json_decode($selectedQty, true);
-                                                                $selectedQty = (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : null;
-                                                            }
+                                                        $selectedQty = $matchedItem->pivot->selected_qty_unit ?? null;
+                                                        if (is_string($selectedQty)) {
+                                                            $decoded = json_decode($selectedQty, true);
+                                                            $selectedQty = (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : null;
+                                                        }
 
-                                                            $checkedUnits = [];
-                                                            if (is_array($selectedQty)) {
-                                                                $checkedUnits = array_filter($selectedQty, fn($u) => isset($u['checked']) && ($u['checked'] === true || $u['checked'] === "true" || $u['checked'] === 1 || $u['checked'] === "1"));
-                                                            }
-                                                        @endphp
-                                                        <li style="font-size: 12px; color: #666;">
-                                                            {{ $userItem->item->title ?? '' }} |
-                                                            QTY:
-                                                            @if (!empty($checkedUnits))
-                                                                {{ collect($checkedUnits)->map(function($unit) {
-                                                                    $qtyRaw = $unit['qty'];
-                                                                    $qty = 0;
-                                                                    $isFraction = false;
-                                                                    if (preg_match('/^(\d+)\s*\/\s*(\d+)$/', trim($qtyRaw), $matches)) {
-                                                                        $qty = (float) $matches[1] / (float) $matches[2];
-                                                                        $isFraction = true;
-                                                                    } elseif (is_numeric($qtyRaw)) {
-                                                                        $qty = (float) $qtyRaw;
-                                                                    }
+                                                        $checkedUnits = [];
+                                                        if (is_array($selectedQty)) {
+                                                            $checkedUnits = array_filter($selectedQty, fn($u) => isset($u['checked']) && ($u['checked'] === true || $u['checked'] === "true" || $u['checked'] === 1 || $u['checked'] === "1"));
+                                                        }
+                                                    @endphp
+                                                    <li class="pl-2">
+                                                        @if (!empty($checkedUnits))
+                                                            {{ collect($checkedUnits)->map(function($unit) {
+                                                                $qtyRaw = $unit['qty'];
+                                                                $qty = 0;
+                                                                $isFraction = false;
+                                                                if (preg_match('/^(\d+)\s*\/\s*(\d+)$/', trim($qtyRaw), $matches)) {
+                                                                    $qty = (float) $matches[1] / (float) $matches[2];
+                                                                    $isFraction = true;
+                                                                } elseif (is_numeric($qtyRaw)) {
+                                                                    $qty = (float) $qtyRaw;
+                                                                }
 
-                                                                    $unitText = strtolower($unit['unit']);
-                                                                    if (in_array($unitText, ['g', 'ml', 'mL'])) {
-                                                                        return round($qty) . $unit['unit'];
-                                                                    }
-                                                                    if ($isFraction) {
-                                                                        return trim($qtyRaw) . ' ' . $unit['unit'];
-                                                                    }
-                                                                    return rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.') . ' ' . $unit['unit'];
-                                                                })->implode(' or ') }}
-                                                            @elseif ($matchedItem)
-                                                                @php
-                                                                    $qtyRaw = $matchedItem->pivot->qty ?? 0;
-                                                                    $unitText = strtolower($matchedItem->pivot->unit ?? '');
-                                                                    $qty = is_numeric($qtyRaw) ? (float) $qtyRaw : 0;
-                                                                    $isFraction = preg_match('/^(\d+)\s*\/\s*(\d+)$/', trim($qtyRaw), $m);
-                                                                    if ($isFraction) {
-                                                                        $qty = (float) $m[1] / (float) $m[2];
-                                                                    }
-                                                                @endphp
-                                                                @if (in_array($unitText, ['g', 'ml', 'mL']))
-                                                                    {{ round($qty) }}{{ $unitText }}
-                                                                @elseif ($isFraction)
-                                                                    {{ trim($qtyRaw) . ' ' . $unitText }}
-                                                                @else
-                                                                    {{ rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.') . ' ' . $unitText }}
-                                                                @endif
-                                                            @else
-                                                                {{ round((float) ($userItem->pivot->qty ?? 0)) }}
-                                                            @endif
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
-        @endforeach
-    @else
-        @foreach($userPlans as $userPlan)
-            @php
-            $planId = $userPlan->id;
-            $selectedMealTimes = $groupedData[$planId] ?? null;
-            @endphp
-
-            @if ($selectedMealTimes)
-                <div class="header">
-                    @if($userPlan->user_id == 66)
-                        <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
-                    @else
-                        <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
-                    @endif
-                    <h2 style="color: #333">{{ $userPlan->plan->name }}</h2>
-                </div>
-
-                <div class="meal-plan">
-                    @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userMealTime)
-                        @php
-                            $mealTimeId = $userMealTime->id;
-                            $selectedCategories = $selectedMealTimes[$mealTimeId] ?? null;
-                        @endphp
-
-                        @if ($selectedCategories)
-                            <div class="meal-time">
-                                <h5>{{ $userMealTime->category->title }}</h5>
-                                <table>
-                                    <tbody>
-                                        @foreach ($userMealTime->userSubCategories->where('user_plan_id', $userPlan->id) as $userCategory)
-
-                                            @php
-                                                $categoryId = $userCategory->id;
-                                                $selectedMeals = $selectedCategories[$categoryId] ?? [];
-
-                                            @endphp
-
-                                            @foreach ($userCategory->userMeals->where('user_plan_id', $userPlan->id)->where('user_sub_category_id', $categoryId) as $userMeal)
-                                                @if (in_array($userMeal->id, $selectedMeals))
-                                                    <tr>
-                                                        <td>
-                                                            <img src="{{ url('private/public/storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
-                                                        </td>
-                                                        <td>
-                                                            {{ $userMeal->meal->title }}
-                                                            @if ($userMeal->meal->description)
-                                                                <br><span style="font-size: 12px; color: #666;">{{ $userMeal->meal->description }}</span>
-                                                            @endif
-                                                            @if ($userMeal->meal->note)
-                                                                <br><span style="font-size: 12px; color: #666;"><strong>Note: </strong> {{ $userMeal->meal->note }}</span>
-                                                            @endif
+                                                                $unitText = strtolower($unit['unit']);
+                                                                if (in_array($unitText, ['g', 'ml', 'mL'])) {
+                                                                    return round($qty) . $unit['unit'];
+                                                                }
+                                                                if ($isFraction) {
+                                                                    return trim($qtyRaw) . ' ' . $unit['unit'];
+                                                                }
+                                                                return rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.') . ' ' . $unit['unit'];
+                                                            })->implode(' or ') }}
+                                                        @elseif ($matchedItem)
                                                             @php
-                                                                $carbsTotal = $proteinTotal = $fatTotal = $energyTotal = 0;
-                                                                foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem) {
-                                                                    $item = $userItem->item;
-                                                                    $carbsTotal += round(floatval($item->carbs ?? 0));
-                                                                    $proteinTotal += round(floatval($item->protein ?? 0));
-                                                                    $fatTotal += round(floatval($item->fat ?? 0));
-                                                                    $energyTotal += round(floatval($item->energy ?? 0));
+                                                                $qtyRaw = $matchedItem->pivot->qty ?? 0;
+                                                                $unitText = strtolower($matchedItem->pivot->unit ?? '');
+                                                                $qty = is_numeric($qtyRaw) ? (float) $qtyRaw : 0;
+                                                                $isFraction = preg_match('/^(\d+)\s*\/\s*(\d+)$/', trim($qtyRaw), $m);
+                                                                if ($isFraction) {
+                                                                    $qty = (float) $m[1] / (float) $m[2];
                                                                 }
                                                             @endphp
-                                                            @if ($userPlan->nutrition_info_flag == 1)
-                                                                <br><span class="mt-3 d-none" style="font-size: 12px; color: #666;">
-                                                                    <strong>Meal Total:</strong>
-                                                                    Energy: {{ (int) $energyTotal }}kJ |
-                                                                    Protein: {{ (int) $proteinTotal }}g |
-                                                                    Carb: {{ (int) $carbsTotal }}g |
-                                                                    Fat: {{ (int) $fatTotal }}g
-                                                                </span>
+                                                            @if (in_array($unitText, ['g', 'ml', 'mL']))
+                                                                {{ round($qty) }}{{ $unitText }}
+                                                            @elseif ($isFraction)
+                                                                {{ trim($qtyRaw) . ' ' . $unitText }}
+                                                            @else
+                                                                {{ rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.') . ' ' . $unitText }}
                                                             @endif
-                                                        </td>
-                                                        <td>
-                                                            <ul>
-                                                                @foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem)
-                                                                    @php
-                                                                        $matchedItem = $userMeal->meal->userMealItems
-                                                                            ->filter(fn ($item) => $item->id == $userItem->id && $item->pivot->user_id == $userPlan->user_id)
-                                                                            ->first();
-
-                                                                        $selectedQty = $matchedItem->pivot->selected_qty_unit ?? null;
-                                                                        if (is_string($selectedQty)) {
-                                                                            $decoded = json_decode($selectedQty, true);
-                                                                            $selectedQty = (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : null;
-                                                                        }
-
-                                                                        $checkedUnits = [];
-                                                                        if (is_array($selectedQty)) {
-                                                                            $checkedUnits = array_filter($selectedQty, fn($u) => isset($u['checked']) && ($u['checked'] === true || $u['checked'] === "true" || $u['checked'] === 1 || $u['checked'] === "1"));
-                                                                        }
-                                                                    @endphp
-                                                                    <li style="font-size: 12px; color: #666;">
-                                                                        {{ $userItem->item->title ?? '' }} |
-                                                                        QTY:
-                                                                        @if (!empty($checkedUnits))
-                                                                            {{ collect($checkedUnits)->map(function($unit) {
-                                                                                $qtyRaw = $unit['qty'];
-                                                                                $qty = 0;
-                                                                                $isFraction = false;
-                                                                                if (preg_match('/^(\d+)\s*\/\s*(\d+)$/', trim($qtyRaw), $matches)) {
-                                                                                    $qty = (float) $matches[1] / (float) $matches[2];
-                                                                                    $isFraction = true;
-                                                                                } elseif (is_numeric($qtyRaw)) {
-                                                                                    $qty = (float) $qtyRaw;
-                                                                                }
-
-                                                                                $unitText = strtolower($unit['unit']);
-                                                                                if (in_array($unitText, ['g', 'ml', 'mL'])) {
-                                                                                    return round($qty) . $unit['unit'];
-                                                                                }
-                                                                                if ($isFraction) {
-                                                                                    return trim($qtyRaw) . ' ' . $unit['unit'];
-                                                                                }
-                                                                                return rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.') . ' ' . $unit['unit'];
-                                                                            })->implode(' or ') }}
-                                                                        @elseif ($matchedItem)
-                                                                            @php
-                                                                                $qtyRaw = $matchedItem->pivot->qty ?? 0;
-                                                                                $unitText = strtolower($matchedItem->pivot->unit ?? '');
-                                                                                $qty = is_numeric($qtyRaw) ? (float) $qtyRaw : 0;
-                                                                                $isFraction = preg_match('/^(\d+)\s*\/\s*(\d+)$/', trim($qtyRaw), $m);
-                                                                                if ($isFraction) {
-                                                                                    $qty = (float) $m[1] / (float) $m[2];
-                                                                                }
-                                                                            @endphp
-                                                                            @if (in_array($unitText, ['g', 'ml', 'mL']))
-                                                                                {{ round($qty) }}{{ $unitText }}
-                                                                            @elseif ($isFraction)
-                                                                                {{ trim($qtyRaw) . ' ' . $unitText }}
-                                                                            @else
-                                                                                {{ rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.') . ' ' . $unitText }}
-                                                                            @endif
-                                                                        @else
-                                                                            {{ round((float) ($userItem->pivot->qty ?? 0)) }}
-                                                                        @endif
-                                                                    </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                @endif
-                                            @endforeach
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                                        @else
+                                                            {{ round((float) ($userItem->pivot->qty ?? 0)) }}
+                                                        @endif
+                                                        {{ $userItem->item->title ?? '' }}
+                                                    </li>
+                                                @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        @endif
+                        @endforeach
                     @endforeach
-                </div>
-            @endif
+                @endif
+            @endforeach
         @endforeach
 
-    @endif
+	<!-- <footer>
+      <div class="row g-3 align-items-center">
+				<div class="col-md-4">
+					<figure class="f-logo mx-auto ms-md-0 mb-0">
+						<img src="images/logo-02.png" alt="">
+					</figure>
+				</div>
+				<div class="col-md-4">
+					<div class="text-center">
+						<span class="page-number text-white">1</span>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="text-center text-md-end">
+						<p class="text-primary"><strong>05/06/2025</strong></p>
+					</div>
+				</div>
+			</div>
+    </footer> -->
+</div>
 
-    <!-- Preview Container for Plan -->
-    <div id="previewContainer">
-        <h3>Preview of the Plan</h3>
-        <div id="previewContent"></div>
-        <button id="generatePdfBtn">Generate PDF</button>
-    </div>
-
-    <!-- Footer with the logo -->
-    <div class="footer">
-        <img src="{{ url('private/public/front/images/logo.svg') }}" alt="Logo">
-    </div>
 </body>
 </html>
