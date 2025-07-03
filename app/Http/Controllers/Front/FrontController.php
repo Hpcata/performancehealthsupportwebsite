@@ -125,8 +125,9 @@ class FrontController extends Controller
         $organization = [];
         $testimonials = [];
         $isAuthenticated = Auth::check(); // Returns true if the user is logged in
+        $sportCategories = SportCategory::all();
 
-        return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated'));
+        return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated', 'sportCategories'));
     }
 
     public function register(Request $request)
@@ -1042,18 +1043,41 @@ class FrontController extends Controller
         ]);
     }
     
-    public function getSportsGames(Request $request) 
-    {
-        $category = $request->input('category'); // Get selected sport category
+    // public function getSportsGames(Request $request) 
+    // {
+    //     $category = $request->input('category'); // Get selected sport category
 
-        if (!$category) {
-            return response()->json(['error' => 'Invalid category'], 400);
+    //     if (!$category) {
+    //         return response()->json(['error' => 'Invalid category'], 400);
+    //     }
+
+    //     // Get sports games from config/sports.php
+    //     $sports = config('sports.' . $category, []);
+
+    //     return response()->json($sports);
+    // }
+
+    public function getSportsGames(Request $request)
+    {
+        $categoryId = $request->input('category');
+
+        if (!$categoryId) {
+            return response()->json([], 400); // Bad request
         }
 
-        // Get sports games from config/sports.php
-        $sports = config('sports.' . $category, []);
+        $category = SportCategory::with('games')->find($categoryId);
+        if (!$category) {
+            return response()->json([], 404); // Not found
+        }
 
-        return response()->json($sports);
+        // Return an array of games (id + name)
+        $games = $category->games->map(function ($game) {
+            return [
+                'id' => $game->id,
+                'name' => $game->name,
+            ];
+        });
+        return response()->json($games);
     }
 
     public function sportSearch(Request $request)

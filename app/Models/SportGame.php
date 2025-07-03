@@ -12,8 +12,12 @@ class SportGame extends Model
     
     protected $fillable = ['name', 'sport_category_id', 'image_path'];
 
-    public function category() {
-        return $this->belongsTo(SportCategory::class, 'sport_category_id');
+    public function categories()
+    {
+        return $this->belongsToMany(SportCategory::class, 'category_sport_game')
+                    ->using(CategorySportGame::class)
+                    ->withPivot('image_path')
+                    ->withTimestamps();
     }
-
+    
 }

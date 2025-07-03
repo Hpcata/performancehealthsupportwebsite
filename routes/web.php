@@ -280,7 +280,6 @@ Route::get('/get-foods/{key}', [FrontController::class, 'getFoodItems'])->name('
 Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPlanDetails'])->name('front.competition-plan-details');
 Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
 Route::get('/get-default-plan-details/{id}', [FrontPlanController::class, 'getDefaultPlanDetails'])->name('front.get-default-plan-details');
-Route::get('/get-race-ethnicity-culture-options', [PaymentController::class, 'getRaceEthnicityCultureOptions'])->name('front.get-race-ethnicity-culture-options');
 
 // Front auth
 Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
