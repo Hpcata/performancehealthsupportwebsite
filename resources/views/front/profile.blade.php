@@ -179,7 +179,15 @@
                                         </h4>
 
                                         <ul class="mb-3">
-                                            <li>Sport: N/A</li>
+                                            <li>Sport: {{ $profileDetails['Sport'] }}
+                                                <button type="button" 
+                                                    class="btn btn-light edit-icon" 
+                                                    id="edit-sport-button"
+                                                    data-sport="{{ $profileDetails['Sport'] ?? '' }}"
+                                                    data-name="{{ $profileDetails['Name'] ?? '' }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </li>
                                         </ul>
 
                                         <!-- Toggle button -->
@@ -909,59 +917,59 @@
     </div> --}}
 
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-3">
-            <div class="modal-header bg-light border-0">
-                <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase Plan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-3">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-            <div class="modal-body px-4">
-                <!-- Plan Description -->
-                <p class="mb-4 text-muted" id="plan-description">
-                    
-                </p>
+                <div class="modal-body px-4">
+                    <!-- Plan Description -->
+                    <p class="mb-4 text-muted" id="plan-description">
+                        
+                    </p>
 
-                <!-- Form -->
-                <form id="payment-form">
-                    <!-- Hidden User Info -->
-                    <div id="registration-details">
-                        <input type="hidden" id="name" value="{{ $user->name }}">
-                        <input type="hidden" id="email" value="{{ $user->email }}">
-                        <input type="hidden" id="phone" value="">
-                    </div>
-                    <!-- Heading -->
-                    <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
-
-                    <!-- Coupon Code -->
-                    <div class="mb-3" id="coupon-details">
-                        <label for="promo-code" class="form-label">Coupon Code</label>
-                        <div class="d-flex gap-2">
-                            <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
-                            <input type="hidden" class="form-control" id="discount">
-                            <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
+                    <!-- Form -->
+                    <form id="payment-form">
+                        <!-- Hidden User Info -->
+                        <div id="registration-details">
+                            <input type="hidden" id="name" value="{{ $user->name }}">
+                            <input type="hidden" id="email" value="{{ $user->email }}">
+                            <input type="hidden" id="phone" value="">
                         </div>
-                        <small id="promo-message" class="form-text"></small>
-                    </div>
+                        <!-- Heading -->
+                        <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
 
-                    <!-- Card Info -->
-                    <div class="mb-3" id="payment-details">
-                        <label for="card-element" class="form-label">Credit or Debit Card</label>
-                        <div id="card-element" class="border rounded p-3 bg-light">
-                            <!-- Stripe card element will go here -->
+                        <!-- Coupon Code -->
+                        <div class="mb-3" id="coupon-details">
+                            <label for="promo-code" class="form-label">Coupon Code</label>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
+                                <input type="hidden" class="form-control" id="discount">
+                                <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
+                            </div>
+                            <small id="promo-message" class="form-text"></small>
                         </div>
-                        <div id="card-errors" class="text-danger mt-2"></div>
-                    </div>
 
-                    <!-- Submit Button -->
-                    <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
-                        Buy Now
-                    </button>
-                </form>
+                        <!-- Card Info -->
+                        <div class="mb-3" id="payment-details">
+                            <label for="card-element" class="form-label">Credit or Debit Card</label>
+                            <div id="card-element" class="border rounded p-3 bg-light">
+                                <!-- Stripe card element will go here -->
+                            </div>
+                            <div id="card-errors" class="text-danger mt-2"></div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
+                            Buy Now
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <div class="modal" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1005,48 +1013,8 @@
         </div>
     </div>
 
-    <!-- Edit Sport Modal -->
-    <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editSportModalLabel">Edit Sport</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editSportForm" method="POST" action="" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-
-                        <!-- Sport Name Input -->
-                        <div class="mb-3">
-                            <label for="sportNameInput" class="form-label">Sport Name</label>
-                            <input type="text" class="form-control" id="sportNameInput" name="sport_name" value="{{ $user->sport_name ?? '' }}" required>
-                        </div>
-
-                        <!-- Sport Image Upload -->
-                        <div class="mb-3">
-                            <label for="sportImageInput" class="form-label">Sport Image</label>
-                            <input type="file" class="form-control" id="sportImageInput" name="sport_image" accept="image/*">
-                        </div>
-
-                        <!-- Preview Uploaded Image -->
-                        <div class="mb-3">
-                            <!-- <label class="form-label">Current Sport Image</label> -->
-                            <div>
-                                <img id="sportImagePreview" src="" class="img-fluid rounded" style="max-width: 200px;">
-                            </div>
-                        </div>
-
-                        <button type="button" class="btn btn-primary" onclick="submitSportUpdate()">Save Changes</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-     <!-- Add Goal / Challenge Modal -->
-     <div class="modal" id="addGoalModal" tabindex="-1">
+    <!-- Add Goal / Challenge Modal -->
+    <div class="modal" id="addGoalModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1081,7 +1049,7 @@
     </div>
 
     <!-- Report File Upload Modal -->
-    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 
@@ -1132,7 +1100,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="supplementEditModal" tabindex="-1" aria-labelledby="supplementEditModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal" id="supplementEditModal" tabindex="-1" aria-labelledby="supplementEditModalLabel" aria-hidden="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1205,6 +1173,49 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Sport Modal -->
+    <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{{ route('profile.update.sport') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Sport Info</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="sport_name" class="form-label">Sport Name</label>
+                            <input type="text" name="sport" class="form-control" id="sport_name" value="{{ $userPrePlan->occupation ?? '' }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="sport_image" class="form-label">Sport Image</label>
+                            <input type="file" name="sport_image" class="form-control" id="sport_image" style="height: auto; border-radius: 5px;">
+                        </div>
+                        <!-- Existing Sport Image Preview -->
+                        @if(!empty($userPrePlan->sport_image))
+                            <div class="mb-3">
+                                <label class="form-label">Current Image:</label><br>
+                                <img src="{{ asset($userPrePlan->sport_image) }}" alt="Sport Image" width="120" height="120" class="rounded">
+                            </div>
+                        @endif
+
+                        <input type="hidden" name="user_id" id="sport_user_id" value="{{ auth()->id() }}">
+                        <input type="hidden" name="payment_id" id="payment_id" value="{{ $payment->id }}">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" id="saveSportBtn" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
@@ -1347,6 +1358,45 @@
             $('#editHeightModal').modal('show'); 
         });
     });
+
+    $('#saveSportBtn').on('click', function () {
+        let formData = new FormData();
+        formData.append('sport', $('#sport_name').val());
+        formData.append('user_id', $('#sport_user_id').val());
+        formData.append('payment_id', $('#payment_id').val());
+        // formData.append('user_id', $('#sport_user_id').val());
+
+        let sportImage = $('#sport_image')[0].files[0];
+        if (sportImage) {
+            formData.append('sport_image', sportImage);
+        }
+
+        $.ajax({
+            url: '{{ route("profile.update.sport") }}',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    $('#editSportModal').modal('hide');
+                    // Optionally, update the DOM with new values
+                    location.reload(); // or update DOM instead of full reload
+                } else {
+                    alert('Something went wrong!');
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseJSON);
+                alert('Validation failed or server error!');
+            }
+        });
+    });
+
     $('#editHeightForm').on('submit', function (e) {
         e.preventDefault();
         
@@ -2426,7 +2476,7 @@
             return `${parts[2]}-${parts[1]}-${parts[0]}`; // "2025-04-24"
         }
         
-        $('.add-sport').on('click', function() {
+        $('#edit-sport-button').on('click', function() {
             $('#editSportModal').modal('show');
         });
 
