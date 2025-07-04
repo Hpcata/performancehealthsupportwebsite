@@ -868,20 +868,28 @@ class PlanController extends Controller
             })
             ->get();
 
-            // Sort userMealTimes by mealTime.order ASC
         $userPlans->each(function ($userPlan) {
             $userPlan->userCategories = $userPlan->userCategories->where('user_plan_id', $userPlan->id)
                 ->sortBy(fn($mt) => $mt->category->order ?? 0)
                 ->values(); // reindex
         });
+        $payment = \App\Models\Payment::where('user_id', $request->user_id)->where('plan_id', $id)->first();
+        $userPrePlan = \App\Models\UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $payment->id)->first();
+
+        $sportGame = \App\Models\SportGame::with('categories')->where('name', $userPrePlan->occupation)->first();
+        $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
+        $sportImagePath = null;
+        if ($category) {
+            $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+        }
         $printAllmeal = true;
-        return view('front.plan-preview', compact('userPlans', 'printAllmeal'));
+        return view('front.plan-preview', compact('userPlans', 'printAllmeal', 'sportImagePath'));
     }
 
     public function planPreview(Request $request)
     {
 
-        $groupedData = $request->input('grouped_data'); // ✅ Access grouped data from AJAX
+        $groupedData = $request->input('grouped_data');
 
         $plan = Plan::find($request->plan_id);
         $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
@@ -901,11 +909,19 @@ class PlanController extends Controller
                 ->values();
         });
 
-        // ✅ Now you can use $groupedData to highlight or modify view data
-        // Example: you could pass it to the view for use in blade:
+        $payment = \App\Models\Payment::where('user_id', $request->user_id)->where('plan_id', $request->plan_id)->first();
+        $userPrePlan = \App\Models\UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $payment->id)->first();
+
+        $sportGame = \App\Models\SportGame::with('categories')->where('name', $userPrePlan->occupation)->first();
+        $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
+        $sportImagePath = null;
+        if ($category) {
+            $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+        }
+        
         $printAllmeal = false;
-        // dd(view('front.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal')));
-        return view('front.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal'));
+
+        return view('front.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal', 'sportImagePath'));
     }
 
     public function getDefaultPlanDetails($id)

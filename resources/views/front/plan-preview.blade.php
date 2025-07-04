@@ -113,7 +113,10 @@
                 </figure>
                 <h5 class="text-white">{{ $userPlan->user->first_name }}’s</h5>
                 <h1 class="text-white">Nutrition Plan <span>| {{ $userPlan->plan->name }}</span></h1>
-                <div class="header-img" style="background-image: url('{{ frontAssets('print-plan/images/header-bg.jpg') }}');"></div>
+                @php
+                    $backgroundUrl = $sportImagePath ? asset('storage/' . $sportImagePath) : frontAssets('/images/banner-img.jpg');
+                @endphp
+                <div class="header-img" style="background-image: url('{{ $backgroundUrl }}');"></div>
             </div>
                 
             @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userMealTime)
@@ -322,7 +325,10 @@
             </figure>
             <h5 class="text-white">{{ $userPlan->user->first_name }}’s</h5>
             <h1 class="text-white">Nutrition Plan <span>| {{ $userPlan->plan->name }}</span></h1>
-            <div class="header-img" style="background-image: url('{{ frontAssets('print-plan/images/header-bg.jpg') }}');"></div>
+            @php
+                $backgroundUrl = $sportImagePath ? asset('storage/' . $sportImagePath) : frontAssets('/images/banner-img.jpg');
+            @endphp
+            <div class="header-img" style="background-image: url('{{ $backgroundUrl }}');"></div>
         </div>
 
         @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userMealTime)

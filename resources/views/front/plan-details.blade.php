@@ -443,6 +443,9 @@
             }));
     }
 
+    $('#planPreviewModal').on('hidden.bs.modal', function () {
+        location.reload(); // Reload the page when the modal is closed
+    });
     // const baseUrl = "{{ asset('private/public/storage') }}";
     const user = @json($userPlan);
     const userId = user.user_id;

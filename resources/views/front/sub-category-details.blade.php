@@ -315,6 +315,10 @@
             }));
     }
 
+    $('#planPreviewModal').on('hidden.bs.modal', function () {
+        location.reload(); // Reload the page when the modal is closed
+    });
+    
     const user = @json($userPlan);
     const userId = user.user_id;    
     const userPlanId = user.id;
