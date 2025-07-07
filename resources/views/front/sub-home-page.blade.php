@@ -3831,13 +3831,10 @@
 
                             let discountCode = $('#promo-code').val();
                             console.log(discountCode);
-                            let discount = $('#discount').val();
-                            let email = $('#emailId').val();
-                            let name = $('#name').val();
-                            let phone = $('#phone').val();
-                            console.log('Email:', email);
-                            console.log('Name:', name);
-                            console.log('Phone:', phone);
+                            let discount = $('#purchaseModal #discount').val();
+                            let email = $('#purchaseModal #emailId').val();
+                            let name = $('#purchaseModal #name').val();
+                            let phone = $('#purchaseModal #phone').val();
                             
                             if(discount == 100.00) {
                                 $.ajax({
@@ -3846,10 +3843,10 @@
                                     data: {
                                         plan_id: planId,
                                         price: price,
-                                        name: $('#name').val(),
-                                        email: $('#emailId').val(),
-                                        phone: $('#phone').val(),
-                                        password: $('#password').val(),
+                                        name: name,
+                                        email: email,
+                                        phone: phone,
+                                        password: $('#purchaseModal #password').val(),
                                         coupon_code: discountCode,
                                         _token: '{{ csrf_token() }}'
                                     },
@@ -3917,9 +3914,9 @@
                                     type: 'card',
                                     card: card,
                                     billing_details: {
-                                        name: $('#name').val(),
-                                        email: $('#emailId').val(),
-                                        phone: $('#phone').val(),
+                                        name: name,
+                                        email: email,
+                                        phone: phone,
                                     },
                                 }).then(function(result) {
                                     if (result.error) {

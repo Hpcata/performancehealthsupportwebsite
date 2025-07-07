@@ -28,6 +28,10 @@
         filter: blur(5px); /* Adjust the blur value */
         transition: filter 0.3s ease-in-out;
     }
+
+    .coupon-link           { text-decoration:none; cursor:pointer; color:#000; text-decoration:underline;}
+    .coupon-link.active    { color:#000; text-decoration:underline; }
+
 </style>
     <div class="nutrition-plan-hero bg-white py-4">
         <div class="container">
@@ -861,61 +865,6 @@
         </div>
     </div>
 
-    {{-- <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- User info form -->
-                    <form id="payment-form">
-                        <div id="registration-details">
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="name" value="{{ $user->name }}">
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="email" value="{{ $user->email }}" >
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="phone" value="">
-                            </div>
-                        </div>
-                        <!-- Promo Code Section -->
-                        <div id="coupon-details">
-                            <div class="mb-3">
-                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
-                                    <input type="hidden" class="form-control" id="discount">
-                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
-                                </div>
-                                <small id="promo-message" class=""></small>
-                            </div>
-                        </div>
-                        <div id="payment-details">
-                            
-                            <!-- Stripe Payment Card Section -->
-                            <h6 class="mb-3">Payment Details</h6>
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
-                            Buy Now
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-3">
@@ -940,9 +889,15 @@
                         </div>
                         <!-- Heading -->
                         <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
+                        
+                        <div class="mb-3 mt-3">
+                            <small>
+                                <a href="#" id="toggle-coupon-link" class="coupon-link">Add a Coupon Code</a>
+                            </small>
+                        </div>
 
                         <!-- Coupon Code -->
-                        <div class="mb-3" id="coupon-details">
+                        <div class="mb-3 d-none" id="coupon-details">
                             <label for="promo-code" class="form-label">Coupon Code</label>
                             <div class="d-flex gap-2">
                                 <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
@@ -1246,6 +1201,55 @@
         }
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleLink = document.getElementById('toggle-coupon-link');
+        const couponDetails = document.getElementById('coupon-details');
+        const promoInput = document.getElementById('promo-code');
+        const promoMessage = document.getElementById('promo-message');
+
+        if (toggleLink) {
+            toggleLink.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const isHidden = couponDetails.classList.contains('d-none');
+
+                couponDetails.classList.toggle('d-none');
+
+                toggleLink.textContent = isHidden ? 'Remove a Coupon Code' : 'Add a Coupon Code';
+
+                if (!isHidden) {
+                    promoInput.value = '';
+                    if (promoMessage) {
+                        promoMessage.textContent = '';
+                    }
+                    document.getElementById('payment-details').style.removeProperty('display');
+                }
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const purchaseModal = document.getElementById('purchaseModal');
+
+        purchaseModal.addEventListener('hidden.bs.modal', function () {
+            // Reset the form inside the modal
+            document.getElementById('payment-form').reset();
+            
+            // Reset Stripe card element (if applicable)
+            if (typeof stripe !== "undefined" && typeof card !== "undefined") {
+                card.clear();
+            }
+
+            // Clear any validation messages or applied promo codes
+            document.getElementById('promo-message').textContent = "";
+            document.getElementById('discount').value = "";
+            document.getElementById('coupon-details').classList.add('d-none'); // Hide coupon details
+            document.getElementById('toggle-coupon-link').classList.remove('active'); // Reset link style
+            document.getElementById('payment-details').style.removeProperty('display');
+
+        });
+    });
+    
     function submitProfileUpdate(type) {
         const formData = new FormData();
         // Get user ID from either modal (whichever is present)
@@ -1817,8 +1821,32 @@
                 }
             });
         });
-    
 
+        $('#purchaseModal').on('hidden.bs.modal', function () {
+            $('#payment-form')[0].reset();
+            $('#card-errors').text('');
+            // Reset coupon UI
+            const toggleLink = document.getElementById('toggle-coupon-link');
+            const couponDetails = document.getElementById('coupon-details');
+            const promoInput = document.getElementById('promo-code');
+            const promoMessage = document.getElementById('promo-message');
+
+            if (couponDetails && !couponDetails.classList.contains('d-none')) {
+                couponDetails.classList.add('d-none');
+            }
+
+            if (toggleLink) {
+                toggleLink.textContent = 'Add a Coupon Code';
+            }
+
+            if (promoInput) {
+                promoInput.value = '';
+            }
+
+            if (promoMessage) {
+                promoMessage.textContent = '';
+            }
+        });
         // Load chart data
         function loadChart(filter, userId) {
             $.ajax({
@@ -2087,6 +2115,10 @@
                 // Create a PaymentMethod with Stripe's API
                 let discountCode = $('#promo-code').val();
                 let discount = $('#discount').val();
+                let name = $('#purchaseModal #name').val();
+                let email = $('#purchaseModal #email').val();
+                let phone = $('#purchaseModal #phone').val();
+
                 if(discount == 100.00) {
                     $.ajax({
                         url: '{{ route("process.payment") }}',
@@ -2094,9 +2126,9 @@
                         data: {
                             plan_id: planId,
                             price: price,
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                             coupon_code: discountCode,
                             _token: '{{ csrf_token() }}'
                         },
@@ -2108,12 +2140,17 @@
                                 var user_id = response.data.user_id;
                                 var payment_id = response.data.payment_id;
 
-                                // Redirect the user if a URL is provided
-                                if (response.redirect_url) {
-                                    var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
-                                    setTimeout(function () {
-                                        window.location.href = redirectUrlWithUserId;
-                                    }, 3000);
+                                if(response.data.submit_questionnaire) {
+                                    if (response.redirect_url) {
+                                        var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                        setTimeout(function () {
+                                            window.location.href = redirectUrlWithUserId;
+                                        }, 3000);
+                                    }else {
+                                        alert('Error: Redirect url not found.');
+                                    }
+                                } else {
+                                    $('#thankYouModal').modal('show');
                                 }
                             } else {
                                 // Show error message for failed payment
@@ -2132,9 +2169,9 @@
                         type: 'card',
                         card: card,
                         billing_details: {
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                         },
                     }).then(function(result) {
                         if (result.error) {
@@ -2150,9 +2187,9 @@
                                     payment_method_id: result.paymentMethod.id,
                                     plan_id: planId,
                                     price: price,
-                                    name: $('#name').val(),
-                                    email: $('#email').val(),
-                                    phone: $('#phone').val(),
+                                    name: name,
+                                    email: email,
+                                    phone: phone,
                                     coupon_code: dicountCode,
                                     _token: '{{ csrf_token() }}'
                                 },
@@ -2166,14 +2203,17 @@
                                         var user_id = response.data.user_id;  // Assuming the backend sends the user_id
                                         var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
 
-                                        // Check if there's a redirect URL provided
-                                        if (response.redirect_url) {
-
-                                            var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
-                                            // Redirect the user to the provided URL after a delay (optional)
-                                            setTimeout(function() {
-                                                window.location.href = redirectUrlWithUserId;
-                                            }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                        if(response.data.submit_questionnaire) {
+                                            if (response.redirect_url) {
+                                                var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                                setTimeout(function () {
+                                                    window.location.href = redirectUrlWithUserId;
+                                                }, 3000);
+                                            }else {
+                                                alert('Error: Redirect url not found.');
+                                            }
+                                        } else {
+                                            $('#thankYouModal').modal('show');
                                         }
 
                                     } else {
