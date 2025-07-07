@@ -24,7 +24,7 @@
                         <h6 class="mb-0 fw-bold ">Header Section</h6>
                     </div>
                     <div class="card-body">
-                        <form id="general-header-form" method="POST" action="{{ route('save-site-settings') }}" enctype="multipart/form-data">
+                        <form id="general-header-form" method="POST" action="{{ route('admin.settings.save') }}" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name='page' value="general">
                             <input type="hidden" name='section' value="header">
@@ -134,7 +134,7 @@
                         <h6 class="mb-0 fw-bold ">Footer Section</h6>
                     </div>
                     <div class="card-body">
-                        <form id="general-footer-form" method="POST" action="{{ route('save-site-settings') }}" enctype="multipart/form-data">
+                        <form id="general-footer-form" method="POST" action="{{ route('admin.settings.save') }}" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name='page' value="general">
                             <input type="hidden" name='section' value="footer">

@@ -44,7 +44,7 @@ class PlanController extends Controller
             'meal_times' => 'nullable|array', // Validate meal times
             'meal_times.*' => 'exists:categories,id',
         ]);
-    
+
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('plans', 'public');
         }
@@ -54,24 +54,26 @@ class PlanController extends Controller
         }
 
         $plan = Plan::create($validated);
-    
+
         if ($request->has('meal_times')) {
             $plan->categories()->sync($request->meal_times); // Sync meal times
         }
 
         // Sync Sub-Plans
-        $plan->subPlans()->sync($data['sub_plan_ids'] ?? []);
-    
+        if ($request->has('sub_plan_ids')) {
+            $plan->subPlans()->sync($request->sub_plan_ids);
+        }
+
         return redirect()->route('admin.plans.index')->with('success', 'Plan created successfully.');
     }
-    
+
     public function edit(Plan $plan)
     {
         $categories = Category::all(); // Fetch all meal times
         $subPlans = Plan::where('id', '!=', $plan->id)->get();
         return view('backend.pages.plan.form', compact('plan', 'categories','subPlans'));
     }
-    
+
     public function update(Request $request, Plan $plan)
     {
         $validated = $request->validate([
@@ -90,23 +92,23 @@ class PlanController extends Controller
             }
             $validated['image'] = $request->file('image')->store('plans', 'public');
         }
-    
+
         if (!empty($validated['description'])) {
             $validated['description'] = html_entity_decode($validated['description']);
         }
-        
+
         $plan->update($validated);
-    
+
         if ($request->has('meal_times')) {
             $plan->categories()->sync($request->meal_times); // Sync meal times
         }
 
         // Sync Sub-Plans
         $plan->subPlans()->sync($request->sub_plan_ids ?? []);
-        
+
         return redirect()->route('admin.plans.index')->with('success', 'Plan updated successfully.');
     }
-    
+
 
     /**
      * Remove the specified resource from storage.

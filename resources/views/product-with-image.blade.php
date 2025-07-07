@@ -65,7 +65,7 @@
             <div class="col-md-12">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <form action="{{ route('woolworths-product-search') }}" method="GET">
+                        <form action="{{ route('admin.product.search') }}" method="GET">
                             <div class="col-md-12">
                                 <input class="form-control" type="text" name="query" placeholder="Search for a product..." value="{{ $query ?? '' }}" required>
                                 <button class="btn btn-primary mt-3" type="submit">Search</button>
@@ -99,7 +99,6 @@
                                 </thead>
                                 <tbody>
                                     @foreach($results as $product)
-                                    @php  //dd($product['category']); @endphp
                                         <tr>
                                             <td>{{ $product['name'] }}</td>
                                             <td>{{ $product['barcode'] }}</td>
@@ -142,13 +141,13 @@
                     <div class="pagination">
                         @if(isset($pagination['current_page']))
                             @if($pagination['current_page'] > 1)
-                                <a href="{{ route('woolworths-product-search') }}?query={{ $query }}&page={{ $pagination['current_page'] - 1 }}">Previous</a>
+                                <a href="{{ route('admin.product.search') }}?query={{ $query }}&page={{ $pagination['current_page'] - 1 }}">Previous</a>
                             @endif
 
                             <span>Page {{ $pagination['current_page'] }} of {{ $pagination['total_pages'] }}</span>
 
                             @if($pagination['current_page'] < $pagination['total_pages'])
-                                <a href="{{ route('woolworths-product-search') }}?query={{ $query }}&page={{ $pagination['current_page'] + 1 }}">Next</a>
+                                <a href="{{ route('admin.product.search') }}?query={{ $query }}&page={{ $pagination['current_page'] + 1 }}">Next</a>
                             @endif
                         @endif
                     </div>

@@ -14,7 +14,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="{!! frontAssets('fonts/icomoon/style.css') !!}">
     <link rel="stylesheet" href="{!! frontAssets('fonts/flaticon/font/flaticon.css') !!}">
 
@@ -26,20 +28,23 @@
     <link rel="stylesheet" href="{!! frontAssets('css/glightbox.min.css') !!}">
     <link rel="stylesheet" href="{!! frontAssets('css/style.css') !!}">
 
-	<title>Kerry </title>
+    <title>Kerry </title>
     <!-- Hotjar Tracking Code for Bookings PHS -->
 
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-N2BZFJGB');</script>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-N2BZFJGB');</script>
     <!-- End Google Tag Manager -->
-    
+
     <script>
-        (function(h, o, t, j, a, r) {
-            h.hj = h.hj || function() {
+        (function (h, o, t, j, a, r) {
+            h.hj = h.hj || function () {
                 (h.hj.q = h.hj.q || []).push(arguments)
             };
             h._hjSettings = {
@@ -57,7 +62,7 @@
 
     <script>
         // Global AJAX error handler
-        $(document).ajaxError(function(event, jqXHR, settings, error) {
+        $(document).ajaxError(function (event, jqXHR, settings, error) {
             if (jqXHR.status === 419 || jqXHR.status === 401) {
                 // Session expired or CSRF token mismatch
                 window.location.href = "{{ route('front.index') }}";
@@ -71,17 +76,18 @@
             }
         });
     </script>
-	@stack('styles')
-	@stack('custom_styles')
+    @stack('styles')
+    @stack('custom_styles')
 </head>
+
 <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N2BZFJGB"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N2BZFJGB" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-   @include('front.includes.header')
-   @yield('content')
-   @include('front.includes.footer')
+    @include('front.includes.header')
+    @yield('content')
+    @include('front.includes.footer')
 </body>
 
 </html>

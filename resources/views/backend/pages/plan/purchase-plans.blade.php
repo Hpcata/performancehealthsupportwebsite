@@ -12,23 +12,12 @@
 </style>
 <div class="container-xxl">
     <!-- Flash Messages -->
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @elseif (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+    @include('backend.includes.alert')
 
     <div class="row align-items-center">
         <div class="border-0 mb-4">
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">Purchase Plans List</h3>
-                <!-- <a href="{{ route('admin.plans.create') }}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Plan</a> -->
             </div>
         </div>
     </div>
@@ -46,9 +35,6 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <!-- <th>Status</th>
-                                <th>Discount Code</th> -->
-                                <!-- <th>Status</th> -->
                                 <th>Purchase Date</th>
                                 <th>Action</th>
                             </tr>
@@ -70,9 +56,6 @@
                                 <td>{{ $payment->name }}</td>
                                 <td>{{ $payment->email }}</td>
                                 <td>{{ $payment->phone }}</td>
-                                <!-- <td>{{ $payment->status }}</td>
-                                <td>{{ $payment->coupon_code }}</td> -->
-                                <!-- <td>{{ $payment->status }}</td> -->
                                 <td>{{ formatDate($payment->created_at) }}</td>
                                 <td>
                                     <!-- Action link to show payment details -->
@@ -82,7 +65,7 @@
                                     @else
                                     <a href="{{ route('admin.purchase-plans.create', $payment->id) }}" class="btn btn-sm btn-outline-success m-1"><i class="icofont-plus text-success"></i></a>
                                     @endif
-                                </td> 
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -112,17 +95,12 @@
     $(document).ready(function() {
         $(document).on('click', '.user-pre-plan-details', function() {
             const paymentId = $(this).data('payment-id');
-
-            console.log('Clicked on user-pre-plan-details button with paymentId:', paymentId);
-
             $.ajax({
-                url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                url: '{{ route('admin.purchase-plans.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                 method: 'GET',
 
                 success: function(response) {
                     if (response.success) {
-                        console.log(response.data);
-
                         let modalContent = '';
 
                         // Add User Details at the top
@@ -291,35 +269,6 @@
             });
         });
 
-        // $('button[name="action"][value="view"]').on('click', function(e) {
-        //     e.preventDefault();
-
-        //     var user_id = $(this).data('user-id');  // Assume you set a data attribute with the user's ID on the button
-        //     var payment_id = $(this).data('payment-id');  // Assume you set a data attribute with the user's ID on the button
-
-        //     $.ajax({
-        //         url: '{{ route("admin.handle-plan-action") }}',  // URL to your controller method for storing the form
-        //         method: 'POST',
-        //         data: {
-        //             action: 'view',
-        //             user_id: user_id,
-        //             payment_id : payment_id,
-        //             _token: '{{ csrf_token() }}'
-        //         },
-        //         success: function(response) {
-        //             if (response.status === 'success') {
-        //                 window.open(response.redirect_url, '_blank');
-        //                 // window.location.href = response.redirect_url;  // Redirect to user profile page
-        //             } else {
-        //                 alert('Error: ' + response.message);
-        //             }
-        //         },
-        //         error: function(xhr) {
-        //             alert('Something went wrong!');
-        //         }
-        //     });
-        // });
-
         // Handle the "Send" button click (Send meal plan)
         $('button[name="action"][value="send"]').on('click', function(e) {
             e.preventDefault();
@@ -330,7 +279,7 @@
             const loader = $('#loader-2');
             loader.show(); // Show the loader
             $.ajax({
-                url: '{{ route("admin.handle-plan-action") }}',
+                url: '{{ route("admin.purchase-plans.handle-plan-action") }}',
                 method: 'POST',
                 data: {
                     action: 'send',
@@ -384,13 +333,10 @@
 
 
         $(document).on('click', '.view-info', function () {
-            // alert('22');
             var description = $(this).data('description') || 'N/A';
             $('#modalDescription').text(description);
             $('#itemInfoModal').modal('show');
         });
     });
-
-
 </script>
 @endsection

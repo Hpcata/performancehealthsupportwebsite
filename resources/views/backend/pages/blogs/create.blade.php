@@ -9,7 +9,7 @@
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">Create Blog</h3>
                 <div class="col-auto d-flex w-sm-100">
-                    <a type="button" href="{{ route('dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
+                    <a type="button" href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
                 </div>
             </div>
         </div>
@@ -18,7 +18,7 @@
         <div class="col-md-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <form action="{{ route('backend.blogs.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.blogs.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row g-3 align-items-center">
                             <!-- Title Field -->
@@ -35,31 +35,10 @@
                             <!-- Content Field -->
                             <div class="col-md-12">
                                 <label for="editor" class="form-label">Blog Content</label>
-                                 <!-- <div id="editor"> -->
-									<!-- <h4>Please add Blog Description here</h4> -->
-								<!-- </div> -->
                                 <div id="editor" class="form-control" style="min-height: 200px;"></div> <!-- CKEditor will use this div -->
                                 <input type="hidden" name="content" id="hiddenContent" />
                             </div>
 
-                            <!-- Author Field -->
-                           {{-- <div class="col-md-6">
-                                <label for="author" class="form-label">Author</label>
-                                <input type="text" class="form-control" id="author" name="author" required>
-                            </div>
-
-                            <!-- Email Field -->
-                            <div class="col-md-6">
-                                <label for="emailaddress" class="form-label">Author Email</label>
-                                <input type="email" class="form-control" id="emailaddress" name="emailaddress" required>
-                            </div>
-
-                            <!-- Publish Date Field -->
-                            <div class="col-md-6">
-                                <label for="publish_date" class="form-label">Publish Date</label>
-                                <input type="date" class="form-control" id="publish_date" name="publish_date" required>
-                            </div>
-                            --}}
                             <!-- Category Field -->
                             <div class="col-md-6">
                                 <label for="category" class="form-label">Tags</label>
@@ -72,12 +51,6 @@
                                 </select>
                             </div>
 
-                            <!-- Tags Field -->
-                        {{--    <div class="col-md-6">
-                                <label for="tags" class="form-label">Tags (Comma separated)</label>
-                                <input type="text" class="form-control" id="tags" name="tags">
-                            </div>
-                        --}}
                             <!-- Image Upload Field -->
                             <div class="col-md-6">
                                 <label for="image" class="form-label">Featured Image</label>

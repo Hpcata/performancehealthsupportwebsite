@@ -46,10 +46,10 @@ class BlogController extends Controller
             // Store the image with the original name in the public/backend/uploads/blog directory
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName(); // Generates a unique name
-    
+
             // Set the destination path for the image
             $destinationPath = public_path('backend/uploads/blog');
-            
+
             // Ensure the directory exists
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);  // Create the directory if it doesn't exist
@@ -57,7 +57,7 @@ class BlogController extends Controller
 
             // Move the image to the desired directory
             $image->move($destinationPath, $imageName);
-    
+
             // Update the blog's image field in the database
             $blog->image = 'backend/uploads/blog/' . $imageName;
         }
@@ -79,7 +79,7 @@ class BlogController extends Controller
             $blog->tags()->sync($tags);
         }
 
-        return redirect()->route('backend.blogs.index')->with('success', 'Blog created successfully.');
+        return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
     }
 
     // Display the specified blog.
@@ -127,10 +127,10 @@ class BlogController extends Controller
             // Store the image with the original name in the public/backend/uploads/blog directory
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName(); // Generates a unique name
-    
+
             // Set the destination path for the image
             $destinationPath = public_path('backend/uploads/blog');
-            
+
             // Ensure the directory exists
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);  // Create the directory if it doesn't exist
@@ -138,7 +138,7 @@ class BlogController extends Controller
 
             // Move the image to the desired directory
             $image->move($destinationPath, $imageName);
-    
+
             // Update the blog's image field in the database
             $blog->image = 'backend/uploads/blog/' . $imageName;
         }
@@ -147,7 +147,7 @@ class BlogController extends Controller
         $blog->author = Auth::user()->id;
         $blog->save();
 
-        return redirect()->route('backend.blogs.index')->with('success', 'Blog updated successfully.');
+        return redirect()->route('admin.blogs.index')->with('success', 'Blog updated successfully.');
     }
 
     // Remove the specified blog from storage.
@@ -155,6 +155,6 @@ class BlogController extends Controller
     {
         $blog->delete();
 
-        return redirect()->route('backend.blogs.index')->with('success', 'Blog deleted successfully.');
+        return redirect()->route('admin.blogs.index')->with('success', 'Blog deleted successfully.');
     }
 }

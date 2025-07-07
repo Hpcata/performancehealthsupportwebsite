@@ -29,7 +29,7 @@
                 <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                     <h3 class="fw-bold mb-0">Change Password</h3>
                     <div class="col-auto d-flex w-sm-100">
-                        <a type="button" href="{{ route('dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
+                        <a type="button" href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
                     </div>
                 </div>
             </div>
@@ -41,7 +41,7 @@
                         <h6 class="mb-0 fw-bold ">Basic Inputs</h6>
                     </div>
                     <div class="card-body">
-                        <form id="admin-change-password-form" method="POST" action="{{ route('change-password') }}" enctype="multipart/form-data">
+                        <form id="admin-change-password-form" method="POST" action="{{ route('admin.auth.change.index') }}" enctype="multipart/form-data">
                             @csrf
                             <div class="row g-3 align-items-center">
                                 <div class="col-md-6">

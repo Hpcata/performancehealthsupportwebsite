@@ -965,7 +965,7 @@
             let userId = $(this).data('user-id');
             console.log(planId);
             //alert(planId);
-            window.open("{{ route('plans.generatePdf', ':id') }}".replace(':id', planId)+ `?user_id=${userId}`, '_blank');
+            window.open("{{ route('front.plans.generatePdf', ':id') }}".replace(':id', planId)+ `?user_id=${userId}`, '_blank');
 
         })
     });
