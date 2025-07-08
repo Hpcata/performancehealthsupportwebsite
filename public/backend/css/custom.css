@@ -1,0 +1,9 @@
+.tawk-custom-color {
+    display: none !important;
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #ffffff;
+}

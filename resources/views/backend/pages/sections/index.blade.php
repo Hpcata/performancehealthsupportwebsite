@@ -20,7 +20,7 @@
 		<div class="border-0 mb-4">
 			<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
 				<h3 class="fw-bold mb-0">Section List</h3>
-				<a href="{!! route('sections.create') !!}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Section</a>
+				<a href="{!! route('admin.pages.sections.create') !!}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Section</a>
 			</div>
 		</div>
 	</div> <!-- Row end  -->
@@ -50,8 +50,8 @@
                                     <td>{{ $section->order }}</td>
                                     <td>{{ $section->enabled ? 'Yes' : 'No' }}</td>
                                     <td>
-                                        <a href="{{ route('sections.edit', $section) }}" class="btn btn-warning">Edit</a>
-                                        <form action="{{ route('sections.destroy', $section) }}" method="POST" style="display:inline;">
+                                        <a href="{{ route('admin.sections.edit', $section) }}" class="btn btn-warning">Edit</a>
+                                        <form action="{{ route('admin.sections.destroy', $section) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger">Delete</button>

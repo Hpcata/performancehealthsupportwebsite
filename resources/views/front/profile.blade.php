@@ -36,13 +36,6 @@
                     <div class="nutrition-plan-text">
                         <h1>We Take Care Of Your <span class="text-primary">Health</span></h1>
                         <p>Fuel your performance with daily nutrition that works. Get expert advice and customised plans - without the guess work.</p>
-                        <!-- <a href="#" class="btn btn-primary">
-                            <span class="me-1">Pre Plan Details</span>
-                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
-                                <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </a> -->
                         @php
                             $Plan = $plans->first();
                             $userPlan = \App\Models\UserPlan::where('user_id', $user->id)->where('plan_id', $Plan->id)->where('status', 'active')->first();
@@ -56,14 +49,14 @@
                             class="btn btn-danger btn-outline-danger mt-3 px-3 text-white"
                             >
                             Complete Your Profile
-                            </a> 
+                            </a>
                             <p class="mt-3 text-danger">* Finish Questionnaire to Continue</p>
                         @elseif(($profileSetUp == 1 || $profileSetUp == 0) && $user->email === 'zachtennis7@icloud.com')
                             <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
                             class="btn btn-danger btn-outline-danger mt-3 px-3 text-white @if($isMailSend) d-none @endif"
                             >
                             Complete Your Profile
-                            </a> 
+                            </a>
                             <p class="mt-3 text-danger @if($isMailSend) d-none @endif">* Finish Questionnaire to Continue</p>
 
                         @endif
@@ -89,7 +82,7 @@
                             <a href="#nextSection" class="btn btn-primary">
                                 <svg width="71" height="72" viewBox="0 0 71 72" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M50.8233 17.2911C49.0555 17.2911 47.7297 18.6169 47.7297 20.3847L47.7297 43.6603L22.2444 18.175C20.9186 17.1438 18.8562 17.1438 17.6777 18.3223C16.4992 19.5008 16.4992 21.5632 17.6777 22.7417L43.3103 48.3744L20.0347 48.3744C18.2669 48.3744 16.9411 49.7002 16.9411 51.4679C16.9411 53.2357 18.2669 54.5615 20.0347 54.5615H50.9706C51.2653 54.5615 51.7072 54.4142 52.1491 54.2669C52.4438 54.2669 52.7384 53.9723 53.033 53.6777C53.3276 53.383 53.6223 53.0884 53.7696 52.6465C53.9169 52.2045 54.0642 51.7626 54.0642 51.4679L54.0642 20.532C53.9169 18.9116 52.4438 17.4384 50.8233 17.2911Z" fill="white"/>
-                                </svg>                                    
+                                </svg>
                             </a>
                             <figure class="bottom-corner">
                                 <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
@@ -121,32 +114,21 @@
                                     <h5>{{ $user->name }} </h5>
                                     <p>{{ $user->designation }}</p>
                                 </div>
-                                <!-- <div class="nutrition-athlete-info">
-                                    <h5>Kerry O'Bryan </h5>
-                                    <p>MNutr&Diet, B.Sp.Ex.Sc, IOC Dip Nut</p>
-                                </div> -->
                             </div>
                             <figure class="bottom-corner">
                                 <svg version="1.1" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
                                     <path d="M0,5v45h47v-0.1h-2.1C20.1,49.9,0,29.8,0,5z" fill="#fafafa"/>
                                 </svg>
-                            </figure> 
+                            </figure>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="plan-buttons-link">
-            <!-- <div class="container">
-                <div class="d-flex flex-wrap align-items-center">
-                    <a href="#">Tracker</a>
-                    <a href="#">Plan</a>
-                    <a href="#">Treatment</a>
-                </div>
-            </div> -->
         </div>
     </div>
-    
+
     <div class="section bg-lighter pb-1 pt-0" id="nextSection">
         <div class="container">
             <div class="mt-4">
@@ -183,11 +165,7 @@
                                         </ul>
 
                                         <!-- Toggle button -->
-                                        <!-- <button class="btn-outline-primary btn-sm mb-2 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#profileDetailsCollapse" aria-expanded="false" aria-controls="profileDetailsCollapse">
-                                            Health Data
-                                        </button> -->
-                                        <a data-bs-toggle="collapse" href="#profileDetailsCollapse" role="button" aria-expanded="false" aria-controls="profileDetailsCollapse" class="text-decoration-none mt-3"> Health Data : 
-                                            <!-- <i class="fas fa-chevron-down pull-right"></i> -->
+                                        <a data-bs-toggle="collapse" href="#profileDetailsCollapse" role="button" aria-expanded="false" aria-controls="profileDetailsCollapse" class="text-decoration-none mt-3"> Health Data :
                                         </a>
                                         <!-- Collapsible section -->
                                         <div class="collapse" id="profileDetailsCollapse">
@@ -214,7 +192,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
 
@@ -225,7 +203,6 @@
                             <div class="card h-100 border-0 shadow-sm">
                                 <div class="p-4 card-body goal-card">
                                     <ul>
-                                       
                                         <li><strong>Nutrition Goals:</strong> {{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}
                                         <div class="btn-list">
                                             <button class="btn btn-light edit-icon add-goal " title="Add Goal" data-type="goal"
@@ -238,7 +215,7 @@
                                             </button>
                                             </div>
                                         </li>
-                                      
+
                                         <li><strong>Nutrition Challenge:</strong> {{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}
                                         <div class="btn-list">
                                             <button class="btn btn-light edit-icon add-goal" title="Add Challenge" data-type="challenge"
@@ -250,7 +227,7 @@
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
-                                        </li> 
+                                        </li>
                                     </ul>
                                     <div class="goal-list mt-4 mt-md-5">
                                         <h5 class="mb-3">Training Intensity</h5>
@@ -278,7 +255,7 @@
                                                 $vitaminEndDates = array_map('trim', explode(',', $vitaminEndDateRaw));
                                                 $formatDate = fn($date, $fallback = null) => $date && strtolower($date) !== 'null'
                                                                 ? \Carbon\Carbon::parse($date)->format('d-m-Y')
-                                                                : $fallback;    
+                                                                : $fallback;
                                                 $supplements = $vitaminAnswer ? array_map('trim', explode(',', $vitaminAnswer)) : [];
                                                 $supplementCount = count($supplements);
 
@@ -426,34 +403,14 @@
                                                     data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medicationAnswer }}" data-type="medication">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
-                                                <button class="btn btn-light edit-icon view-past-history" title="View Past Medications" 
+                                                <button class="btn btn-light edit-icon view-past-history" title="View Past Medications"
                                                 data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medicationAnswer }}" data-type="medication">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                                    
-                            {{--    <div class="px-4 py-3 border-bottom">
-                                        <strong>Favourite Food:</strong>
-                                        <p>{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="List your favourite foods?" data-answer="{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                    <div class="px-4 py-3 border-bottom">
-                                        <strong>Foods | Dislike:</strong>
-                                        <p>{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="Do you avoid/dislike any foods? List below" data-answer="{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                --}}
                                 </div>
                             </div>
                         </div>
@@ -494,7 +451,7 @@
                                                                 <circle class="st0" cx="400" cy="567.2" r="54.7"></circle>
                                                                 <path class="st0" d="M621.2,326.9V219.3c0-120.2-97.8-217.9-217.9-217.9C279.5,1.3,178.8,102,178.8,225.7v101.2c-59.5,1.2-107.3,49.7-107.3,109.5v255.5c0,60.5,49,109.5,109.5,109.5h438c60.5,0,109.5-49,109.5-109.5V436.4C728.5,376.6,680.6,328.1,621.2,326.9z M255.5,225.7c0-81.5,66.3-147.8,147.8-147.8c77.9,0,141.3,63.4,141.3,141.3v104H255.5V225.7z M655.5,691.8c0,20.2-16.3,36.5-36.5,36.5H181c-20.2,0-36.5-16.3-36.5-36.5V436.4c0-20.2,16.3-36.5,36.5-36.5h42.8h352.3H619c20.2,0,36.5,16.3,36.5,36.5V691.8z"></path>
                                                             </g>
-                                                            </svg> 
+                                                            </svg>
                                                         @else
                                                             <svg class="score-unlock-ico" version="1.1" x="0px" y="0px" viewBox="0 0 800 800" style="enable-background:new 0 0 800 800;" xml:space="preserve">
                                                             <g>
@@ -504,7 +461,7 @@
                                                             </svg>
                                                         @endif
                                                         </figure>
-                                                        <h5 class="mb-0">{{ $plan->name }}</h5> 
+                                                        <h5 class="mb-0">{{ $plan->name }}</h5>
                                                     </span>
                                                 </button>
                                             </h2>
@@ -515,95 +472,52 @@
                                             </div>
                                             <div class="card-footer border-top-0 bg-white">
                                                 <div class="d-flex flex-wrap">
-                                                @if($user->email === 'zachtennis7@icloud.com' && ($profileSetUp == 1 || $profileSetUp == 0))
-                                                    <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}" class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $isMailSend == 1 ? 'd-none' : '' }}">
-                                                    Complete Your Profile
-                                                </a>
-                                                @else
-                                                <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
-                                                class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $profileSetUp == 1 ? 'd-none' : '' }}">
-                                                    Complete Your Profile
-                                                </a>
-                                                @endif
-                                                @if($discount && !$adminView)
-                                                    @if($isMailSend)
-                                                        <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
-                                                        data-bs-toggle="tooltip">
-                                                        View Plan
-                                                        </a>
-                                                    @else 
-                                                        <a href="javascript:void(0);"
-                                                        class="btn btn-white m-2 buy-plan btn-outline-secondary"
-                                                        data-user-id="{{ $user->id }}"
-                                                        data-plan-id="{{ $plan->id }}"
-                                                        data-plan-price="{{ $plan->price }}"
-                                                        data-plan-name="{{ $plan->name }}">
-                                                            Buy Plan
-                                                        </a>
-                                                    @endif
-                                                @elseif($successPayment && !$adminView)
-                                                    @if($isMailSend)
-                                                        <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
-                                                        data-bs-toggle="tooltip">
-                                                        View Plan
-                                                        </a>
+                                                    @if($user->email === 'zachtennis7@icloud.com' && ($profileSetUp == 1 || $profileSetUp == 0))
+                                                        <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}" class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $isMailSend == 1 ? 'd-none' : '' }}">
+                                                        Complete Your Profile
+                                                    </a>
                                                     @else
-                                                        <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-secondary m-2 disabled"
-                                                        data-bs-toggle="tooltip" title="Working on your plan :-) Email you when ready."
-                                                        style="pointer-events: auto; cursor: not-allowed;">
+                                                        <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                                                        class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $profileSetUp == 1 ? 'd-none' : '' }}">
+                                                            Complete Your Profile
+                                                        </a>
+                                                    @endif
+                                                    @if($discount && !$adminView)
+                                                        @if($isMailSend)
+                                                            <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
+                                                            data-bs-toggle="tooltip">
+                                                            View Plan
+                                                            </a>
+                                                        @else
+                                                            <a href="javascript:void(0);"
+                                                            class="btn btn-white m-2 buy-plan btn-outline-secondary"
+                                                            data-user-id="{{ $user->id }}"
+                                                            data-plan-id="{{ $plan->id }}"
+                                                            data-plan-price="{{ $plan->price }}"
+                                                            data-plan-name="{{ $plan->name }}">
+                                                                Buy Plan
+                                                            </a>
+                                                        @endif
+                                                    @elseif($successPayment && !$adminView)
+                                                        @if($isMailSend)
+                                                            <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
+                                                            data-bs-toggle="tooltip">
+                                                            View Plan
+                                                            </a>
+                                                        @else
+                                                            <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-secondary m-2 disabled"
+                                                            data-bs-toggle="tooltip" title="Working on your plan :-) Email you when ready."
+                                                            style="pointer-events: auto; cursor: not-allowed;">
+                                                            View Plan
+                                                            </a>
+                                                        @endif
+                                                    @elseif(($discount || $successPayment) && $adminView)
+                                                        <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
+                                                        >
                                                         View Plan
                                                         </a>
                                                     @endif
-                                                @elseif(($discount || $successPayment) && $adminView)
-                                                    <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => $user->id]) }}" class="btn btn-primary m-2 "
-                                                    >
-                                                    View Plan
-                                                    </a>
-
-                                                    <!-- <a href="javascript:void(0);"
-                                                    class="btn btn-primary m-2 print-plan-btn "
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-plan-id="{{ $plan->id }}"
-                                                    data-bs-toggle="tooltip"
-                                                    >
-                                                        Print Plan
-                                                    </a>
-
-                                                    <a href="#"
-                                                    class="btn btn-primary m-2 "
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ShoppingModal"
-                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
-                                                    id="fetchAllMeals"
-                                                    >
-                                                        Shopping List
-                                                    </a> -->
-                                                @endif
-
-                                                    <!-- <a href="javascript:void(0);"
-                                                    class="btn btn-primary m-2 print-plan-btn @if(!$isMailSend) disabled @endif"
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-plan-id="{{ $plan->id }}"
-                                                    style="color:#fff; background-color:#6c757d;"
-                                                    data-bs-toggle="tooltip"
-                                                    @if(!$isMailSend)
-                                                        title="Working on your plan :-) Email you when ready."
-                                                    @endif>
-                                                        Print Plan
-                                                    </a>
-
-                                                    <a href="#"
-                                                    class="btn btn-primary m-2 @if(!$isMailSend) disabled @endif"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ShoppingModal"
-                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
-                                                    id="fetchAllMeals"
-                                                    style="color:#fff; background-color:#6c757d;"
-                                                    @if(!$isMailSend)
-                                                        title="Working on your plan :-) Email you when ready."
-                                                    @endif>
-                                                        Shopping List
-                                                    </a> -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -662,7 +576,7 @@
                                         </figure>
                                         <h3>Get answers from a real-life expert. Not a chat bot.</h3>
                                         <!-- <p>Schedule a meeting to help determine where to start on your path to ELITE PERFORMANCE or AGE BETTER than your parents.</p> -->
-                                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-white">Book Now 
+                                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-white">Book Now
                                             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M6.4165 15.5827L15.5832 6.41602M15.5832 6.41602H6.4165M15.5832 6.41602V15.5827" stroke="#124E4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
@@ -783,7 +697,7 @@
                             <label for="weightGoal">Current Weight</label>
                             <input type="text" class="form-control" id="weight" placeholder="Weight">
                             <input type="hidden" class="form-control" id="userId" value="{{ $user->id }}" placeholder="Weight">
-                        </div>   
+                        </div>
                         <div class="form-group mb-3">
                             <label for="weightGoal">Weight Goal</label>
                             <input type="text" class="form-control" id="weightGoal" placeholder="Weight Goal">
@@ -791,7 +705,7 @@
                         <div class="form-group">
                             <label for="weightGoal">Date</label>
                             <input type="date" class="form-control" id="date" placeholder="Date">
-                        </div>   
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer p-0">
@@ -846,67 +760,9 @@
                         <canvas id="line-chart" width="400" height="200"></canvas>
                     </div>
                 </div>
-                <!-- <div class="modal-footer p-0">
-                    <a href="#" class="btn btn-primary m-0 w-100 text-center rounded-0">Close</a>
-                </div> -->
             </div>
         </div>
     </div>
-
-    {{-- <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- User info form -->
-                    <form id="payment-form">
-                        <div id="registration-details">
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="name" value="{{ $user->name }}">
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="email" value="{{ $user->email }}" >
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="phone" value="">
-                            </div>
-                        </div>
-                        <!-- Promo Code Section -->
-                        <div id="coupon-details">
-                            <div class="mb-3">
-                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
-                                    <input type="hidden" class="form-control" id="discount">
-                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
-                                </div>
-                                <small id="promo-message" class=""></small>
-                            </div>
-                        </div>
-                        <div id="payment-details">
-                            
-                            <!-- Stripe Payment Card Section -->
-                            <h6 class="mb-3">Payment Details</h6>
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
-                            Buy Now
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -919,7 +775,7 @@
             <div class="modal-body px-4">
                 <!-- Plan Description -->
                 <p class="mb-4 text-muted" id="plan-description">
-                    
+
                 </p>
 
                 <!-- Form -->
@@ -1084,7 +940,7 @@
     <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
-                
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="reportModalLabel">Upload Report</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -1168,7 +1024,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="modal show" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-center">
@@ -1181,9 +1037,7 @@
                     </div>
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
                     <p class="mb-2" id="thankYouMessage">Your payment was successful.</p>
-                    <a href="#" id="planUrlLink" class="btn btn-primary mt-2">Order Your Personalised Plan</a>
-
-                    <!-- <button type="button" class="btn btn-primary w-50 mt-3" data-bs-dismiss="modal">Close</button> -->
+                    <a href="#" id="planUrlLink" class="btn btn-primary mt-2">Order Your Personalized Plan</a>
                 </div>
             </div>
         </div>
@@ -1238,7 +1092,7 @@
     function submitProfileUpdate(type) {
         const formData = new FormData();
         // Get user ID from either modal (whichever is present)
-        
+
         const profileIdInput = $('#editImageModal #profileId').val() || $('#editNameModal #profileId').val();
         formData.append('user_id', profileIdInput);
         if(type === 'profile_image') {
@@ -1257,7 +1111,7 @@
                 formData.append('name', profileNameInput);
             }
         }
-        
+
         fetch("{{ route('front.profile.update') }}", {
             method: 'POST',
             headers: {
@@ -1329,11 +1183,11 @@
 
     $(document).ready(function () {
         $('.edit-profile-image').on('click', function () {
-            $('#editImageModal').modal('show'); 
+            $('#editImageModal').modal('show');
         });
 
         $('#editNameButton').on('click', function () {
-            $('#editNameModal').modal('show'); 
+            $('#editNameModal').modal('show');
         });
 
         $('#editHeightButton').on('click', function (event) {
@@ -1344,12 +1198,12 @@
             $('#editHeightModal').find('#heightQuestion').val(question);
             $('#editHeightModal').find('#heightAnswer').val(answer);
             $('#editHeightModal').find('#formName').val(formName);
-            $('#editHeightModal').modal('show'); 
+            $('#editHeightModal').modal('show');
         });
     });
     $('#editHeightForm').on('submit', function (e) {
         e.preventDefault();
-        
+
         var updatedHeight = $('#heightAnswer').val();
         let formData = {
             form_name: $('#formName').val(),
@@ -1377,7 +1231,7 @@
                 alert('Something went wrong!');
             }
         });
-    
+
     });
 
     $(document).off('change', '#selectAllCheckbox').on('change', '#selectAllCheckbox', function () {
@@ -1631,7 +1485,7 @@
         // Select/Deselect all meal items within this meal's container
         mealContainer.find('.meal-item-checkbox').prop('checked', isChecked);
     });
-   
+
 
     $(document).on('click', '#ShippingPrintModal .btn-primary', function () {
         // Get the content of the print list
@@ -1662,13 +1516,13 @@
             const planId = $(this).data("plan-id");
             const userId = $(this).data("user-id");
             // Set form action for download button
-            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
+            $("#downloadPdfForm").attr("action", "{{ route('front.plans.generatePdf', ':id') }}".replace(':id', planId));
 
             $("#downloadPdfForm input[name='user_id']").val(userId);
 
             // Load the preview content from the controller
             $("#plan-preview-body").html('<div class="text-center">Loading preview...</div>');
-            fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
+            fetch("{{ route('front.plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
             .then(res => res.text())
                 .then(html => {
                     console.log(html);
@@ -1703,7 +1557,7 @@
 
                     // Prefill fields with fetched data or set defaults
                     $('#weight').val(data?.weight || weight);
-                
+
                     $('#weightGoal').val(data?.weight_goal || ''); // Prefill weight goal
                     $('#date').val(data?.date || date); // Prefill date or default to today
                 },
@@ -1759,15 +1613,15 @@
                     } else {
                         message = `<p style="color: red;">Unexpected Error (${xhr.status}): ${error}</p>`;
                     }
-                    
+
                     $('#errorModalBody').html(message);
                     const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-                    errorModal.show();  
+                    errorModal.show();
                     $('#WeightModal').addClass('blur-background');
                 }
             });
         });
-    
+
 
         // Load chart data
         function loadChart(filter, userId) {
@@ -1792,12 +1646,12 @@
             // Extract data from the API response
             const weightsData = response.weights;
             const filter = response.filter; // Get the filter value (3M, 6M, 1Y)
-            
+
             // Prepare labels and data for the chart
             const labels = [];
             const dataPointsDate = [];   // For date-based dataset
             const dataPointsWeight = []; // For weight-based dataset
-            
+
             // Function to check if any weight in the month is valid (non-null)
             function hasValidWeight(monthData) {
                 return monthData.weights.some(weightEntry => weightEntry.weight !== null);
@@ -1907,9 +1761,9 @@
                                     const tooltipData = tooltipItem[0]; // Ensure tooltipItem[0] exists
                                     if (tooltipData && tooltipData.parsed) {
                                         console.log(dataPointsDate[tooltipData.parsed.x]);
-                                        const date = dataPointsDate[tooltipData.parsed.x] ? dataPointsDate[tooltipData.parsed.x].x : 'Unknown Date'; // 
+                                        const date = dataPointsDate[tooltipData.parsed.x] ? dataPointsDate[tooltipData.parsed.x].x : 'Unknown Date'; //
                                         // Get the date using the index from dataPointsDate
-                                        return `Date: ${date}`; 
+                                        return `Date: ${date}`;
                                     }
                                     // return 'No Date';  // Fallback if no data is found
                                 },
@@ -1972,7 +1826,7 @@
             $('.weight-filter ul li a').removeClass('active');
             $(this).addClass('active');
         });
-    
+
     });
 
     $(document).ready(function() {
@@ -2019,11 +1873,11 @@
             var planId = $(this).data('plan-id');  // Get the plan ID
             var price = $(this).data('plan-price');     // Get the plan price (if needed)
             var description = $(this).data('plan-description');     // Get the plan price (if needed)
-            
+
             // Update modal title with plan name (optional)
             $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name')+ '($' + price+')');
             $('#plan-description').text(description);
-            
+
             $('#purchaseModal #coupon-details').show();
             $('#purchaseModal').modal('show');
 
@@ -2039,7 +1893,7 @@
                 let discount = $('#discount').val();
                 if(discount == 100.00) {
                     $.ajax({
-                        url: '{{ route("process.payment") }}',
+                        url: '{{ route("front.process.payment") }}',
                         method: 'POST',
                         data: {
                             plan_id: planId,
@@ -2094,7 +1948,7 @@
                         } else {
                             // Call the server to create the PaymentIntent
                             $.ajax({
-                                url: '{{ route("process.payment") }}', // Define the route to process the payment
+                                url: '{{ route("front.process.payment") }}', // Define the route to process the payment
                                 method: 'POST',
                                 data: {
                                     payment_method_id: result.paymentMethod.id,
@@ -2141,7 +1995,7 @@
                     });
                 }
             });
-            
+
             document.getElementById('apply-promo-code').addEventListener('click', function () {
                 const promoCode = document.getElementById('promo-code').value.trim();
 
@@ -2154,7 +2008,7 @@
                 }
 
                 // AJAX request to validate promo code
-                fetch('{{ route("validate.coupon.code") }}', {
+                fetch('{{ route("front.validate.coupon.code") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2203,12 +2057,12 @@
 
             var planId = $(this).data('plan-id');  // Get the plan ID
             var price = $(this).data('plan-price');     // Get the plan price (if needed)
-            
+
             // Update modal title with plan name (optional)
             $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name'));
 
             $('#purchaseModal #coupon-details').hide();
-            
+
             $('#purchaseModal').modal('show');
             let name = $('#purchaseModal #name').val();
             let email = $('#purchaseModal #email').val();
@@ -2221,7 +2075,7 @@
                 $('#submit').prop('disabled', true);
 
                 // Create a PaymentMethod with Stripe's API
-                
+
                 stripe.createPaymentMethod({
                     type: 'card',
                     card: card,
@@ -2231,14 +2085,14 @@
                         phone: phone,
                     },
                 }).then(function(result) {
-                    if (result.error) { 
+                    if (result.error) {
                         // Display error in the card element
                         cardErrors.textContent = result.error.message;
                         $('#submit').prop('disabled', false);
                     } else {
                         // Call the server to create the PaymentIntent
                         $.ajax({
-                            url: '{{ route("process.payment") }}', // Define the route to process the payment
+                            url: '{{ route("front.process.payment") }}', // Define the route to process the payment
                             method: 'POST',
                             data: {
                                 payment_method_id: result.paymentMethod.id,
@@ -2274,18 +2128,18 @@
                         });
                     }
                 });
-                
+
             });
-            
+
         });
 
         function showThankYouModal() {
             // Set dynamic content
-            const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalised plan today.";
+            const thankYouMessage = "We make around 300 food decisions a day... to perform at your best order your Personalized plan today.";
             const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
             // Set the modal message
             $('#thankYouMessage').text(thankYouMessage);
-            
+
             // Set the URL for the plan button dynamically
             $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
             $('#thankYouModal').modal('show');
@@ -2381,7 +2235,7 @@
                 modal.find('label[for="answer"], label.form-label').first().text('Supplement Name');
             }
 
-            modal.modal('show');  
+            modal.modal('show');
         });
 
         $('#suplimentEditForm').on('submit', function(event) {
@@ -2425,7 +2279,7 @@
             if (parts.length !== 3) return '';
             return `${parts[2]}-${parts[1]}-${parts[0]}`; // "2025-04-24"
         }
-        
+
         $('.add-sport').on('click', function() {
             $('#editSportModal').modal('show');
         });
@@ -2554,206 +2408,9 @@
         });
     });
 
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     const ctx = document.getElementById('trainingChart').getContext('2d');
-//     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-
-//     const frequencyMap = {
-//         "1-2": 2,
-//         "3-4": 4,
-//         "5+": 7
-//     };
-
-//     const colors = {
-//         "Low intensity": "rgba(47, 202, 98, 0.6)",
-//         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-//         "High intensity": "rgba(232, 62, 53, 0.6)"
-//     };
-
-//     const borderColors = {
-//         "Low intensity": "rgba(47, 202, 98, 1)",
-//         "Moderate intensity": "rgba(255, 159, 64, 1)",
-//         "High intensity": "rgba(232, 62, 53, 1)"
-//     };
-
-//     const allBars = [];
-
-//     if (response) {
-//         Object.keys(response).forEach(frequency => {
-//             const intensities = response[frequency];
-//             intensities.forEach(intensity => {
-//                 allBars.push({
-//                     label: `${intensity} (${frequency})`,
-//                     intensity: intensity,
-//                     value: frequencyMap[frequency] || 0,
-//                     tooltip: frequency
-//                 });
-//             });
-//         });
-//     }
-
-//     const chart = new Chart(ctx, {
-//         type: 'bar',
-//         data: {
-//             labels: allBars.map(bar => bar.label),
-//             datasets: [{
-//                 label: '# of Days',
-//                 data: allBars.map(bar => bar.value),
-//                 backgroundColor: allBars.map(bar => colors[bar.intensity]),
-//                 borderColor: allBars.map(bar => borderColors[bar.intensity]),
-//                 borderWidth: 1
-//             }]
-//         },
-//         options: {
-//             responsive: true,
-//             plugins: {
-//                 tooltip: {
-//                     callbacks: {
-//                         label: function (context) {
-//                             const bar = allBars[context.dataIndex];
-//                             return `${bar.intensity}: ${bar.tooltip} days`;
-//                         }
-//                     }
-//                 },
-//                 legend: { display: false }
-//             },
-//             scales: {
-//                 y: {
-//                     title: {
-//                         display: true,
-//                         text: '# of Days'
-//                     },
-//                     min: 0,
-//                     max: 7,
-//                     stepSize: 1,
-//                     ticks: {
-//                         callback: function(value) {
-//                             return value.toString();
-//                         }
-//                     }
-//                 },
-//                 x: {
-//                     title: {
-//                         display: true,
-//                         text: 'Training Intensity (by Frequency)'
-//                     }
-//                 }
-//             }
-//         }
-//     });
-// });
-
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     const ctx = document.getElementById('trainingChart').getContext('2d');
-    //     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-    //     console.log(response);
-    //     const frequencyMap = { "1-2": 2, "3-4": 4, "5+": 7 };
-    //     const intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
-    //     const displayLabels = ["Low", "Moderate", "High"];
-
-    //     const colors = {
-    //         "Low intensity": "rgba(47, 202, 98, 0.6)",
-    //         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-    //         "High intensity": "rgba(232, 62, 53, 0.6)"
-    //     };
-
-    //     const borderColors = {
-    //         "Low intensity": "rgba(47, 202, 98, 1)",
-    //         "Moderate intensity": "rgba(255, 159, 64, 1)",
-    //         "High intensity": "rgba(232, 62, 53, 1)"
-    //     };
-
-    //     const datasets = [];
-
-    //     for (const intensity of intensityLabels) {
-    //         for (const [freqLabel, intensityArray] of Object.entries(response)) {
-    //             if (intensityArray.includes(intensity)) {
-    //                 const data = [null, null, null];  // index: 0=Low, 1=Moderate, 2=High
-    //                 const index = intensityLabels.indexOf(intensity);
-    //                 data[index] = frequencyMap[freqLabel] || 0;
-
-    //                 datasets.push({
-    //                     label: `${intensity} (${freqLabel})`,
-    //                     data: data,
-    //                     backgroundColor: colors[intensity],
-    //                     borderColor: borderColors[intensity],
-    //                     borderWidth: 1,
-    //                     intensity: intensity // for custom legend filtering
-    //                 });
-    //             }
-    //         }
-    //     }
-
-    //     new Chart(ctx, {
-    //         type: 'bar',
-    //         data: {
-    //             labels: displayLabels,
-    //             datasets: datasets
-    //         },
-    //         options: {
-    //             responsive: true,
-    //             plugins: {
-    //                 tooltip: {
-    //                     callbacks: {
-    //                         label: function (context) {
-    //                             const value = context.raw;
-    //                             const label = context.dataset.label.match(/\((.*?)\)/);
-    //                             return `${context.dataset.label.split(' (')[0]}: ${label ? label[1] : ''}`;
-    //                         }
-    //                     }
-    //                 },
-    //                 legend: {
-    //                     position: 'bottom',
-    //                     labels: {
-    //                         generateLabels: function (chart) {
-    //                             const seen = new Set();
-    //                             return chart.data.datasets
-    //                                 .filter(ds => {
-    //                                     if (!seen.has(ds.intensity)) {
-    //                                         seen.add(ds.intensity);
-    //                                         return true;
-    //                                     }
-    //                                     return false;
-    //                                 })
-    //                                 .map(ds => ({
-    //                                     text: ds.intensity.replace(' intensity', ''),
-    //                                     fillStyle: ds.backgroundColor,
-    //                                     strokeStyle: ds.borderColor,
-    //                                     lineWidth: 1,
-    //                                     hidden: false,
-    //                                     index: chart.data.datasets.indexOf(ds)
-    //                                 }));
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             scales: {
-    //                 y: {
-    //                     min: 0,
-    //                     max: 7,
-    //                     ticks: {
-    //                         stepSize: 1
-    //                     },
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Days per week'
-    //                     }
-    //                 },
-    //                 x: {
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Training Intensity'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     });
-    // });
-
     document.addEventListener("DOMContentLoaded", function () {
         const ctx = document.getElementById('trainingChart').getContext('2d');
-        
+
         // Assuming server passes training intensity as JSON
         const response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
 
@@ -2840,7 +2497,7 @@
 
             $("#reportModal").modal("show"); // Open modal
         });
-        
+
         // Function to Display Reports
         function displayReports(reportsData, reportType) {
             var reports = reportsData[reportType];
@@ -2867,8 +2524,8 @@
                     let fileUrl = file.file_path;
                     let fileTypeIcon = '';
 
-                    if (fileUrl.toLowerCase().endsWith(".png") || 
-                        fileUrl.toLowerCase().endsWith(".jpg") || 
+                    if (fileUrl.toLowerCase().endsWith(".png") ||
+                        fileUrl.toLowerCase().endsWith(".jpg") ||
                         fileUrl.toLowerCase().endsWith(".jpeg")) {
                         fileTypeIcon = `<img src="${fileUrl}" class="img-thumbnail" width="100" onclick="previewImage('${fileUrl}')">`;
                     } else if (fileUrl.toLowerCase().endsWith(".pdf")) {
@@ -2884,8 +2541,8 @@
                             <td>${file.date || 'N/A'}</td>
                             <td>${fileTypeIcon}</td>
                             <td>
-                                ${fileUrl.toLowerCase().endsWith(".png") || 
-                                fileUrl.toLowerCase().endsWith(".jpg") || 
+                                ${fileUrl.toLowerCase().endsWith(".png") ||
+                                fileUrl.toLowerCase().endsWith(".jpg") ||
                                 fileUrl.toLowerCase().endsWith(".jpeg")
                                     ? `<button class="btn btn-primary py-2 px-3" onclick="previewImage('${fileUrl}')">
                                         <i class="fa-solid fa-eye text-white"></i>
@@ -2949,7 +2606,7 @@
                 }
             });
         });
-    }); 
+    });
 
     // Function to handle file deletion
     function deleteFile(fileName) {

@@ -9,10 +9,12 @@
 		<div class="col-lg-6 d-none d-lg-flex justify-content-center align-items-center rounded-lg auth-h100">
 			<div style="max-width: 25rem;">
 				<div class="text-center mb-5">
-					<i class="bi bi-bag-check-fill  text-primary" style="font-size: 90px;"></i>
+					<span class="logo-icon">
+						<img src="{!! backendAssets('dist/assets/images/main-logo.png') !!}" class="img-fluid" alt="logo">
+					</span>
 				</div>
 				<div class="mb-5">
-					<h2 class="color-900 text-center">Performance Health</h2>
+					<h2 class="color-900 text-center">Athleat Fuel</h2>
 				</div>
 				<!-- Image block -->
 				<div class="">
@@ -25,7 +27,7 @@
 			<div class="w-100 p-3 p-md-5 card border-0 shadow-sm" style="max-width: 32rem;">
 				<!-- Form -->
 				@include(backendView('includes.alert'))
-				<form class="row g-1 p-3 p-md-4" action="{{ route('login') }}" method="POST">
+				<form class="row g-1 p-3 p-md-4" action="{{ route('admin.auth.login.submit') }}" method="POST">
 					@csrf
 					<div class="col-12 text-center mb-5">
 						<h1>Sign in</h1>
@@ -41,7 +43,7 @@
 							<div class="form-label">
 								<span class="d-flex justify-content-between align-items-center">
 									Password
-									<a class="text-secondary" href="{!! route('forgot-password') !!}">Forgot Password?</a>
+									<a class="text-secondary" href="{!! route('admin.auth.forgot.index') !!}">Forgot Password?</a>
 								</span>
 							</div>
 							<input type="password" name="password" class="form-control form-control-lg" placeholder="***************" required>
@@ -61,7 +63,7 @@
 					<div class="col-12 text-center mt-4">
 						<p class="text-center use-font-14 font-weight-500">
 							Don't have an Account?
-							<a class="text-secondary" href="{!! route('register') !!}">Sign up</a>
+							<a class="text-secondary" href="{!! route('admin.auth.register.index') !!}">Sign up</a>
 						</p>
 					</div>
 				</form>

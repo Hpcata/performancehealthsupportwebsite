@@ -28,22 +28,13 @@ class PageController extends Controller
 
         Page::create($request->only(['title', 'slug']));
 
-        return redirect()->route('pages.index')->with('success', 'Page created successfully.');
+        return redirect()->route('admin.pages.index')->with('success', 'Page created successfully.');
     }
 
     public function edit(Page $page)
     {
         return view('backend.pages.page.form', compact('page'));
     }
-
-    // public function show($slug)
-    // {
-    //     $page = Page::with(['sections' => function ($query) {
-    //         $query->where('enabled', true)->orderBy('order');
-    //     }])->where('slug', $slug)->firstOrFail();
-
-    //     return view('pages.show', compact('page'));
-    // }
 
     public function update(Request $request, Page $page)
     {
@@ -54,12 +45,12 @@ class PageController extends Controller
 
         $page->update($request->only(['title', 'slug']));
 
-        return redirect()->route('pages.index')->with('success', 'Page updated successfully.');
+        return redirect()->route('admin.pages.index')->with('success', 'Page updated successfully.');
     }
 
     public function destroy(Page $page)
     {
         $page->delete();
-        return redirect()->route('pages.index')->with('success', 'Page deleted successfully.');
+        return redirect()->route('admin.pages.index')->with('success', 'Page deleted successfully.');
     }
 }

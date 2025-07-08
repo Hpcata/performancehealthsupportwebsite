@@ -14,7 +14,7 @@
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">Edit Blog</h3>
                 <div class="col-auto d-flex w-sm-100">
-                    <a type="button" href="{{ route('dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
+                    <a type="button" href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <!-- Form for Edit Blog -->
-                    <form action="{{ route('backend.blogs.update', $blog->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.blogs.update', $blog->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT') <!-- This tells Laravel we're updating an existing resource -->
                         <div class="row g-3 align-items-center">

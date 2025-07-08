@@ -87,7 +87,7 @@
         maxFiles: 10,
         paramName: 'files',
         clickable: true,
-        url: "{{ route('organizations.media-upload') }}",
+        url: "{{ route('admin.organizations.media-upload') }}",
         headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
         data: {'id': userId, 'type' : 'image', 'position': $('#imagePosition').val()},
         init: function () {
@@ -152,7 +152,7 @@
 
     function sorting(mediaIds) {
         $.ajax({
-            url: "{{ route('organizations.sort-order') }}",
+            url: "{{ route('admin.organizations.sort-order') }}",
             headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
             method: 'POST',
             data: {
@@ -174,7 +174,7 @@
 
     function getImageList(userId) {
         $.ajax({
-            url: "{{ route('organizations.image-list') }}",
+            url: "{{ route('admin.organizations.image-list') }}",
             headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
             method: 'POST',
             data: {
@@ -207,7 +207,7 @@
 
     function deleteMedia(mediaId) {
         $.ajax({
-            url: "{{ route('organizations.image-delete') }}",
+            url: "{{ route('admin.organizations.image-delete') }}",
             headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
             method: 'POST',
             data: {

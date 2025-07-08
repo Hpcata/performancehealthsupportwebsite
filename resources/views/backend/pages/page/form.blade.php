@@ -7,7 +7,7 @@
             <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
                 <h3 class="fw-bold mb-0">{{ isset($page) ? 'Edit Page' : 'Create Page' }}</h3>
                 <div class="col-auto d-flex w-sm-100">
-                    <a type="button" href="{{ route('dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
+                    <a type="button" href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
                 </div>
             </div>
         </div>
@@ -16,7 +16,7 @@
         <div class="col-md-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <form action="{{ isset($page) ? route('pages.update', $page) : route('pages.store') }}" method="POST">
+                    <form action="{{ isset($page) ? route('admin.pages.update', $page) : route('admin.pages.store') }}" method="POST">
                         @csrf
                         @if (isset($page)) @method('PUT') @endif
 

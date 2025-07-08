@@ -85,7 +85,7 @@
                     <input type="hidden" name="foodSelections" id="foodSelectionsInput">
                     <div class="row">
                         <div class="panel-group col-8" id="accordion">
-                            
+
                             <!-- Main Plan -->
                             @foreach ($plans as $plan)
                             <div class="panel panel-default">
@@ -112,10 +112,10 @@
                                                         <span class="toggle-arrow me-2" data-toggle-id="{{$plan->id}}_{{$mealTime->id}}" style="cursor: pointer;">
                                                             <i class="fas fa-chevron-down"></i>
                                                         </span>
-                                                        <input type="checkbox" 
-                                                            name="meal_times[{{$plan->id}}][]" 
-                                                            value="{{ $mealTime->id }}" 
-                                                            class="form-check-input meal-time-checkbox hidden-checkbox" 
+                                                        <input type="checkbox"
+                                                            name="meal_times[{{$plan->id}}][]"
+                                                            value="{{ $mealTime->id }}"
+                                                            class="form-check-input meal-time-checkbox hidden-checkbox"
                                                             id="mealTime{{$plan->id}}_{{$mealTime->id}}"
                                                             data-mealtime-id="{{$mealTime->id}}">
 
@@ -129,9 +129,9 @@
                                                     <!-- Add Meal Dropdown (Multiple Select) -->
                                                     <div class="add-meal-dropdown mt-3" id="addMealDropdown{{$plan->id}}_{{$mealTime->id}}" style="display: none;">
                                                         <label for="mealItems{{$plan->id}}_{{$mealTime->id}}" class="form-label">Add Meal</label>
-                                                        <select name="selected_meals[{{$plan->id}}][{{$mealTime->id}}][]" 
-                                                                id="mealItems{{$plan->id}}_{{$mealTime->id}}" 
-                                                                class="form-select meal-items-select select2" 
+                                                        <select name="selected_meals[{{$plan->id}}][{{$mealTime->id}}][]"
+                                                                id="mealItems{{$plan->id}}_{{$mealTime->id}}"
+                                                                class="form-select meal-items-select select2"
                                                                 multiple>
                                                         </select>
                                                     </div>
@@ -154,14 +154,14 @@
                             </div>
                             @endforeach
                         </div>
-                        
+
                         <div class="col-4">
                             <div style="max-height: 90vh; overflow-y: auto; overflow-x: hidden; border: 1px solid #ddd; padding: 10px; border-radius: 8px; position: sticky; top:15px;">
                                 <h4>Food Prefrences</h4>
                                 <span class="">
                                     <strong>Key: </strong>
                                     <p class="mb-0" style="color: black; font-size:15px;">Athlete Preferences</p>
-                                    <p class="mb-0" style="color: #7258db; font-size:15px;">Included Preferences </p> 
+                                    <p class="mb-0" style="color: #7258db; font-size:15px;">Included Preferences </p>
                                     <p class="mb-0" style="color: #198754; font-size:15px;">Recommendations</p>
                                 </span>
                                 <div class="category-section mb-3" id="category-section">
@@ -453,7 +453,7 @@
 
 <!-- Add More Food Modal -->
 <div class="modal" id="addMoreFoodModal" tabindex="-1" aria-labelledby="addMoreFoodModalLabel" aria-hidden="true">
-    
+
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -729,7 +729,7 @@
 <script>
 
     const preSelectedFoods = @json($preplanSlectedFoods);
-    
+
     document.addEventListener('DOMContentLoaded', function () {
         let hasUnsavedChanges = false;
         let intendedHref = ''; // Store the intended link URL
@@ -747,7 +747,7 @@
         $(document).on('click', '.view-user-profile', function(event) {
             event.preventDefault();
             event.stopPropagation();
-            
+
             if (hasUnsavedChanges) {
                 intendedProfileAction = this;
                 const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
@@ -757,7 +757,7 @@
                 // If no unsaved changes, proceed with normal profile view
                 const userId = $(this).data('user-id');
                 const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-                
+
                 $.ajax({
                     url: sessionUrl,
                     method: 'GET',
@@ -824,7 +824,7 @@
             if (intendedProfileAction) {
                 const userId = intendedProfileAction.getAttribute('data-user-id');
                 const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-                
+
                 $.ajax({
                     url: sessionUrl,
                     method: 'GET',
@@ -846,7 +846,7 @@
             if (intendedModalAction) {
                 const paymentId = intendedModalAction.getAttribute('data-payment-id');
                 $.ajax({
-                    url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                    url: '{{ route('admin.purchase-plans.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                     method: 'GET',
                     success: function(response) {
                         if (response.success) {
@@ -875,7 +875,7 @@
             if (intendedModalAction) {
                 const paymentId = intendedModalAction.getAttribute('data-payment-id');
                 $.ajax({
-                    url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                    url: '{{ route('admin.purchase-plans.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                     method: 'GET',
                     success: function(response) {
                         if (response.success) {
@@ -922,9 +922,9 @@
         // Use event delegation to handle dynamically added elements
         $(document).on('click', '.user-pre-plan-details', function () {
             const paymentId = $(this).data('payment-id');
-            
+
             $.ajax({
-                url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
+                url: '{{ route('admin.purchase-plans.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                 method: 'GET',
 
                 success: function(response) {
@@ -1098,36 +1098,6 @@
             });
         });
 
-        // $('button[name="action"][value="view"]').on('click', function(e) {
-        //     e.preventDefault();
-
-        //     var user_id = $(this).data('user-id');  // Assume you set a data attribute with the user's ID on the button
-        //     var payment_id = $(this).data('payment-id');  // Assume you set a data attribute with the user's ID on the button
-
-        //     $.ajax({
-        //         url: '{{ route("admin.handle-plan-action") }}',  // URL to your controller method for storing the form
-        //         method: 'POST',
-        //         data: {
-        //             action: 'view',
-        //             user_id: user_id,
-        //             payment_id : payment_id,
-        //             _token: '{{ csrf_token() }}'
-        //         },
-        //         success: function(response) {
-        //             if (response.status === 'success') {
-        //                 window.open(response.redirect_url, '_blank');
-
-        //                 // window.location.href = response.redirect_url;  // Redirect to user profile page
-        //             } else {
-        //                 alert('Error: ' + response.message);
-        //             }
-        //         },
-        //         error: function(xhr) {
-        //             alert('Something went wrong!');
-        //         }
-        //     });
-        // });
-
         // Handle the "Send" button click (Send meal plan)
         $('button[name="action"][value="send"]').on('click', function(e) {
             e.preventDefault();
@@ -1136,7 +1106,7 @@
             var payment_id = $(this).data('payment-id');  // Assume you set a data attribute with the user's ID on the button
 
             $.ajax({
-                url: '{{ route("admin.handle-plan-action") }}',  // URL to your controller method for storing the form
+                url: '{{ route("admin.purchase-plans.handle-plan-action") }}',  // URL to your controller method for storing the form
                 method: 'POST',
                 data: {
                     action: 'send',
@@ -1178,7 +1148,7 @@
                             resultDiv.find('.serving_size_unit').val(data.serving_size_unit);
                             resultDiv.find('.serving_per_pack').val(data.serving_per_pack);
                         }, 500);
-                      
+
                     } else {
                         resultDiv.html(`<p class="error">Error: Could not calculate.</p>`).addClass('error').show();
                     }
@@ -1203,7 +1173,7 @@
                 }
             });
         }
-       
+
         // Ensure modals reset on close
         $('#swapFoodsModal, #editItemModal').on('hidden.bs.modal', function () {
             $(this).find('input').val(''); // Reset all input fields
@@ -1259,7 +1229,7 @@
 
             if (checkbox.is(':checked')) {
                 $(dropdownId).show(); // Show the dropdown
-                $(selectedMealsId).show(); 
+                $(selectedMealsId).show();
                 initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
             } else {
                 $(dropdownId).hide();
@@ -1277,7 +1247,7 @@
 
                 /* 1️⃣  AJAX config – we pass ALL the fields we’ll need later */
                 ajax: {
-                    url: '{{ route("admin.get-meals-by-mealtime") }}',
+                    url: '{{ route("admin.purchase-plans.get-meals-by-mealtime") }}',
                     type: 'POST',
                     dataType: 'json',
                     delay: 250,
@@ -1334,7 +1304,7 @@
                 </div>
             `;
         }
-        
+
         // Function to calculate nutrition
         function calculateMealNutrition() {
             let grandTotalCarbs = 0;
@@ -1384,7 +1354,7 @@
         }
 
         let userId = $('#user_id').val();
-        
+
         let planID = 0;
         let mealtimeID = 0;
         // Step 2: Handle meal selection changes
@@ -1415,7 +1385,7 @@
                     });
 
                     $.ajax({
-                        url: '{{ route("admin.remove-user-meal") }}',
+                        url: '{{ route("admin.purchase-plans.remove-user-meal") }}',
                         method: 'POST',
                         data: {
                             user_id: userId,
@@ -1430,7 +1400,7 @@
                             alert('Failed to remove meal. Please try again.');
                         }
                     });
-                    
+
                     // Remove the meal container
                     removedMealContainer.remove();
                     // Trigger meal count update
@@ -1441,10 +1411,10 @@
 
             // Fetch and add new meals
             newMeals.forEach(mealId => {
-                
+
                 if ($(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).length) return;
                 $.ajax({
-                    url: '{{ route("admin.get-meal-items") }}',
+                    url: '{{ route("admin.purchase-plans.get-meal-items") }}',
                     method: 'POST',
                     data: {
                         meal_id: mealId,
@@ -1470,11 +1440,11 @@
                             );
 
                             selectedMealsContainer.append(mealContainer);
-                            
+
                             calculateMealNutrition();
                             response.data.forEach(item => {
                                 // ✅ Increment count for each item in the meal
-                                updateFoodCount(item.id, 1, 'purple', item.name, null);  
+                                updateFoodCount(item.id, 1, 'purple', item.name, null);
 
                                 // ✅ Increment count for each swap item if available
                                 // item.swapItems.forEach(swapItem => {
@@ -1530,9 +1500,9 @@
                             style="font-weight: bold; font-size: 14px; color: #6610f2; width: 100%;" />
                     </div>
                     <p class="mb-2 meal-total-bar" style="font-size: 14px; color:grey;"><strong>
-                        Meal Total: Energy: <span class="totalEnergy">${(totalEnergy)}kJ</span> | 
-                        Protein: <span class="totalProtein">${Math.round(totalProtein)}g</span> | 
-                        Carb: <span class="totalCarbs">${Math.round(totalCarbs)}g</span> | 
+                        Meal Total: Energy: <span class="totalEnergy">${(totalEnergy)}kJ</span> |
+                        Protein: <span class="totalProtein">${Math.round(totalProtein)}g</span> |
+                        Carb: <span class="totalCarbs">${Math.round(totalCarbs)}g</span> |
                         Fat: <span class="totalFat">${Math.round(totalFat)}g</span>
                         </strong>
                     </p>
@@ -1553,7 +1523,7 @@
                                 Add More Food
                             </button>
                         </div>
-                        
+
                     </div>
                 </div>
             `);
@@ -1562,7 +1532,7 @@
 
             // Populate items and swap items
             items.forEach(item => {
-                
+
                 let swapItemsHTML = '';
                 const swapsFoods = item.swapItems || [];
 
@@ -1644,7 +1614,7 @@
                             <div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                     title="Add More"><i class="icofont-plus text-primary"></i></button>
                             </div>
                         </li>`;
@@ -1656,7 +1626,7 @@
                                         <div>
                                             <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                                 title="Add"><i class="icofont-plus text-primary"></i>
                                             </button>
                                         </div>
@@ -1684,12 +1654,12 @@
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}" 
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}"
                                         data-selected-qty-unit='${item.selected_qty_unit}'
                                         title="Edit"><i class="icofont-edit text-success"></i></button>
                                     <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"  
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"
                                         title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
                                 </div>
                             </div>
@@ -1729,7 +1699,7 @@
             // Rotate the arrow
             $(this).toggleClass('rotate');
         });
-      
+
         $(document).on('change','.food-checkbox', function () {
             const foodId = $(this).data('food-id');
             const foodName = $(this).data('food-name');
@@ -1829,7 +1799,7 @@
 
         $('#saveMealFood').on('click', function () {
             const modal = $('#mealFoodAddModal');
-            
+
             const anyChecked = $('#mealFoodAddModal .qty-unit-row').find('.qtyCheckboxSelector:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
@@ -1880,9 +1850,9 @@
                     }
                 }
             });
-          
+
             $.ajax({
-                url: '{{ route("admin.add-food") }}',
+                url: '{{ route("admin.purchase-plans.add-food") }}',
                 type: 'POST',
                 data: {
                     item_id: foodId,
@@ -1919,7 +1889,7 @@
 
                                 return `
                                     <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
-                                        <div class="d-flex justify-content-between align-items-start mb-0"> 
+                                        <div class="d-flex justify-content-between align-items-start mb-0">
                                             <div class="col-9">
                                                 <div class="d-flex align-items-start">
                                                     <input type="checkbox" name="swap_items[${planID}][${mealtimeID}][${mealId}][${item.id}][]"
@@ -1962,7 +1932,7 @@
                                     <div>
                                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                                            data-meal-time-id="${mealtimeID}" data-user-id="${userId}" 
+                                            data-meal-time-id="${mealtimeID}" data-user-id="${userId}"
                                             title="Add More"><i class="icofont-plus text-primary"></i></button>
                                     </div>
                                 </li>`;
@@ -2030,13 +2000,13 @@
                         calculateMealNutrition();
                     });
                     updateFoodCount(foodId, 1, 'green');
-                    
+
                     $('#mealFoodAddModal').modal('hide');
                 }
             });
 
         });
-        
+
         function getQtyDisplay(selectedQtyUnits, fallbackQty, fallbackUnit) {
             const checked = selectedQtyUnits.filter(q => q.checked === true || q.checked === "true");
 
@@ -2109,7 +2079,7 @@
             $('#mealFoodAddModal').find('input').val('');
             $('#mealFoodAddModal').find('select').val('').trigger('change');
         });
-        
+
         $('#addMoreFoodModal').on('hide.bs.modal', function() {
             $('#addMoreFoodModal').find('input').val('');
             $('#addMoreFoodModal').find('select').val('').trigger('change');
@@ -2118,7 +2088,7 @@
             $('#addMoreFoodModal').find('#modalProtein').text('0.0g');
             $('#addMoreFoodModal').find('#modalCarbs').text('0.0g');
             $('#addMoreFoodModal').find('#modalFat').text('0.0g');
-            
+
         });
 
         $('.meal-select').select2({
@@ -2191,236 +2161,9 @@
             });
         }
 
-        // function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
-        //     let textColor = 'text-dark';
-
-        //     const proceed = function(foodTitle, categoryId) {
-        //         let foodWrapper = $(`#food-wrapper-${foodId}`);
-        //         let justAdded = false;
-
-        //         // Step 1: If food doesn't exist, dynamically insert it
-        //         if (!foodWrapper.length) {
-        //             if (!foodTitle || !categoryId) {
-        //                 console.warn(`Cannot insert food ID ${foodId} without foodTitle or categoryId.`);
-        //                 return;
-        //             }
-
-        //             addFoodToCategory(foodId, foodTitle, categoryId);
-        //             justAdded = true;
-
-        //             // Re-fetch the wrapper
-        //             foodWrapper = $(`#food-wrapper-${foodId}`);
-        //         }
-
-        //         // Step 2: Handle color
-        //         if (!foodWrapper.hasClass('dynamically-added-food') && !justAdded ) {
-        //             if (color === 'purple') textColor = 'text-primary';
-        //             else if (color === 'green') textColor = 'text-success';
-        //             else if (color === 'dark') textColor = 'text-dark';
-        //         }else {
-        //             if (color === 'purple') textColor = 'text-primary';
-        //             else if (color === 'green') textColor = 'text-success';
-        //             else if (color === 'dark') textColor = 'text-dark';
-        //         }
-
-        //         const checkbox = $(`#setp5Food${foodId}`);
-        //         const countLabel = checkbox.siblings('.form-check-label');
-        //         const categoryWrapper = $(`#category-section-${categoryId || foodWrapper.data('category-id')}`);
-
-        //         // Step 3: Unhide wrappers if needed
-        //         foodWrapper.removeClass('d-none');
-        //         categoryWrapper.removeClass('d-none');
-
-        //         // Step 4: Update count label
-        //         let countText = countLabel.text();
-        //         let match = countText.match(/\((\d+)\)$/);
-        //         let currentCount = match ? parseInt(match[1]) : 0;
-        //         let newCount = Math.max(0, currentCount + change);
-
-        //         const isDynamic = foodWrapper.hasClass('dynamically-added-food');
-
-        //         if (!isDynamic) {
-        //             countLabel.removeClass('text-primary text-success text-dark');
-
-        //             if (newCount > 0) {
-        //                 countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
-        //             } else {
-        //                 countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
-        //             }
-        //         } else {
-        //             if (newCount > 0) {
-        //                 countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`);
-        //             } else {
-        //                 countLabel.text(countText.replace(/\s*\(\d+\)$/, ''));
-        //             }
-        //         }
-        //     };
-
-        //     // If we have all data, proceed immediately
-        //     if (title && category_id) {
-        //         proceed(title, category_id);
-        //     } else {
-        //         // Fetch item details first, then proceed
-        //         fetchFoodDetails(foodId, function(item) {
-        //             if (!item || !item.title || !item.category_id) {
-        //                 console.warn(`Could not fetch title/category for food ID ${foodId}`);
-        //                 return;
-        //             }
-        //             proceed(item.title, item.category_id);
-        //         });
-        //     }
-        // }
-
-        // function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
-        //     let textColor = 'text-dark';
-
-        //     // ✅ Automatically determine text color
-        //     if (preSelectedFoods.includes(Number(foodId))) {
-        //         textColor = 'text-primary'; // purple
-        //     } else {
-        //         textColor = 'text-success'; // green
-        //     }
-
-        //     const proceed = function(foodTitle, categoryId) {
-        //         console.log(foodTitle);
-        //         let foodWrapper = $(`#food-wrapper-${foodId}`);
-
-        //         // ✅ Add food to DOM if not already present
-        //         if (!foodWrapper.length) {
-        //             addFoodToCategory(foodId, foodTitle, categoryId);
-        //             foodWrapper = $(`#food-wrapper-${foodId}`);
-        //         }
-
-        //         const checkbox = $(`#setp5Food${foodId}`);
-        //         const countLabel = checkbox.siblings('.form-check-label');
-        //         const categoryWrapper = $(`#category-section-${categoryId || foodWrapper.data('category-id')}`);
-
-        //         foodWrapper.removeClass('d-none');
-        //         categoryWrapper.removeClass('d-none');
-
-        //         let countText = countLabel.text();
-        //         let match = countText.match(/\((\d+)\)$/);
-        //         let currentCount = match ? parseInt(match[1]) : 0;
-        //         let newCount = Math.max(0, currentCount + change);
-
-        //         countLabel.removeClass('text-primary text-success text-dark');
-
-        //         // ✅ Handle decrement
-        //         if (change === -1) {
-        //             if (currentCount > 1) {
-        //                 countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
-        //             } else {
-        //                 if (!preSelectedFoods.includes(Number(foodId))) {
-        //                     foodWrapper.remove();
-
-        //                     // ✅ Hide category if no visible foods remain
-        //                     const remainingFoods = categoryWrapper.find('.form-check:visible');
-        //                     if (remainingFoods.length === 0) {
-        //                         categoryWrapper.addClass('d-none');
-        //                     }
-        //                 } else {
-        //                     countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
-        //                 }
-        //             }
-        //             return;
-        //         }
-
-        //         // ✅ Handle increment
-        //         if (newCount > 0) {
-        //             countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
-        //         } else {
-        //             countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
-        //         }
-        //     };
-
-        //     // ✅ If data is present, proceed immediately; otherwise fetch
-        //     if (title && category_id) {
-        //         proceed(title, category_id);
-        //     } else {
-        //         fetchFoodDetails(foodId, function(item) {
-        //             if (!item || !item.title || !item.category_id) {
-        //                 console.warn(`Could not fetch title/category for food ID ${foodId}`);
-        //                 return;
-        //             }
-        //             proceed(item.title, item.category_id);
-        //         });
-        //     }
-        // }
-
-        // function addFoodToCategory(foodId, foodTitle, categoryId) {
-        //     console.log(foodId);
-        //     // ✅ Prevent duplicate DOM insertion
-        //     if ($(`#food-wrapper-${foodId}`).length > 0) {
-        //         console.warn(`Food ID ${foodId} already exists in DOM. Skipping duplicate.`);
-        //         return;
-        //     }
-
-        //     const categorySection = $(`#category-section-${categoryId}`);
-        //     const categoryRow = $(`#category-row-${categoryId}`);
-
-        //     categorySection.removeClass('d-none');
-
-        //     // ✅ Use the first non-empty column or create one
-        //     let column = categoryRow.find('.col-md-6').filter(function () {
-        //         return $(this).children().length > 0;
-        //     });
-
-        //     if (column.length === 0) {
-        //         column = $(`<div class="col-md-6" id="food-column-${categoryId}-0"></div>`);
-        //         categoryRow.append(column);
-        //     }
-
-        //     const foodHTML = `
-        //         <div class="form-check dynamically-added-food" id="food-wrapper-${foodId}" data-category-id="${categoryId}">
-        //             <input type="checkbox" name="setp5_foods[]" value="${foodId}"
-        //                 class="form-check-input food-checkbox"
-        //                 id="setp5Food${foodId}"
-        //                 data-food-id="${foodId}"
-        //                 data-food-name="${foodTitle}">
-        //             <label class="form-check-label new-food" for="setp5Food${foodId}">
-        //                 ${foodTitle}
-        //             </label>
-        //         </div>
-        //     `;
-
-        //     column.append(foodHTML);
-        // }
-       // ..................................
-        // function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
-        //     // First, fetch food details via AJAX if not provided
-        //                     console.log('categoryId:', category_id);
-
-        //     // if (!title || !category_id) {
-        //         $.ajax({
-        //             url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
-        //             method: 'GET',
-        //             success: function(response) {
-        //                 if (response.item) {
-        //                     const foodData = response.item;
-        //                     // Get category from first flag
-        //                     const categoryName = foodData.flags && foodData.flags.length > 0 ? foodData.flags[0].name : null;
-        //                     if (!categoryName) {
-        //                         console.error('No category found for food:', foodData.title);
-        //                         return;
-        //                     }
-        //                     processFoodUpdate(foodId, change, foodData.title, categoryName);
-        //                 } else {
-        //                     console.error('Error fetching food details: Invalid response format');
-        //                 }
-        //             },
-        //             error: function(xhr) {
-        //                 console.error('Error fetching food details:', xhr.responseText);
-        //             }
-        //         });
-        //     // } else {
-        //     //     console.log('aaa : ', category_id);
-        //     //     processFoodUpdate(foodId, change, title, category_id);
-        //     // }
-        // }
-
         function updateFoodCount(foodId, change, color = null, title = null, category_id = null) {
             $.ajax({
-                url: '{{ route("admin.get-food-details") }}?food_id=' + foodId,
+                url: '{{ route("admin.items.get-food-details") }}?food_id=' + foodId,
                 method: 'GET',
                 success: function(response) {
                     if (response.item) {
@@ -2470,7 +2213,7 @@
                 .replace(/\s+/g, '-');
 
                 let categoryRow = $(`#category-row-${categoryId}`);
-                
+
                 // If category row doesn't exist, create it
                 if (!categoryRow.length) {
                     // Create category section if it doesn't exist
@@ -2484,7 +2227,7 @@
                         `);
                         $('#category-section').append(categorySection);
                     }
-                    
+
                     // Get or create the category row
                     categoryRow = $(`#category-row-${categoryId}`);
                 }
@@ -2554,10 +2297,8 @@
             }
         }
 
-
-        // function processFoodUpdate(foodId, change, foodTitle, categoryName) {
         //     let textColor = 'text-dark';
-            
+
         //     // Determine color based on preSelectedFoods
         //     if (preSelectedFoods.includes(Number(foodId))) {
         //         textColor = 'text-primary'; // purple for pre-selected
@@ -2574,7 +2315,7 @@
         //         const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
         //         console.log(categoryId);
         //         let categoryRow = $(`#category-row-${categoryId}`);
-                
+
         //         // If category row doesn't exist, create it
         //         if (!categoryRow.length) {
         //             // Create category section if it doesn't exist
@@ -2588,7 +2329,7 @@
         //                 `);
         //                 $('#category-section').append(categorySection);
         //             }
-                    
+
         //             // Get or create the category row
         //             categoryRow = $(`#category-row-${categoryId}`);
         //         }
@@ -2643,7 +2384,7 @@
         //         } else {
         //             if (!preSelectedFoods.includes(Number(foodId))) {
         //                 foodWrapper.remove();
-                        
+
         //                 // Check if category has no more visible food items
         //                 const remainingFoods = categoryWrapper.find('.form-check:visible');
         //                 if (remainingFoods.length === 0) {
@@ -2733,23 +2474,8 @@
         }
 
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-            // const AU_UNIT_EQUIVALENTS = {
-            //     'cup': 250,
-            //     'tablespoon': 20,
-            //     'teaspoon': 5,
-            //     'dessert spoon': 10,
-            //     'piece': 150,
-            //     'slice': 30,
-            //     'roll': 70,
-            //     'tub': 180,
-            //     'pouch': 100,
-            //     'handful': 40,
-            //     'ml': 1,
-            //     'g': 1
-            // };
-
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
-            
+
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
             if ($rows.length === 0) return;
@@ -2774,13 +2500,13 @@
 
                 // Later in your function
                 const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
-               
+
                 if (!baseEquivalent) {
                     console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
                 const ratio = currentQty / baseEquivalent;
-               
+
                 $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalProtein`).text((Math.round(baseProtein * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalFat`).text((Math.round(baseFat * ratio * 10) / 10) + 'g');
@@ -2821,94 +2547,6 @@
                 return result || null;
             }
         }
-
-        // function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-        //     const AU_UNIT_EQUIVALENTS = {
-        //         'cup': 250,
-        //         'tablespoon': 20,
-        //         'teaspoon': 5,
-        //         'dessert spoon': 10,
-        //         'piece': 150,
-        //         'slice': 30,
-        //         'roll': 70,
-        //         'tub': 180,
-        //         'pouch': 100,
-        //         'handful': 40,
-        //         'ml': 1,
-        //         'g': 1
-        //     };
-
-        //     const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
-        //     const $rows = $container.find('.qty-unit-row');
-        //     if ($rows.length === 0) return;
-
-        //     const $baseRow = $rows.first();
-        //     const baseQty = parseFraction($baseRow.find('.modalQtyInput').val());
-        //     const baseUnit = $baseRow.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-        //     if (!baseQty || !baseUnit) {
-        //         console.warn('Base quantity or unit is missing.');
-        //         return;
-        //     }
-
-        //     function updateNutrition(currentQtyRaw, currentUnit) {
-        //         const currentQty = parseFraction(currentQtyRaw);
-        //         if (!currentQty || !currentUnit) return;
-
-        //         currentUnit = currentUnit.toLowerCase();
-        //         let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
-        //         let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
-
-        //         if (!baseEquivalent || !currentEquivalent) {
-        //             console.warn('Unknown unit used in conversion.');
-        //             return;
-        //         }
-
-        //         const baseGrams = baseQty * baseEquivalent;
-        //         const currentGrams = currentQty * currentEquivalent;
-
-        //         const multiplier = currentGrams / baseGrams;
-
-        //         $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
-
-        //     }
-
-        //     $rows.find('.modalQtyInput').on('input', function () {
-        //         const $row = $(this).closest('.qty-unit-row');
-        //         const newQtyRaw = $(this).val();
-        //         const newUnit = $row.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-        //         updateNutrition(newQtyRaw, newUnit);
-        //     });
-
-        //     // Utility: Convert fractions like "1/2" or "3/4" to decimal numbers
-        //     function parseFraction(input) {
-        //         if (!input) return null;
-        //         input = input.trim();
-        //         // Direct number
-        //         if (!isNaN(input)) return parseFloat(input);
-
-        //         // Handle fractions like "1/2", "3/4", or even "1 1/2"
-        //         const parts = input.split(' ');
-        //         let result = 0;
-
-        //         parts.forEach(part => {
-        //             if (part.includes('/')) {
-        //                 const [num, denom] = part.split('/');
-        //                 if (!isNaN(num) && !isNaN(denom)) {
-        //                     result += parseFloat(num) / parseFloat(denom);
-        //                 }
-        //             } else if (!isNaN(part)) {
-        //                 result += parseFloat(part);
-        //             }
-        //         });
-
-        //         return result || null;
-        //     }
-        // }
 
         function setupDynamicMeasurementSync(modal) {
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
@@ -3061,11 +2699,6 @@
 
                 let ratio = originalQty / newQty;
 
-                // if (originalUnit !== newUnit && unitRatios?.[originalUnit] && unitRatios?.[newUnit]) {
-                //     const unitRatio = unitRatios[newUnit] / unitRatios[originalUnit];
-                //     ratio *= unitRatio;
-                // }
-
                 $('#editItemModal #ratio').val(ratio);
                 console.log(`Ratio compared to original row: ${ratio}`);
                 // Optionally: update nutrition or UI here
@@ -3185,7 +2818,7 @@
             calculateMealNutrition();
 
             $.ajax({
-                url: '{{ route("admin.update-food-swap-foods") }}',
+                url: '{{ route("admin.purchase-plans.update-food-swap-foods") }}',
                 method: 'POST',
                 data: {
                     item_id: itemId,
@@ -3279,7 +2912,7 @@
 
                             // AJAX call to update swap item in DB
                             $.ajax({
-                                url: '{{ route("admin.update-swap-item") }}',
+                                url: '{{ route("admin.purchase-plans.update-swap-item") }}',
                                 method: 'POST',
                                 data: swapData,
                                 success: function (resp) {
@@ -3597,7 +3230,7 @@
             const modal = bootstrap.Modal.getInstance(modalEl);
 
             $.ajax({
-                url: '{{ route("admin.update-food-swap-foods") }}',
+                url: '{{ route("admin.purchase-plans.update-food-swap-foods") }}',
                 method: 'POST',
                 data: {
                     item_id: itemId,
@@ -3677,45 +3310,6 @@
             // Hide the modal
             bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
         });
-
-        // $(document).on('click', '.delete-swap-item', function () {
-        //     const button = $(this);
-
-        //     const swapItemId = button.data('swap-item-id');
-        //     const itemId = button.data('item-id');
-        //     const mealId = button.data('meal-id');
-        //     const planId = button.data('plan-id');
-        //     const mealTimeId = button.data('meal-time-id');
-        //     const userId = button.data('user-id');
-
-        //     if (!confirm('Are you sure you want to delete this swap item?')) return;
-
-        //     const $li = button.closest('li');
-        //     const $ul = $li.closest('ul');
-
-        //     // Remove the swap item
-        //     $li.remove();
-        //     updateFoodCount(swapItemId, -1, null);
-
-        //     // Check if there are any <li> left in the list
-        //     if ($ul.children('li').length === 0) {
-        //         // Add "No swap items available" message
-        //         $ul.append(`
-        //             <li class="d-flex justify-content-between align-items-start mb-2">
-        //                 <div class="col-9">
-        //                     <span class="text-muted">No swap items available</span>
-        //                 </div>
-        //                 <div>
-        //                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-        //                         data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-        //                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-        //                         title="Add"><i class="icofont-plus text-primary"></i>
-        //                     </button>
-        //                 </div>
-        //             </li>
-        //         `);
-        //     }
-        // });
 
         $(document).ready(function () {
             $('#swapFoodDropdown').select2({
@@ -3827,7 +3421,7 @@
                 $('#editSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#editSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#editSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#editSwapItemModal');
                 setupDynamicMeasurementSync('#editSwapItemModal');
             });
@@ -3986,7 +3580,7 @@
                 $('#addSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#addSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#addSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0,  '#addSwapItemModal');
                 setupDynamicMeasurementSync('#addSwapItemModal');
             });
@@ -4009,7 +3603,7 @@
                 alert('Please select a food item.');
                 return;
             }
-            
+
             const anyChecked = $('#addSwapItemModal .qty-unit-row').find('.multiQtyCheckbox:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
@@ -4096,7 +3690,7 @@
                     <div>
                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                             title="Add More"><i class="icofont-plus text-primary"></i></button>
                     </div>
                 </li>
@@ -4113,7 +3707,7 @@
             const modal = bootstrap.Modal.getInstance(modalEl);
 
             $.ajax({
-                url: '{{ route("admin.update-food-swap-foods") }}',
+                url: '{{ route("admin.purchase-plans.update-food-swap-foods") }}',
                 method: 'POST',
                 data: {
                     item_id: itemId,
@@ -4146,7 +3740,7 @@
                     modal.hide();
                 }
             });
-            
+
             // calculateTotals(planId, mealTimeId, mealId);
             // calculateMealNutrition();
         });
@@ -4297,7 +3891,7 @@
                 $('#addMoreSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#addMoreSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#addMoreSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#addMoreSwapItemModal');
                 setupDynamicMeasurementSync('#addMoreSwapItemModal');
             });
@@ -4400,10 +3994,10 @@
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
             const swapItemsContainer = currentItemRow.find(`td:nth-child(2) ul`);
-            
+
             // Check if there are any existing swap items
             const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
-            
+
             if (existingItems.length > 0) {
                 // If there are existing items, append the new item after them
                 existingItems.last().after(updatedLI);
@@ -4411,32 +4005,14 @@
                 // If no existing items, replace the entire content
                 swapItemsContainer.html(updatedLI);
             }
-            
-            // // Add the + icon button at the end
-            // const addButton = `
-            //     <li class="d-flex justify-content-between align-items-start mb-2">
-            //         <div class="col-9">
-            //             <span class="text-muted"></span>
-            //         </div>
-            //         <div>
-            //             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
-            //                 data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-            //                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-            //                 title="Add"><i class="icofont-plus text-primary"></i>
-            //             </button>
-            //         </div>
-            //     </li>
-            // `;
-            // swapItemsContainer.append(addButton);
-            
+
             $('[data-bs-toggle="tooltip"]').tooltip();
-            // updateFoodCount(swapItemId, 1, 'green');
 
             const modalEl = document.getElementById('addMoreSwapItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
 
             $.ajax({
-                url: '{{ route("admin.update-food-swap-foods") }}',
+                url: '{{ route("admin.purchase-plans.update-food-swap-foods") }}',
                 method: 'POST',
                 data: {
                     item_id: itemId,
@@ -4698,11 +4274,11 @@
             });
 
             const $mealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
-           
+
             const $tableBody = $mealContainer.find('.items-table-body');
-           
+
             $.ajax({
-                url: '{{ route("admin.add-food") }}',
+                url: '{{ route("admin.purchase-plans.add-food") }}',
                 type: 'POST',
                 data: {
                     item_id: foodId,
@@ -4779,14 +4355,10 @@
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                         title="Add More"><i class="icofont-plus text-primary"></i></button>
                                 </div>
                             </li>`;
-
-                        // swapFoods.map(swapItem => 
-                        //     updateFoodCount(swapItem.id, 1, 'green')
-                        // );
 
                     } else {
                         swapItemsHTML = `
@@ -4813,7 +4385,7 @@
                                                 data-carbs="${carbs}" data-protein="${protein}" data-fat="${fat}" data-energy="${energy}">
                                             <label class="form-check-label flex-grow-1">${item.title}</label>
                                         </div>
-                                        
+
                                     </div>
                                     <div>
                                         <button type="button" class="btn btn-sm btn-outline-primary"
@@ -4876,16 +4448,8 @@
                     totalFat += parseFloat($mainItemInput.data('fat')) || 0;
                     totalEnergy += parseFloat($mainItemInput.data('energy')) || 0;
                 }
-
-                // Find checked inputs inside second <td> (swap items)
-                // $row.find('td:eq(1) input[type="checkbox"]:checked').each(function () {
-                //     const $swapInput = $(this);
-                //     totalCarbs += parseFloat($swapInput.data('carbs')) || 0;
-                //     totalProtein += parseFloat($swapInput.data('protein')) || 0;
-                //     totalFat += parseFloat($swapInput.data('fat')) || 0;
-                // });
             });
-           
+
             // Update totals in the specific meal container
             $(`${mealContainerId} .totalCarbs`).text(Math.round(totalCarbs)+'g');
             $(`${mealContainerId} .totalProtein`).text(Math.round(totalProtein)+'g');
@@ -4989,11 +4553,11 @@
                                             <td>${item.fat ?? 'N/A'}</td>
                                             <td><img src="${imagePath}" alt="Food Image" width="50" height="50"></td>
                                             <td>
-                                                <button class="btn btn-success add-food-btn" 
-                                                        data-food-id="${item.id}" 
-                                                        data-meal-id="${mealId}" 
-                                                        data-mealtime-id="${mealTimeId}" 
-                                                        data-user-id="${userId}" 
+                                                <button class="btn btn-success add-food-btn"
+                                                        data-food-id="${item.id}"
+                                                        data-meal-id="${mealId}"
+                                                        data-mealtime-id="${mealTimeId}"
+                                                        data-user-id="${userId}"
                                                         data-plan-id="${planId}">
                                                     Add Food
                                                 </button>
@@ -5014,7 +4578,7 @@
                 } else if (searchType === 'woolworths') {
                     // Perform Woolworths product search
                     $.ajax({
-                        url: '{{ route("woolworths-product-search") }}', // Use route for Woolworths search
+                        url: '{{ route("admin.product.search") }}', // Use route for Woolworths search
                         type: 'GET',
                         data: {
                             query: query
@@ -5036,15 +4600,15 @@
                                             <td>${product.nutrition.fat || 'N/A'}</td>
                                             <td><img src="${product.image}" width="50" height="50"></td>
                                             <td>
-                                                <button class="btn btn-success add-woolworths-food" 
-                                                        data-name="${product.name}" 
-                                                        data-image="${product.image}" 
-                                                        data-protein="${product.nutrition.protein || 0}" 
+                                                <button class="btn btn-success add-woolworths-food"
+                                                        data-name="${product.name}"
+                                                        data-image="${product.image}"
+                                                        data-protein="${product.nutrition.protein || 0}"
                                                         data-carbs="${product.nutrition.carbohydrate || 0}"
                                                         data-fat="${product.nutrition.fat || 0}"
                                                         data-energy="${product.nutrition.energy || 0}"
-                                                        data-serving-size="${product.nutrition.serving_size || 0}" 
-                                                        data-serving-per-pack="${product.nutrition.serving_per_pack || 0}" 
+                                                        data-serving-size="${product.nutrition.serving_size || 0}"
+                                                        data-serving-per-pack="${product.nutrition.serving_per_pack || 0}"
                                                         data-category="${product.category || '' }"
                                                         data-meal-id="${mealId}" data-mealtime-id="${mealTimeId}" data-plan-id="${planId}" data-user-id="${userId}">
                                                     Add Woolworths Food
@@ -5076,7 +4640,7 @@
                 loader.show();
 
                 $.ajax({
-                    url: '{{ route("admin.add-food") }}',
+                    url: '{{ route("admin.purchase-plans.add-food") }}',
                     type: 'POST',
                     data: {
                         item_id: foodId,
@@ -5115,8 +4679,8 @@
                                     <tr data-food-id="${food.id}">
                                         <td width="45%">
                                             <div class="d-flex align-items-start">
-                                                <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]" 
-                                                    value="${food.id}" 
+                                                <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
+                                                    value="${food.id}"
                                                     class="form-check-input me-2 d-none" data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}"  checked>
                                                 <label class="form-check-label flex-grow-1">${food.title} (${food.qty}${food.unit})</label>
                                             </div>
@@ -5129,7 +4693,7 @@
                                                     <div>
                                                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                                             data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                                             title="Add More"><i class="icofont-plus text-primary"></i></button>
                                                     </div>
                                                 </li>
@@ -5141,19 +4705,19 @@
                                                 title="${food.description}">
                                                 <i class="fas fa-info-circle text-primary"></i>
                                             </button>
-                                            <button class="btn btn-sm edit-food btn-outline-success" 
-                                                    data-food-id="${food.id}" 
-                                                    data-meal-id="${mealId}" 
+                                            <button class="btn btn-sm edit-food btn-outline-success"
+                                                    data-food-id="${food.id}"
+                                                    data-meal-id="${mealId}"
                                                     data-swap-foods='${JSON.stringify(swapFoods)}',
-                                                    data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}" 
-                                                    data-swapfood-qty="${swapFoods[0]?.qty || ''}" 
-                                                    data-swapfood-unit="${swapFoods[0]?.unit || ''}" 
+                                                    data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}"
+                                                    data-swapfood-qty="${swapFoods[0]?.qty || ''}"
+                                                    data-swapfood-unit="${swapFoods[0]?.unit || ''}"
                                                     data-food-qty="${food.qty}"
                                                     data-food-unit="${food.unit}">
                                                 <i class="icofont-edit text-success"></i>
                                             </button>
-                                            <button class="btn  btn-sm delete-food btn-outline-danger" 
-                                                    data-food-id="${food.id}" 
+                                            <button class="btn  btn-sm delete-food btn-outline-danger"
+                                                    data-food-id="${food.id}"
                                                     data-meal-id="${mealId}"
                                                     data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}">
                                                 <i class="icofont-ui-delete text-danger"></i>
@@ -5198,7 +4762,7 @@
                 loader.show();
 
                 $.ajax({
-                    url: '{{ route("admin.add-food") }}',
+                    url: '{{ route("admin.purchase-plans.add-food") }}',
                     type: 'POST',
                     data: {
                         name: name,
@@ -5223,7 +4787,7 @@
                             const food = response.data;
                             const mealContainerId = `#mealContainer_${planId}_${mealTimeId}_${mealId}`;
                             const tableBody = $(mealContainerId).find('.items-table-body');
-                            
+
                             const selectedQtyUnits = {
                                 qty: food.qty,
                                 unit: food.unit
@@ -5239,7 +4803,7 @@
                                                         <div>
                                                             <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                                                 data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                                                 title="Add"><i class="icofont-plus text-primary"></i>
                                                             </button>
                                                         </div>
@@ -5344,18 +4908,18 @@
          function initializeTooltips() {
             // First dispose all existing tooltips
             $('[data-bs-toggle="tooltip"]').tooltip('dispose');
-            
+
             // Initialize new tooltips
             $('[data-bs-toggle="tooltip"]').each(function() {
                 const $this = $(this);
                 const description = $this.data('description');
-                
+
                 // Set both title attributes for consistency
                 $this.attr({
                     'title': description,
                     'data-bs-original-title': description
                 });
-                
+
                 // Initialize Bootstrap tooltip
                 new bootstrap.Tooltip(this, {
                     trigger: 'hover',
@@ -5378,7 +4942,7 @@
             initializeTooltips();
         });
     });
-    
+
     document.addEventListener('DOMContentLoaded', () => {
         const mealTimeCheckboxes = document.querySelectorAll('.meal-time-checkbox');
 

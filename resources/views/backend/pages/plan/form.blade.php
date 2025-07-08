@@ -1,5 +1,7 @@
 @extends('backend.layouts.app')
 
+@section('title', 'Plans')
+
 @section('content')
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -73,17 +75,17 @@
                                     @endforeach
                                 </select>
                             </div>
+
                             <!-- Image -->
                             <div class="col-md-12">
                                 <label for="image" class="form-label">Image</label>
-                                <input type="file" id="image" name="image" class="form-control">
+                                <input type="file" id="image" name="image" class="form-control" accept="image/*">
                                 @include('backend.layouts.error', ['field' => 'image'])
 
-                                @if (isset($plan) && $plan->image)
-                                    <div class="mt-2">
-                                        <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="Plan Image" width="100">
-                                    </div>
-                                @endif
+                                <div class="mt-2">
+                                    <img id="imagePreview" src="{{ isset($plan) && $plan->image ? storageImageUrl($plan->image) : '' }}"
+                                        alt="Plan Image" width="100" style="{{ isset($plan) && $plan->image ? '' : 'display: none;' }}">
+                                </div>
                             </div>
                         </div>
 
@@ -132,6 +134,15 @@ $(document).ready(function() {
     $('#sub_plan_ids').select2({
         placeholder: "Select meal times",
         allowClear: true
+    });
+
+    document.getElementById('image').addEventListener('change', function (e) {
+        const [file] = e.target.files;
+        if (file) {
+            const preview = document.getElementById('imagePreview');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
     });
 });
 </script>

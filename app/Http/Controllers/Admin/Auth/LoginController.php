@@ -67,13 +67,13 @@ class LoginController extends Controller
         ]);
 
         $admin = User::where('email', $request->get('email'))->first();
-        
+
         if (!$admin) {
-            return redirect()->route('index')->with('error', 'Invalid credentials.');
+            return redirect()->route('admin.auth.login.index')->with('error', 'Invalid credentials.');
         }
 
         if (!$admin->is_superadmin) {
-            return redirect()->route('index')->with('error', 'You do not have authorization to access this system.');
+            return redirect()->route('admin.auth.login.index')->with('error', 'You do not have authorization to access this system.');
         }
 
         $rememberMe = $request->has('remember_me');
@@ -138,17 +138,17 @@ class LoginController extends Controller
         // Only logout from admin guard
         if (Auth::guard('admin')->check()) {
             Auth::guard('admin')->logout();
-            
+
             // Invalidate only the admin session
             $request->session()->forget('admin');
-            
+
             // Regenerate CSRF token
             $request->session()->regenerateToken();
 
-            return redirect()->route('index')->with('success', 'You have been logged out successfully.');
+            return redirect()->route('admin.auth.login.index')->with('success', 'You have been logged out successfully.');
         }
 
-        return redirect()->route('index')->with('error', 'Unauthorized access.');
+        return redirect()->route('admin.auth.login.index')->with('error', 'Unauthorized access.');
     }
 
     /**
@@ -229,7 +229,7 @@ class LoginController extends Controller
 
         // If the password reset record does not exist, redirect back with an error message.
         if (!$updatePassword) {
-            return redirect()->to(route("reset-password"))->with('error', 'Invalid!!');
+            return redirect()->to(route("admin.auth.reset.submit"))->with('error', 'Invalid!!');
         }
 
         // Update the admin user's password.
@@ -239,7 +239,7 @@ class LoginController extends Controller
         PasswordReset::where(["email" => $request->email])->delete();
 
         // Redirect to the admin login page with a success message.
-        return redirect()->to(route('login'))->with("success", "Password reset successfully.");
+        return redirect()->to(route('admin.auth.login.submit'))->with("success", "Password reset successfully.");
     }
 
     /**
@@ -250,7 +250,7 @@ class LoginController extends Controller
     public function changePassword()
     {
         if (!Auth::guard('admin')->check()) {
-            return redirect()->route('index');
+            return redirect()->route('admin.auth.login.index');
         }
         return view('backend.pages.auth.change-password');
     }
@@ -270,9 +270,9 @@ class LoginController extends Controller
 
         $currentAdminUser = Auth::guard('admin')->user();
 
-        if (Hash::check($request->current_password, $currentAdminUser->password)) {
+        if (Hash::check($request->current_password, hashedValue: $currentAdminUser->password)) {
             User::where('id', $currentAdminUser->id)->update(['password' => Hash::make($request->new_password)]);
-            return redirect()->route('dashboard')->with('success', 'Password changed successfully.');
+            return redirect()->route('admin.dashboard')->with('success', 'Password changed successfully.');
         } else {
             return back()->with('error', 'Current password not matched.');
         }
@@ -281,9 +281,9 @@ class LoginController extends Controller
     public function profile(Request $request)
     {
         if (!Auth::guard('admin')->check()) {
-            return redirect()->route('index');
+            return redirect()->route('admin.auth.login.index');
         }
-        
+
         $adminUser = [];
         if ($request->id) {
             $adminUser = User::find($request->id);
@@ -292,10 +292,11 @@ class LoginController extends Controller
         return view('backend.pages.admin-profile', compact('adminUser', 'bookingConfiguration'));
     }
 
+
     public function profilePost(Request $request)
     {
         if (!Auth::guard('admin')->check()) {
-            return redirect()->route('index');
+            return redirect()->route('admin.auth.login.index');
         }
 
         $request->validate([
@@ -320,11 +321,11 @@ class LoginController extends Controller
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = 'uploads/profile_images/' . $fileName;
             $file->move(public_path('uploads/profile_images'), $fileName);
-        
+
             if ($adminUser->profile_image && file_exists(public_path($adminUser->profile_image))) {
                 unlink(public_path($adminUser->profile_image));
             }
-        
+
             $adminUser->profile_image = $filePath;
         }
 
@@ -333,11 +334,11 @@ class LoginController extends Controller
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = 'uploads/front_logo/' . $fileName;
             $file->move(public_path('uploads/front_logo'), $fileName);
-        
+
             if ($adminUser->front_logo && file_exists(public_path($adminUser->front_logo))) {
                 unlink(public_path($adminUser->front_logo));
             }
-        
+
             $adminUser->front_logo = $filePath;
         }
 
@@ -346,14 +347,14 @@ class LoginController extends Controller
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = 'uploads/about_us_image/' . $fileName;
             $file->move(public_path('uploads/about_us_image'), $fileName);
-        
+
             if ($adminUser->about_us_image && file_exists(public_path($adminUser->about_us_image))) {
                 unlink(public_path($adminUser->about_us_image));
             }
-        
+
             $adminUser->about_us_image = $filePath;
         }
-        
+
         $adminUser->update([
             'name' => $request->input('first_name') . ' ' . $request->input('last_name'),
             'first_name' => $request->input('first_name'),
@@ -373,11 +374,11 @@ class LoginController extends Controller
 
         return redirect()->back()->with('success', 'Profile updated successfully.');
     }
-    
+
     public function removeProfileImage($id)
     {
         if (!Auth::guard('admin')->check()) {
-            return redirect()->route('index');
+            return redirect()->route('admin.auth.login.index');
         }
 
         $adminUser = User::findOrFail($id);
@@ -393,7 +394,7 @@ class LoginController extends Controller
     public function removeFrontLogo($id)
     {
         if (!Auth::guard('admin')->check()) {
-            return redirect()->route('index');
+            return redirect()->route('admin.auth.login.index');
         }
 
         $adminUser = User::findOrFail($id);
@@ -409,7 +410,7 @@ class LoginController extends Controller
     public function removeAboutUsImage($id)
     {
         if (!Auth::guard('admin')->check()) {
-            return redirect()->route('index');
+            return redirect()->route('admin.auth.login.index');
         }
 
         $adminUser = User::findOrFail($id);

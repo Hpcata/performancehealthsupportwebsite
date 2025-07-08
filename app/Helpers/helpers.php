@@ -2,6 +2,7 @@
 
 // use Route;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Route;
 
 // APP FUNCTIONS
 function appName() {
@@ -10,47 +11,48 @@ function appName() {
 
 // ROUTE FUNCTIONS
 function routePut($name, $args = []) {
-	return $name && \Route::has($name) ? route($name, $args) : '#';
+	return $name && Route::has($name) ? route($name, $args) : '#';
 }
 function routeCurrentName() {
-	return \Route::getCurrentRoute()->getName();
+	return Route::getCurrentRoute()->getName();
 }
 function routeIsActive($name, $activeClass = "active") {
 	return routeCurrentName() == $name ? $activeClass : '';
 }
 
+// TODO: When we are done with assets refactor then we can remove this below commented code
 // BACKEND FUNCTIONS
-function backendAssets($path) {
-	return asset('backend/' . $path);
-}
-function backendView($key) {
-	return 'backend.' . $key;
-}
-function backendRoute($key) {
-	return 'backend.' . $key;
-}
-function backendRoutePut($key, $args = []) {
-	return routePut(backendRoute($key), $args);
-}
+// function backendAssets($path) {
+// 	return asset('backend/' . $path);
+// }
+// function backendView($key) {
+// 	return 'backend.' . $key;
+// }
+// function backendRoute($key) {
+// 	return 'backend.' . $key;
+// }
+// function backendRoutePut($key, $args = []) {
+// 	return routePut(backendRoute($key), $args);
+// }
 
-function frontAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'front/' . $path : 'front/' . $path;
-	return asset($asset);
-}
+// function frontAssets($path) {
+// 	$asset = config('constant.ENVIRONMENT') == 'production' ? 'front/' . $path : 'front/' . $path;
+// 	return asset($asset);
+// }
 
-function webAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? '' . $path : '' . $path;
-	return asset($asset);
-}
+// function webAssets($path) {
+// 	$asset = config('constant.ENVIRONMENT') == 'production' ? '' . $path : '' . $path;
+// 	return asset($asset);
+// }
 
-function adminAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'public/admin/' . $path : 'admin/' . $path;
-	return asset($asset);
-}
+// function adminAssets($path) {
+// 	$asset = config('constant.ENVIRONMENT') == 'production' ? 'public/admin/' . $path : 'admin/' . $path;
+// 	return asset($asset);
+// }
 
-function adminView($key) {
-	return 'admin.' . $key;
-}
+// function adminView($key) {
+// 	return 'admin.' . $key;
+// }
 
 function getUserBySlug($slug) {
 	return \App\Models\User::where('slug', $slug)->first();

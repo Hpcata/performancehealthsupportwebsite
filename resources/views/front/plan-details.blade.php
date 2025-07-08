@@ -24,23 +24,15 @@
                 <div class="col-md-6 col-lg-5">
                     <div class="nutrition-plan-text">
                         @foreach($userPlans as $userPlan)
-                        <h1>{{ $userPlan->plan->name }} 
+                        <h1>{{ $userPlan->plan->name }}
                             @if(isset($userPlan->plan->subPlans) && $userPlan->plan->subPlans->count() > 0)
-                                ( 
-                                {{ $userPlan->plan->subPlans->pluck('name')->join(' + ') }} 
+                                (
+                                {{ $userPlan->plan->subPlans->pluck('name')->join(' + ') }}
                                 ({{ $userPlan->plan->subPlans->count() }} plans)
                                 )
                             @endif
                         </h1>
                         @endforeach
-                        <!-- <p>Make sure your daily nutrition is sufficient. Consult your Nutrition Supplements Products about nutrition with us.</p> -->
-                        <!-- <a href="#" class="btn btn-primary">
-                            <span class="me-1">Get Started</span>
-                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
-                                <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </a> -->
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-5 ms-lg-auto">
@@ -65,9 +57,9 @@
                                 id="showAllMeals"
                                 data-user-id="{{ $user->id }}"
                                 data-plan-id="{{ $plan->id }}"
-                                data-fetch-route="{{ route('user.plan.meals', ['user' => $user->id, 'plan' => $plan->id]) }}">
+                                data-fetch-route="{{ route('front.user.plan.meals', ['user' => $user->id, 'plan' => $plan->id]) }}">
                                 All Meals
-                            </a>                        
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -75,7 +67,7 @@
         </div>
     </div>
     <!-- <div class="container mb-2 text-end">
-       <a href="{{ route('front.profile', ['id' => $user->id]) }}" class="btn btn-primary">Back</a> 
+       <a href="{{ route('front.profile', ['id' => $user->id]) }}" class="btn btn-primary">Back</a>
     </div> -->
     <div class="section pt-md-3">
     @foreach ($userPlans as $userPlan)
@@ -99,7 +91,7 @@
                     @endphp
 
                     @if ($hasValidMeal && $userCategory->category)
-                        <div class="col-md-3">  
+                        <div class="col-md-3">
                             <div class="nutrition-plan-box">
                                 <figure>
                                     @if ($userCategory->category->image)
@@ -239,7 +231,7 @@
 
                     <!-- Subcategories Content -->
                     <div id="mealItemsContainer" class="row g-4" style="display: none;"></div>
-                    
+
                 </div>
             </div>
         </div>
@@ -262,7 +254,7 @@
 
                     <!-- items swap Content -->
                     <div id="itemsSwapContainer" class="row g-4" style="display: none;"></div>
-                    
+
                 </div>
                 <div class="modal-footer justify-content-center">
                     <button type="button" class="apply-changes-btn btn btn-primary" data-user-item-id="" data-user-meal-id="">Apply Changes</button>
@@ -348,7 +340,7 @@
         // Handle profile update form submission
         $('#updateProfileBtn').on('click', function () {
             let formData = new FormData($('#profileForm')[0]); // Get form data, including files
-            formData.append('_token', '{{ csrf_token() }}'); 
+            formData.append('_token', '{{ csrf_token() }}');
             $.ajax({
                 url: '{{ route("front.profile.update") }}', // Endpoint to update user profile
                 method: 'POST',
@@ -383,12 +375,12 @@
             const planId = $(this).data("plan-id");
             const userId = $(this).data("user-id");
             // Set form action for download button
-            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
+            $("#downloadPdfForm").attr("action", "{{ route('front.plans.generatePdf', ':id') }}".replace(':id', planId));
             $("#downloadPdfForm input[name='user_id']").val(userId);
 
             // Load the preview content from the controller
             $("#plan-preview-body").html('<div class="text-center">Loading preview...</div>');
-            fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
+            fetch("{{ route('front.plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
             .then(res => res.text())
                 .then(html => {
                     console.log(html);
@@ -658,7 +650,7 @@
         // Select/Deselect all meal items within this meal's container
         mealContainer.find('.meal-item-checkbox').prop('checked', isChecked);
     });
-   
+
     $(document).on('click', '#ShippingPrintModal .btn-primary', function () {
         let pdfContent = '';
 
@@ -774,7 +766,7 @@
                                     </div>
                                 </figure>
                                 <h5 class="mb-3">${meal.name}</h5>
-                                <button type="button" class="view-items-btn btn btn-primary mt-auto" data-user-meal-id="${meal.user_meal_id}" data-meal-id="${meal.id}" 
+                                <button type="button" class="view-items-btn btn btn-primary mt-auto" data-user-meal-id="${meal.user_meal_id}" data-meal-id="${meal.id}"
                                 data-meal-name="${meal.name}">
                                     <svg class="me-2" width="25" height="25" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M0.666667 8.5C1.06667 8.5 1.33333 8.23333 1.33333 7.83333V6.5C1.33333 5.36667 2.2 4.5 3.33333 4.5H11.0667L9.53333 6.03333C9.26666 6.3 9.26666 6.7 9.53333 6.96667C9.66666 7.1 9.8 7.16667 10 7.16667C10.2 7.16667 10.3333 7.1 10.4667 6.96667L13.1333 4.3C13.2 4.23333 13.2667 4.16667 13.2667 4.1C13.3333 3.96667 13.3333 3.76667 13.2667 3.56667C13.2 3.5 13.2 3.43333 13.1333 3.36667L10.4667 0.7C10.2 0.433333 9.8 0.433333 9.53333 0.7C9.26666 0.966667 9.26666 1.36667 9.53333 1.63333L11.0667 3.16667H3.33333C1.46667 3.16667 0 4.63333 0 6.5V7.83333C0 8.23333 0.266667 8.5 0.666667 8.5Z" fill="white"/>
@@ -795,7 +787,7 @@
                                 </div>
                             </div>`;
                         $mealModelContainer.append(purchaseMoreCard);
-                        
+
                     } else {
                         $mealModelContainer.html('<p class="text-center">No meals available.</p>');
                     }
@@ -889,11 +881,11 @@
 
                             let infoButton = '';
                             if (item.description) {
-                                infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1 info-btn" 
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
-                                    title="${item.description}" 
-                                    data-item-id="${item.id}" 
+                                infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1 info-btn"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="${item.description}"
+                                    data-item-id="${item.id}"
                                     data-item-name="${item.name}"
                                     data-description="${item.description}"
                                     data-note="${item.note}">
@@ -985,7 +977,7 @@
                 console.error('Invalid item data.');
                 return;
             }
-            
+
             $('.apply-changes-btn').attr('data-user-item-id', userItemId);
             $('.apply-changes-btn').attr('data-user-meal-id', userMealId);
 
@@ -1014,7 +1006,7 @@
                                         <img class="img-thumbnail main-item-img" data-main-id="${data.item_id}" src="${data.item_image}" alt="">
                                     </figure>
                                     <figcaption>${data.item_name}</figcaption>
-                               
+
                                     ${data.item.description ? `
                                         <button class="btn btn-primary rounded-pill py-1 px-4 d-flex align-items-center m-1"
                                             data-bs-toggle="tooltip"
@@ -1041,11 +1033,11 @@
                             swapItemsHTML += `
                                 <div class="category-item-swap category-swap-list-box swap-item" data-swap-id="${swapitem.swap_item_id}">
                                     <div class="category-swap-btn mx-auto">
-                                        <button class="swap-button btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" 
-                                            data-swap-item-id="${swapitem.swap_item_id}" 
-                                            data-swap-item-name="${swapitem.swap_item_name}" 
-                                            data-swap-item-img="${swapitem.swap_item_image}" 
-                                            data-swap-item-protein="${swapitem.swap_item_protein}" 
+                                        <button class="swap-button btn btn-primary rounded-pill py-2 d-flex align-items-center m-1"
+                                            data-swap-item-id="${swapitem.swap_item_id}"
+                                            data-swap-item-name="${swapitem.swap_item_name}"
+                                            data-swap-item-img="${swapitem.swap_item_image}"
+                                            data-swap-item-protein="${swapitem.swap_item_protein}"
                                             data-swap-item-carbs="${swapitem.swap_item_carbs}"
                                             data-user-item-id="${userItemId}">
                                             <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1060,7 +1052,7 @@
                                             <img class="img-thumbnail" src="${swapitem.swap_item_image}" alt="">
                                         </figure>
                                         <figcaption>${swapitem.swap_item_name}</figcaption>
-                                   
+
                                         ${swapitem.swap_item_description ? `
                                             <button class="btn btn-primary rounded-pill py-1 px-4 d-flex align-items-center m-1"
                                                 data-bs-toggle="tooltip"
@@ -1076,7 +1068,7 @@
                                                 Info
                                             </button>
                                             ` : ''
-                                        } 
+                                        }
                                     </div>
                                 </div>`;
                         });
@@ -1265,7 +1257,7 @@
                         var user_meal_id = response.data['user_meal_id'];
                         mealItemModelReload(meal_id, meal_name, user_meal_id);
                     }
-                    
+
                     // $('#mealItemModel').modal('show');
                 },
                 error: function (xhr, status, error) {
@@ -1325,11 +1317,11 @@
                             let infoButton = '';
 
                             if (item.description) {
-                                infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1 info-btn" 
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
-                                    title="${item.description}" 
-                                    data-item-id="${item.id}" 
+                                infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1 info-btn"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="${item.description}"
+                                    data-item-id="${item.id}"
                                     data-item-name="${item.name}"
                                     data-description="${item.description}"
                                     data-note="${item.note}">
@@ -1406,7 +1398,7 @@
         });
 
         $('body').on('click', '.info-btn', function () {
-            const itemName = $(this).data('item-name'); 
+            const itemName = $(this).data('item-name');
             const itemDescription = $(this).data('description');
             const itemNote = $(this).data('note');
 
@@ -1469,10 +1461,10 @@
                             <div class="nutrition-plan-box h-100 d-flex flex-column position-relative">
                                 <figure class="position-relative mb-0">
                                     <img src="${meal.image_url}" alt="${meal.title}" class="img-fluid">
-                                    
+
                                     <!-- Checkbox at top-right -->
                                     <input type="checkbox" class="select-meal-checkbox form-check-input" data-meal-id="${meal.id}" data-user-category-id="${category.user_category_id}" data-user-sub-category-id="${category.user_sub_category_id}" data-user-plan-id="${category.user_plan_id}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 20px; height: 20px;">
-                                
+
                                 </figure>
                                 <h5 class="mb-3 mt-2 text-center">${meal.title}</h5>
                                 <div class="text-center mt-auto mb-2">
@@ -1509,12 +1501,12 @@
             });
 
             let planId = user.plan_id;
-            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
+            $("#downloadPdfForm").attr("action", "{{ route('front.plans.generatePdf', ':id') }}".replace(':id', planId));
             $("#downloadPdfForm input[name='user_id']").val(userId);
             $("#downloadPdfForm input[name='grouped_data']").val(JSON.stringify(groupedData));
 
             // Send grouped data to Laravel and receive HTML response
-            fetch("{{ route('front.plans.preview') }}", {
+            fetch("{{ route('front.plans.preview.submit') }}", {
                 method: "POST",
                 headers: {
                     "X-CSRF-TOKEN": '{{ csrf_token() }}',
@@ -1538,7 +1530,7 @@
             .catch(err => {
                 console.error(err);
                 $("#plan-preview-body").html('<div class="text-danger">Error loading preview</div>');
-            }); 
+            });
         });
 
     });

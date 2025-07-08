@@ -10,7 +10,7 @@
 			<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
 				<h3 class="fw-bold mb-0">{{ $testimonial->id ? 'Edit Testimonial' : 'Add Testimonial' }}</h3>
 				<div class="col-auto d-flex w-sm-100">
-					<a type="button" href="{{ route('testimonials.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
+					<a type="button" href="{{ route('admin.testimonials.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
 				</div>
 			</div>
 		</div>
@@ -23,7 +23,7 @@
 					<h6 class="mb-0 fw-bold ">Basic Inputs</h6>
 				</div> -->
 				<div class="card-body">
-					<form id="admin-testimonial-form" method="POST" action="{{ route('testimonials.save') }}" enctype="multipart/form-data">
+					<form id="admin-testimonial-form" method="POST" action="{{ route('admin.testimonials.save') }}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name='id' value="{{ old('id', $testimonial->id ?? '') }}">
 						<div class="row g-3 align-items-center">

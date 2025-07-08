@@ -1108,13 +1108,13 @@
             const planId = $(this).data("plan-id");
             const userId = $(this).data("user-id");
             // Set form action for download button
-            $("#downloadPdfForm").attr("action", "{{ route('plans.generatePdf', ':id') }}".replace(':id', planId));
+            $("#downloadPdfForm").attr("action", "{{ route('front.plans.generatePdf', ':id') }}".replace(':id', planId));
 
             $("#downloadPdfForm input[name='user_id']").val(userId);
 
             // Load the preview content from the controller
             $("#plan-preview-body").html('<div class="text-center">Loading preview...</div>');
-            fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
+            fetch("{{ route('front.plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
             .then(res => res.text())
                 .then(html => {
                     console.log(html);

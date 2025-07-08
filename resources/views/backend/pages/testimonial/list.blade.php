@@ -14,7 +14,7 @@
 				<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
 					<h3 class="fw-bold mb-0">Testimonials</h3>
                     <div class="col-auto d-flex w-sm-100">
-						<a type="button" href="{{ route('testimonials.add') }}" class="btn btn-primary btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i>Add Testimonial</a>
+						<a type="button" href="{{ route('admin.testimonials.add') }}" class="btn btn-primary btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i>Add Testimonial</a>
 					</div>
 				</div>
 			</div>
@@ -53,7 +53,7 @@
 	function init(ajaxParams) {
 		$('#testimonial-table').DataTable({
 			processing: true,
-			ajax: "{{ route('testimonials.list-ajax') }}",
+			ajax: "{{ route('admin.testimonials.list-ajax') }}",
 			"order": [[ 0, "desc" ]],
 			columns: [
                 { data: 'name', name: 'name' },
@@ -71,7 +71,7 @@
 
     function deleteTestimonial(id) {
 		$.ajax({
-			url: "{{ route('testimonials.delete') }}",
+			url: "{{ route('admin.testimonials.delete') }}",
 			headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
 			method: 'POST',
 			data: {

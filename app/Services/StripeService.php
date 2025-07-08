@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use Log;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
 class StripeService
@@ -23,13 +24,13 @@ class StripeService
             $body = [
                 'line_items' => $paymentData,
                 'mode' => 'payment',
-                'success_url' => route('payment.success'),
+                'success_url' => route('front.payment.success'),
             ];
 
             $response = Http::withHeaders($this->headers)->asForm()->post($this->url, $body);
             return $this->prepareResonse($response);
         } catch (Exception $e) {
-            Log::error($e->gerMessage());
+            Log::error($e->getMessage());
             return false;
         }
     }

@@ -58,7 +58,7 @@
 								<td>
 									<div class="btn-group" role="group" aria-label="Basic outlined example">
 										<a href="{!! backendRoutePut('blogs.edit', $blog->id) !!}" class="btn btn-outline-secondary"><i class="icofont-edit text-success"></i></a>
-                                        <form action="{{ route('backend.blogs.destroy', $blog->id) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-secondary">

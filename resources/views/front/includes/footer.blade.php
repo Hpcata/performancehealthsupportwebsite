@@ -1,12 +1,11 @@
-
 <div class="site-footer">
     <div class="container">
         <div class="row mt-5">
-        <div class="col-12 text-center">
-            <p class="mb-0">
-            Copyright © 2024 Kerry O’Bryan.
-            </p>
-        </div>
+            <div class="col-12 text-center">
+                <p class="mb-0">
+                    Copyright © 2024 Kerry O’Bryan.
+                </p>
+            </div>
         </div>
         <!-- /.container -->
     </div>
@@ -15,7 +14,7 @@
     <div id="overlayer"></div>
     <div class="loader">
         <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 </div>
@@ -33,8 +32,6 @@
 
 <style>
     /* home page css */
-
-
     :root {
         --size: clamp(10rem, 1rem + 40vmin, 30rem);
         --gap: calc(clamp(10rem, 1rem + 40vmin, 30rem) / 14);
@@ -84,7 +81,6 @@
             transform: translateX(var(--scroll-end));
         }
     }
-
 
     /* Element styles */
     .marquee__group>div {

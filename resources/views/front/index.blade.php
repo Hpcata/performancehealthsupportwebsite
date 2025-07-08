@@ -3,90 +3,91 @@
 @section('title', 'Home')
 
 @section('content')
-@php
-    $showHeader = !empty($user->front_logo) && 
-                  !empty($user->front_title) && 
-                  !empty($user->front_description) && 
-                  !empty($user->about_us_image);
-@endphp
+    @php
+        $showHeader = !empty($user->front_logo) &&
+            !empty($user->front_title) &&
+            !empty($user->front_description) &&
+            !empty($user->about_us_image);
+    @endphp
 
-@if($showHeader)
-    <header>
-        <div class="container-fluid p-0 overflow-hidden">
-            <div class="primary-bg-color main-content">
-                <div class="row">
-                <div class="col-lg-6 ">
-                    <div class="left-aside">
-                    <div class="mb-3 powered-by-box aos-init aos-animate" data-aos="fade-up">
-                        <p>Powered by &nbsp;<span>BioHealth<span>Passport</span></span></p>
-                    </div>
-                    <img src="{{ asset('public/' . $user->front_logo) }}" class="logo mb-3" alt="logo-img">
-                    <h1>{!! $user->front_title !!}</h1>
-                    <p class="content-description mt-4 mb-5">{!! $user->front_description !!}</p>
-                    <a class="btn-booking-type booking-type">Booking Types <img src="{{ asset('public/uploads/right-arrow.png') }}" height="13px"
-                        width="13px"></a>
-                    </div>
-                </div>
-                <div class="col-lg-6 ">
-                    <div class="right-aside position-relative">
-                        <img src="{{ asset('public/uploads/image-plane-new.svg') }}" class="img-plane d-none d-lg-block">
-                        <div class="position-relative">
-                            <img src="{{ asset('public/uploads/laptop.png') }}" alt="image-mockup" class="img-fluid img-mockup">
-                            <div class="bg-white main-background" style=" width: 100%;"></div>
-
-                            <div class="profile-details mx-auto d-flex justify-content-center flex-column text-center">
-                            <img src="{{ asset('public/uploads/hero01.png') }}" alt="hero-img" class="mx-auto">
-                            <h4 class="text-white">{{ $user->name }}</h4>
-                            <span class="text-white">{{ $user->designation }}</span>
-                            </div>
-                            <div class="d-flex know-about">
-                                <h2 class="text-black"> {!! $user->about_us_title !!}</h2>
-                                <img src="{{ asset('public/' . $user->about_us_image) }}" class=''>
-                            </div>
+    @if($showHeader)
+        <header>
+            <div class="container-fluid p-0 overflow-hidden">
+                <div class="primary-bg-color main-content">
+                    <div class="row">
+                    <div class="col-lg-6 ">
+                        <div class="left-aside">
+                        <div class="mb-3 powered-by-box aos-init aos-animate" data-aos="fade-up">
+                            <p>Powered by &nbsp;<span>BioHealth<span>Passport</span></span></p>
                         </div>
-                        <div class="profile-description">
-                            @php
-                                $fullDescription = $user->about_us_description;
-                                $shortDescription = Str::limit(strip_tags($fullDescription), 200, '');
-                            @endphp
-                        
-                            <div id="short-description">
-                                <p>{!! $shortDescription !!}</p>
-                                @if (strlen(strip_tags($fullDescription)) > 200)
-                                    <!-- <button id="read-more-btn" class="text-dark fw-bold">Read more</button> -->
-                                    <a href="javascript:void(0);" id="read-more-btn" class="text-dark fw-bold">Read more...</a>
-                                @endif
+                        <img src="{{ asset('public/' . $user->front_logo) }}" class="logo mb-3" alt="logo-img">
+                        <h1>{!! $user->front_title !!}</h1>
+                        <p class="content-description mt-4 mb-5">{!! $user->front_description !!}</p>
+                        <a class="btn-booking-type booking-type">Booking Types <img src="{{ asset('public/uploads/right-arrow.png') }}" height="13px"
+                            width="13px"></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 ">
+                        <div class="right-aside position-relative">
+                            <img src="{{ asset('public/uploads/image-plane-new.svg') }}" class="img-plane d-none d-lg-block">
+                            <div class="position-relative">
+                                <img src="{{ asset('public/uploads/laptop.png') }}" alt="image-mockup" class="img-fluid img-mockup">
+                                <div class="bg-white main-background" style=" width: 100%;"></div>
+
+                                <div class="profile-details mx-auto d-flex justify-content-center flex-column text-center">
+                                <img src="{{ asset('public/uploads/hero01.png') }}" alt="hero-img" class="mx-auto">
+                                <h4 class="text-white">{{ $user->name }}</h4>
+                                <span class="text-white">{{ $user->designation }}</span>
+                                </div>
+                                <div class="d-flex know-about">
+                                    <h2 class="text-black"> {!! $user->about_us_title !!}</h2>
+                                    <img src="{{ asset('public/' . $user->about_us_image) }}" class=''>
+                                </div>
                             </div>
-                            
-                            <div id="full-description" style="display: none;">
+                            <div class="profile-description">
                                 @php
-                                $parts = preg_split('/solutions\./i', $fullDescription, 2, PREG_SPLIT_DELIM_CAPTURE);
-    
-                                if (count($parts) > 1) {
-                                    $firstPart = $parts[0] . 'solutions.'; // Include "solutions." in the first part
-                                    $secondPart = $parts[1];
-                                } else {
-                                    $firstPart = $fullDescription;
-                                    $secondPart = '';
-                                }
+                                    $fullDescription = $user->about_us_description;
+                                    $shortDescription = Str::limit(strip_tags($fullDescription), 200, '');
                                 @endphp
-                                {!! $firstPart !!}
-                                @if ($secondPart)
-                                <a href="javascript:void(0);" id="read-less-btn" class="text-dark fw-bold"><i class="fas fa-chevron-up"></i></a>
-                                    <div class="kerry-obryan-section">
-                                        {!! $secondPart !!}
-                                    </div>
-                                @endif
-                                <!-- <button id="read-less-btn" class="text-dark fw-bold">Read less</button> -->
+
+                                <div id="short-description">
+                                    <p>{!! $shortDescription !!}</p>
+                                    @if (strlen(strip_tags($fullDescription)) > 200)
+                                        <!-- <button id="read-more-btn" class="text-dark fw-bold">Read more</button> -->
+                                        <a href="javascript:void(0);" id="read-more-btn" class="text-dark fw-bold">Read more...</a>
+                                    @endif
+                                </div>
+
+                                <div id="full-description" style="display: none;">
+                                    @php
+                                        $parts = preg_split('/solutions\./i', $fullDescription, 2, PREG_SPLIT_DELIM_CAPTURE);
+
+                                        if (count($parts) > 1) {
+                                            $firstPart = $parts[0] . 'solutions.'; // Include "solutions." in the first part
+                                            $secondPart = $parts[1];
+                                        } else {
+                                            $firstPart = $fullDescription;
+                                            $secondPart = '';
+                                        }
+                                    @endphp
+                                    {!! $firstPart !!}
+                                    @if ($secondPart)
+                                        <a href="javascript:void(0);" id="read-less-btn" class="text-dark fw-bold"><i class="fas fa-chevron-up"></i></a>
+                                        <div class="kerry-obryan-section">
+                                            {!! $secondPart !!}
+                                        </div>
+                                    @endif
+                                    <!-- <button id="read-less-btn" class="text-dark fw-bold">Read less</button> -->
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
     @endif
+
     <div class="site-mobile-menu site-navbar-target">
         <div class="site-mobile-menu-header">
             <div class="site-mobile-menu-close">
@@ -95,7 +96,6 @@
         </div>
         <div class="site-mobile-menu-body"></div>
     </div>
-
 
     <div class="hero overlay">
 
@@ -170,13 +170,10 @@
                             <p data-aos="fade-up" data-aos-delay="600" class="text-semibold mb-0"><strong>Kerry O’Bryan</strong> <br>
                                 MNutr&Diet, B.Sp.Ex.Sc, IOC Dip Nut</p>
                             <p data-aos="fade-up" data-aos-delay="700">(Dietitian/Sports Scientist/Strength & Conditioning Coach)</p>
-
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
 
@@ -191,128 +188,6 @@
                 </div>
             </div>
             <div class="service-sec d-flex" id="bookingtypecontainer"></div>
-            <!--<div class="service-sec d-flex">-->
-            <!--	<div class="media-entry p-0" data-aos="fade-up" data-aos-delay="100">-->
-            <!--		<div class="text-services">-->
-            <!--			<h3 class="text-center"><a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="">Athlete - developing <br>through to elite</a></h3>-->
-            <!--		</div>-->
-            <!--		<a href="https://booking.biohealthpassport.com.au/kerry-obryan">-->
-            <!--			<img src="images/img_v_1.webp" alt="Image" class="img-fluid">-->
-            <!--		</a>-->
-            <!--		<div data-aos="fade-up">-->
-            <!--			<a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100">-->
-            <!--				<span class="me-1">Book A Call </span>-->
-            <!--				<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-            <!--					<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-            <!--					<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-            <!--				</svg>-->
-            <!--			</a>-->
-            <!--		</div>-->
-            <!--	</div>	-->
-            <!--	<div class="media-entry p-0" data-aos="fade-up" data-aos-delay="200">-->
-            <!--		<div class="text-services">-->
-            <!--			<h3 class="text-center"><a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="">Individual interested<br> in health &amp; longevity</a></h3>-->
-            <!--		</div>-->
-            <!--		<a href="https://booking.biohealthpassport.com.au/kerry-obryan">-->
-            <!--			<img src="images/service-2.jpg" alt="Image" class="img-fluid">-->
-            <!--		</a>-->
-            <!--		<div data-aos="fade-up">-->
-            <!--			<a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100">-->
-            <!--				<span class="me-1">Book A Call </span>-->
-            <!--				<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-            <!--					<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-            <!--					<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-            <!--				</svg>-->
-            <!--			</a>-->
-            <!--		</div>-->
-            <!--	</div>	-->
-            <!--	<div class="media-entry p-0" data-aos="fade-up" data-aos-delay="300">-->
-            <!--		<div class="text-services">-->
-            <!--			<h3 class="text-center"><a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="">Healthy cooking classes <br>for groups/teams</a></h3>-->
-            <!--		</div>-->
-            <!--		<a href="https://booking.biohealthpassport.com.au/kerry-obryan">-->
-            <!--			<img src="images/service-3.jpg" alt="Image" class="img-fluid">-->
-            <!--		</a>-->
-            <!--		<div data-aos="fade-up">-->
-            <!--			<a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100">-->
-            <!--				<span class="me-1">Book A Call </span>-->
-            <!--				<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-            <!--					<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-            <!--					<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-            <!--				</svg>-->
-            <!--			</a>-->
-            <!--		</div>-->
-            <!--	</div>	-->
-            <!--	<div class="media-entry p-0" data-aos="fade-up" data-aos-delay="400">-->
-            <!--		<div class="text-services">-->
-            <!--			<h3 class="text-center"><a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="">Guest speaker for <br>groups &amp; event</a></h3>-->
-            <!--		</div>-->
-            <!--		<a href="https://booking.biohealthpassport.com.au/kerry-obryan">-->
-            <!--			<img src="images/service-4.jpg" alt="Image" class="img-fluid">-->
-            <!--		</a>-->
-            <!--		<div data-aos="fade-up">-->
-            <!--			<a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100">-->
-            <!--				<span class="me-1">Book A Call </span>-->
-            <!--				<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-            <!--					<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-            <!--					<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-            <!--				</svg>-->
-            <!--			</a>-->
-            <!--		</div>-->
-            <!--	</div>	-->
-            <!--	<div class="media-entry p-0" data-aos="fade-up" data-aos-delay="500">-->
-            <!--		<div class="text-services">-->
-            <!--			<h3 class="text-center"><a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="">Follow up Nutrition <br>consultation</a></h3>-->
-            <!--		</div>-->
-            <!--		<a href="https://booking.biohealthpassport.com.au/kerry-obryan">-->
-            <!--			<img src="images/service-5.jpg" alt="Image" class="img-fluid">-->
-            <!--		</a>-->
-            <!--		<div data-aos="fade-up">-->
-            <!--			<a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100">-->
-            <!--				<span class="me-1">Book A Call </span>-->
-            <!--				<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-            <!--					<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-            <!--					<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-            <!--				</svg>-->
-            <!--			</a>-->
-            <!--		</div>-->
-            <!--	</div>	-->
-            <!--	<div class="media-entry p-0" data-aos="fade-up" data-aos-delay="500">-->
-            <!--		<div class="text-services">-->
-            <!--			<h3 class="text-center"><a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="">First Nutrition <br>Consultation</a></h3>-->
-            <!--		</div>-->
-            <!--		<a href="https://booking.biohealthpassport.com.au/kerry-obryan">-->
-            <!--			<img src="images/service-6.jpg" alt="Image" class="img-fluid">-->
-            <!--		</a>-->
-            <!--		<div data-aos="fade-up">-->
-            <!--			<a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100">-->
-            <!--				<span class="me-1">Book A Call </span>-->
-            <!--				<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-            <!--					<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-            <!--					<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-            <!--				</svg>-->
-            <!--			</a>-->
-            <!--		</div>-->
-            <!--	</div>-->
-            <!--	<div class="media-entry p-0" data-aos="fade-up" data-aos-delay="500">-->
-            <!--		<div class="text-services">-->
-            <!--			<h3 class="text-center"><a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="">Dexa Body <br>Composition Scan</a></h3>-->
-            <!--		</div>-->
-            <!--		<a href="https://booking.biohealthpassport.com.au/kerry-obryan">-->
-            <!--			<img src="images/service-7.png" alt="Image" class="img-fluid">-->
-            <!--		</a>-->
-            <!--		<div data-aos="fade-up">-->
-            <!--			<a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-primary mt-2 w-100">-->
-            <!--				<span class="me-1">Book A Call </span>-->
-            <!--				<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-            <!--					<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-            <!--					<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-            <!--				</svg>-->
-            <!--			</a>-->
-            <!--		</div>-->
-            <!--	</div>-->
-
-            <!--</div>-->
             <div class="col-12 text-center mt-5" style="text-align: center !important;">
                 <div id="prevnext-service-one">
                     <span class="prev me-1" data-controls="prev">
@@ -333,98 +208,7 @@
                     </span>
                 </div>
             </div>
-
         </div>
-    </div>
-
-
-    <div class="section section-3 pt-3 pb-0" data-aos="fade-up" data-aos-delay="100">
-        <!--	<div class="container position-relative likndin-section"> -->
-        <!--<div class="row align-items-center justify-content-center w-100 mx-auto  mb-3">-->
-        <!--	<div class="col-lg-12" data-aos="fade-up">-->
-        <!--		<h2 class="heading mb-5  d-flex align-items-start" data-aos="fade-up" data-aos-delay="100">-->
-        <!--			<div class="text-nowrap">Follow me on -->
-
-        <!--			</div>-->
-        <!--			<img src="images/linkedin.webp" class="img-fluid ms-1" width="50"/>-->
-
-        <!--			<span class="border-heading"></span>-->
-        <!--		</h2>-->
-        <!--	</div>		-->
-
-        <!--</div>-->
-
-        <!--<div class="d-flex align-items-center justify-content-center  mb-5">-->
-        <!--	<div class="col-md-10 col-sm-9 col-11">-->
-        <!--		<div class="destination-slider-wrap">-->
-        <!--			<div class="destination-slider">-->
-        <!--				<div class="destination">-->
-        <!--					<div class="card-wrap">-->
-        <!--						<div class="thumb">-->
-        <!--							<img src="images/img-1.webp" alt="Image" class="img-fluid">-->
-        <!--						</div>-->
-        <!--						<div class="mt-4">-->
-        <!--							<a href="https://www.linkedin.com/posts/kerry-obryan_to-be-more-clear-on-my-previous-post-below-activity-7143854793122275328-RNvD" target="_blank" class="btn btn-primary mt-3">-->
-        <!--								<span class="me-1">Read More</span>-->
-        <!--								<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-        <!--									<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-        <!--									<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-        <!--								</svg>-->
-        <!--							</a>-->
-        <!--						</div>-->
-        <!--					</div>-->
-        <!--				</div>-->
-        <!--				<div class="destination">-->
-        <!--					<div class="card-wrap">-->
-        <!--						<div class="thumb">-->
-        <!--							<img src="images/img-2.webp" alt="Image" class="img-fluid">-->
-        <!--						</div>-->
-        <!--						<div class="mt-4">-->
-        <!--							<a href="https://www.linkedin.com/posts/kerry-obryan_i-am-more-than-excited-to-be-working-with-activity-7143431926471663616-sSSO" target="_blank" class="btn btn-primary mt-3">-->
-        <!--								<span class="me-1">Read More</span>-->
-        <!--								<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-        <!--									<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-        <!--									<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-        <!--								</svg>-->
-        <!--							</a>-->
-        <!--						</div>-->
-        <!--					</div>-->
-        <!--				</div>-->
-        <!--				<div class="destination">-->
-        <!--					<div class="card-wrap">-->
-        <!--						<div class="thumb">-->
-        <!--							<img src="images/img-2.webp" alt="Image" class="img-fluid">-->
-        <!--						</div>-->
-        <!--						<div class="mt-4">-->
-        <!--							<a href="https://www.linkedin.com/posts/kerry-obryan_i-am-more-than-excited-to-be-working-with-activity-7143431926471663616-sSSO?utm_source=share" class="btn btn-primary mt-3">-->
-        <!--								<span class="me-1">Read More</span>-->
-        <!--								<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-        <!--									<path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"/>-->
-        <!--									<path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
-        <!--								</svg>-->
-        <!--							</a>-->
-        <!--						</div>-->
-        <!--					</div>-->
-        <!--				</div>-->
-        <!--			</div>-->
-        <!--		</div>-->
-        <!--	</div>-->
-
-        <!--</div>	-->
-        <!--	<div id="destination-controls">-->
-        <!--		<span class="prev" data-controls="prev">-->
-        <!--			<svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-        <!--				<path d="M0.521729 8.70303C-0.144938 8.31813 -0.144939 7.35588 0.521728 6.97098L12.2446 0.202802C12.9112 -0.182099 13.7446 0.299026 13.7446 1.06883L13.7446 14.6052C13.7446 15.375 12.9112 15.8561 12.2446 15.4712L0.521729 8.70303Z" fill="#649EF7"/>-->
-        <!--			</svg>-->
-        <!--		</span>-->
-        <!--		<span class="next" data-controls="next">-->
-        <!--			<svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-        <!--				<path d="M13.4783 8.70303C14.1449 8.31813 14.1449 7.35588 13.4783 6.97098L1.75545 0.202802C1.08878 -0.182099 0.255445 0.299026 0.255445 1.06883L0.255445 14.6052C0.255445 15.375 1.08878 15.8561 1.75544 15.4712L13.4783 8.70303Z" fill="#649EF7"/>-->
-        <!--			</svg>-->
-        <!--		</span>-->
-        <!--	</div>-->
-        <!--		<script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script> <div class="elfsight-app-bbbef70f-dd45-4bf0-9898-71a8bcb0d620" data-elfsight-app-lazy></div>
-		</div>-->
     </div>
 
     <section class="section pb-3 pt-4 my-3 testimonial-section-main-div">
@@ -442,101 +226,9 @@
         </div>
         <div class="col-12 mx-auto">
             <div class="row">
-                <!--<div class="col-3 d-none">-->
-                <!--	<div class="wide-slider-testimonial-wrap-one">-->
-                <!--		<div class="wide-slider-testimonial-one">-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex justify-content-end align-items-center" id="using-three">-->
-                <!--					<div class="mx-2 blue-bg-add">-->
-                <!--						<img src="images/testi-three.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex justify-content-end align-items-center" id="using-one">-->
-                <!--					<div class="mx-2 blue-bg-add">-->
-                <!--						<img src="images/testi-one.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex justify-content-end align-items-center" id="using-two">-->
-                <!--					<div class="mx-2 blue-bg-add">-->
-                <!--						<img src="images/testi-two.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--		</div>-->
-                <!--	</div>-->
-                <!--</div>-->
                 <div class="col-xl-6 col-lg-8 col-md-10 px-md-0 px-4 mx-auto position-relative">
                     <div class="wide-slider-testimonial-wrap-two">
                         <div class="wide-slider-testimonial-two">
-                            <!--<div class="">-->
-                            <!--	<div class="d-flex flex-sm-row flex-column align-items-center" id="using-one">-->
-                            <!--		<div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">-->
-                            <!--			<img src="images/testi-one.jfif" alt="" class="slider-added-imges" style="">-->
-                            <!--		</div>-->
-                            <!--		<div class="no-display-half-part">-->
-                            <!--			<div class="quote-using">-->
-                            <!--				<i class="fa-solid fa-quote-left"></i>-->
-                            <!--			</div>-->
-                            <!--			<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                            <!--			<h5 class="mb-0">Cohen Crispin</h5>-->
-                            <!--			<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                            <!--				Bachelor of sport & exercise science</p>-->
-                            <!--		</div>-->
-                            <!--	</div>-->
-                            <!--</div>-->
-                            <!--<div class="">-->
-                            <!--	<div class="d-flex flex-sm-row flex-column align-items-center" id="using-two">-->
-                            <!--		<div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">-->
-                            <!--			<img src="images/testi-two.jfif" alt="" class="slider-added-imges" style="">-->
-                            <!--		</div>-->
-                            <!--		<div class="no-display-half-part">-->
-                            <!--			<div class="quote-using">-->
-                            <!--				<i class="fa-solid fa-quote-left"></i>-->
-                            <!--			</div>-->
-                            <!--			<p>Working with Kerry has been amazing. His wealth of nutrition knowledge has given us so many options with easy to follow recommendations. Being able to adjust nutrition easily to best suit our son’s training schedule for performance, recovery and physical development has been great.</p>-->
-                            <!--			<h5 class="mb-0">Rhondda Dunne</h5>-->
-                            <!--			<p class="position mb-0">Mother of Olympian Breaking Athlete</p>-->
-                            <!--		</div>-->
-                            <!--	</div>-->
-                            <!--</div>-->
-                            <!--<div class="">-->
-                            <!--	<div class="d-flex flex-sm-row flex-column align-items-center" id="using-three">-->
-                            <!--		<div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">-->
-                            <!--			<img src="images/testi-three.jfif" alt="" class="slider-added-imges" style="">-->
-                            <!--		</div>-->
-                            <!--		<div class="no-display-half-part">-->
-                            <!--			<div class="quote-using">-->
-                            <!--				<i class="fa-solid fa-quote-left"></i>-->
-                            <!--			</div>-->
-                            <!--			<p class="mb-1">Kerry has been instrumental in helping me to achieve gains during my off season. I have seen huge strides with how I feel, perform and recover both on the volleyball court and in the weight room.</p>-->
-                            <!--			<p class="">Kerry’s wealth of knowledge paired with his friendly and accessible nature has made it an absolute pleasure working with him. I would highly recommend consulting with Kerry for anyone looking to create sustained performance results.</p>-->
-                            <!--			<h5 class="mb-0">Enis Besirevic</h5>-->
-                            <!--			<p class="position mb-0">AUS Senior National Volleyball Athlete</p>-->
-                            <!--		</div>-->
-                            <!--	</div>-->
-                            <!--</div>-->
                         </div>
                     </div>
                     <div id="prevnext-testimonial-one">
@@ -558,51 +250,6 @@
                         </span>
                     </div>
                 </div>
-                <!--<div class="col-3  d-none">-->
-                <!--	<div class="wide-slider-testimonial-wrap-three">-->
-                <!--		<div class="wide-slider-testimonial-three">-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex align-items-center" id="using-two">-->
-                <!--					<div class="ms-3 blue-bg-add">-->
-                <!--						<img src="images/testi-two.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex align-items-center" id="using-three">-->
-                <!--					<div class="ms-3 blue-bg-add">-->
-                <!--						<img src="images/testi-three.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--			<div class="h-100">-->
-                <!--				<div class="d-flex align-items-center" id="using-one">-->
-                <!--					<div class="ms-3 blue-bg-add">-->
-                <!--						<img src="images/testi-one.jfif" alt="" class="slider-added-imges">-->
-                <!--					</div>-->
-                <!--					<div class="no-display-half-part d-none">-->
-                <!--						<p>Kerry's expertise and exceptional reasoning have proven invaluable within our high-performance team. I enthusiastically recommend his services to anyone seeking to enhance their health and performance.</p>-->
-                <!--						<h5 class="mb-0">Cohen Crispin</h5>-->
-                <!--						<p class="position mb-0">Strength and Conditioning Coach (ASCA EL3)-->
-                <!--							Bachelor of sport & exercise science</p>-->
-                <!--					</div>-->
-                <!--				</div>-->
-                <!--			</div>-->
-                <!--		</div>-->
-                <!--	</div>-->
-                <!--</div>-->
                 <div class="col-12 text-center mt-5" style="text-align: center !important;">
 
                 </div>
@@ -621,297 +268,9 @@
                     <span class="border-heading"></span>
                 </h2>
             </div>
-            <!--<div class="client-slider-wrap mb-3 mt-5">-->
-            <!--	<div class="client-slider-marque  d-flex justify-content-between my-3">-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-3.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-3.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-3.web" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-3 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-
-            <!--	</div>-->
-            <!--	<div class="client-slider-marque-rev  d-flex justify-content-center  my-3">-->
-
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-6.webp" alt="client" class="img-fluid " height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-11.webp" alt="client" class="img-fluid" height="150" />-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-6.webp" alt="client" class="img-fluid " height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--		<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-            <!--			<div class="col-md-2 text-center mx-1 mb-3">-->
-            <!--			<div class="client-wrap">-->
-            <!--				<img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/>-->
-            <!--				</div>-->
-            <!--		</div>-->
-
-            <!--	</div>-->
-
-            <!--</div>-->
         </div>
         <article class="wrapper">
             <div class="marquee-main">
-                <!--<div class="marquee">-->
-                <!--    <div class="marquee__group">-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" /></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-3.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--<div>-->
-                <!--    <span>6</span>-->
-                <!--</div>-->
-                <!--<div>-->
-                <!--    <span>7</span>-->
-                <!--</div>-->
-                <!--<div>-->
-                <!--    <span>8</span>-->
-                <!--</div>-->
-                <!--    </div>-->
-
-                <!--    <div aria-hidden="true" class="marquee__group">-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-1.webp" alt="client" class="img-fluid mb-3 " width="250" /></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-2.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-3.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-4.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-5.webp" alt="client" class="img-fluid " width="250"/></span>-->
-                <!--        </div>-->
-                <!--    </div>-->
-                <!--</div>-->
-
-                <!--<div class="marquee marquee--reverse">-->
-                <!--    <div class="marquee__group">-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-6.webp" alt="client" class="img-fluid " height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--<div>-->
-                <!--    <span>7</span>-->
-                <!--</div>-->
-                <!--<div>-->
-                <!--    <span>8</span>-->
-                <!--</div>-->
-                <!--    </div>-->
-
-                <!--    <div aria-hidden="true" class="marquee__group">-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-6.webp" alt="client" class="img-fluid " height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-8.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-9.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-10.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-11.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--        <div>-->
-                <!--            <span><img src="images/client-12.webp" alt="client" class="img-fluid" height="150"/></span>-->
-                <!--        </div>-->
-                <!--    </div>-->
-                <!--</div>-->
                 <div class="marquee" id="marquee-top">
                     <div class="marquee__group"></div>
                     <div aria-hidden="true" class="marquee__group"></div>
@@ -939,26 +298,21 @@
                         <p>Let us know your concerns and we will get back to you with</p>
 
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" placeholder="Your name">
-                            <label for="floatingInput">Name</label>
+                            <input type="text" class="form-control" id="floatingInputName" placeholder="Your name">
+                            <label for="floatingInputName">Name</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
+                            <input type="email" class="form-control" id="floatingInputEmail" placeholder="name@example.com">
+                            <label for="floatingInputEmail">Email address</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" placeholder="Mobile number">
-                            <label for="floatingInput">Mobile number</label>
+                            <input type="text" class="form-control" id="floatingInputMobileNumber" placeholder="Mobile number">
+                            <label for="floatingInputMobileNumber">Mobile number</label>
                         </div>
                         <div class="form-floating">
                             <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" rows="3"></textarea>
                             <label for="floatingTextarea">What is your question?</label>
                         </div>
-
-
-                        <!-- <div class="col-12">
-							<input type="submit" value="Send Message" class="btn btn-primary">
-						</div> -->
                         <p class="my-4" data-aos="fade-up" data-aos-delay="200"><a href="#" class="btn btn-primary">Submit
                                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white" />
@@ -973,7 +327,6 @@
 
         </div>
     </div>
-
 @endsection
 
 @push('scripts')

@@ -151,7 +151,7 @@ class TestimonialController extends Controller
             DB::commit();
 
             $msg = $id ? 'Testimonial updated successfully!' : 'Testimonial added successfully!';
-            return redirect()->route('testimonials.index')->with('success', $msg);
+            return redirect()->route('admin.testimonials.index')->with('success', $msg);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error(__METHOD__ . ' ' . $e->getMessage());

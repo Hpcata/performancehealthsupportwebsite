@@ -28,7 +28,7 @@
 					<div class="col-12 text-center mb-4">
 						<img src="{!! backendAssets('dist/assets/images/not_found.svg') !!}" class="w240 mb-4" alt="" />
 						<h5>OOP! PAGE NOT FOUND</h5>
-						<span class="">Sorry, the page you're looking for doesn;t exist. if you think something is brlken, report a problem.</span>
+						<span class="">Sorry, the page you're looking for doesn't exist. if you think something is broken, report a problem.</span>
 					</div>
 					<div class="col-12 text-center">
 						<a href="{!! backendRoutePut('home') !!}" title="" class="btn btn-lg btn-block btn-light lift text-uppercase">Back to Home</a>
@@ -41,18 +41,3 @@
 
 </div>
 @endsection
-
-@push('styles')
-@endpush
-
-@push('custom_styles')
-@endpush
-
-@push('scripts')
-@endpush
-
-@push('custom_scripts')
-@endpush
-
-@push('modals')
-@endpush

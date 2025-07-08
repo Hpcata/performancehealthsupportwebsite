@@ -54,7 +54,7 @@ class SectionController extends Controller
             'image' => $image ?? null,
         ]);
 
-        return redirect()->route('sections.index', $request->page_id)->with('success', 'Section added successfully.');
+        return redirect()->route('admin.pages.sections.index', $request->page_id)->with('success', 'Section added successfully.');
     }
 
     public function edit(Section $section)
@@ -95,14 +95,14 @@ class SectionController extends Controller
             'image' => $image ?? null,
         ]);
 
-        return redirect()->route('sections.index', $request->page_id)->with('success', 'Section updated successfully.');
+        return redirect()->route('admin.pages.sections.index', $request->page_id)->with('success', 'Section updated successfully.');
     }
 
     public function destroy(Section $section)
     {
         $pageId = $section->page_id;
         $section->delete();
-        return redirect()->route('sections.index', $pageId)->with('success', 'Section deleted successfully.');
+        return redirect()->route('admin.pages.sections.index', $pageId)->with('success', 'Section deleted successfully.');
     }
 
 }
