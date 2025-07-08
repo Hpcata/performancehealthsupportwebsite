@@ -3079,7 +3079,7 @@
             $('#editItemName').val(name);
             $('#editItemModal #description').val(description);
 
-                            let selectedQtyUnits = [];
+            let selectedQtyUnits = [];
             let rawJson = btn.attr('data-selected-qty-unit');
             try {
                 if (rawJson && rawJson !== "null") {
@@ -3214,7 +3214,8 @@
                     }
                 }
             });
-           
+           console.log(qtyUnitDisplay);
+           console.log(selectedQtyUnits);
             const carbs = parseFloat($('#modalCarbs').text()) || 0;
             const protein = parseFloat($('#modalProtein').text()) || 0;
             const fat = parseFloat($('#modalFat').text()) || 0;
@@ -3255,7 +3256,7 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            currentItemRow.find('td:nth-child(3)').html(updatedHTML);
+            currentItemRow.find('td:nth-child(2)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
