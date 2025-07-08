@@ -27,8 +27,8 @@
 							<thead>
 								<tr>
                                     <th>Name</th>
-                                    <th>Title</th>
-                                    <th>Testimonial</th>
+                                    <th>Role/Title</th>
+                                    <th>Testimonial Text</th>
                                     <th>Image</th>
 									<th>Action</th>
 								</tr>

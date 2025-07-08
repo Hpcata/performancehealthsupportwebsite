@@ -47,7 +47,7 @@ class TestimonialController extends Controller
             $response = Testimonial::all();
 
             $response = Testimonial::leftJoin('media', 'testimonials.testimonial_image', 'media.id')
-                ->where('testimonials.user_id', auth()->user()->id)
+                ->where('testimonials.user_id', auth()->guard('admin')->user()->id)
                 ->get([
                     'testimonials.id',
                     'testimonials.name',
@@ -142,7 +142,7 @@ class TestimonialController extends Controller
                 $postData['testimonial_image'] = $image->id;
             }
 
-            $postData['user_id'] = auth()->user()->id;
+            $postData['user_id'] = auth()->guard('admin')->user()->id;
             Testimonial::updateOrCreate(
                 ['id' => $id],
                 $postData
