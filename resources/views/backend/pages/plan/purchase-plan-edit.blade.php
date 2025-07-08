@@ -3079,7 +3079,7 @@
             $('#editItemName').val(name);
             $('#editItemModal #description').val(description);
 
-                            let selectedQtyUnits = [];
+            let selectedQtyUnits = [];
             let rawJson = btn.attr('data-selected-qty-unit');
             try {
                 if (rawJson && rawJson !== "null") {
@@ -3255,7 +3255,8 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            currentItemRow.find('td:nth-child(3)').html(updatedHTML);
+            // console.log(currentItemRow);
+            currentItemRow.find('td:nth-child(2)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
@@ -3287,8 +3288,8 @@
                 success: function (response) {
                     if (response.success) {
                         const $updatedRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-                        const $swapListItems = $updatedRow.find('td').eq(1).find('li[data-swap-item-id]');
-
+                        const $swapListItems = $updatedRow.find('td').eq(2).find('li[data-swap-item-id]');
+                       
                         $swapListItems.each(function () {
                             const $swapLi = $(this);
                             const swapItemId = $swapLi.data('swap-item-id');
@@ -3306,7 +3307,7 @@
                             const parts = originalText.split('or').map(part => part.trim());
                             const updatedParts = parts.map(part => {
                                 const match = part.match(/^([\d./]+)\s*(\w+)$/);  // e.g. "100g" or "1 cup"
-                                if (!match) return part;  // if format is unexpected, return as-is
+                                if (!match) return part;
 
                                 let [_, qty, unit] = match;
 
@@ -3321,7 +3322,11 @@
                                 if (isNaN(qty)) return part;
 
                                 const newQty = (qty / ratio).toFixed(2).replace(/\.00$/, '');
-                                return `${newQty} ${unit}`;
+
+                                // Units that should not have space
+                                const noSpaceUnits = ['g', 'ml', 'mL'];
+
+                                return noSpaceUnits.includes(unit) ? `${newQty}${unit}` : `${newQty} ${unit}`;
                             });
 
                             // Set updated text back with parentheses
