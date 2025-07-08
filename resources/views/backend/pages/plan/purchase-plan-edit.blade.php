@@ -3121,11 +3121,12 @@
                     }
                 }
             });
-           
-            const carbs = parseFloat($('#editItemModal #modalCarbs').text()) || 0;
-            const protein = parseFloat($('#editItemModal #modalProtein').text()) || 0;
-            const fat = parseFloat($('#editItemModal #modalFat').text()) || 0;
-            const energy = parseFloat($('#editItemModal #modalEnergy').text()) || 0;
+           console.log(qtyUnitDisplay);
+           console.log(selectedQtyUnits);
+            const carbs = parseFloat($('#modalCarbs').text()) || 0;
+            const protein = parseFloat($('#modalProtein').text()) || 0;
+            const fat = parseFloat($('#modalFat').text()) || 0;
+            const energy = parseFloat($('#modalEnergy').text()) || 0;
             const updatedHTML = `
                 <div class="d-flex justify-content-between align-items-start mb-0">
                     <div class="col-9">
@@ -3162,7 +3163,10 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+<<<<<<< HEAD
             // console.log(currentItemRow);
+=======
+>>>>>>> b77f380... profile landing page html implement
             currentItemRow.find('td:nth-child(2)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');

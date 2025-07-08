@@ -1177,7 +1177,7 @@
     <!-- Edit Sport Modal -->
     <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" action="{{ route('profile.update.sport') }}" enctype="multipart/form-data">
+            <form method="POST" action="#" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1356,44 +1356,6 @@
             $('#editHeightModal').find('#heightAnswer').val(answer);
             $('#editHeightModal').find('#formName').val(formName);
             $('#editHeightModal').modal('show'); 
-        });
-    });
-
-    $('#saveSportBtn').on('click', function () {
-        let formData = new FormData();
-        formData.append('sport', $('#sport_name').val());
-        formData.append('user_id', $('#sport_user_id').val());
-        formData.append('payment_id', $('#payment_id').val());
-        // formData.append('user_id', $('#sport_user_id').val());
-
-        let sportImage = $('#sport_image')[0].files[0];
-        if (sportImage) {
-            formData.append('sport_image', sportImage);
-        }
-
-        $.ajax({
-            url: '{{ route("profile.update.sport") }}',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert(response.message);
-                    $('#editSportModal').modal('hide');
-                    // Optionally, update the DOM with new values
-                    location.reload(); // or update DOM instead of full reload
-                } else {
-                    alert('Something went wrong!');
-                }
-            },
-            error: function (xhr) {
-                console.error(xhr.responseJSON);
-                alert('Validation failed or server error!');
-            }
         });
     });
 
