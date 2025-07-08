@@ -31,7 +31,7 @@ class MealController extends Controller
                     $q->where('title', 'LIKE', '%' . $searchTerm . '%')
                     // Or in Subcategory title
                     ->orWhereHas('subCategories', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('title', 'LIKE', '%' . $searchTerm . '%');
+                        $subQuery->where('sub_categories.title', 'LIKE', '%' . $searchTerm . '%');
                     });
                 });
             }
@@ -39,7 +39,7 @@ class MealController extends Controller
             // Apply category filter if selected
             if ($request->has('category_id') && !empty($request->category_id)) {
                 $query->whereHas('subCategories', function ($q) use ($request) {
-                    $q->where('subCategories.id', $request->category_id);
+                    $q->where('sub_categories.id', $request->category_id);
                 });
             }
 
