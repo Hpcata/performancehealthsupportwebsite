@@ -3172,7 +3172,7 @@
 
                                 // AJAX call to update swap item in DB
                                 $.ajax({
-                                    url: '{{ route("admin.update-swap-item") }}',
+                                    url: '{{ route("admin.purchase-plans.update-swap-item") }}',
                                     method: 'POST',
                                     data: swapData,
                                     success: function (resp) {
