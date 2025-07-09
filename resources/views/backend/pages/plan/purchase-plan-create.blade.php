@@ -1,11 +1,11 @@
 @extends('backend.layouts.app')
 
 @section('content')
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         .hidden-checkbox {
             display: none; /* Completely hides the checkbox */
@@ -967,56 +967,48 @@
                                 let answer = formQuestions[question];
                                 let answerContent = '';
 
+                                // === FOOD PREFERENCE HANDLING ===
                                 if (formName === 'Food Preference') {
                                     const expectedGroups = foodGroups;
                                     const groupNameRaw = question;
 
                                     const clean = s => (s || '').toString().trim();
                                     const normal = s => clean(s).replace(/\s{2,}/g, ' ');
-                                    const hasAny = v => {
-                                        if (Array.isArray(v)) return v.filter(x => clean(x)).length > 0;
-                                        if (typeof v === 'string') return clean(v) !== '';
-                                        return false;
-                                    };
 
                                     const groupKey = normal(groupNameRaw);
                                     const expectedSubs = expectedGroups[groupKey] || [];
                                     const userValue = answer;
-                                    const groupMissing = (userValue === null);
 
                                     answerContent = '<ul>';
 
-                                    if (groupMissing) {
+                                    if (userValue === null || userValue === undefined) {
                                         answerContent += `<li class="text-danger">Not selected</li>`;
                                     } else {
                                         if (Array.isArray(userValue)) {
                                             const nonEmpty = userValue.filter(x => clean(x));
-                                            answerContent += `<li class="${nonEmpty.length ? '' : 'text-danger'}">
-                                                ${nonEmpty.length ? nonEmpty.join(', ') : 'Not selected'}
-                                            </li>`;
+                                            if (nonEmpty.length) {
+                                                nonEmpty.forEach(item => {
+                                                    answerContent += `<li>${item}</li>`;
+                                                });
+                                            } else {
+                                                answerContent += `<li class="text-danger">Not selected</li>`;
+                                            }
                                         } else if (typeof userValue === 'object') {
                                             expectedSubs.forEach(sub => {
                                                 const subKey = normal(sub);
-                                                const provided = Object.prototype.hasOwnProperty.call(userValue, subKey);
-                                                let valueBlock = ' — Not selected';
-                                                let css = 'text-danger';
-
-                                                if (provided) {
-                                                    const val = userValue[subKey];
-                                                    if (Array.isArray(val)) {
-                                                        const ok = val.filter(x => clean(x));
-                                                        if (ok.length) {
-                                                            css = '';
-                                                            valueBlock = '<ul>' + ok.map(v => `<li>${v}</li>`).join('') + '</ul>';
-                                                        }
-                                                    } else if (typeof val === 'string' && clean(val) !== '') {
-                                                        css = '';
-                                                        valueBlock = `: ${val}`;
+                                                const val = userValue[subKey];
+                                                if (Array.isArray(val)) {
+                                                    const cleanItems = val.filter(x => x && x !== 'null' && x !== null);
+                                                    if (cleanItems.length) {
+                                                        answerContent += `<li><strong>${subKey}</strong><ul>${cleanItems.map(v => `<li>${v}</li>`).join('')}</ul></li>`;
                                                     }
+                                                } else if (typeof val === 'string' && clean(val) !== '' && val !== 'null') {
+                                                    answerContent += `<li><strong>${subKey}:</strong> ${val}</li>`;
+                                                } else {
+                                                    answerContent += `<li class="text-danger">${subKey} — Not selected</li>`;
                                                 }
-                                                answerContent += `<li class="${css}">${subKey}${valueBlock}</li>`;
                                             });
-                                        } else if (typeof userValue === 'string') {
+                                        } else {
                                             answerContent += `<li>${clean(userValue)}</li>`;
                                         }
                                     }
@@ -1028,10 +1020,10 @@
                                             <p><strong>Q : ${groupNameRaw}</strong></p>
                                             <div>${answerContent}</div>
                                         </div>`;
-                                    return; // Skip default logic
+                                    return; // skip to next question
                                 }
 
-                                // ========== DEFAULT LOGIC FOR OTHER FORMS ==========
+                                // === DEFAULT LOGIC FOR OTHER FORMS ===
                                 if (!answer) {
                                     answerContent = '<span class="text-danger">Not selected</span>';
                                 } else if (Array.isArray(answer)) {
@@ -1040,44 +1032,51 @@
                                         answerContent = '<ul>' + filtered.map(i => `<li>${i}</li>`).join('') + '</ul>';
                                     }
                                 } else if (typeof answer === 'object') {
-                                    let valid = Object.entries(answer).filter(([_, v]) => v);
-                                    if (question.includes('hunger/appetite over the day')) {
-                                        const order = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
-                                        valid.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
-                                    }
-                                    if (valid.length) {
-                                        answerContent = '<ul>';
-                                        valid.forEach(([k, v]) => {
-                                            const keyLabel = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                                            if (Array.isArray(v)) {
-                                                const sub = v.filter(x => x);
-                                                if (sub.length) {
-                                                    answerContent += `<li><strong>${keyLabel}</strong><ul>${sub.map(s => `<li>${s}</li>`).join('')}</ul></li>`;
+                                    // special case: { answer: 'Yes', date: '3 months ago' }
+                                    if ('answer' in answer && 'date' in answer) {
+                                        answerContent = `
+                                            <ul>
+                                                <li><strong>Answer:</strong> ${answer.answer}</li>
+                                                <li><strong>Date:</strong> ${answer.date}</li>
+                                            </ul>`;
+                                    } else {
+                                        let valid = Object.entries(answer).filter(([_, v]) => v);
+                                        if (question.includes('hunger/appetite over the day')) {
+                                            const order = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
+                                            valid.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
+                                        }
+                                        if (valid.length) {
+                                            answerContent = '<ul>';
+                                            valid.forEach(([k, v]) => {
+                                                const keyLabel = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                                if (Array.isArray(v)) {
+                                                    const sub = v.filter(x => x);
+                                                    if (sub.length) {
+                                                        answerContent += `<li><strong>${keyLabel}</strong><ul>${sub.map(s => `<li>${s}</li>`).join('')}</ul></li>`;
+                                                    }
+                                                } else {
+                                                    answerContent += `<li><strong>${keyLabel}:</strong> ${v}</li>`;
                                                 }
-                                            } else {
-                                                answerContent += `<li><strong>${keyLabel}:</strong> ${v}</li>`;
-                                            }
-                                        });
-                                        answerContent += '</ul>';
+                                            });
+                                            answerContent += '</ul>';
+                                        }
                                     }
                                 } else {
                                     answerContent = answer;
                                 }
 
-                                if (answerContent) {
-                                    if(question != '' && question != null && question != undefined) {
+                                // Append question + answer block
+                                if (answerContent && question) {
                                     modalContent += `
                                         <div>
                                             <p><strong>Q : ${question}</strong></p>
                                             <p>${answerContent}</p>
                                         </div>`;
-                                    }
                                 }
                             });
 
                             modalContent += '</div><hr>';
                         });
-
 
                         // Set the content inside the modal
                         $('#prePlanDetail .modal-body').html(modalContent);
@@ -1319,7 +1318,7 @@
                 let totalEnergy = 0;
 
                 $(this).find('.items-table-body tr').each(function () {
-                    const $firstTd = $(this).find('td').first();
+                    const $firstTd = $(this).find('td').eq(1);
                     const $input = $firstTd.find('input');
 
                     totalCarbs += parseFloat($input.data('carbs')) || 0;
@@ -1512,6 +1511,7 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th>Food</th>
                                         <th>Swap Foods</th>
                                     </tr>
@@ -1584,17 +1584,17 @@
                                             data-swap-item-id="${swapItem.id}" data-swapItem-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${swapItem.description}"  data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="${swapItem.description}">
-                                            <i class="fas fa-info-circle text-primary"></i>
+                                            <i class="fas fa-info-circle"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                             data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
                                             data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
-                                            title="Edit"><i class="icofont-edit text-success"></i></button>
+                                            title="Edit"><i class="icofont-edit"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                             data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Delete">
-                                            <i class="icofont-ui-delete text-danger"></i>
+                                            <i class="icofont-ui-delete"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -1614,8 +1614,8 @@
                             <div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                    title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    title="Add More"><i class="icofont-plus"></i></button>
                             </div>
                         </li>`;
                 } else {
@@ -1626,8 +1626,8 @@
                                         <div>
                                             <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                title="Add"><i class="icofont-plus text-primary"></i>
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                title="Add"><i class="icofont-plus"></i>
                                             </button>
                                         </div>
                                     </li>`;
@@ -1635,7 +1635,10 @@
 
                 // Append a row for the item and its swap items
                 tableBody.append(`
-                    <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}">
+                    <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}" data-item-id="${item.id}">
+                        <td width="30" class="align-middle text-center">
+                            <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                        </td>
                         <td class="text-wrap" width="50%">
                             <div class="d-flex justify-content-between align-items-start mb-0">
                                 <div class="col-9">
@@ -1650,17 +1653,17 @@
                                     <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                         data-swap-item-id="${item.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-description="${item.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}">
-                                        <i class="fas fa-info-circle text-primary"></i>
+                                        <i class="fas fa-info-circle"></i>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}"
                                         data-selected-qty-unit='${item.selected_qty_unit}'
-                                        title="Edit"><i class="icofont-edit text-success"></i></button>
+                                        title="Edit"><i class="icofont-edit"></i></button>
                                     <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"
-                                        title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"  
+                                        title="Delete"><i class="icofont-ui-delete"></i></button>
                                 </div>
                             </div>
                             <div class="row">
@@ -1676,6 +1679,31 @@
                     </tr>
                 `);
             });
+
+            // Get the DOM element for the table body
+            const tableBodyEl = tableBody[0];
+
+            // Destroy previous Sortable instance if any (to avoid duplicates)
+            if (tableBodyEl._sortable) {
+                tableBodyEl._sortable.destroy();
+            }
+
+            // Initialize SortableJS
+            tableBodyEl._sortable = Sortable.create(tableBodyEl, {
+                animation: 150,
+                handle: '.drag-handle', // Only allow dragging by the handle
+                onEnd: function (evt) {
+                    // Get the new order of item IDs
+                    const newOrder = [];
+                    $(tableBodyEl).find('tr').each(function () {
+                        newOrder.push($(this).data('item-id'));
+                    });
+                    // Store newOrder as needed (e.g., in a hidden input or JS variable)
+                    // Example: window.currentItemOrder = newOrder;
+                    console.log('New order:', newOrder);
+                }
+            });
+
             $('[data-bs-toggle="tooltip"]').tooltip('dispose').tooltip();
 
             // Return the constructed meal container
@@ -1902,17 +1930,17 @@
                                                 <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                                     data-swap-item-id="${swapItem.id}" data-item-id="${swapItem.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                     data-meal-time-id="${mealtimeID}" data-user-id="${userId}" data-description="${swapItem.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${swapItem.description}">
-                                                    <i class="fas fa-info-circle text-primary"></i>
+                                                    <i class="fas fa-info-circle"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                                     data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                     data-meal-time-id="${mealtimeID}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
                                                     data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
-                                                    title="Edit"><i class="icofont-edit text-success"></i></button>
+                                                    title="Edit"><i class="icofont-edit"></i></button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                                     data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                     data-meal-time-id="${mealtimeID}" data-user-id="${userId}" title="Delete">
-                                                    <i class="icofont-ui-delete text-danger"></i>
+                                                    <i class="icofont-ui-delete"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -1932,8 +1960,8 @@
                                     <div>
                                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                                            data-meal-time-id="${mealtimeID}" data-user-id="${userId}"
-                                            title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                            data-meal-time-id="${mealtimeID}" data-user-id="${userId}" 
+                                            title="Add More"><i class="icofont-plus"></i></button>
                                     </div>
                                 </li>`;
 
@@ -1948,13 +1976,16 @@
                                         <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                             data-meal-time-id="${mealtimeID}" data-user-id="${userId}" title="Add">
-                                            <i class="icofont-plus text-primary"></i>
+                                            <i class="icofont-plus"></i>
                                         </button>
                                     </div>
                                 </li>`;
                         }
                         const rowHTML = `
-                            <tr id="itemRow_${planID}_${mealtimeID}_${mealId}_${item.id}">
+                            <tr id="itemRow_${planID}_${mealtimeID}_${mealId}_${item.id}" data-item-id="${item.id}">
+                                <td width="30" class="align-middle text-center">
+                                    <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                                </td>
                                 <td class="text-wrap" width="50%">
                                     <div class="d-flex justify-content-between align-items-start mb-0">
                                         <div class="col-9">
@@ -1969,17 +2000,17 @@
                                             <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                                 data-swap-item-id="${item.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                 data-meal-time-id="${mealtimeID}" data-user-id="${userId}" data-description="${item.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${item.description}">
-                                                <i class="fas fa-info-circle text-primary"></i>
+                                                <i class="fas fa-info-circle"></i>
                                             </button>
                                             <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                 data-meal-time-id="${mealtimeID}" data-user-id="${userId}" data-item-qty="${qty}" data-item-unit="${unit}"
                                                 data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                                                title="Edit"><i class="icofont-edit"></i></button>
                                             <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
                                                 data-meal-time-id="${mealtimeID}" data-user-id="${userId}"
-                                                title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
+                                                title="Delete"><i class="icofont-ui-delete"></i></button>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -2785,18 +2816,18 @@
                     <div>
                         <button type="button" class="btn btn-sm btn-outline-primary view-info"
                             data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
-                            <i class="fas fa-info-circle text-primary"></i>
+                            <i class="fas fa-info-circle"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
                             data-meal-time-id="${mealTimeId}" data-user-id=""
                             data-item-qty="" data-item-unit=""
                             data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                            title="Edit"><i class="icofont-edit text-success"></i></button>
+                            title="Edit"><i class="icofont-edit"></i></button>
                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
                             data-meal-time-id="${mealTimeId}" data-user-id="" title="Delete">
-                            <i class="icofont-ui-delete text-danger"></i></button>
+                            <i class="icofont-ui-delete"></i></button>
                     </div>
                 </div>
                 <div class="row">
@@ -2808,7 +2839,7 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            currentItemRow.find('td:first').html(updatedHTML);
+            currentItemRow.find('td:nth-child(3)').html(updatedHTML);
 
             const modalEl = document.getElementById('editItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
@@ -3012,7 +3043,7 @@
             const baseProtein = parseFloat(checkbox.data('protein')) || 0;
             const baseFat = parseFloat(checkbox.data('fat')) || 0;
             const baseEnergy = parseFloat(checkbox.data('energy')) || 0;
-            const name = btn.closest('tr').find('td').first().find('label').text().split('(')[0].trim();
+            const name = btn.closest('tr').find('td').eq(1).find('label').text().split('(')[0].trim();
             $(`${modalId} #editItemName`).val(name);
 
             $('#editMainItemId').val(itemId);
@@ -3194,18 +3225,18 @@
                         <div>
                             <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                 data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
-                                <i class="fas fa-info-circle text-primary"></i>
+                                <i class="fas fa-info-circle"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}"
                                 data-swap-qty="${qty}" data-swap-unit="${unit}"
                                 data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                                title="Edit"><i class="icofont-edit"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}" title="Delete">
-                                <i class="icofont-ui-delete text-danger"></i></button>
+                                <i class="icofont-ui-delete"></i></button>
                         </div>
                     </div>
                     <div class="row">
@@ -3218,7 +3249,7 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            const liToReplace = currentItemRow.find(`td:nth-child(2) li[data-swap-item-id="${previousSwapItemId}"]`);
+            const liToReplace = currentItemRow.find(`td:nth-child(3) li[data-swap-item-id="${previousSwapItemId}"]`);
             liToReplace.replaceWith(updatedLI);
 
             if (previousSwapItemId !== swapItemId) {
@@ -3437,7 +3468,7 @@
             const modalId = '#addSwapItemModal';
             const description = $(this).data('description');
             // Set item name
-            const name = btn.closest('tr').find('td').first().find('label').text().split('(')[0].trim();
+            const name = btn.closest('tr').find('td').eq(1).find('label').text().split('(')[0].trim();
             $(`${modalId} #itemName`).val(name);
 
             $(`${modalId} .modal-title`).text('Add Swap Food');
@@ -3664,18 +3695,18 @@
                         <div>
                             <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                 data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
-                                <i class="fas fa-info-circle text-primary"></i>
+                                <i class="fas fa-info-circle"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}"
                                 data-swap-qty="${qty}" data-swap-unit="${unit}"
                                 data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                                title="Edit"><i class="icofont-edit"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}" title="Delete">
-                                <i class="icofont-ui-delete text-danger"></i></button>
+                                <i class="icofont-ui-delete"></i></button>
                         </div>
                     </div>
                     <div class="row">
@@ -3690,15 +3721,15 @@
                     <div>
                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                            title="Add More"><i class="icofont-plus text-primary"></i></button>
+                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                            title="Add More"><i class="icofont-plus"></i></button>
                     </div>
                 </li>
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
             // Find and replace only the current <li> using swapItemId
-            const liToReplace = currentItemRow.find(`td:nth-child(2) ul`);
+            const liToReplace = currentItemRow.find(`td:nth-child(3) ul`);
             liToReplace.replaceWith(updatedLI);
 
             updateFoodCount(swapItemId, 1, 'green');
@@ -3755,7 +3786,7 @@
             const description = $(this).data('description');
 
             // Set item name
-            const name = btn.closest('tr').find('td').first().find('label').text().split('(')[0].trim();
+            const name = btn.closest('tr').find('td').eq(1).find('label').text().split('(')[0].trim();
             $(`${modalId} #itemName`).val(name);
 
             $(`${modalId} .modal-title`).text('Add Swap Food');
@@ -3969,18 +4000,18 @@
                         <div>
                             <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                 data-description="${description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${description}">
-                                <i class="fas fa-info-circle text-primary"></i>
+                                <i class="fas fa-info-circle"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}"
                                 data-swap-qty="${qty}" data-swap-unit="${unit}"
                                 data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                title="Edit"><i class="icofont-edit text-success"></i></button>
+                                title="Edit"><i class="icofont-edit"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                 data-swap-item-id="${swapItemId}" data-item-id="${itemId}" data-meal-id="${mealId}"
                                 data-plan-id="${planId}" data-meal-time-id="${mealTimeId}" title="Delete">
-                                <i class="icofont-ui-delete text-danger"></i></button>
+                                <i class="icofont-ui-delete"></i></button>
                         </div>
                     </div>
                     <div class="row">
@@ -3992,12 +4023,16 @@
                 </li>
             `;
 
+            // const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+            // const swapItemsContainer = currentItemRow.find(`td:nth-child(2) ul`);
+            
+            // // Check if there are any existing swap items
+            // const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            const swapItemsContainer = currentItemRow.find(`td:nth-child(2) ul`);
+            const swapItemsContainer = currentItemRow.find(`td:nth-child(3)`);
 
             // Check if there are any existing swap items
             const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
-
             if (existingItems.length > 0) {
                 // If there are existing items, append the new item after them
                 existingItems.last().after(updatedLI);
@@ -4005,7 +4040,6 @@
                 // If no existing items, replace the entire content
                 swapItemsContainer.html(updatedLI);
             }
-
             $('[data-bs-toggle="tooltip"]').tooltip();
 
             const modalEl = document.getElementById('addMoreSwapItemModal');
@@ -4325,17 +4359,17 @@
                                     <div>
                                         <button type="button" class="btn btn-sm btn-outline-primary view-info"
                                             data-description="${swapItem.description}" data-bs-toggle="tooltip" data-bs-placement="top" title="${swapItem.description}">
-                                            <i class="fas fa-info-circle text-primary"></i>
+                                            <i class="fas fa-info-circle"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success edit-swap-item ms-0"
                                             data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swap-qty="${swapItem.qty}" data-swap-unit="${swapItem.unit}"
                                             data-selected-qty-unit='${JSON.stringify(swapItem.selected_qty_unit)}'
-                                            title="Edit"><i class="icofont-edit text-success"></i></button>
+                                            title="Edit"><i class="icofont-edit"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-swap-item"
                                             data-swap-item-id="${swapItem.id}" data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Delete">
-                                            <i class="icofont-ui-delete text-danger"></i>
+                                            <i class="icofont-ui-delete"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -4351,12 +4385,12 @@
 
                         swapItemsHTML += `
                             <li class="d-flex justify-content-between align-items-start mt-1">
-                                <div class="col-9">></div>
+                                <div class="col-9"></div>
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                        title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
 
@@ -4368,14 +4402,17 @@
                                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Add">
-                                        <i class="icofont-plus text-primary"></i>
+                                        <i class="icofont-plus"></i>
                                     </button>
                                 </div>
                             </li>`;
                     }
 
                     const rowHTML = `
-                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}">
+                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}" data-item-id="${item.id}">
+                            <td width="30" class="align-middle text-center">
+                                <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                            </td>
                             <td class="text-wrap" width="50%">
                                 <div class="d-flex justify-content-between align-items-start mb-0">
                                     <div class="col-9">
@@ -4391,17 +4428,17 @@
                                         <button type="button" class="btn btn-sm btn-outline-primary"
                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="${item.description}">
-                                            <i class="fas fa-info-circle text-primary"></i>
+                                            <i class="fas fa-info-circle"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${qty}" data-item-unit="${unit}"
                                             data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                            title="Edit"><i class="icofont-edit text-success"></i></button>
+                                            title="Edit"><i class="icofont-edit"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                            title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
+                                            title="Delete"><i class="icofont-ui-delete"></i></button>
                                     </div>
                                 </div>
                                     <div class="row">
@@ -4441,7 +4478,7 @@
                 const $row = $(this);
 
                 // Find checked input inside first <td> (main item)
-                const $mainItemInput = $row.find('td:first input[type="checkbox"]:checked');
+                const $mainItemInput = $row.find('td').eq(1).find('input[type="checkbox"]:checked');
                 if ($mainItemInput.length) {
                     totalCarbs += parseFloat($mainItemInput.data('carbs')) || 0;
                     totalProtein += parseFloat($mainItemInput.data('protein')) || 0;
@@ -4676,7 +4713,10 @@
                                     '<span class="text-muted">No swap items available</span>';
 
                                 tableBody.append(`
-                                    <tr data-food-id="${food.id}">
+                                    <tr data-food-id="${food.id}" data-item-id="${food.id}">
+                                        <td width="30" class="align-middle text-center">
+                                            <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                                        </td>
                                         <td width="45%">
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
@@ -4693,8 +4733,8 @@
                                                     <div>
                                                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                                             data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                            title="Add More"><i class="icofont-plus text-primary"></i></button>
+                                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                            title="Add More"><i class="icofont-plus"></i></button>
                                                     </div>
                                                 </li>
                                             </ul>
@@ -4703,7 +4743,7 @@
                                             <button type="button" class="btn btn-sm btn-outline-primary"
                                                 data-bs-toggle="tooltip" data-bs-placement="top"
                                                 title="${food.description}">
-                                                <i class="fas fa-info-circle text-primary"></i>
+                                                <i class="fas fa-info-circle"></i>
                                             </button>
                                             <button class="btn btn-sm edit-food btn-outline-success"
                                                     data-food-id="${food.id}"
@@ -4714,13 +4754,13 @@
                                                     data-swapfood-unit="${swapFoods[0]?.unit || ''}"
                                                     data-food-qty="${food.qty}"
                                                     data-food-unit="${food.unit}">
-                                                <i class="icofont-edit text-success"></i>
+                                                <i class="icofont-edit"></i>
                                             </button>
                                             <button class="btn  btn-sm delete-food btn-outline-danger"
                                                     data-food-id="${food.id}"
                                                     data-meal-id="${mealId}"
                                                     data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}">
-                                                <i class="icofont-ui-delete text-danger"></i>
+                                                <i class="icofont-ui-delete"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -4803,15 +4843,18 @@
                                                         <div>
                                                             <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                                                 data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                                title="Add"><i class="icofont-plus text-primary"></i>
+                                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                                title="Add"><i class="icofont-plus"></i>
                                                             </button>
                                                         </div>
                                                     </li>`;
 
                                 // Append the single food item row to the table
                                 tableBody.append(`
-                                    <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${food.id}">
+                                    <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${food.id}" data-item-id="${food.id}">
+                                        <td width="30" class="align-middle text-center">
+                                            <span class="drag-handle" style="cursor:move; margin-right:8px;"><i class="fa fa-bars"></i></span>
+                                        </td>
                                         <td class="text-wrap" width="50%">
                                             <div class="d-flex justify-content-between align-items-start mb-0">
                                                 <div class="col-9">
@@ -4826,17 +4869,17 @@
                                                     <button type="button" class="btn btn-sm btn-outline-primary"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="${food.description}">
-                                                        <i class="fas fa-info-circle text-primary"></i>
+                                                        <i class="fas fa-info-circle"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                                         data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${food.qty}" data-item-unit="${food.unit}"
                                                         data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                                        title="Edit"><i class="icofont-edit text-success"></i></button>
+                                                        title="Edit"><i class="icofont-edit"></i></button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                                         data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                                        title="Delete"><i class="icofont-ui-delete text-danger"></i></button>
+                                                        title="Delete"><i class="icofont-ui-delete"></i></button>
                                                 </div>
                                             </div>
                                             <div class="row">

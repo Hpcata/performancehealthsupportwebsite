@@ -17,6 +17,7 @@ class UserPlan extends Model
         'status',
         'modified_by',
         'is_mail_sent',
+        'mail_sent_at',
         'nutrition_info_flag'
     ];
 

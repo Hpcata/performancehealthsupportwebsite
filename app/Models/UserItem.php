@@ -12,7 +12,7 @@ class UserItem extends Model
     protected $fillable = [
         'user_plan_id',
         'user_category_id',
-        'user_subcategory_id',
+        'user_sub_category_id',
         'user_meal_id',
         'id'
     ];

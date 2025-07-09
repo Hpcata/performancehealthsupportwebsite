@@ -139,56 +139,48 @@
                                 let answer = formQuestions[question];
                                 let answerContent = '';
 
+                                // === FOOD PREFERENCE HANDLING ===
                                 if (formName === 'Food Preference') {
                                     const expectedGroups = foodGroups;
                                     const groupNameRaw = question;
 
                                     const clean = s => (s || '').toString().trim();
                                     const normal = s => clean(s).replace(/\s{2,}/g, ' ');
-                                    const hasAny = v => {
-                                        if (Array.isArray(v)) return v.filter(x => clean(x)).length > 0;
-                                        if (typeof v === 'string') return clean(v) !== '';
-                                        return false;
-                                    };
 
                                     const groupKey = normal(groupNameRaw);
                                     const expectedSubs = expectedGroups[groupKey] || [];
                                     const userValue = answer;
-                                    const groupMissing = (userValue === null);
 
                                     answerContent = '<ul>';
 
-                                    if (groupMissing) {
+                                    if (userValue === null || userValue === undefined) {
                                         answerContent += `<li class="text-danger">Not selected</li>`;
                                     } else {
                                         if (Array.isArray(userValue)) {
                                             const nonEmpty = userValue.filter(x => clean(x));
-                                            answerContent += `<li class="${nonEmpty.length ? '' : 'text-danger'}">
-                                                ${nonEmpty.length ? nonEmpty.join(', ') : 'Not selected'}
-                                            </li>`;
+                                            if (nonEmpty.length) {
+                                                nonEmpty.forEach(item => {
+                                                    answerContent += `<li>${item}</li>`;
+                                                });
+                                            } else {
+                                                answerContent += `<li class="text-danger">Not selected</li>`;
+                                            }
                                         } else if (typeof userValue === 'object') {
                                             expectedSubs.forEach(sub => {
                                                 const subKey = normal(sub);
-                                                const provided = Object.prototype.hasOwnProperty.call(userValue, subKey);
-                                                let valueBlock = ' — Not selected';
-                                                let css = 'text-danger';
-
-                                                if (provided) {
-                                                    const val = userValue[subKey];
-                                                    if (Array.isArray(val)) {
-                                                        const ok = val.filter(x => clean(x));
-                                                        if (ok.length) {
-                                                            css = '';
-                                                            valueBlock = '<ul>' + ok.map(v => `<li>${v}</li>`).join('') + '</ul>';
-                                                        }
-                                                    } else if (typeof val === 'string' && clean(val) !== '') {
-                                                        css = '';
-                                                        valueBlock = `: ${val}`;
+                                                const val = userValue[subKey];
+                                                if (Array.isArray(val)) {
+                                                    const cleanItems = val.filter(x => x && x !== 'null' && x !== null);
+                                                    if (cleanItems.length) {
+                                                        answerContent += `<li><strong>${subKey}</strong><ul>${cleanItems.map(v => `<li>${v}</li>`).join('')}</ul></li>`;
                                                     }
+                                                } else if (typeof val === 'string' && clean(val) !== '' && val !== 'null') {
+                                                    answerContent += `<li><strong>${subKey}:</strong> ${val}</li>`;
+                                                } else {
+                                                    answerContent += `<li class="text-danger">${subKey} — Not selected</li>`;
                                                 }
-                                                answerContent += `<li class="${css}">${subKey}${valueBlock}</li>`;
                                             });
-                                        } else if (typeof userValue === 'string') {
+                                        } else {
                                             answerContent += `<li>${clean(userValue)}</li>`;
                                         }
                                     }
@@ -200,10 +192,10 @@
                                             <p><strong>Q : ${groupNameRaw}</strong></p>
                                             <div>${answerContent}</div>
                                         </div>`;
-                                    return; // Skip default logic
+                                    return; // skip to next question
                                 }
 
-                                // ========== DEFAULT LOGIC FOR OTHER FORMS ==========
+                                // === DEFAULT LOGIC FOR OTHER FORMS ===
                                 if (!answer) {
                                     answerContent = '<span class="text-danger">Not selected</span>';
                                 } else if (Array.isArray(answer)) {
@@ -212,38 +204,46 @@
                                         answerContent = '<ul>' + filtered.map(i => `<li>${i}</li>`).join('') + '</ul>';
                                     }
                                 } else if (typeof answer === 'object') {
-                                    let valid = Object.entries(answer).filter(([_, v]) => v);
-                                    if (question.includes('hunger/appetite over the day')) {
-                                        const order = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
-                                        valid.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
-                                    }
-                                    if (valid.length) {
-                                        answerContent = '<ul>';
-                                        valid.forEach(([k, v]) => {
-                                            const keyLabel = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                                            if (Array.isArray(v)) {
-                                                const sub = v.filter(x => x);
-                                                if (sub.length) {
-                                                    answerContent += `<li><strong>${keyLabel}</strong><ul>${sub.map(s => `<li>${s}</li>`).join('')}</ul></li>`;
+                                    // special case: { answer: 'Yes', date: '3 months ago' }
+                                    if ('answer' in answer && 'date' in answer) {
+                                        answerContent = `
+                                            <ul>
+                                                <li><strong>Answer:</strong> ${answer.answer}</li>
+                                                <li><strong>Date:</strong> ${answer.date}</li>
+                                            </ul>`;
+                                    } else {
+                                        let valid = Object.entries(answer).filter(([_, v]) => v);
+                                        if (question.includes('hunger/appetite over the day')) {
+                                            const order = ['breakfast', 'morning_tea', 'lunch', 'afternoon_tea', 'dinner', 'dessert'];
+                                            valid.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
+                                        }
+                                        if (valid.length) {
+                                            answerContent = '<ul>';
+                                            valid.forEach(([k, v]) => {
+                                                const keyLabel = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                                if (Array.isArray(v)) {
+                                                    const sub = v.filter(x => x);
+                                                    if (sub.length) {
+                                                        answerContent += `<li><strong>${keyLabel}</strong><ul>${sub.map(s => `<li>${s}</li>`).join('')}</ul></li>`;
+                                                    }
+                                                } else {
+                                                    answerContent += `<li><strong>${keyLabel}:</strong> ${v}</li>`;
                                                 }
-                                            } else {
-                                                answerContent += `<li><strong>${keyLabel}:</strong> ${v}</li>`;
-                                            }
-                                        });
-                                        answerContent += '</ul>';
+                                            });
+                                            answerContent += '</ul>';
+                                        }
                                     }
                                 } else {
                                     answerContent = answer;
                                 }
 
-                                if (answerContent) {
-                                    if(question != '' && question != null && question != undefined) {
+                                // Append question + answer block
+                                if (answerContent && question) {
                                     modalContent += `
                                         <div>
                                             <p><strong>Q : ${question}</strong></p>
                                             <p>${answerContent}</p>
                                         </div>`;
-                                    }
                                 }
                             });
 

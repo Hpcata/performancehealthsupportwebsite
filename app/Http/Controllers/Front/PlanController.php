@@ -828,8 +828,7 @@ class PlanController extends Controller
 
         $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
 
-        $userPlans = UserPlan::with('plan', 
-            'userCategories.userSubCategories.userMeals.userItems')
+        $userPlans = UserPlan::with('plan')
             ->where('user_id', $request->user_id) // Ensure user_id is always applied
             ->where(function ($query) use ($id, $subPlans) {
                 $query->where('plan_id', $id)
@@ -861,7 +860,7 @@ class PlanController extends Controller
         $plan = Plan::find($id);
         $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
 
-        $userPlans = UserPlan::with('plan', 'userCategories.userSubCategories.userMeals.userItems')
+        $userPlans = UserPlan::with('plan')
             ->where('user_id', $request->user_id)
             ->where(function ($query) use ($id, $subPlans) {
                 $query->where('plan_id', $id)
@@ -872,7 +871,7 @@ class PlanController extends Controller
             // Sort userMealTimes by mealTime.order ASC
         $userPlans->each(function ($userPlan) {
             $userPlan->userCategories = $userPlan->userCategories->where('user_plan_id', $userPlan->id)
-                ->sortBy(fn($mt) => $mt->mealTime->order ?? 0)
+                ->sortBy(fn($mt) => $mt->category->order ?? 0)
                 ->values(); // reindex
         });
         $printAllmeal = true;
@@ -887,7 +886,7 @@ class PlanController extends Controller
         $plan = Plan::find($request->plan_id);
         $subPlans = $plan->subPlans ? $plan->subPlans()->pluck('sub_plan_id')->toArray() : [];
 
-        $userPlans = UserPlan::with('plan', 'userCategories.userSubCategories.userMeals.userItems')
+        $userPlans = UserPlan::with('plan')
             ->where('user_id', $request->user_id)
             ->where(function ($query) use ($request, $subPlans) {
                 $query->where('plan_id', $request->plan_id)
@@ -898,7 +897,7 @@ class PlanController extends Controller
         // Sort userMealTimes
         $userPlans->each(function ($userPlan) {
             $userPlan->userCategories = $userPlan->userCategories->where('user_plan_id', $userPlan->id)
-                ->sortBy(fn($mt) => $mt->mealTime->order ?? 0)
+                ->sortBy(fn($mt) => $mt->category->order ?? 0)
                 ->values();
         });
 

@@ -30,6 +30,17 @@
     object-fit: contain;
     cursor: pointer;
 }
+
+#loader-2 {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.7);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
@@ -448,7 +459,7 @@
     </div>
 </div>
 <div id="loader-2" style="display: none;">
-    <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" alt="Loading..." />
+    <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" width="100px" height="100px" alt="Loading..." />
 </div>
 @push('styles')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
@@ -920,6 +931,8 @@
                 serving_per_pack: $('input[name="serving_per_pack"]').val(),
             };
 
+            $('#loader-2').show();
+
             $.ajax({
                 url: "{{ route('calculate.nutrition') }}",
                 type: 'POST',
@@ -1001,8 +1014,13 @@
 
                     AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
                     updateHiddenField();
+
+                    // Hide loader after success
+                    $('#loader-2').hide();
                 },
                 error: function () {
+                    // Hide loader after success
+                    $('#loader-2').hide();
                     console.error("Error fetching alternate measurements.");
                 }
             });
@@ -1600,7 +1618,6 @@
         });
 
         $(document).on('blur', '.alt-unit-dropdown', function () {
-            console.log('111');
             updateHiddenField();
         });
 
