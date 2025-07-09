@@ -3255,6 +3255,7 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+            // console.log(currentItemRow);
             currentItemRow.find('td:nth-child(2)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');
@@ -3288,101 +3289,103 @@
                     if (response.success) {
                         const $updatedRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
                         const $swapListItems = $updatedRow.find('td').eq(2).find('li[data-swap-item-id]');
-                       
-                        $swapListItems.each(function () {
-                            const $swapLi = $(this);
-                            const swapItemId = $swapLi.data('swap-item-id');
-                            const ratio = parseFloat($('#editItemModal #ratio').val());
+                        const ratio = parseFloat($('#editItemModal #ratio').val());
 
-                            // Get the first <p> that has "(100g or 1 cup)" style text
-                            const $quantityP = $swapLi.find('p').first();
-                            let originalText = $quantityP.text().trim();
+                        if(ratio != 0 && !isNaN(ratio)) {
+                            $swapListItems.each(function () {
+                                const $swapLi = $(this);
+                                const swapItemId = $swapLi.data('swap-item-id');
 
-                            // Remove surrounding parentheses and split by 'or'
-                            if (originalText.startsWith('(') && originalText.endsWith(')')) {
-                                originalText = originalText.slice(1, -1);
-                            }
+                                // Get the first <p> that has "(100g or 1 cup)" style text
+                                const $quantityP = $swapLi.find('p').first();
+                                let originalText = $quantityP.text().trim();
 
-                            const parts = originalText.split('or').map(part => part.trim());
-                            const updatedParts = parts.map(part => {
-                                const match = part.match(/^([\d./]+)\s*(\w+)$/);  // e.g. "100g" or "1 cup"
-                                if (!match) return part;
-
-                                let [_, qty, unit] = match;
-
-                                // Convert fractions like 1/2
-                                if (qty.includes('/')) {
-                                    const [num, denom] = qty.split('/');
-                                    qty = parseFloat(num) / parseFloat(denom);
-                                } else {
-                                    qty = parseFloat(qty);
+                                // Remove surrounding parentheses and split by 'or'
+                                if (originalText.startsWith('(') && originalText.endsWith(')')) {
+                                    originalText = originalText.slice(1, -1);
                                 }
 
-                                if (isNaN(qty)) return part;
+                                const parts = originalText.split('or').map(part => part.trim());
+                                const updatedParts = parts.map(part => {
+                                    const match = part.match(/^([\d./]+)\s*(\w+)$/);  // e.g. "100g" or "1 cup"
+                                    if (!match) return part;
 
-                                const newQty = (qty / ratio).toFixed(2).replace(/\.00$/, '');
+                                    let [_, qty, unit] = match;
 
-                                // Units that should not have space
-                                const noSpaceUnits = ['g', 'ml', 'mL'];
-
-                                return noSpaceUnits.includes(unit) ? `${newQty}${unit}` : `${newQty} ${unit}`;
-                            });
-
-                            // Set updated text back with parentheses
-                            $quantityP.text(`(${updatedParts.join(' or ')})`);
-
-                            const swapInput = $swapLi.find('input[type="checkbox"]');
-                            const swapEnergy = parseFloat(swapInput.data('energy')) || 0;
-                            const swapProtein = parseFloat(swapInput.data('protein')) || 0;
-                            const swapCarbs = parseFloat(swapInput.data('carbs')) || 0;
-                            const swapFat = parseFloat(swapInput.data('fat')) || 0;
-
-                            // Get ratio (you may calculate based on qty/unit or use directly)
-
-                            // Adjust values
-                            const adjustedEnergy = (swapEnergy / ratio).toFixed(2);
-                            const adjustedProtein = Math.round(swapProtein / ratio);
-                            const adjustedCarbs = Math.round(swapCarbs / ratio);
-                            const adjustedFat = Math.round(swapFat / ratio);
-
-                            // Prepare data for backend
-                            const swapData = {
-                                swap_item_id: swapItemId,
-                                item_id: itemId,
-                                plan_id: planId,
-                                meal_id: mealId,
-                                meal_time_id: mealTimeId,
-                                user_id: userId,
-                                food_energy: adjustedEnergy,
-                                food_protein: adjustedProtein,
-                                food_carbs: adjustedCarbs,
-                                food_fat: adjustedFat,
-                                ratio: ratio,
-                                _token: '{{ csrf_token() }}'
-                            };
-
-                            // AJAX call to update swap item in DB
-                            $.ajax({
-                                url: '{{ route("admin.update-swap-item") }}',
-                                method: 'POST',
-                                data: swapData,
-                                success: function (resp) {
-                                    if (resp.success) {
-                                        // Update nutrition info in HTML
-                                        const $nutritionP = $swapLi.find('p').last();
-                                        $nutritionP.html(
-                                            `Energy: ${adjustedEnergy}kJ | Protein: ${adjustedProtein}g | Carb: ${adjustedCarbs}g | Fat: ${adjustedFat}g`
-                                        );
+                                    // Convert fractions like 1/2
+                                    if (qty.includes('/')) {
+                                        const [num, denom] = qty.split('/');
+                                        qty = parseFloat(num) / parseFloat(denom);
                                     } else {
-                                        console.warn(`Swap item ${swapItemId} failed to update in DB`);
+                                        qty = parseFloat(qty);
                                     }
-                                },
-                                error: function () {
-                                    console.error(`Error updating swap item ${swapItemId}`);
-                                }
-                            });
-                        });
 
+                                    if (isNaN(qty)) return part;
+
+                                    const newQty = (qty / ratio).toFixed(2).replace(/\.00$/, '');
+
+                                    // Units that should not have space
+                                    const noSpaceUnits = ['g', 'ml', 'mL'];
+
+                                    return noSpaceUnits.includes(unit) ? `${newQty}${unit}` : `${newQty} ${unit}`;
+                                });
+
+                                // Set updated text back with parentheses
+                                $quantityP.text(`(${updatedParts.join(' or ')})`);
+
+                                const swapInput = $swapLi.find('input[type="checkbox"]');
+                                const swapEnergy = parseFloat(swapInput.data('energy')) || 0;
+                                const swapProtein = parseFloat(swapInput.data('protein')) || 0;
+                                const swapCarbs = parseFloat(swapInput.data('carbs')) || 0;
+                                const swapFat = parseFloat(swapInput.data('fat')) || 0;
+
+                                // Get ratio (you may calculate based on qty/unit or use directly)
+
+                                // Adjust values
+                                const adjustedEnergy = (swapEnergy / ratio).toFixed(2);
+                                const adjustedProtein = Math.round(swapProtein / ratio);
+                                const adjustedCarbs = Math.round(swapCarbs / ratio);
+                                const adjustedFat = Math.round(swapFat / ratio);
+
+                                // Prepare data for backend
+                                const swapData = {
+                                    swap_item_id: swapItemId,
+                                    item_id: itemId,
+                                    plan_id: planId,
+                                    meal_id: mealId,
+                                    meal_time_id: mealTimeId,
+                                    user_id: userId,
+                                    food_energy: adjustedEnergy,
+                                    food_protein: adjustedProtein,
+                                    food_carbs: adjustedCarbs,
+                                    food_fat: adjustedFat,
+                                    ratio: ratio,
+                                    _token: '{{ csrf_token() }}'
+                                };
+
+                                // AJAX call to update swap item in DB
+                                $.ajax({
+                                    url: '{{ route("admin.update-swap-item") }}',
+                                    method: 'POST',
+                                    data: swapData,
+                                    success: function (resp) {
+                                        if (resp.success) {
+                                            // Update nutrition info in HTML
+                                            const $nutritionP = $swapLi.find('p').last();
+                                            $nutritionP.html(
+                                                `Energy: ${adjustedEnergy}kJ | Protein: ${adjustedProtein}g | Carb: ${adjustedCarbs}g | Fat: ${adjustedFat}g`
+                                            );
+                                            $('#editItemModal #ratio').val(0);
+                                        } else {
+                                            console.warn(`Swap item ${swapItemId} failed to update in DB`);
+                                        }
+                                    },
+                                    error: function () {
+                                        console.error(`Error updating swap item ${swapItemId}`);
+                                    }
+                                });
+                            });
+                        }
                         console.log('Main food and swap items updated successfully.');
                     } else {
                         alert('Failed to update food.');
