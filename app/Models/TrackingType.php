@@ -40,6 +40,7 @@ class TrackingType extends Model
 
     public const QUIZ_BUTTON_CLICK        = 'quiz_button_click';
     public const QUIZ_STARTED             = 'quiz_started';
+    public const QUIZ_QUESTION_ANSWER     = 'quiz_question_answer';
     public const QUIZ_COMPLETED           = 'quiz_completed';
     public const QUESTIONNAIRE_STARTED    = 'questionnaire_started';
     public const QUESTIONNAIRE_COMPLETED  = 'questionnaire_completed';

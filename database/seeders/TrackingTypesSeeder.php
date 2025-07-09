@@ -18,6 +18,7 @@ class TrackingTypesSeeder extends Seeder
         $types = [
             'quiz_button_click',
             'quiz_started',
+            'quiz_question_answer',
             'quiz_completed',
             'questionnaire_started',
             'questionnaire_completed',
