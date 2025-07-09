@@ -423,7 +423,7 @@
                             </div>
                             <div class="card-body" id="planDiv">
                                 @foreach($plans as $plan)
-                                    @if(in_array($plan->id,$purchasedplans))
+                                    @if(in_array($plan->id,$purchasedPlans))
                                     <?php
                                         $userPlan = \App\Models\UserPlan::where('user_id', $user->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
                                         $isMailSend = 0;

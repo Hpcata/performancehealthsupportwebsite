@@ -390,7 +390,7 @@ class FrontController extends Controller
 
             $adminView = $request->input('admin_view') == 1 ? true : false;
 
-            return view('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity', 'reports', 'userPrePlan', 'payment', 'profileSetUp', 'adminView'));
+            return view('front.profile', compact('user', 'purchasedPlans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity', 'reports', 'userPrePlan', 'payment', 'profileSetUp', 'adminView'));
         }
     }
 
