@@ -62,10 +62,36 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
+                                        <input type="hidden" name="questions[personal_details][sport_category]" value="Sport Category">
+                                        <div class="form-floating my-3">
+                                            <select class="form-select" id="sport_category" name="ans[personal_details][sport_category]" required>
+                                                <option value="">Select Sport Category</option>
+                                                @foreach($sportCategories as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <label for="sport_category">Sport Category<small class="text-danger">*</small></label>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-md-6 col-lg-4">
+                                        <input type="hidden" name="questions[personal_details][sport_game]" value="Sport Game">
+                                        <div class="form-floating my-3">
+                                            <select class="form-select" id="sport_game" name="ans[personal_details][sport_game]" required>
+                                                <option value="">Select Sport Game</option>
+                                                {{-- Games will be populated here via JavaScript --}}
+                                            </select>
+                                            <label for="sport_game">Sport Game<small class="text-danger">*</small></label>
+                                        </div>
+                                    </div> -->
+
+                                    <div class="col-md-6 col-lg-4">
                                         <input type="hidden" name="questions[personal_details][occupation]" value="Occupation">
                                         <div class="form-floating my-3">
-                                            <input type="text" class="form-control" name="ans[personal_details][occupation]" placeholder="">
-                                            <label>Sport<small class="text-danger">*</small></label>
+                                            <select class="form-select" id="sport_game"  name="ans[personal_details][occupation]" placeholder="">
+                                                <option value="">Select Sport Game</option>
+                                            </select>
+                                            <label for="sport_game">Sport<small class="text-danger">*</small></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
@@ -1782,6 +1808,34 @@
             $('.modal-dialog').draggable({
                 handle: ".modal-header"
             });
+        });
+
+        $('#sport_category').on('change', function () {
+            let categoryId = $(this).val();
+            console.log(categoryId);
+            $('#sport_game').html('<option value="">Loading...</option>');
+
+            if (categoryId) {
+                $.ajax({
+                    url: "{{ route('front.get-sports-games') }}",
+                    method: "GET",
+                    data: { category: categoryId },
+                    success: function (response) {
+                        let options = '<option value="">Select Sport Game</option>';
+                        if (Array.isArray(response)) {
+                            response.forEach(function (game) {
+                                options += `<option value="${game.name}">${game.name}</option>`;
+                            });
+                        }
+                        $('#sport_game').html(options);
+                    },
+                    error: function () {
+                        $('#sport_game').html('<option value="">Error loading games</option>');
+                    }
+                });
+            } else {
+                $('#sport_game').html('<option value="">Select Sport Game</option>');
+            }
         });
     });
 

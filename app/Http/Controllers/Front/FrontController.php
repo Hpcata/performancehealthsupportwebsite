@@ -37,6 +37,7 @@ use App\Mail\SportInterestMailAdmin;
 use Illuminate\Support\Facades\Validator;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
+use App\Models\SportCategory;
 
 class FrontController extends Controller
 {
@@ -53,19 +54,14 @@ class FrontController extends Controller
     }
 
     public function index()
-    {
-        
-        $plans = \App\Models\Plan::all();
-        //dd($plans);
-        $page = \App\Models\Page::with('sections')->where('slug', 'home')->first();
-       
+    { 
         $requirements = [];
     
         $disabledDay = json_encode([]);
        
         $organization = [];
         $testimonials = [];
-        return view('front.index', compact('requirements','page', 'plans','disabledDay','organization','testimonials'));
+        return view('front.index', compact('requirements','disabledDay','organization','testimonials'));
     }
 
     public function save(QueryRequest $request)
@@ -132,8 +128,9 @@ class FrontController extends Controller
         $organization = [];
         $testimonials = [];
         $isAuthenticated = Auth::check(); // Returns true if the user is logged in
+        $sportCategories = SportCategory::all();
 
-        return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated'));
+        return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated', 'sportCategories'));
     }
 
     public function register(Request $request)
@@ -910,91 +907,6 @@ class FrontController extends Controller
         ]);
     }
 
-    // public function fetchWeights(Request $request)
-    // {
-    //     $filter = $request->filter; // e.g., '1W', '1M', etc.
-    //     $userId = $request->user_id; 
-    //     $startDate = now(); // Current date as the end of the range
-    //     $endDate = null;    // To calculate the starting point of the range
-    
-    //     // Determine the date range based on the filter
-    //     switch ($filter) {
-    //         case '1W':
-    //             $endDate = now()->subWeek();
-    //             break;
-    //         case '2W':
-    //             $endDate = now()->subWeek(2);
-    //             break;
-    //         case '1M':
-    //             $endDate = now()->subMonth();
-    //             break;
-    //         case '3M':
-    //             $endDate = now()->subMonths(3);
-    //             break;
-    //         case '6M':
-    //             $endDate = now()->subMonths(6);
-    //             break;
-    //         case '1Y':
-    //             $endDate = now()->subYear();
-    //             break;
-    //         case 'ALL':
-    //             $endDate = null; // For "ALL", no end date filter is applied
-    //             break;
-    //         default:
-    //             return response()->json(['error' => 'Invalid filter'], 400);
-    //     }
-    
-    //     $weight = WeightTracking::where('user_id', $userId)
-    //         ->when($endDate, function ($query) use ($startDate, $endDate) {
-    //             return $query->whereBetween('date', [$endDate, $startDate]);
-    //         })
-    //         ->orderBy('date', 'asc')
-    //         ->get(['date', 'weight','weight_goal']);
-
-    //     // Fetch weights between the calculated date range
-    //     $weights = WeightTracking::where('user_id', $userId)
-    //     ->when($endDate, function ($query) use ($startDate, $endDate) {
-    //         return $query->whereBetween('date', [$endDate, $startDate]);
-    //     })
-    //     ->orderBy('date', 'asc')
-    //     ->get(['date', 'weight'])
-    //     ->groupBy(function ($item) {
-    //         return \Carbon\Carbon::parse($item->date)->format('F'); // Group by month name
-    //     })
-    //     ->map(function ($items, $month) {
-    //         return [
-    //             'month' => $month,
-    //             'weights' => $items->map(function ($item) {
-    //                 return [
-    //                     'date' => \Carbon\Carbon::parse($item->date)->format('d/m/Y'),
-    //                     'weight' => $item->weight,
-    //                 ];
-    //             }),
-    //             // 'average_weight' => $items->avg('weight'), // Average weight for the month
-    //         ];
-    //     })
-    //     ->values();
-    
-    //     // Get the start and goal weight
-    //     $startWeight = $weight->first()->weight;
-    //     $goalWeight = $weight->last()->weight_goal; // Use the 'weight_goal' field from the last record
-    //     if($goalWeight > $startWeight) {
-    //         $weightDiff = $startWeight - $goalWeight; // Calculate the difference
-    //     }else {
-    //         $weightDiff = $goalWeight - $startWeight; // Calculate the difference
-    //     }
-
-    //     // Return all the necessary data for the chart and modal
-    //     return response()->json([
-    //         'success' => true,
-    //         'filter' => $filter,
-    //         'weights' => $weights,
-    //         'start_weight' => $startWeight,
-    //         'goal_weight' => $goalWeight,
-    //         'weight_diff' => $weightDiff
-    //     ]);
-    // }
-    
     public function fetchWeights(Request $request)
     {
         $filter = $request->filter; // e.g., '1W', '1M', etc.
@@ -1060,15 +972,6 @@ class FrontController extends Controller
             ];
         });
         
-        // Group by month for the response
-        // $groupedWeights = $allWeights->groupBy(function ($item) {
-        //     return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F'); // Group by month name
-        // })->map(function ($items, $month) {
-        //     return [
-        //         'month' => $month,
-        //         'weights' => $items
-        //     ];
-        // })->values();
         $groupedWeights = $allWeights->groupBy(function ($item) {
             return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F Y'); // Group by "Month Year"
         })->map(function ($items, $monthYear) {
@@ -1077,7 +980,6 @@ class FrontController extends Controller
                 'weights' => $items
             ];
         })->values();
-        // dd($groupedWeights );
         // Calculate start and goal weights
         $startWeight = $weightsData->first() ? $weightsData->first()->weight : null;
         $goalWeight = $weightsData->last() ? $weightsData->last()->weight_goal : null;
@@ -1088,7 +990,6 @@ class FrontController extends Controller
             $weightDiff = abs($startWeight - $goalWeight);
         }
     
-        // dd($groupedWeights);
         // Return all the necessary data for the chart and modal
         return response()->json([
             'success' => true,
@@ -1100,18 +1001,27 @@ class FrontController extends Controller
         ]);
     }
     
-    public function getSportsGames(Request $request) 
+    public function getSportsGames(Request $request)
     {
-        $category = $request->input('category'); // Get selected sport category
+        $categoryId = $request->input('category');
 
-        if (!$category) {
-            return response()->json(['error' => 'Invalid category'], 400);
+        if (!$categoryId) {
+            return response()->json([], 400);
         }
 
-        // Get sports games from config/sports.php
-        $sports = config('sports.' . $category, []);
+        $category = SportCategory::with('games')->find($categoryId);
+        if (!$category) {
+            return response()->json([], 404);
+        }
 
-        return response()->json($sports);
+        // Return an array of games (id + name)
+        $games = $category->games->map(function ($game) {
+            return [
+                'id' => $game->id,
+                'name' => $game->name,
+            ];
+        });
+        return response()->json($games);
     }
 
     public function sportSearch(Request $request)
@@ -1170,17 +1080,16 @@ class FrontController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
         $mainAns = $request->main_ans;
-        // dd($request->all());
         $payment = Payment::where('user_id', $userId)->first();
         $prePlan = \App\Models\UserPrePlan::where('payment_id', $payment->id)
         ->where('user_id', $userId)
         ->first();
-        // dd($prePlan);
+       
         $prePlanDetail =  \App\Models\PrePlanDetail::where('form_slug', $formName)
                 ->where('question', $question)
                 ->where('user_pre_plan_id', $prePlan->id)
                 ->first(); 
-        // dd($type);
+        
         if($prePlanDetail){
             if ($type == 'supplement-edit' || $type == 'medication-edit') {
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
@@ -1209,7 +1118,7 @@ class FrontController extends Controller
                         $endDates[$index] = $endDate;
                     }
                 }
-                // dd($preplanAnswers);
+                
                 $prePlanDetail->update([
                     'answer' => json_encode(implode(', ', $preplanAnswers)),
                     'start_date' => implode(', ', $startDates),
@@ -1238,7 +1147,7 @@ class FrontController extends Controller
                 ]);
                 
             }elseif ($type == 'supplement' || $type == 'medication') {
-                // dd($type);
+               
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
                 $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
                 $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
@@ -1251,7 +1160,7 @@ class FrontController extends Controller
                 
                 foreach ($preplanAnswers as $index => $item) {
                     $itemEndDate = $endDates[$index] ?? null;
-                    // dd($itemEndDate);
+                   
                     if ($itemEndDate && $itemEndDate < $currentDate) {
                         // Archive expired item in GoalHistory
                         GoalHistory::create([
@@ -1308,7 +1217,7 @@ class FrontController extends Controller
                     'user_id' => $request->user_id,
                 ]);
             }elseif ($type == 'height') {
-                // dd($type);
+                
                 $prePlanDetail->update([
                     'answer' => json_encode($answer),
                     'start_date' => $startDate,
@@ -1369,12 +1278,12 @@ class FrontController extends Controller
     public function updateGoals(Request $request)
     {
         $userId = $request->user_id;
-        $type = $request->input('type'); // "goal" or "challenge"
+        $type = $request->input('type');
         $question = $type == "goal" ? 
             "Which of these do you want help with?" : 
             "What's your biggest nutrition challenge?";
         
-        $answer = $request->input('answer'); // New answer input
+        $answer = $request->input('answer');
         $payment = \App\Models\Payment::where('user_id', $userId)->first();
 
         // Find the latest record
@@ -1436,7 +1345,7 @@ class FrontController extends Controller
     public function getPastGoals(Request $request)
     {
         $userId = $request->user_id;
-        $type = $request->input('type'); // "goal" or "challenge"
+        $type = $request->input('type');
         $pastItems = GoalHistory::where('user_id', $userId)
             ->where('type', $type)
             ->orderBy('created_at', 'desc')
@@ -1470,7 +1379,7 @@ class FrontController extends Controller
     public function uploadReport(Request $request)
     {
         $request->validate([
-            'file.*' => 'required|mimes:jpg,jpeg,png,pdf|max:2048', // Validate multiple files
+            'file.*' => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
             'report_type' => 'required',
             'user_pre_plan_id' => 'required',
             'report_name' => 'required',
@@ -1705,6 +1614,48 @@ class FrontController extends Controller
         return response()->json([
             'success' => true,
             'redirect_url' => route('front.profile', ['id' => $id]) . '?admin_view=1'
+        ]);
+    }
+
+    public function updateSport(Request $request)
+    {
+        $request->validate([
+            'sport' => 'required|string|max:255',
+            'sport_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+    
+        $userPrePlan = UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $request->payment_id)->first();
+        
+        $userPrePlan->occupation = $request->sport;
+
+        if ($request->hasFile('sport_image')) {
+            $file = $request->file('sport_image');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = 'uploads/sport_images/' . $fileName;
+            $directoryPath = public_path('uploads/sport_images');
+
+            // Create directory if not exists
+            if (!File::exists($directoryPath)) {
+                File::makeDirectory($directoryPath, 0777, true, true);
+            }
+
+            // Move new image
+            $file->move($directoryPath, $fileName);
+
+            // Delete old image if exists
+            if ($userPrePlan->sport_image && file_exists(public_path($userPrePlan->sport_image))) {
+                unlink(public_path($userPrePlan->sport_image));
+            }
+
+            // Save new image path
+            $userPrePlan->sport_image = $filePath;
+        }
+        $userPrePlan->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sport updated successfully!',
+            'userPrePlan' => $userPrePlan,
         ]);
     }
 

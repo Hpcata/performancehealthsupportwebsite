@@ -20,7 +20,7 @@ class UserPrePlan extends Model
         'other',
         'referredBy',
         'culture',
-        
+        'sport_image',
     ];
 
     // Relationship with the User model (belongsTo)
