@@ -1,40 +1,25 @@
-
-<div class="site-footer">
-    <div class="container">
-        <div class="row mt-5">
-        <div class="col-12 text-center">
-            <p class="mb-0">
-            Copyright © 2024 Kerry O’Bryan.
-            </p>
-        </div>
-        </div>
-        <!-- /.container -->
+<footer class="footer">
+    <div class="footer-content">
+    <div class="logo">
+        <img src="{!! frontAssets('images/logo (1) 1.svg') !!}" alt="2LS Logo" class="logo-img" />
     </div>
-    <!-- /.site-footer -->
-    <!-- Preloader -->
-    <div id="overlayer"></div>
-    <div class="loader">
-        <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-        </div>
+    <nav class="footer-nav">
+        <a href="/profile">My Profile</a>
+        <a href="/challenges">Challenges and Rewards</a>
+        <a href="/resources">Resources and Help</a>
+        <a href="/store">Store</a>
+    </nav>
     </div>
-</div>
+    <div class="footer-bottom">
+    <p>Copyright © 2025 Kerry O'Bryan.</p>
+    </div>
+</footer>
 
-<script src="{!! frontAssets('js/bootstrap.bundle.min.js') !!}"></script>
-<script src="{!! frontAssets('js/tiny-slider.js') !!}"></script>
-<script src="{!! frontAssets('js/aos.js') !!}"></script>
-<script src="{!! frontAssets('js/navbar.js') !!}"></script>
-<script src="{!! frontAssets('js/counter.js') !!}"></script>
-<script src="{!! frontAssets('js/rellax.js') !!}"></script>
-<script src="{!! frontAssets('js/flatpickr.js') !!}"></script>
-<script src="{!! frontAssets('js/glightbox.min.js') !!}"></script>
-<script src="{!! frontAssets('js/custom.js') !!}"></script>
-<script src="{!! frontAssets('js/general.js') !!}"></script>
+<!-- Includes the script file -->
+@include('front.includes.script')
 
 <style>
     /* home page css */
-
-
     :root {
         --size: clamp(10rem, 1rem + 40vmin, 30rem);
         --gap: calc(clamp(10rem, 1rem + 40vmin, 30rem) / 14);
