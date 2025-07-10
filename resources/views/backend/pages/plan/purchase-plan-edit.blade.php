@@ -3121,8 +3121,7 @@
                     }
                 }
             });
-           console.log(qtyUnitDisplay);
-           console.log(selectedQtyUnits);
+           
             const carbs = parseFloat($('#modalCarbs').text()) || 0;
             const protein = parseFloat($('#modalProtein').text()) || 0;
             const fat = parseFloat($('#modalFat').text()) || 0;

@@ -1,10 +1,16 @@
+@if (Route::is('front.profile') || Route::is('front.plans.details'))
+
 <footer class="footer">
     <div class="footer-content">
     <div class="logo">
         <img src="{!! frontAssets('images/logo (1) 1.svg') !!}" alt="2LS Logo" class="logo-img" />
     </div>
     <nav class="footer-nav">
-        <a href="/profile">My Profile</a>
+        @if($userId = optional(auth()->guard('web')->user())->id)
+        <a href="{{ route('front.profile-old', ['id' => $userId]) }}">My Profile</a>
+        @else
+        <a href="#">My Profile</a>
+        @endif
         <a href="/challenges">Challenges and Rewards</a>
         <a href="/resources">Resources and Help</a>
         <a href="/store">Store</a>
@@ -14,7 +20,29 @@
     <p>Copyright © 2025 Kerry O'Bryan.</p>
     </div>
 </footer>
+@else
 
+<div class="site-footer">
+    <div class="container">
+        <div class="row mt-5">
+        <div class="col-12 text-center">
+            <p class="mb-0">
+            Copyright © 2024 Kerry O’Bryan.
+            </p>
+        </div>
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+        <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+@endif
 <!-- Includes the script file -->
 @include('front.includes.script')
 
