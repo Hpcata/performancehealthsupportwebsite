@@ -1,0 +1,14 @@
+@if(Route::is('front.profile') || Route::is('front.plans.details'))
+<script src="{!! frontAssets('js/script.js') !!}" defer></script>
+@else
+<script src="{!! frontAssets('js/bootstrap.bundle.min.js') !!}"></script>
+<script src="{!! frontAssets('js/tiny-slider.js') !!}"></script>
+<script src="{!! frontAssets('js/aos.js') !!}"></script>
+<script src="{!! frontAssets('js/navbar.js') !!}"></script>
+<script src="{!! frontAssets('js/counter.js') !!}"></script>
+<script src="{!! frontAssets('js/rellax.js') !!}"></script>
+<script src="{!! frontAssets('js/flatpickr.js') !!}"></script>
+<script src="{!! frontAssets('js/glightbox.min.js') !!}"></script>
+<script src="{!! frontAssets('js/custom.js') !!}"></script>
+<script src="{!! frontAssets('js/general.js') !!}"></script>
+@endif

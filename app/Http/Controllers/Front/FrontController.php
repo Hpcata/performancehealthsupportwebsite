@@ -36,6 +36,7 @@ use GrahamCampbell\ResultType\Success;
 use App\Mail\SportInterestMailAdmin;
 use Illuminate\Support\Facades\Validator;
 use App\Models\SportCategory;
+use App\Models\SportGame;
 
 class FrontController extends Controller
 {
@@ -59,7 +60,7 @@ class FrontController extends Controller
        
         $organization = [];
         $testimonials = [];
-        return view('front.index', compact('requirements','disabledDay','organization','testimonials'));
+        return view('front.pages.index', compact('requirements','disabledDay','organization','testimonials'));
     }
 
     public function save(QueryRequest $request)
@@ -88,7 +89,7 @@ class FrontController extends Controller
     public function blog()
     {
         $blogs = \App\Models\Blog::where('is_published', 1)->get();
-        return view('front.blog', compact('blogs'));
+        return view('front.pages.blog', compact('blogs'));
     }
 
     public function blogDetails($id)
@@ -105,7 +106,7 @@ class FrontController extends Controller
             $query->whereIn('tags.id', $blog->tags->pluck('id'));
         })->where('id', '!=', $blog->id)->limit(5)->get();
 
-        return view('front.blog-details', compact('blog', 'relatedBlogs'));
+        return view('front.pages.blog-details', compact('blog', 'relatedBlogs'));
     }
 
     public function subHomePage()
@@ -128,7 +129,7 @@ class FrontController extends Controller
         $isAuthenticated = Auth::check(); // Returns true if the user is logged in
         $sportCategories = SportCategory::all();
 
-        return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated', 'sportCategories'));
+        return view('front.pages.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated', 'sportCategories'));
     }
 
     public function register(Request $request)
@@ -173,7 +174,6 @@ class FrontController extends Controller
     // Handle Login Request
     public function login(Request $request)
     {
-        // dd($request->all());
         // Validate the email and password
         $validated = $request->validate([
             'email' => 'required|email',
@@ -406,7 +406,7 @@ class FrontController extends Controller
 
             $adminView = $request->input('admin_view') == 1 ? true : false;
             
-            return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan', 'payment', 'profileSetUp', 'adminView'));
+            return view ('front.pages.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan', 'payment', 'profileSetUp', 'adminView'));
         }
     }
 
@@ -487,7 +487,7 @@ class FrontController extends Controller
             $query->where('form_slug', 'physical_measures');
         }])->where('user_id', $id)->first();
         //    dd($preplan->prePlanDetails);
-        return view('front.competition-plan.index', compact('userPlans', 'user'));
+        return view('front.pages.competition-plan.index', compact('userPlans', 'user'));
 
     }
 
@@ -992,7 +992,7 @@ class FrontController extends Controller
         }
 
         // $intakeDetails = array_merge($intakeDetails, $diateryDetail);
-        return view('front.sample-plan', compact('page', 'isAuthenticated'));
+        return view('front.pages.sample-plan', compact('page', 'isAuthenticated'));
     }
 
     public function updateSamplePlanDetails(Request $request)
@@ -1490,6 +1490,58 @@ class FrontController extends Controller
             'message' => 'Sport updated successfully!',
             'userPrePlan' => $userPrePlan,
         ]);
+    }
+
+    public function getProfile(Request $request, $userId)
+    {
+        try {
+            $payment = Payment::where('user_id', $userId)->first();
+
+            if (!$payment) {
+                return redirect()->back()->with('error', 'Plan not purchased.');
+            }
+
+            $userPlan = UserPlan::with([
+                'plan',
+                'userCategories.userSubCategories.userMeals.userItems'
+            ])
+            ->where('user_id', $userId)
+            ->first();
+
+            return view('front.pages.profile-landing', compact('userPlan'));
+            
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error fetching user profile: ' . $e->getMessage());
+
+            // Redirect back with a generic error message
+            return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
+        }
+    }
+
+
+    public function getMeals($planId, $categoryId)
+    {
+        $userCategory = \App\Models\UserCategory::where('user_plan_id', $planId)
+            ->where('id', $categoryId)
+            ->first();
+
+        if (!$userCategory) {
+            return '<p>No meals found.</p>';
+        }
+
+        $meals = [];
+
+        foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
+            foreach ($subCategory->userMeals->where('user_plan_id', $planId) as $meal) {
+                if (count($meals) < 3) {
+                    $meals[] = $meal;
+                }
+            }
+            if (count($meals) >= 3) break;
+        }
+
+        return view('front.pages.partials.meal-cards', compact('meals'))->render();
     }
 
 }

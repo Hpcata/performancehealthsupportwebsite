@@ -1,3 +1,26 @@
+@if (Route::is('front.profile') || Route::is('front.plans.details'))
+
+<footer class="footer">
+    <div class="footer-content">
+    <div class="logo">
+        <img src="{!! frontAssets('images/logo (1) 1.svg') !!}" alt="2LS Logo" class="logo-img" />
+    </div>
+    <nav class="footer-nav">
+        @if($userId = optional(auth()->guard('web')->user())->id)
+        <a href="{{ route('front.profile-old', ['id' => $userId]) }}">My Profile</a>
+        @else
+        <a href="#">My Profile</a>
+        @endif
+        <a href="/challenges">Challenges and Rewards</a>
+        <a href="/resources">Resources and Help</a>
+        <a href="/store">Store</a>
+    </nav>
+    </div>
+    <div class="footer-bottom">
+    <p>Copyright © 2025 Kerry O'Bryan.</p>
+    </div>
+</footer>
+@else
 
 <div class="site-footer">
     <div class="container">
@@ -19,22 +42,12 @@
         </div>
     </div>
 </div>
-
-<script src="{!! frontAssets('js/bootstrap.bundle.min.js') !!}"></script>
-<script src="{!! frontAssets('js/tiny-slider.js') !!}"></script>
-<script src="{!! frontAssets('js/aos.js') !!}"></script>
-<script src="{!! frontAssets('js/navbar.js') !!}"></script>
-<script src="{!! frontAssets('js/counter.js') !!}"></script>
-<script src="{!! frontAssets('js/rellax.js') !!}"></script>
-<script src="{!! frontAssets('js/flatpickr.js') !!}"></script>
-<script src="{!! frontAssets('js/glightbox.min.js') !!}"></script>
-<script src="{!! frontAssets('js/custom.js') !!}"></script>
-<script src="{!! frontAssets('js/general.js') !!}"></script>
+@endif
+<!-- Includes the script file -->
+@include('front.includes.script')
 
 <style>
     /* home page css */
-
-
     :root {
         --size: clamp(10rem, 1rem + 40vmin, 30rem);
         --gap: calc(clamp(10rem, 1rem + 40vmin, 30rem) / 14);

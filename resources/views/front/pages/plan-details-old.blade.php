@@ -79,7 +79,6 @@
     </div> -->
     <div class="section pt-md-3">
     @foreach ($userPlans as $userPlan)
-        @php  //dd($userPlan->userCategories); @endphp
         <div class="container mb-5">
             <div class="row g-4">
                 @foreach ($userPlan->userCategories as $userCategory)
