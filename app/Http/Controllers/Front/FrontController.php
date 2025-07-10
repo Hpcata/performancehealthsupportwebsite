@@ -36,15 +36,7 @@ use GrahamCampbell\ResultType\Success;
 use App\Mail\SportInterestMailAdmin;
 use Illuminate\Support\Facades\Validator;
 use App\Models\SportCategory;
-use App\Models\UserItem;
-use App\Models\UserItemMeal;
-use App\Models\UserMeal;
-use App\Models\Page;
-use App\Models\Coupon;
-use App\Models\UserCategory;
-use App\Models\PrePlanQuesionFile;
-use App\Models\Flag;
-use App\Models\CouponUsage;
+use App\Models\SportGame;
 
 class FrontController extends Controller
 {

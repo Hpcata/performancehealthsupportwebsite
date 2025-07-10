@@ -13,16 +13,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserPlan;
-use App\Models\UserPrePlan;
 use App\Models\User;
 use App\Models\UserCategory;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
-use App\Models\UserSubCategory;
-use App\Models\UserMeal;
-use App\Models\UserItemMeal;
-use App\Models\UserItem;
-use App\Models\UserItemSwap;
+use App\Models\UserPrePlan;
+use App\Models\SportGame;
 
 class PlanController extends Controller
 {
@@ -71,8 +67,26 @@ class PlanController extends Controller
             ]);
         }
 
-    return view('front.pages.plan-details', compact('userPlans', 'plan', 'user'));
-}
+
+        $userPrePlan = $user->userPrePlans()->first();
+
+        $sportGame = null;
+
+        if ($userPrePlan && $userPrePlan->occupation) {
+            $sportGame = SportGame::with('categories')
+                            ->where('name', $userPrePlan->occupation)
+                            ->first();
+        }
+
+        $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
+        $sportImagePath = null;
+        if ($category) {
+            $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+        }
+
+
+        return view('front.pages.plan-details', compact('userPlans', 'plan', 'user', 'sportImagePath'));
+    }
 
     public function mealTimeDetails(Request $request, $id, $plan_id)
     {
@@ -486,7 +500,7 @@ class PlanController extends Controller
                 'message' => 'All swaps applied successfully!',
             ]);
         } catch (\Exception $e) {
-          
+        
             \DB::rollBack();
 
             return response()->json([
@@ -498,10 +512,6 @@ class PlanController extends Controller
 
     public function generatePdf(Request $request, $id)
     {
-        // Fetch the plan with its related data using eager loading
-        // $plan = Plan::with([
-        //     'mealTimes.categories.subcategories.meals.items.swapItems',  // Load related data
-        // ])->findOrFail($id);
         $plan = Plan::find($id);
         $groupedData = json_decode($request->grouped_data, true); // ← decoded as associative array
 
@@ -521,9 +531,7 @@ class PlanController extends Controller
                 ->sortBy(fn($mt) => $mt->category->order ?? 0)
                 ->values(); // reindex
         });
-        // Pass the plan data to the Blade view for rendering the PDF
-        // $pdf = PDF::loadView('front.plan-pdf', compact('userPlans'));
-        // $pdf->setOption('enable-local-file-access', true);
+       
         $pdf = Pdf::loadView('front.plan-pdf', compact('userPlans', 'groupedData'))
         ->setPaper('A4', 'portrait'); // Set page size and layout
 
