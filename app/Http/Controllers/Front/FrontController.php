@@ -1050,7 +1050,7 @@ class FrontController extends Controller
 
         // Send email with sport-specific nutrition info
         Mail::to($request->email)->send(new SportInterestMail($interest));
-        Mail::to('kerry@performancehealthsupport.com')->send(new SportInterestMailAdmin($interest));
+        Mail::to(config('constants.admin_email'))->send(new SportInterestMailAdmin($interest));
         // Mail::to('kartikvadhaiya6656@gmail.com')->send(new SportInterestMailAdmin($interest));
 
         return response()->json(['message' => 'Thank you! We will send you relevant nutrition information.'], 200);

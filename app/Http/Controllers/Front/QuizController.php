@@ -138,7 +138,7 @@ class QuizController extends Controller
                             }
                         }
                     
-                        \App\Models\QuizAnswer::create([
+                        QuizAnswer::create([
                             'quiz_id'        => $quiz->id,
                             'form_slug'      => $formSlug,
                             'question'       => $questionText,
@@ -188,7 +188,7 @@ class QuizController extends Controller
                         // Log tracking for each question with percentage correct
                         $click = ActivityTracker::click('quiz_question_answer', null);
 
-                        \App\Services\ActivityTracker::log(\App\Models\TrackingType::QUIZ_QUESTION_ANSWER, null, [
+                        ActivityTracker::log(\App\Models\TrackingType::QUIZ_QUESTION_ANSWER, null, [
                             'user_click_id' => $click->id,
                             'section_element_id' => $click->section_element_id,
                             'quiz_id' => $quiz->id,
@@ -276,8 +276,8 @@ class QuizController extends Controller
                 
             try {
                 $user = User::find($request->user_id);
-                // $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
-                $adminEmail = 'kartikvadhaiya6656@gmail.com'; // Set admin email address
+                $adminEmail = config('constants.admin_email'); // Set admin email address
+                // $adminEmail = 'kartikvadhaiya6656@gmail.com'; // Set admin email address
                 Mail::to($adminEmail)->send(new \App\Mail\QuizSubmittedMail($user, $quiz));
 
                 Mail::to($user->email)->send(new \App\Mail\FreeTestResultMail($user, $quiz));

@@ -777,7 +777,7 @@ class PlanController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $click = \App\Services\ActivityTracker::click('button_meal_smart_swap', $request->user_id);
+        $click = ActivityTracker::click('button_meal_smart_swap', $request->user_id);
 
         ActivityTracker::log(TrackingType::PRODUCT_SWAP, $request->user_id, [
             'section_element_id' => $click->section_element_id,
