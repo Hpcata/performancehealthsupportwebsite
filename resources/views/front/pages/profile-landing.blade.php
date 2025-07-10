@@ -30,7 +30,7 @@
         <section class="training-plan">
             <div class="section-header">
                 <h2>{{ $userPlan->plan->name }}</h2>
-                <a href="/training-plan" class="see-all">See all</a>
+                <a href="{{ route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]) }}" class="see-all">See Plan</a>
             </div>
 
             {{-- Tabs --}}
