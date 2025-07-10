@@ -1494,19 +1494,31 @@ class FrontController extends Controller
 
     public function getProfile(Request $request, $userId)
     {
-        $payment = Payment::where('user_id', $userId)->first();
+        try {
+            $payment = Payment::where('user_id', $userId)->first();
 
-        if(!$payment) {
-            return redirect()->back()->with('error', 'Plan not purchased.');
-        }
+            if (!$payment) {
+                return redirect()->back()->with('error', 'Plan not purchased.');
+            }
 
-        $userPlan = UserPlan::with('plan', 
-            'userCategories.userSubCategories.userMeals.userItems')
-            ->where('user_id', $userId) // Ensure user_id is always applied
+            $userPlan = UserPlan::with([
+                'plan',
+                'userCategories.userSubCategories.userMeals.userItems'
+            ])
+            ->where('user_id', $userId)
             ->first();
 
-        return view('front.pages.profile-landing', compact('userPlan'));
+            return view('front.pages.profile-landing', compact('userPlan'));
+            
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error fetching user profile: ' . $e->getMessage());
+
+            // Redirect back with a generic error message
+            return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
+        }
     }
+
 
     public function getMeals($planId, $categoryId)
     {

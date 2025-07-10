@@ -34,7 +34,12 @@ $auth = auth()->guard('web')->check();
                 <div class="dropdown-content">
                     <a href="/billing">Billing</a>
                     <a href="/subscription">Subscription</a>
-                    <a href="/logout">Logout</a>
+                    <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    <a class="dropdown-item text-danger p-2" href="#" onclick="handleLogout(event)">
+                        Logout
+                    </a>
                 </div>
             </div>
             <span class="nav-item">Main website</span>
