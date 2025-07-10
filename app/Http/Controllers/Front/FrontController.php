@@ -36,6 +36,7 @@ use GrahamCampbell\ResultType\Success;
 use App\Mail\SportInterestMailAdmin;
 use Illuminate\Support\Facades\Validator;
 use App\Models\SportCategory;
+use App\Models\SportGame;
 
 class FrontController extends Controller
 {
@@ -173,7 +174,6 @@ class FrontController extends Controller
     // Handle Login Request
     public function login(Request $request)
     {
-        // dd($request->all());
         // Validate the email and password
         $validated = $request->validate([
             'email' => 'required|email',

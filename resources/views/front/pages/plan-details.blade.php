@@ -4,7 +4,12 @@
 @section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-
+<style>
+    .hero-background {
+        background-image: url('{{ webAssets("storage/". $sportImagePath) }}') !important ;
+        background-size:cover;background-position:center;background-repeat:no-repeat;height:100%
+    }
+</style>
 <main class="main">
     <!-- Hero Banner -->
     <div class="hero-container">
@@ -29,7 +34,7 @@
         <div class="action-buttons">
             <button class="btn btn-share">
                 <img
-                    src="images/share-icon.svg"
+                    src="{{ frontAssets('images/images/share-icon.svg') }}"
                     alt="share-icon"
                     class="share-icon" />
                 Share

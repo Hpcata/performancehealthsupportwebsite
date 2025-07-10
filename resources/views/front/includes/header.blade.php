@@ -6,7 +6,7 @@ $auth = auth()->guard('web')->check();
 
 @if (Route::is('front.profile') || Route::is('front.plans.details'))
 <header class="mobile-header">
-    <img src="images/logo (1) 1.svg" alt="2LS Logo" class="mobile-logo-img" width="120" height="40" />
+    <img src="{{ frontAssets('images/logo (1) 1.svg') }}" alt="2LS Logo" class="mobile-logo-img" width="120" height="40" />
     <button class="mobile-menu-open" aria-label="Open mobile menu" onclick="toggleMobileMenu()">
         <i class="fas fa-bars" aria-hidden="true"></i>
     </button>
