@@ -345,6 +345,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/delete-report', [FrontController::class, 'deleteReport'])->name('front.delete.report');
 
 	Route::get('/user/{user}/plan/{plan}/meals', [FrontPlanController::class, 'ajaxGetMeals'])->name('user.plan.meals');
+	Route::post('/track/click', [FrontPlanController::class, 'trackClick'])->name('front.track.click');
 	Route::get('/get-meals/{plan}/{category}', [FrontController::class, 'getMeals'])->name('front.get-profile-meals');
 
 });
