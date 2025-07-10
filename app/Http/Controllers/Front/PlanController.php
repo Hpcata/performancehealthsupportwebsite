@@ -68,7 +68,7 @@ class PlanController extends Controller
     }
     // dd($userPlans->toArray());
 
-    return view('front.plan-details', compact('userPlans', 'plan', 'user'));
+    return view('front.pages.plan-details', compact('userPlans', 'plan', 'user'));
 }
 
     public function mealTimeDetails(Request $request, $id, $plan_id)
