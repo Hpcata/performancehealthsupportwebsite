@@ -60,18 +60,19 @@
         .food-label{
             font-weight:normal !important;
         }
+
     </style>
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                 <div class="d-flex align-items-center flex-wrap">
                     <h3 class="fw-bold mb-0 me-3">{{ 'Create Plan' }}</h3>
                     <h3 class="fw-bold mb-0" style="">({{ $payment->user->name }})</h3>
                 </div>
-                <div class="col-auto d-flex w-sm-100">
-                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}" >View User Details</a>
-                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task w-sm-100 back-button">Back</a>
+                <div class="">
+                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}" >View User Details</a>
+                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task back-button">Back</a>
                 </div>
             </div>
         </div>
@@ -131,7 +132,7 @@
                                                         <label for="mealItems{{$plan->id}}_{{$mealTime->id}}" class="form-label">Add Meal</label>
                                                         <select name="selected_meals[{{$plan->id}}][{{$mealTime->id}}][]" 
                                                                 id="mealItems{{$plan->id}}_{{$mealTime->id}}" 
-                                                                class="form-select meal-items-select select2" 
+                                                                class="form-select meal-items-select select2 form-control " 
                                                                 multiple>
                                                         </select>
                                                     </div>

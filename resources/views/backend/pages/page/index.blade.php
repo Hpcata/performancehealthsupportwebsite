@@ -18,9 +18,9 @@
     @endif
 	<div class="row align-items-center">
 		<div class="border-0 mb-4">
-			<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+			<div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
 				<h3 class="fw-bold mb-0">Pages List</h3>
-				<a href="{!! route('pages.create') !!}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Page</a>
+				<a href="{!! route('pages.create') !!}" class="btn btn-primary py-2 px-2 btn-set-task"><i class="icofont-plus-circle me-2 fs-6"></i> Add Page</a>
 			</div>
 		</div>
 	</div> <!-- Row end  -->
@@ -43,13 +43,13 @@
                                     <td>{{ $page->id }}</td>
                                     <td>{{ $page->title }}</td>
                                     <td>{{ $page->slug }}</td>
-                                    <td>
-                                        <a href="{{ route('pages.edit', $page) }}" class="btn btn-warning">Edit</a>
-                                        <a href="{{ route('sections.index', $page) }}" class="btn btn-secondary">Manage Sections</a>
+                                    <td class="d-flex flex-md-row flex-column gap-2">
+                                        <a href="{{ route('pages.edit', $page) }}" class="btn btn-warning text-white w-fit">Edit</a>
+                                        <a href="{{ route('sections.index', $page) }}" class="btn btn-secondary text-white w-fit">Manage Sections</a>
                                         <form action="{{ route('pages.destroy', $page) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                            <button type="submit" class="btn btn-danger text-white w-fit">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

@@ -11,7 +11,7 @@
 	<div class="container-xxl">
         <div class="row align-items-center">
             <div class="border-0 mb-4">
-                <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                     <h3 class="fw-bold mb-0">{{ __('General Setting') }}</h3>
                 </div>
             </div>
@@ -46,13 +46,13 @@
                                     <textarea class="form-control header_topnotification" name="general[topnotification]" id="header_topnotification">{{isset($settings['header']['topnotification']) && $settings['header']['topnotification'] ? $settings['header']['topnotification'] : ''}}</textarea>
                                 </div>
 
-                                <div class="col-md-12">
-                                    <label for="site-logo" class="form-label">Header Menu</label>
+                                <div class="col-md-12 border-md-top border-none pt-md-0 pt-3">
+                                   
 
                                     <div id="header-menu-div">
-                                        <div class="row">
-                                            <div class="col-md-11"></div>
-                                            <div class="col-md-1 text-end">
+                                        <div class="mb-5 d-flex justify-content-between">
+                                             <label for="site-logo" class="form-label w-fit">Header Menu</label>
+                                            <div class="">
                                                 <a class="btn btn-outline-primary add-header-menu">
                                                     <i class="icofont-plus"></i>
                                                 </a>
@@ -64,7 +64,7 @@
                                                 $count = 0;
                                             @endphp
                                             @foreach($settings['header']['headermenu'] as $key => $menu)
-                                                <div class="row g-3 align-items-center header-menu-row-section-div pb-4">
+                                                <div class="row g-3 align-items-center header-menu-row-section-div pb-4 drag-section">
                                                     <div class="col-md-1 text-end drag-btn">
                                                         <h4><i class="bi bi-grip-vertical"></i></h4>
                                                     </div>

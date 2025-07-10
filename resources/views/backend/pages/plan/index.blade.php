@@ -19,9 +19,9 @@
 
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                 <h3 class="fw-bold mb-0">Plans List</h3>
-                <a href="{{ route('admin.plans.create') }}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Plan</a>
+                <a href="{{ route('admin.plans.create') }}" class="btn btn-primary py-2 px-2 btn-set-task"><i class="icofont-plus-circle me-2 fs-6"></i> Add Plan</a>
             </div>
         </div>
     </div>
@@ -56,11 +56,11 @@
                                     </td> 
                                     <td>{{ ($plan->user) ? $plan->user->name : '' }}</td>
                                     <td>
-                                        <a href="{{ route('admin.plans.edit', $plan) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{{ route('admin.plans.edit', $plan) }}" class="btn btn-warning btn-sm text-white">Edit</a>
                                         <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                            <button type="submit" class="btn btn-danger btn-sm text-white" onclick="return confirm('Are you sure?')">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

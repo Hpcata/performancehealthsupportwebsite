@@ -7,7 +7,7 @@
 <div class="container-xxl">
 	<div class="row align-items-center">
 		<div class="border-0 mb-4">
-			<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+			<div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
 				<h3 class="fw-bold mb-0">Associations</h3>
 			</div>
 		</div>
