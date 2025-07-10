@@ -22,7 +22,7 @@
                 
                 <div class="mt-2 mealtime-btn-list">
                     <ul class="">
-                       @if($userPlan->userCategories->where('user_plan_id', $userPlan->id)->count() > 0)
+                        @if($userPlan->userCategories->where('user_plan_id', $userPlan->id)->count() > 0)
                             {{-- ❶  Keep only one UserCategory per category‑id --}}
                             @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
 
