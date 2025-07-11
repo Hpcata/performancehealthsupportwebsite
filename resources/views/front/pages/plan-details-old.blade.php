@@ -79,7 +79,6 @@
     </div> -->
     <div class="section pt-md-3">
     @foreach ($userPlans as $userPlan)
-        @php  //dd($userPlan->userCategories); @endphp
         <div class="container mb-5">
             <div class="row g-4">
                 @foreach ($userPlan->userCategories as $userCategory)
@@ -659,7 +658,7 @@
                                     </div>
                                     <div class="me-3 ingredient-img">
                                         <figure>
-                                            <img src="{{ asset('private/public/storage') }}/${item.image || ''}" alt="">
+                                            <img src="{{ webAssets('storage') }}/${item.image || ''}" alt="">
                                         </figure>
                                     </div>
                                     <div class="flex-grow-1">

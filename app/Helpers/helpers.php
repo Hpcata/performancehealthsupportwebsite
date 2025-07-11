@@ -34,14 +34,20 @@ function backendRoutePut($key, $args = []) {
 }
 
 function frontAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/front/' . $path : 'front/' . $path;
+	$asset = config('constant.ENVIRONMENT') == 'production' ? 'front/' . $path : 'front/' . $path;
 	return asset($asset);
 }
 
 function webAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/' . $path : 'public/' . $path;
+	$asset = config('constant.ENVIRONMENT') == 'production' ? '' . $path : 'public/' . $path;
 	return asset($asset);
 }
+
+function customAssets($path) {
+	$asset = config('constant.ENVIRONMENT') == 'production' ? '' . $path : 'public/' . $path;
+	return asset($asset);
+}
+
 
 function adminAssets($path) {
 	$asset = config('constant.ENVIRONMENT') == 'production' ? 'public/admin/' . $path : 'admin/' . $path;
@@ -117,4 +123,16 @@ function cleanDecimal($value)
     }
 
     return is_numeric($cleaned) ? (float) $cleaned : 0;
+}
+
+function getAdminProfileImage()
+{
+    $admin = \Auth::guard('admin')->user();
+
+    if ($admin && !empty($admin->profile_image)) {
+        return asset($admin->profile_image);
+    }
+
+    // Default fallback image
+    return 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg';
 }

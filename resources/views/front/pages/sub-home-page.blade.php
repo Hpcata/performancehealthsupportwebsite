@@ -96,7 +96,7 @@
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->type == 'section-1' && $section->enabled == 1)
-                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(private/public/front/images/hero-img-03.webp);">
+                <div class="section nutrition-page-banner pt-md-5" style="background-image: url('{{ frontAssets('images/hero-img-03.webp') }}');">
                     <div class="container">
                         <div class="text-center">
                             <h1 class="text-white mt-md-3">Sports Nutrition Plans</h1>
@@ -138,7 +138,7 @@
         @endforeach 
     @endif
 
-    <div class="section find-spot-row" style="background-image: url(private/public/front/images/female-athlete.webp);">
+    <div class="section find-spot-row" style="background-image: url('{{ frontAssets('images/hero-img-03.webp') }}');">
         <div class="container">
             <div class="h1 text-center text-white">Find Your Sport</div>
             <div class="spot-search">
@@ -210,7 +210,7 @@
                             <div class="spot-plan-img-box">
                                 <figure>
                                     @if($plan->image)
-                                    <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="">
+                                    <img src="{{ webAssets('storage/' . $plan->image) }}" alt="">
                                     @else
                                     <img src="{!! frontAssets('images/about-new.webp') !!}" alt="">
                                     @endif

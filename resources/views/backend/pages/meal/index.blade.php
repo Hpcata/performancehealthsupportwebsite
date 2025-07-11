@@ -19,9 +19,9 @@
 
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                 <h3 class="fw-bold mb-0">Meal List</h3>
-                <a href="{{ route('admin.meals.create') }}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100">
+                <a href="{{ route('admin.meals.create') }}" class="btn btn-primary py-2 px-2 btn-set-task">
                     <i class="icofont-plus-circle me-2 fs-6"></i> Add Meal
                 </a>
             </div>
@@ -35,7 +35,7 @@
 
                     <!-- 🔹 Category Filter Dropdown -->
                     <div class="row mb-3">
-                        <div class="col-md-12 d-flex justify-content-end align-items-center">
+                        <div class="col-md-12 d-flex justify-content-end align-items-center mob-border-bottom">
                             <label for="categoryFilter" class="form-label mb-0 me-2">Filter by Sub Category:</label>
                             <select id="categoryFilter" class="form-control w-auto">
                                 <option value="">All Sub Categories</option>
@@ -94,7 +94,7 @@
                     data: "image",
                     render: function (data) {
                         return data
-                            ? `<img src="{{ asset('private/public/storage/') }}/${data}" width="50"/>`
+                            ? `<img src="{{ webAssets('storage/') }}/${data}" width="50"/>`
                             : '<span class="text-muted">No Image</span>';
                     }
                 },

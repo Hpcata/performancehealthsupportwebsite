@@ -35,7 +35,10 @@ use Carbon\Carbon;
 use GrahamCampbell\ResultType\Success;
 use App\Mail\SportInterestMailAdmin;
 use Illuminate\Support\Facades\Validator;
+use App\Services\ActivityTracker;
+use App\Models\TrackingType;
 use App\Models\SportCategory;
+use App\Models\SportGame;
 
 class FrontController extends Controller
 {
@@ -59,7 +62,7 @@ class FrontController extends Controller
        
         $organization = [];
         $testimonials = [];
-        return view('front.index', compact('requirements','disabledDay','organization','testimonials'));
+        return view('front.pages.index', compact('requirements','disabledDay','organization','testimonials'));
     }
 
     public function save(QueryRequest $request)
@@ -88,7 +91,7 @@ class FrontController extends Controller
     public function blog()
     {
         $blogs = \App\Models\Blog::where('is_published', 1)->get();
-        return view('front.blog', compact('blogs'));
+        return view('front.pages.blog', compact('blogs'));
     }
 
     public function blogDetails($id)
@@ -105,7 +108,7 @@ class FrontController extends Controller
             $query->whereIn('tags.id', $blog->tags->pluck('id'));
         })->where('id', '!=', $blog->id)->limit(5)->get();
 
-        return view('front.blog-details', compact('blog', 'relatedBlogs'));
+        return view('front.pages.blog-details', compact('blog', 'relatedBlogs'));
     }
 
     public function subHomePage()
@@ -128,7 +131,7 @@ class FrontController extends Controller
         $isAuthenticated = Auth::check(); // Returns true if the user is logged in
         $sportCategories = SportCategory::all();
 
-        return view('front.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated', 'sportCategories'));
+        return view('front.pages.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated', 'sportCategories'));
     }
 
     public function register(Request $request)
@@ -163,6 +166,12 @@ class FrontController extends Controller
             'password' => Hash::make($request->input('password')), // Hashed password of the admin user.
         ]);
 
+        ActivityTracker::log(
+            TrackingType::ACCOUNT_CREATED,
+            $user->id,
+            ['email' => $user->email]
+        );
+
         return response()->json([
             'success' => true,
             'message' => 'Registration successful. Please login.',
@@ -173,7 +182,6 @@ class FrontController extends Controller
     // Handle Login Request
     public function login(Request $request)
     {
-        // dd($request->all());
         // Validate the email and password
         $validated = $request->validate([
             'email' => 'required|email',
@@ -197,6 +205,15 @@ class FrontController extends Controller
                         // if($freeTest) {
                         //     \Mail::to($validated['email'])->send(new \App\Mail\FreeTestResultMail($user));
                         // }
+                        $click = ActivityTracker::click('user_logged_in', $user->id);
+
+                        // Log in trackings with click reference
+                        ActivityTracker::log(TrackingType::USER_LOGGED_IN, $user->id, [
+                            'user_click_id' => $click->id,
+                            'section_element_id' => $click->section_element_id,
+                            'user_id' => $user->id,
+                            'login_time' => now()->toDateTimeString(),
+                        ]);
                         return response()->json([
                             'success' => true,
                             'redirect_url' => $redirectUrl,
@@ -236,11 +253,22 @@ class FrontController extends Controller
     {
         // Only logout from web guard (frontend)
         if (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user(); // ✅ Define $user before using
+
+            // Log the click and tracking BEFORE logout
+            $click = ActivityTracker::click('link_logged_out', $user->id);
+
+            ActivityTracker::log(TrackingType::USER_LOGGED_OUT, $user->id, [
+                'user_click_id' => $click->id,
+                'section_element_id' => $click->section_element_id,
+                'logout_time' => now()->toDateTimeString(),
+            ]);
+
             Auth::guard('web')->logout();
-            
+
             // Invalidate only the web session
             $request->session()->forget('web');
-            
+
             // Regenerate CSRF token
             $request->session()->regenerateToken();
 
@@ -262,7 +290,7 @@ class FrontController extends Controller
                 'last_name' => $user->last_name,
                 'email' => $user->email,
                 'phone' => $user->phone,
-                'profile_image' => $user->profile_image ? asset('private/public/'.$user->profile_image) : null,
+                'profile_image' => $user->profile_image ? webAssets($user->profile_image) : null,
             ]);
 
         } else {
@@ -406,7 +434,7 @@ class FrontController extends Controller
 
             $adminView = $request->input('admin_view') == 1 ? true : false;
             
-            return view ('front.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan', 'payment', 'profileSetUp', 'adminView'));
+            return view ('front.pages.profile', compact('user', 'purchasedplans', 'plans', 'preplanDetails', 'profileDetails', 'nutritionGoalsDetails', 'intakeDetails', 'trainingIntencity','reports','userPrePlan', 'payment', 'profileSetUp', 'adminView'));
         }
     }
 
@@ -432,10 +460,13 @@ class FrontController extends Controller
             ], 422);
         }
 
+        $sectionElement = null;
         if ($request->filled('name')) {
             $user->name = $request->name;
             $user->first_name = explode(' ', $request->name)[0] ?? ('');
             $user->last_name = explode(' ', $request->name)[1] ?? ('');
+
+            $sectionElement = 'update_profile_name';
         }
 
         if ($request->hasFile('profile_image')) {
@@ -458,11 +489,21 @@ class FrontController extends Controller
         
             // Save the new profile image path in the database
             $user->profile_image = $filePath;
+
+            $sectionElement = 'update_profile_image';
         }
 
         // Save the user
         $user->save();
 
+        $click = ActivityTracker::click($sectionElement, $user->id);
+
+        // Log in trackings with click reference
+        ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $user->id, [
+            'user_click_id' => $click->id,
+            'section_element_id' => $click->section_element_id,
+        ]);
+        
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully!',
@@ -486,8 +527,8 @@ class FrontController extends Controller
         $preplan = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
             $query->where('form_slug', 'physical_measures');
         }])->where('user_id', $id)->first();
-        return view('front.competition-plan.index', compact('userPlans', 'user'));
 
+        return view('front.pages.competition-plan.index', compact('userPlans', 'user'));
     }
 
     public function getAllMeals(Request $request)
@@ -621,7 +662,6 @@ class FrontController extends Controller
 
         // Return success response
         return response()->json(['success' => true, 'message' => 'Test data submitted successfully']);
-    
     }
 
     private function getFeedbackMessage($score, $category)
@@ -736,7 +776,38 @@ class FrontController extends Controller
                 }
             }
 
-            // Coupon is valid
+            if ($coupon->type === 'percentage' && $coupon->value == 100.00) {
+                $discount = 'full';
+                $sectionElement = 'coupon_full_discount';
+                $couponType = TrackingType::FREE_PLAN_COUPON;
+            } elseif ($coupon->type === 'percentage') {
+                $discount = $coupon->value / 100;
+                $sectionElement = 'coupon_percentage_discount';
+                $couponType = TrackingType::COUPON_APPLIED;
+            } elseif ($coupon->type === 'fixed') {
+                $discount = $coupon->value;
+                $sectionElement = 'coupon_fixed_discount';
+                $couponType = TrackingType::COUPON_APPLIED;
+            }
+
+            $user = Auth::guard('web')->user();
+            $userId = null;
+
+            if($user) {
+                $userId = $user->id;
+            }
+
+            $click = ActivityTracker::click($sectionElement, $userId);
+
+            ActivityTracker::log($couponType, $userId, [
+                'user_click_id' => $click->id,
+                'section_element_id' => $click->section_element_id,
+                'coupon_code' => $promoCode,
+                'coupon_id' => $coupon->id,
+                'discount' => $discount,
+                'plan_id' => $planId,
+            ]);
+
             return response()->json([
                 'valid' => true,
                 'type' => $coupon->type,
@@ -744,7 +815,6 @@ class FrontController extends Controller
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            
             return response()->json([
                 'valid' => false,
                 'message' => 'Validation failed.',
@@ -767,13 +837,11 @@ class FrontController extends Controller
     public function fetchWeightData(Request $request)
     {
         $userId = $request->user_id;
-        // Fetch physical measure weight from pre plan details
         $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
             $query->where('form_slug', 'physical_measures')
                 ->where('question', 'Current body weight (kg) (if known):');
         }])->where('user_id', $userId)->first();
 
-        // Extract the answer if available
         $prePlanWeight = optional($physicalMeasures->prePlanDetails->first())->answer ?? null;
 
         $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
@@ -781,12 +849,11 @@ class FrontController extends Controller
                 ->where('question', 'Current body weight (kg) (if known):');
         }])->where('user_id', $userId)->first();
 
-        // Extract the answer if available
         $prePlanWeight = optional($physicalMeasures->prePlanDetails->first())->answer ?? null;
 
         $weightData = WeightTracking::where('user_id', $userId)
             ->latest('date')
-            ->first(['weight', 'weight_goal', 'date']); // Fetch the latest entry
+            ->first(['weight', 'weight_goal', 'date']);
        
         return response()->json([
             'latest_weight_tracking' => $weightData,
@@ -802,13 +869,11 @@ class FrontController extends Controller
             'user_id' => 'required|integer',
         ]);
 
-       // Check for an existing record
         $existingRecord = WeightTracking::where('user_id', $request->user_id)
         ->where('date', $request->date)
         ->first();
 
         if ($existingRecord) {
-            // Update the existing record
             $existingRecord->update([
                 'weight' => $request->weight,
                 'weight_goal' => $request->weight_goal,
@@ -817,7 +882,6 @@ class FrontController extends Controller
             return response()->json(['success' => true, 'message' => 'Weight updated successfully']);
 
         } else {
-            // Create a new record if none exists
             WeightTracking::create([
                 'user_id' => $request->user_id,
                 'weight' => $request->weight,
@@ -827,6 +891,17 @@ class FrontController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Weight recorded successfully']);
         }
+
+        $click = ActivityTracker::click('button_save_profile_weight', $request->user_id);
+
+        ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+            'user_click_id' => $click->id,
+            'section_element_id' => $click->section_element_id,
+            'weight' => $request->weight,
+            'weight_goal' => $request->weight_goal,
+            'date' => $request->date,
+            'user_id' => $request->user_id,
+        ]);
     }
 
     public function fetchWeights(Request $request)
@@ -972,7 +1047,7 @@ class FrontController extends Controller
 
         // Send email with sport-specific nutrition info
         Mail::to($request->email)->send(new SportInterestMail($interest));
-        Mail::to('kerry@performancehealthsupport.com')->send(new SportInterestMailAdmin($interest));
+        Mail::to(config('constants.admin_email'))->send(new SportInterestMailAdmin($interest));
         // Mail::to('kartikvadhaiya6656@gmail.com')->send(new SportInterestMailAdmin($interest));
 
         return response()->json(['message' => 'Thank you! We will send you relevant nutrition information.'], 200);
@@ -989,7 +1064,7 @@ class FrontController extends Controller
         }
 
         // $intakeDetails = array_merge($intakeDetails, $diateryDetail);
-        return view('front.sample-plan', compact('page', 'isAuthenticated'));
+        return view('front.pages.sample-plan', compact('page', 'isAuthenticated'));
     }
 
     public function updateSamplePlanDetails(Request $request)
@@ -1046,6 +1121,28 @@ class FrontController extends Controller
                     'start_date' => implode(', ', $startDates),
                     'end_date' => implode(', ', $endDates)
                 ]);
+
+                if($type == 'supplement-edit') {
+                    $sectionElement = 'button_update_supplement';
+                } elseif($type == 'medication-edit') {
+                    $sectionElement = 'button_update_medications';
+                }
+                $click = ActivityTracker::click($sectionElement, $request->user_id);
+
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                    'user_click_id' => $click->id,
+                    'section_element_id' => $click->section_element_id,
+                    'type' => $type,
+                    'question' => $question,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'main_ans' => $mainAns,
+                    'form_name' => $formName,
+                    'payment_id' => $payment->id,
+                    'user_pre_plan_id' => $prePlan->id,
+                    'user_id' => $request->user_id,
+                ]);
+                
             }elseif ($type == 'supplement' || $type == 'medication') {
                
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
@@ -1095,10 +1192,46 @@ class FrontController extends Controller
                     'start_date' => implode(', ', $startDates),
                     'end_date' => implode(', ', $endDates)
                 ]);
+
+                if($type == 'supplement') {
+                    $sectionElement = 'button_save_supplement';
+                } elseif($type == 'medication') {
+                    $sectionElement = 'button_save_medications';
+                }
+                $click = ActivityTracker::click($sectionElement, $request->user_id);
+
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                    'user_click_id' => $click->id,
+                    'section_element_id' => $click->section_element_id,
+                    'type' => $type,
+                    'question' => $question,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'answer' => $answer,
+                    'form_name' => $formName,
+                    'payment_id' => $payment->id,
+                    'user_pre_plan_id' => $prePlan->id,
+                    'user_id' => $request->user_id,
+                ]);
             }elseif ($type == 'height') {
                 
                 $prePlanDetail->update([
                     'answer' => json_encode($answer),
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
+                ]);
+                $click = ActivityTracker::click('button_update_height', $request->user_id);
+
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                    'user_click_id' => $click->id,
+                    'section_element_id' => $click->section_element_id,
+                    'type' => $type,
+                    'question' => $question,
+                    'answer' => $answer,
+                    'form_name' => $formName,
+                    'payment_id' => $payment->id,
+                    'user_pre_plan_id' => $prePlan->id,
+                    'user_id' => $request->user_id,
                     'start_date' => $startDate,
                     'end_date' => $endDate
                 ]);
@@ -1117,6 +1250,22 @@ class FrontController extends Controller
                 'answer' => json_encode($answer),
                 'start_date' => $startDate,
                 'end_date' => $endDate   
+            ]);
+
+            $click = ActivityTracker::click('button_save_nutrition_goal', $request->user_id);
+
+            ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                'user_click_id' => $click->id,
+                'section_element_id' => $click->section_element_id,
+                'type' => $type,
+                'question' => $question,
+                'answer' => $answer,
+                'form_name' => 'nutrition_goals',
+                'payment_id' => $payment->id,
+                'user_pre_plan_id' => $userPrePlan->id,
+                'user_id' => $request->user_id,
+                'start_date' => $startDate,
+                'end_date' => $endDate
             ]);
         }
        
@@ -1168,6 +1317,24 @@ class FrontController extends Controller
                 'answer' => json_encode($answer),
             ]);
         }
+
+        if($type == 'goal') {
+            $sectionElement = 'button_save_nutrition_goals';
+        } else {
+            $sectionElement = 'button_save_nutrition_challenges';
+        }
+
+        $click = ActivityTracker::click($sectionElement, $request->user_id);
+
+        ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+            'user_click_id' => $click->id,
+            'section_element_id' => $click->section_element_id,
+            'type' => $type,
+            'question' => $question,
+            'answer' => json_encode($answer),
+            'date' => $request->date,
+            'user_id' => $request->user_id,
+        ]);
 
         return response()->json(['success' => true, 'message' => ucfirst($type) . ' updated successfully']);
     }
@@ -1487,6 +1654,58 @@ class FrontController extends Controller
             'message' => 'Sport updated successfully!',
             'userPrePlan' => $userPrePlan,
         ]);
+    }
+
+    public function getProfile(Request $request, $userId)
+    {
+        try {
+            $payment = Payment::where('user_id', $userId)->first();
+
+            if (!$payment) {
+                return redirect()->back()->with('error', 'Plan not purchased.');
+            }
+
+            $userPlan = UserPlan::with([
+                'plan',
+                'userCategories.userSubCategories.userMeals.userItems'
+            ])
+            ->where('user_id', $userId)
+            ->first();
+
+            return view('front.pages.profile-landing', compact('userPlan'));
+            
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error fetching user profile: ' . $e->getMessage());
+
+            // Redirect back with a generic error message
+            return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
+        }
+    }
+
+
+    public function getMeals($planId, $categoryId)
+    {
+        $userCategory = \App\Models\UserCategory::where('user_plan_id', $planId)
+            ->where('id', $categoryId)
+            ->first();
+
+        if (!$userCategory) {
+            return '<p>No meals found.</p>';
+        }
+
+        $meals = [];
+
+        foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
+            foreach ($subCategory->userMeals->where('user_plan_id', $planId) as $meal) {
+                if (count($meals) < 3) {
+                    $meals[] = $meal;
+                }
+            }
+            if (count($meals) >= 3) break;
+        }
+
+        return view('front.pages.partials.meal-cards', compact('meals'))->render();
     }
 
 }

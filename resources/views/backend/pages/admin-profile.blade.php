@@ -18,11 +18,11 @@
     <div class="container-xxl">
         <div class="row align-items-center">
             <div class="border-0 mb-4">
-                <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                     <h3 class="fw-bold mb-0">My Profile <a href="" style="font-size: 17px"></a></h3>
-                    <div class="col-auto d-flex w-sm-100">
-                        <a type="button" href="{{ route('dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
-                    </div>
+                   
+                        <a type="button" href="{{ route('dashboard') }}" class="btn btn-primary btn-set-task">Back</a>&nbsp;
+                   
                 </div>
             </div>
         </div>
@@ -79,11 +79,11 @@
                                                     <label for="profile_image" class="form-label">Profile Image</label>
                                                     <input type="file" class="form-control" name="profile_image" value="{{ old('profile_image', $adminUser->profile_image ?? '') }}"  id="profile_image" accept="image/*">
                                                     <img class="avatar lg rounded-circle img-thumbnail"
-                                                    src="{{ $adminUser->profile_image ? asset('private/public/' .$adminUser->profile_image) : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}"
+                                                    src="{{ $adminUser->profile_image ? getAdminProfileImage() : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}"
                                                     alt="profile">
                                                     <!-- Conditionally show the Remove Image button -->
                                                     @if (!empty($adminUser->profile_image))
-                                                    <a type="button" href="{{ route('remove-profile-image', $adminUser->id) }}" class="btn btn-primary btn-set-task w-sm-100">Remove Image</a>
+                                                    <a type="button" href="{{ route('remove-profile-image', $adminUser->id) }}" class="btn btn-primary btn-set-task">Remove Image</a>
                                                     @endif
                                                 </div>
                                             </div>
@@ -193,7 +193,7 @@
                                                     src="{{ $adminUser->front_logo ? asset($adminUser->front_logo) : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}"
                                                     alt="profile">
                                                     @if (!empty($adminUser->front_logo))
-                                                    <a type="button" href="{{ route('remove-front-logo', $adminUser->id) }}" class="btn btn-primary btn-set-task w-sm-100">Remove Image</a>
+                                                    <a type="button" href="{{ route('remove-front-logo', $adminUser->id) }}" class="btn btn-primary btn-set-task">Remove Image</a>
                                                     @endif
                                                 </div>
                                                 <div class="col-md-6">
@@ -203,7 +203,7 @@
                                                     src="{{ $adminUser->about_us_image ? asset($adminUser->about_us_image) : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}"
                                                     alt="profile">
                                                     @if (!empty($adminUser->about_us_image))
-                                                    <a type="button" href="{{ route('remove-aboutus-image', $adminUser->id) }}" class="btn btn-primary btn-set-task w-sm-100">Remove Image</a>
+                                                    <a type="button" href="{{ route('remove-aboutus-image', $adminUser->id) }}" class="btn btn-primary btn-set-task">Remove Image</a>
                                                     @endif
                                                 </div>
                                                 <div class="col-md-6">

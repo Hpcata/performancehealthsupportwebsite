@@ -4,7 +4,7 @@
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                 <h3 class="fw-bold">{{ isset($category) ? 'Edit Sport Category' : 'Create Sport Category' }}</h3>
                 <div class="col-auto">
                     <a href="{{ route('admin.sports-categories.index') }}" class="btn btn-primary">Back</a>

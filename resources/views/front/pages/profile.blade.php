@@ -111,7 +111,7 @@
                             <div class="nutrition-athlete-box">
                                 <figure>
                                     @if(isset($user->profile_image))
-                                    <img src="{{ asset('private/public/' .$user->profile_image) }}">
+                                    <img src="{{ webAssets($user->profile_image) }}">
                                     @else
                                     <img src="{{ frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
                                     @endif
@@ -165,7 +165,7 @@
                                     @endif
                                 </figure>
                                 <button class="btn btn-light edit-icon edit-profile-image" data-bs-target="#editImageModal"
-                                    data-form-name="profile_image" data-question="Profile Image" data-answer="{{ asset('private/public/storage/' . (isset($profileDetails) ? $profileDetails['Profile Image'] : '')) }}">
+                                    data-form-name="profile_image" data-question="Profile Image" data-answer="{{ webAssets('storage/' . (isset($profileDetails) ? $profileDetails['Profile Image'] : '')) }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <div class="card border-0 shadow-none">
@@ -738,7 +738,7 @@
                         @method('PUT')
                         <div class="mb-3 text-center">
                             @if(isset($user->profile_image))
-                                <img id="imagePreview" src="{{ asset('private/public/'.$user->profile_image) }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
+                                <img id="imagePreview" src="{{ webAssets($user->profile_image) }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                             @endif
                         </div>
                         <div class="mb-3">
@@ -1177,7 +1177,7 @@
     <!-- Edit Sport Modal -->
     <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" action="{{ route('profile.update.sport') }}" enctype="multipart/form-data">
+            <form method="POST" action="#" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1359,44 +1359,6 @@
         });
     });
 
-    $('#saveSportBtn').on('click', function () {
-        let formData = new FormData();
-        formData.append('sport', $('#sport_name').val());
-        formData.append('user_id', $('#sport_user_id').val());
-        formData.append('payment_id', $('#payment_id').val());
-        // formData.append('user_id', $('#sport_user_id').val());
-
-        let sportImage = $('#sport_image')[0].files[0];
-        if (sportImage) {
-            formData.append('sport_image', sportImage);
-        }
-
-        $.ajax({
-            url: '{{ route("profile.update.sport") }}',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert(response.message);
-                    $('#editSportModal').modal('hide');
-                    // Optionally, update the DOM with new values
-                    location.reload(); // or update DOM instead of full reload
-                } else {
-                    alert('Something went wrong!');
-                }
-            },
-            error: function (xhr) {
-                console.error(xhr.responseJSON);
-                alert('Validation failed or server error!');
-            }
-        });
-    });
-
     $('#editHeightForm').on('submit', function (e) {
         e.preventDefault();
         
@@ -1550,7 +1512,7 @@
                                     </div>
                                     <div class="me-3 ingredient-img">
                                         <figure>
-                                            <img src="{{ asset('private/public/storage') }}/${item.image || ''}" alt="">
+                                            <img src="{{ webAssets('storage') }}/${item.image || ''}" alt="">
                                         </figure>
                                     </div>
                                     <div class="flex-grow-1">
