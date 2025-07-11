@@ -59,8 +59,8 @@
                 @endforeach
             </div>
 
-            <div class="tab-content">
-                <div class="meal-cards" id="meal-cards-wrapper">
+            <div class="tab-content challenges">
+                <div class="challenge-cards" id="meal-cards-wrapper">
                     <p>Loading meals...</p>
                 </div>
             </div>
@@ -242,7 +242,7 @@
                             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
                             class="consult-avatar"
                             alt="Kerry O'Bryan, expert coach avatar" />
-                        <span>Kerry O'Bryan • 60 min</span>
+                        <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
                     </div>
                     <button class="btn-consult">Book consult</button>
                 </div>
@@ -257,6 +257,10 @@
                         <img
                             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
                             class="consult-avatar"
+                            alt="Kerry O'Bryan, expert coach avatar" />
+                             <img
+                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                            class="consult-avatar overlap1"
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <span>21 meals • 18 Nutrition tips</span>
                     </div>
@@ -275,6 +279,10 @@
                         <img
                             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
                             class="consult-avatar"
+                            alt="Kerry O'Bryan, expert coach avatar" />
+                              <img
+                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                            class="consult-avatar overlap1"
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <span>21 meals • 18 Nutrition tips</span>
                     </div>
@@ -315,7 +323,7 @@
                                 class="channel-avatar" />
                             <div class="channel-name">
                                 <div class="channel-name-main">
-                                    <label>surfboard_co</label>
+                                     <label class="insta-handle-name">surfboard_co</label>
                                     <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
                                 </div>
                                 <label>Turnstile . LIGHT DESIGN</label>
@@ -326,8 +334,10 @@
                                 Learn about the best surfboard techniques for beginners and
                                 pros alike.
                             </p>
-                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="32" height="32" />
-                            <span class="likes">345 likes</span>
+                          <div class="insta-like-wrapper">
+                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;"/>
+                            <span class="likes">892 likes</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -359,7 +369,7 @@
                                 class="channel-avatar" />
                             <div class="channel-name">
                                 <div class="channel-name-main">
-                                    <label>surfboard_co</label>
+                                    <label class="insta-handle-name">surfboard_co</label>
                                     <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
                                 </div>
                                 <label>Turnstile . LIGHT DESIGN</label>
@@ -370,8 +380,10 @@
                                 Learn about the best surfboard techniques for beginners and
                                 pros alike.
                             </p>
-                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="32" height="32" />
-                            <span class="likes">567 likes</span>
+                           <div class="insta-like-wrapper">
+                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;"/>
+                            <span class="likes">892 likes</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -403,7 +415,7 @@
                                 class="channel-avatar" />
                             <div class="channel-name">
                                 <div class="channel-name-main">
-                                    <label>surfboard_co</label>
+                                    <label class="insta-handle-name">surfboard_co</label>
                                     <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
                                 </div>
                                 <label>Turnstile . LIGHT DESIGN</label>
@@ -414,8 +426,10 @@
                                 Learn about the best surfboard techniques for beginners and
                                 pros alike.
                             </p>
-                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="32" height="32" />
+                            <div class="insta-like-wrapper">
+                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;"/>
                             <span class="likes">892 likes</span>
+                            </div>
                         </div>
                     </div>
                 </div>
