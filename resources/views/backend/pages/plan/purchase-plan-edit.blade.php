@@ -79,11 +79,20 @@
     .food-label{
         font-weight:normal !important;
     }
+         .form-control-multiple {
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    cursor: text;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    height: 38px;
+}
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex  px-0 justify-content-between border-bottom flex-md-row flex-column align-items-md-center align-items-start ps-md-0 ps-3">
                 <!-- Left Section: Title -->
                 <div class="d-flex align-items-center flex-wrap">
                     <h3 class="fw-bold mb-0 me-3">Edit Plan</h3>
@@ -92,14 +101,14 @@
                 @php
                     $firstPlan = $userPlans->first(); // ✅ works
                 @endphp
-                <div class="form-check form-switch me-3">
+                <div class="form-check form-switch me-3 mt-md-0 mt-2">
                     <label class="form-check-label" for="nutritionToggle">Nutrition Info</label>
                     <input class="form-check-input" type="checkbox" id="nutritionToggle" name="nutrition_info" value="1"         data-payment-id="{{ $payment->id }}" {{ $firstPlan->nutrition_info_flag ? 'checked' : '' }}>
                 </div>
                 <!-- Right Section: Buttons -->
-                <div class="col-auto d-flex w-sm-100 mt-2 mt-sm-0">
-                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}">View User Details</a>
-                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
+                <div class="col-auto d-flex mt-2 mt-sm-0">
+                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task me-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}">View User Details</a>
+                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task">Back</a>
                 </div>
             </div>
 
@@ -113,7 +122,7 @@
                         @csrf
                         @method('PUT')
                         <div class="row">
-                            <div class="panel-group col-8" id="accordion">
+                            <div class="panel-group col-md-8" id="accordion">
                                 @foreach ($userPlans as $userPlan)
                                 <?php 
                                 $plan = $userPlan->plan; ?>
@@ -165,7 +174,7 @@
                                                             <label for="mealItems{{$plan->id}}_{{$mealTime->id}}" class="form-label">Add Meal</label>
                                                             <select name="selected_meals[{{$plan->id}}][{{$mealTime->id}}][]"
                                                                 id="mealItems{{$plan->id}}_{{$mealTime->id}}"
-                                                                class="form-select meal-items-select select2"
+                                                                class="form-select meal-items-select select2 form-control-multiple"
                                                                 multiple style="width:100%">
 
                                                             </select>
@@ -188,7 +197,7 @@
                                 </div>
                                 @endforeach
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4">
                                 <div style="max-height: 90vh; overflow-y: auto; overflow-x: hidden; border: 1px solid #ddd; padding: 10px; border-radius: 8px; position: sticky; top:15px;">
                                     <h4>Food Prefrences</h4>
                                     <span class="">
@@ -305,7 +314,7 @@
                             </div>
                         </div>
                         <!-- Submit Button -->
-                        <div class="pull-right">
+                        <div class="pull-right-bot px-md-3 ">
                             <p>Last Updated: {{ isset($activity->updated_at) ? $activity->updated_at->format('d-m-Y H:i:s') : '' }} by {{ isset($activity->user) ? $activity->user->name : '' }}</p>
                         </div>
 
@@ -317,7 +326,7 @@
                         @endphp
 
 
-                        <div class="">
+                        <div class="my-5 d-flex flex-wrap flex-md-nowrap gap-3">
                             <button type="submit" class="btn btn-primary">Update</button>
                             <button type="submit" class="btn btn-success" name="action" value="save_exit">Update & Exit</button>
                             <!-- <button type="button" class="btn btn-success view-user-profile" data-user-id="{{ $payment->user_id }}">View User Profile</button> -->
@@ -3255,7 +3264,6 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            // console.log(currentItemRow);
             currentItemRow.find('td:nth-child(2)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');

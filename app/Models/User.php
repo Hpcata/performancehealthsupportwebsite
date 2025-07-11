@@ -147,4 +147,10 @@ class User extends Authenticatable
     {
         return $this->is_superadmin;  // Assuming 'is_superadmin' is a boolean column in the users table
     }
+
+    public function userPrePlans()
+    {
+        return $this->hasMany(UserPrePlan::class);
+    }
+
 }

@@ -11,11 +11,11 @@
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                 <h3 class="fw-bold mb-0">Edit Blog</h3>
-                <div class="col-auto d-flex w-sm-100">
-                    <a type="button" href="{{ route('dashboard') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
-                </div>
+                
+                    <a type="button" href="{{ route('dashboard') }}" class="btn btn-primary btn-set-task">Back</a>&nbsp;
+               
             </div>
         </div>
     </div>
