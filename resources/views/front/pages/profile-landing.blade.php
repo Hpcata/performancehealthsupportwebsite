@@ -249,10 +249,13 @@
             </div>
             <div class="consults-plans-grid">
                 <div class="plan-card-custom plan-competition">
+                     <div class="">
                     <div class="plan-title">Competition Plan</div>
                     <div class="plan-desc">
                         Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
                     </div>
+                    </div>
+                    <div class="">
                     <div class="consult-user-row">
                         <img
                             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
@@ -269,6 +272,7 @@
                 tips
               </div> -->
                     <button class="btn-consult">Learn more</button>
+                    </div>
                 </div>
                 <div class="plan-card-custom plan-injury">
                     <div class="plan-title">Injury</div>
