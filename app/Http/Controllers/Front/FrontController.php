@@ -486,7 +486,6 @@ class FrontController extends Controller
         $preplan = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
             $query->where('form_slug', 'physical_measures');
         }])->where('user_id', $id)->first();
-        //    dd($preplan->prePlanDetails);
         return view('front.competition-plan.index', compact('userPlans', 'user'));
 
     }
@@ -654,9 +653,7 @@ class FrontController extends Controller
 
     public function updateFoodQuantity(Request $request)
     {
-        // dd($request->all());
-        $userItem = \App\Models\UserItem::where('id', $request->user_item_id)
-                                ->first();
+        $userItem = \App\Models\UserItem::where('id', $request->user_item_id)->first();
 
         $userItem->qty = $request->qty;
         $userItem->save();
