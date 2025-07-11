@@ -42,9 +42,11 @@
 										<input type="file" class="form-control" name="logo" id="club-logo" accept="image/*,image/webp">
 										@include('backend.layouts.error', ['field' => 'logo'])
 									</div>
-									<div class="col-md-6 @if (!isset($club) && !$club->logo) d-none @endif" id="preview-div">
+									<div class="col-md-6 @if (!isset($club) || !$club->logo) d-none @endif" id="preview-div">
 										<label for="status" class="form-label">Preview</label>
-										<img src="{{ isset($club) ? asset('storage/' . $club->logo) : '' }}" alt="club-logo" class="form-control img-fluid @if (!isset($club) && !$club->logo) d-none @endif" id="preview" width="200" style="width: 200px !important;">
+										
+										<img src="{{ isset($club) ? asset('storage/' . isset($club->logo) ? $club->logo : '') : '' }}" alt="club-logo" class="form-control img-fluid @if (!isset($club) || !$club->logo) d-none @endif" id="preview" width="200" style="width: 200px !important;">
+										
 									</div>
 								</div>
 							</div>
