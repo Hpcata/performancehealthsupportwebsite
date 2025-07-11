@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Database\Seeders\CouponSeeder;
 use Database\Seeders\FoodCategorySeeder;
+use Database\Seeders\TrackingTypesSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,6 +19,9 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         $this->call(CouponSeeder::class);
         $this->call(FoodCategorySeeder::class);
+        $this->call([
+            TrackingTypesSeeder::class,
+        ]);
 
     }
 }

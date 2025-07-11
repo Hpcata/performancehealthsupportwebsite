@@ -3264,7 +3264,6 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            // console.log(currentItemRow);
             currentItemRow.find('td:nth-child(2)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');
