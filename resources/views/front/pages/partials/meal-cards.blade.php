@@ -1,6 +1,6 @@
 @if(count($meals) > 0)
     @foreach($meals as $meal)
-        <div class="meal-card">
+        <div class="challenge-card">
             <img
                 src="{{ frontAssets('images/' . ($meal->meal->image ?? 'food1.webp')) }}"
                 alt="{{ $meal->meal->title ?? 'Meal' }}"
