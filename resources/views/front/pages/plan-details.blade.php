@@ -81,7 +81,7 @@
                                     @foreach ($meals as $meal)
                                         <div class="challenge-card clickable">
                                             <img
-                                                src="{{ frontAssets('images/food1.webp') }}"
+                                                src="{{ webAssets('storage/' . ($meal->meal->image ?? 'food1.webp')) }}"
                                                 alt="{{ $meal->meal->title }}"
                                                 height="252"
                                                 width="160" />

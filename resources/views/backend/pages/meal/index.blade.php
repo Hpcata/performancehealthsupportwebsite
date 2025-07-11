@@ -94,7 +94,7 @@
                     data: "image",
                     render: function (data) {
                         return data
-                            ? `<img src="{{ asset('private/public/storage/') }}/${data}" width="50"/>`
+                            ? `<img src="{{ webAssets('storage/') }}/${data}" width="50"/>`
                             : '<span class="text-muted">No Image</span>';
                     }
                 },

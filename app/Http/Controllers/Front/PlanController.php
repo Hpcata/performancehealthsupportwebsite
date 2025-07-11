@@ -747,7 +747,7 @@ class PlanController extends Controller
                             'title'       => $meal->title,
                             'description' => $meal->description,
                             'image_url'   => $meal && $meal->image
-                                ? asset('private/public/storage/' . $meal->image)
+                                ? webAssets('storage/' . $meal->image)
                                 : 'https://via.placeholder.com/300x200?text=No+Image',
                         ];
                     })

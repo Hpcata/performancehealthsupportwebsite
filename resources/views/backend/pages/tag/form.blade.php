@@ -34,7 +34,7 @@
                             </div>
                             @if(isset($tag) && $tag->icon)
                                 <div class="mt-2">
-                                    <img src="{{ asset('private/public/storage/' . $tag->icon) }}" alt="Tag Icon" style="max-height: 50px;">
+                                    <img src="{{ webAssets('storage/' . $tag->icon) }}" alt="Tag Icon" style="max-height: 50px;">
                                 </div>
                             @endif
                             <!-- Tag Icon Field -->

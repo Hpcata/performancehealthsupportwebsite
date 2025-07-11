@@ -3473,7 +3473,7 @@
                         const selected = response.items.find(item => item.id == swapItemId);
                         if (!selected) return;
 
-                        const imageUrl = selected.image ? `{{ asset('private/public/storage/') }}/${selected.image}` : '';
+                        const imageUrl = selected.image ? `{{ webAssets('storage/') }}/${selected.image}` : '';
 
                         const option = new Option(selected.title, selected.id, true, true);
                         $(option)
@@ -3768,7 +3768,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -3928,7 +3928,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -4246,7 +4246,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -4559,7 +4559,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -5019,7 +5019,7 @@
                             foodSearchResults.show();
                             if (response.items.length > 0) {
                                 response.items.forEach(item => {
-                                    const imagePath = item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : 'https://via.placeholder.com/50';
+                                    const imagePath = item.image ? `{{ webAssets('storage/') }}/${item.image}` : 'https://via.placeholder.com/50';
                                     const row = `
                                         <tr>
                                             <td>${item.title}</td>

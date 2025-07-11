@@ -81,7 +81,7 @@
 
                                 @if (isset($plan) && $plan->image)
                                     <div class="mt-2">
-                                        <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="Plan Image" width="100">
+                                        <img src="{{ webAssets('storage/' . $plan->image) }}" alt="Plan Image" width="100">
                                     </div>
                                 @endif
                             </div>

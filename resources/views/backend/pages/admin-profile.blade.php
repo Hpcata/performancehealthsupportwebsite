@@ -79,7 +79,7 @@
                                                     <label for="profile_image" class="form-label">Profile Image</label>
                                                     <input type="file" class="form-control" name="profile_image" value="{{ old('profile_image', $adminUser->profile_image ?? '') }}"  id="profile_image" accept="image/*">
                                                     <img class="avatar lg rounded-circle img-thumbnail"
-                                                    src="{{ $adminUser->profile_image ? asset('private/public/' .$adminUser->profile_image) : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}"
+                                                    src="{{ $adminUser->profile_image ? getAdminProfileImage() : 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg' }}"
                                                     alt="profile">
                                                     <!-- Conditionally show the Remove Image button -->
                                                     @if (!empty($adminUser->profile_image))

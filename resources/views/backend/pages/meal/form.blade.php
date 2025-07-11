@@ -277,7 +277,7 @@
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                                 @if (isset($meal) && $meal->image)
-                                <img src="{{ asset('private/public/storage/' . $meal->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;" id="existing-meal-image">
+                                <img src="{{ webAssets('storage/' . $meal->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;" id="existing-meal-image">
                                 @endif
                             </div>
                             <div class="col-md-12">

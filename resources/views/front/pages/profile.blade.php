@@ -111,7 +111,7 @@
                             <div class="nutrition-athlete-box">
                                 <figure>
                                     @if(isset($user->profile_image))
-                                    <img src="{{ asset('private/public/' .$user->profile_image) }}">
+                                    <img src="{{ webAssets($user->profile_image) }}">
                                     @else
                                     <img src="{{ frontAssets('images/profile-image.jpeg') }}" alt="Profile Image">
                                     @endif
@@ -165,7 +165,7 @@
                                     @endif
                                 </figure>
                                 <button class="btn btn-light edit-icon edit-profile-image" data-bs-target="#editImageModal"
-                                    data-form-name="profile_image" data-question="Profile Image" data-answer="{{ asset('private/public/storage/' . (isset($profileDetails) ? $profileDetails['Profile Image'] : '')) }}">
+                                    data-form-name="profile_image" data-question="Profile Image" data-answer="{{ webAssets('storage/' . (isset($profileDetails) ? $profileDetails['Profile Image'] : '')) }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <div class="card border-0 shadow-none">
@@ -738,7 +738,7 @@
                         @method('PUT')
                         <div class="mb-3 text-center">
                             @if(isset($user->profile_image))
-                                <img id="imagePreview" src="{{ asset('private/public/'.$user->profile_image) }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
+                                <img id="imagePreview" src="{{ webAssets($user->profile_image) }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                             @endif
                         </div>
                         <div class="mb-3">
@@ -1512,7 +1512,7 @@
                                     </div>
                                     <div class="me-3 ingredient-img">
                                         <figure>
-                                            <img src="{{ asset('private/public/storage') }}/${item.image || ''}" alt="">
+                                            <img src="{{ webAssets('storage') }}/${item.image || ''}" alt="">
                                         </figure>
                                     </div>
                                     <div class="flex-grow-1">

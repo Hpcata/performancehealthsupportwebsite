@@ -221,7 +221,7 @@ td.child li .dtr-data span{
                                 id: item.id,
                                 text: item.title,
                                 image: item.image
-                                    ? `{{ asset('private/public/storage') }}/${item.image}`
+                                    ? `{{ webAssets('storage') }}/${item.image}`
                                     : '{{ asset("default.png") }}'
                             }))
                     };

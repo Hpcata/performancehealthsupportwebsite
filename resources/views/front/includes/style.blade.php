@@ -3,7 +3,6 @@
 <!-- Preconnect for Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <!-- Non-blocking Font Awesome -->
 <link
@@ -33,6 +32,9 @@
 </noscript>
 <link rel="preload" as="image" href="{{ frontAssets('images/food1.webp') }}" type="image/webp">
 <link rel="preload" as="image" href="{{ frontAssets('images/logo.webp') }}" type="image/webp">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 @else
 <!-- Existing code style -->
 <!-- Fallback for browsers that don't support preload -->
