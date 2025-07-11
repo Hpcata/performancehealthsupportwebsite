@@ -14,7 +14,8 @@ html {
     min-height: 100%;
 }
 body {
-    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, sans-serif;
     background-color: #f8fafc;
     color: #1e293b;
     line-height: 1.6;
@@ -181,13 +182,46 @@ body {
     font-size: 0.9rem;
 }
 .welcome-section .profile-info .profile-avatar-container .profile-popover,
-.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content,
-.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content .popover-actions,
-.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content .popover-actions button,
-.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content .popover-avatar,
-.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content h3,
-.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content p,
-.welcome-section .profile-info .profile-avatar-container:hover .profile-popover {
+.welcome-section
+    .profile-info
+    .profile-avatar-container
+    .profile-popover
+    .popover-content,
+.welcome-section
+    .profile-info
+    .profile-avatar-container
+    .profile-popover
+    .popover-content
+    .popover-actions,
+.welcome-section
+    .profile-info
+    .profile-avatar-container
+    .profile-popover
+    .popover-content
+    .popover-actions
+    button,
+.welcome-section
+    .profile-info
+    .profile-avatar-container
+    .profile-popover
+    .popover-content
+    .popover-avatar,
+.welcome-section
+    .profile-info
+    .profile-avatar-container
+    .profile-popover
+    .popover-content
+    h3,
+.welcome-section
+    .profile-info
+    .profile-avatar-container
+    .profile-popover
+    .popover-content
+    p,
+.welcome-section
+    .profile-info
+    .profile-avatar-container:hover
+    .profile-popover {
     display: none !important;
 }
 .section-header {
@@ -359,7 +393,12 @@ body {
     color: #626262;
     font-size: 0.7rem;
 }
-.resources .resources-grid .resource-card.video-card .card-content .video-meta i {
+.resources
+    .resources-grid
+    .resource-card.video-card
+    .card-content
+    .video-meta
+    i {
     font-size: 0.6rem;
 }
 .resources .resources-grid .supplement-scanner {
@@ -486,8 +525,7 @@ body {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-        display: flex
-;
+    display: flex;
     flex-direction: column;
 }
 .surfing-videos .video-grid .video-card .video-thumbnail img {
@@ -543,13 +581,26 @@ body {
     justify-content: start;
     align-items: start;
 }
-.surfing-videos .video-grid .video-card .video-info .top .channel-name .channel-name-main {
+.surfing-videos
+    .video-grid
+    .video-card
+    .video-info
+    .top
+    .channel-name
+    .channel-name-main {
     display: flex;
     justify-content: start;
     align-items: center;
     gap: 4px;
 }
-.surfing-videos .video-grid .video-card .video-info .top .channel-name .channel-name-main img {
+.surfing-videos
+    .video-grid
+    .video-card
+    .video-info
+    .top
+    .channel-name
+    .channel-name-main
+    img {
     width: 16px;
 }
 .surfing-videos .video-grid .video-card .video-info .top .channel-name label {
@@ -585,7 +636,7 @@ body {
     font-weight: 600;
     font-size: 14px;
 }
-.insta-like-wrapper{
+.insta-like-wrapper {
     display: flex;
     align-items: center;
     gap: 3px;
@@ -661,7 +712,8 @@ body {
 }
 .welcome-card,
 .welcome-card * {
-    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        sans-serif !important;
 }
 .welcome-message {
     background: linear-gradient(45deg, #d3e6fd 0, #f5faff 100%);
@@ -699,11 +751,11 @@ body {
 .profile-avatar-overlap {
     position: absolute;
     left: 0;
-    bottom: -89px;
+    bottom: -95px;
     width: 78px;
     height: 78px;
     object-fit: cover;
-        box-shadow: 0px 1.6px 6.4px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 1.6px 6.4px rgba(0, 0, 0, 0.15);
     border-radius: 50%;
 }
 .welcome-arrow {
@@ -880,7 +932,7 @@ body {
     object-fit: cover;
 }
 .consult-avatar.overlap1 {
-       position: absolute;
+    position: absolute;
     left: 10%;
 }
 .btn-consult {
@@ -1259,7 +1311,7 @@ body {
 .select-wrapper.open .select-arrow {
     transform: translateY(-50%) rotate(180deg);
 }
-.insta-handle-name{
+.insta-handle-name {
     font-size: 14px !important;
     font-weight: 600 !important;
 }
@@ -1386,7 +1438,7 @@ body {
         margin: 0;
     }
     .welcome-arrow {
-clip-path: polygon(0 0, 100% 0, 100% 0, 53% 100%, 53% 100%, 37% 40%);
+        clip-path: polygon(0 0, 100% 0, 100% 0, 53% 100%, 53% 100%, 37% 40%);
         width: 30px;
         height: 6px;
         left: 10px;
@@ -1422,58 +1474,60 @@ clip-path: polygon(0 0, 100% 0, 100% 0, 53% 100%, 53% 100%, 37% 40%);
     }
 }
 @media (max-width: 600px) {
-
-
+    .profile-avatar-overlap {
+        bottom: -89px;
+    }
 
     .consult-user-row span {
+        padding-left: 22px;
+    }
+    .surfing-videos .video-grid .video-card {
+        flex-direction: row;
+    }
+    .video-card .video-player {
+        width: 156px;
+        height: 145px;
+    }
+    .surfing-videos .video-grid .video-card .video-thumbnail img {
+        width: 156px;
+        height: 145px;
+    }
+    .surfing-videos .video-grid .video-card .video-thumbnail .insta-text {
+        top: 70%;
+        left: 50%;
 
-    padding-left: 22px;
-}
-.surfing-videos .video-grid .video-card {
-    flex-direction: row;
-}
-.video-card .video-player{
-width: 156px;
- height: 145px;
-}
-    .surfing-videos .video-grid .video-card .video-thumbnail img
- {
-    width: 156px;
-    height: 145px;
-}
-.surfing-videos .video-grid .video-card .video-thumbnail .insta-text {
-
-    top: 70%;
-    left: 50%;
- 
-    font-size: 9px;
-    font-weight: 700;
-
-}
-.surfing-videos .video-grid .video-card .video-thumbnail .play-btn {
-    width: 38px;
-    height: 38px;
-  
-}
-.video-card .truncate-one-line {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 170px;
-    display: block;
-}
-.surfing-videos .video-grid .video-card .video-info .top .channel-name label {
-    font-size: 9px;
-    color: #626262;
-    font-weight: 400;
-}
-.footer .footer-content .footer-nav a{
-    font-size: 13px;
-    font-weight: 400;
-}
-.footer .footer-bottom p {
-       font-size: 10px;
-    font-weight: 500;
+        font-size: 9px;
+        font-weight: 700;
+    }
+    .surfing-videos .video-grid .video-card .video-thumbnail .play-btn {
+        width: 38px;
+        height: 38px;
+    }
+    .video-card .truncate-one-line {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 170px;
+        display: block;
+    }
+    .surfing-videos
+        .video-grid
+        .video-card
+        .video-info
+        .top
+        .channel-name
+        label {
+        font-size: 9px;
+        color: #626262;
+        font-weight: 400;
+    }
+    .footer .footer-content .footer-nav a {
+        font-size: 13px;
+        font-weight: 400;
+    }
+    .footer .footer-bottom p {
+        font-size: 10px;
+        font-weight: 500;
     }
     .meals .meal-cards,
     .challenges .challenge-cards,
@@ -1506,7 +1560,7 @@ width: 156px;
     }
     .consults-plans-grid {
         grid-template-rows: auto auto auto;
-                display: flex !important
+        display: flex !important
 ;
         flex-direction: row;
         overflow-x: auto;
@@ -1515,20 +1569,18 @@ width: 156px;
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
     }
-    .plan-card-custom{
-           min-width: 290px;
+    .plan-card-custom {
+        min-width: 290px;
         max-width: 290px;
         flex: 0 0 290px;
         scroll-snap-align: start;
         padding: 12px;
-        }
-    .resources-custom-grid
-   {
+    }
+    .resources-custom-grid {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
     }
-      .consults-plans-grid.grid-1
-   {
+    .consults-plans-grid.grid-1 {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
     }
@@ -1536,8 +1588,8 @@ width: 156px;
         grid-template-columns: 1fr;
         grid-template-rows: auto;
     }
-    .resource-tip{
-         grid-column: span 2;
+    .resource-tip {
+        grid-column: span 2;
     }
     .welcome-card {
         max-width: 100%;
@@ -1549,7 +1601,7 @@ width: 156px;
         border-radius: 0;
     }
     .welcome-arrow {
-              margin-left: 13px;
+        margin-left: 13px;
         border-left: 16px solid #fff0;
         border-right: 18px solid #fff0;
         border-bottom: 18px solid #d3e6fd;
