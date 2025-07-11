@@ -45,14 +45,15 @@
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-md-center align-items-start px-0 justify-content-between border-bottom flex-md-row flex-column">
                 <h3 class="fw-bold mb-0">{{ isset($item) ? 'Edit Food' : 'Create Food' }}</h3>
-                <div class="col-auto d-flex w-sm-100">
+                
                     @if (isset($item)) 
-                    <a href="javascript:void(0)" class="btn btn-primary btn-set-task w-sm-100 woolworth-json mx-3" data-json='@json($item->woolworth_json)'> Woolworths Json</a>
+                    <a href="javascript:void(0)" class="btn btn-primary btn-set-task woolworth-json mx-3" data-json='@json($item->woolworth_json)'> Woolworths Json</a>
                     @endif
-                    <a href="{{ route('woolworths-product-search') }}" class="btn btn-primary btn-set-task w-sm-100">Search Woolworths Shop</a>
-                    <a href="{{ route('admin.items.index') }}" class="btn btn-primary btn-set-task w-sm-100 mx-3">Back</a>
+                    <div class="col-auto d-flex">
+                    <a href="{{ route('woolworths-product-search') }}" class="btn btn-primary btn-set-task">Search Woolworths Shop</a>
+                    <a href="{{ route('admin.items.index') }}" class="btn btn-primary btn-set-task mx-3">Back</a>
                 </div>
             </div>
         </div>
@@ -145,8 +146,8 @@
                                 @enderror
                             </div>
                         --}}
-                            <div class="mb-3 d-flex align-items-center gap-2 justify-content-between">
-                                <div class="d-flex align-items-center gap-2">
+                            <div class="mb-3 d-flex align-items-start align-items-md-center flex-md-row flex-column gap-2 justify-content-between">
+                                <div class="d-flex align-items-md-center align-items-start gap-2">
                                     <input type="checkbox" 
                                         id="lockCheckbox" 
                                         name="is_locked" 
@@ -157,12 +158,12 @@
                                     <label for="lockCheckbox" id="lockLabel" class="form-label mb-0">
                                         {{ isset($item) ? ($item->is_locked == 1 ? 'Unlock' : 'Lock') : 'Lock' }}
                                     </label>
-                                    <small class="form-text text-muted">
+                                    <small class="form-text text-muted mt-0">
                                         (Lock to prevent editing nutrition info. Unlock to allow changes.)
                                     </small>
                                 </div>
                                 <!-- Right side: Lock icon + Reset button -->
-                                <div class="d-flex align-items-center gap-2 mx-3">
+                                <div class="d-flex align-items-center gap-2 ">
                                     <button type="button" class="btn btn-secondary btn-sm" data-qty="{{ $item->serving_size ?? ''}}" data-unit="{{ $item->serving_size_unit ?? '' }}" data-title="{{ $item->title ?? '' }}" id="resetQty">Reset Qty</button>
                                 </div>
                             </div>
@@ -243,7 +244,7 @@
                                             @endforeach
                                         @else
                                             <!-- Default view if no selected units -->
-                                            <div class="row align-items-center mb-2">
+                                            <div class="row align-items-center mb-2 gap-3">
                                                 {{-- Quantity Column --}}
                                                 <div class="col-md-4">
                                                     <div class="d-flex align-items-center">

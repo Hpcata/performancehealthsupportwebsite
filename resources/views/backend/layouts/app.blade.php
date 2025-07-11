@@ -21,6 +21,24 @@
 			border-color: var(--primary-color) !important;
 			color: #ffffff ;
 		}
+		@media only screen and (max-width: 554px){
+    		.quiz-ques{
+  font-size: 16px;
+}
+     .form-control-multiple {
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    cursor: text;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    height: 38px;
+}
+}
+
+.w-fit{
+  width: max-content !important;
+}
 	</style>
 	<!-- project css file  -->
 	<link rel="stylesheet" href="{!! backendAssets('ebazar.style.min.css') !!}">

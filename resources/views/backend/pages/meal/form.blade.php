@@ -17,16 +17,28 @@
         width: 50px; /* Adjust size */
         height: 50px;
     }
-
+    @media only screen and (max-width: 767px) {
+.col-btn{
+    display: flex;
+    gap:8px;
+    flex-direction: column;
+}
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 26px;
+    position: absolute;
+    top: 8px;
+    right: 1px;
+    width: 20px;
+}
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                 <h3 class="fw-bold mb-0">{{ isset($meal) ? 'Edit Meal' : 'Create Meal' }}</h3>
-                <div class="col-auto d-flex w-sm-100">
-                    <a type="button" href="{{ route('admin.meals.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>&nbsp;
-                </div>
+               
+                    <a type="button" href="{{ route('admin.meals.index') }}" class="btn btn-primary btn-set-task">Back</a>
             </div>
         </div>
     </div>
@@ -180,14 +192,14 @@
                                                                 Fat: {{($item->pivot->fat)}}g
                                                             </p>
                                                         </td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-outline-success edit-food"
+                                                        <td >
+                                                            <button type="button" class="btn btn-outline-success edit-food col-btn"
                                                                 data-carbs="{{$item->pivot->carbs}}"
                                                                 data-protein="{{$item->pivot->protein}}"
                                                                 data-fat="{{$item->pivot->fat}}"
                                                                 data-energy="{{ floatval($item->energy) }}"
                                                                 data-serving-size="{{$item->serving_size}}"
-                                                                data-serving-size-unit="{{$item->serving_size_unit}}">
+                                                                data-serving-size-unit="{{$item->serving_size_unit}}" >
                                                                 <i class="icofont-edit text-success"></i>
                                                             </button>
                                                             <button type="button" class="btn btn-outline-danger remove-food">
@@ -220,10 +232,10 @@
                                                         <p class="food-title-qty mt-2 mb-0"><strong></strong></p>
                                                         <p class="nutrition-info mt-2 mb-0 text-muted">Protein: 0g, Carb: 0g, Fat: 0g</p>
                                                     </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-outline-success edit-food" data-carbs="" data-protein="" data-fat="" data-serving-size="" data-serving-size-unit=""><i class="icofont-edit text-success" ></i>
+                                                    <td class="col-btn">
+                                                        <button type="button" class="btn btn-outline-success edit-food w-fit" data-carbs="" data-protein="" data-fat="" data-serving-size="" data-serving-size-unit=""><i class="icofont-edit text-success" ></i>
                                                         </button>
-                                                        <button type="button" class="btn btn-outline-danger remove-food"><i class="icofont-ui-delete text-danger"></i>
+                                                        <button type="button" class="btn btn-outline-danger remove-food w-fit"><i class="icofont-ui-delete text-danger"></i>
                                                         </button>
                                                     </td>
                                                     <input type="hidden" class="hidden-selected-qty-unit" name="selected_qty_unit[]" value="">
