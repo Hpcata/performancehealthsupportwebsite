@@ -60,7 +60,7 @@ class TestimonialController extends Controller
             if (isset($response) && count($response)) {
                 foreach ($response as $key => $_response) {
                     $testimonialImage = $_response->media_name ? $_response->path . '/' . $_response->media_name : config('constant.DEFAULT_IMAGE_PATH');
-                    $response[$key]['testimonial_image'] = env('APP_URL') . '/v2/storage/app/public/' . ($testimonialImage);
+                    $response[$key]['testimonial_image'] = webAssets('/storage' . ($testimonialImage));
                     $response[$key]['action'] = '<a href="' . route('testimonials.edit', $this->urlService->encodeId($_response->id)) . '" class="btn btn-outline-secondary"><i class="icofont-edit text-success"></i></a>&nbsp;<a class="btn btn-outline-secondary deleterow" data-id=' . $this->urlService->encodeId($_response->id) . '><i class="icofont-ui-delete text-danger"></i></a>';
                 }
             }
