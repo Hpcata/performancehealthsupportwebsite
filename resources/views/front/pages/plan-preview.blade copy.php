@@ -109,7 +109,7 @@
         @foreach($userPlans as $userPlan)
             <div class="header">
                 @if($userPlan->user_id == 66)
-                    <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
+                    <img src="{{ webAssets('front/images/plan-67.png') }}" alt="Sport Image">
                 @else
                     <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
                 @endif
@@ -157,7 +157,7 @@
                                     @foreach ($sortedMeals as $userMeal)
                                         <tr>
                                             <td>
-                                                <img src="{{ url('private/public/storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
+                                                <img src="{{ webAssets('storage/'.$userMeal->meal->image) ?? '' }}" alt="Meal image">
                                             </td>
                                             <td>
                                                 {{ $userMeal->meal->title }}
@@ -287,7 +287,7 @@
             @if ($selectedMealTimes)
                 <div class="header">
                     @if($userPlan->user_id == 66)
-                        <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
+                        <img src="{{ webAssets('front/images/plan-67.png') }}" alt="Sport Image">
                     @else
                         <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
                     @endif
@@ -318,7 +318,7 @@
                                                 @if (in_array($userMeal->id, $selectedMeals))
                                                     <tr>
                                                         <td>
-                                                            <img src="{{ url('private/public/storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
+                                                            <img src="{{ webAssets('storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
                                                         </td>
                                                         <td>
                                                             {{ $userMeal->meal->title }}

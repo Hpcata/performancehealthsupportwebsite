@@ -46,7 +46,7 @@
                         <td>{{ $category->order }}</td>
                         <td>
                             @if ($category->image)
-                                <img src="{{ asset('private/public/storage/' . $category->image) }}" alt="Meal Time Image" style="max-height: 50px;">
+                                <img src="{{ webAssets('storage/' . $category->image) }}" alt="Meal Time Image" style="max-height: 50px;">
                             @endif
                         </td>
                         <td>

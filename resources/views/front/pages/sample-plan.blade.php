@@ -83,8 +83,8 @@
                         </div>
                         <div class="nutrition-plan-img">
                             <figure>
-                                <!-- <img src="https://performancehealthsupport.com/private/public/front/images/Healthy-food-spread-pic.jpg" alt=""> -->
-                                <img src="https://performancehealthsupport.com/private/public/front/images/iStock_Healthy-food-diversity-1.jpg" alt="">
+                                <!-- <img src="https://performancehealthsupport.com/images/Healthy-food-spread-pic.jpg" alt=""> -->
+                                <img src="https://performancehealthsupport.com/images/iStock_Healthy-food-diversity-1.jpg" alt="">
                             </figure>
                         </div>
                     </div>
@@ -102,7 +102,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/create-profile-img-01.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/create-profile-img-01.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/goal-img-01.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/goal-img-01.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/intake-img-01.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/intake-img-01.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -174,7 +174,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/food-preferences-img-001.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/food-preferences-img-001.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -196,7 +196,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/your-purchased-plan-0001.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/your-purchased-plan-0001.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -218,7 +218,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/customise-your-plan-01.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/customise-your-plan-01.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -240,7 +240,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/select-shopping-list-001.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/select-shopping-list-001.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -262,7 +262,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/print-shopping-list-001.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/print-shopping-list-001.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -285,7 +285,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/print-your-summery-plan-002.jpeg') }}" alt="">
+                                    <img src="{{ frontAssets('images/print-your-summery-plan-002.jpeg') }}" alt="">
                                 </figure>
                             </div>
                         </div>
@@ -307,7 +307,7 @@
                         <div class="col-md-7 col-lg-8">
                             <div class="sample-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/front/images/competition-plan-01.png') }}" alt="">
+                                    <img src="{{ frontAssets('images/competition-plan-01.png') }}" alt="">
                                 </figure>
                             </div>
                         </div>

@@ -18,6 +18,18 @@
     object-fit: cover !important;
     margin-right: 8px !important;
 }
+@media only screen and (max-width: 767px) {
+td.child li .dtr-data{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  gap: 5px;
+}
+td.child li .dtr-data span{
+  font-size: 12px;
+}
+}
 </style>
 <div class="container-xxl">
     <!-- Flash Messages -->
@@ -34,9 +46,9 @@
     @endif
 	<div class="row align-items-center">
 		<div class="border-0 mb-4">
-			<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+			<div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
 				<h3 class="fw-bold mb-0">Preferences List</h3>
-				<a href="{!! route('admin.flags.create') !!}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Preferences</a>
+				<a href="{!! route('admin.flags.create') !!}" class="btn btn-primary py-2 px-2 btn-set-task"><i class="icofont-plus-circle me-2 fs-6"></i> Add Preferences</a>
 			</div>
 		</div>
 	</div> <!-- Row end  -->
@@ -58,10 +70,10 @@
                                 <tr>
                                     <td>{{ $flag->id }}</td>
                                     <td>{{ $flag->name }}</td>
-                                    <td>
+                                    <td class="chips">
                                         <!-- Loop through foods and display as badges with remove button -->
                                         @foreach ($flag->items as $item)
-                                            <span class="badge bg-primary me-2 position-relative">
+                                            <span class="badge bg-primary me-2 position-relative w-fit">
                                                 {{ $item->title }}
                                                 <button type="button" class="btn-close btn-remove-food" data-flag-id="{{ $flag->id }}" data-food-id="{{ $item->id }}"     data-url="{{ route('admin.flags.removeFood', ['flag' => $flag->id, 'food' => $item->id]) }}" aria-label="Close"></button>
                                             </span>
@@ -209,7 +221,7 @@
                                 id: item.id,
                                 text: item.title,
                                 image: item.image
-                                    ? `{{ asset('private/public/storage') }}/${item.image}`
+                                    ? `{{ webAssets('storage') }}/${item.image}`
                                     : '{{ asset("default.png") }}'
                             }))
                     };
