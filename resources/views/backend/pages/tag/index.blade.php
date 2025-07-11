@@ -44,7 +44,7 @@
                                     <td>{{ $tag->name }}</td>
                                     <td>
                                         @if($tag->icon)
-                                        <img src="{{ asset('private/public/storage/' . $tag->icon) }}" alt="" width="50">
+                                        <img src="{{ webAssets('storage/' . $tag->icon) }}" alt="" width="50">
                                         @else
                                         <span class="text-muted">No Image</span>
                                         @endif

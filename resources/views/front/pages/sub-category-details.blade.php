@@ -77,7 +77,7 @@
                     <div class="col-md-3">
                         <div class="nutrition-plan-box h-100 d-flex flex-column">
                             <figure>
-                                <img src="{!! asset('private/public/storage/' . $item->subCategory->image) !!} " alt="">
+                                <img src="{!! webAssets('storage/' . $item->subCategory->image) !!} " alt="">
                             </figure>
                             <h5 class="mb-3">{{ $item->subCategory->title }}</h5>
                             <a href="javascript:void(0)" class="btn btn-primary view-details-btn mt-auto" data-sub-category-id="{{ $item->subCategory->id }}" data-user-category-id="{{ $userMealTime->id }}" data-sub-category-name="{{ $item->subCategory->title }}" data-user-plan-id="{{ $userPlan->id }}">View Details</a>
@@ -1377,7 +1377,7 @@
                                     </div>
                                     <div class="me-3 ingredient-img">
                                         <figure>
-                                            <img src="{{ asset('private/public/storage') }}/${item.image || ''}" alt="">
+                                            <img src="{{ webAssets('storage') }}/${item.image || ''}" alt="">
                                         </figure>
                                     </div>
                                     <div class="flex-grow-1">

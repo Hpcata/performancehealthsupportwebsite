@@ -55,7 +55,7 @@
                     </small>
                     <input type="file" name="image" class="form-control" accept="image/*">
                     @if (isset($category) && $category->image)
-                        <img src="{{ asset('private/public/storage/' . $category->image) }}" class="img-thumbnail mt-3" style="max-height: 150px;">
+                        <img src="{{ webAssets('storage/' . $category->image) }}" class="img-thumbnail mt-3" style="max-height: 150px;">
                     @endif
                     @error('image')
                         <div class="text-danger">{{ $message }}</div>

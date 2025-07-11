@@ -382,7 +382,7 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <img class="pull-right mt-1" id="lockIcon" src="{{ asset('private/public/uploads/lock.png') }}" alt="Lock Icon" />
+                                <img class="pull-right mt-1" id="lockIcon" src="{{ webAssets('uploads/lock.png') }}" alt="Lock Icon" />
                             </div>
                             <!-- Is Swapped Field -->
                             <div class="col-md-12">
@@ -414,7 +414,7 @@
                                 <label for="image" class="form-label">Image</label>
                                 <input type="file" name="image" class="form-control">
                                 @if (isset($item) && $item->image)
-                                    <img src="{{ asset('private/public/storage/' . $item->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                    <img src="{{ webAssets('storage/' . $item->image) }}" alt="Item Image" class="img-thumbnail mt-2" style="max-height: 150px;">
                                 @endif
                             </div>
 
@@ -833,7 +833,7 @@
                                 id: item.id,
                                 text: item.title,
                                 image: item.image
-                                    ? `{{ asset('private/public/storage') }}/${item.image}`
+                                    ? `{{ webAssets('storage') }}/${item.image}`
                                     : '{{ asset("default.png") }}',
                                 has_flags: Array.isArray(item.flags) ? item.flags.length > 0 : !!item.flags
                             }))
@@ -879,7 +879,7 @@
 
             preselected.forEach(item => {
                 const image = item.image
-                    ? `{{ asset('private/public/storage') }}/${item.image}`
+                    ? `{{ webAssets('storage') }}/${item.image}`
                     : '{{ asset("default.png") }}';
 
                 const option = new Option(item.title, item.id, true, true);

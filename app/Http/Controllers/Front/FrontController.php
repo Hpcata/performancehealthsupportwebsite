@@ -290,7 +290,7 @@ class FrontController extends Controller
                 'last_name' => $user->last_name,
                 'email' => $user->email,
                 'phone' => $user->phone,
-                'profile_image' => $user->profile_image ? asset('private/public/'.$user->profile_image) : null,
+                'profile_image' => $user->profile_image ? webAssets($user->profile_image) : null,
             ]);
 
         } else {

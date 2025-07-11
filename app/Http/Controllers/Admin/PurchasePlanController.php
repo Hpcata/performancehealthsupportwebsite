@@ -1904,7 +1904,7 @@ class PurchasePlanController extends Controller
                     $meals->push([
                         'id' => $meal->id,
                         'name' => $meal->title,
-                        'image' => $meal->image ? asset('private/public/storage/' . $meal->image) : null,
+                        'image' => $meal->image ? webAssets('storage/' . $meal->image) : null,
                         'carbs' => round($carbs, 2),
                         'protein' => round($protein, 2),
                         'fat' => round($fat, 2),
@@ -1944,7 +1944,7 @@ class PurchasePlanController extends Controller
                         return [
                             'id' => $userMeal->id,
                             'name' => $userMeal->meal_name,
-                            'image' => $userMeal->meal && $userMeal->meal->image ? asset('private/public/storage/' . $userMeal->meal->image) : null,
+                            'image' => $userMeal->meal && $userMeal->meal->image ? webAssets('storage/' . $userMeal->meal->image) : null,
                             'carbs' => round($carbs, 2),
                             'protein' => round($protein, 2),
                             'fat' => round($fat, 2),

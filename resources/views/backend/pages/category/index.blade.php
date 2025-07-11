@@ -61,7 +61,7 @@
                                 </td>
                                 <td>
                                     @if($subCategory->image)
-                                    <img src="{{ asset('private/public/storage/' . $subCategory->image) }}" alt="" width="50">
+                                    <img src="{{ webAssets('storage/' . $subCategory->image) }}" alt="" width="50">
                                     @else
                                     <span class="text-muted">No Image</span>
                                     @endif
