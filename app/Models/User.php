@@ -109,7 +109,7 @@ class User extends Authenticatable
 
         $organization = [];
         foreach ($imageList as $key => $_list) {
-            $organization[$_list->position][] = Storage::disk('public')->url($_list->path . '/' . $_list->name);
+            $organization[$_list->position][] = webAssets('storage/'.$_list->path . '/' . $_list->name);
         }
 
         return $organization;
@@ -126,7 +126,7 @@ class User extends Authenticatable
                 'name' => $value->name,
                 'designation' => $value->designation,
                 'review' => $value->review,
-                'image' => Storage::disk('public')->url($value->path . '/' . $value->media_name),
+                'image' => webAssets('storage/'.$value->path . '/' . $value->media_name),
             ];
         }
 

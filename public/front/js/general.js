@@ -186,15 +186,15 @@ $(document).ready(function() {
                     testimonialHtml += `<div class="">
                         <div class="d-flex flex-sm-row flex-column align-items-center" id="using-${index}">
                             <div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">
-                                <img src="${testimonial.thumbnail_image}" alt="" class="slider-added-imges" />
+                                <img src="${testimonial.image}" alt="" class="slider-added-imges" />
                             </div>
                             <div class="no-display-half-part">
                                 <div class="quote-using">
                                     <i class="fa-solid fa-quote-left"></i>
                                 </div>
-                                <p class="mb-1">${testimonial.description}</p>
+                                <p class="mb-1">${testimonial.review}</p>
                                 <h5 class="mb-0">${testimonial.name}</h5>
-                                <p class="position mb-0"> </p> <!-- no 'designation' in response -->
+                                <p class="position mb-0">${testimonial.designation} </p> <!-- no 'designation' in response -->
                             </div>
                         </div>
                     </div>`;
