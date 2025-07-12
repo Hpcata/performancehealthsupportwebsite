@@ -28,8 +28,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ActivePlanMail;
 use App\Models\User;
-
 use function PHPUnit\Framework\isEmpty;
+use App\Services\ActivityTracker;
+use App\Models\TrackingType;
 
 class PurchasePlanController extends Controller
 {
@@ -1903,7 +1904,7 @@ class PurchasePlanController extends Controller
                     $meals->push([
                         'id' => $meal->id,
                         'name' => $meal->title,
-                        'image' => $meal->image ? asset('private/public/storage/' . $meal->image) : null,
+                        'image' => $meal->image ? webAssets('storage/' . $meal->image) : null,
                         'carbs' => round($carbs, 2),
                         'protein' => round($protein, 2),
                         'fat' => round($fat, 2),
@@ -1943,7 +1944,7 @@ class PurchasePlanController extends Controller
                         return [
                             'id' => $userMeal->id,
                             'name' => $userMeal->meal_name,
-                            'image' => $userMeal->meal && $userMeal->meal->image ? asset('private/public/storage/' . $userMeal->meal->image) : null,
+                            'image' => $userMeal->meal && $userMeal->meal->image ? webAssets('storage/' . $userMeal->meal->image) : null,
                             'carbs' => round($carbs, 2),
                             'protein' => round($protein, 2),
                             'fat' => round($fat, 2),
@@ -3099,6 +3100,16 @@ class PurchasePlanController extends Controller
                     'mail_sent_at' => now()
                 ]);
                 $userPlan->save();
+
+                $click = ActivityTracker::click('plan_create_mail_send', $user->id);
+
+                // Log in trackings with click reference
+                ActivityTracker::log(TrackingType::PLAN_EMAILED, $user->id, [
+                    'user_click_id' => $click->id,
+                    'section_element_id' => $click->section_element_id,
+                    'user_plan_id' => $userPlan->id,
+                    'plan_id' => $payment->plan_id,
+                ]);
 
                 return response()->json([
                     'status' => 'success',

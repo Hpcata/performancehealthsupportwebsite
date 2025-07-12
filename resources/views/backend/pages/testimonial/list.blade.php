@@ -11,11 +11,11 @@
 	<div class="container-xxl">
 		<div class="row align-items-center">
 			<div class="border-0 mb-4">
-				<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+				<div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
 					<h3 class="fw-bold mb-0">Testimonials</h3>
-                    <div class="col-auto d-flex w-sm-100">
-						<a type="button" href="{{ route('testimonials.add') }}" class="btn btn-primary btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i>Add Testimonial</a>
-					</div>
+                   
+						<a type="button" href="{{ route('testimonials.add') }}" class="btn btn-primary btn-set-task"><i class="icofont-plus-circle me-2 fs-6"></i>Add Testimonial</a>
+					
 				</div>
 			</div>
 		</div>

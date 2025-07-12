@@ -23,6 +23,8 @@ return [
 
     'TIMEZONE' => 'Australia/Brisbane',
 
+    'admin_email' => env('ADMIN_EMAIL', 'kerry@performancehealthsupport.com'),
+
     'PAGES_LIST' => [
         'home' => [
             'title' => 'Home',

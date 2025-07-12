@@ -18,9 +18,9 @@
     @endif
 	<div class="row align-items-center">
 		<div class="border-0 mb-4">
-			<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+			<div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
 				<h3 class="fw-bold mb-0">Tags List</h3>
-				<a href="{!! route('admin.tags.create') !!}" class="btn btn-primary py-2 px-5 btn-set-task w-sm-100"><i class="icofont-plus-circle me-2 fs-6"></i> Add Tag</a>
+				<a href="{!! route('admin.tags.create') !!}" class="btn btn-primary py-2 px-2 btn-set-task"><i class="icofont-plus-circle me-2 fs-6"></i> Add Tag</a>
 			</div>
 		</div>
 	</div> <!-- Row end  -->
@@ -44,7 +44,7 @@
                                     <td>{{ $tag->name }}</td>
                                     <td>
                                         @if($tag->icon)
-                                        <img src="{{ asset('private/public/storage/' . $tag->icon) }}" alt="" width="50">
+                                        <img src="{{ webAssets('storage/' . $tag->icon) }}" alt="" width="50">
                                         @else
                                         <span class="text-muted">No Image</span>
                                         @endif

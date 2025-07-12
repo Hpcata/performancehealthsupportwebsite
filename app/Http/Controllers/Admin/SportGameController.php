@@ -35,9 +35,7 @@ class SportGameController extends Controller
         $request->validate([
             'name' => 'required',
             'sport_category_id' => 'required|exists:sport_categories,id',
-            'image' => 'nullable|image|dimensions:width=300,height=200|max:2048',
-        ], [
-            'image.dimensions' => 'The image must be exactly 300px wide and 200px high.',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         try {
@@ -74,9 +72,7 @@ class SportGameController extends Controller
         $request->validate([
             'name' => 'required',
             'sport_category_id' => 'required|exists:sport_categories,id',
-            'image' => 'nullable|image|dimensions:width=300,height=200|max:2048',
-        ],[
-            'image.dimensions' => 'The image must be exactly 300px wide and 200px high.',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         try {

@@ -118,3 +118,15 @@ function cleanDecimal($value)
 
     return is_numeric($cleaned) ? (float) $cleaned : 0;
 }
+
+function getAdminProfileImage()
+{
+    $admin = \Auth::guard('admin')->user();
+
+    if ($admin && !empty($admin->profile_image)) {
+        return asset($admin->profile_image);
+    }
+
+    // Default fallback image
+    return 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg';
+}

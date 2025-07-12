@@ -79,11 +79,20 @@
     .food-label{
         font-weight:normal !important;
     }
+         .form-control-multiple {
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    cursor: text;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    height: 38px;
+}
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex  px-0 justify-content-between border-bottom flex-md-row flex-column align-items-md-center align-items-start ps-md-0 ps-3">
                 <!-- Left Section: Title -->
                 <div class="d-flex align-items-center flex-wrap">
                     <h3 class="fw-bold mb-0 me-3">Edit Plan</h3>
@@ -92,14 +101,14 @@
                 @php
                     $firstPlan = $userPlans->first(); // ✅ works
                 @endphp
-                <div class="form-check form-switch me-3">
+                <div class="form-check form-switch me-3 mt-md-0 mt-2">
                     <label class="form-check-label" for="nutritionToggle">Nutrition Info</label>
                     <input class="form-check-input" type="checkbox" id="nutritionToggle" name="nutrition_info" value="1"         data-payment-id="{{ $payment->id }}" {{ $firstPlan->nutrition_info_flag ? 'checked' : '' }}>
                 </div>
                 <!-- Right Section: Buttons -->
-                <div class="col-auto d-flex w-sm-100 mt-2 mt-sm-0">
-                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}">View User Details</a>
-                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
+                <div class="col-auto d-flex mt-2 mt-sm-0">
+                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task me-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}">View User Details</a>
+                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task">Back</a>
                 </div>
             </div>
 
@@ -113,7 +122,7 @@
                         @csrf
                         @method('PUT')
                         <div class="row">
-                            <div class="panel-group col-8" id="accordion">
+                            <div class="panel-group col-md-8" id="accordion">
                                 @foreach ($userPlans as $userPlan)
                                 <?php 
                                 $plan = $userPlan->plan; ?>
@@ -165,7 +174,7 @@
                                                             <label for="mealItems{{$plan->id}}_{{$mealTime->id}}" class="form-label">Add Meal</label>
                                                             <select name="selected_meals[{{$plan->id}}][{{$mealTime->id}}][]"
                                                                 id="mealItems{{$plan->id}}_{{$mealTime->id}}"
-                                                                class="form-select meal-items-select select2"
+                                                                class="form-select meal-items-select select2 form-control-multiple"
                                                                 multiple style="width:100%">
 
                                                             </select>
@@ -188,7 +197,7 @@
                                 </div>
                                 @endforeach
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4">
                                 <div style="max-height: 90vh; overflow-y: auto; overflow-x: hidden; border: 1px solid #ddd; padding: 10px; border-radius: 8px; position: sticky; top:15px;">
                                     <h4>Food Prefrences</h4>
                                     <span class="">
@@ -305,7 +314,7 @@
                             </div>
                         </div>
                         <!-- Submit Button -->
-                        <div class="pull-right">
+                        <div class="pull-right-bot px-md-3 ">
                             <p>Last Updated: {{ isset($activity->updated_at) ? $activity->updated_at->format('d-m-Y H:i:s') : '' }} by {{ isset($activity->user) ? $activity->user->name : '' }}</p>
                         </div>
 
@@ -317,7 +326,7 @@
                         @endphp
 
 
-                        <div class="">
+                        <div class="my-5 d-flex flex-wrap flex-md-nowrap gap-3">
                             <button type="submit" class="btn btn-primary">Update</button>
                             <button type="submit" class="btn btn-success" name="action" value="save_exit">Update & Exit</button>
                             <!-- <button type="button" class="btn btn-success view-user-profile" data-user-id="{{ $payment->user_id }}">View User Profile</button> -->
@@ -2724,7 +2733,6 @@
             }
         }
 
-      
         let AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal = null);
 
         function buildUnitQtyMap(modal) {
@@ -2777,21 +2785,7 @@
         }
 
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-            // const AU_UNIT_EQUIVALENTS = {
-            //     'cup': 250,
-            //     'tablespoon': 20,
-            //     'teaspoon': 5,
-            //     'dessert spoon': 10,
-            //     'piece': 150,
-            //     'slice': 30,
-            //     'roll': 70,
-            //     'tub': 180,
-            //     'pouch': 100,
-            //     'handful': 40,
-            //     'ml': 1,
-            //     'g': 1
-            // };
-
+           
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
             console.log(AU_UNIT_EQUIVALENTS);
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
@@ -2871,94 +2865,6 @@
             }
         }
         
-        // function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-        //     const AU_UNIT_EQUIVALENTS = {
-        //         'cup': 250,
-        //         'tablespoon': 20,
-        //         'teaspoon': 5,
-        //         'dessert spoon': 10,
-        //         'piece': 150,
-        //         'slice': 30,
-        //         'roll': 70,
-        //         'tub': 180,
-        //         'pouch': 100,
-        //         'handful': 40,
-        //         'ml': 1,
-        //         'g': 1
-        //     };
-
-        //     const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
-        //     const $rows = $container.find('.qty-unit-row');
-        //     if ($rows.length === 0) return;
-
-        //     const $baseRow = $rows.first();
-        //     const baseQty = parseFraction($baseRow.find('.modalQtyInput').val());
-        //     const baseUnit = $baseRow.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-        //     if (!baseQty || !baseUnit) {
-        //         console.warn('Base quantity or unit is missing.');
-        //         return;
-        //     }
-
-        //     function updateNutrition(currentQtyRaw, currentUnit) {
-        //         const currentQty = parseFraction(currentQtyRaw);
-        //         if (!currentQty || !currentUnit) return;
-
-        //         currentUnit = currentUnit.toLowerCase();
-        //         let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
-        //         let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
-
-        //         if (!baseEquivalent || !currentEquivalent) {
-        //             console.warn('Unknown unit used in conversion.');
-        //             return;
-        //         }
-
-        //         const baseGrams = baseQty * baseEquivalent;
-        //         const currentGrams = currentQty * currentEquivalent;
-
-        //         const multiplier = currentGrams / baseGrams;
-
-        //         $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
-
-        //     }
-
-        //     $rows.find('.modalQtyInput').on('input', function () {
-        //         const $row = $(this).closest('.qty-unit-row');
-        //         const newQtyRaw = $(this).val();
-        //         const newUnit = $row.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-        //         updateNutrition(newQtyRaw, newUnit);
-        //     });
-
-        //     // Utility: Convert fractions like "1/2" or "3/4" to decimal numbers
-        //     function parseFraction(input) {
-        //         if (!input) return null;
-        //         input = input.trim();
-        //         // Direct number
-        //         if (!isNaN(input)) return parseFloat(input);
-
-        //         // Handle fractions like "1/2", "3/4", or even "1 1/2"
-        //         const parts = input.split(' ');
-        //         let result = 0;
-
-        //         parts.forEach(part => {
-        //             if (part.includes('/')) {
-        //                 const [num, denom] = part.split('/');
-        //                 if (!isNaN(num) && !isNaN(denom)) {
-        //                     result += parseFloat(num) / parseFloat(denom);
-        //                 }
-        //             } else if (!isNaN(part)) {
-        //                 result += parseFloat(part);
-        //             }
-        //         });
-
-        //         return result || null;
-        //     }
-        // }
-
         function setupDynamicMeasurementSync(modal) {
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
@@ -3010,21 +2916,7 @@
             });
         }
 
-        // ✅ Helper to parse fractions like "1/2", "1 1/4", etc.
-        // function parseFraction(input) {
-        //     if (!input) return NaN;
-        //     input = input.trim();
-        //     if (!isNaN(input)) return parseFloat(input); // e.g., "1.5", "2"
-        //     if (/^\d+\s+\d+\/\d+$/.test(input)) {
-        //         const [whole, frac] = input.split(' ');
-        //         const [num, denom] = frac.split('/');
-        //         return parseInt(whole) + (parseFloat(num) / parseFloat(denom));
-        //     } else if (/^\d+\/\d+$/.test(input)) {
-        //         const [num, denom] = input.split('/');
-        //         return parseFloat(num) / parseFloat(denom);
-        //     }
-        //     return NaN;
-        // }
+       
         function parseFraction(input) {
             if (input === undefined || input === null) return null;
 
@@ -3153,6 +3045,23 @@
         });
 
         $('#saveItemChanges').on('click', function () {
+            // Validate: Prevent save if any checked qty is 0, blank, or invalid
+            let invalidQty = false;
+            $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+                const $row = $(this);
+                const isChecked = $row.find('.qtyUnitSelector').is(':checked');
+                if (isChecked) {
+                    const rawQtyInput = $row.find('.modalQtyInput').val().trim();
+                    const parsedQty = parseFraction(rawQtyInput);
+                    if (!rawQtyInput || isNaN(parsedQty) || parsedQty <= 0) {
+                        invalidQty = true;
+                    }
+                }
+            });
+            if (invalidQty) {
+                alert('Please enter a quantity greater than 0 for all selected options.');
+                return;
+            }
             const itemId = $('#editItemId').val();
             const mealId = $('#editMealId').val();
             const planId = $('#editPlanId').val();
@@ -3255,7 +3164,6 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            // console.log(currentItemRow);
             currentItemRow.find('td:nth-child(2)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');
@@ -3527,7 +3435,7 @@
                         const selected = response.items.find(item => item.id == swapItemId);
                         if (!selected) return;
 
-                        const imageUrl = selected.image ? `{{ asset('private/public/storage/') }}/${selected.image}` : '';
+                        const imageUrl = selected.image ? `{{ webAssets('storage/') }}/${selected.image}` : '';
 
                         const option = new Option(selected.title, selected.id, true, true);
                         $(option)
@@ -3574,6 +3482,24 @@
         });
 
         $('#saveSwapItemChanges').on('click', function () {
+            // Validate: Prevent save if any checked qty is 0, blank, or invalid
+            let invalidQty = false;
+            $('#editSwapItemModal .qty-unit-row').each(function () {
+                const $row = $(this);
+                const isChecked = $row.find('.qtyUnitSelector').is(':checked');
+                if (isChecked) {
+                    const rawQtyInput = $row.find('.modalQtyInput').val().trim();
+                    const parsedQty = parseFraction(rawQtyInput);
+                    if (!rawQtyInput || isNaN(parsedQty) || parsedQty <= 0) {
+                        invalidQty = true;
+                    }
+                }
+            });
+            
+            if (invalidQty) {
+                alert('Please enter a quantity greater than 0 for all selected options.');
+                return;
+            }
             const modalSelector = '#editSwapItemModal';
             const anyChecked = $(`${modalSelector} .qty-unit-row`).find('.qtyUnitSelector:checked').length > 0;
 
@@ -3819,7 +3745,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -3978,7 +3904,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -4295,7 +4221,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -4609,7 +4535,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -5182,7 +5108,7 @@
                         foodSearchResults.show();
                         if (response.items.length > 0) {
                             response.items.forEach(item => {
-                                const imagePath = item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : 'https://via.placeholder.com/50';
+                                const imagePath = item.image ? `{{ webAssets('storage/') }}/${item.image}` : 'https://via.placeholder.com/50';
                                 const row = `
                                     <tr>
                                         <td>${item.title}</td>
