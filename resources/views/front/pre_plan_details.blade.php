@@ -97,7 +97,7 @@
                                     <div class="col-md-6 col-lg-4">
                                         <input type="hidden" name="questions[personal_details][postcode]" value="Postcode">
                                         <div class="form-floating my-3">
-                                            <input type="text" class="form-control" name="ans[personal_details][postcode]" placeholder="">
+                                            <input type="text" class="form-control" name="ans[personal_details][postcode]" placeholder="" maxlength="6" pattern="\d{1,6}">
                                             <label>Postcode<small class="text-danger">*</small></label>
                                         </div>
                                     </div>
