@@ -49,7 +49,7 @@
                                 <!-- <th>Status</th>
                                 <th>Discount Code</th> -->
                                 <!-- <th>Status</th> -->
-                                <th>Purchase Date</th>
+                                <th style="white-space: nowrap;">Purchase Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
