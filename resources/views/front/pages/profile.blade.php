@@ -320,6 +320,55 @@
                                                     $vitaminEndDates = array_fill(0, $supplementCount, $vitaminEndDates[0]);
                                                 }
 
+                                                // Separate current and past supplements
+                                                $currentSupplements = [];
+                                                $pastSupplements = [];
+                                                $currentSupplementDates = [];
+                                                $pastSupplementDates = [];
+                                                
+                                                foreach ($supplements as $index => $item) {
+                                                    $endDate = $vitaminEndDates[$index] ?? null;
+                                                    $startDate = $vitaminStartDates[$index] ?? null;
+                                                    
+                                                    // Only check for past if end date exists and is not null
+                                                    if ($endDate && strtolower($endDate) !== 'null' && !empty(trim($endDate))) {
+                                                        try {
+                                                            $endDateCarbon = \Carbon\Carbon::parse($endDate);
+                                                            $today = \Carbon\Carbon::today();
+                                                            
+                                                            if ($endDateCarbon->lt($today)) {
+                                                                // Past supplement - end date is less than today
+                                                                $pastSupplements[] = $item;
+                                                                $pastSupplementDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            } else {
+                                                                // Current supplement - end date is in future
+                                                                $currentSupplements[] = $item;
+                                                                $currentSupplementDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            }
+                                                        } catch (\Exception $e) {
+                                                            // If date parsing fails, treat as current
+                                                            $currentSupplements[] = $item;
+                                                            $currentSupplementDates[] = [
+                                                                'start' => $startDate,
+                                                                'end' => $endDate
+                                                            ];
+                                                        }
+                                                    } else {
+                                                        // No end date or empty/null - always keep as current
+                                                        $currentSupplements[] = $item;
+                                                        $currentSupplementDates[] = [
+                                                            'start' => $startDate,
+                                                            'end' => $endDate
+                                                        ];
+                                                    }
+                                                }
+
                                                 $medicationDetails = $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? null;
                                                 $medicationAnswer = $medicationDetails['answer'] ?? null;
                                                 $medicationStartDateRaw = $medicationDetails['start_date'] ?? '';
@@ -342,16 +391,65 @@
                                                 if (count($medicationEndDates) === 1 && $medicationCount > 1) {
                                                     $medicationEndDates = array_fill(0, $medicationCount, $medicationEndDates[0]);
                                                 }
+
+                                                // Separate current and past medications
+                                                $currentMedications = [];
+                                                $pastMedications = [];
+                                                $currentMedicationDates = [];
+                                                $pastMedicationDates = [];
+                                                
+                                                foreach ($medications as $index => $item) {
+                                                    $endDate = $medicationEndDates[$index] ?? null;
+                                                    $startDate = $medicationStartDates[$index] ?? null;
+                                                    
+                                                    // Only check for past if end date exists and is not null
+                                                    if ($endDate && strtolower($endDate) !== 'null' && !empty(trim($endDate))) {
+                                                        try {
+                                                            $endDateCarbon = \Carbon\Carbon::parse($endDate);
+                                                            $today = \Carbon\Carbon::today();
+                                                            
+                                                            if ($endDateCarbon->lt($today)) {
+                                                                // Past medication - end date is less than today
+                                                                $pastMedications[] = $item;
+                                                                $pastMedicationDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            } else {
+                                                                // Current medication - end date is in future
+                                                                $currentMedications[] = $item;
+                                                                $currentMedicationDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            }
+                                                        } catch (\Exception $e) {
+                                                            // If date parsing fails, treat as current
+                                                            $currentMedications[] = $item;
+                                                            $currentMedicationDates[] = [
+                                                                'start' => $startDate,
+                                                                'end' => $endDate
+                                                            ];
+                                                        }
+                                                    } else {
+                                                        // No end date or empty/null - always keep as current
+                                                        $currentMedications[] = $item;
+                                                        $currentMedicationDates[] = [
+                                                            'start' => $startDate,
+                                                            'end' => $endDate
+                                                        ];
+                                                    }
+                                                }
                                             @endphp
 
                                             <strong>Supplements:</strong>
 
-                                            @if (!empty($supplements))
+                                            @if (!empty($currentSupplements))
                                                 <ul class="ps-3 mt-3">
-                                                    @foreach ($supplements as $index => $item)
+                                                    @foreach ($currentSupplements as $index => $item)
                                                         @php
-                                                            $startDate = $vitaminStartDates[$index] ?? null;
-                                                            $endDate = $vitaminEndDates[$index] ?? null;
+                                                            $startDate = $currentSupplementDates[$index]['start'] ?? null;
+                                                            $endDate = $currentSupplementDates[$index]['end'] ?? null;
 
                                                             $formattedStart = $formatDate($startDate, null);
                                                             $formattedEnd = $formatDate($endDate, null);
@@ -409,12 +507,12 @@
                                     <div class="px-4 py-3 border-bottom">
                                         <div class="position-relative">
                                         <strong>Medications:</strong>
-                                            @if (!empty($medications))
+                                            @if (!empty($currentMedications))
                                                 <ul class="ps-3 mt-3">
-                                                    @foreach ($medications as $index => $item)
+                                                    @foreach ($currentMedications as $index => $item)
                                                         @php
-                                                            $startDate = $medicationStartDates[$index] ?? null;
-                                                            $endDate = $medicationEndDates[$index] ?? null;
+                                                            $startDate = $currentMedicationDates[$index]['start'] ?? null;
+                                                            $endDate = $currentMedicationDates[$index]['end'] ?? null;
 
                                                             $formattedStart = $formatDate($startDate, null);
                                                             $formattedEnd = $formatDate($endDate, null);
@@ -2657,7 +2755,11 @@
         });
     });
 
-    var reportsData = @json($reports);
+    var reportsData = {!! json_encode($reports) !!};
+    var pastSupplements = {!! json_encode($pastSupplements ?? []) !!};
+    var pastSupplementDates = {!! json_encode($pastSupplementDates ?? []) !!};
+    var pastMedications = {!! json_encode($pastMedications ?? []) !!};
+    var pastMedicationDates = {!! json_encode($pastMedicationDates ?? []) !!};
     // Define the previewImage function
     function previewImage(fileUrl) {
         window.open(fileUrl, '_blank');
@@ -2873,44 +2975,43 @@
     // Function to open view past history modal (called by onclick attribute)
     function openViewPastHistoryModal(type) {
         
-        $.ajax({
-            url: "{{ route('front.past.goals') }}",
-            type: "POST",
-            data: {
-                _token: "{{ csrf_token() }}",
-                type: type,
-                user_id: userId
-            },
-            success: function (data) {
-                let modalTitle = type === "supplement" ? "Past Supplements" : "Past Medications";
-                $("#viewPastItemsModalLabel").text(modalTitle);
+        // Get past items from global variables
+        let pastItems = [];
+        let pastDates = [];
+        
+        if (type === 'supplement') {
+            pastItems = pastSupplements;
+            pastDates = pastSupplementDates;
+        } else if (type === 'medication') {
+            pastItems = pastMedications;
+            pastDates = pastMedicationDates;
+        }
+        
+        let modalTitle = type === "supplement" ? "Past Supplements" : "Past Medications";
+        $("#viewPastItemsModalLabel").text(modalTitle);
 
-                let pastList = $("#pastItemsList");
-                pastList.html(""); // Clear existing list
+        let pastList = $("#pastItemsList");
+        pastList.html(""); // Clear existing list
 
-                if (data.length > 0) {
-                    $.each(data, function (index, item) {
-                        let displayText = item.answer;
+        if (pastItems.length > 0) {
+            $.each(pastItems, function (index, item) {
+                let displayText = item;
+                let startDate = pastDates[index] && pastDates[index].start ? pastDates[index].start : null;
+                let endDate = pastDates[index] && pastDates[index].end ? pastDates[index].end : null;
 
-                        if (item.start_date && item.end_date) {
-                            displayText += ` <small>(Start: ${new Date(item.start_date).toLocaleDateString()} to End: ${new Date(item.end_date).toLocaleDateString()})</small>`;
-                        } else {
-                            displayText += ` <small>(Added on: ${new Date(item.created_at).toLocaleDateString()})</small>`;
-                        }
-
-                        pastList.append("<li>" + displayText + "</li>");
-                    });
-
-                } else {
-                    pastList.append("<li>No past records found.</li>");
+                if (startDate && endDate) {
+                    displayText += ` <small>(Start: ${new Date(startDate).toLocaleDateString()} to End: ${new Date(endDate).toLocaleDateString()})</small>`;
+                } else if (startDate) {
+                    displayText += ` <small>(Start: ${new Date(startDate).toLocaleDateString()})</small>`;
                 }
 
-                $("#viewPastItemsModal").modal("show"); // Show modal with past data
-            },
-            error: function () {
-                alert("Error fetching past " + type + "s!");
-            }
-        });
+                pastList.append("<li>" + displayText + "</li>");
+            });
+        } else {
+            pastList.append("<li>No past records found.</li>");
+        }
+
+        $("#viewPastItemsModal").modal("show"); // Show modal with past data
     }
 
     // Function to save goal data (called by onclick attribute)
