@@ -1126,105 +1126,143 @@ dd($e);
         $type = $request->type;
         $startDate = $request->start_date;
         $endDate = $request->end_date;
-        $mainAns = $request->main_ans;
-        // dd($request->all());
+
         $payment = Payment::where('user_id', $userId)->first();
         $prePlan = \App\Models\UserPrePlan::where('payment_id', $payment->id)
-        ->where('user_id', $userId)
-        ->first();
-        // dd($prePlan);
-        $prePlanDetail =  \App\Models\PrePlanDetail::where('form_slug', $formName)
-                ->where('question', $question)
-                ->where('user_pre_plan_id', $prePlan->id)
-                ->first(); 
-        // dd($type);
-        if($prePlanDetail){
+            ->where('user_id', $userId)
+            ->first();
+
+        $prePlanDetail = \App\Models\PrePlanDetail::where('form_slug', $formName)
+            ->where('question', $question)
+            ->where('user_pre_plan_id', $prePlan->id)
+            ->first();
+        if ($prePlanDetail) {
             if ($type == 'supplement-edit' || $type == 'medication-edit') {
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
                 $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
                 $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
                 $count = count($preplanAnswers);
-            
-                // If startDates are empty or contain all nulls, set all to created_at
+
                 if (empty($prePlanDetail->start_date) || collect($startDates)->every(fn($date) => empty($date) || strtolower($date) === 'null')) {
                     $createdDate = $prePlanDetail->created_at->format('Y-m-d');
                     $startDates = array_fill(0, $count, $createdDate);
                 } else {
                     $startDates = array_pad($startDates, $count, null);
                 }
-            
+
                 $endDates = array_pad($endDates, $count, null);
-                // Find index of the edited answer
-                $index = array_search($answer, $preplanAnswers);
-            
-                if ($index !== false) {
-                    if (!empty($startDate)) {
-                        $startDates[$index] = $startDate;
-                    }
-            
-                    if (!empty($endDate)) {
-                        $endDates[$index] = $endDate;
+
+                // Normalize input answer
+                $normalizedInput = strtolower(trim($answer));
+
+                $found = false;
+                $currentDate = now()->format('Y-m-d');
+                foreach ($preplanAnswers as $index => $storedAnswer) {
+                    $normalizedStored = strtolower(trim($storedAnswer));
+                    if ($normalizedStored === $normalizedInput) {
+                        $updatedStartDate = !empty($startDate) ? $startDate : ($startDates[$index] ?? $prePlanDetail->created_at->format('Y-m-d'));
+                        $updatedEndDate = !empty($endDate) ? $endDate : ($endDates[$index] ?? null);
+                        if (!empty($updatedEndDate) && $updatedEndDate < $currentDate) {
+                            // ✅ Move to GoalHistory
+                            \App\Models\GoalHistory::create([
+                                'user_id' => $userId,
+                                'payment_id' => $payment->id,
+                                'type' => $type == 'supplement-edit' ? 'supplement' : 'medication',
+                                'question' => $prePlanDetail->question,
+                                'answer' => $storedAnswer, // original case-sensitive value
+                                'start_date' => $updatedStartDate,
+                                'end_date' => $updatedEndDate,
+                            ]);
+
+                            // Remove from main table arrays
+                            unset($preplanAnswers[$index]);
+                            unset($startDates[$index]);
+                            unset($endDates[$index]);
+                        } else {
+                            // Just update the date if not expired
+                            $startDates[$index] = $updatedStartDate;
+                            $endDates[$index] = $updatedEndDate;
+                        }
+
+                        $found = true;
+                        break;
                     }
                 }
-                // dd($preplanAnswers);
-                $prePlanDetail->update([
-                    'answer' => json_encode(implode(', ', $preplanAnswers)),
-                    'start_date' => implode(', ', $startDates),
-                    'end_date' => implode(', ', $endDates)
-                ]);
-            }elseif ($type == 'supplement' || $type == 'medication') {
-                // dd($type);
+
+                if ($found) {
+                    if (!empty($preplanAnswers)) {
+                        $prePlanDetail->update([
+                            'answer' => json_encode(implode(', ', array_values($preplanAnswers))),
+                            'start_date' => implode(', ', array_values($startDates)),
+                            'end_date' => implode(', ', array_values($endDates)),
+                        ]);
+                    }
+                }
+            }
+
+            elseif ($type == 'supplement' || $type == 'medication') {
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
                 $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
                 $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
-            
-                $answer = trim($request->answer);
-                $startDate = $request->start_date;
-                $endDate = $request->end_date;
-            
+
                 $currentDate = now()->format('Y-m-d');
-                
-                foreach ($preplanAnswers as $index => $item) {
-                    $itemEndDate = $endDates[$index] ?? null;
-                    // dd($itemEndDate);
-                    if ($itemEndDate && $itemEndDate < $currentDate) {
-                        // Archive expired item in GoalHistory
-                        GoalHistory::create([
-                            'user_id' => $userId,
-                            'payment_id' => $payment->id,
-                            'type' => $type,
-                            'question' => $prePlanDetail->question,
-                            'answer' => $item,
-                            'start_date' => $startDates[$index] ?? $prePlanDetail->created_at,
-                            'end_date' => $itemEndDate
-                        ]);
-            
-                        // Remove from arrays
-                        unset($preplanAnswers[$index]);
-                        unset($startDates[$index]);
-                        unset($endDates[$index]);
+                $newAnswer = trim($request->answer);
+                $newStartDate = $request->start_date ?? $prePlanDetail->created_at->format('Y-m-d');
+                $newEndDate = $request->end_date;
+
+                // ✅ Check if new answer has expired
+                if (!empty($newEndDate) && $newEndDate < $currentDate) {
+                    // Save directly in GoalHistory, don't store in PrePlanDetail
+                    GoalHistory::create([
+                        'user_id' => $userId,
+                        'payment_id' => $payment->id,
+                        'type' => $type,
+                        'question' => $question,
+                        'answer' => $newAnswer,
+                        'start_date' => $newStartDate,
+                        'end_date' => $newEndDate
+                    ]);
+                } else {
+                    // Clean expired existing answers
+                    foreach ($preplanAnswers as $index => $item) {
+                        $itemEndDate = trim($endDates[$index] ?? '');
+
+                        if (!empty($itemEndDate) && $itemEndDate < $currentDate) {
+                            GoalHistory::create([
+                                'user_id' => $userId,
+                                'payment_id' => $payment->id,
+                                'type' => $type,
+                                'question' => $prePlanDetail->question,
+                                'answer' => $item,
+                                'start_date' => $startDates[$index] ?? $prePlanDetail->created_at,
+                                'end_date' => $itemEndDate
+                            ]);
+
+                            unset($preplanAnswers[$index]);
+                            unset($startDates[$index]);
+                            unset($endDates[$index]);
+                        }
                     }
+
+                    // Reindex
+                    $preplanAnswers = array_values($preplanAnswers);
+                    $startDates = array_values($startDates);
+                    $endDates = array_values($endDates);
+
+                    // Append new
+                    $preplanAnswers[] = $newAnswer;
+                    $startDates[] = $newStartDate;
+                    $endDates[] = $newEndDate ?? null;
+
+                    $prePlanDetail->update([
+                        'answer' => json_encode(implode(', ', $preplanAnswers)),
+                        'start_date' => implode(', ', $startDates),
+                        'end_date' => implode(', ', $endDates)
+                    ]);
                 }
-            
-                // Reindex arrays
-                $preplanAnswers = array_values($preplanAnswers);
-                $startDates = array_values($startDates);
-                $endDates = array_values($endDates);
-            
-                // Add new entry
-                $preplanAnswers[] = $answer;
-                $startDates[] = $startDate ?? $prePlanDetail->created_at;
-                $endDates[] = $endDate ?? null;
-            
-                $prePlanDetail->update([
-                    'answer' => json_encode(implode(', ', $preplanAnswers)),
-                    'start_date' => implode(', ', $startDates),
-                    'end_date' => implode(', ', $endDates)
-                ]);
             }
-          
+
         } else {
-            // Create a new record if none exists
             $userPrePlan = UserPrePlan::firstOrCreate([
                 'user_id' => $userId,
                 'payment_id' => $payment->id,
@@ -1236,10 +1274,10 @@ dd($e);
                 'question' => $question,
                 'answer' => json_encode($answer),
                 'start_date' => $startDate,
-                'end_date' => $endDate   
+                'end_date' => $endDate
             ]);
         }
-       
+
         return response()->json(['success' => true, 'message' => 'Answer updated successfully']);
     }
 
