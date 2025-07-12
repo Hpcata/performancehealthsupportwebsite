@@ -10,14 +10,11 @@ use Stripe\PaymentIntent;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use Hash;
-use Str;
-use Auth;
 use App\Models\UserPrePlan;
 use App\Mail\PlanPurchaseMail;
 use App\Mail\PrePlanDetailsSubmitMail;
 use App\Models\Payment;
 use App\Models\Coupon;
-use GuzzleHttp\Client;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
 use App\Models\SportCategory;
@@ -236,7 +233,6 @@ class PaymentController extends Controller
     {
         $userId = $request->user_id;
         $paymentId = $request->id;
-        // dd($request->all());
         // Retrieve the user's pre-plan details
         $prePlan = DB::table('user_pre_plans')
             ->where('user_id', $userId)
@@ -262,7 +258,6 @@ class PaymentController extends Controller
             ->groupBy('step');
         
         $sportCategories = SportCategory::all();
-        // dd($nextStep);
         return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
     }
 

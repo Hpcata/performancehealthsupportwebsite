@@ -2733,7 +2733,6 @@
             }
         }
 
-      
         let AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal = null);
 
         function buildUnitQtyMap(modal) {
@@ -2786,21 +2785,7 @@
         }
 
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-            // const AU_UNIT_EQUIVALENTS = {
-            //     'cup': 250,
-            //     'tablespoon': 20,
-            //     'teaspoon': 5,
-            //     'dessert spoon': 10,
-            //     'piece': 150,
-            //     'slice': 30,
-            //     'roll': 70,
-            //     'tub': 180,
-            //     'pouch': 100,
-            //     'handful': 40,
-            //     'ml': 1,
-            //     'g': 1
-            // };
-
+           
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
             console.log(AU_UNIT_EQUIVALENTS);
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
@@ -2880,94 +2865,6 @@
             }
         }
         
-        // function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-        //     const AU_UNIT_EQUIVALENTS = {
-        //         'cup': 250,
-        //         'tablespoon': 20,
-        //         'teaspoon': 5,
-        //         'dessert spoon': 10,
-        //         'piece': 150,
-        //         'slice': 30,
-        //         'roll': 70,
-        //         'tub': 180,
-        //         'pouch': 100,
-        //         'handful': 40,
-        //         'ml': 1,
-        //         'g': 1
-        //     };
-
-        //     const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
-        //     const $rows = $container.find('.qty-unit-row');
-        //     if ($rows.length === 0) return;
-
-        //     const $baseRow = $rows.first();
-        //     const baseQty = parseFraction($baseRow.find('.modalQtyInput').val());
-        //     const baseUnit = $baseRow.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-        //     if (!baseQty || !baseUnit) {
-        //         console.warn('Base quantity or unit is missing.');
-        //         return;
-        //     }
-
-        //     function updateNutrition(currentQtyRaw, currentUnit) {
-        //         const currentQty = parseFraction(currentQtyRaw);
-        //         if (!currentQty || !currentUnit) return;
-
-        //         currentUnit = currentUnit.toLowerCase();
-        //         let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
-        //         let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
-
-        //         if (!baseEquivalent || !currentEquivalent) {
-        //             console.warn('Unknown unit used in conversion.');
-        //             return;
-        //         }
-
-        //         const baseGrams = baseQty * baseEquivalent;
-        //         const currentGrams = currentQty * currentEquivalent;
-
-        //         const multiplier = currentGrams / baseGrams;
-
-        //         $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
-
-        //     }
-
-        //     $rows.find('.modalQtyInput').on('input', function () {
-        //         const $row = $(this).closest('.qty-unit-row');
-        //         const newQtyRaw = $(this).val();
-        //         const newUnit = $row.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-        //         updateNutrition(newQtyRaw, newUnit);
-        //     });
-
-        //     // Utility: Convert fractions like "1/2" or "3/4" to decimal numbers
-        //     function parseFraction(input) {
-        //         if (!input) return null;
-        //         input = input.trim();
-        //         // Direct number
-        //         if (!isNaN(input)) return parseFloat(input);
-
-        //         // Handle fractions like "1/2", "3/4", or even "1 1/2"
-        //         const parts = input.split(' ');
-        //         let result = 0;
-
-        //         parts.forEach(part => {
-        //             if (part.includes('/')) {
-        //                 const [num, denom] = part.split('/');
-        //                 if (!isNaN(num) && !isNaN(denom)) {
-        //                     result += parseFloat(num) / parseFloat(denom);
-        //                 }
-        //             } else if (!isNaN(part)) {
-        //                 result += parseFloat(part);
-        //             }
-        //         });
-
-        //         return result || null;
-        //     }
-        // }
-
         function setupDynamicMeasurementSync(modal) {
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
@@ -3019,21 +2916,7 @@
             });
         }
 
-        // ✅ Helper to parse fractions like "1/2", "1 1/4", etc.
-        // function parseFraction(input) {
-        //     if (!input) return NaN;
-        //     input = input.trim();
-        //     if (!isNaN(input)) return parseFloat(input); // e.g., "1.5", "2"
-        //     if (/^\d+\s+\d+\/\d+$/.test(input)) {
-        //         const [whole, frac] = input.split(' ');
-        //         const [num, denom] = frac.split('/');
-        //         return parseInt(whole) + (parseFloat(num) / parseFloat(denom));
-        //     } else if (/^\d+\/\d+$/.test(input)) {
-        //         const [num, denom] = input.split('/');
-        //         return parseFloat(num) / parseFloat(denom);
-        //     }
-        //     return NaN;
-        // }
+       
         function parseFraction(input) {
             if (input === undefined || input === null) return null;
 
@@ -3162,6 +3045,23 @@
         });
 
         $('#saveItemChanges').on('click', function () {
+            // Validate: Prevent save if any checked qty is 0, blank, or invalid
+            let invalidQty = false;
+            $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+                const $row = $(this);
+                const isChecked = $row.find('.qtyUnitSelector').is(':checked');
+                if (isChecked) {
+                    const rawQtyInput = $row.find('.modalQtyInput').val().trim();
+                    const parsedQty = parseFraction(rawQtyInput);
+                    if (!rawQtyInput || isNaN(parsedQty) || parsedQty <= 0) {
+                        invalidQty = true;
+                    }
+                }
+            });
+            if (invalidQty) {
+                alert('Please enter a quantity greater than 0 for all selected options.');
+                return;
+            }
             const itemId = $('#editItemId').val();
             const mealId = $('#editMealId').val();
             const planId = $('#editPlanId').val();
@@ -3582,6 +3482,24 @@
         });
 
         $('#saveSwapItemChanges').on('click', function () {
+            // Validate: Prevent save if any checked qty is 0, blank, or invalid
+            let invalidQty = false;
+            $('#editSwapItemModal .qty-unit-row').each(function () {
+                const $row = $(this);
+                const isChecked = $row.find('.qtyUnitSelector').is(':checked');
+                if (isChecked) {
+                    const rawQtyInput = $row.find('.modalQtyInput').val().trim();
+                    const parsedQty = parseFraction(rawQtyInput);
+                    if (!rawQtyInput || isNaN(parsedQty) || parsedQty <= 0) {
+                        invalidQty = true;
+                    }
+                }
+            });
+            
+            if (invalidQty) {
+                alert('Please enter a quantity greater than 0 for all selected options.');
+                return;
+            }
             const modalSelector = '#editSwapItemModal';
             const anyChecked = $(`${modalSelector} .qty-unit-row`).find('.qtyUnitSelector:checked').length > 0;
 
