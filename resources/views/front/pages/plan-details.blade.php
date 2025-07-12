@@ -4,12 +4,17 @@
 @section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-<style>
-    .hero-background {
-        background-image: url('{{ webAssets("storage/". $sportImagePath) }}') !important ;
-        background-size:cover;background-position:center;background-repeat:no-repeat;height:100%
-    }
-</style>
+@if (!empty($sportGameData['sport_image']))
+    <style>
+        .hero-background {
+            background-image: url('{{ webAssets("storage/" . $sportGameData['sport_image']) }}') !important;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100%;
+        }
+    </style>
+@endif
 <main class="main">
     <!-- Hero Banner -->
     <div class="hero-container">
@@ -23,7 +28,7 @@
                     <h1 class="hero-title">Sports Training Plan</h1>
 
                     <div class="hero-top">
-                        <p class="hero-subtitle-plan">Surfing</p>
+                        <p class="hero-subtitle-plan">{{ !empty($sportGameData['sport_name']) ? $sportGameData['sport_name'] : '' }}</p>
                         <a href="#" class="view-all-link"> View all plans </a>
                     </div>
                 </div>
@@ -34,7 +39,7 @@
         <div class="action-buttons">
             <button class="btn btn-share">
                 <img
-                    src="{{ frontAssets('images/images/share-icon.svg') }}"
+                    src="{{ frontAssets('images/share-icon.svg') }}"
                     alt="share-icon"
                     class="share-icon" />
                 Share

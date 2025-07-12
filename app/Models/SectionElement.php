@@ -16,6 +16,5 @@ class SectionElement extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['section_element_name', 'description'];
-
+    protected $fillable = ['section_element_name', 'description', 'created_at', 'updated_at'];
 }

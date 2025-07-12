@@ -43,12 +43,6 @@ function webAssets($path) {
 	return asset($asset);
 }
 
-function customAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? '' . $path : 'public/' . $path;
-	return asset($asset);
-}
-
-
 function adminAssets($path) {
 	$asset = config('constant.ENVIRONMENT') == 'production' ? 'public/admin/' . $path : 'admin/' . $path;
 	return asset($asset);
