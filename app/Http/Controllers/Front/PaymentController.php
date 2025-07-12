@@ -258,7 +258,7 @@ class PaymentController extends Controller
             ->groupBy('step');
         
         $sportCategories = SportCategory::all();
-        return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
+        return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
     }
 
     public function prePlanDetailsSave(Request $request)
