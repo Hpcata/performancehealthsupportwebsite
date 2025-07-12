@@ -28,6 +28,20 @@
         filter: blur(5px); /* Adjust the blur value */
         transition: filter 0.3s ease-in-out;
     }
+    
+    /* Simple fix to prevent page scroll on link click */
+    #weight-tracking {
+        cursor: pointer;
+    }
+    
+    /* Let Bootstrap handle modal positioning naturally */
+    .modal {
+        z-index: 1055;
+    }
+    
+    .modal-backdrop {
+        z-index: 1050;
+    }
 </style>
     <div class="nutrition-plan-hero bg-white py-4">
         <div class="container">
@@ -3027,5 +3041,17 @@
             });
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Simple solution: just prevent default behavior on weight tracking link
+    const weightTrackingLink = document.getElementById('weight-tracking');
+    if (weightTrackingLink) {
+        weightTrackingLink.addEventListener('click', function(e) {
+            e.preventDefault(); // Only prevent default link behavior
+            e.stopPropagation(); // Stop event bubbling
+            // Let Bootstrap handle the modal normally
+        });
+    }
+});
 </script>
 @endsection
