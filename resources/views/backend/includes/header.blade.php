@@ -146,9 +146,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="setting ms-2">
-					<a href="#" data-bs-toggle="modal" data-bs-target="#Settingmodal"><i class="icofont-gear-alt fs-5"></i></a>
-				</div>
 			</div>
 
 			<!-- menu toggler -->
