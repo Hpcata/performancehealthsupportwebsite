@@ -1376,11 +1376,6 @@
             $('#allProteinTotal').text(`${Math.round(grandTotalProtein)}g`);
             $('#allFatTotal').text(`${Math.round(grandTotalFat)}g`);
             $('#allEnergyTotal').text(`${Math.round(grandTotalEnergy)}kJ`);
-
-            // console.log(`Total Nutrition Values:
-            // - Total Carb: ${grandTotalCarbs.toFixed(2)}g
-            // - Total Protein: ${grandTotalProtein.toFixed(2)}g
-            // - Total Fat: ${grandTotalFat.toFixed(2)}g`);
         }
 
         let userId = $('#user_id').val();
@@ -1400,7 +1395,6 @@
 
             const newMeals = currentSelectedMeals.filter(mealId => !oldMeals.includes(mealId));
             const unselectedMeals = oldMeals.filter(mealId => !currentSelectedMeals.includes(mealId));
-            // console.log(newMeals);
             previouslySelectedMeals[`${planId}_${mealTimeId}`] = currentSelectedMeals;
 
             // Remove unselected meals
@@ -1731,7 +1725,7 @@
                     });
                     // Store newOrder as needed (e.g., in a hidden input or JS variable)
                     // Example: window.currentItemOrder = newOrder;
-                    console.log('New order:', newOrder);
+                  
                 }
             });
 
@@ -2608,7 +2602,6 @@
 
         function parseFraction(value) {
             if (!value) return NaN;
-            console.log('val : ', value);
             value = String(value).trim(); // ✅ Convert to string safely
             if (value.includes('/')) {
                 const parts = value.split(' ');
@@ -2882,7 +2875,6 @@
                 // }
 
                 $('#editItemModal #ratio').val(ratio);
-                console.log(`Ratio compared to original row: ${ratio}`);
                 // Optionally: update nutrition or UI here
             });
 
@@ -3043,8 +3035,7 @@
                         const $updatedRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
                         const $swapListItems = $updatedRow.find('td').eq(2).find('li[data-swap-item-id]');
                         // const ratio = parseFloat($('#editItemModal #ratio').val());
-                        // console.log($('#editItemModal #ratio').val());
-                        console.log('ration', ratio);
+                      
                         if(ratio != 0 && !isNaN(ratio)) {
                             $swapListItems.each(function () {
                                 const $swapLi = $(this);
@@ -3397,7 +3388,6 @@
                     }
                 }
             });
-            // console.log(qty);
             const carbs = parseFloat($('#editSwapItemModal #modalCarbs').text()) || 0;
             const protein = parseFloat($('#editSwapItemModal #modalProtein').text()) || 0;
             const fat = parseFloat($('#editSwapItemModal #modalFat').text()) || 0;
@@ -4333,7 +4323,6 @@
         });
 
         $('#addMoreSwapItemModal').on('hidden.bs.modal', function () {
-            console.log('Add More Swap Item Modal hidden');
 
             // Reset all inputs inside the modal
             $(this).find('input').val('');
