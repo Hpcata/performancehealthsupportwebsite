@@ -166,11 +166,16 @@ class FrontController extends Controller
             'password' => Hash::make($request->input('password')), // Hashed password of the admin user.
         ]);
 
+        $click = ActivityTracker::click('user_account_create', $user->id);
         ActivityTracker::log(
-            TrackingType::ACCOUNT_CREATED,
-            $user->id,
-            ['email' => $user->email]
-        );
+            TrackingType::ACCOUNT_CREATED,$user->id,
+            [   
+                'email' => $user->email,
+                'user_click_id' => $click->id,
+                'section_element_id' => $click->section_element_id,
+                'user_id' => $user->id,
+            ]
+         );
 
         return response()->json([
             'success' => true,
@@ -1700,7 +1705,9 @@ class FrontController extends Controller
         $meals = [];
 
         foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
-            foreach ($subCategory->userMeals->where('user_plan_id', $planId) as $meal) {
+            foreach ($subCategory->userMeals->where('user_plan_id', $planId)
+                        ->where('user_category_id', $userCategory->id)
+                        ->where('user_sub_category_id', $subCategory->id) as $meal) {
                 if (count($meals) < 3) {
                     $meals[] = $meal;
                 }

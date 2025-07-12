@@ -80,21 +80,22 @@ class PlanController extends Controller
 
         $userPrePlan = $user->userPrePlans()->first();
 
-        $sportGame = null;
-
+        $sportGameData = null;
         if ($userPrePlan && $userPrePlan->occupation) {
             $sportGame = SportGame::with('categories')
                             ->where('name', $userPrePlan->occupation)
                             ->first();
+            if ($sportGame && $sportGame->categories->isNotEmpty()) {
+                $category = $sportGame->categories->first(); // or loop if multiple
+
+                $sportGameData = [
+                    'sport_name' => $sportGame->name,
+                    'sport_image' => $category->pivot->image_path ?? null,
+                ];
+            }
         }
 
-        $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
-        $sportImagePath = null;
-        if ($category) {
-            $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
-        }
-
-        return view('front.pages.plan-details', compact('userPlans', 'plan', 'user', 'sportImagePath'));
+        return view('front.pages.plan-details', compact('userPlans', 'plan', 'user', 'sportGameData'));
     }
 
     public function mealTimeDetails(Request $request, $id, $plan_id)

@@ -20,6 +20,7 @@ use App\Models\Coupon;
 use GuzzleHttp\Client;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
+use App\Models\SportCategory;
 
 class PaymentController extends Controller
 {

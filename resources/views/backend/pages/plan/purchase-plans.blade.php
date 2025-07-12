@@ -43,9 +43,9 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Plan</th>
-                                <th>Price</th>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Price</th>
                                 <th>Phone</th>
                                 <!-- <th>Status</th>
                                 <th>Discount Code</th> -->
@@ -65,9 +65,9 @@
                             <tr>
                                 <td>{{ $payment->id }}</td>
                                 <td>{{ $payment->plan->name ?? 'N/A' }}</td> <!-- Assuming you have a 'name' field in Plan model -->
-                                <td>{{ $payment->price }}</td>
                                 <td>{{ $payment->name }}</td>
                                 <td>{{ $payment->email }}</td>
+                                <td>{{ $payment->price }}</td>
                                 <td>{{ $payment->phone }}</td>
                                 <!-- <td>{{ $payment->status }}</td>
                                 <td>{{ $payment->coupon_code }}</td> -->
