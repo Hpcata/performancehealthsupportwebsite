@@ -2825,7 +2825,7 @@
                 selectedQtyUnits = [{ qty: fallbackQty, unit: fallbackUnit, checked: false }];
             }
 
-            const $container = $('#dynamicQtyMeasurementContainer').empty();
+            const $container = $('#editItemModal #dynamicQtyMeasurementContainer').empty();
 
             selectedQtyUnits.forEach(({ qty, unit, checked }, index) => {
                 const row = `
@@ -2862,9 +2862,8 @@
                 const originalQty = parseFraction($(this).data('original-qty'));
                 const originalUnit = $row.find('.modalMeasurementInput').data('original-unit')?.trim().toLowerCase();
 
-                let ratio = null;
                 if (!isNaN(newQty) && !isNaN(originalQty) && originalQty && newQty) {
-                    ratio = originalQty / newQty;
+                    ratio = newQty / originalQty;
                 } else {
                     ratio = null;
                 }
@@ -2887,7 +2886,7 @@
         $('#saveItemChanges').on('click', function () {
             // Validate: Prevent save if any checked qty is 0, blank, or invalid
             let invalidQty = false;
-            $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+            $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
                 const $row = $(this);
                 const isChecked = $row.find('.qtyUnitSelector').is(':checked');
                 if (isChecked) {
@@ -2916,14 +2915,14 @@
             let qty = 0;
             let unit = '';
 
-            const anyChecked = $('#dynamicQtyMeasurementContainer .qty-unit-row').find('.qtyUnitSelector:checked').length > 0;
+            const anyChecked = $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').find('.qtyUnitSelector:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
                 return;
             }
             let foundChecked = false;
 
-            $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+            $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
                 const $row = $(this);
                 const rawQtyInput = $row.find('.modalQtyInput').val().trim();
                 const parsedQty = parseFraction(rawQtyInput);
@@ -2959,10 +2958,10 @@
                 }
             });
 
-            const carbs = parseFloat($('#modalCarbs').text()) || 0;
-            const protein = parseFloat($('#modalProtein').text()) || 0;
-            const fat = parseFloat($('#modalFat').text()) || 0;
-            const energy = parseFloat($('#modalEnergy').text()) || 0;
+            const carbs = parseFloat($('#editItemModal #modalCarbs').text()) || 0;
+            const protein = parseFloat($('#editItemModal #modalProtein').text()) || 0;
+            const fat = parseFloat($('#editItemModal #modalFat').text()) || 0;
+            const energy = parseFloat($('#editItemModal #modalEnergy').text()) || 0;
 
             const updatedHTML = `
                 <div class="d-flex justify-content-between align-items-start mb-0">
@@ -3067,7 +3066,7 @@
 
                                     if (isNaN(qty)) return part;
 
-                                    const newQty = (qty / ratio).toFixed(2).replace(/\.00$/, '');
+                                    const newQty = (qty * ratio).toFixed(2).replace(/\.00$/, '');
 
                                     // Units that should not have space
                                     const noSpaceUnits = ['g', 'ml', 'mL'];
@@ -3077,19 +3076,23 @@
                                 // Set updated text back with parentheses
                                 $quantityP.text(`(${updatedParts.join(' or ')})`);
 
-                                const swapInput = $swapLi.find('input[type="checkbox"]');
-                                const swapEnergy = parseFloat(swapInput.data('energy')) || 0;
-                                const swapProtein = parseFloat(swapInput.data('protein')) || 0;
-                                const swapCarbs = parseFloat(swapInput.data('carbs')) || 0;
-                                const swapFat = parseFloat(swapInput.data('fat')) || 0;
+                                const $nutritionP = $swapLi.find('p').last();
+                                const nutritionText = $nutritionP.text();
+                                const match = nutritionText.match(/Energy:\s*(\d+(?:\.\d+)?)kJ\s*\|\s*Protein:\s*(\d+(?:\.\d+)?)g\s*\|\s*Carb:\s*(\d+(?:\.\d+)?)g\s*\|\s*Fat:\s*(\d+(?:\.\d+)?)g/);
 
-                                // Get ratio (you may calculate based on qty/unit or use directly)
+                                let swapEnergy = 0, swapProtein = 0, swapCarbs = 0, swapFat = 0;
 
+                                if (match) {
+                                    swapEnergy = parseFloat(match[1]);
+                                    swapProtein = parseFloat(match[2]);
+                                    swapCarbs = parseFloat(match[3]);
+                                    swapFat = parseFloat(match[4]);
+                                }
                                 // Adjust values
-                                const adjustedEnergy = (swapEnergy / ratio).toFixed(2);
-                                const adjustedProtein = Math.round(swapProtein / ratio);
-                                const adjustedCarbs = Math.round(swapCarbs / ratio);
-                                const adjustedFat = Math.round(swapFat / ratio);
+                                const adjustedEnergy = (swapEnergy * ratio).toFixed(2);
+                                const adjustedProtein = Math.round(swapProtein * ratio);
+                                const adjustedCarbs = Math.round(swapCarbs * ratio);
+                                const adjustedFat = Math.round(swapFat * ratio);
 
                                 // Prepare data for backend
                                 const swapData = {
@@ -3115,7 +3118,6 @@
                                     success: function (resp) {
                                         if (resp.success) {
                                             // Update nutrition info in HTML
-                                            const $nutritionP = $swapLi.find('p').last();
                                             $nutritionP.html(
                                                 `Energy: ${adjustedEnergy}kJ | Protein: ${adjustedProtein}g | Carb: ${adjustedCarbs}g | Fat: ${adjustedFat}g`
                                             );
