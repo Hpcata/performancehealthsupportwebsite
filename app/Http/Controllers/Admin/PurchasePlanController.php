@@ -1468,14 +1468,11 @@ class PurchasePlanController extends Controller
     public function getMealItems(Request $request)
     {
         $userId = $request->user_id;
-        // dd($userId);
         if ($request->type == 'edit') {
             $userMeal = \App\Models\UserItemMeal::where('meal_id', $request->meal_id)
                 ->where('user_id', $userId)
                 ->get();
-            // dd($userMeal);
             if ($userMeal->isEmpty()) {
-                // dd($userMeal);
                 $meal = Meal::with('items.swapItems')->find($request->meal_id);
 
                 if (!$meal) {
@@ -1492,13 +1489,11 @@ class PurchasePlanController extends Controller
                 $totalProtein = 0;
                 $totalFat = 0;
                 $totalEnergy = 0;
-                // dd($meal->userMealItems);
                 $data = $meal->items->map(function ($item) use (&$totalCarbs, &$totalProtein, &$totalFat, &$totalEnergy, $request) {
                     $totalCarbs += $item->pivot->carbs ?? $item->carbs;
                     $totalProtein += $item->pivot->protein ?? $item->protein;
                     $totalFat += $item->pivot->fat ?? $item->fat;
                     $totalEnergy += floatval($item->energy) ?? floatval($item->energy);
-                    // dd($item->pivot);
                     $swapItems = $item->swapItems->map(function ($swapItem){
                         // $totalCarbs += $swapItem->carbs;
                         // $totalProtein += $swapItem->protein;
@@ -1553,7 +1548,6 @@ class PurchasePlanController extends Controller
                 $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)
                     ->where('plan_id', $request->plan_id)
                     ->first();
-                // dd($userPlan);
                 $userMealTimes = null;
                 $userUpdateMeal = null;
                 if ($userPlan) {
@@ -1586,8 +1580,8 @@ class PurchasePlanController extends Controller
                         $itemsList[$item['id']] = $item;
                     }
                 }
-
-                $data = $userMeal->map(function ($item) use($userId, &$totalCarbs, &$totalProtein, &$totalFat, &$totalEnergy, $request ,$userMealTimes) {
+                
+                $data = $userMeal->map(function ($item) use($userId, &$totalCarbs, &$totalProtein, &$totalFat, &$totalEnergy, $request , &$itemsList) {
                     $isNew = \App\Models\ItemMeal::where('meal_id', $request->meal_id)
                         ->where('item_id', $item->item_id)
                         ->exists() ? 0 : 1;
@@ -1654,7 +1648,6 @@ class PurchasePlanController extends Controller
                         'swapItems' => $swapItems,
                     ];
                 });
-                // dd($data);   
             }
         } else {
             $meal = Meal::with('items.swapItems')->find($request->meal_id);
