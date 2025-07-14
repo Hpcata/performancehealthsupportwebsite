@@ -180,13 +180,13 @@
 
                                         <ul class="mb-3">
                                             <li>Sport: {{ $profileDetails['Sport'] }}
-                                                <button type="button" 
+                                                <!-- <button type="button" 
                                                     class="btn btn-light edit-icon" 
                                                     id="edit-sport-button"
                                                     data-sport="{{ $profileDetails['Sport'] ?? '' }}"
                                                     data-name="{{ $profileDetails['Name'] ?? '' }}">
                                                     <i class="fas fa-edit"></i>
-                                                </button>
+                                                </button> -->
                                             </li>
                                         </ul>
 
@@ -1161,13 +1161,13 @@
         <div class="modal-dialog modal-dialog-top">
             <div class="modal-content" style="z-index: 1100;">
             <div class="modal-header">
-                <h5 class="modal-title" id="errorModalLabel">Validation Errors</h5>
+                <h5 class="modal-title" id="errorModalLabel">Validation Error</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="errorModalBody">
+            <div class="modal-body py-3" id="errorModalBody">
                 <!-- Error messages will be injected here -->
             </div>
-            <div class="modal-footer justify-content-center">
+            <div class="modal-footer mt-0 py-1">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             </div>
@@ -1282,7 +1282,7 @@
                 let message = '';
 
                 if (response.status === 422 && errorData.errors) {
-                    message += '<ul>';
+                    message += '<ul class="mb-1">';
                     Object.values(errorData.errors).forEach(err => {
                         message += `<li style="color: red;">${err[0]}</li>`;
                     });
@@ -1799,7 +1799,7 @@
                     if (xhr.status === 422) {
                         // Laravel validation error
                         const errors = xhr.responseJSON.errors;
-                        message += '<ul>';
+                        message += '<ul class="mb-1">';
                         $.each(errors, function(key, value) {
                             message += `<li style="color: red;">${value[0]}</li>`;
                         });
