@@ -1672,9 +1672,9 @@ class FrontController extends Controller
     public function getProfile(Request $request, $userId)
     {
         try {
-            $payment = Payment::where('user_id', $userId)->first();
+            $paymentId = Payment::where('user_id', $userId)->value('id');
 
-            if (!$payment) {
+            if (!$paymentId) {
                 return redirect()->back()->with('error', 'Plan not purchased.');
             }
 
@@ -1695,7 +1695,6 @@ class FrontController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
         }
     }
-
 
     public function getMeals($planId, $categoryId)
     {
