@@ -38,7 +38,15 @@ use Illuminate\Support\Facades\Validator;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
 use App\Models\SportCategory;
-use App\Models\SportGame;
+use App\Models\UserItem;
+use App\Models\UserItemMeal;
+use App\Models\UserMeal;
+use App\Models\Page;
+use App\Models\Coupon;
+use App\Models\UserCategory;
+use App\Models\PrePlanQuesionFile;
+use App\Models\Flag;
+use App\Models\CouponUsage;
 
 class FrontController extends Controller
 {
@@ -90,7 +98,7 @@ class FrontController extends Controller
 
     public function blog()
     {
-        $blogs = \App\Models\Blog::where('is_published', 1)->get();
+        $blogs = Blog::where('is_published', 1)->get();
         return view('front.pages.blog', compact('blogs'));
     }
 
@@ -117,10 +125,10 @@ class FrontController extends Controller
         $subPlanIds = \DB::table('plan_sub_plans')->pluck('sub_plan_id')->toArray();
 
         // Step 2: Retrieve all plans that are NOT sub-plans
-        $plans = \App\Models\Plan::whereNotIn('id', $subPlanIds)->get();
+        $plans = Plan::whereNotIn('id', $subPlanIds)->get();
 
         // dd($plans);
-        $page = \App\Models\Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
+        $page = Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
         
         $requirements = [];
        
@@ -314,7 +322,7 @@ class FrontController extends Controller
 
             $userPrePlan = UserPrePlan::where('user_id', $user->id)->where('payment_id', $payment->id)->first();
 
-            $prePlans = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) { 
+            $prePlans = UserPrePlan::with(['prePlanDetails' => function($query) { 
                 $query->where('form_slug', 'physical_measures')
                         ->whereIn('question', ['Height (cm):', 'Current body weight (kg) (if known):']); 
             }])->where('user_id', $user->id)->get();
@@ -330,7 +338,7 @@ class FrontController extends Controller
                 }
             }
             
-            $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) { 
+            $physicalMeasures = UserPrePlan::with(['prePlanDetails' => function($query) { 
                 $query->where('form_slug', 'physical_measures')
                         ->whereIn('question', ['Height (cm):', 'Current body weight (kg) (if known):']); 
             }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
@@ -348,7 +356,7 @@ class FrontController extends Controller
                 }
             }
     
-            $nutritionGoals = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+            $nutritionGoals = UserPrePlan::with(['prePlanDetails' => function($query) {
                 $query->where('form_slug', 'nutrition_goals')
                         ->whereIn('question', ['Which of these do you want help with?',"What's your biggest nutrition challenge?"]); 
             }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
@@ -366,7 +374,7 @@ class FrontController extends Controller
             }
     
             $intakeDetails = [];
-            $medicalHistories = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+            $medicalHistories = UserPrePlan::with(['prePlanDetails' => function($query) {
                 $query->where('form_slug', 'medical_history')
                         ->whereIn('question', ['List any dietary vitamins or supplements you are currently taking (if any):', 'Provide details of any prescription medications (if taking any):']);
             }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
@@ -382,7 +390,7 @@ class FrontController extends Controller
                 }
             }
     
-            $diateryDetails = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+            $diateryDetails = UserPrePlan::with(['prePlanDetails' => function($query) {
                 $query->where('form_slug', 'dietary_information')
                         ->whereIn('question', ['List your favourite foods?', 'Do you avoid/dislike any foods? List below']);
             }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
@@ -398,7 +406,7 @@ class FrontController extends Controller
             }
 
             $trainingIntencity = [];
-            $trainingDetails = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+            $trainingDetails = UserPrePlan::with(['prePlanDetails' => function($query) {
                 $query->where('form_slug', 'physical_activity_and_exercise')
                         ->where('question', 'On average, how many days per week do you train, and at what intensity?');
             }])->where('user_id', $user->id)->where('payment_id', $payment->id)->get();
@@ -410,7 +418,7 @@ class FrontController extends Controller
 
             $reports = [];
 
-            $prePlanReports = \App\Models\UserPrePlan::with(['PrePlanQuesionFile' => function($query) {
+            $prePlanReports = UserPrePlan::with(['PrePlanQuesionFile' => function($query) {
                 $query->whereIn('form_slug', ['physical_measures', 'medical_history']);
             }])->where('user_id', $user->id)
             ->where('payment_id', $payment->id)
@@ -429,7 +437,7 @@ class FrontController extends Controller
             $profileSetUp = 0 ;
             if($userPrePlan) {
                 $completedSteps = DB::table('pre_plan_details')
-                ->where('user_pre_plan_id', $prePlan->id ?? null)
+                ->where('user_pre_plan_id', $userPrePlan->id ?? null)
                 ->max('step');
                 
                 if($completedSteps == 9) {
@@ -529,12 +537,11 @@ class FrontController extends Controller
             ->where('user_id', $id) // Ensure user_id is always applied
             ->get();
         $prePlanDetails = [];
-        $preplan = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+        $preplan = UserPrePlan::with(['prePlanDetails' => function($query) {
             $query->where('form_slug', 'physical_measures');
         }])->where('user_id', $id)->first();
-        //    dd($preplan->prePlanDetails);
-        return view('front.pages.competition-plan.index', compact('userPlans', 'user'));
 
+        return view('front.pages.competition-plan.index', compact('userPlans', 'user'));
     }
 
     public function getAllMeals(Request $request)
@@ -699,16 +706,14 @@ class FrontController extends Controller
 
     public function updateFoodQuantity(Request $request)
     {
-        // dd($request->all());
-        $userItem = \App\Models\UserItem::where('id', $request->user_item_id)
-                                ->first();
+        $userItem = UserItem::where('id', $request->user_item_id)->first();
 
         $userItem->qty = $request->qty;
         $userItem->save();
 
-        $userMeal = \App\Models\UserMeal::with('userItems')->where('id',$userItem->user_meal_id)->first();
-        $userPlan = \App\Models\UserPlan::where('id', $userMeal->user_plan_id)->where('status', 'active')->first();
-        $userItemMeal = \App\Models\UserItemMeal::where('user_id', $userPlan->user_id)->where('meal_id', $userMeal->meal_id)->where('item_id', $userItem->item_id)->first();
+        $userMeal = UserMeal::with('userItems')->where('id',$userItem->user_meal_id)->first();
+        $userPlan = UserPlan::where('id', $userMeal->user_plan_id)->where('status', 'active')->first();
+        $userItemMeal = UserItemMeal::where('user_id', $userPlan->user_id)->where('meal_id', $userMeal->meal_id)->where('item_id', $userItem->item_id)->first();
 
         $userItemMeal->qty = $request->qty;
         $userItemMeal->save();
@@ -738,7 +743,7 @@ class FrontController extends Controller
                 'user_id' => optional($request->user())->id
             ]);
 
-            $coupon = \App\Models\Coupon::where('code', $promoCode)
+            $coupon = Coupon::where('code', $promoCode)
                 ->where('status', 1)
                 ->first();
 
@@ -772,7 +777,7 @@ class FrontController extends Controller
             }
 
             if (Auth::check() && !Auth::user()->isSuperAdmin()) {
-                $userUsageCount = \App\Models\CouponUsage::where('coupon_id', $coupon->id)
+                $userUsageCount = CouponUsage::where('coupon_id', $coupon->id)
                     ->where('user_id', Auth::id())
                     ->count();
 
@@ -805,16 +810,16 @@ class FrontController extends Controller
                 $userId = $user->id;
             }
 
-            $click = ActivityTracker::click($sectionElement, $userId);
+            // $click = ActivityTracker::click($sectionElement, $userId);
 
-            ActivityTracker::log($couponType, $userId, [
-                'user_click_id' => $click->id,
-                'section_element_id' => $click->section_element_id,
-                'coupon_code' => $promoCode,
-                'coupon_id' => $coupon->id,
-                'discount' => $discount,
-                'plan_id' => $planId,
-            ]);
+            // ActivityTracker::log($couponType, $userId, [
+            //     'user_click_id' => $click->id,
+            //     'section_element_id' => $click->section_element_id,
+            //     'coupon_code' => $promoCode,
+            //     'coupon_id' => $coupon->id,
+            //     'discount' => $discount,
+            //     'plan_id' => $planId,
+            // ]);
 
             return response()->json([
                 'valid' => true,
@@ -845,14 +850,14 @@ class FrontController extends Controller
     public function fetchWeightData(Request $request)
     {
         $userId = $request->user_id;
-        $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+        $physicalMeasures = UserPrePlan::with(['prePlanDetails' => function($query) {
             $query->where('form_slug', 'physical_measures')
                 ->where('question', 'Current body weight (kg) (if known):');
         }])->where('user_id', $userId)->first();
 
         $prePlanWeight = optional($physicalMeasures->prePlanDetails->first())->answer ?? null;
 
-        $physicalMeasures = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
+        $physicalMeasures = UserPrePlan::with(['prePlanDetails' => function($query) {
             $query->where('form_slug', 'physical_measures')
                 ->where('question', 'Current body weight (kg) (if known):');
         }])->where('user_id', $userId)->first();
@@ -1065,7 +1070,7 @@ class FrontController extends Controller
     {
         $isAuthenticated = "";
 
-        $page = \App\Models\Page::with('sections')->where('slug', 'sample-plan')->first();
+        $page = Page::with('sections')->where('slug', 'sample-plan')->first();
         
         if (!$page) {
             return redirect()->route('front.index')->with('error', 'Page not found.');
@@ -1086,11 +1091,11 @@ class FrontController extends Controller
         $endDate = $request->end_date;
         $mainAns = $request->main_ans;
         $payment = Payment::where('user_id', $userId)->first();
-        $prePlan = \App\Models\UserPrePlan::where('payment_id', $payment->id)
+        $prePlan = UserPrePlan::where('payment_id', $payment->id)
         ->where('user_id', $userId)
         ->first();
        
-        $prePlanDetail =  \App\Models\PrePlanDetail::where('form_slug', $formName)
+        $prePlanDetail =  PrePlanDetail::where('form_slug', $formName)
                 ->where('question', $question)
                 ->where('user_pre_plan_id', $prePlan->id)
                 ->first(); 
@@ -1289,7 +1294,7 @@ class FrontController extends Controller
             "What's your biggest nutrition challenge?";
         
         $answer = $request->input('answer');
-        $payment = \App\Models\Payment::where('user_id', $userId)->first();
+        $payment = Payment::where('user_id', $userId)->first();
 
         // Find the latest record
         $prePlanDetail = PrePlanDetail::where('form_slug', 'nutrition_goals')
@@ -1407,7 +1412,7 @@ class FrontController extends Controller
                 $path = $file->store('preplan_files', 'public');
 
                 // Save to database
-                $prePlanFile = \App\Models\PrePlanQuesionFile::create([
+                $prePlanFile = PrePlanQuesionFile::create([
                     'user_pre_plan_id' => $userPrePlanId,
                     'form_slug' => $reportType,
                     'question' => $question,
@@ -1474,7 +1479,7 @@ class FrontController extends Controller
             $lastName = explode(' ', $name)[1]; // Last name from full name
 
             // Example: Storing in "users" table
-            $user = \App\Models\User::updateOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $email], // Search by email
                 [
                     'name' => $name,
@@ -1500,7 +1505,7 @@ class FrontController extends Controller
             'email' => 'required|email',
         ]);
 
-        $user = \App\Models\User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
         if ($user) {
 
@@ -1586,7 +1591,7 @@ class FrontController extends Controller
     public function getFoodItems($key)
     {
         // Find flag by name
-        $flag = \App\Models\Flag::where('name', $key)->with('items')->first();
+        $flag = Flag::where('name', $key)->with('items')->first();
 
         if (!$flag) {
             return response()->json([]);
@@ -1610,7 +1615,7 @@ class FrontController extends Controller
         //     return response()->json(['error' => 'Unauthorized'], 403);
         // }
 
-        $user = \App\Models\User::findOrFail($id);
+        $user = User::findOrFail($id);
         // dd($user);
         // Set user session
         Auth::guard('web')->login($user);
@@ -1667,9 +1672,9 @@ class FrontController extends Controller
     public function getProfile(Request $request, $userId)
     {
         try {
-            $payment = Payment::where('user_id', $userId)->first();
+            $paymentId = Payment::where('user_id', $userId)->value('id');
 
-            if (!$payment) {
+            if (!$paymentId) {
                 return redirect()->back()->with('error', 'Plan not purchased.');
             }
 
@@ -1691,10 +1696,9 @@ class FrontController extends Controller
         }
     }
 
-
     public function getMeals($planId, $categoryId)
     {
-        $userCategory = \App\Models\UserCategory::where('user_plan_id', $planId)
+        $userCategory = UserCategory::where('user_plan_id', $planId)
             ->where('id', $categoryId)
             ->first();
 

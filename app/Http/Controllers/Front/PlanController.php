@@ -580,11 +580,13 @@ class PlanController extends Controller
         $payment = \App\Models\Payment::where('user_id', $request->user_id)->where('plan_id', $id)->first();
         $userPrePlan = \App\Models\UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $payment->id)->first();
 
-        $sportGame = \App\Models\SportGame::with('categories')->where('name', $userPrePlan->occupation)->first();
-        $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
         $sportImagePath = null;
-        if ($category) {
-            $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+        if(isset($userPrePlan) && isset($userPrePlan->occupation)) { 
+            $sportGame = \App\Models\SportGame::with('categories')->where('name',   $userPrePlan->occupation)->first();
+            $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
+            if ($category) {
+                $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+            }
         }
         $printAllmeal = true;
         return view('front.pages.plan-preview', compact('userPlans', 'printAllmeal', 'sportImagePath'));
@@ -615,13 +617,14 @@ class PlanController extends Controller
         $payment = \App\Models\Payment::where('user_id', $request->user_id)->where('plan_id', $request->plan_id)->first();
         $userPrePlan = \App\Models\UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $payment->id)->first();
 
-        $sportGame = \App\Models\SportGame::with('categories')->where('name', $userPrePlan->occupation)->first();
-        $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
         $sportImagePath = null;
-        if ($category) {
-            $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+        if(isset($userPrePlan) && isset($userPrePlan->occupation)) { 
+            $sportGame = \App\Models\SportGame::with('categories')->where('name', $userPrePlan->occupation)->first();
+            $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
+            if ($category) {
+                $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+            }
         }
-        
         $printAllmeal = false;
 
         return view('front.pages.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal', 'sportImagePath'));

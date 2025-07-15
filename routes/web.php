@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Front\QuizController as FrontQuizController;
 use App\Http\Controllers\Admin\SportCategoryController;
 use App\Http\Controllers\Admin\SportGameController;
+use App\Http\Controllers\Admin\ClubController;
 
 /*
 |--------------------------------------------------------------------------
@@ -137,6 +138,7 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 			Route::resource('coupons', CouponController::class);
 			Route::resource('sports-categories', SportCategoryController::class);
     		Route::resource('sport-games', SportGameController::class);
+			Route::resource('clubs', ClubController::class);
 		});
 
 		Route::get('/site-settings/{slug}', [SiteSettingsController::class, 'index'])->name('site-settings');

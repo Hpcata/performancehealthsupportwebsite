@@ -33,12 +33,12 @@
                                 @include('backend.layouts.error', ['field' => 'name'])
 							</div>
                             <div class="col-md-6">
-								<label for="designation" class="form-label">Title</label>
+								<label for="designation" class="form-label">Role/Title</label>
 								<input type="text" class="form-control" name="designation" id="designation" value="{{ old('designation', $testimonial->designation ?? '') }}">
                                 @include('backend.layouts.error', ['field' => 'designation'])
 							</div>
 							<div class="col-md-12">
-								<label for="review" class="form-label">Testimonial</label>
+								<label for="review" class="form-label">Testimonial Text</label>
 								<textarea class="form-control" name="review" id="review" rows="8">{{ old('review', $testimonial->review ?? '') }}</textarea>
 								@include('backend.layouts.error', ['field' => 'review'])
 							</div>

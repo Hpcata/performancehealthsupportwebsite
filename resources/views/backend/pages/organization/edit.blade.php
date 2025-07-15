@@ -76,7 +76,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggable/1.0.0-beta.8/draggable.bundle.legacy.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
-    var userId = "{{ Auth::user()->id }}";
+    var userId = "{{ Auth::guard('admin')->user()->id }}";
     Dropzone.autoDiscover = false;
     var imageDropZone = new Dropzone('div#imageUpload', {
         addRemoveLinks: true,
