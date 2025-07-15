@@ -25,37 +25,43 @@
             </div>
             <div class="welcome-arrow"></div>
         </section>
-
+        @if(isset($userPlan->plan))
         <!-- Sports Training Plan -->
         <section class="training-plan">
+            @if(isset($userPlan->plan))
             <div class="section-header">
-                <h2>{{ $userPlan->plan->name }}</h2>
+                <h2>{{ isset($userPlan->plan) ? $userPlan->plan->name : '' }}</h2>
                 <a href="{{ route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]) }}" class="see-all">See Plan</a>
             </div>
-
+            @else
+            <div class="section-header">
+                <h2></h2>
+                <a href="#" class="see-all">See Plan</a>
+            </div>
+            @endif
             {{-- Tabs --}}
             <div class="tabs">
                 @php $firstTab = true; @endphp
                 @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
-                    @php
-                        $category = $userCategory->category;
-                        $hasValidMeal = $userCategory->userSubCategories()
-                            ->where('user_plan_id', $userPlan->id)
-                            ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
-                                $q->where('user_plan_id', $userPlan->id)
-                                ->where('user_category_id', $userCategory->id);
-                            })->exists();
-                    @endphp
+                @php
+                $category = $userCategory->category;
+                $hasValidMeal = $userCategory->userSubCategories()
+                ->where('user_plan_id', $userPlan->id)
+                ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                $q->where('user_plan_id', $userPlan->id)
+                ->where('user_category_id', $userCategory->id);
+                })->exists();
+                @endphp
 
-                    @if ($hasValidMeal && $category)
-                        <button
-                            class="tab {{ $firstTab ? 'active' : '' }}"
-                            data-category-id="{{ $category->id }}"
-                            data-plan-id="{{ $userPlan->id }}">
-                            {{ $category->title }}
-                        </button>
-                        @php $firstTab = false; @endphp
-                    @endif
+                @if ($hasValidMeal && $category)
+                <button
+                    class="tab {{ $firstTab ? 'active' : '' }}"
+                    data-category-id="{{ $category->id }}"
+                    data-plan-id="{{ $userPlan->id }}">
+                    {{ $category->title }}
+                </button>
+                @php $firstTab = false; @endphp
+                @endif
                 @endforeach
             </div>
 
@@ -64,29 +70,9 @@
                     <p>Loading meals...</p>
                 </div>
             </div>
-
-            <!-- <div class="meal-cards">
-                <div class="meal-card">
-                
-                    <img src="{{ frontAssets('images/food1.webp') }}" alt="Oats with banana and berries breakfast" width="600" height="400" />
-                
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-                <div class="meal-card">
-                
-                    <img src="{{ frontAssets('images/food2.webp') }}" alt="Oats with banana and berries breakfast" />
-                
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-                <div class="meal-card">
-            
-                    <img src="{{ frontAssets('images/food1.webp') }}" alt="Oats with banana and berries breakfast" />
-            
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-            </div> -->
         </section>
 
+        @endif
         <!-- Challenges -->
         <section class="challenges">
             <div class="section-header">
@@ -249,29 +235,29 @@
             </div>
             <div class="consults-plans-grid">
                 <div class="plan-card-custom plan-competition">
-                     <div class="">
-                    <div class="plan-title">Competition Plan</div>
-                    <div class="plan-desc">
-                        Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
-                    </div>
+                    <div class="">
+                        <div class="plan-title">Competition Plan</div>
+                        <div class="plan-desc">
+                            Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
+                        </div>
                     </div>
                     <div class="">
-                    <div class="consult-user-row">
-                        <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                            class="consult-avatar"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                             <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                            class="consult-avatar overlap1"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                        <span>21 meals • 18 Nutrition tips</span>
-                    </div>
-                    <!-- <div class="plan-meta">
-                <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
-                tips
-              </div> -->
-                    <button class="btn-consult">Learn more</button>
+                        <div class="consult-user-row">
+                            <img
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                class="consult-avatar"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <img
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                class="consult-avatar overlap1"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <span>21 meals • 18 Nutrition tips</span>
+                        </div>
+                        <!-- <div class="plan-meta">
+                            <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
+                            tips
+                        </div> -->
+                        <button class="btn-consult">Learn more</button>
                     </div>
                 </div>
                 <div class="plan-card-custom plan-injury">
@@ -284,7 +270,7 @@
                             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
                             class="consult-avatar"
                             alt="Kerry O'Bryan, expert coach avatar" />
-                              <img
+                        <img
                             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
                             class="consult-avatar overlap1"
                             alt="Kerry O'Bryan, expert coach avatar" />
@@ -327,7 +313,7 @@
                                 class="channel-avatar" />
                             <div class="channel-name">
                                 <div class="channel-name-main">
-                                     <label class="insta-handle-name">surfboard_co</label>
+                                    <label class="insta-handle-name">surfboard_co</label>
                                     <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
                                 </div>
                                 <label>Turnstile . LIGHT DESIGN</label>
@@ -338,9 +324,9 @@
                                 Learn about the best surfboard techniques for beginners and
                                 pros alike.
                             </p>
-                          <div class="insta-like-wrapper">
-                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;"/>
-                            <span class="likes">892 likes</span>
+                            <div class="insta-like-wrapper">
+                                <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;" />
+                                <span class="likes">892 likes</span>
                             </div>
                         </div>
                     </div>
@@ -384,9 +370,9 @@
                                 Learn about the best surfboard techniques for beginners and
                                 pros alike.
                             </p>
-                           <div class="insta-like-wrapper">
-                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;"/>
-                            <span class="likes">892 likes</span>
+                            <div class="insta-like-wrapper">
+                                <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;" />
+                                <span class="likes">892 likes</span>
                             </div>
                         </div>
                     </div>
@@ -431,8 +417,8 @@
                                 pros alike.
                             </p>
                             <div class="insta-like-wrapper">
-                            <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;"/>
-                            <span class="likes">892 likes</span>
+                                <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;" />
+                                <span class="likes">892 likes</span>
                             </div>
                         </div>
                     </div>
@@ -447,7 +433,7 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('.tab');
         const contentWrapper = document.getElementById('meal-cards-wrapper');
 
@@ -459,25 +445,25 @@
             const fetchUrl = baseUrl.replace('PLAN_ID', planId).replace('CATEGORY_ID', categoryId);
 
             fetch(fetchUrl, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Fetch failed');
-                return response.text();
-            })
-            .then(html => {
-                contentWrapper.innerHTML = html;
-            })
-            .catch(() => {
-                contentWrapper.innerHTML = '<p>Error loading meals.</p>';
-            });
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Fetch failed');
+                    return response.text();
+                })
+                .then(html => {
+                    contentWrapper.innerHTML = html;
+                })
+                .catch(() => {
+                    contentWrapper.innerHTML = '<p>Error loading meals.</p>';
+                });
         }
 
         // Click event for each tab
         tabs.forEach(tab => {
-            tab.addEventListener('click', function () {
+            tab.addEventListener('click', function() {
                 // Remove active class from all
                 tabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
