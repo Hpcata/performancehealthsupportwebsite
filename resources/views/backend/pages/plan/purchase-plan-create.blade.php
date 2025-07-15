@@ -60,7 +60,11 @@
         .food-label{
             font-weight:normal !important;
         }
-
+        .panel-body {
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
     </style>
 <div class="container-xxl">
     <div class="row align-items-center">
