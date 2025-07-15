@@ -34,12 +34,12 @@ function backendRoutePut($key, $args = []) {
 }
 
 function frontAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? 'front/' . $path : 'front/' . $path;
+	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/front/' . $path : 'front/' . $path;
 	return asset($asset);
 }
 
 function webAssets($path) {
-	$asset = config('constant.ENVIRONMENT') == 'production' ? '' . $path : 'public/' . $path;
+	$asset = config('constant.ENVIRONMENT') == 'production' ? 'private/public/' . $path : 'public/' . $path;
 	return asset($asset);
 }
 
