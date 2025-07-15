@@ -180,22 +180,10 @@
 
                                         <ul class="mb-3">
                                             <li>Sport: {{ $profileDetails['Sport'] }}
-                                                <!-- <button type="button" 
-                                                    class="btn btn-light edit-icon" 
-                                                    id="edit-sport-button"
-                                                    data-sport="{{ $profileDetails['Sport'] ?? '' }}"
-                                                    data-name="{{ $profileDetails['Name'] ?? '' }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button> -->
                                             </li>
                                         </ul>
 
-                                        <!-- Toggle button -->
-                                        <!-- <button class="btn-outline-primary btn-sm mb-2 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#profileDetailsCollapse" aria-expanded="false" aria-controls="profileDetailsCollapse">
-                                            Health Data
-                                        </button> -->
                                         <a data-bs-toggle="collapse" href="#profileDetailsCollapse" role="button" aria-expanded="false" aria-controls="profileDetailsCollapse" class="text-decoration-none mt-3"> Health Data : 
-                                            <!-- <i class="fas fa-chevron-down pull-right"></i> -->
                                         </a>
                                         <!-- Collapsible section -->
                                         <div class="collapse" id="profileDetailsCollapse">
@@ -442,26 +430,6 @@
                                            
                                         </div>
                                     </div>
-                                    
-                            {{--    <div class="px-4 py-3 border-bottom">
-                                        <strong>Favourite Food:</strong>
-                                        <p>{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="List your favourite foods?" data-answer="{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                    <div class="px-4 py-3 border-bottom">
-                                        <strong>Foods | Dislike:</strong>
-                                        <p>{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="Do you avoid/dislike any foods? List below" data-answer="{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                --}}
                                 </div>
                             </div>
                         </div>
@@ -567,51 +535,7 @@
                                                     >
                                                     View Plan
                                                     </a>
-
-                                                    <!-- <a href="javascript:void(0);"
-                                                    class="btn btn-primary m-2 print-plan-btn "
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-plan-id="{{ $plan->id }}"
-                                                    data-bs-toggle="tooltip"
-                                                    >
-                                                        Print Plan
-                                                    </a>
-
-                                                    <a href="#"
-                                                    class="btn btn-primary m-2 "
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ShoppingModal"
-                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
-                                                    id="fetchAllMeals"
-                                                    >
-                                                        Shopping List
-                                                    </a> -->
                                                 @endif
-
-                                                    <!-- <a href="javascript:void(0);"
-                                                    class="btn btn-primary m-2 print-plan-btn @if(!$isMailSend) disabled @endif"
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-plan-id="{{ $plan->id }}"
-                                                    style="color:#fff; background-color:#6c757d;"
-                                                    data-bs-toggle="tooltip"
-                                                    @if(!$isMailSend)
-                                                        title="Working on your plan :-) Email you when ready."
-                                                    @endif>
-                                                        Print Plan
-                                                    </a>
-
-                                                    <a href="#"
-                                                    class="btn btn-primary m-2 @if(!$isMailSend) disabled @endif"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ShoppingModal"
-                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
-                                                    id="fetchAllMeals"
-                                                    style="color:#fff; background-color:#6c757d;"
-                                                    @if(!$isMailSend)
-                                                        title="Working on your plan :-) Email you when ready."
-                                                    @endif>
-                                                        Shopping List
-                                                    </a> -->
                                             </div>
                                         </div>
                                     </div>
@@ -860,61 +784,6 @@
             </div>
         </div>
     </div>
-
-    {{-- <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- User info form -->
-                    <form id="payment-form">
-                        <div id="registration-details">
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="name" value="{{ $user->name }}">
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="email" value="{{ $user->email }}" >
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="phone" value="">
-                            </div>
-                        </div>
-                        <!-- Promo Code Section -->
-                        <div id="coupon-details">
-                            <div class="mb-3">
-                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
-                                    <input type="hidden" class="form-control" id="discount">
-                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
-                                </div>
-                                <small id="promo-message" class=""></small>
-                            </div>
-                        </div>
-                        <div id="payment-details">
-                            
-                            <!-- Stripe Payment Card Section -->
-                            <h6 class="mb-3">Payment Details</h6>
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
-                            Buy Now
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -1173,49 +1042,7 @@
             </div>
         </div>
     </div>
-
-    <!-- Edit Sport Modal -->
-    <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="#" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Sport Info</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="sport_name" class="form-label">Sport Name</label>
-                            <input type="text" name="sport" class="form-control" id="sport_name" value="{{ $userPrePlan->occupation ?? '' }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="sport_image" class="form-label">Sport Image</label>
-                            <input type="file" name="sport_image" class="form-control" id="sport_image" style="height: auto; border-radius: 5px;">
-                        </div>
-                        <!-- Existing Sport Image Preview -->
-                        @if(!empty($userPrePlan->sport_image))
-                            <div class="mb-3">
-                                <label class="form-label">Current Image:</label><br>
-                                <img src="{{ asset($userPrePlan->sport_image) }}" alt="Sport Image" width="120" height="120" class="rounded">
-                            </div>
-                        @endif
-
-                        <input type="hidden" name="user_id" id="sport_user_id" value="{{ auth()->id() }}">
-                        <input type="hidden" name="payment_id" id="payment_id" value="{{ $payment->id }}">
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" id="saveSportBtn" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
@@ -2438,10 +2265,6 @@
             return `${parts[2]}-${parts[1]}-${parts[0]}`; // "2025-04-24"
         }
         
-        $('#edit-sport-button').on('click', function() {
-            $('#editSportModal').modal('show');
-        });
-
         document.getElementById('sportImageInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
@@ -2565,203 +2388,6 @@
             });
         });
     });
-
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     const ctx = document.getElementById('trainingChart').getContext('2d');
-//     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-
-//     const frequencyMap = {
-//         "1-2": 2,
-//         "3-4": 4,
-//         "5+": 7
-//     };
-
-//     const colors = {
-//         "Low intensity": "rgba(47, 202, 98, 0.6)",
-//         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-//         "High intensity": "rgba(232, 62, 53, 0.6)"
-//     };
-
-//     const borderColors = {
-//         "Low intensity": "rgba(47, 202, 98, 1)",
-//         "Moderate intensity": "rgba(255, 159, 64, 1)",
-//         "High intensity": "rgba(232, 62, 53, 1)"
-//     };
-
-//     const allBars = [];
-
-//     if (response) {
-//         Object.keys(response).forEach(frequency => {
-//             const intensities = response[frequency];
-//             intensities.forEach(intensity => {
-//                 allBars.push({
-//                     label: `${intensity} (${frequency})`,
-//                     intensity: intensity,
-//                     value: frequencyMap[frequency] || 0,
-//                     tooltip: frequency
-//                 });
-//             });
-//         });
-//     }
-
-//     const chart = new Chart(ctx, {
-//         type: 'bar',
-//         data: {
-//             labels: allBars.map(bar => bar.label),
-//             datasets: [{
-//                 label: '# of Days',
-//                 data: allBars.map(bar => bar.value),
-//                 backgroundColor: allBars.map(bar => colors[bar.intensity]),
-//                 borderColor: allBars.map(bar => borderColors[bar.intensity]),
-//                 borderWidth: 1
-//             }]
-//         },
-//         options: {
-//             responsive: true,
-//             plugins: {
-//                 tooltip: {
-//                     callbacks: {
-//                         label: function (context) {
-//                             const bar = allBars[context.dataIndex];
-//                             return `${bar.intensity}: ${bar.tooltip} days`;
-//                         }
-//                     }
-//                 },
-//                 legend: { display: false }
-//             },
-//             scales: {
-//                 y: {
-//                     title: {
-//                         display: true,
-//                         text: '# of Days'
-//                     },
-//                     min: 0,
-//                     max: 7,
-//                     stepSize: 1,
-//                     ticks: {
-//                         callback: function(value) {
-//                             return value.toString();
-//                         }
-//                     }
-//                 },
-//                 x: {
-//                     title: {
-//                         display: true,
-//                         text: 'Training Intensity (by Frequency)'
-//                     }
-//                 }
-//             }
-//         }
-//     });
-// });
-
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     const ctx = document.getElementById('trainingChart').getContext('2d');
-    //     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-    //     console.log(response);
-    //     const frequencyMap = { "1-2": 2, "3-4": 4, "5+": 7 };
-    //     const intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
-    //     const displayLabels = ["Low", "Moderate", "High"];
-
-    //     const colors = {
-    //         "Low intensity": "rgba(47, 202, 98, 0.6)",
-    //         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-    //         "High intensity": "rgba(232, 62, 53, 0.6)"
-    //     };
-
-    //     const borderColors = {
-    //         "Low intensity": "rgba(47, 202, 98, 1)",
-    //         "Moderate intensity": "rgba(255, 159, 64, 1)",
-    //         "High intensity": "rgba(232, 62, 53, 1)"
-    //     };
-
-    //     const datasets = [];
-
-    //     for (const intensity of intensityLabels) {
-    //         for (const [freqLabel, intensityArray] of Object.entries(response)) {
-    //             if (intensityArray.includes(intensity)) {
-    //                 const data = [null, null, null];  // index: 0=Low, 1=Moderate, 2=High
-    //                 const index = intensityLabels.indexOf(intensity);
-    //                 data[index] = frequencyMap[freqLabel] || 0;
-
-    //                 datasets.push({
-    //                     label: `${intensity} (${freqLabel})`,
-    //                     data: data,
-    //                     backgroundColor: colors[intensity],
-    //                     borderColor: borderColors[intensity],
-    //                     borderWidth: 1,
-    //                     intensity: intensity // for custom legend filtering
-    //                 });
-    //             }
-    //         }
-    //     }
-
-    //     new Chart(ctx, {
-    //         type: 'bar',
-    //         data: {
-    //             labels: displayLabels,
-    //             datasets: datasets
-    //         },
-    //         options: {
-    //             responsive: true,
-    //             plugins: {
-    //                 tooltip: {
-    //                     callbacks: {
-    //                         label: function (context) {
-    //                             const value = context.raw;
-    //                             const label = context.dataset.label.match(/\((.*?)\)/);
-    //                             return `${context.dataset.label.split(' (')[0]}: ${label ? label[1] : ''}`;
-    //                         }
-    //                     }
-    //                 },
-    //                 legend: {
-    //                     position: 'bottom',
-    //                     labels: {
-    //                         generateLabels: function (chart) {
-    //                             const seen = new Set();
-    //                             return chart.data.datasets
-    //                                 .filter(ds => {
-    //                                     if (!seen.has(ds.intensity)) {
-    //                                         seen.add(ds.intensity);
-    //                                         return true;
-    //                                     }
-    //                                     return false;
-    //                                 })
-    //                                 .map(ds => ({
-    //                                     text: ds.intensity.replace(' intensity', ''),
-    //                                     fillStyle: ds.backgroundColor,
-    //                                     strokeStyle: ds.borderColor,
-    //                                     lineWidth: 1,
-    //                                     hidden: false,
-    //                                     index: chart.data.datasets.indexOf(ds)
-    //                                 }));
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             scales: {
-    //                 y: {
-    //                     min: 0,
-    //                     max: 7,
-    //                     ticks: {
-    //                         stepSize: 1
-    //                     },
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Days per week'
-    //                     }
-    //                 },
-    //                 x: {
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Training Intensity'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     });
-    // });
 
     document.addEventListener("DOMContentLoaded", function () {
         const ctx = document.getElementById('trainingChart').getContext('2d');
