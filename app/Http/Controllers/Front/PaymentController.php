@@ -236,7 +236,6 @@ class PaymentController extends Controller
     {
         $userId = $request->user_id;
         $paymentId = $request->id;
-        // dd($request->all());
         // Retrieve the user's pre-plan details
         $prePlan = DB::table('user_pre_plans')
             ->where('user_id', $userId)
@@ -262,8 +261,7 @@ class PaymentController extends Controller
             ->groupBy('step');
         
         $sportCategories = SportCategory::all();
-        // dd($nextStep);
-        return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
+        return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
     }
 
     public function prePlanDetailsSave(Request $request)
@@ -276,13 +274,11 @@ class PaymentController extends Controller
         $stepFill = $request->input('step_fill') == true ? 1 : 0;
 
         DB::beginTransaction();
-        // dd($request->all());
         try {
             $prePlanId = DB::table('user_pre_plans')
                 ->where('user_id', $user_id)
                 ->where('payment_id', $payment_id)
                 ->value('id');
-            // dd($prePlanId );
             if (!$prePlanId) {
                 $prePlanId = DB::table('user_pre_plans')->insertGetId([
                     'payment_id' => $payment_id,
@@ -397,7 +393,6 @@ class PaymentController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // dd($e->getMessage());
             DB::rollBack();
             Log::error('Error saving step: ' . $e->getMessage());
             // return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
