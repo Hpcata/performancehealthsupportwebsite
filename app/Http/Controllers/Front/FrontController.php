@@ -437,7 +437,7 @@ class FrontController extends Controller
             $profileSetUp = 0 ;
             if($userPrePlan) {
                 $completedSteps = DB::table('pre_plan_details')
-                ->where('user_pre_plan_id', $prePlan->id ?? null)
+                ->where('user_pre_plan_id', $userPrePlan->id ?? null)
                 ->max('step');
                 
                 if($completedSteps == 9) {
