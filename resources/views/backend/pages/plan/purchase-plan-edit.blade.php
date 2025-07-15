@@ -79,6 +79,16 @@
     .food-label{
         font-weight:normal !important;
     }
+    /* .selected-meals .list-group {
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    } */
+    .panel-body {
+        max-height: 600px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
