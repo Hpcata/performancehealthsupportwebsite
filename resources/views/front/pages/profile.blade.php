@@ -194,22 +194,10 @@
 
                                         <ul class="mb-3">
                                             <li>Sport: {{ $profileDetails['Sport'] }}
-                                                <button type="button" 
-                                                    class="btn btn-light edit-icon" 
-                                                    id="edit-sport-button"
-                                                    data-sport="{{ $profileDetails['Sport'] ?? '' }}"
-                                                    data-name="{{ $profileDetails['Name'] ?? '' }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
                                             </li>
                                         </ul>
 
-                                        <!-- Toggle button -->
-                                        <!-- <button class="btn-outline-primary btn-sm mb-2 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#profileDetailsCollapse" aria-expanded="false" aria-controls="profileDetailsCollapse">
-                                            Health Data
-                                        </button> -->
                                         <a data-bs-toggle="collapse" href="#profileDetailsCollapse" role="button" aria-expanded="false" aria-controls="profileDetailsCollapse" class="text-decoration-none mt-3"> Health Data : 
-                                            <!-- <i class="fas fa-chevron-down pull-right"></i> -->
                                         </a>
                                         <!-- Collapsible section -->
                                         <div class="collapse" id="profileDetailsCollapse">
@@ -555,26 +543,6 @@
                                            
                                         </div>
                                     </div>
-                                    
-                            {{--    <div class="px-4 py-3 border-bottom">
-                                        <strong>Favourite Food:</strong>
-                                        <p>{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="List your favourite foods?" data-answer="{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                    <div class="px-4 py-3 border-bottom">
-                                        <strong>Foods | Dislike:</strong>
-                                        <p>{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="Do you avoid/dislike any foods? List below" data-answer="{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                --}}
                                 </div>
                             </div>
                         </div>
@@ -680,51 +648,7 @@
                                                     >
                                                     View Plan
                                                     </a>
-
-                                                    <!-- <a href="javascript:void(0);"
-                                                    class="btn btn-primary m-2 print-plan-btn "
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-plan-id="{{ $plan->id }}"
-                                                    data-bs-toggle="tooltip"
-                                                    >
-                                                        Print Plan
-                                                    </a>
-
-                                                    <a href="#"
-                                                    class="btn btn-primary m-2 "
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ShoppingModal"
-                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
-                                                    id="fetchAllMeals"
-                                                    >
-                                                        Shopping List
-                                                    </a> -->
                                                 @endif
-
-                                                    <!-- <a href="javascript:void(0);"
-                                                    class="btn btn-primary m-2 print-plan-btn @if(!$isMailSend) disabled @endif"
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-plan-id="{{ $plan->id }}"
-                                                    style="color:#fff; background-color:#6c757d;"
-                                                    data-bs-toggle="tooltip"
-                                                    @if(!$isMailSend)
-                                                        title="Working on your plan :-) Email you when ready."
-                                                    @endif>
-                                                        Print Plan
-                                                    </a>
-
-                                                    <a href="#"
-                                                    class="btn btn-primary m-2 @if(!$isMailSend) disabled @endif"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ShoppingModal"
-                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
-                                                    id="fetchAllMeals"
-                                                    style="color:#fff; background-color:#6c757d;"
-                                                    @if(!$isMailSend)
-                                                        title="Working on your plan :-) Email you when ready."
-                                                    @endif>
-                                                        Shopping List
-                                                    </a> -->
                                             </div>
                                         </div>
                                     </div>
@@ -1223,61 +1147,19 @@
         <div class="modal-dialog modal-dialog-top">
             <div class="modal-content" style="z-index: 1100;">
             <div class="modal-header">
-                <h5 class="modal-title" id="errorModalLabel">Validation Errors</h5>
+                <h5 class="modal-title" id="errorModalLabel">Validation Error</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="errorModalBody">
+            <div class="modal-body py-3" id="errorModalBody">
                 <!-- Error messages will be injected here -->
             </div>
-            <div class="modal-footer justify-content-center">
+            <div class="modal-footer mt-0 py-1">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             </div>
         </div>
     </div>
-
-    <!-- Edit Sport Modal -->
-    <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="#" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Sport Info</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="sport_name" class="form-label">Sport Name</label>
-                            <input type="text" name="sport" class="form-control" id="sport_name" value="{{ $userPrePlan->occupation ?? '' }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="sport_image" class="form-label">Sport Image</label>
-                            <input type="file" name="sport_image" class="form-control" id="sport_image" style="height: auto; border-radius: 5px;">
-                        </div>
-                        <!-- Existing Sport Image Preview -->
-                        @if(!empty($userPrePlan->sport_image))
-                            <div class="mb-3">
-                                <label class="form-label">Current Image:</label><br>
-                                <img src="{{ asset($userPrePlan->sport_image) }}" alt="Sport Image" width="120" height="120" class="rounded">
-                            </div>
-                        @endif
-
-                        <input type="hidden" name="user_id" id="sport_user_id" value="{{ auth()->id() }}">
-                        <input type="hidden" name="payment_id" id="payment_id" value="{{ $payment->id }}">
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" id="saveSportBtn" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
@@ -1346,7 +1228,7 @@
                 let message = '';
 
                 if (response.status === 422 && errorData.errors) {
-                    message += '<ul>';
+                    message += '<ul class="mb-1">';
                     Object.values(errorData.errors).forEach(err => {
                         message += `<li style="color: red;">${err[0]}</li>`;
                     });
@@ -1824,7 +1706,7 @@
                     if (xhr.status === 422) {
                         // Laravel validation error
                         const errors = xhr.responseJSON.errors;
-                        message += '<ul>';
+                        message += '<ul class="mb-1">';
                         $.each(errors, function(key, value) {
                             message += `<li style="color: red;">${value[0]}</li>`;
                         });
@@ -2544,10 +2426,6 @@
             return `${parts[2]}-${parts[1]}-${parts[0]}`; // "2025-04-24"
         }
         
-        $('#edit-sport-button').on('click', function() {
-            $('#editSportModal').modal('show');
-        });
-
         document.getElementById('sportImageInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
