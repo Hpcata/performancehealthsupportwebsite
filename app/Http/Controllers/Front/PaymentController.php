@@ -269,7 +269,6 @@ class PaymentController extends Controller
 
         // Fetch only needed columns for stepData
         $stepData = DB::table('pre_plan_details')
-            ->select('id', 'step', 'field_name', 'field_value') // Specify only needed columns
             ->where('user_pre_plan_id', $userPrePlanId)
             ->get()
             ->groupBy('step');
