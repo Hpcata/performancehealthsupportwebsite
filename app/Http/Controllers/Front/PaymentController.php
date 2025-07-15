@@ -69,6 +69,17 @@ class PaymentController extends Controller
                     'password' => Hash::make($validated['password']),
                 ]);
 
+                $click = ActivityTracker::click('user_account_create', $user->id);
+                ActivityTracker::log(
+                    TrackingType::ACCOUNT_CREATED,$user->id,
+                    [
+                        'email' => $user->email,
+                        'user_click_id' => $click->id,
+                        'section_element_id' => $click->section_element_id,
+                        'user_id' => $user->id,
+                    ]
+                );
+                
                 $isNewUser = true;
                 Log::debug('New user created.', ['user_id' => $user->id]);
             }

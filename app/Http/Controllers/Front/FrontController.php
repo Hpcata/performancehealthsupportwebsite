@@ -810,16 +810,16 @@ class FrontController extends Controller
                 $userId = $user->id;
             }
 
-            $click = ActivityTracker::click($sectionElement, $userId);
+            // $click = ActivityTracker::click($sectionElement, $userId);
 
-            ActivityTracker::log($couponType, $userId, [
-                'user_click_id' => $click->id,
-                'section_element_id' => $click->section_element_id,
-                'coupon_code' => $promoCode,
-                'coupon_id' => $coupon->id,
-                'discount' => $discount,
-                'plan_id' => $planId,
-            ]);
+            // ActivityTracker::log($couponType, $userId, [
+            //     'user_click_id' => $click->id,
+            //     'section_element_id' => $click->section_element_id,
+            //     'coupon_code' => $promoCode,
+            //     'coupon_id' => $coupon->id,
+            //     'discount' => $discount,
+            //     'plan_id' => $planId,
+            // ]);
 
             return response()->json([
                 'valid' => true,

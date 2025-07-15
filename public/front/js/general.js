@@ -181,9 +181,7 @@ $(document).ready(function() {
                 $('.testimonial-section-main-div').show();
 
                 var testimonialArray = Object.values(response);
-
                 $.each(testimonialArray, function(index, testimonial) {
-        
                     testimonialHtml += `
                         <div class="slide">
                             <div class="d-flex flex-sm-row flex-column align-items-center" id="using-${index}">
