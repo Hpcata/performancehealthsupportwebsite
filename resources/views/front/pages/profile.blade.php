@@ -321,10 +321,7 @@
                                                 }
 
                                                 // Separate current and past supplements
-                                                $currentSupplements = [];
-                                                $pastSupplements = [];
-                                                $currentSupplementDates = [];
-                                                $pastSupplementDates = [];
+                                                $currentSupplements = $pastSupplements = $currentSupplementDates = $pastSupplementDates = [];
                                                 
                                                 foreach ($supplements as $index => $item) {
                                                     $endDate = $vitaminEndDates[$index] ?? null;
@@ -393,10 +390,7 @@
                                                 }
 
                                                 // Separate current and past medications
-                                                $currentMedications = [];
-                                                $pastMedications = [];
-                                                $currentMedicationDates = [];
-                                                $pastMedicationDates = [];
+                                                $currentMedications = $pastMedications = $currentMedicationDates = $pastMedicationDates = [];
                                                 
                                                 foreach ($medications as $index => $item) {
                                                     $endDate = $medicationEndDates[$index] ?? null;
