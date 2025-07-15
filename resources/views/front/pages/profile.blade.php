@@ -1332,7 +1332,7 @@
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{!! frontAssets('js/jquery-3.6.min.js') !!}"></script>
 <script src="{!! frontAssets('js/bootstrap.bundle.min.js') !!}"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
