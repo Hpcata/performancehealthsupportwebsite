@@ -519,28 +519,17 @@ select.form-control {
   background-repeat: no-repeat; background-position: 93% center; background-size: 14px auto; 
 }
 
-.sidebar .sidebar-mini-text {
-  display: inline;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.tooltip.bs-tooltip-end .tooltip-inner,
+.tooltip.bs-tooltip-right .tooltip-inner {
+  background-color: #6c5ce7;
+  color: #fff;             
+  font-size: 1rem;         
+  border-radius: 8px;        
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 8px 16px;
 }
 
-// Custom sidebar tooltip styles
-.tooltip {
-    &.bs-tooltip-auto[x-placement^="right"],
-    &.bs-tooltip-end {
-      .tooltip-inner {
-        background-color: #6c5ce7; // Custom background
-        color: #fff;               // Custom text color
-        font-size: 1rem;           // Custom font size
-        border-radius: 8px;        // Rounded corners
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-        padding: 8px 16px;
-      }
-      .tooltip-arrow::before {
-        border-right-color: #6c5ce7; // Arrow color matches background
-      }
-    }
-    // You can add more placement-specific rules if needed
-  }
+.tooltip.bs-tooltip-end .tooltip-arrow::before,
+.tooltip.bs-tooltip-right .tooltip-arrow::before {
+  border-right-color: #6c5ce7;
+}

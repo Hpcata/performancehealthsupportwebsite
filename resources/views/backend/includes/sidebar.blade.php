@@ -12,113 +12,113 @@
 
 			<!-- <li><a class="m-link {!! routeIsActive(backendRoute('dashboard')) !!}" href="{!! backendRoutePut('dashboard') !!}"><i class="icofont-home fs-5"></i> <span>Dashboard</span></a></li> -->
 			 <li>
-				<a class="m-link {{request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+				<a class="m-link {{request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
 					<i class="icofont-ui-user fs-5"></i>
 					<span class="sidebar-mini-text">Users</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.quiz.*') ? 'active' : '' }}" href="{{ route('admin.quiz.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Quiz">
+				<a class="m-link {{request()->routeIs('admin.quiz.*') ? 'active' : '' }}" href="{{ route('admin.quiz.index') }}">
 					<i class="icofont-page fs-5"></i>
 					<span class="sidebar-mini-text">Quiz</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('pages.*') ? 'active' : '' }}" href="{{ route('pages.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Pages">
+				<a class="m-link {{request()->routeIs('pages.*') ? 'active' : '' }}" href="{{ route('pages.index') }}">
 					<i class="icofont-page fs-5"></i>
 					<span class="sidebar-mini-text">Pages</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.plans.*') ? 'active' : '' }}" href="{{ route('admin.plans.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Purchase Plans">
+				<a class="m-link {{request()->routeIs('admin.plans.*') ? 'active' : '' }}" href="{{ route('admin.plans.index') }}">
 					<i class="icofont-dollar fs-5"></i>
 					<span class="sidebar-mini-text">Purchase Plans</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.coupons.*') ? 'active' : '' }}" href="{{ route('admin.coupons.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Coupons">
+				<a class="m-link {{request()->routeIs('admin.coupons.*') ? 'active' : '' }}" href="{{ route('admin.coupons.index') }}">
 					<i class="icofont-sale-discount fs-5"></i>
 					<span class="sidebar-mini-text">Coupons</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Category">
+				<a class="m-link {{request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
 					<i class="icofont-chart-flow fs-5"></i>
 					<span class="sidebar-mini-text">Category</span>
 				</a>
 			</li>
 			
 			<li>
-				<a class="m-link {{request()->routeIs('admin.subcategories.*') ? 'active' : '' }}" href="{{ route('admin.subcategories.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Categories">
+				<a class="m-link {{request()->routeIs('admin.subcategories.*') ? 'active' : '' }}" href="{{ route('admin.subcategories.index') }}">
 					<i class="icofont-chart-flow fs-5"></i>
 					<span class="sidebar-mini-text">Sub Categories</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.items.*') ? 'active' : '' }}" href="{{ route('admin.items.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Foods">
+				<a class="m-link {{request()->routeIs('admin.items.*') ? 'active' : '' }}" href="{{ route('admin.items.index') }}">
 					<i class="icofont-fruits fs-5"></i>
 					<span class="sidebar-mini-text">Foods</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.meals.*') ? 'active' : '' }}" href="{{ route('admin.meals.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Meals">
+				<a class="m-link {{request()->routeIs('admin.meals.*') ? 'active' : '' }}" href="{{ route('admin.meals.index') }}">
 					<i class="icofont-culinary fs-5"></i>
 					<span class="sidebar-mini-text">Meals</span>
 				</a>
 			</li>
 
 			<li>
-				<a class="m-link {{request()->routeIs('admin.purchase-plans.*') ? 'active' : '' }}" href="{{ route('admin.purchase-plans.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Athlete Plans">
+				<a class="m-link {{request()->routeIs('admin.purchase-plans.*') ? 'active' : '' }}" href="{{ route('admin.purchase-plans.index') }}">
 					<i class="icofont-law-document fs-5"></i>
 					<span class="sidebar-mini-text">Athlete Plans</span>
 				</a>
 			</li>
 
 			<li>
-				<a class="m-link {{request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Tags">
+				<a class="m-link {{request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}">
 					<i class="icofont-culinary fs-5"></i>
 					<span class="sidebar-mini-text">Tags</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.flags.*') ? 'active' : '' }}" href="{{ route('admin.flags.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Preferences">
+				<a class="m-link {{request()->routeIs('admin.flags.*') ? 'active' : '' }}" href="{{ route('admin.flags.index') }}">
 					<i class="icofont-fruits fs-5"></i>
 					<span class="sidebar-mini-text">Preferences</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.sports-categories.*') ? 'active' : '' }}" href="{{ route('admin.sports-categories.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Sport Categories">
+				<a class="m-link {{request()->routeIs('admin.sports-categories.*') ? 'active' : '' }}" href="{{ route('admin.sports-categories.index') }}">
 					<i class="icofont-abc fs-5"></i>
 					<span class="sidebar-mini-text">Sport Categories</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('admin.sport-games.*') ? 'active' : '' }}" href="{{ route('admin.sport-games.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Sport Games">
+				<a class="m-link {{request()->routeIs('admin.sport-games.*') ? 'active' : '' }}" href="{{ route('admin.sport-games.index') }}">
 					<i class="icofont-football fs-5"></i>
 					<span class="sidebar-mini-text">Sport Games</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('backend.blogs.*') ? 'active' : '' }}" href="{{ route('backend.blogs.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Blog Page">
+				<a class="m-link {{request()->routeIs('backend.blogs.*') ? 'active' : '' }}" href="{{ route('backend.blogs.index') }}">
 					<i class="icofont-copy fs-5"></i>
 					<span class="sidebar-mini-text">Blog Page</span>
 				</a>
 			</li>
 			
 			<li>
-				<a class="m-link {{request()->routeIs('testimonials.*') ? 'active' : '' }}" href="{!! route('testimonials.index') !!}" data-bs-toggle="tooltip" data-bs-placement="right" title="Testimonials">
+				<a class="m-link {{request()->routeIs('testimonials.*') ? 'active' : '' }}" href="{!! route('testimonials.index') !!}">
 					<i class="icofont-users-alt-2 fs-5"></i>
 					<span class="sidebar-mini-text">Testimonials</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('organizations.*') ? 'active' : '' }}" href="{!! route('organizations') !!}" data-bs-toggle="tooltip" data-bs-placement="right" title="Associations">
+				<a class="m-link {{request()->routeIs('organizations.*') ? 'active' : '' }}" href="{!! route('organizations') !!}">
 					<i class="icofont-ui-rating fs-5"></i>
 					<span class="sidebar-mini-text">Associations</span>
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{ request()->routeIs('site-settings', ['slug' => 'general']) ? 'active' : '' }}" href="{{ route('site-settings', ['slug' => 'general']) }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Site Settings">
+				<a class="m-link {{ request()->routeIs('site-settings', ['slug' => 'general']) ? 'active' : '' }}" href="{{ route('site-settings', ['slug' => 'general']) }}">
 					<i class="icofont-ui-settings fs-5"></i>
 					<span class="sidebar-mini-text">Site Settings</span>
 				</a>

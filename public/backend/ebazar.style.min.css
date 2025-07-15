@@ -24991,8 +24991,16 @@ table.dataTable > tbody > tr.child ul.dtr-details {
 div.dataTables_wrapper div.dataTables_filter input, div.dataTables_wrapper div.dataTables_length select { border-color: #d7c5c5; }
 .sidebar.sidebar-mini .brand-icon .logo-text { display:none; }
 .collapsePlan-body { max-height: 73vh; overflow: auto; }
-.sidebar.sidebar-mini .menu-list .m-link:hover span { font-size: 15px; width: auto; left: 60%; white-space: nowrap; padding: 10px 20px; }
+.sidebar.sidebar-mini .menu-list .m-link:hover span { display:none;font-size: 15px; width: auto; left: 60%; white-space: nowrap; padding: 10px 20px; }
 .sidebar .menu-list { overflow: inherit; }
+.sidebar .sidebar-mini-text {
+  display: inline;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
 
 select.form-control {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
