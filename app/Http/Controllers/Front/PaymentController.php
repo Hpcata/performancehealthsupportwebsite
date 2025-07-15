@@ -28,6 +28,7 @@ class PaymentController extends Controller
     public function processPayment(Request $request)
     {
         $isGuest = !auth()->guard('web')->check();
+        $userId = User::where('email', $request->email)->value('id');
 
         // Define validation rules
         $rules = [
@@ -36,7 +37,7 @@ class PaymentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'password' => $isGuest ? 'required|string|min:8' : 'nullable',
+            'password' => ($isGuest && !$userId) ? 'required|string|min:8' : 'nullable',
             'coupon_code' => 'nullable'
         ];
 

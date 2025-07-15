@@ -28,17 +28,17 @@
         filter: blur(5px); /* Adjust the blur value */
         transition: filter 0.3s ease-in-out;
     }
-    
+    .coupon-link           { text-decoration:none; cursor:pointer; color:#000; text-decoration:underline;}
+    .coupon-link.active    { color:#000; text-decoration:underline; }
+
     /* Simple fix to prevent page scroll on link click */
     #weight-tracking {
         cursor: pointer;
     }
-    
     /* Let Bootstrap handle modal positioning naturally */
     .modal {
         z-index: 1055;
     }
-    
     .modal-backdrop {
         z-index: 1050;
     }
@@ -974,66 +974,11 @@
         </div>
     </div>
 
-    {{-- <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- User info form -->
-                    <form id="payment-form">
-                        <div id="registration-details">
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="name" value="{{ $user->name }}">
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="email" value="{{ $user->email }}" >
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="phone" value="">
-                            </div>
-                        </div>
-                        <!-- Promo Code Section -->
-                        <div id="coupon-details">
-                            <div class="mb-3">
-                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
-                                    <input type="hidden" class="form-control" id="discount">
-                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
-                                </div>
-                                <small id="promo-message" class=""></small>
-                            </div>
-                        </div>
-                        <div id="payment-details">
-                            
-                            <!-- Stripe Payment Card Section -->
-                            <h6 class="mb-3">Payment Details</h6>
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
-                            Buy Now
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-3">
                 <div class="modal-header bg-light border-0">
-                    <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase Plan</h5>
+                    <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -1053,9 +998,13 @@
                         </div>
                         <!-- Heading -->
                         <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
-
+                        <div class="mb-3 mt-3">
+                            <small>
+                                <a href="#" id="toggle-coupon-link" class="coupon-link">Add a Coupon Code</a>
+                            </small>
+                        </div>
                         <!-- Coupon Code -->
-                        <div class="mb-3" id="coupon-details">
+                        <div class="mb-3 d-none" id="coupon-details">
                             <label for="promo-code" class="form-label">Coupon Code</label>
                             <div class="d-flex gap-2">
                                 <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
@@ -2099,6 +2048,34 @@
     });
 
     $(document).ready(function() {
+
+        const $toggleLink = $('#toggle-coupon-link');
+        const $couponDetails = $('#coupon-details');
+        const $promoInput = $('#promo-code');
+        const $promoMessage = $('#promo-message');
+        const $paymentDetails = $('#payment-details');
+
+        if ($toggleLink.length) {
+            $toggleLink.on('click', function (e) {
+                e.preventDefault();
+
+                const isHidden = $couponDetails.hasClass('d-none');
+
+                $couponDetails.toggleClass('d-none');
+
+                $toggleLink.text(isHidden ? 'Remove a Coupon Code' : 'Add a Coupon Code');
+
+                if (!isHidden) {
+                    $promoInput.val('');
+                    if ($promoMessage.length) {
+                        $promoMessage.text('');
+                    }
+                    $paymentDetails.css('display', '');
+                }
+            });
+        }
+
+        // Stripe Payment
         var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
         // var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
         var elements = stripe.elements();
@@ -2136,7 +2113,6 @@
 
         // Event listener for the 'Purchase Now' button
         $('body').on('click', '.buy-plan-btn', function () {
-            // alert('Payment button clicked');
             // e.preventDefault();
 
             var planId = $(this).data('plan-id');  // Get the plan ID
@@ -2232,7 +2208,6 @@
                                 success: function(response) {
                                     if (response.success) {
                                         // Handle successful payment
-                                        // alert('Payment successful!');
                                         $('#purchaseModal').modal('hide');
                                         // $('#thankYouModal').modal('show');
 
@@ -2321,7 +2296,6 @@
         });
 
         $('body').on('click', '.buy-plan', function () {
-            // alert('Payment button clicked');
             // e.preventDefault();
 
             var planId = $(this).data('plan-id');  // Get the plan ID
@@ -2376,7 +2350,6 @@
                             success: function(response) {
                                 if (response.success) {
                                     // Handle successful payment
-                                    // alert('Payment successful!');
                                     $('#purchaseModal').modal('hide');
 
                                     showThankYouModal();
@@ -2416,6 +2389,32 @@
 
         $('#thankYouModal').on('hidden.bs.modal', function () {
             location.reload(); // Reloads the page when modal is closed
+        });
+
+        $('#purchaseModal').on('hidden.bs.modal', function () {
+            $('#payment-form')[0].reset();
+            $('#card-errors').text('');
+            // Reset coupon UI
+            const toggleLink = document.getElementById('toggle-coupon-link');
+            const couponDetails = document.getElementById('coupon-details');
+            const promoInput = document.getElementById('promo-code');
+            const promoMessage = document.getElementById('promo-message');
+
+            if (couponDetails && !couponDetails.classList.contains('d-none')) {
+                couponDetails.classList.add('d-none');
+            }
+
+            if (toggleLink) {
+                toggleLink.textContent = 'Add a Coupon Code';
+            }
+
+            if (promoInput) {
+                promoInput.value = '';
+            }
+
+            if (promoMessage) {
+                promoMessage.textContent = '';
+            }
         });
     });
 
