@@ -18,9 +18,6 @@ use App\Models\Coupon;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
 use App\Models\UserPlan;
-use App\Mail\PlanPurchaseMail;
-use App\Mail\PrePlanDetailsSubmitMail;
-use App\Models\Payment;
 use App\Models\SportCategory;
 
 class PaymentController extends Controller
