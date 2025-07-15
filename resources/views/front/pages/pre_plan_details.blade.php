@@ -24,7 +24,10 @@
     .modal-header {
         cursor: move;
     }
-
+    .required-asterisk {
+        font-size: 1.5rem;
+        vertical-align: middle;
+    }
 </style>
     <div class="section">
         <div class="container">
@@ -58,7 +61,7 @@
                                         <div class="form-floating my-3">
                                             <!-- Hidden question input -->
                                             <input type="date" class="form-control" name="ans[personal_details][dob]" placeholder="">
-                                            <label>Date of Birth<small class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</small></label>
+                                            <label>Date of Birth<small class="text-danger required-asterisk">*</small></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
@@ -70,7 +73,7 @@
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                 @endforeach
                                             </select>
-                                            <label for="sport_category">Sport Category<small class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</small></label>
+                                            <label for="sport_category">Sport Category<small class="text-danger required-asterisk">*</small></label>
                                         </div>
                                     </div>
 
@@ -91,14 +94,14 @@
                                             <select class="form-select" id="sport_game"  name="ans[personal_details][occupation]" placeholder="">
                                                 <option value="">Select Sport Game</option>
                                             </select>
-                                            <label for="sport_game">Sport<small class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</small></label>
+                                            <label for="sport_game">Sport<small class="text-danger required-asterisk">*</small></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
                                         <input type="hidden" name="questions[personal_details][postcode]" value="Postcode">
                                         <div class="form-floating my-3">
-                                            <input type="text" class="form-control" name="ans[personal_details][postcode]" placeholder="" maxlength="6" pattern="\d{1,6}" >
-                                            <label>Postcode<small class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</small></label>
+                                            <input type="text" class="form-control" name="ans[personal_details][postcode]" placeholder="">
+                                            <label>Postcode<small class="text-danger required-asterisk">*</small></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
@@ -124,7 +127,7 @@
                             <div class="card-body px-4">
                                 <div class="row">
                                     <div class="col-md-6 col-lg-6">
-                                        <h5>Have you recently had a blood test?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>Have you recently had a blood test?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[medical_history][blood_test]" value="Have you recently had a blood test?">
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -142,7 +145,7 @@
                                         </div>
                                         <!-- File Upload Input, initially hidden -->
                                         <div id="bloodTestDateSection" style="display: none;">
-                                            <label for="bloodTestDate" class="form-label">Approx. Date: <small class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</small></label>
+                                            <label for="bloodTestDate" class="form-label">Approx. Date: <small class="text-danger" >*</small></label>
                                             <select class="form-select mb-2" name="ans[medical_history][blood_test][date]" id="bloodTestDate">
                                                 <option value="">-- Select --</option>
                                                 <option value="3 months">3 months</option>
@@ -159,14 +162,14 @@
                                     </div>
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <h5>Provide details of any prescription medications (if taking any):<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                            <h5>Provide details of any prescription medications (if taking any):<span class="text-danger required-asterisk">*</span></h5>
                                             <input type="hidden" name="questions[medical_history][prescription_meds]" value="Provide details of any prescription medications (if taking any):">
                                             <input type="text" class="form-control" name="ans[medical_history][prescription_meds]" placeholder="Eg: Nurofen, Ritalin or Nil">
                                             <small class="text-muted">(Use commas to separate items. Eg: Nurofen, Ritalin or Nil.)</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
-                                        <h5>Have you recently been diagnosed with any health problems or illnesses:<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>Have you recently been diagnosed with any health problems or illnesses:<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[medical_history][diagnosed]" value="Have you recently been diagnosed with any of the following:">
 
                                         <div class="form-floating my-3">
@@ -217,7 +220,7 @@
                                     
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <h5>List any dietary vitamins or supplements you are <strong>currently</strong> taking (if any):<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                            <h5>List any dietary vitamins or supplements you are <strong>currently</strong> taking (if any):<span class="text-danger required-asterisk">*</span></h5>
                                             <input type="hidden" name="questions[medical_history][vitamins_supplements]" value="List any dietary vitamins or supplements you are currently taking (if any):">
                                             <input type="text" class="form-control" name="ans[medical_history][vitamins_supplements]" placeholder="Eg: Swisse Vitamin C, Musashi Whey Protein Powder, Nil">
                                             <small class="text-muted">(Use commas to separate items. Eg: Swisse Vitamin C, Musashi Whey Protein Powder or Nil.)</small>
@@ -227,7 +230,7 @@
 
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <h5>Please list any other medical conditions<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                            <h5>Please list any other medical conditions<span class="text-danger required-asterisk">*</span></h5>
                                             <input type="hidden" name="questions[medical_history][medical_conditions]" value="Please list any other medical conditions">
                                             <input type="text" class="form-control" name="ans[medical_history][medical_conditions]" placeholder="Eg: Coeilac, Asthma or Nil">
                                             <small class="text-muted">Use commas to separate items. Eg: Coeilac, Asthma or Nil.</small>
@@ -236,7 +239,7 @@
                                     
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <h5>If female which statement best describes your current menstrual function?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                            <h5>If female which statement best describes your current menstrual function?<span class="text-danger required-asterisk">*</span></h5>
                                             <input type="hidden" name="questions[medical_history][menstrual_function]" value="If female which statement best describes your current menstrual function?">
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
@@ -296,20 +299,20 @@
                                 <div class="row">
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>Height (cm):<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></label>
+                                            <label>Height (cm):<span class="text-danger required-asterisk">*</span></label>
                                             <input type="hidden" name="questions[physical_measures][height]" value="Height (cm):" />
                                             <input type="text" class="form-control" name="ans[physical_measures][height]" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>Current body weight (kg) (if known):<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></label>
+                                            <label>Current body weight (kg) (if known):<span class="text-danger required-asterisk">*</span></label>
                                             <input type="hidden" name="questions[physical_measures][weight]" value="Current body weight (kg) (if known):" />
                                             <input type="text" class="form-control" name="ans[physical_measures][weight]" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
-                                        <h5>What has happened to your body weight over the past 2-3 months?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>What has happened to your body weight over the past 2-3 months?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[physical_measures][weightover]" value="What has happened to your body weight over the past 2-3 months?" />
 
                                         <div class="form-floating my-3">
@@ -346,7 +349,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
-                                        <h5>Have you recently undertaken a body composition assessment (measure of muscle, body fat)?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>Have you recently undertaken a body composition assessment (measure of muscle, body fat)?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[physical_measures][bodycomposition]" value="Have you recently undertaken a body composition assessment (measure of muscle, body fat)?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -396,7 +399,7 @@
                             <div class="card-body px-4">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5>I am currently living with:<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>I am currently living with:<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[social_information][livingwith]" value="I am currently living with:" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -432,7 +435,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <h5>Who does most of the cooking at home?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>Who does most of the cooking at home?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[social_information][cookinghome]" value="Who does most of the cooking at home?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -468,7 +471,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <h5>How would you rate your cooking skills?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>How would you rate your cooking skills?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[social_information][cookingskills]" value="How would you rate your cooking skills?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -526,20 +529,20 @@
                                 <div class="row">
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>List your favourite foods?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></label>
+                                            <label>List your favourite foods?<span class="text-danger required-asterisk">*</span></label>
                                             <input type="hidden" name="questions[dietary_information][favoutire_foods]" value="List your favourite foods?" />
                                             <input type="text" class="form-control" name="ans[dietary_information][favoutire_foods]" placeholder="">                                        
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>Do you avoid/dislike any foods? List below<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></label>
+                                            <label>Do you avoid/dislike any foods? List below<span class="text-danger required-asterisk">*</span></label>
                                             <input type="hidden" name="questions[dietary_information][dislike_foods]" value="Do you avoid/dislike any foods? List below" />
                                             <input type="text" class="form-control" name="ans[dietary_information][dislike_foods]" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>Do you have any allergies or intolerances?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5><span>(more than 1 box can be checked)</span>
+                                        <h5>Do you have any allergies or intolerances?<span class="text-danger required-asterisk">*</span></h5><span>(more than 1 box can be checked)</span>
                                         <input type="hidden" name="questions[dietary_information][dietaryneeds]" value="Do you have any allergies or intolerances?" />
                                         <div class="form-floating my-3">
                                             
@@ -588,7 +591,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>Do you tend to follow any particular way of eating?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5><span>(more than 1 box can be checked)</span>
+                                        <h5>Do you tend to follow any particular way of eating?<span class="text-danger required-asterisk">*</span></h5><span>(more than 1 box can be checked)</span>
                                         <input type="hidden" name="questions[dietary_information][wayofeating]" value="Do you tend to follow any particular way of eating?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -622,7 +625,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-12">
-                                        <h5>Please indicate your hunger/appetite over the day: (tick relevant meal times)<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>Please indicate your hunger/appetite over the day: (tick relevant meal times)<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[dietary_information][hunger]" value="Please indicate your hunger/appetite over the day: (tick relevant meal times)" />
                                         <div class="table-responsive">
                                             <table class="table">
@@ -690,7 +693,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>How often do you eat takeaway food?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>How often do you eat takeaway food?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[dietary_information][takeaway_foods]" value="How often do you eat takeaway food?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -709,13 +712,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>What are the most common takeaways you eat? Pizza, McDonald's, Mexican, etc<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></label>
+                                            <label>What are the most common takeaways you eat? Pizza, McDonald's, Mexican, etc<span class="text-danger required-asterisk">*</span></label>
                                             <input type="hidden" name="questions[dietary_information][common_takeaways]" value="What are the most common takeaways you eat? Pizza, McDonald's, Mexican, etc" />
                                             <input type="text" class="form-control" name="ans[dietary_information][common_takeaways]" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-12">
-                                        <h5>Rank the following considerations from highest (1) to lowest (3) when selecting a meal or snack:<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>Rank the following considerations from highest (1) to lowest (3) when selecting a meal or snack:<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[dietary_information][flavour_taste]" value="Rank the following considerations from highest (1) to lowest (3) when selecting a meal or snack:" />
                                         <div class="table-responsive">
                                             <table class="table">
@@ -753,7 +756,7 @@
 
                                     <div class="col-md-6">
                                         <div class="no-form-floating form-floating my-3">
-                                            <label>If 18+, do you drink alcohol?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></label>
+                                            <label>If 18+, do you drink alcohol?<span class="text-danger required-asterisk">*</span></label>
                                             <input type="hidden" name="questions[dietary_information][drink_alcohol]" value="If 18+, do you drink alcohol?" />
                                             <div class="form-floating my-3">
                                                 <div class="form-check my-2">
@@ -1423,7 +1426,7 @@
                             <div class="card-body px-4">
                                 <div class="row">
                                     <div class="col-md-6">
-                                    <h5>Which of these do you want help with?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                    <h5>Which of these do you want help with?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[nutrition_goals][related_goals]" value="Which of these do you want help with?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -1471,7 +1474,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>What do you want help with?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>What do you want help with?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[nutrition_goals][like_assistance_with]" value="What do you want help with?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -1499,7 +1502,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>What's your biggest nutrition challenge?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>What's your biggest nutrition challenge?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[nutrition_goals][biggest_nutrition_challenge]" value="What's your biggest nutrition challenge?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -1561,7 +1564,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>Where do you get your nutrition info?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>Where do you get your nutrition info?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[nutrition_goals][getnutrition]" value="Where do you get your nutrition info?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -1644,7 +1647,7 @@
                             <div class="card-body px-4">
                                 <div class="row">
                                     <div class="col-md-12 col-lg-12">
-                                        <h5>What type of physical activity do you mainly do or compete in? (more than one can apply)<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>What type of physical activity do you mainly do or compete in? (more than one can apply)<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[physical_activity_and_exercise][physical_activity]" value="What type of physical activity do you mainly do or compete in? (more than one can apply)" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -1674,7 +1677,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-12">
-                                        <h5>On average, how many days per week do you train, and at what intensity?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>On average, how many days per week do you train, and at what intensity?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[physical_activity_and_exercise][intensity]" value="On average, how many days per week do you train, and at what intensity?" />
                                         <div class="table-responsive">
                                             <table class="table">
@@ -1702,7 +1705,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-12">
-                                        <h5>Do you <strong class="text-primary">CURRENTLY</strong> use any exercise or nutrition trackers/apps?<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></h5>
+                                        <h5>Do you <strong class="text-primary">CURRENTLY</strong> use any exercise or nutrition trackers/apps?<span class="text-danger required-asterisk">*</span></h5>
                                         <input type="hidden" name="questions[physical_activity_and_exercise][tracking_device]" value="Do you CURRENTLY use any exercise or nutrition trackers/apps?" />
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
@@ -1733,7 +1736,7 @@
                                     </div>
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3 d-none" id="trackingDetailsField">
-                                            <label>What do you mainly track? (e.g. exercise, food ,sleep)<span class="text-danger" style="font-size: 1.5rem; vertical-align: middle;">*</span></label>
+                                            <label>What do you mainly track? (e.g. exercise, food ,sleep)<span class="text-danger required-asterisk">*</span></label>
                                             <input type="hidden" name="questions[physical_activity_and_exercise][track]" value="If answered yes to the above question, what do you mainly track? (e.g. exercise, food, sleep)" />
                                             <input type="text" class="form-control" name="ans[physical_activity_and_exercise][track]" placeholder="">
                                         </div>

@@ -451,9 +451,7 @@ class PlanController extends Controller
                         ->where('user_plan_id', $userPlanId)
                         ->where('user_meal_id', $userMealId)
                         ->get();
-                    // dd($swapItems);
                     foreach ($swapItems as $swapItem) {
-                        // dd($swapItem->id);
                         $a = \DB::table('user_swap_items')
                             ->where('id', $swap['main_id'])
                             ->where('user_item_id', $userItem->id)

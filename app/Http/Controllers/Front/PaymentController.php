@@ -288,13 +288,11 @@ class PaymentController extends Controller
         $stepFill = $request->input('step_fill') == true ? 1 : 0;
 
         DB::beginTransaction();
-        // dd($request->all());
         try {
             $prePlanId = DB::table('user_pre_plans')
                 ->where('user_id', $user_id)
                 ->where('payment_id', $payment_id)
                 ->value('id');
-            // dd($prePlanId );
             if (!$prePlanId) {
                 $prePlanId = DB::table('user_pre_plans')->insertGetId([
                     'payment_id' => $payment_id,
@@ -409,7 +407,6 @@ class PaymentController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // dd($e->getMessage());
             DB::rollBack();
             Log::error('Error saving step: ' . $e->getMessage());
             // return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
