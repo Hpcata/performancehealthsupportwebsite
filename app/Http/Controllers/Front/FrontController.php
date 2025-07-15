@@ -437,7 +437,7 @@ class FrontController extends Controller
             $profileSetUp = 0 ;
             if($userPrePlan) {
                 $completedSteps = DB::table('pre_plan_details')
-                ->where('user_pre_plan_id', $prePlan->id ?? null)
+                ->where('user_pre_plan_id', $userPrePlan->id ?? null)
                 ->max('step');
                 
                 if($completedSteps == 9) {
@@ -810,16 +810,16 @@ class FrontController extends Controller
                 $userId = $user->id;
             }
 
-            $click = ActivityTracker::click($sectionElement, $userId);
+            // $click = ActivityTracker::click($sectionElement, $userId);
 
-            ActivityTracker::log($couponType, $userId, [
-                'user_click_id' => $click->id,
-                'section_element_id' => $click->section_element_id,
-                'coupon_code' => $promoCode,
-                'coupon_id' => $coupon->id,
-                'discount' => $discount,
-                'plan_id' => $planId,
-            ]);
+            // ActivityTracker::log($couponType, $userId, [
+            //     'user_click_id' => $click->id,
+            //     'section_element_id' => $click->section_element_id,
+            //     'coupon_code' => $promoCode,
+            //     'coupon_id' => $coupon->id,
+            //     'discount' => $discount,
+            //     'plan_id' => $planId,
+            // ]);
 
             return response()->json([
                 'valid' => true,
@@ -1672,9 +1672,9 @@ class FrontController extends Controller
     public function getProfile(Request $request, $userId)
     {
         try {
-            $payment = Payment::where('user_id', $userId)->first();
+            $paymentId = Payment::where('user_id', $userId)->value('id');
 
-            if (!$payment) {
+            if (!$paymentId) {
                 return redirect()->back()->with('error', 'Plan not purchased.');
             }
 
@@ -1695,7 +1695,6 @@ class FrontController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
         }
     }
-
 
     public function getMeals($planId, $categoryId)
     {

@@ -176,32 +176,32 @@ $(document).ready(function() {
         url: testimonialApiUrl,
         method: 'GET',
         success: function(response) {
-            console.log(response);
-
-            if (response.length > 0) {
+            if (Object.keys(response).length > 0) {
                 var testimonialHtml = '';
                 $('.testimonial-section-main-div').show();
 
-                $.each(response, function(index, testimonial){
-                    testimonialHtml += `<div class="">
-                        <div class="d-flex flex-sm-row flex-column align-items-center" id="using-${index}">
-                            <div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">
-                                <img src="${testimonial.thumbnail_image}" alt="" class="slider-added-imges" />
-                            </div>
-                            <div class="no-display-half-part">
-                                <div class="quote-using">
-                                    <i class="fa-solid fa-quote-left"></i>
+                var testimonialArray = Object.values(response);
+                $.each(testimonialArray, function(index, testimonial) {
+                    testimonialHtml += `
+                        <div class="slide">
+                            <div class="d-flex flex-sm-row flex-column align-items-center" id="using-${index}">
+                                <div class="pe-xxl-5 pe-sm-3 mb-sm-0 mb-3 border-custom-left">
+                                    <img src="${testimonial.image}" alt="" class="slider-added-imges" />
                                 </div>
-                                <p class="mb-1">${testimonial.description}</p>
-                                <h5 class="mb-0">${testimonial.name}</h5>
-                                <p class="position mb-0"> </p> <!-- no 'designation' in response -->
+                                <div class="no-display-half-part">
+                                    <div class="quote-using">
+                                        <i class="fa-solid fa-quote-left"></i>
+                                    </div>
+                                    <p class="mb-1">${testimonial.review}</p>
+                                    <h5 class="mb-0">${testimonial.name}</h5>
+                                    <p class="position mb-0">${testimonial.designation}</p>
+                                </div>
                             </div>
-                        </div>
-                    </div>`;
+                        </div>`;
                 });
 
-                $('.wide-slider-testimonial-two').html(testimonialHtml);
-
+                $('.wide-slider-testimonial-two').html(testimonialHtml); // Adjust this selector as needed
+            
                 // Initialize slider (tns)
                 var sliderTwo = tns({
                     container: ".wide-slider-testimonial-two",

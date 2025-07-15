@@ -17,7 +17,7 @@
     @include('front.includes.style')
 
     {{-- jQuery --}}
-    <script src="{!! frontAssets('js/jquery.min-3.6.js') !!}"></script>
+    <script src="{!! frontAssets('js/jquery-3.6.min.js') !!}"></script>
 
     {{-- GTM & Hotjar --}}
     <script>

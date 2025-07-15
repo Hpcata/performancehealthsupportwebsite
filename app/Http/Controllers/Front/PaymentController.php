@@ -17,6 +17,10 @@ use App\Models\Payment;
 use App\Models\Coupon;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
+use App\Models\UserPlan;
+use App\Mail\PlanPurchaseMail;
+use App\Mail\PrePlanDetailsSubmitMail;
+use App\Models\Payment;
 use App\Models\SportCategory;
 
 class PaymentController extends Controller
@@ -70,6 +74,17 @@ class PaymentController extends Controller
                     'password' => Hash::make($validated['password']),
                 ]);
 
+                $click = ActivityTracker::click('user_account_create', $user->id);
+                ActivityTracker::log(
+                    TrackingType::ACCOUNT_CREATED,$user->id,
+                    [
+                        'email' => $user->email,
+                        'user_click_id' => $click->id,
+                        'section_element_id' => $click->section_element_id,
+                        'user_id' => $user->id,
+                    ]
+                );
+                
                 $isNewUser = true;
                 Log::debug('New user created.', ['user_id' => $user->id]);
             }
@@ -234,31 +249,33 @@ class PaymentController extends Controller
     {
         $userId = $request->user_id;
         $paymentId = $request->id;
-        // Retrieve the user's pre-plan details
+
+        // Only select required columns (e.g., 'id') from user_pre_plans
         $prePlan = DB::table('user_pre_plans')
+            ->select('id')  // Only select 'id' if that's all you use
             ->where('user_id', $userId)
             ->where('payment_id', $paymentId)
             ->first();
 
-        // Retrieve all steps completed by the user
+        $userPrePlanId = $prePlan->id ?? null;
+
+        // Get the max step completed (single value, efficient)
         $completedSteps = DB::table('pre_plan_details')
-            ->where('user_pre_plan_id', $prePlan->id ?? null)
+            ->where('user_pre_plan_id', $userPrePlanId)
             ->max('step');
 
         // Determine the next step
-        if($completedSteps < 9) {
-            $nextStep = $completedSteps + 1;
-        }else {
-            $nextStep = 9;
-        }
+        $nextStep = ($completedSteps < 9) ? $completedSteps + 1 : 9;
 
-        // Retrieve data for all steps to pre-fill the form
+        // Fetch only needed columns for stepData
         $stepData = DB::table('pre_plan_details')
-            ->where('user_pre_plan_id', $prePlan->id ?? null)
+            ->select('id', 'step', 'field_name', 'field_value') // Specify only needed columns
+            ->where('user_pre_plan_id', $userPrePlanId)
             ->get()
             ->groupBy('step');
-        
-        $sportCategories = SportCategory::all();
+
+        $sportCategories = SportCategory::select('id', 'name')->get(); // If you only need id and name
+
         return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
     }
 
@@ -272,13 +289,11 @@ class PaymentController extends Controller
         $stepFill = $request->input('step_fill') == true ? 1 : 0;
 
         DB::beginTransaction();
-        // dd($request->all());
         try {
             $prePlanId = DB::table('user_pre_plans')
                 ->where('user_id', $user_id)
                 ->where('payment_id', $payment_id)
                 ->value('id');
-            // dd($prePlanId );
             if (!$prePlanId) {
                 $prePlanId = DB::table('user_pre_plans')->insertGetId([
                     'payment_id' => $payment_id,
@@ -393,7 +408,6 @@ class PaymentController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // dd($e->getMessage());
             DB::rollBack();
             Log::error('Error saving step: ' . $e->getMessage());
             // return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);

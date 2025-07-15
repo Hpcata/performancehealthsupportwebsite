@@ -31,6 +31,17 @@
     .coupon-link           { text-decoration:none; cursor:pointer; color:#000; text-decoration:underline;}
     .coupon-link.active    { color:#000; text-decoration:underline; }
 
+    /* Simple fix to prevent page scroll on link click */
+    #weight-tracking {
+        cursor: pointer;
+    }
+    /* Let Bootstrap handle modal positioning naturally */
+    .modal {
+        z-index: 1055;
+    }
+    .modal-backdrop {
+        z-index: 1050;
+    }
 </style>
     <div class="nutrition-plan-hero bg-white py-4">
         <div class="container">
@@ -239,12 +250,15 @@
                                        
                                         <li><strong>Nutrition Goals:</strong> {{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}
                                         <div class="btn-list">
-                                            <button class="btn btn-light edit-icon add-goal " title="Add Goal" data-type="goal"
-                                                data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}">
+                                            <button class="btn btn-light edit-icon add-goal" title="Add Goal" data-type="goal"
+                                                data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}"
+                                                onclick="openAddGoalModal('goal')">
                                                 <i class="fas fa-plus"></i>
                                             </button>
+
                                             <button class="btn btn-light edit-icon view-past-goals" title="View Past Goals" data-type="goal"
-                                                data-form-name="nutrition_goals" data-question="Which of these do you want help with?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="Which of these do you want help with?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}"
+                                                onclick="openViewPastGoalsModal('goal')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             </div>
@@ -253,11 +267,13 @@
                                         <li><strong>Nutrition Challenge:</strong> {{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}
                                         <div class="btn-list">
                                             <button class="btn btn-light edit-icon add-goal" title="Add Challenge" data-type="challenge"
-                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}"
+                                                onclick="openAddGoalModal('challenge')">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                             <button class="btn btn-light edit-icon view-past-goals" title="View Past Challenges" data-type="challenge"
-                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}"
+                                                onclick="openViewPastGoalsModal('challenge')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
@@ -304,6 +320,52 @@
                                                     $vitaminEndDates = array_fill(0, $supplementCount, $vitaminEndDates[0]);
                                                 }
 
+                                                // Separate current and past supplements
+                                                $currentSupplements = $pastSupplements = $currentSupplementDates = $pastSupplementDates = [];
+                                                
+                                                foreach ($supplements as $index => $item) {
+                                                    $endDate = $vitaminEndDates[$index] ?? null;
+                                                    $startDate = $vitaminStartDates[$index] ?? null;
+                                                    
+                                                    // Only check for past if end date exists and is not null
+                                                    if ($endDate && strtolower($endDate) !== 'null' && !empty(trim($endDate))) {
+                                                        try {
+                                                            $endDateCarbon = \Carbon\Carbon::parse($endDate);
+                                                            $today = \Carbon\Carbon::today();
+                                                            
+                                                            if ($endDateCarbon->lt($today)) {
+                                                                // Past supplement - end date is less than today
+                                                                $pastSupplements[] = $item;
+                                                                $pastSupplementDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            } else {
+                                                                // Current supplement - end date is in future
+                                                                $currentSupplements[] = $item;
+                                                                $currentSupplementDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            }
+                                                        } catch (\Exception $e) {
+                                                            // If date parsing fails, treat as current
+                                                            $currentSupplements[] = $item;
+                                                            $currentSupplementDates[] = [
+                                                                'start' => $startDate,
+                                                                'end' => $endDate
+                                                            ];
+                                                        }
+                                                    } else {
+                                                        // No end date or empty/null - always keep as current
+                                                        $currentSupplements[] = $item;
+                                                        $currentSupplementDates[] = [
+                                                            'start' => $startDate,
+                                                            'end' => $endDate
+                                                        ];
+                                                    }
+                                                }
+
                                                 $medicationDetails = $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? null;
                                                 $medicationAnswer = $medicationDetails['answer'] ?? null;
                                                 $medicationStartDateRaw = $medicationDetails['start_date'] ?? '';
@@ -326,16 +388,62 @@
                                                 if (count($medicationEndDates) === 1 && $medicationCount > 1) {
                                                     $medicationEndDates = array_fill(0, $medicationCount, $medicationEndDates[0]);
                                                 }
+
+                                                // Separate current and past medications
+                                                $currentMedications = $pastMedications = $currentMedicationDates = $pastMedicationDates = [];
+                                                
+                                                foreach ($medications as $index => $item) {
+                                                    $endDate = $medicationEndDates[$index] ?? null;
+                                                    $startDate = $medicationStartDates[$index] ?? null;
+                                                    
+                                                    // Only check for past if end date exists and is not null
+                                                    if ($endDate && strtolower($endDate) !== 'null' && !empty(trim($endDate))) {
+                                                        try {
+                                                            $endDateCarbon = \Carbon\Carbon::parse($endDate);
+                                                            $today = \Carbon\Carbon::today();
+                                                            
+                                                            if ($endDateCarbon->lt($today)) {
+                                                                // Past medication - end date is less than today
+                                                                $pastMedications[] = $item;
+                                                                $pastMedicationDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            } else {
+                                                                // Current medication - end date is in future
+                                                                $currentMedications[] = $item;
+                                                                $currentMedicationDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            }
+                                                        } catch (\Exception $e) {
+                                                            // If date parsing fails, treat as current
+                                                            $currentMedications[] = $item;
+                                                            $currentMedicationDates[] = [
+                                                                'start' => $startDate,
+                                                                'end' => $endDate
+                                                            ];
+                                                        }
+                                                    } else {
+                                                        // No end date or empty/null - always keep as current
+                                                        $currentMedications[] = $item;
+                                                        $currentMedicationDates[] = [
+                                                            'start' => $startDate,
+                                                            'end' => $endDate
+                                                        ];
+                                                    }
+                                                }
                                             @endphp
 
                                             <strong>Supplements:</strong>
 
-                                            @if (!empty($supplements))
+                                            @if (!empty($currentSupplements))
                                                 <ul class="ps-3 mt-3">
-                                                    @foreach ($supplements as $index => $item)
+                                                    @foreach ($currentSupplements as $index => $item)
                                                         @php
-                                                            $startDate = $vitaminStartDates[$index] ?? null;
-                                                            $endDate = $vitaminEndDates[$index] ?? null;
+                                                            $startDate = $currentSupplementDates[$index]['start'] ?? null;
+                                                            $endDate = $currentSupplementDates[$index]['end'] ?? null;
 
                                                             $formattedStart = $formatDate($startDate, null);
                                                             $formattedEnd = $formatDate($endDate, null);
@@ -383,7 +491,8 @@
                                                     data-form-name="medical_history"
                                                     data-question="List any dietary vitamins or supplements you are currently taking (if any):"
                                                     data-answer="{{ $vitaminAnswer ?? 'Nill' }}"
-                                                    data-type="supplement">
+                                                    data-type="supplement"
+                                                    onclick="openViewPastHistoryModal('supplement')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -392,12 +501,12 @@
                                     <div class="px-4 py-3 border-bottom">
                                         <div class="position-relative">
                                         <strong>Medications:</strong>
-                                            @if (!empty($medications))
+                                            @if (!empty($currentMedications))
                                                 <ul class="ps-3 mt-3">
-                                                    @foreach ($medications as $index => $item)
+                                                    @foreach ($currentMedications as $index => $item)
                                                         @php
-                                                            $startDate = $medicationStartDates[$index] ?? null;
-                                                            $endDate = $medicationEndDates[$index] ?? null;
+                                                            $startDate = $currentMedicationDates[$index]['start'] ?? null;
+                                                            $endDate = $currentMedicationDates[$index]['end'] ?? null;
 
                                                             $formattedStart = $formatDate($startDate, null);
                                                             $formattedEnd = $formatDate($endDate, null);
@@ -438,7 +547,8 @@
                                                     <i class="fas fa-plus"></i>
                                                 </button>
                                                 <button class="btn btn-light edit-icon view-past-history" title="View Past Medications" 
-                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medicationAnswer }}" data-type="medication">
+                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medicationAnswer }}" data-type="medication"
+                                                onclick="openViewPastHistoryModal('medication')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -966,19 +1076,19 @@
     </div>
 
     <!-- Add Goal / Challenge Modal -->
-    <div class="modal" id="addGoalModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="addGoalModal" tabindex="-1" aria-labelledby="editItemTitle" aria-hidden="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editItemTitle">Add Nutrition</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editItemForm">
                         <input type="hidden" id="itemType">
-                        <label id="itemLabel">New Value</label>
+                        <label id="itemLabel" class="form-label">New Value</label>
                         <input type="text" class="form-control" id="itemInput">
-                        <button type="button" class="btn btn-primary mt-3" id="saveGoal">Save</button>
+                        <button type="button" class="btn btn-primary mt-3" id="saveGoal" onclick="saveGoalData()">Save</button>
                     </form>
                 </div>
             </div>
@@ -1171,6 +1281,8 @@
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
+<script src="{!! frontAssets('js/jquery-3.6.min.js') !!}"></script>
+<script src="{!! frontAssets('js/bootstrap.bundle.min.js') !!}"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1645,6 +1757,7 @@
     });
 
     $(document).ready(function () {
+       
         let chartInstance = null; // To hold the chart instance
         // Open Weight Modal and Prefill Data
         $('#weight-tracking').on('click', function(e) {
@@ -2446,16 +2559,23 @@
             }
         });
 
-        $(".add-goal").click(function () {
+        // Multiple ways to bind the click event
+        $(document).on('click', '.add-goal', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             let type = $(this).attr("data-type");
+            
             $("#itemType").val(type);
             $("#editItemTitle").text(type === "goal" ? "Add Goal" : "Add Challenge");
             $("#itemLabel").text(type === "goal" ? "New Goal" : "New Challenge");
+            
+            // Use the same method that works for test button
             $("#addGoalModal").modal("show");
         });
 
         // Update Goal or Challenge via AJAX
-        $("#saveGoal").click(function () {
+        $("#saveGoal").on('click', function () {
             let type = $("#itemType").val();
             let answer = $("#itemInput").val();
 
@@ -2481,7 +2601,7 @@
         });
 
         // View Past Goals or Challenges via AJAX
-        $(".view-past-goals").click(function () {
+        $(".view-past-goals").on('click', function () {
             let type = $(this).attr("data-type");
             $.ajax({
                 url: "{{ route('front.past.goals') }}",
@@ -2514,7 +2634,7 @@
             });
         });
 
-        $(".view-past-history").click(function () {
+        $(".view-past-history").on('click', function () {
             let type = $(this).attr("data-type");
 
             $.ajax({
@@ -2628,7 +2748,11 @@
         });
     });
 
-    var reportsData = @json($reports);
+    var reportsData = {!! json_encode($reports) !!};
+    var pastSupplements = {!! json_encode($pastSupplements ?? []) !!};
+    var pastSupplementDates = {!! json_encode($pastSupplementDates ?? []) !!};
+    var pastMedications = {!! json_encode($pastMedications ?? []) !!};
+    var pastMedicationDates = {!! json_encode($pastMedicationDates ?? []) !!};
     // Define the previewImage function
     function previewImage(fileUrl) {
         window.open(fileUrl, '_blank');
@@ -2783,5 +2907,150 @@
             });
         }
     }
+
+        // Test function to check if modal works
+    function testModal() {
+        try {
+            $("#addGoalModal").modal("show");
+        } catch (error) {
+            console.error('Test modal error:', error);
+            // Fallback
+            $("#addGoalModal").addClass('show').css('display', 'block');
+            $('body').addClass('modal-open');
+            $('<div class="modal-backdrop fade show"></div>').appendTo('body');
+        }
+    }
+
+    // Function to open add goal modal (called by onclick attribute)
+    function openAddGoalModal(type) {
+        
+        $("#itemType").val(type);
+        $("#editItemTitle").text(type === "goal" ? "Add Goal" : "Add Challenge");
+        $("#itemLabel").text(type === "goal" ? "New Goal" : "New Challenge");
+        
+        $("#addGoalModal").modal("show");
+    }
+
+    // Function to open view past goals modal (called by onclick attribute)
+    function openViewPastGoalsModal(type) {
+        
+        $.ajax({
+            url: "{{ route('front.past.goals') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                type: type,
+                user_id: userId
+            },
+            success: function (data) {
+                let modalTitle = type === "goal" ? "Past Goals" : "Past Challenges";
+                $("#viewPastItemsModalLabel").text(modalTitle);
+
+                let pastList = $("#pastItemsList");
+                pastList.html(""); // Clear existing list
+
+                if (data.length > 0) {
+                    $.each(data, function (index, item) {
+                        pastList.append("<li>" + item.answer + " <small>(Added on: " + new Date(item.created_at).toLocaleDateString() + ")</small></li>");
+                    });
+                } else {
+                    pastList.append("<li>No past records found.</li>");
+                }
+
+                $("#viewPastItemsModal").modal("show"); // Show modal with past data
+            },
+            error: function () {
+                alert("Error fetching past " + type + "s!");
+            }
+        });
+    }
+
+    // Function to open view past history modal (called by onclick attribute)
+    function openViewPastHistoryModal(type) {
+        
+        // Get past items from global variables
+        let pastItems = [];
+        let pastDates = [];
+        
+        if (type === 'supplement') {
+            pastItems = pastSupplements;
+            pastDates = pastSupplementDates;
+        } else if (type === 'medication') {
+            pastItems = pastMedications;
+            pastDates = pastMedicationDates;
+        }
+        
+        let modalTitle = type === "supplement" ? "Past Supplements" : "Past Medications";
+        $("#viewPastItemsModalLabel").text(modalTitle);
+
+        let pastList = $("#pastItemsList");
+        pastList.html(""); // Clear existing list
+
+        if (pastItems.length > 0) {
+            $.each(pastItems, function (index, item) {
+                let displayText = item;
+                let startDate = pastDates[index] && pastDates[index].start ? pastDates[index].start : null;
+                let endDate = pastDates[index] && pastDates[index].end ? pastDates[index].end : null;
+
+                if (startDate && endDate) {
+                    displayText += ` <small>(Start: ${new Date(startDate).toLocaleDateString()} to End: ${new Date(endDate).toLocaleDateString()})</small>`;
+                } else if (startDate) {
+                    displayText += ` <small>(Start: ${new Date(startDate).toLocaleDateString()})</small>`;
+                }
+
+                pastList.append("<li>" + displayText + "</li>");
+            });
+        } else {
+            pastList.append("<li>No past records found.</li>");
+        }
+
+        $("#viewPastItemsModal").modal("show"); // Show modal with past data
+    }
+
+    // Function to save goal data (called by onclick attribute)
+    function saveGoalData() {
+        let type = $("#itemType").val();
+        let answer = $("#itemInput").val();
+
+        if (!answer || answer.trim() === '') {
+            alert('Please enter a value before saving.');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('front.update.goal') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                type: type,
+                answer: answer,
+                user_id: userId
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(type.charAt(0).toUpperCase() + type.slice(1) + " updated successfully!");
+                    $("#addGoalModal").modal("hide");
+                    location.reload();
+                } else {
+                    alert("Error: " + (response.message || "Something went wrong!"));
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Something went wrong! Please try again.");
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simple solution: just prevent default behavior on weight tracking link
+        const weightTrackingLink = document.getElementById('weight-tracking');
+        if (weightTrackingLink) {
+            weightTrackingLink.addEventListener('click', function(e) {
+                e.preventDefault(); // Only prevent default link behavior
+                e.stopPropagation(); // Stop event bubbling
+                // Let Bootstrap handle the modal normally
+            });
+        }
+    });
 </script>
 @endsection
