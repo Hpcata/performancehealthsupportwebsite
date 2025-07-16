@@ -302,7 +302,7 @@ body {
 }
 .challenges .challenge-cards .challenge-card img,
 .training-plan .meal-cards .meal-card img {
-    min-width: 266px;
+    min-width: 252px;
     height: 160px;
     object-fit: cover;
     border-radius: 12px;
