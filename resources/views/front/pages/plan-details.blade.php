@@ -4,12 +4,17 @@
 @section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-<style>
-    .hero-background {
-        background-image: url('{{ webAssets("storage/". $sportImagePath) }}') !important ;
-        background-size:cover;background-position:center;background-repeat:no-repeat;height:100%
-    }
-</style>
+@if (!empty($sportGameData['sport_image']))
+    <style>
+        .hero-background {
+            background-image: url('{{ webAssets("storage/" . $sportGameData['sport_image']) }}') !important;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100%;
+        }
+    </style>
+@endif
 <main class="main">
     <!-- Hero Banner -->
     <div class="hero-container">
@@ -23,7 +28,7 @@
                     <h1 class="hero-title">Sports Training Plan</h1>
 
                     <div class="hero-top">
-                        <p class="hero-subtitle-plan">Surfing</p>
+                        <p class="hero-subtitle-plan">{{ !empty($sportGameData['sport_name']) ? $sportGameData['sport_name'] : '' }}</p>
                         <a href="#" class="view-all-link"> View all plans </a>
                     </div>
                 </div>
@@ -34,7 +39,7 @@
         <div class="action-buttons">
             <button class="btn btn-share">
                 <img
-                    src="{{ frontAssets('images/images/share-icon.svg') }}"
+                    src="{{ frontAssets('images/share-icon.svg') }}"
                     alt="share-icon"
                     class="share-icon" />
                 Share
@@ -71,35 +76,7 @@
                                 ->count();
                         @endphp
 
-<!-- placeholder card when less cards are visible -->
-                          <!-- <section class="challenges" aria-label="Meal Plan Categories">
-                                <div class="section-header">
-                                    <h2>static card </h2>
-                                   
-                                </div>
-                                
-                                <div class="challenge-cards">
-                                   
-                                        <div class="challenge-card clickable">
-                                            <div 
-                                                     style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
-                                                    >
-                                            <img
-                                                src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
-                                              style="width: 70px; height: 70px;min-height:50px; object-fit: contain; margin-top: 20px;"
-                                                height="100"
-                                                width="100" />
-                                                 <h3 class="add-more-text">Add More Meals</h3>
-                                                </div>
-                                           
-                                        </div>
-                                 
-                                </div>
-                            </section> -->
-
-<!-- placeholder card when less cards are visible -->
-
-                        @if ($mealCount > 0)
+                        @if ($mealCount > 0 )
                             <section class="challenges" aria-label="Meal Plan Categories">
                                 <div class="section-header">
                                     <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
@@ -110,26 +87,28 @@
                                     @foreach ($meals as $meal)
                                         <div class="challenge-card clickable">
                                             <img
-                                                src="{{ frontAssets('images/food1.webp') }}"
+                                                src="{{ webAssets('storage/' . ($meal->meal->image ?? 'food1.webp')) }}"
                                                 alt="{{ $meal->meal->title }}"
                                                 height="252"
                                                 width="160" />
                                             <h3>{{ $meal->meal->title }}</h3>
                                         </div>
+                                    @endforeach
+                                    @if($meals->count() < 3)
+                                        {{-- Show "Add More Meals" only if meal count is between 1 and 2 --}}
                                         <div class="challenge-card clickable">
                                             <div 
-                                                     style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
-                                                    >
-                                            <img
-                                                src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
-                                              style="width: 70px; height: 70px;min-height:50px; object-fit: contain; margin-top: 20px;"
-                                                height="100"
-                                                width="100" />
-                                                 <h3 class="add-more-text">Add More Meals</h3>
-                                                </div>
-                                           
+                                                style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
+                                            >
+                                                <img
+                                                    src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
+                                                    style="width: 70px; height: 70px; min-height:50px; object-fit: contain; margin-top: 20px;"
+                                                    height="100"
+                                                    width="100" />
+                                                <h3 class="add-more-text">Add More Meals</h3>
+                                            </div>
                                         </div>
-                                    @endforeach
+                                    @endif
                                 </div>
                             </section>
                         @endif
