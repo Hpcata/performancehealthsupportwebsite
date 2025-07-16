@@ -116,7 +116,6 @@ class FrontController extends Controller
         // Step 2: Retrieve all plans that are NOT sub-plans
         $plans = \App\Models\Plan::whereNotIn('id', $subPlanIds)->get();
 
-        // dd($plans);
         $page = \App\Models\Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
         
         $requirements = [];
@@ -133,7 +132,6 @@ class FrontController extends Controller
 
     public function register(Request $request)
     {
-        // dd($request->all());
         $firstName = explode(' ', $request->input('name'))[0]; // First name from full name
         $lastName = explode(' ', $request->input('name'))[1] ?? ''; // Last name from full name
 
@@ -209,7 +207,7 @@ class FrontController extends Controller
                             'success' => false,
                             'message' => 'Unauthorized access for this role.',
                         ]);
-                    } // Auth::login($user);
+                    }
         
                 } else {
                     $redirectUrl = route('front.profile', ['id' => $user->id]);
@@ -462,11 +460,9 @@ class FrontController extends Controller
                 unlink(public_path($user->profile_image));
             }
         
-            // Save the new profile image path in the database
             $user->profile_image = $filePath;
         }
 
-        // Save the user
         $user->save();
 
         return response()->json([
@@ -1443,7 +1439,6 @@ class FrontController extends Controller
         // }
 
         $user = \App\Models\User::findOrFail($id);
-        // dd($user);
         // Set user session
         Auth::guard('web')->login($user);
 
