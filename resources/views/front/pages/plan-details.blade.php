@@ -4,12 +4,22 @@
 @section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-<style>
-    .hero-background {
-        background-image: url('{{ webAssets("storage/". $sportImagePath) }}') !important ;
-        background-size:cover;background-position:center;background-repeat:no-repeat;height:100%
-    }
-</style>
+@if (!empty($sportGameData['sport_image']))
+    <style>
+        .hero-background {
+            background-image: url('{{ webAssets("storage/" . $sportGameData['sport_image']) }}') !important;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100%;
+            max-width: 100%;
+            position: absolute;
+            right: 0;
+            border-radius: 0 0 36px 0;
+            width: 100%;
+        }
+    </style>
+@endif
 <main class="main">
     <!-- Hero Banner -->
     <div class="hero-container">
@@ -75,7 +85,9 @@
                             <section class="challenges" aria-label="Meal Plan Categories">
                                 <div class="section-header">
                                     <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
-                                    <a href="{{ route('front.meal-time.details', ['id' => $userCategory->id, 'plan_id' => $userPlan->id]) }}" class="see-all">See all</a>
+                                    <!-- <a href="{{ route('front.meal-time.details', ['id' => $userCategory->id, 'plan_id' => $userPlan->id]) }}" class="see-all">Scroll for More</a> -->
+
+                                     <label  class="see-all" style="text-decoration:none;">Scroll for More</label>
                                 </div>
                                 <div class="challenge-cards">
                                     @foreach ($meals as $meal)
@@ -88,6 +100,21 @@
                                             <h3>{{ $meal->meal->title }}</h3>
                                         </div>
                                     @endforeach
+                                    @if($meals->count() < 3)
+                                        {{-- Show "Add More Meals" only if meal count is between 1 and 2 --}}
+                                        <div class="challenge-card" style="height: 160px;">
+                                            <div 
+                                                style="height: 160px; background-color:#f1f1f1;position:relative;"
+                                            >
+                                                <img
+                                                    src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
+                                                    style="width: 70px; height: 70px; min-height:50px; object-fit: contain; margin-top: 20px;"
+                                                    height="100"
+                                                    width="100" />
+                                                <h3 class="add-more-text">Add More Meals</h3>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </section>
                         @endif
