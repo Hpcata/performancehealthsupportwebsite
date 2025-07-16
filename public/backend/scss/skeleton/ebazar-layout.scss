@@ -151,7 +151,6 @@
             align-items: center;
             padding: 8px 0;
             font-size: 17px;
-            .sidebar-mini-text{}
         }
         .ms-link{
             color: var(--white-color);
@@ -259,11 +258,30 @@
 
             .m-link{
                 margin-bottom: 10px;
-              
-                div{
+                span{
                     display: none;
                 }
-               
+                &:hover{
+                    span{
+                        display: block;
+                        background: var(--primary-color);
+                        border-radius: .25rem;
+                        box-shadow: 0 10px 40px 10px rgba($dark,.2);
+                        width: 200px;
+                        padding: 10px 0px 10px 30px;
+                        text-align: left;
+                        position: absolute;
+                        left: 101px;
+                        top: 0;
+                        font-size: 17px;
+                        &.badge{
+                            font-size: 13px;
+                            &:before{
+                                top: 12px;
+                            }
+                        }
+                    }
+                }
             }
             .ms-link{
                 &::before{
@@ -517,19 +535,4 @@ div.dataTables_wrapper div.dataTables_filter input { border-color: #d7c5c5; }
 select.form-control {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
   background-repeat: no-repeat; background-position: 93% center; background-size: 14px auto; 
-}
-
-.tooltip.bs-tooltip-end .tooltip-inner,
-.tooltip.bs-tooltip-right .tooltip-inner {
-  background-color: #6c5ce7;
-  color: #fff;             
-  font-size: 1rem;         
-  border-radius: 8px;        
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  padding: 8px 16px;
-}
-
-.tooltip.bs-tooltip-end .tooltip-arrow::before,
-.tooltip.bs-tooltip-right .tooltip-arrow::before {
-  border-right-color: #6c5ce7;
 }
