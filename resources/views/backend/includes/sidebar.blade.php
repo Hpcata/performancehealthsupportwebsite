@@ -102,9 +102,7 @@
 			<li>
 				<a class="m-link {{request()->routeIs('testimonials.*') ? 'active' : '' }}" href="{!! route('testimonials.index') !!}"><i class="icofont-users-alt-2 fs-5"></i> <span>Testimonials</span></a>
 			</li>
-			<li>
-				<a class="m-link {{request()->routeIs('admin.clubs.*') ? 'active' : '' }}" href="{!! route('admin.clubs.index') !!}"><i class="icofont-users-alt-2 fs-5"></i> <span>Clubs</span></a>
-			</li>
+			
 			<li>
 				<a class="m-link {{request()->routeIs('organizations.*') ? 'active' : '' }}" href="{!! route('organizations') !!}"><i class="icofont-ui-rating fs-5"></i> <span>Associations</span></a>
 			</li>
