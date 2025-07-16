@@ -76,35 +76,7 @@
                                 ->count();
                         @endphp
 
-<!-- placeholder card when less cards are visible -->
-                          <!-- <section class="challenges" aria-label="Meal Plan Categories">
-                                <div class="section-header">
-                                    <h2>static card </h2>
-                                   
-                                </div>
-                                
-                                <div class="challenge-cards">
-                                   
-                                        <div class="challenge-card clickable">
-                                            <div 
-                                                     style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
-                                                    >
-                                            <img
-                                                src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
-                                              style="width: 70px; height: 70px;min-height:50px; object-fit: contain; margin-top: 20px;"
-                                                height="100"
-                                                width="100" />
-                                                 <h3 class="add-more-text">Add More Meals</h3>
-                                                </div>
-                                           
-                                        </div>
-                                 
-                                </div>
-                            </section> -->
-
-<!-- placeholder card when less cards are visible -->
-
-                        @if ($mealCount > 0)
+                        @if ($mealCount > 0 )
                             <section class="challenges" aria-label="Meal Plan Categories">
                                 <div class="section-header">
                                     <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
@@ -121,20 +93,22 @@
                                                 width="160" />
                                             <h3>{{ $meal->meal->title }}</h3>
                                         </div>
+                                    @endforeach
+                                    @if($meals->count() < 3)
+                                        {{-- Show "Add More Meals" only if meal count is between 1 and 2 --}}
                                         <div class="challenge-card clickable">
                                             <div 
-                                                     style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
-                                                    >
-                                            <img
-                                                src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
-                                              style="width: 70px; height: 70px;min-height:50px; object-fit: contain; margin-top: 20px;"
-                                                height="100"
-                                                width="100" />
-                                                 <h3 class="add-more-text">Add More Meals</h3>
-                                                </div>
-                                           
+                                                style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
+                                            >
+                                                <img
+                                                    src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
+                                                    style="width: 70px; height: 70px; min-height:50px; object-fit: contain; margin-top: 20px;"
+                                                    height="100"
+                                                    width="100" />
+                                                <h3 class="add-more-text">Add More Meals</h3>
+                                            </div>
                                         </div>
-                                    @endforeach
+                                    @endif
                                 </div>
                             </section>
                         @endif
