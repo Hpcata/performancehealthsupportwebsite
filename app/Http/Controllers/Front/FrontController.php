@@ -173,62 +173,69 @@ class FrontController extends Controller
     // Handle Login Request
     public function login(Request $request)
     {
-        // dd($request->all());
         // Validate the email and password
         $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:6',
         ]);
+        try {
+            // Find the user by email
+            $user = User::where('email', $validated['email'])->first();
 
-        // Find the user by email
-        $user = User::where('email', $validated['email'])->first();
+            // Check if user exists and password matches
+            if ($user && Hash::check($validated['password'], $user->password)) {
+                // The user is authenticated, log them in
 
-        // Check if user exists and password matches
-        if ($user && Hash::check($validated['password'], $user->password)) {
-            // The user is authenticated, log them in
+                $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->orWhere('status','discount_applied')->pluck('plan_id')->toArray();
+                if ($planIds) {
+                    if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])) {
+                        if (!Auth::guard('web')->user()->isSuperAdmin()) {
+                            $redirectUrl = route('front.profile', ['id' => $user->id]);
+                            // $freeTest = Questionnaire::where('email', $validated['email'])->first();
 
-            $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->orWhere('status','discount_applied')->pluck('plan_id')->toArray();
-            if ($planIds) {
-                if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])) {
-                    if (!Auth::guard('web')->user()->isSuperAdmin()) {
-                        $redirectUrl = route('front.profile', ['id' => $user->id]); // Change this to the page you want
-                        // $freeTest = Questionnaire::where('email', $validated['email'])->first();
-
-                        // if($freeTest) {
-                        //     \Mail::to($validated['email'])->send(new \App\Mail\FreeTestResultMail($user));
-                        // }
+                            // if($freeTest) {
+                            //     \Mail::to($validated['email'])->send(new \App\Mail\FreeTestResultMail($user));
+                            // }
+                            return response()->json([
+                                'success' => true,
+                                'redirect_url' => $redirectUrl,
+                                'message' => 'Login successful.',
+                                'user' => $user
+                            ]);
+                        }
+                
+                        Auth::guard('web')->logout();
                         return response()->json([
-                            'success' => true,
-                            'redirect_url' => $redirectUrl,
-                            'message' => 'Login successful.',
-                            'user' => $user
+                            'success' => false,
+                            'message' => 'Unauthorized access for this role.',
                         ]);
-                    }
-            
-                    Auth::guard('web')->logout();
-                    // return back()->withErrors(['Unauthorized access for this role.']);
+                    } // Auth::login($user);
+        
+                } else {
+                    $redirectUrl = route('front.profile', ['id' => $user->id]);
                     return response()->json([
                         'success' => false,
-                        'message' => 'Unauthorized access for this role.',
-                    ], 401);
-                } // Auth::login($user);
-    
-            } else {
-                $redirectUrl = route('front.profile', ['id' => $user->id]);
-                return response()->json([
-                    'success' => 'success',
-                    'redirect_url' => $redirectUrl,
-                    'user' => $user,
-                    'message' => 'Plan not purchased.',
-                ]);
+                        'redirect_url' => $redirectUrl,
+                        'user' => $user,
+                        'message' => 'Plan not purchased.',
+                    ]);
+                }
             }
-        }
 
-        // If user doesn't exist or password doesn't match
-        return response()->json([
-            'success' => false,
-            'message' => 'Oops! Your email or password is incorrect. Please try again.',
-        ], 401);
+            // If user doesn't exist or password doesn't match
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops! Your email or password is incorrect. Please try again.',
+            ], 500);
+        } catch (\Exception $e) {
+            Log::error('Error validating coupon code', [
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again.',
+            ], 500);
+        }
     }
 
     // Logout for admin users
@@ -414,7 +421,6 @@ class FrontController extends Controller
     {
         $user = User::find($request->user_id);
         $rules = []; // Initialize the $rules array
-        // dd($request->all());
         if ($request->has('name')) {
             $rules['name'] = 'string|max:255';
         }
@@ -486,7 +492,6 @@ class FrontController extends Controller
         $preplan = \App\Models\UserPrePlan::with(['prePlanDetails' => function($query) {
             $query->where('form_slug', 'physical_measures');
         }])->where('user_id', $id)->first();
-        //    dd($preplan->prePlanDetails);
         return view('front.competition-plan.index', compact('userPlans', 'user'));
 
     }
@@ -654,7 +659,6 @@ class FrontController extends Controller
 
     public function updateFoodQuantity(Request $request)
     {
-        // dd($request->all());
         $userItem = \App\Models\UserItem::where('id', $request->user_item_id)
                                 ->first();
 
