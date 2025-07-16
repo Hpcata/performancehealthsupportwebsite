@@ -4,7 +4,7 @@
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                 <h3 class="fw-bold">{{ isset($category) ? 'Edit Category' : 'Create Category' }}</h3>
                 <div class="col-auto">
                     <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">Back</a>
@@ -55,7 +55,7 @@
                     </small>
                     <input type="file" name="image" class="form-control" accept="image/*">
                     @if (isset($category) && $category->image)
-                        <img src="{{ asset('private/public/storage/' . $category->image) }}" class="img-thumbnail mt-3" style="max-height: 150px;">
+                        <img src="{{ webAssets('storage/' . $category->image) }}" class="img-thumbnail mt-3" style="max-height: 150px;">
                     @endif
                     @error('image')
                         <div class="text-danger">{{ $message }}</div>

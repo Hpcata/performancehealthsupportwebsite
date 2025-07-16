@@ -102,37 +102,14 @@
         .footer img {
             width: 150px; /* Adjust size of the logo */
         }
-
-        /* Preview Container */
-        #previewContainer {
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            display: none;
-        }
-
-        /* Generate PDF Button */
-        #generatePdfBtn {
-            display: none;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        #generatePdfBtn:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
-    @if (empty($groupedData))
+    @if($printAllmeal)
         @foreach($userPlans as $userPlan)
             <div class="header">
                 @if($userPlan->user_id == 66)
-                    <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
+                    <img src="{{ webAssets('front/images/plan-67.png') }}" alt="Sport Image">
                 @else
                     <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
                 @endif
@@ -180,7 +157,7 @@
                                     @foreach ($sortedMeals as $userMeal)
                                         <tr>
                                             <td>
-                                                <img src="{{ url('private/public/storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
+                                                <img src="{{ webAssets('storage/'.$userMeal->meal->image) ?? '' }}" alt="Meal image">
                                             </td>
                                             <td>
                                                 {{ $userMeal->meal->title }}
@@ -310,7 +287,7 @@
             @if ($selectedMealTimes)
                 <div class="header">
                     @if($userPlan->user_id == 66)
-                        <img src="{{ url('private/public/front/images/plan-67.png') }}" alt="Sport Image">
+                        <img src="{{ webAssets('front/images/plan-67.png') }}" alt="Sport Image">
                     @else
                         <img src="{{ url('front/images/about-new.png') }}" alt="Sport Image">
                     @endif
@@ -341,7 +318,7 @@
                                                 @if (in_array($userMeal->id, $selectedMeals))
                                                     <tr>
                                                         <td>
-                                                            <img src="{{ url('private/public/storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
+                                                            <img src="{{ webAssets('storage/'.$userMeal->meal->image ?? '') }}" alt="Meal image">
                                                         </td>
                                                         <td>
                                                             {{ $userMeal->meal->title }}
@@ -452,17 +429,5 @@
         @endforeach
 
     @endif
-
-    <!-- Preview Container for Plan -->
-    <div id="previewContainer">
-        <h3>Preview of the Plan</h3>
-        <div id="previewContent"></div>
-        <button id="generatePdfBtn">Generate PDF</button>
-    </div>
-
-    <!-- Footer with the logo -->
-    <div class="footer">
-        <img src="{{ url('private/public/front/images/logo.svg') }}" alt="Logo">
-    </div>
 </body>
 </html>

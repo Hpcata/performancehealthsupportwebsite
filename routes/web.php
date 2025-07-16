@@ -30,6 +30,8 @@ use App\Http\Controllers\Admin\FlagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Front\QuizController as FrontQuizController;
+use App\Http\Controllers\Admin\SportCategoryController;
+use App\Http\Controllers\Admin\SportGameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,193 +77,6 @@ Route::post('/generate-description', [NutritionAIController::class, 'generateDes
 Route::get('/calculate-nutrition-form', [NutritionAIController::class, 'form'])->name('view.form');
 
 Route::post('/meal-food-nutrition-calculate', [NutritionAIController::class, 'mealFoodNutritionCalculation'])->name('meal.food.nutrition.calculate');
-
-// Route::get('/test-woolworths-api', function () {
-//     // Woolworths API URL
-//     $apiUrl = 'https://www.woolworths.com.au/apis/ui/Search/products/';
-
-//     // Search term to test with
-//     $searchTerm = 'apple';
-
-//     // Guzzle HTTP Client
-//     $client = new Client();
-
-//     try {
-//         // Make the GET request
-//         $response = $client->get($apiUrl, [
-//             'query' => [
-//                 'searchTerm' => $searchTerm,
-//             ],
-//             'headers' => [
-//                 'Accept' => 'application/json',
-//             ],
-//         ]);
-
-//         // Parse the response
-//         $data = json_decode($response->getBody(), true);
-
-//         // Return the response to view or JSON format
-//         return response()->json($data);
-
-//     } catch (\Exception $e) {
-//         // Handle errors
-//         return response()->json(['error' => $e->getMessage()], 500);
-//     }
-// });
-
-// Route::get('/product-search-api', function (Illuminate\Http\Request $request) {
-//     $results = [];
-//     $query = $request->input('query');
-//     $page = $request->input('page', 1);  // Get current page, default to 1 if not provided
-//     $perPage = 20;  // Set items per page, you can adjust this number
-// 	$pagination = [];
-//     if ($query) {
-//         $client = new Client();
-
-//         // Make the request to the API with pagination parameters
-//         $response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/woolworths/product-search', [
-//             'headers' => [
-//                 'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
-//                 'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
-//             ],
-//             'query' => [
-//                 'query' => $query,
-//                 'page' => $page,  // Page number
-//                 'size' => $perPage,  // Items per page
-//             ],
-//         ]);
-
-//         // Decode the response
-//         $responseBody = json_decode($response->getBody(), true);
-        
-//         // Assuming 'results' contains the product data, and 'total' is the total number of results
-//         $products = $responseBody['results'] ?? [];
-//         $total = $responseBody['total_results'] ?? 0;  // Total number of products in the API response
-//         // dd($products);
-//         // Pagination: Calculate the total number of pages
-//         $totalPages = $responseBody['total_pages'];
-
-//         // Paginate the results in Laravel
-//         $results = collect($products);
-
-//         // Prepare pagination metadata to send to the view
-//         $pagination = [
-//             'current_page' => $page,
-//             'total_pages' => $totalPages,
-//             'total' => $total,
-//             'per_page' => $perPage,
-//         ];
-//     }
-
-//     return view('search', compact('results', 'query', 'pagination'));
-// })->name('search-product');
-
-// Route::post('/add-to-cart', function (Request $request) {
-//     $productId = $request->input('product_id');
-// 	try {
-// 		$client = new Client();
-
-// 		$response = $client->request('POST', 'https://woolworths-products-api.p.rapidapi.com/cart/add', [
-// 			'headers' => [
-// 				'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
-// 				'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
-// 				'Content-Type' => 'application/json',
-// 			],
-// 			'json' => [
-// 				'product_id' => $productId,
-// 				'quantity' => 1,
-// 			],
-// 		]);
-
-// 		$cartResponse = json_decode($response->getBody(), true);
-// 	} catch (RequestException $e) {
-// 		dd($e->getMessage());
-// 	}
-
-//     return redirect()->route('cart');
-// })->name('add-to-cart');
-
-// Route::get('/cart', function () {
-// 	try {
-// 		$client = new Client();
-// 		$response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/cart', [
-// 			'headers' => [
-// 				'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
-// 				'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
-// 			],
-// 		]);
-
-// 		$cart = json_decode($response->getBody(), true);
-// 	} catch (RequestException $e) {
-// 		dd($e->getMessage());
-// 	}
-
-//     return view('cart', compact('cart'));
-// })->name('cart');
-
-// Route::get('/product-search', function (Illuminate\Http\Request $request) {
-//     $results = [];
-//     $query = $request->input('query');
-// 	$page = $request->input('page', 1);  // Get current page, default to 1 if not provided
-//     $perPage = 20; 
-// 	$pagination = [];
-//     if ($query) {
-//         $client = new Client();
-// 		// Get the products from the API
-//         $response = $client->request('GET', 'https://woolworths-products-api.p.rapidapi.com/woolworths/product-search', [
-//             'headers' => [
-//                 'x-rapidapi-host' => 'woolworths-products-api.p.rapidapi.com',
-//                 'x-rapidapi-key' => '0cfccf3082mshbbbffb6fcad072dp124a1cjsn76a674b3c1ee',
-//             ],
-//             'query' => [
-//                 'query' => $query,
-//                 'page' => $page,  // Page number
-//                 'size' => $perPage,  // Items per page
-//             ],
-//         ]);
-//         $responseBody = json_decode($response->getBody(), true);
-//         $products = $responseBody['results'] ?? [];
-
-//         // Loop through products to get images from each product page
-//         foreach ($products as $key => $product) {
-//             $productUrl = $product['url'];
-            
-// 			if (isset($product['url']) && !empty($product['url'])) {
-// 				try {
-// 					$detailResponse = $client->request('GET', $product['url']);
-// 					$detailHtml = (string) $detailResponse->getBody();
-					
-// 					if (preg_match('/<img[^>]+class="[^"]*main-image-v2[^"]*"[^>]+src="([^"]+)"/i', $detailHtml, $matches)) {
-// 						$products[$key]['image_url'] = $matches[1]; // Image URL extracted from the page
-// 					} else {
-// 						$products[$key]['image_url'] = null; // Default if no image found
-// 					}
-// 				} catch (\Exception $e) {
-// 					\Log::error('Error fetching product details: ' . $e->getMessage());
-// 					$products[$key]['image_url'] = null;
-// 				}
-// 			}
-//         }
-
-//         $total = $responseBody['total_results'] ?? 0;  // Total number of products in the API response
-//         $totalPages = $responseBody['total_pages'];
-
-//         $results = collect($products);
-
-//         $pagination = [
-//             'current_page' => $page,
-//             'total_pages' => $totalPages,
-//             'total' => $total,
-//             'per_page' => $perPage,
-//         ];
-
-//     }
-// 	// echo '<pre>';
-// 	// print_r($results);
-
-//    return view('product-with-image', compact('results', 'query', 'pagination'));
-// })->name('search');
-
 
 Route::get('/login', [AdminAuthController::class, 'index'])->name('index');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login');
@@ -320,6 +135,8 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 
 		Route::as('admin.')->group(function () {
 			Route::resource('coupons', CouponController::class);
+			Route::resource('sports-categories', SportCategoryController::class);
+    		Route::resource('sport-games', SportGameController::class);
 		});
 
 		Route::get('/site-settings/{slug}', [SiteSettingsController::class, 'index'])->name('site-settings');
@@ -463,7 +280,6 @@ Route::get('/get-foods/{key}', [FrontController::class, 'getFoodItems'])->name('
 Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPlanDetails'])->name('front.competition-plan-details');
 Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
 Route::get('/get-default-plan-details/{id}', [FrontPlanController::class, 'getDefaultPlanDetails'])->name('front.get-default-plan-details');
-Route::get('/get-race-ethnicity-culture-options', [PaymentController::class, 'getRaceEthnicityCultureOptions'])->name('front.get-race-ethnicity-culture-options');
 
 // Front auth
 Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
@@ -513,7 +329,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/plans/preview/{id}', [FrontPlanController::class, 'preview'])->name('plans.preview');
 	Route::post('/plans/preview/', [FrontPlanController::class, 'planPreview'])->name('front.plans.preview');
 
-	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
+	Route::get('/profile-landing/{id}', [FrontController::class, 'getProfile'])->name('front.profile');
+	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile-old');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
 	Route::post('/food/quantity/update', [FrontController::class, 'updateFoodQuantity'])->name('front.food-quantity-update');
 
@@ -528,7 +345,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/delete-report', [FrontController::class, 'deleteReport'])->name('front.delete.report');
 
 	Route::get('/user/{user}/plan/{plan}/meals', [FrontPlanController::class, 'ajaxGetMeals'])->name('user.plan.meals');
-
+	Route::post('/track/click', [FrontPlanController::class, 'trackClick'])->name('front.track.click');
+	Route::get('/get-meals/{plan}/{category}', [FrontController::class, 'getMeals'])->name('front.get-profile-meals');
 
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');

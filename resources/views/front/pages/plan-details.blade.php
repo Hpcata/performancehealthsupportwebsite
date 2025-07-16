@@ -1,0 +1,216 @@
+@extends(frontView('layouts.app'))
+
+@section('title', 'Sports Training Plan | 2LS Performance Support')
+@section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
+
+@section('content')
+@if (!empty($sportGameData['sport_image']))
+    <style>
+        .hero-background {
+            background-image: url('{{ webAssets("storage/" . $sportGameData['sport_image']) }}') !important;
+               background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100%;
+    max-width: 100%;
+    position: absolute;
+    right: 0;
+     border-radius: 0 0 36px 0;
+    width: 100%;
+        }
+    </style>
+@endif
+<main class="main">
+    <!-- Hero Banner -->
+    <div class="hero-container">
+        <div class="hero-section">
+            <div class="hero-background">
+                <div class="hero-overlay"></div>
+            </div>
+
+            <div class="hero-content">
+                <div class="hero-bottom">
+                    <h1 class="hero-title">Sports Training Plan</h1>
+
+                    <div class="hero-top">
+                        <p class="hero-subtitle-plan">{{ !empty($sportGameData['sport_name']) ? $sportGameData['sport_name'] : '' }}</p>
+                        <a href="#" class="view-all-link"> View all plans </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="action-buttons">
+            <button class="btn btn-share">
+                <img
+                    src="{{ frontAssets('images/share-icon.svg') }}"
+                    alt="share-icon"
+                    class="share-icon" />
+                Share
+            </button>
+
+            <button class="btn-outline btn">Shopping list</button>
+        </div>
+        <!-- Meal Sections -->
+        <section aria-label="Meal Plan Categories">
+            <!-- Sweet Breakfast -->
+            @foreach ($userPlans as $userPlan)
+                @foreach ($userPlan->userCategories as $userCategory)
+                    @php
+                        $validSubCategories = $userCategory->userSubCategories->filter(function ($subCategory) use ($userPlan, $userCategory) {
+                            return $subCategory->userMeals
+                                ->where('user_plan_id', $userPlan->id)
+                                ->where('user_category_id', $userCategory->id)
+                                ->where('user_sub_category_id', $subCategory->id)
+                                ->isNotEmpty();
+                        });
+                    @endphp
+
+                    @foreach ($validSubCategories as $subCategory)
+                        @php
+                            $meals = $subCategory->userMeals
+                                ->where('user_plan_id', $userPlan->id)
+                                ->where('user_category_id', $userCategory->id)
+                                ->where('user_sub_category_id', $subCategory->id)
+                                ->take(3);
+                            $mealCount = $subCategory->userMeals
+                                ->where('user_plan_id', $userPlan->id)
+                                ->where('user_category_id', $userCategory->id)
+                                ->where('user_sub_category_id', $subCategory->id)
+                                ->count();
+                        @endphp
+
+                        @if ($mealCount > 0 )
+                            <section class="challenges" aria-label="Meal Plan Categories">
+                                <div class="section-header">
+                                    <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
+                                    <!-- <a href="{{ route('front.meal-time.details', ['id' => $userCategory->id, 'plan_id' => $userPlan->id]) }}" class="see-all">Scroll for More</a> -->
+
+                                     <label  class="see-all" style="text-decoration:none;">Scroll for More</label>
+                                </div>
+                                
+                                <div class="challenge-cards">
+                                    @foreach ($meals as $meal)
+                                        <div class="challenge-card clickable">
+                                            <img
+                                                src="{{ webAssets('storage/' . ($meal->meal->image ?? 'food1.webp')) }}"
+                                                alt="{{ $meal->meal->title }}"
+                                                height="252"
+                                                width="160" />
+                                            <h3>{{ $meal->meal->title }}</h3>
+                                        </div>
+                                    @endforeach
+                                    @if($meals->count() < 3)
+                                        {{-- Show "Add More Meals" only if meal count is between 1 and 2 --}}
+                                        <div class="challenge-card" style="height: 160px;">
+                                            <div 
+                                                style="height: 160px; background-color:#f1f1f1;position:relative;"
+                                            >
+                                                <img
+                                                    src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
+                                                    style="width: 70px; height: 70px; min-height:50px; object-fit: contain; margin-top: 20px;"
+                                                    height="100"
+                                                    width="100" />
+                                                <h3 class="add-more-text">Add More Meals</h3>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </section>
+                        @endif
+                    @endforeach
+                @endforeach
+            @endforeach
+        </section>
+
+        <!-- Plate Breakdown and Training Load -->
+        <section
+            aria-label="Plate Breakdown and Training Load"
+            style="margin-top: 2rem">
+            <div class="section-header">
+                <h2>Plate like this...</h2>
+            </div>
+            <p>
+                Your carb and veggie portions vary by meal type and training load
+                for peak performance. Protein stays the same. See the ideal ratios
+                and what foods to choose below.
+            </p>
+            <div class="input-wrap">
+                <label for="training-load-select" style="font-weight: 600">Training load</label>
+                <div class="select-wrapper">
+                    <select id="training-load-select" class="two-line-select">
+                        <option value="low">
+                            Low – Low load, rest and recovery days
+                        </option>
+                        <option value="medium">Medium – Moderate training</option>
+                        <option value="high">High – Intense training</option>
+                    </select>
+                    <img
+                        src="{{ webAssets('front/images/arrow-down.svg') }}"
+                        alt="Arrow"
+                        class="select-arrow" />
+                </div>
+            </div>
+            <div
+                style="
+              display: flex;
+              align-items: center;
+              gap: 1.5rem;
+              flex-wrap: wrap;
+            ">
+                <img
+                    src="{{ webAssets('front/images/plate.webp') }}"
+                    alt="Plate like this image"
+                    style="width: 100%"
+                    width="806"
+                    height="590"
+                    class="plate-img" />
+                    <div class="">
+                    <h3 style="margin-bottom:20px;">Main Meal Plate Portions</h3>
+                <ul style="list-style: none; padding-left: 0; font-size: 1rem">
+                    <li class="list-w-image">
+                        <img
+                            src="{{ webAssets('front/images/Bread.svg') }}"
+                            alt="Plate like this image"
+                            style="width: 32px; height: auto"
+                            width="32"
+                            height="33" />
+                        <div>
+                            <span style="color: #967500; font-weight: bold">Fuel Foods: Complex Carbs + Healthy Fats</span>
+                            <br />Choose whole grains, rice, pasta, or potato + some avocado, nuts & seeds for sustained energy.
+                        </div>
+                    </li>
+
+                    <li class="list-w-image">
+                        <img
+                            src="{{ webAssets('front/images/apple.svg') }}"
+                            alt="Plate like this image"
+                            style="width: 32px; height: auto"
+                            width="32"
+                            height="33" />
+                        <div>
+                            <span style="color: #3e8e00; font-weight: bold">Protect Foods: Colourful Fruit & Veg</span>
+                            <br />A variety of mixed fresh or cooked fruit & veg drives a strong immune system.
+                        </div>
+                    </li>
+                    <li class="list-w-image">
+                        <img
+                            src="{{ webAssets('front/images/boiled egg.svg') }}"
+                            alt="Plate like this image"
+                            style="width: 32px; height: auto"
+                            width="32"
+                            height="33" />
+                        <div>
+                            <span style="color: #a60015; font-weight: bold">Repair Foods: Proteins</span>
+                            <br />Include meat, fish, eggs, tofu, dairy, or legumes to rebuild & recover.
+                        </div>
+                    </li>
+                </ul>
+                    </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+@endsection

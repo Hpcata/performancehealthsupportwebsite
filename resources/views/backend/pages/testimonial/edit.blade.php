@@ -7,11 +7,11 @@
 <div class="container-xxl">
 	<div class="row align-items-center">
 		<div class="border-0 mb-4">
-			<div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+			<div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
 				<h3 class="fw-bold mb-0">{{ $testimonial->id ? 'Edit Testimonial' : 'Add Testimonial' }}</h3>
-				<div class="col-auto d-flex w-sm-100">
-					<a type="button" href="{{ route('testimonials.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
-				</div>
+				
+					<a type="button" href="{{ route('testimonials.index') }}" class="btn btn-primary btn-set-task">Back</a>
+			
 			</div>
 		</div>
 	</div>
@@ -33,12 +33,12 @@
                                 @include('backend.layouts.error', ['field' => 'name'])
 							</div>
                             <div class="col-md-6">
-								<label for="designation" class="form-label">Title</label>
+								<label for="designation" class="form-label">Role/Title</label>
 								<input type="text" class="form-control" name="designation" id="designation" value="{{ old('designation', $testimonial->designation ?? '') }}">
                                 @include('backend.layouts.error', ['field' => 'designation'])
 							</div>
 							<div class="col-md-12">
-								<label for="review" class="form-label">Testimonial</label>
+								<label for="review" class="form-label">Testimonial Text</label>
 								<textarea class="form-control" name="review" id="review" rows="8">{{ old('review', $testimonial->review ?? '') }}</textarea>
 								@include('backend.layouts.error', ['field' => 'review'])
 							</div>

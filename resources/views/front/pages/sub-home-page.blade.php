@@ -96,7 +96,7 @@
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->type == 'section-1' && $section->enabled == 1)
-                <div class="section nutrition-page-banner pt-md-5" style="background-image: url(private/public/front/images/hero-img-03.webp);">
+                <div class="section nutrition-page-banner pt-md-5" style="background-image: url('{{ frontAssets('images/hero-img-03.webp') }}');">
                     <div class="container">
                         <div class="text-center">
                             <h1 class="text-white mt-md-3">Sports Nutrition Plans</h1>
@@ -138,7 +138,7 @@
         @endforeach 
     @endif
 
-    <div class="section find-spot-row" style="background-image: url(private/public/front/images/female-athlete.webp);">
+    <div class="section find-spot-row" style="background-image: url('{{ frontAssets('images/hero-img-03.webp') }}');">
         <div class="container">
             <div class="h1 text-center text-white">Find Your Sport</div>
             <div class="spot-search">
@@ -148,17 +148,9 @@
                             <div class="form-select-box">
                                 <select class="form-control" name="sport" id="sport" required>
                                     <option value="">Select Your Sport</option>
-                                    <option value="action_sports">Action Sports</option>
-                                    <option value="contact_sports">Contact Sports</option>
-                                    <option value="endurance_sports">Endurance Sports</option>
-                                    <option value="ball_sports">Ball Sports</option>
-                                    <option value="combat_sports">Combat Sports</option>
-                                    <option value="equestrian_sports">Equestrian Sports</option>
-                                    <option value="motor_sports">Motor Sports</option>
-                                    <option value="target_sports">Target Sports</option>
-                                    <option value="water_sports">Water Sports</option>
-                                    <option value="winter_sports">Winter Sports</option>
-                                    <option value="disability_sports">Disability Sports</option>
+                                    @foreach($sportCategories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -218,7 +210,7 @@
                             <div class="spot-plan-img-box">
                                 <figure>
                                     @if($plan->image)
-                                    <img src="{{ asset('private/public/storage/' . $plan->image) }}" alt="">
+                                    <img src="{{ webAssets('storage/' . $plan->image) }}" alt="">
                                     @else
                                     <img src="{!! frontAssets('images/about-new.webp') !!}" alt="">
                                     @endif
@@ -2768,14 +2760,14 @@
                         data: { category: selectedSport },
                         dataType: "json",
                         success: function (response) {
-                            sportGameSelect.html('<option value="">Select Your Sport Game</option>'); // Reset dropdown
-
+                            let options = '<option value="">Select Sport Game</option>';
                             if (Array.isArray(response)) {
-                                $.each(response, function (index, game) {
-                                    sportGameSelect.append(`<option value="${game}">${game}</option>`);
+                                response.forEach(function (game) {
+                                    options += `<option value="${game.name}">${game.name}</option>`;
                                 });
                             }
-                        },
+                            $('#sport_game').html(options);
+                        },  
                         error: function (xhr) {
                             console.error("Error fetching sports games:", xhr.responseText);
                         }

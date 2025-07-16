@@ -36,7 +36,7 @@
                         <div class="card-body nutrition-profile-info">
                             <div class="nutrition-profile-img">
                                 <figure>
-                                    <img src="{{ asset('private/public/' . $user->profile_image) }}" alt="">
+                                    <img src="{{ webAssets($user->profile_image) }}" alt="">
                                 </figure>
                                 <button class="btn btn-light edit-icon" data-bs-toggle="modal" data-bs-target="#editImageModal">
                                     <i class="fas fa-edit"></i>
@@ -76,7 +76,7 @@
                                             <div class="plan-list-box">
                                                 <div class="plan-list-img">
                                                     <figure>
-                                                        <img src="{{ asset('private/public/storage/' . $userMeal->meal->image) }}" alt="">
+                                                        <img src="{{ webAssets('storage/' . $userMeal->meal->image) }}" alt="">
                                                     </figure>
                                                 </div>
                                                 <div class="plan-list-info">
@@ -118,7 +118,7 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-3 text-center">
-                            <img id="imagePreview" src="{{ asset('private/public/' . $user->profile_image) }}" alt="Current Profile Image" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
+                            <img id="imagePreview" src="{{ webAssets($user->profile_image) }}" alt="Current Profile Image" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                         </div>
                         <div class="mb-3">
                             <label for="profileImageInput" class="form-label">Upload New Image</label>
@@ -819,7 +819,7 @@
                                                     <label class="form-check-label" for="Check${item.id}">
                                                         <div class="ingredient-img">
                                                             <figure>
-                                                                <img src="{{ asset('private/public/storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
+                                                                <img src="{{ webAssets('storage') }}/${item.image ? item.image : '' }" alt="${item.title}">
                                                             </figure>
                                                         </div>
                                                     </label>

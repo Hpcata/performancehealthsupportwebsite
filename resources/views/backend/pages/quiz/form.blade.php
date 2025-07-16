@@ -4,11 +4,11 @@
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
                 <h3 class="fw-bold mb-0">Quiz Form</h3>
-                <div class="col-auto d-flex w-sm-100">
-                    <a href="{{ route('admin.plans.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
-                </div>
+
+                    <a href="{{ route('admin.plans.index') }}" class="btn btn-primary btn-set-task">Back</a>
+              
             </div>
         </div>
     </div>
@@ -34,7 +34,7 @@
                                                     <div class="card">
                                                         <div class="p-3 card-header bg-white">
                                                             <div class="d-flex align-items-center">
-                                                                <h5 class="m-0">{{ $question->question_index }}. {{ $question->question_text }}</h5>
+                                                                <h5 class="m-0 quiz-ques">{{ $question->question_index }}. {{ $question->question_text }}</h5>
                                                                 <span class="ms-2 general-error-message text-danger"></span>
                                                             </div>
                                                             <input type="hidden" name="questions[{{ $question->question_index }}][form_slug]" value="nutrition" />

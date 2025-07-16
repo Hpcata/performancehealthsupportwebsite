@@ -79,11 +79,30 @@
     .food-label{
         font-weight:normal !important;
     }
+    .form-control-multiple {
+        background-color: white;
+        border: 1px solid #f0f0f0;
+        border-radius: 4px;
+        cursor: text;
+        padding-bottom: 5px;
+        padding-right: 5px;
+        height: 38px;
+    }
+    /* .selected-meals .list-group {
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    } */
+    .panel-body {
+        max-height: 600px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex  px-0 justify-content-between border-bottom flex-md-row flex-column align-items-md-center align-items-center ps-md-0 ps-3">
                 <!-- Left Section: Title -->
                 <div class="d-flex align-items-center flex-wrap">
                     <h3 class="fw-bold mb-0 me-3">Edit Plan</h3>
@@ -92,14 +111,14 @@
                 @php
                     $firstPlan = $userPlans->first(); // ✅ works
                 @endphp
-                <div class="form-check form-switch me-3">
+                <div class="form-check form-switch me-3 mt-md-0 mt-2">
                     <label class="form-check-label" for="nutritionToggle">Nutrition Info</label>
                     <input class="form-check-input" type="checkbox" id="nutritionToggle" name="nutrition_info" value="1"         data-payment-id="{{ $payment->id }}" {{ $firstPlan->nutrition_info_flag ? 'checked' : '' }}>
                 </div>
                 <!-- Right Section: Buttons -->
-                <div class="col-auto d-flex w-sm-100 mt-2 mt-sm-0">
-                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task w-sm-100 mx-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}">View User Details</a>
-                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task w-sm-100">Back</a>
+                <div class="col-auto d-flex mt-2 mt-sm-0">
+                    <a href="javascript:void(0);" class="btn btn-primary btn-set-task me-3 user-pre-plan-details" data-payment-id="{{ $payment->id }}">View User Details</a>
+                    <a href="{{ route('admin.purchase-plans.index') }}" class="btn btn-primary btn-set-task">Back</a>
                 </div>
             </div>
 
@@ -113,7 +132,7 @@
                         @csrf
                         @method('PUT')
                         <div class="row">
-                            <div class="panel-group col-8" id="accordion">
+                            <div class="panel-group col-md-8" id="accordion">
                                 @foreach ($userPlans as $userPlan)
                                 <?php 
                                 $plan = $userPlan->plan; ?>
@@ -165,7 +184,7 @@
                                                             <label for="mealItems{{$plan->id}}_{{$mealTime->id}}" class="form-label">Add Meal</label>
                                                             <select name="selected_meals[{{$plan->id}}][{{$mealTime->id}}][]"
                                                                 id="mealItems{{$plan->id}}_{{$mealTime->id}}"
-                                                                class="form-select meal-items-select select2"
+                                                                class="form-select meal-items-select select2 form-control-multiple"
                                                                 multiple style="width:100%">
 
                                                             </select>
@@ -188,7 +207,7 @@
                                 </div>
                                 @endforeach
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4">
                                 <div style="max-height: 90vh; overflow-y: auto; overflow-x: hidden; border: 1px solid #ddd; padding: 10px; border-radius: 8px; position: sticky; top:15px;">
                                     <h4>Food Prefrences</h4>
                                     <span class="">
@@ -305,7 +324,7 @@
                             </div>
                         </div>
                         <!-- Submit Button -->
-                        <div class="pull-right">
+                        <div class="pull-right-bot px-md-3 ">
                             <p>Last Updated: {{ isset($activity->updated_at) ? $activity->updated_at->format('d-m-Y H:i:s') : '' }} by {{ isset($activity->user) ? $activity->user->name : '' }}</p>
                         </div>
 
@@ -317,7 +336,7 @@
                         @endphp
 
 
-                        <div class="">
+                        <div class="my-5 d-flex flex-wrap flex-md-nowrap gap-3">
                             <button type="submit" class="btn btn-primary">Update</button>
                             <button type="submit" class="btn btn-success" name="action" value="save_exit">Update & Exit</button>
                             <!-- <button type="button" class="btn btn-success view-user-profile" data-user-id="{{ $payment->user_id }}">View User Profile</button> -->
@@ -1618,7 +1637,7 @@
                     //     const swapItemId = $(this).val();
                     //     updateFoodCount(swapItemId, -1, null); // Decrease swap item count
                     // });
-                    
+                   
                     // Send AJAX to remove meal and its items
                     $.ajax({
                         url: '{{ route("admin.remove-user-meal") }}',
@@ -1640,7 +1659,7 @@
                     // Remove the meal container
                     removedMealContainer.remove();
                     // Trigger meal count update
-                    $(document).trigger('mealRemoved', [planId, mealTimeId]);
+                    // $(document).trigger('mealRemoved', [planId, mealTimeId]);
                     calculateMealNutrition();
                 }
             });
@@ -1691,6 +1710,8 @@
                     });
                 });
             });
+            $(document).off('mealAdded');
+            $(document).off('mealRemoved');
 
             Promise.all(mealCreationPromises).then(() => {
                 // After all AJAX calls, append containers in the correct order
@@ -1702,6 +1723,8 @@
                     }
                 });
                 calculateMealNutrition();
+                updateMealCount(planId, mealTimeId);
+
             });
         });
             // Helper to format and round qty based on unit
@@ -2724,7 +2747,6 @@
             }
         }
 
-      
         let AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal = null);
 
         function buildUnitQtyMap(modal) {
@@ -2777,21 +2799,7 @@
         }
 
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-            // const AU_UNIT_EQUIVALENTS = {
-            //     'cup': 250,
-            //     'tablespoon': 20,
-            //     'teaspoon': 5,
-            //     'dessert spoon': 10,
-            //     'piece': 150,
-            //     'slice': 30,
-            //     'roll': 70,
-            //     'tub': 180,
-            //     'pouch': 100,
-            //     'handful': 40,
-            //     'ml': 1,
-            //     'g': 1
-            // };
-
+           
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
             console.log(AU_UNIT_EQUIVALENTS);
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
@@ -2827,9 +2835,7 @@
                     return;
                 }
                 const ratio = currentQty / baseEquivalent;
-                console.log(ratio);
-                console.log(modal);
-                console.log(baseCarbs * ratio);
+            
                 $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalProtein`).text((Math.round(baseProtein * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalFat`).text((Math.round(baseFat * ratio * 10) / 10) + 'g');
@@ -2871,94 +2877,6 @@
             }
         }
         
-        // function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-        //     const AU_UNIT_EQUIVALENTS = {
-        //         'cup': 250,
-        //         'tablespoon': 20,
-        //         'teaspoon': 5,
-        //         'dessert spoon': 10,
-        //         'piece': 150,
-        //         'slice': 30,
-        //         'roll': 70,
-        //         'tub': 180,
-        //         'pouch': 100,
-        //         'handful': 40,
-        //         'ml': 1,
-        //         'g': 1
-        //     };
-
-        //     const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
-        //     const $rows = $container.find('.qty-unit-row');
-        //     if ($rows.length === 0) return;
-
-        //     const $baseRow = $rows.first();
-        //     const baseQty = parseFraction($baseRow.find('.modalQtyInput').val());
-        //     const baseUnit = $baseRow.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-        //     if (!baseQty || !baseUnit) {
-        //         console.warn('Base quantity or unit is missing.');
-        //         return;
-        //     }
-
-        //     function updateNutrition(currentQtyRaw, currentUnit) {
-        //         const currentQty = parseFraction(currentQtyRaw);
-        //         if (!currentQty || !currentUnit) return;
-
-        //         currentUnit = currentUnit.toLowerCase();
-        //         let baseEquivalent = AU_UNIT_EQUIVALENTS[baseUnit];
-        //         let currentEquivalent = AU_UNIT_EQUIVALENTS[currentUnit];
-
-        //         if (!baseEquivalent || !currentEquivalent) {
-        //             console.warn('Unknown unit used in conversion.');
-        //             return;
-        //         }
-
-        //         const baseGrams = baseQty * baseEquivalent;
-        //         const currentGrams = currentQty * currentEquivalent;
-
-        //         const multiplier = currentGrams / baseGrams;
-
-        //         $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalProtein`).text((Math.round(baseProtein * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalFat`).text((Math.round(baseFat * multiplier * 10) / 10) + 'g');
-        //         $(`${modal} #modalEnergy`).text((Math.round(baseEnergy * multiplier * 10) / 10) + 'kJ');
-
-        //     }
-
-        //     $rows.find('.modalQtyInput').on('input', function () {
-        //         const $row = $(this).closest('.qty-unit-row');
-        //         const newQtyRaw = $(this).val();
-        //         const newUnit = $row.find('.modalMeasurementInput').val().trim().toLowerCase();
-
-        //         updateNutrition(newQtyRaw, newUnit);
-        //     });
-
-        //     // Utility: Convert fractions like "1/2" or "3/4" to decimal numbers
-        //     function parseFraction(input) {
-        //         if (!input) return null;
-        //         input = input.trim();
-        //         // Direct number
-        //         if (!isNaN(input)) return parseFloat(input);
-
-        //         // Handle fractions like "1/2", "3/4", or even "1 1/2"
-        //         const parts = input.split(' ');
-        //         let result = 0;
-
-        //         parts.forEach(part => {
-        //             if (part.includes('/')) {
-        //                 const [num, denom] = part.split('/');
-        //                 if (!isNaN(num) && !isNaN(denom)) {
-        //                     result += parseFloat(num) / parseFloat(denom);
-        //                 }
-        //             } else if (!isNaN(part)) {
-        //                 result += parseFloat(part);
-        //             }
-        //         });
-
-        //         return result || null;
-        //     }
-        // }
-
         function setupDynamicMeasurementSync(modal) {
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
@@ -3009,22 +2927,7 @@
                 });
             });
         }
-
-        // ✅ Helper to parse fractions like "1/2", "1 1/4", etc.
-        // function parseFraction(input) {
-        //     if (!input) return NaN;
-        //     input = input.trim();
-        //     if (!isNaN(input)) return parseFloat(input); // e.g., "1.5", "2"
-        //     if (/^\d+\s+\d+\/\d+$/.test(input)) {
-        //         const [whole, frac] = input.split(' ');
-        //         const [num, denom] = frac.split('/');
-        //         return parseInt(whole) + (parseFloat(num) / parseFloat(denom));
-        //     } else if (/^\d+\/\d+$/.test(input)) {
-        //         const [num, denom] = input.split('/');
-        //         return parseFloat(num) / parseFloat(denom);
-        //     }
-        //     return NaN;
-        // }
+       
         function parseFraction(input) {
             if (input === undefined || input === null) return null;
 
@@ -3079,7 +2982,7 @@
             $('#editItemName').val(name);
             $('#editItemModal #description').val(description);
 
-                            let selectedQtyUnits = [];
+            let selectedQtyUnits = [];
             let rawJson = btn.attr('data-selected-qty-unit');
             try {
                 if (rawJson && rawJson !== "null") {
@@ -3092,8 +2995,7 @@
             if (!Array.isArray(selectedQtyUnits) || selectedQtyUnits.length === 0) {
                 selectedQtyUnits = [{ qty: fallbackQty, unit: fallbackUnit, checked: false }];
             }
-            console.log(selectedQtyUnits);
-            const $container = $('#dynamicQtyMeasurementContainer').empty();
+            const $container = $('#editItemModal #dynamicQtyMeasurementContainer').empty();
 
             selectedQtyUnits.forEach(({ qty, unit, checked }, index) => {
                 const isChecked = checked === true || checked === 'true'; // ✅ Normalize boolean
@@ -3134,7 +3036,7 @@
 
                 if (isNaN(newQty) || isNaN(originalQty) || !originalUnit || !newUnit) return;
 
-                let ratio = originalQty / newQty;
+                ratio = newQty / originalQty;
 
                 // if (originalUnit !== newUnit && unitRatios?.[originalUnit] && unitRatios?.[newUnit]) {
                 //     const unitRatio = unitRatios[newUnit] / unitRatios[originalUnit];
@@ -3153,6 +3055,23 @@
         });
 
         $('#saveItemChanges').on('click', function () {
+            // Validate: Prevent save if any checked qty is 0, blank, or invalid
+            let invalidQty = false;
+            $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+                const $row = $(this);
+                const isChecked = $row.find('.qtyUnitSelector').is(':checked');
+                if (isChecked) {
+                    const rawQtyInput = $row.find('.modalQtyInput').val().trim();
+                    const parsedQty = parseFraction(rawQtyInput);
+                    if (!rawQtyInput || isNaN(parsedQty) || parsedQty <= 0) {
+                        invalidQty = true;
+                    }
+                }
+            });
+            if (invalidQty) {
+                alert('Please enter a quantity greater than 0 for all selected options.');
+                return;
+            }
             const itemId = $('#editItemId').val();
             const mealId = $('#editMealId').val();
             const planId = $('#editPlanId').val();
@@ -3166,22 +3085,19 @@
             let qty = 0;
             let unit = '';
 
-            const anyChecked = $('#dynamicQtyMeasurementContainer .qty-unit-row').find('.qtyUnitSelector:checked').length > 0;
+            const anyChecked = $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').find('.qtyUnitSelector:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
                 return;
             }
             let foundChecked = false;
 
-            $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+            $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
                 const $row = $(this);
                 const rawQtyInput = $row.find('.modalQtyInput').val().trim();
                 const parsedQty = parseFraction(rawQtyInput);
                 let unit = $row.find('.modalMeasurementInput').val().trim();
                 const isChecked = $row.find('.qtyUnitSelector').is(':checked');
-
-                console.log('rawQtyInput:', rawQtyInput);
-                console.log('unit:', unit);
 
                 if (!isNaN(parsedQty) && unit) {
                     let qtyToUse;
@@ -3215,10 +3131,10 @@
                 }
             });
            
-            const carbs = parseFloat($('#modalCarbs').text()) || 0;
-            const protein = parseFloat($('#modalProtein').text()) || 0;
-            const fat = parseFloat($('#modalFat').text()) || 0;
-            const energy = parseFloat($('#modalEnergy').text()) || 0;
+            const carbs = parseFloat($('#editItemModal #modalCarbs').text()) || 0;
+            const protein = parseFloat($('#editItemModal #modalProtein').text()) || 0;
+            const fat = parseFloat($('#editItemModal #modalFat').text()) || 0;
+            const energy = parseFloat($('#editItemModal #modalEnergy').text()) || 0;
             const updatedHTML = `
                 <div class="d-flex justify-content-between align-items-start mb-0">
                     <div class="col-9">
@@ -3255,7 +3171,7 @@
             `;
 
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            currentItemRow.find('td:nth-child(3)').html(updatedHTML);
+            currentItemRow.find('td:nth-child(2)').html(updatedHTML);
             $('[data-bs-toggle="tooltip"]').tooltip();
             const modalEl = document.getElementById('editItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
@@ -3287,98 +3203,108 @@
                 success: function (response) {
                     if (response.success) {
                         const $updatedRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-                        const $swapListItems = $updatedRow.find('td').eq(1).find('li[data-swap-item-id]');
+                        const $swapListItems = $updatedRow.find('td').eq(2).find('li[data-swap-item-id]');
+                        const ratio = parseFloat($('#editItemModal #ratio').val());
+                        console.log('get ratio :', ratio);
+                        if(ratio != 0 && !isNaN(ratio)) {
+                            $swapListItems.each(function () {
+                                const $swapLi = $(this);
+                                const swapItemId = $swapLi.data('swap-item-id');
 
-                        $swapListItems.each(function () {
-                            const $swapLi = $(this);
-                            const swapItemId = $swapLi.data('swap-item-id');
-                            const ratio = parseFloat($('#editItemModal #ratio').val());
+                                // Get the first <p> that has "(100g or 1 cup)" style text
+                                const $quantityP = $swapLi.find('p').first();
+                                let originalText = $quantityP.text().trim();
 
-                            // Get the first <p> that has "(100g or 1 cup)" style text
-                            const $quantityP = $swapLi.find('p').first();
-                            let originalText = $quantityP.text().trim();
-
-                            // Remove surrounding parentheses and split by 'or'
-                            if (originalText.startsWith('(') && originalText.endsWith(')')) {
-                                originalText = originalText.slice(1, -1);
-                            }
-
-                            const parts = originalText.split('or').map(part => part.trim());
-                            const updatedParts = parts.map(part => {
-                                const match = part.match(/^([\d./]+)\s*(\w+)$/);  // e.g. "100g" or "1 cup"
-                                if (!match) return part;  // if format is unexpected, return as-is
-
-                                let [_, qty, unit] = match;
-
-                                // Convert fractions like 1/2
-                                if (qty.includes('/')) {
-                                    const [num, denom] = qty.split('/');
-                                    qty = parseFloat(num) / parseFloat(denom);
-                                } else {
-                                    qty = parseFloat(qty);
+                                // Remove surrounding parentheses and split by 'or'
+                                if (originalText.startsWith('(') && originalText.endsWith(')')) {
+                                    originalText = originalText.slice(1, -1);
                                 }
 
-                                if (isNaN(qty)) return part;
+                                const parts = originalText.split('or').map(part => part.trim());
+                                const updatedParts = parts.map(part => {
+                                    const match = part.match(/^([\d./]+)\s*(\w+)$/);  // e.g. "100g" or "1 cup"
+                                    if (!match) return part;
 
-                                const newQty = (qty / ratio).toFixed(2).replace(/\.00$/, '');
-                                return `${newQty} ${unit}`;
-                            });
+                                    let [_, qty, unit] = match;
 
-                            // Set updated text back with parentheses
-                            $quantityP.text(`(${updatedParts.join(' or ')})`);
-
-                            const swapInput = $swapLi.find('input[type="checkbox"]');
-                            const swapEnergy = parseFloat(swapInput.data('energy')) || 0;
-                            const swapProtein = parseFloat(swapInput.data('protein')) || 0;
-                            const swapCarbs = parseFloat(swapInput.data('carbs')) || 0;
-                            const swapFat = parseFloat(swapInput.data('fat')) || 0;
-
-                            // Get ratio (you may calculate based on qty/unit or use directly)
-
-                            // Adjust values
-                            const adjustedEnergy = (swapEnergy / ratio).toFixed(2);
-                            const adjustedProtein = Math.round(swapProtein / ratio);
-                            const adjustedCarbs = Math.round(swapCarbs / ratio);
-                            const adjustedFat = Math.round(swapFat / ratio);
-
-                            // Prepare data for backend
-                            const swapData = {
-                                swap_item_id: swapItemId,
-                                item_id: itemId,
-                                plan_id: planId,
-                                meal_id: mealId,
-                                meal_time_id: mealTimeId,
-                                user_id: userId,
-                                food_energy: adjustedEnergy,
-                                food_protein: adjustedProtein,
-                                food_carbs: adjustedCarbs,
-                                food_fat: adjustedFat,
-                                ratio: ratio,
-                                _token: '{{ csrf_token() }}'
-                            };
-
-                            // AJAX call to update swap item in DB
-                            $.ajax({
-                                url: '{{ route("admin.update-swap-item") }}',
-                                method: 'POST',
-                                data: swapData,
-                                success: function (resp) {
-                                    if (resp.success) {
-                                        // Update nutrition info in HTML
-                                        const $nutritionP = $swapLi.find('p').last();
-                                        $nutritionP.html(
-                                            `Energy: ${adjustedEnergy}kJ | Protein: ${adjustedProtein}g | Carb: ${adjustedCarbs}g | Fat: ${adjustedFat}g`
-                                        );
+                                    // Convert fractions like 1/2
+                                    if (qty.includes('/')) {
+                                        const [num, denom] = qty.split('/');
+                                        qty = parseFloat(num) / parseFloat(denom);
                                     } else {
-                                        console.warn(`Swap item ${swapItemId} failed to update in DB`);
+                                        qty = parseFloat(qty);
                                     }
-                                },
-                                error: function () {
-                                    console.error(`Error updating swap item ${swapItemId}`);
-                                }
-                            });
-                        });
 
+                                    if (isNaN(qty)) return part;
+
+                                    const newQty = (qty * ratio).toFixed(2).replace(/\.00$/, '');
+
+                                    // Units that should not have space
+                                    const noSpaceUnits = ['g', 'ml', 'mL'];
+
+                                    return noSpaceUnits.includes(unit) ? `${newQty}${unit}` : `${newQty} ${unit}`;
+                                });
+
+                                // Set updated text back with parentheses
+                                $quantityP.text(`(${updatedParts.join(' or ')})`);
+
+                                const $nutritionP = $swapLi.find('p').last();
+                                const nutritionText = $nutritionP.text();
+                                const match = nutritionText.match(/Energy:\s*(\d+(?:\.\d+)?)kJ\s*\|\s*Protein:\s*(\d+(?:\.\d+)?)g\s*\|\s*Carb:\s*(\d+(?:\.\d+)?)g\s*\|\s*Fat:\s*(\d+(?:\.\d+)?)g/);
+
+                                let swapEnergy = 0, swapProtein = 0, swapCarbs = 0, swapFat = 0;
+
+                                if (match) {
+                                    swapEnergy = parseFloat(match[1]);
+                                    swapProtein = parseFloat(match[2]);
+                                    swapCarbs = parseFloat(match[3]);
+                                    swapFat = parseFloat(match[4]);
+                                }
+                                
+                                // Adjust values
+                                const adjustedEnergy = (swapEnergy * ratio).toFixed(2);
+                                const adjustedProtein = Math.round(swapProtein * ratio);
+                                const adjustedCarbs = Math.round(swapCarbs * ratio);
+                                const adjustedFat = Math.round(swapFat * ratio);
+
+                                // Prepare data for backend
+                                const swapData = {
+                                    swap_item_id: swapItemId,
+                                    item_id: itemId,
+                                    plan_id: planId,
+                                    meal_id: mealId,
+                                    meal_time_id: mealTimeId,
+                                    user_id: userId,
+                                    food_energy: adjustedEnergy,
+                                    food_protein: adjustedProtein,
+                                    food_carbs: adjustedCarbs,
+                                    food_fat: adjustedFat,
+                                    ratio: ratio,
+                                    _token: '{{ csrf_token() }}'
+                                };
+
+                                // AJAX call to update swap item in DB
+                                $.ajax({
+                                    url: '{{ route("admin.update-swap-item") }}',
+                                    method: 'POST',
+                                    data: swapData,
+                                    success: function (resp) {
+                                        if (resp.success) {
+                                            // Update nutrition info in HTML
+                                            $nutritionP.html(
+                                                `Energy: ${adjustedEnergy}kJ | Protein: ${adjustedProtein}g | Carb: ${adjustedCarbs}g | Fat: ${adjustedFat}g`
+                                            );
+                                            $('#editItemModal #ratio').val(0);
+                                        } else {
+                                            console.warn(`Swap item ${swapItemId} failed to update in DB`);
+                                        }
+                                    },
+                                    error: function () {
+                                        console.error(`Error updating swap item ${swapItemId}`);
+                                    }
+                                });
+                            });
+                        }
                         console.log('Main food and swap items updated successfully.');
                     } else {
                         alert('Failed to update food.');
@@ -3520,7 +3446,7 @@
                         const selected = response.items.find(item => item.id == swapItemId);
                         if (!selected) return;
 
-                        const imageUrl = selected.image ? `{{ asset('private/public/storage/') }}/${selected.image}` : '';
+                        const imageUrl = selected.image ? `{{ webAssets('storage/') }}/${selected.image}` : '';
 
                         const option = new Option(selected.title, selected.id, true, true);
                         $(option)
@@ -3567,6 +3493,24 @@
         });
 
         $('#saveSwapItemChanges').on('click', function () {
+            // Validate: Prevent save if any checked qty is 0, blank, or invalid
+            let invalidQty = false;
+            $('#editSwapItemModal .qty-unit-row').each(function () {
+                const $row = $(this);
+                const isChecked = $row.find('.qtyUnitSelector').is(':checked');
+                if (isChecked) {
+                    const rawQtyInput = $row.find('.modalQtyInput').val().trim();
+                    const parsedQty = parseFraction(rawQtyInput);
+                    if (!rawQtyInput || isNaN(parsedQty) || parsedQty <= 0) {
+                        invalidQty = true;
+                    }
+                }
+            });
+            
+            if (invalidQty) {
+                alert('Please enter a quantity greater than 0 for all selected options.');
+                return;
+            }
             const modalSelector = '#editSwapItemModal';
             const anyChecked = $(`${modalSelector} .qty-unit-row`).find('.qtyUnitSelector:checked').length > 0;
 
@@ -3812,7 +3756,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -3971,7 +3915,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -4288,7 +4232,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -4602,7 +4546,7 @@
                             results: response.items.map(item => ({
                                 id: item.id,
                                 text: item.title,
-                                image: item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : '',
+                                image: item.image ? `{{ webAssets('storage/') }}/${item.image}` : '',
                                 carbs: item.carbs,
                                 protein: item.protein,
                                 fat: item.fat,
@@ -4976,6 +4920,34 @@
             $(`${mealContainerId} .totalFat`).text(Math.round(totalFat)+'g');
             $(`${mealContainerId} .totalEnergy`).text(Math.round((totalEnergy))+'kJ');
         }
+
+        function updateMealCount(planId, mealTimeId) {
+            const selectedMeals = $(`#selectedMeals${planId}_${mealTimeId} .meal-container`).length;
+            console.log(selectedMeals);
+            $(`#mealCount${planId}_${mealTimeId}`).text(`${selectedMeals}`);
+        }
+
+        // Update meal count when meals are added or removed
+        $(document).on('mealAdded mealRemoved', function(e, planId, mealTimeId) {
+            updateMealCount(planId, mealTimeId);
+        });
+
+        // Initialize meal counts for all meal times
+        $('.meal-time-checkbox').each(function() {
+            const planId = $(this).closest('.panel').find('input[name="plan_id[]"]').val();
+            const mealTimeId = $(this).data('mealtime-id');
+            updateMealCount(planId, mealTimeId);
+        });
+
+        // Update meal count when meal is added
+        $(document).on('mealAdded', function(e, planId, mealTimeId) {
+            updateMealCount(planId, mealTimeId);
+        });
+
+        // Update meal count when meal is removed
+        $(document).on('mealRemoved', function(e, planId, mealTimeId) {
+            updateMealCount(planId, mealTimeId);
+        });
     });
 
     $(document).on('change', '.editable-meal-name', function() {
@@ -5175,7 +5147,7 @@
                         foodSearchResults.show();
                         if (response.items.length > 0) {
                             response.items.forEach(item => {
-                                const imagePath = item.image ? `{{ asset('private/public/storage/') }}/${item.image}` : 'https://via.placeholder.com/50';
+                                const imagePath = item.image ? `{{ webAssets('storage/') }}/${item.image}` : 'https://via.placeholder.com/50';
                                 const row = `
                                     <tr>
                                         <td>${item.title}</td>
@@ -5427,8 +5399,8 @@
                         // Check if the food item already exists in the table
                         // if (tableBody.find(`tr[data-food-id="${food.id}"]`).length === 0) {
 
-                            // Since swap items are not available, show the message
-                            const swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
+                         // Since swap items are not available, show the message
+                        const swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
                             <div class="col-9">
                                 <span class="text-muted">No swap items available</span>
                             </div>
@@ -5441,57 +5413,57 @@
                             </div>
                         </li>`;
 
-                            // Append the single food item row to the table
-                    tableBody.append(`
-                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${food.id}" data-item-id="${item.id}">
-                            <td class="text-wrap" width="50%">
-                                <div class="d-flex justify-content-between align-items-start mb-0">
-                                    <div class="col-9">
-                                        <div class="d-flex align-items-start">
-                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
-                                                value="${food.id}" class="form-check-input me-2 d-none" checked
-                                                data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}">
-                                            <label class="form-check-label flex-grow-1">${food.title}</label>
+                        // Append the single food item row to the table
+                        tableBody.append(`
+                            <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${food.id}" data-item-id="${item.id}">
+                                <td class="text-wrap" width="50%">
+                                    <div class="d-flex justify-content-between align-items-start mb-0">
+                                        <div class="col-9">
+                                            <div class="d-flex align-items-start">
+                                                <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
+                                                    value="${food.id}" class="form-check-input me-2 d-none" checked
+                                                    data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}">
+                                                <label class="form-check-label flex-grow-1">${food.title}</label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="${food.description}">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-success edit-item"
+                                                data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${food.qty}" data-item-unit="${food.unit}"
+                                                data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
+                                                title="Edit"><i class="icofont-edit"></i></button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-item"
+                                                data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
+                                            title="Delete"><i class="icofont-ui-delete"></i></button>
                                         </div>
                                     </div>
-                                    <div>
-                                        <button type="button" class="btn btn-sm btn-outline-primary"
-                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="${food.description}">
-                                            <i class="fas fa-info-circle"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success edit-item"
-                                            data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${food.qty}" data-item-unit="${food.unit}"
-                                            data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                            title="Edit"><i class="icofont-edit"></i></button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger delete-item"
-                                            data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                        title="Delete"><i class="icofont-ui-delete"></i></button>
+                                    <div class="row">
+                                        <div class="col">
+                                                    <p class="px-2 mb-2 fw-bold">(${
+                                                        typeof food.qty === 'string' && food.qty.includes('/')
+                                                            ? food.qty
+                                                            : (
+                                                                ["g", "ml", "mL"].includes(food.unit)
+                                                                    ? Math.round(parseFloat(food.qty))
+                                                                    : food.qty
+                                                            )
+                                                    }${["g", "ml", "mL"].includes(food.unit) ? food.unit : ' ' + food.unit})
+                                                    </p>
+                                                    <p class="mb-0 px-2">Energy: ${parseFloat(food.protein)}kJ | Protein: ${Math.round(food.protein)}g | Carb: ${Math.round(food.carbs)}g | Fat: ${Math.round(food.fat)}g</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                                <p class="px-2 mb-2 fw-bold">(${
-                                                    typeof food.qty === 'string' && food.qty.includes('/')
-                                                        ? food.qty
-                                                        : (
-                                                            ["g", "ml", "mL"].includes(food.unit)
-                                                                ? Math.round(parseFloat(food.qty))
-                                                                : food.qty
-                                                        )
-                                                }${["g", "ml", "mL"].includes(food.unit) ? food.unit : ' ' + food.unit})
-                                                </p>
-                                                <p class="mb-0 px-2">Energy: ${parseFloat(food.protein)}kJ | Protein: ${Math.round(food.protein)}g | Carb: ${Math.round(food.carbs)}g | Fat: ${Math.round(food.fat)}g</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td width="50%">
-                                <ul class="list-unstyled">${swapItemsHTML}</ul>
-                            </td>
-                        </tr>
-                    `);
+                                </td>
+                                <td width="50%">
+                                    <ul class="list-unstyled">${swapItemsHTML}</ul>
+                                </td>
+                            </tr>
+                        `);
                         // }
                         updateFoodCount(food.id, 1, 'green');
                         calculateTotals(planId, mealTimeId, mealId);
@@ -5512,38 +5484,6 @@
                     loader.hide();
                 }
             });
-        });
-    });
-
-    $(document).ready(function() {
-        // ... existing code ...
-        
-        // Function to update meal count
-        function updateMealCount(planId, mealTimeId) {
-            const selectedMeals = $(`#selectedMeals${planId}_${mealTimeId} .meal-container`).length;
-            $(`#mealCount${planId}_${mealTimeId}`).text(`${selectedMeals}`);
-        }
-
-        // Update meal count when meals are added or removed
-        $(document).on('mealAdded mealRemoved', function(e, planId, mealTimeId) {
-            updateMealCount(planId, mealTimeId);
-        });
-
-        // Initialize meal counts for all meal times
-        $('.meal-time-checkbox').each(function() {
-            const planId = $(this).closest('.panel').find('input[name="plan_id[]"]').val();
-            const mealTimeId = $(this).data('mealtime-id');
-            updateMealCount(planId, mealTimeId);
-        });
-
-        // Update meal count when meal is added
-        $(document).on('mealAdded', function(e, planId, mealTimeId) {
-            updateMealCount(planId, mealTimeId);
-        });
-
-        // Update meal count when meal is removed
-        $(document).on('mealRemoved', function(e, planId, mealTimeId) {
-            updateMealCount(planId, mealTimeId);
         });
     });
 
