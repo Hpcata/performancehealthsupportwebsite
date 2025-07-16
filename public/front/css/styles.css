@@ -1346,8 +1346,8 @@ background-image: url(/front/images/hero-section/tennis.webp);
     }
     .mobile-logo-img,
     .mobile-menu-header .logo-img {
-        height: 24px;
-        width: 168px;
+        height: 30px;
+        width: 140px;
     }
     .mobile-menu-open {
         display: block;
