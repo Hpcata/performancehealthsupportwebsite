@@ -8,10 +8,15 @@
     <style>
         .hero-background {
             background-image: url('{{ webAssets("storage/" . $sportGameData['sport_image']) }}') !important;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 100%;
+               background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100%;
+    max-width: 100%;
+    position: absolute;
+    right: 0;
+     border-radius: 0 0 36px 0;
+    width: 100%;
         }
     </style>
 @endif
@@ -80,7 +85,9 @@
                             <section class="challenges" aria-label="Meal Plan Categories">
                                 <div class="section-header">
                                     <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
-                                    <a href="{{ route('front.meal-time.details', ['id' => $userCategory->id, 'plan_id' => $userPlan->id]) }}" class="see-all">Scroll for More</a>
+                                    <!-- <a href="{{ route('front.meal-time.details', ['id' => $userCategory->id, 'plan_id' => $userPlan->id]) }}" class="see-all">Scroll for More</a> -->
+
+                                     <label  class="see-all" style="text-decoration:none;">Scroll for More</label>
                                 </div>
                                 
                                 <div class="challenge-cards">
@@ -96,9 +103,9 @@
                                     @endforeach
                                     @if($meals->count() < 3)
                                         {{-- Show "Add More Meals" only if meal count is between 1 and 2 --}}
-                                        <div class="challenge-card clickable">
+                                        <div class="challenge-card" style="height: 160px;">
                                             <div 
-                                                style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
+                                                style="height: 160px; background-color:#f1f1f1;position:relative;"
                                             >
                                                 <img
                                                     src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
