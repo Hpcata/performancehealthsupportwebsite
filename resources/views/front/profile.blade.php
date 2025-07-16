@@ -1763,7 +1763,7 @@
                             data: dataPointsWeight.map(dp => dp.x), // X values for the Weight dataset (dates)
                             borderColor: '#649ef7', // Red color for the line
                             backgroundColor: '#fff', // Light red fill
-                            fill: true,
+                            fill: false,
                             // tension: 0.4, // Smooth curves
                             pointRadius: 3, // Highlight points
                             pointBackgroundColor: '#fff'
@@ -1773,7 +1773,7 @@
                             data: dataPointsWeight.map(dp => dp.y), // Y values for the Weight dataset
                             borderColor: '#649ef7', // Red color for the line
                             backgroundColor: '#fff', // Light red fill
-                            fill: true,
+                            fill: false,
                             // tension: 0.4, // Smooth curves
                             pointRadius: 3, // Highlight points
                             pointBackgroundColor: '#fff'
