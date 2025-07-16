@@ -202,11 +202,6 @@ class FrontController extends Controller
                     if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])) {
                         if (!Auth::guard('web')->user()->isSuperAdmin()) {
                             $redirectUrl = route('front.profile', ['id' => $user->id]);
-                            // $freeTest = Questionnaire::where('email', $validated['email'])->first();
-
-                            // if($freeTest) {
-                            //     \Mail::to($validated['email'])->send(new \App\Mail\FreeTestResultMail($user));
-                            // }
                             return response()->json([
                                 'success' => true,
                                 'redirect_url' => $redirectUrl,
