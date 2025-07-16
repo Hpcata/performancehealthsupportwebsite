@@ -182,21 +182,9 @@
                                         </h4>
 
                                         <ul class="mb-3">
-                                            <li>Sport: {{ $profileDetails['Sport'] }}
-                                                <button type="button" 
-                                                    class="btn btn-light edit-icon" 
-                                                    id="edit-sport-button"
-                                                    data-sport="{{ $profileDetails['Sport'] ?? '' }}"
-                                                    data-name="{{ $profileDetails['Name'] ?? '' }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </li>
+                                            <li>Sport: {{ $profileDetails['Sport'] }}</li>
                                         </ul>
 
-                                        <!-- Toggle button -->
-                                        <!-- <button class="btn-outline-primary btn-sm mb-2 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#profileDetailsCollapse" aria-expanded="false" aria-controls="profileDetailsCollapse">
-                                            Health Data
-                                        </button> -->
                                         <a data-bs-toggle="collapse" href="#profileDetailsCollapse" role="button" aria-expanded="false" aria-controls="profileDetailsCollapse" class="text-decoration-none mt-3"> Health Data : 
                                             <!-- <i class="fas fa-chevron-down pull-right"></i> -->
                                         </a>
@@ -341,7 +329,7 @@
                                                             $formattedEnd = $formatDate($endDate, null);
                                                             $item = trim($item);
                                                         @endphp
-                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                        <li class="d-flex justify-content-between align-items-start @if ($formattedStart) mb-1 @else mb-3 @endif">
                                                             <span>{{ $item }}</span>
                                                             <div class="btn-list ms-2 mt-1">
                                                                 <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
@@ -403,7 +391,7 @@
                                                             $formattedEnd = $formatDate($endDate, null);
                                                             $item = trim($item);
                                                         @endphp
-                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                        <li class="d-flex justify-content-between align-items-start @if ($formattedStart) mb-1 @else mb-3 @endif">
                                                             <span>{{ $item }}</span>
                                                             <div class="btn-list ms-2 mt-1">
                                                                 <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
@@ -445,26 +433,6 @@
                                            
                                         </div>
                                     </div>
-                                    
-                            {{--    <div class="px-4 py-3 border-bottom">
-                                        <strong>Favourite Food:</strong>
-                                        <p>{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="List your favourite foods?" data-answer="{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                    <div class="px-4 py-3 border-bottom">
-                                        <strong>Foods | Dislike:</strong>
-                                        <p>{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="Do you avoid/dislike any foods? List below" data-answer="{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                --}}
                                 </div>
                             </div>
                         </div>
@@ -868,7 +836,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-3">
                 <div class="modal-header bg-light border-0">
-                    <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase </h5>
+                    <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase Plan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -1126,48 +1094,6 @@
         </div>
     </div>
 
-    <!-- Edit Sport Modal -->
-    <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="{{ route('profile.update.sport') }}" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Sport Info</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="sport_name" class="form-label">Sport Name</label>
-                            <input type="text" name="sport" class="form-control" id="sport_name" value="{{ $userPrePlan->occupation ?? '' }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="sport_image" class="form-label">Sport Image</label>
-                            <input type="file" name="sport_image" class="form-control" id="sport_image" style="height: auto; border-radius: 5px;">
-                        </div>
-                        <!-- Existing Sport Image Preview -->
-                        @if(!empty($userPrePlan->sport_image))
-                            <div class="mb-3">
-                                <label class="form-label">Current Image:</label><br>
-                                <img src="{{ asset($userPrePlan->sport_image) }}" alt="Sport Image" width="120" height="120" class="rounded">
-                            </div>
-                        @endif
-
-                        <input type="hidden" name="user_id" id="sport_user_id" value="{{ auth()->id() }}">
-                        <input type="hidden" name="payment_id" id="payment_id" value="{{ $payment->id }}">
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" id="saveSportBtn" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
@@ -1308,44 +1234,6 @@
             $('#editHeightModal').find('#heightAnswer').val(answer);
             $('#editHeightModal').find('#formName').val(formName);
             $('#editHeightModal').modal('show'); 
-        });
-    });
-
-    $('#saveSportBtn').on('click', function () {
-        let formData = new FormData();
-        formData.append('sport', $('#sport_name').val());
-        formData.append('user_id', $('#sport_user_id').val());
-        formData.append('payment_id', $('#payment_id').val());
-        // formData.append('user_id', $('#sport_user_id').val());
-
-        let sportImage = $('#sport_image')[0].files[0];
-        if (sportImage) {
-            formData.append('sport_image', sportImage);
-        }
-
-        $.ajax({
-            url: '{{ route("profile.update.sport") }}',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert(response.message);
-                    $('#editSportModal').modal('hide');
-                    // Optionally, update the DOM with new values
-                    location.reload(); // or update DOM instead of full reload
-                } else {
-                    alert('Something went wrong!');
-                }
-            },
-            error: function (xhr) {
-                console.error(xhr.responseJSON);
-                alert('Validation failed or server error!');
-            }
         });
     });
 
@@ -2001,8 +1889,9 @@
         }
 
         // Stripe Payment
-        var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+        // var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
         // var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
+        var stripe = Stripe("{{ config('services.stripe.key') }}");
         var elements = stripe.elements();
         var style = {
             base: {
@@ -2039,11 +1928,13 @@
         // Event listener for the 'Purchase Now' button
         $('body').on('click', '.buy-plan-btn', function () {
             // e.preventDefault();
-
             var planId = $(this).data('plan-id');  // Get the plan ID
             var price = $(this).data('plan-price');     // Get the plan price (if needed)
             var description = $(this).data('plan-description');     // Get the plan price (if needed)
-            
+            var name = $('#purchaseModal #name').val();
+            var email = $('#purchaseModal #email').val();
+            var phone = $('#purchaseModal #phone').val();
+
             // Update modal title with plan name (optional)
             $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name')+ '($' + price+')');
             $('#plan-description').text(description);
@@ -2056,8 +1947,7 @@
                 event.preventDefault();
 
                 // Disable the submit button to prevent multiple clicks
-                $('#submit').prop('disabled', true);
-
+                // $('#submit').prop('disabled', true);
                 // Create a PaymentMethod with Stripe's API
                 let discountCode = $('#promo-code').val();
                 let discount = $('#discount').val();
@@ -2068,9 +1958,9 @@
                         data: {
                             plan_id: planId,
                             price: price,
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                             coupon_code: discountCode,
                             _token: '{{ csrf_token() }}'
                         },
@@ -2082,12 +1972,16 @@
                                 var user_id = response.data.user_id;
                                 var payment_id = response.data.payment_id;
 
-                                // Redirect the user if a URL is provided
-                                if (response.redirect_url) {
-                                    var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
-                                    setTimeout(function () {
-                                        window.location.href = redirectUrlWithUserId;
-                                    }, 3000);
+                                if(response.data.submit_questionnaire) {
+                                    // Redirect the user if a URL is provided
+                                    if (response.redirect_url) {
+                                        var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                        setTimeout(function () {
+                                            window.location.href = redirectUrlWithUserId;
+                                        }, 3000);
+                                    }
+                                } else {
+                                    $('#thankYouModal').modal('show');
                                 }
                             } else {
                                 // Show error message for failed payment
@@ -2106,9 +2000,9 @@
                         type: 'card',
                         card: card,
                         billing_details: {
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                         },
                     }).then(function(result) {
                         if (result.error) {
@@ -2124,10 +2018,10 @@
                                     payment_method_id: result.paymentMethod.id,
                                     plan_id: planId,
                                     price: price,
-                                    name: $('#name').val(),
-                                    email: $('#email').val(),
-                                    phone: $('#phone').val(),
-                                    coupon_code: dicountCode,
+                                    name: name,
+                                    email: email,
+                                    phone: phone,
+                                    coupon_code: discountCode,
                                     _token: '{{ csrf_token() }}'
                                 },
                                 success: function(response) {
@@ -2139,14 +2033,16 @@
                                         var user_id = response.data.user_id;  // Assuming the backend sends the user_id
                                         var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
 
-                                        // Check if there's a redirect URL provided
-                                        if (response.redirect_url) {
-
-                                            var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
-                                            // Redirect the user to the provided URL after a delay (optional)
-                                            setTimeout(function() {
-                                                window.location.href = redirectUrlWithUserId;
-                                            }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                        if(response.data.submit_questionnaire) {
+                                            // Redirect the user if a URL is provided
+                                            if (response.redirect_url) {
+                                                var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                                setTimeout(function () {
+                                                    window.location.href = redirectUrlWithUserId;
+                                                }, 3000);
+                                            }
+                                        } else {
+                                            $('#thankYouModal').modal('show');
                                         }
 
                                     } else {
