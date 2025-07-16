@@ -102,7 +102,7 @@
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header pb-3 no-bg bg-transparent d-flex  px-0 justify-content-between border-bottom flex-md-row flex-column align-items-md-center align-items-center ps-md-0 ps-3">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex  px-0 justify-content-between border-bottom flex-md-row flex-column align-items-md-center align-items-start ps-md-0 ps-3">
                 <!-- Left Section: Title -->
                 <div class="d-flex align-items-center flex-wrap">
                     <h3 class="fw-bold mb-0 me-3">Edit Plan</h3>

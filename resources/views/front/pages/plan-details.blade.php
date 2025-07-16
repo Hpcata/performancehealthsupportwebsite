@@ -76,41 +76,12 @@
                                 ->count();
                         @endphp
 
-<!-- placeholder card when less cards are visible -->
-                          <!-- <section class="challenges" aria-label="Meal Plan Categories">
-                                <div class="section-header">
-                                    <h2>static card </h2>
-                                   
-                                </div>
-                                
-                                <div class="challenge-cards">
-                                   
-                                        <div class="challenge-card clickable">
-                                            <div 
-                                                     style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
-                                                    >
-                                            <img
-                                                src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
-                                              style="width: 70px; height: 70px;min-height:50px; object-fit: contain; margin-top: 20px;"
-                                                height="100"
-                                                width="100" />
-                                                 <h3 class="add-more-text">Add More Meals</h3>
-                                                </div>
-                                           
-                                        </div>
-                                 
-                                </div>
-                            </section> -->
-
-<!-- placeholder card when less cards are visible -->
-
                         @if ($mealCount > 0)
                             <section class="challenges" aria-label="Meal Plan Categories">
                                 <div class="section-header">
                                     <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
-                                    <a href="{{ route('front.meal-time.details', ['id' => $userCategory->id, 'plan_id' => $userPlan->id]) }}" class="see-all">Scroll for More</a>
+                                    <a href="{{ route('front.meal-time.details', ['id' => $userCategory->id, 'plan_id' => $userPlan->id]) }}" class="see-all">See all</a>
                                 </div>
-                                
                                 <div class="challenge-cards">
                                     @foreach ($meals as $meal)
                                         <div class="challenge-card clickable">
@@ -120,19 +91,6 @@
                                                 height="252"
                                                 width="160" />
                                             <h3>{{ $meal->meal->title }}</h3>
-                                        </div>
-                                        <div class="challenge-card clickable">
-                                            <div 
-                                                     style="width: 266px; height: 160px; background-color:#f1f1f1;position:relative;"
-                                                    >
-                                            <img
-                                                src="{{ asset('front/images/sports-training/addmore.png') }}" alt="dasa"
-                                              style="width: 70px; height: 70px;min-height:50px; object-fit: contain; margin-top: 20px;"
-                                                height="100"
-                                                width="100" />
-                                                 <h3 class="add-more-text">Add More Meals</h3>
-                                                </div>
-                                           
                                         </div>
                                     @endforeach
                                 </div>
@@ -185,8 +143,6 @@
                     width="806"
                     height="590"
                     class="plate-img" />
-                    <div class="">
-                    <h3 style="margin-bottom:20px;">Main Meal Plate Portions</h3>
                 <ul style="list-style: none; padding-left: 0; font-size: 1rem">
                     <li class="list-w-image">
                         <img
@@ -196,8 +152,8 @@
                             width="32"
                             height="33" />
                         <div>
-                            <span style="color: #967500; font-weight: bold">Fuel Foods: Complex Carbs + Healthy Fats</span>
-                            <br />Choose whole grains, rice, pasta, or potato + some avocado, nuts & seeds for sustained energy.
+                            <span style="color: #967500; font-weight: bold">Carbs: Fuel</span>
+                            <br />Get your carbs from bread or cereal at breakfast.
                         </div>
                     </li>
 
@@ -209,8 +165,8 @@
                             width="32"
                             height="33" />
                         <div>
-                            <span style="color: #3e8e00; font-weight: bold">Protect Foods: Colourful Fruit & Veg</span>
-                            <br />A variety of mixed fresh or cooked fruit & veg drives a strong immune system.
+                            <span style="color: #3e8e00; font-weight: bold">Fruit and vegetables: Protect</span>
+                            <br />A quarter must be colourful fruit and vegetables.
                         </div>
                     </li>
                     <li class="list-w-image">
@@ -221,12 +177,11 @@
                             width="32"
                             height="33" />
                         <div>
-                            <span style="color: #a60015; font-weight: bold">Repair Foods: Proteins</span>
-                            <br />Include meat, fish, eggs, tofu, dairy, or legumes to rebuild & recover.
+                            <span style="color: #a60015; font-weight: bold">Protein: Repair foods</span>
+                            <br />One quarter stays protein. Try eggs or dairy.
                         </div>
                     </li>
                 </ul>
-                    </div>
             </div>
         </section>
     </div>

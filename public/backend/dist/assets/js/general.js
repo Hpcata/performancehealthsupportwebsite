@@ -103,6 +103,7 @@ function tinymceInit(id)
         menubar: true,
         toolbar: 'undo redo | formatselect| bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist',
     });
+<<<<<<< HEAD
 }
 // Initialize Bootstrap tooltips for sidebar links
 if (window.bootstrap) {
@@ -185,3 +186,6 @@ if (window.bootstrap) {
       setTimeout(updateSidebarTooltips, 300);
     });
   }); 
+=======
+}
+>>>>>>> parent of ca40f83... ui changes

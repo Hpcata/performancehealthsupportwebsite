@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->index(['section_element_id', 'clicked_at'], 'user_clicks_section_element_clicked_at_index');
             $table->index(['user_id'], 'user_clicks_user_index');
-            $table->index(['ip'], 'user_clicks_ip_index');
+            $table->index(['ip_address'], 'user_clicks_ip_index');
             $table->index(['clicked_at'], 'user_clicks_clicked_at_index');
             $table->index(['section_element_id'], 'user_clicks_section_element_index');
         });
