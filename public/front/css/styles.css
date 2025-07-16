@@ -1136,15 +1136,15 @@ body {
     height: 100vh;
 }
 .hero-background {
-      background-image: url(/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/hero-section/volleyball.webp);
+background-image: url(/front/images/hero-section/tennis.webp);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     height: 100%;
-    max-width: 700px;
+    max-width: 100%;
     position: absolute;
     right: 0;
-    border-radius: 81px 0 0 0;
+     border-radius: 0 0 36px 0;
     width: 100%;
 }
 .hero-container {
@@ -1154,7 +1154,6 @@ body {
     
         min-height: 320px;
     
-   background-color: #3b3b3b;
         position: relative;
 }
 .hero-overlay {
@@ -1164,6 +1163,7 @@ body {
     right: 0;
     bottom: 0;
     background-color: #3b3b3b69;
+        border-radius: 0 0 36px 0;
 }
 .hero-content {
     position: relative;
@@ -1357,8 +1357,8 @@ body {
     }
     .mobile-logo-img,
     .mobile-menu-header .logo-img {
-        height: 24px;
-        width: 168px;
+        height: 30px;
+        width: 140px;
     }
     .mobile-menu-open {
         display: block;
@@ -1499,6 +1499,7 @@ body {
     border-radius: 0 0 36px 0;
 }
 .hero-section {
+        min-height: 160px;
     background-color: #ffffff;
 }
     .profile-avatar-overlap {
@@ -1680,7 +1681,7 @@ body {
 }
 @media (min-width: 1024px) {
     .hero-section {
-        height: 384px;
+        height: 500px;
     }
     .hero-content {
         padding: 40px;
