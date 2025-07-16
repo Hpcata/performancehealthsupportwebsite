@@ -284,7 +284,8 @@ body {
 .surfing-videos .video-grid,
 .training-plan .meal-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    /* grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); */
+    grid-template-columns: repeat(auto-fit, 266px);
     gap: 1.5rem;
 }
 .challenges .challenge-cards .challenge-card,
@@ -292,7 +293,7 @@ body {
 .training-plan .meal-cards .meal-card {
     border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.3s;
+    /* transition: transform 0.3s; */
 }
 .challenges .challenge-cards .challenge-card:hover,
 .resources .resources-grid .resource-card.clickable:hover,
@@ -301,10 +302,13 @@ body {
 }
 .challenges .challenge-cards .challenge-card img,
 .training-plan .meal-cards .meal-card img {
-    width: 100%;
+    min-width: 266px;
     height: 160px;
     object-fit: cover;
     border-radius: 12px;
+    min-height: 160px;
+    background-color: #f1f1f1;
+    width: 100%;
 }
 .challenges .challenge-cards .challenge-card h3,
 .training-plan .meal-cards .meal-card h3 {
@@ -419,6 +423,13 @@ body {
 .resources .resources-grid .video-card:nth-of-type(5) {
     grid-column: 3;
     grid-row: 2;
+}
+.add-more-text{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
 }
 .optimize-performance .consultation-card {
     background: linear-gradient(135deg, #fef3c7, #fde68a);
@@ -1125,20 +1136,26 @@ body {
     height: 100vh;
 }
 .hero-background {
-    background-image: url(front/images/sports-hero-bg.webp);
+      background-image: url(/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/hero-section/volleyball.webp);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     height: 100%;
+    max-width: 700px;
+    position: absolute;
+    right: 0;
+    border-radius: 81px 0 0 0;
+    width: 100%;
 }
 .hero-container {
     width: 100%;
 }
 .hero-section {
-    position: relative;
-    height: 256px;
-    border-radius: 0 0 36px 0;
-    overflow: hidden;
+    
+        min-height: 320px;
+    
+   background-color: #3b3b3b;
+        position: relative;
 }
 .hero-overlay {
     position: absolute;
@@ -1146,7 +1163,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgb(0 0 0 / 0.3);
+    background-color: #3b3b3b69;
 }
 .hero-content {
     position: relative;
@@ -1474,6 +1491,16 @@ body {
     }
 }
 @media (max-width: 600px) {
+    .hero-background {
+    border-radius: 0 0 36px 0;
+}
+.hero-overlay {
+  
+    border-radius: 0 0 36px 0;
+}
+.hero-section {
+    background-color: #ffffff;
+}
     .profile-avatar-overlap {
         bottom: -89px;
     }
@@ -1677,4 +1704,8 @@ body {
 }
 .plate-img {
     height: auto;
+}
+
+.sidebar.sidebar-mini .sidebar-mini-text {
+  display: none !important;
 }
