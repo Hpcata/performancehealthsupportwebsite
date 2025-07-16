@@ -285,7 +285,7 @@ body {
 .training-plan .meal-cards {
     display: grid;
     /* grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); */
-    grid-template-columns: repeat(auto-fit, 266px);
+    grid-template-columns: repeat(auto-fit, 252px);
     gap: 1.5rem;
 }
 .challenges .challenge-cards .challenge-card,
