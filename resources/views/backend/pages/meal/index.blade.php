@@ -78,7 +78,7 @@
     $(document).ready(function () {
         let dataTable = $('#mealDataTable').DataTable({
         pageLength: 100,
-        processing: true,
+        processing: false,
         serverSide: false, // Use true if handling data via Laravel DataTables
         ajax: {
             url: "{{ route('admin.meals.index') }}",
