@@ -99,7 +99,7 @@ class FrontController extends Controller
     public function blog()
     {
         $blogs = Blog::where('is_published', 1)->get();
-        return view('front.pages.blog', compact('blogs'));
+        return view('front.pages.blog.blog', compact('blogs'));
     }
 
     public function blogDetails($id)
@@ -116,7 +116,7 @@ class FrontController extends Controller
             $query->whereIn('tags.id', $blog->tags->pluck('id'));
         })->where('id', '!=', $blog->id)->limit(5)->get();
 
-        return view('front.pages.blog-details', compact('blog', 'relatedBlogs'));
+        return view('front.pages.blog.blog-details', compact('blog', 'relatedBlogs'));
     }
 
     public function subHomePage()
