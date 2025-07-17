@@ -437,7 +437,7 @@
                                                             $formattedEnd = $formatDate($endDate, null);
                                                             $item = trim($item);
                                                         @endphp
-                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                        <li class="d-flex justify-content-between align-items-start @if ($formattedStart) mb-1 @else mb-3 @endif">
                                                             <span>{{ $item }}</span>
                                                             <div class="btn-list ms-2 mt-1">
                                                                 <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
@@ -500,7 +500,7 @@
                                                             $formattedEnd = $formatDate($endDate, null);
                                                             $item = trim($item);
                                                         @endphp
-                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                        <li class="d-flex justify-content-between align-items-start @if ($formattedStart) mb-1 @else mb-3 @endif">
                                                             <span>{{ $item }}</span>
                                                             <div class="btn-list ms-2 mt-1">
                                                                 <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
@@ -2879,7 +2879,6 @@
             }
         });
     }
-
 
     // Function to save goal data (called by onclick attribute)
     function saveGoalData() {

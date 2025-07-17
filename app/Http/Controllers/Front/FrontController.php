@@ -1084,59 +1084,85 @@ class FrontController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
         $mainAns = $request->main_ans;
+
         $payment = Payment::where('user_id', $userId)->first();
         $prePlan = UserPrePlan::where('payment_id', $payment->id)
-        ->where('user_id', $userId)
-        ->first();
-       
-        $prePlanDetail =  PrePlanDetail::where('form_slug', $formName)
-                ->where('question', $question)
-                ->where('user_pre_plan_id', $prePlan->id)
-                ->first(); 
-        
-        if($prePlanDetail){
+            ->where('user_id', $userId)
+            ->first();
+
+        $prePlanDetail = PrePlanDetail::where('form_slug', $formName)
+            ->where('question', $question)
+            ->where('user_pre_plan_id', $prePlan->id)
+            ->first();
+
+        if ($prePlanDetail) {
             if ($type == 'supplement-edit' || $type == 'medication-edit') {
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
                 $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
                 $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
+
+                // Remove "nil" values with empty/null dates
+                foreach ($preplanAnswers as $i => $ans) {
+                    $normalized = strtolower(trim($ans));
+                    $sd = trim($startDates[$i] ?? '');
+                    $ed = trim($endDates[$i] ?? '');
+                    if ($normalized === 'nil' && (empty($sd) || strtolower($sd) === 'null') && (empty($ed) || strtolower($ed) === 'null')) {
+                        unset($preplanAnswers[$i], $startDates[$i], $endDates[$i]);
+                    }
+                }
+
+                $preplanAnswers = array_values($preplanAnswers);
+                $startDates = array_values($startDates);
+                $endDates = array_values($endDates);
+
                 $count = count($preplanAnswers);
-            
-                // If startDates are empty or contain all nulls, set all to created_at
-                if (empty($prePlanDetail->start_date) || collect($startDates)->every(fn($date) => empty($date) || strtolower($date) === 'null')) {
+                if (empty($prePlanDetail->start_date) || collect($startDates)->every(fn($d) => empty($d) || strtolower($d) === 'null')) {
                     $createdDate = $prePlanDetail->created_at->format('Y-m-d');
                     $startDates = array_fill(0, $count, $createdDate);
                 } else {
                     $startDates = array_pad($startDates, $count, null);
                 }
-            
+
                 $endDates = array_pad($endDates, $count, null);
-                // Find index of the edited answer
+
                 $index = array_search($answer, $preplanAnswers);
-            
                 if ($index !== false) {
                     if (!empty($startDate)) {
                         $startDates[$index] = $startDate;
                     }
-            
                     if (!empty($endDate)) {
                         $endDates[$index] = $endDate;
                     }
+
+                    $updatedStartDate = $startDates[$index] ?? $prePlanDetail->created_at->format('Y-m-d');
+                    $updatedEndDate = $endDates[$index] ?? null;
+                    $currentDate = now()->format('Y-m-d');
+
+                    if (!empty($updatedEndDate) && $updatedEndDate < $currentDate) {
+                        GoalHistory::create([
+                            'user_id' => $userId,
+                            'payment_id' => $payment->id,
+                            'type' => $type == 'supplement-edit' ? 'supplement' : 'medication',
+                            'question' => $question,
+                            'answer' => $answer,
+                            'start_date' => $updatedStartDate,
+                            'end_date' => $updatedEndDate
+                        ]);
+
+                        unset($preplanAnswers[$index], $startDates[$index], $endDates[$index]);
+                    }
                 }
-                
+
                 $prePlanDetail->update([
-                    'answer' => json_encode(implode(', ', $preplanAnswers)),
-                    'start_date' => implode(', ', $startDates),
-                    'end_date' => implode(', ', $endDates)
+                    'answer' => json_encode(implode(', ', array_values($preplanAnswers))),
+                    'start_date' => implode(', ', array_values($startDates)),
+                    'end_date' => implode(', ', array_values($endDates))
                 ]);
 
-                if($type == 'supplement-edit') {
-                    $sectionElement = 'button_update_supplement';
-                } elseif($type == 'medication-edit') {
-                    $sectionElement = 'button_update_medications';
-                }
-                $click = ActivityTracker::click($sectionElement, $request->user_id);
+                $sectionElement = $type == 'supplement-edit' ? 'button_update_supplement' : 'button_update_medications';
+                $click = ActivityTracker::click($sectionElement, $userId);
 
-                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $userId, [
                     'user_click_id' => $click->id,
                     'section_element_id' => $click->section_element_id,
                     'type' => $type,
@@ -1147,26 +1173,36 @@ class FrontController extends Controller
                     'form_name' => $formName,
                     'payment_id' => $payment->id,
                     'user_pre_plan_id' => $prePlan->id,
-                    'user_id' => $request->user_id,
+                    'user_id' => $userId,
                 ]);
-                
-            }elseif ($type == 'supplement' || $type == 'medication') {
-               
+
+            } elseif ($type == 'supplement' || $type == 'medication') {
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
                 $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
                 $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
-            
-                $answer = trim($request->answer);
-                $startDate = $request->start_date;
-                $endDate = $request->end_date;
-            
+
+                // Remove "nil" values with empty/null dates
+                foreach ($preplanAnswers as $i => $ans) {
+                    $normalized = strtolower(trim($ans));
+                    $sd = trim($startDates[$i] ?? '');
+                    $ed = trim($endDates[$i] ?? '');
+                    if ($normalized === 'nil' && (empty($sd) || strtolower($sd) === 'null') && (empty($ed) || strtolower($ed) === 'null')) {
+                        unset($preplanAnswers[$i], $startDates[$i], $endDates[$i]);
+                    }
+                }
+
+                $preplanAnswers = array_values($preplanAnswers);
+                $startDates = array_values($startDates);
+                $endDates = array_values($endDates);
+
+                $answer = trim($answer);
                 $currentDate = now()->format('Y-m-d');
-                
+
+                // Archive expired existing items
                 foreach ($preplanAnswers as $index => $item) {
                     $itemEndDate = $endDates[$index] ?? null;
-                   
-                    if ($itemEndDate && $itemEndDate < $currentDate) {
-                        // Archive expired item in GoalHistory
+
+                    if (!empty($itemEndDate) && $itemEndDate < $currentDate) {
                         GoalHistory::create([
                             'user_id' => $userId,
                             'payment_id' => $payment->id,
@@ -1176,38 +1212,45 @@ class FrontController extends Controller
                             'start_date' => $startDates[$index] ?? $prePlanDetail->created_at,
                             'end_date' => $itemEndDate
                         ]);
-            
-                        // Remove from arrays
-                        unset($preplanAnswers[$index]);
-                        unset($startDates[$index]);
-                        unset($endDates[$index]);
+
+                        unset($preplanAnswers[$index], $startDates[$index], $endDates[$index]);
                     }
                 }
-            
-                // Reindex arrays
+
                 $preplanAnswers = array_values($preplanAnswers);
                 $startDates = array_values($startDates);
                 $endDates = array_values($endDates);
-            
-                // Add new entry
-                $preplanAnswers[] = $answer;
-                $startDates[] = $startDate ?? $prePlanDetail->created_at;
-                $endDates[] = $endDate ?? null;
-            
-                $prePlanDetail->update([
-                    'answer' => json_encode(implode(', ', $preplanAnswers)),
-                    'start_date' => implode(', ', $startDates),
-                    'end_date' => implode(', ', $endDates)
-                ]);
 
-                if($type == 'supplement') {
-                    $sectionElement = 'button_save_supplement';
-                } elseif($type == 'medication') {
-                    $sectionElement = 'button_save_medications';
+                $newStart = $startDate ?? $prePlanDetail->created_at->format('Y-m-d');
+                $newEnd = $endDate ?? null;
+
+                if (!empty($newEnd) && $newEnd < $currentDate) {
+                    // Move directly to GoalHistory
+                    GoalHistory::create([
+                        'user_id' => $userId,
+                        'payment_id' => $payment->id,
+                        'type' => $type,
+                        'question' => $question,
+                        'answer' => $answer,
+                        'start_date' => $newStart,
+                        'end_date' => $newEnd
+                    ]);
+                } else {
+                    $preplanAnswers[] = $answer;
+                    $startDates[] = $newStart;
+                    $endDates[] = $newEnd;
+
+                    $prePlanDetail->update([
+                        'answer' => json_encode(implode(', ', $preplanAnswers)),
+                        'start_date' => implode(', ', $startDates),
+                        'end_date' => implode(', ', $endDates)
+                    ]);
                 }
-                $click = ActivityTracker::click($sectionElement, $request->user_id);
 
-                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                $sectionElement = $type == 'supplement' ? 'button_save_supplement' : 'button_save_medications';
+                $click = ActivityTracker::click($sectionElement, $userId);
+
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $userId, [
                     'user_click_id' => $click->id,
                     'section_element_id' => $click->section_element_id,
                     'type' => $type,
@@ -1218,18 +1261,19 @@ class FrontController extends Controller
                     'form_name' => $formName,
                     'payment_id' => $payment->id,
                     'user_pre_plan_id' => $prePlan->id,
-                    'user_id' => $request->user_id,
+                    'user_id' => $userId,
                 ]);
-            }elseif ($type == 'height') {
-                
+
+            } elseif ($type == 'height') {
                 $prePlanDetail->update([
                     'answer' => json_encode($answer),
                     'start_date' => $startDate,
                     'end_date' => $endDate
                 ]);
-                $click = ActivityTracker::click('button_update_height', $request->user_id);
 
-                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                $click = ActivityTracker::click('button_update_height', $userId);
+
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $userId, [
                     'user_click_id' => $click->id,
                     'section_element_id' => $click->section_element_id,
                     'type' => $type,
@@ -1238,13 +1282,14 @@ class FrontController extends Controller
                     'form_name' => $formName,
                     'payment_id' => $payment->id,
                     'user_pre_plan_id' => $prePlan->id,
-                    'user_id' => $request->user_id,
+                    'user_id' => $userId,
                     'start_date' => $startDate,
                     'end_date' => $endDate
                 ]);
             }
+
         } else {
-            // Create a new record if none exists
+            // Create a new PrePlanDetail
             $userPrePlan = UserPrePlan::firstOrCreate([
                 'user_id' => $userId,
                 'payment_id' => $payment->id,
@@ -1256,12 +1301,12 @@ class FrontController extends Controller
                 'question' => $question,
                 'answer' => json_encode($answer),
                 'start_date' => $startDate,
-                'end_date' => $endDate   
+                'end_date' => $endDate
             ]);
 
-            $click = ActivityTracker::click('button_save_nutrition_goal', $request->user_id);
+            $click = ActivityTracker::click('button_save_nutrition_goal', $userId);
 
-            ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+            ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $userId, [
                 'user_click_id' => $click->id,
                 'section_element_id' => $click->section_element_id,
                 'type' => $type,
@@ -1270,14 +1315,15 @@ class FrontController extends Controller
                 'form_name' => 'nutrition_goals',
                 'payment_id' => $payment->id,
                 'user_pre_plan_id' => $userPrePlan->id,
-                'user_id' => $request->user_id,
+                'user_id' => $userId,
                 'start_date' => $startDate,
                 'end_date' => $endDate
             ]);
         }
-       
+
         return response()->json(['success' => true, 'message' => 'Answer updated successfully']);
     }
+
 
     public function updateGoals(Request $request)
     {
