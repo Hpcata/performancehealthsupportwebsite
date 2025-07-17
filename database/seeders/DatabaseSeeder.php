@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\CouponSeeder;
 use Database\Seeders\FoodCategorySeeder;
 use Database\Seeders\TrackingTypesSeeder;
+use Database\Seeders\CouponSourceSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,12 +17,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
         $this->call(CouponSeeder::class);
         $this->call(FoodCategorySeeder::class);
-        $this->call([
-            TrackingTypesSeeder::class,
-        ]);
+        $this->call(TrackingTypesSeeder::class);
+        $this->call(CouponSourceSeeder::class);
 
     }
 }

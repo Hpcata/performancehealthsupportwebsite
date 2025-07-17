@@ -120,6 +120,16 @@ class PaymentController extends Controller
                         ]);
                     }
 
+                    // 🔹 Split coupon code by "_", get the source slug (e.g., FB from FB_Athlete20)
+                    $couponParts = explode('_', $validated['coupon_code']);
+                    $sourceSlug = $couponParts[0] ?? null;
+
+                    $couponSource = null;
+                    if ($sourceSlug) {
+                        $couponSource = \DB::table('coupon_source')->select('id', 'name')->where('slug', $sourceSlug)->first();
+                    }
+
+                    // 🔹 Determine discount
                     if ($coupon->type === Coupon::TYPE_PERCENT && $coupon->value == 100.00) {
                         $discount = 'full';
                         $sectionElement = 'full_discount';
@@ -134,9 +144,10 @@ class PaymentController extends Controller
                         $couponType = TrackingType::COUPON_APPLIED;
                     }
 
+                    // 🔹 Track click
                     $click = ActivityTracker::click($sectionElement, $user->id);
 
-                    // Log in trackings with click reference
+                    // 🔹 Log in trackings with extra coupon source info
                     ActivityTracker::log($couponType, $user->id, [
                         'user_click_id' => $click->id,
                         'section_element_id' => $click->section_element_id,
@@ -144,8 +155,10 @@ class PaymentController extends Controller
                         'coupon_id' => $coupon->id,
                         'discount' => $discount,
                         'plan_id' => $validated['plan_id'],
+                        'coupon_source_id' => $couponSource->id ?? null,
+                        'coupon_source_name' => $couponSource->name ?? null,
                     ]);
-                    
+
                 } else {
                     return response()->json(['success' => false, 'message' => 'Invalid or expired coupon code.']);
                 }
