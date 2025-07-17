@@ -60,6 +60,7 @@ class User extends Authenticatable
         'front_title',
         'front_description',
         'qualification_text',
+        'questionnaire_token',
     ];
 
     /**
