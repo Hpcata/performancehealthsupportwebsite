@@ -65,6 +65,7 @@ class User extends Authenticatable
         'sport_game_id',
         'age_group',
         'phone'
+        'questionnaire_token',
     ];
 
     /**

@@ -19,6 +19,7 @@ use App\Services\ActivityTracker;
 use App\Models\TrackingType;
 use App\Models\UserPlan;
 use App\Models\SportCategory;
+use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
@@ -68,6 +69,7 @@ class PaymentController extends Controller
                     'last_name' => $lastName,
                     'email' => $validated['email'],
                     'phone' => $validated['phone'],
+                    'questionnaire_token' =>  Str::random(64),
                     'password' => Hash::make($validated['password']),
                 ]);
 
@@ -81,7 +83,7 @@ class PaymentController extends Controller
                         'user_id' => $user->id,
                     ]
                 );
-                
+
                 $isNewUser = true;
                 Log::debug('New user created.', ['user_id' => $user->id]);
             }
@@ -174,7 +176,7 @@ class PaymentController extends Controller
 
             $paymentIntentId = null;
             $status = 'discount_applied';
-            
+
             // If payment is required, create Stripe payment intent
             if ($finalPrice > 0) {
                 Log::debug('Creating Stripe payment intent.', ['amount' => $finalPrice * 100]);
@@ -238,7 +240,8 @@ class PaymentController extends Controller
                 'data' => [
                     'user_id' => $user->id,
                     'payment_id' => $paymentId,
-                    'submit_questionnaire' => $submitQuestionnaire
+                    'submit_questionnaire' => $submitQuestionnaire,
+                    'token' => $user->questionnaire_token
                 ],
                 'redirect_url' => route('front.pre-plan-details')
             ]);
@@ -257,6 +260,18 @@ class PaymentController extends Controller
 
     public function prePlanDetails(Request $request)
     {
+        $token = $request->query('token');
+
+        if (!$token) {
+            abort(403, 'Missing token.');
+        }
+
+        $user = \App\Models\User::where('questionnaire_token', $token)->first();
+
+        if (!$user) {
+            abort(403, 'Invalid or expired token.');
+        }
+
         $userId = $request->user_id;
         $paymentId = $request->id;
 
@@ -285,7 +300,7 @@ class PaymentController extends Controller
 
         $sportCategories = SportCategory::select('id', 'name')->get(); // If you only need id and name
 
-        return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
+        return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories','token'));
     }
 
     public function prePlanDetailsSave(Request $request)
