@@ -814,16 +814,16 @@ class PurchasePlanController extends Controller
 
     public function edit(User $user, $planId)
     {
-        // \DB::enableQueryLog();
-        // dd("Edit User Plan");
         try {
-       
             $payment = Payment::find($planId);
             $plan = $payment->plan;
             $subPlanIds = $plan->subPlans->pluck('id')->toArray();
 
             $userPlans = UserPlan::with([
-                'plan', 
+                // 'plan',
+                'plan.categories' => function ($query) {
+                    $query->select('categories.id', 'categories.title');
+                },
                 // 'userCategories.userSubCategories.userMeals.userItems.userSwapItems',
             ])
             ->where('user_id', $user->id)
@@ -883,10 +883,9 @@ class PurchasePlanController extends Controller
                 }
             }
             // dd($selectedMeals);
-            $categories = Category::all();
-            $subCategories = SubCategory::all();
-            $meals = Meal::all();
-            $items = Item::where('is_swiped', 0)->get();
+            // $categories = Category::all();
+            // $subCategories = SubCategory::all();
+            // $meals = Meal::all();
 
             $activity = UserPlan::with([
                 'modifiedBy',
@@ -904,22 +903,25 @@ class PurchasePlanController extends Controller
 
             $foodPreferences = collect();
 
-            if (!empty($userPrePlan) && $userPrePlan->prePlanDetails) {
-                foreach ($userPrePlan->prePlanDetails as $detail) {
-                    $question = $detail->question ?? 'Unknown';
-                    $answers = json_decode($detail->answer, true);
-
-                    if (is_array($answers)) {
-                        $filteredAnswers = array_filter($answers);
-                        if (!empty($filteredAnswers)) {
-                            $foodPreferences->put($question, collect($filteredAnswers));
+            if (!empty($userPrePlan)) {
+                $usePrePlanDetails = $userPrePlan->prePlanDetails;
+                if($usePrePlanDetails) {
+                    foreach ($usePrePlanDetails as $detail) {
+                        $question = $detail->question ?? 'Unknown';
+                        $answers = json_decode($detail->answer, true);
+    
+                        if (is_array($answers)) {
+                            $filteredAnswers = array_filter($answers);
+                            if (!empty($filteredAnswers)) {
+                                $foodPreferences->put($question, collect($filteredAnswers));
+                            }
                         }
                     }
                 }
             }
 
             $perPlanSelectedFoods =[];
-            $step5Foods = Item::get();
+            $step5Foods = Item::select(['id','title'])->get();
             $otherFoods = $userPrePlan = \App\Models\UserPrePlan::with(['prePlanDetails' => function ($query) {
                 $query->where('form_slug', 'food_preference')
                     ->whereIn('question', ['Cuisines', 'Snacks']);
@@ -927,8 +929,9 @@ class PurchasePlanController extends Controller
 
             $groupedAnswers = [];
 
-            if (isset($otherFoods->prePlanDetails)) {
-                foreach ($otherFoods->prePlanDetails as $detail) {
+            $otherFoodsPrePlanDetails = $otherFoods->prePlanDetails;
+            if (isset($otherFoodsPrePlanDetails)) {
+                foreach ($otherFoodsPrePlanDetails as $detail) {
                     $question = $detail->question ?? null;
                     if (!$question) continue;
 
@@ -943,17 +946,11 @@ class PurchasePlanController extends Controller
                     }
                 }
             }
-            $otherFoods = $groupedAnswers;
-
-            // $queries = \DB::getQueryLog();
-            // \Log::info('Queries executed:', $queries);
-
-            // dd($userPlans);
-            // $userPlan = $userPlans->first();
+            $otherFoods = $groupedAnswers; 
             return view('backend.pages.plan.purchase-plan-edit', compact(
-                'userPlans','categories', 'subCategories', 'meals', 'items',
+                'userPlans',
                 'selectedMeals', 'selectedItems', 'selectedSwapItems',
-                'activity', 'payment', 'step5Foods', 'perPlanSelectedFoods', 'subCategories',
+                'activity', 'payment', 'step5Foods', 'perPlanSelectedFoods',
                 'totalCarbs', 'totalFat', 'totalProtein', 'totalEnergy', 'otherFoods', 'foodPreferences'
             ));
         } catch (\Exception $e) {
@@ -1470,14 +1467,11 @@ class PurchasePlanController extends Controller
     public function getMealItems(Request $request)
     {
         $userId = $request->user_id;
-        // dd($userId);
         if ($request->type == 'edit') {
             $userMeal = \App\Models\UserItemMeal::where('meal_id', $request->meal_id)
                 ->where('user_id', $userId)
                 ->get();
-            // dd($userMeal);
             if ($userMeal->isEmpty()) {
-                // dd($userMeal);
                 $meal = Meal::with('items.swapItems')->find($request->meal_id);
 
                 if (!$meal) {
@@ -1494,13 +1488,11 @@ class PurchasePlanController extends Controller
                 $totalProtein = 0;
                 $totalFat = 0;
                 $totalEnergy = 0;
-                // dd($meal->userMealItems);
                 $data = $meal->items->map(function ($item) use (&$totalCarbs, &$totalProtein, &$totalFat, &$totalEnergy, $request) {
                     $totalCarbs += $item->pivot->carbs ?? $item->carbs;
                     $totalProtein += $item->pivot->protein ?? $item->protein;
                     $totalFat += $item->pivot->fat ?? $item->fat;
                     $totalEnergy += floatval($item->energy) ?? floatval($item->energy);
-                    // dd($item->pivot);
                     $swapItems = $item->swapItems->map(function ($swapItem){
                         // $totalCarbs += $swapItem->carbs;
                         // $totalProtein += $swapItem->protein;
@@ -1543,7 +1535,6 @@ class PurchasePlanController extends Controller
                 });
                 
             } else {
-               
                 $meal = Meal::where('id', $request->meal_id)
                     ->with(['userMealItems' => function ($query) use ($userId) {
                         $query->where('user_id', $userId)
@@ -1556,7 +1547,6 @@ class PurchasePlanController extends Controller
                 $userPlan = \App\Models\UserPlan::where('user_id', $request->user_id)
                     ->where('plan_id', $request->plan_id)
                     ->first();
-                // dd($userPlan);
                 $userMealTimes = null;
                 $userUpdateMeal = null;
                 if ($userPlan) {
@@ -1570,7 +1560,7 @@ class PurchasePlanController extends Controller
                             ->first();
                     }
                 }
-                
+
                 $mealName = $userUpdateMeal->meal_name ?? $meal->title;
                 $mealId = $meal->id;
 
@@ -1578,7 +1568,19 @@ class PurchasePlanController extends Controller
                 $totalProtein = 0;
                 $totalFat = 0;
                 $totalEnergy = 0;
-                $data = $userMeal->map(function ($item) use($userId, &$totalCarbs, &$totalProtein, &$totalFat, &$totalEnergy, $request ,$userMealTimes) {
+
+                $itemIds = $userMeal->toArray();
+                $itemIds = $itemIds ? array_column($itemIds, 'item_id'): [];
+                $itemsList = [];
+                if(!empty($itemIds)){
+                    $userItemMeal = new UserItemMeal();
+                    $itemsListTemp = $userItemMeal->getItems($itemIds);
+                    foreach($itemsListTemp as $item){
+                        $itemsList[$item['id']] = $item;
+                    }
+                }
+                
+                $data = $userMeal->map(function ($item) use($userId, &$totalCarbs, &$totalProtein, &$totalFat, &$totalEnergy, $request , &$itemsList) {
                     $isNew = \App\Models\ItemMeal::where('meal_id', $request->meal_id)
                         ->where('item_id', $item->item_id)
                         ->exists() ? 0 : 1;
@@ -1628,23 +1630,23 @@ class PurchasePlanController extends Controller
                             ];
                         });
                     }
-                    // dd($swapItems);
+
+                    $itemData = isset($itemsList[$item->item_id]) ? $itemsList[$item->item_id] : [];
                     return [
-                        'id' => $item->items->id ?? $item->item_id,
-                        'name' => $item->items->title ?? '',
-                        'qty' => $item->qty ?? $item->items->item_qty ?? 0,
-                        'unit' => $item->unit ?? $item->items->unit ?? '',
-                        'carbs' => $item->carbs ?? $item->items->carbs,
-                        'protein' => $item->protein ?? $item->items->protein,
-                        'fat' => $item->fat ?? $item->items->fat,
-                        'energy' => $item->energy ?? $item->items->energy ?? 0,
-                        'description' => $item->items->description ?? null,
-                        'selected_qty_unit' => $item->selected_qty_unit ?? $item->items->selected_qty_unit ?? '',
+                        'id' =>  (isset($itemData['id']) ? $itemData['id'] : null) ?? $item->item_id,
+                        'name' => (isset($itemData['title']) ? $itemData['title'] : null) ?? '',
+                        'qty' => $item->qty ?? (isset($itemData['item_qty']) ? $itemData['item_qty'] : null) ?? 0,
+                        'unit' => $item->unit ?? (isset($itemData['unit']) ? $itemData['unit'] : null) ?? '',
+                        'carbs' => $item->carbs ?? (isset($itemData['carbs']) ? $itemData['carbs'] : null) ?? 0,
+                        'protein' => $item->protein ?? (isset($itemData['protein']) ? $itemData['protein'] : null) ?? 0,
+                        'fat' => $item->fat ?? (isset($itemData['fat']) ? $itemData['fat'] : null) ?? 0,
+                        'energy' => $item->energy ?? (isset($itemData['energy']) ? $itemData['energy'] : null) ?? 0,
+                        'description' => (isset($itemData['description']) ? $itemData['description'] : null) ?? null,
+                        'selected_qty_unit' => $item->selected_qty_unit ?? (isset($itemData['selected_qty_unit']) ? $itemData['selected_qty_unit'] : null) ?? '',
                         'is_new' => $isNew,
                         'swapItems' => $swapItems,
                     ];
                 });
-                // dd($data);
             }
         } else {
             $meal = Meal::with('items.swapItems')->find($request->meal_id);
@@ -1931,24 +1933,31 @@ class PurchasePlanController extends Controller
                         $fat = 0;
                         $energy = 0;
 
-                        foreach ($userMeal->userItems->where('user_plan_id', $userPlan->id) as $userItem) {
-                            $item = \App\Models\Item::find($userItem->id);
-                            if ($item) {
-                                $carbs += $item->carbs ?? 0;
-                                $fat += $item->fat ?? 0;
-                                $protein += $item->protein ?? 0;
-                                $energy += floatval($item->energy ?? 0);
-                            }
+                        $userItemsData = $userMeal->userItems->where('user_plan_id', $userPlan->id)->toArray();
+                        $itemIds = $userItemsData ? array_column($userItemsData, 'id'): [];
+
+                        if(!empty($itemIds)){
+                            $items = \DB::table('items')
+                                ->selectRaw('SUM(carbs) as carbs, SUM(protein) as protein, SUM(fat) as fat, SUM(energy) as energy')
+                                ->whereIn('id', $itemIds)
+                                ->first();
+                        } else {
+                            $items = (object) [
+                                'carbs' => 0,
+                                'protein' => 0,
+                                'fat' => 0,
+                                'energy' => 0,
+                            ];
                         }
 
                         return [
                             'id' => $userMeal->id,
                             'name' => $userMeal->meal_name,
-                            'image' => $userMeal->meal && $userMeal->meal->image ? webAssets('storage/' . $userMeal->meal->image) : null,
-                            'carbs' => round($carbs, 2),
-                            'protein' => round($protein, 2),
-                            'fat' => round($fat, 2),
-                            'energy' => round($energy, 2),
+                            'image' => $userMeal->meal && $userMeal->meal->image ? asset('private/public/storage/' . $userMeal->meal->image) : null,
+                            'carbs' => round($items->carbs ?? 0, 2),
+                            'protein' => round($items->protein ?? 0, 2),
+                            'fat' => round($items->fat ?? 0, 2),
+                            'energy' => round($items->energy ?? 0, 2),
                         ];
                     });
                 });

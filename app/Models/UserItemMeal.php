@@ -36,4 +36,18 @@ class UserItemMeal extends Model
     {
         return self::distinct('user_id')->pluck('user_id');
     }
+
+    public function getItems($item_ids) {
+        return Item::select([
+            'id',
+            'title',
+            'unit',
+            'carbs',
+            'protein',
+            'fat',
+            'energy',
+            'description',
+            'selected_qty_unit'
+        ])->whereIn('id', $item_ids)->get()->toArray();
+    }
 }
