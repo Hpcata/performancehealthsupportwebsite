@@ -2640,13 +2640,13 @@
         <div class="modal-dialog modal-dialog-top">
             <div class="modal-content" style="z-index: 1100;">
             <div class="modal-header">
-                <h5 class="modal-title" id="errorModalLabel">Validation Errors</h5>
+                <h5 class="modal-title" id="errorModalLabel">Validation Error</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="errorModalBody">
+            <div class="modal-body py-3" id="errorModalBody">
                 <!-- Error messages will be injected here -->
             </div>
-            <div class="modal-footer justify-content-center">
+            <div class="modal-footer mt-0 py-1">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             </div>
@@ -3893,7 +3893,7 @@
 
                                         if (xhr.status === 422) {
                                             const errors = xhr.responseJSON.errors;
-                                            message += '<ul>';
+                                            message += '<ul class="mb-1">';
                                             $.each(errors, function(key, value) {
                                                 message += `<li style="color: red;">${value[0]}</li>`;
                                             });
@@ -3983,7 +3983,7 @@
 
                                                 if (xhr.status === 422) {
                                                     const errors = xhr.responseJSON.errors;
-                                                    message += '<ul>';
+                                                    message += '<ul class="mb-1">';
                                                     $.each(errors, function(key, value) {
                                                         message += `<li style="color: red;">${value[0]}</li>`;
                                                     });

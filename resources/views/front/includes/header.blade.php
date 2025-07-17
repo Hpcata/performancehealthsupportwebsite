@@ -4,49 +4,6 @@ $headerData = json_decode($setting['meta_value'], true);
 $auth = auth()->guard('web')->check();
 ?>
 
-@if (Route::is('front.profile') || Route::is('front.plans.details'))
-<header class="mobile-header">
-    <img src="{{ frontAssets('images/logo (1) 1.svg') }}" alt="2LS Logo" class="mobile-logo-img" width="120" height="40" />
-    <button class="mobile-menu-open" aria-label="Open mobile menu" onclick="toggleMobileMenu()">
-        <i class="fas fa-bars" aria-hidden="true"></i>
-    </button>
-</header>
-<header class="header">
-    <div class="header-content">
-        <div class="logo">
-            <img src="{{ frontAssets('images/logo (1) 1.svg') }}" alt="2LS Logo" class="logo-img" width="120" height="40" />
-        </div>
-        <nav class="nav-center">
-            <span class="nav-item">My Plans</span>
-            <span class="nav-item">Challenges and Rewards</span>
-            <div class="nav-item dropdown">
-                <span>Resources <i class="fas fa-chevron-down"></i></span>
-                <div class="dropdown-content">
-                    <a href="/articles">Articles</a>
-                    <a href="/videos">Videos</a>
-                    <a href="/tools">Tools</a>
-                </div>
-            </div>
-        </nav>
-        <div class="nav-right">
-            <div class="nav-item dropdown">
-                <span>My Account <i class="fas fa-chevron-down"></i></span>
-                <div class="dropdown-content">
-                    <a href="/billing">Billing</a>
-                    <a href="/subscription">Subscription</a>
-                    <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    <a class="dropdown-item text-danger p-2" href="#" onclick="handleLogout(event)">
-                        Logout
-                    </a>
-                </div>
-            </div>
-            <span class="nav-item">Main website</span>
-        </div>
-    </div>
-</header>
-@else
 <header id="header">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
@@ -119,8 +76,41 @@ $auth = auth()->guard('web')->check();
         </nav>
     </div>
 </header>
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="login-error" class="text-danger"></div> <!-- This will display the error message -->
+                <!-- Sign In Form -->
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label for="login-email" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="login-email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="login-password" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="login-password" required>
+                    </div>
 
-@endif
+                    <!-- Sign In Button -->
+                    <button type="submit" id="login-submit" class="btn btn-primary w-100 mt-3">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Sign Up Link -->
+                <div class="mt-3 text-center">
+                    <small>Don't have an account? <a href="#" id="show-signup-modal">Sign Up</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     function handleLogout(event) {
