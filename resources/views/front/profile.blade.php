@@ -28,6 +28,9 @@
         filter: blur(5px); /* Adjust the blur value */
         transition: filter 0.3s ease-in-out;
     }
+    .coupon-link           { text-decoration:none; cursor:pointer; color:#000; text-decoration:underline;}
+    .coupon-link.active    { color:#000; text-decoration:underline; }
+
 </style>
     <div class="nutrition-plan-hero bg-white py-4">
         <div class="container">
@@ -179,21 +182,9 @@
                                         </h4>
 
                                         <ul class="mb-3">
-                                            <li>Sport: {{ $profileDetails['Sport'] }}
-                                                <button type="button" 
-                                                    class="btn btn-light edit-icon" 
-                                                    id="edit-sport-button"
-                                                    data-sport="{{ $profileDetails['Sport'] ?? '' }}"
-                                                    data-name="{{ $profileDetails['Name'] ?? '' }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </li>
+                                            <li>Sport: {{ $profileDetails['Sport'] }}</li>
                                         </ul>
 
-                                        <!-- Toggle button -->
-                                        <!-- <button class="btn-outline-primary btn-sm mb-2 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#profileDetailsCollapse" aria-expanded="false" aria-controls="profileDetailsCollapse">
-                                            Health Data
-                                        </button> -->
                                         <a data-bs-toggle="collapse" href="#profileDetailsCollapse" role="button" aria-expanded="false" aria-controls="profileDetailsCollapse" class="text-decoration-none mt-3"> Health Data : 
                                             <!-- <i class="fas fa-chevron-down pull-right"></i> -->
                                         </a>
@@ -338,7 +329,7 @@
                                                             $formattedEnd = $formatDate($endDate, null);
                                                             $item = trim($item);
                                                         @endphp
-                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                        <li class="d-flex justify-content-between align-items-start @if ($formattedStart) mb-1 @else mb-3 @endif">
                                                             <span>{{ $item }}</span>
                                                             <div class="btn-list ms-2 mt-1">
                                                                 <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
@@ -400,7 +391,7 @@
                                                             $formattedEnd = $formatDate($endDate, null);
                                                             $item = trim($item);
                                                         @endphp
-                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                        <li class="d-flex justify-content-between align-items-start @if ($formattedStart) mb-1 @else mb-3 @endif">
                                                             <span>{{ $item }}</span>
                                                             <div class="btn-list ms-2 mt-1">
                                                                 <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
@@ -442,26 +433,6 @@
                                            
                                         </div>
                                     </div>
-                                    
-                            {{--    <div class="px-4 py-3 border-bottom">
-                                        <strong>Favourite Food:</strong>
-                                        <p>{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="List your favourite foods?" data-answer="{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                    <div class="px-4 py-3 border-bottom">
-                                        <strong>Foods | Dislike:</strong>
-                                        <p>{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="Do you avoid/dislike any foods? List below" data-answer="{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                --}}
                                 </div>
                             </div>
                         </div>
@@ -861,61 +832,6 @@
         </div>
     </div>
 
-    {{-- <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- User info form -->
-                    <form id="payment-form">
-                        <div id="registration-details">
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="name" value="{{ $user->name }}">
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="email" value="{{ $user->email }}" >
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="phone" value="">
-                            </div>
-                        </div>
-                        <!-- Promo Code Section -->
-                        <div id="coupon-details">
-                            <div class="mb-3">
-                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
-                                    <input type="hidden" class="form-control" id="discount">
-                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
-                                </div>
-                                <small id="promo-message" class=""></small>
-                            </div>
-                        </div>
-                        <div id="payment-details">
-                            
-                            <!-- Stripe Payment Card Section -->
-                            <h6 class="mb-3">Payment Details</h6>
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
-                            Buy Now
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-3">
@@ -940,9 +856,13 @@
                         </div>
                         <!-- Heading -->
                         <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
-
+                        <div class="mb-3 mt-3">
+                            <small>
+                                <a href="#" id="toggle-coupon-link" class="coupon-link">Add a Coupon Code</a>
+                            </small>
+                        </div>
                         <!-- Coupon Code -->
-                        <div class="mb-3" id="coupon-details">
+                        <div class="mb-3 d-none" id="coupon-details">
                             <label for="promo-code" class="form-label">Coupon Code</label>
                             <div class="d-flex gap-2">
                                 <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
@@ -1174,48 +1094,6 @@
         </div>
     </div>
 
-    <!-- Edit Sport Modal -->
-    <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="{{ route('profile.update.sport') }}" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Sport Info</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="sport_name" class="form-label">Sport Name</label>
-                            <input type="text" name="sport" class="form-control" id="sport_name" value="{{ $userPrePlan->occupation ?? '' }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="sport_image" class="form-label">Sport Image</label>
-                            <input type="file" name="sport_image" class="form-control" id="sport_image" style="height: auto; border-radius: 5px;">
-                        </div>
-                        <!-- Existing Sport Image Preview -->
-                        @if(!empty($userPrePlan->sport_image))
-                            <div class="mb-3">
-                                <label class="form-label">Current Image:</label><br>
-                                <img src="{{ asset($userPrePlan->sport_image) }}" alt="Sport Image" width="120" height="120" class="rounded">
-                            </div>
-                        @endif
-
-                        <input type="hidden" name="user_id" id="sport_user_id" value="{{ auth()->id() }}">
-                        <input type="hidden" name="payment_id" id="payment_id" value="{{ $payment->id }}">
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" id="saveSportBtn" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
@@ -1356,44 +1234,6 @@
             $('#editHeightModal').find('#heightAnswer').val(answer);
             $('#editHeightModal').find('#formName').val(formName);
             $('#editHeightModal').modal('show'); 
-        });
-    });
-
-    $('#saveSportBtn').on('click', function () {
-        let formData = new FormData();
-        formData.append('sport', $('#sport_name').val());
-        formData.append('user_id', $('#sport_user_id').val());
-        formData.append('payment_id', $('#payment_id').val());
-        // formData.append('user_id', $('#sport_user_id').val());
-
-        let sportImage = $('#sport_image')[0].files[0];
-        if (sportImage) {
-            formData.append('sport_image', sportImage);
-        }
-
-        $.ajax({
-            url: '{{ route("profile.update.sport") }}',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert(response.message);
-                    $('#editSportModal').modal('hide');
-                    // Optionally, update the DOM with new values
-                    location.reload(); // or update DOM instead of full reload
-                } else {
-                    alert('Something went wrong!');
-                }
-            },
-            error: function (xhr) {
-                console.error(xhr.responseJSON);
-                alert('Validation failed or server error!');
-            }
         });
     });
 
@@ -1721,10 +1561,8 @@
             fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
             .then(res => res.text())
                 .then(html => {
-                    console.log(html);
                     $("#plan-preview-body").html(html);
                     $("#planPreviewModal").modal("show"); // ✅ show modal
-                    console.log('modal show');
                 })
                 .catch(err => {
                     $("#plan-preview-body").html('<div class="text-danger">Error loading preview</div>');
@@ -1884,7 +1722,6 @@
                             x: weightEntry.date, // Use the actual date for x-axis (Date dataset)
                             y: weightEntry.weight // Weight as the y value for the Date dataset
                         });
-                        // console.log('weightEntry.date:', weightEntry.date);
 
                         dataPointsWeight.push({
                             x: weightEntry.date, // Use the same date for the weight dataset
@@ -1956,7 +1793,6 @@
                                 title: function(tooltipItem) {
                                     const tooltipData = tooltipItem[0]; // Ensure tooltipItem[0] exists
                                     if (tooltipData && tooltipData.parsed) {
-                                        console.log(dataPointsDate[tooltipData.parsed.x]);
                                         const date = dataPointsDate[tooltipData.parsed.x] ? dataPointsDate[tooltipData.parsed.x].x : 'Unknown Date'; // 
                                         // Get the date using the index from dataPointsDate
                                         return `Date: ${date}`; 
@@ -1964,7 +1800,6 @@
                                     // return 'No Date';  // Fallback if no data is found
                                 },
                                 label: function(tooltipItem) {
-                                    console.log(tooltipItem);
                                     // const tooltipData = tooltipItem[0]; // Ensure tooltipItem[0] exists
                                     if (tooltipItem && tooltipItem.parsed) {
                                         return `Weight: ${tooltipItem.parsed.y} kg`; // Accessing the parsed y value (weight)
@@ -2026,8 +1861,37 @@
     });
 
     $(document).ready(function() {
-        var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+
+        const $toggleLink = $('#toggle-coupon-link');
+        const $couponDetails = $('#coupon-details');
+        const $promoInput = $('#promo-code');
+        const $promoMessage = $('#promo-message');
+        const $paymentDetails = $('#payment-details');
+
+        if ($toggleLink.length) {
+            $toggleLink.on('click', function (e) {
+                e.preventDefault();
+
+                const isHidden = $couponDetails.hasClass('d-none');
+
+                $couponDetails.toggleClass('d-none');
+
+                $toggleLink.text(isHidden ? 'Remove a Coupon Code' : 'Add a Coupon Code');
+
+                if (!isHidden) {
+                    $promoInput.val('');
+                    if ($promoMessage.length) {
+                        $promoMessage.text('');
+                    }
+                    $paymentDetails.css('display', '');
+                }
+            });
+        }
+
+        // Stripe Payment
+        // var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
         // var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
+        var stripe = Stripe("{{ config('services.stripe.key') }}");
         var elements = stripe.elements();
         var style = {
             base: {
@@ -2063,13 +1927,14 @@
 
         // Event listener for the 'Purchase Now' button
         $('body').on('click', '.buy-plan-btn', function () {
-            // alert('Payment button clicked');
             // e.preventDefault();
-
             var planId = $(this).data('plan-id');  // Get the plan ID
             var price = $(this).data('plan-price');     // Get the plan price (if needed)
             var description = $(this).data('plan-description');     // Get the plan price (if needed)
-            
+            var name = $('#purchaseModal #name').val();
+            var email = $('#purchaseModal #email').val();
+            var phone = $('#purchaseModal #phone').val();
+
             // Update modal title with plan name (optional)
             $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name')+ '($' + price+')');
             $('#plan-description').text(description);
@@ -2082,8 +1947,7 @@
                 event.preventDefault();
 
                 // Disable the submit button to prevent multiple clicks
-                $('#submit').prop('disabled', true);
-
+                // $('#submit').prop('disabled', true);
                 // Create a PaymentMethod with Stripe's API
                 let discountCode = $('#promo-code').val();
                 let discount = $('#discount').val();
@@ -2094,9 +1958,9 @@
                         data: {
                             plan_id: planId,
                             price: price,
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                             coupon_code: discountCode,
                             _token: '{{ csrf_token() }}'
                         },
@@ -2108,12 +1972,16 @@
                                 var user_id = response.data.user_id;
                                 var payment_id = response.data.payment_id;
 
-                                // Redirect the user if a URL is provided
-                                if (response.redirect_url) {
-                                    var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
-                                    setTimeout(function () {
-                                        window.location.href = redirectUrlWithUserId;
-                                    }, 3000);
+                                if(response.data.submit_questionnaire) {
+                                    // Redirect the user if a URL is provided
+                                    if (response.redirect_url) {
+                                        var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                        setTimeout(function () {
+                                            window.location.href = redirectUrlWithUserId;
+                                        }, 3000);
+                                    }
+                                } else {
+                                    $('#thankYouModal').modal('show');
                                 }
                             } else {
                                 // Show error message for failed payment
@@ -2132,9 +2000,9 @@
                         type: 'card',
                         card: card,
                         billing_details: {
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                         },
                     }).then(function(result) {
                         if (result.error) {
@@ -2150,30 +2018,31 @@
                                     payment_method_id: result.paymentMethod.id,
                                     plan_id: planId,
                                     price: price,
-                                    name: $('#name').val(),
-                                    email: $('#email').val(),
-                                    phone: $('#phone').val(),
-                                    coupon_code: dicountCode,
+                                    name: name,
+                                    email: email,
+                                    phone: phone,
+                                    coupon_code: discountCode,
                                     _token: '{{ csrf_token() }}'
                                 },
                                 success: function(response) {
                                     if (response.success) {
                                         // Handle successful payment
-                                        // alert('Payment successful!');
                                         $('#purchaseModal').modal('hide');
                                         // $('#thankYouModal').modal('show');
 
                                         var user_id = response.data.user_id;  // Assuming the backend sends the user_id
                                         var payment_id = response.data.payment_id;  // Assuming the backend sends the user_id
 
-                                        // Check if there's a redirect URL provided
-                                        if (response.redirect_url) {
-
-                                            var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
-                                            // Redirect the user to the provided URL after a delay (optional)
-                                            setTimeout(function() {
-                                                window.location.href = redirectUrlWithUserId;
-                                            }, 3000); // 3-second delay before redirecting (adjust as needed)
+                                        if(response.data.submit_questionnaire) {
+                                            // Redirect the user if a URL is provided
+                                            if (response.redirect_url) {
+                                                var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                                setTimeout(function () {
+                                                    window.location.href = redirectUrlWithUserId;
+                                                }, 3000);
+                                            }
+                                        } else {
+                                            $('#thankYouModal').modal('show');
                                         }
 
                                     } else {
@@ -2248,7 +2117,6 @@
         });
 
         $('body').on('click', '.buy-plan', function () {
-            // alert('Payment button clicked');
             // e.preventDefault();
 
             var planId = $(this).data('plan-id');  // Get the plan ID
@@ -2303,7 +2171,6 @@
                             success: function(response) {
                                 if (response.success) {
                                     // Handle successful payment
-                                    // alert('Payment successful!');
                                     $('#purchaseModal').modal('hide');
 
                                     showThankYouModal();
@@ -2344,6 +2211,32 @@
         $('#thankYouModal').on('hidden.bs.modal', function () {
             location.reload(); // Reloads the page when modal is closed
         });
+
+        $('#purchaseModal').on('hidden.bs.modal', function () {
+            $('#payment-form')[0].reset();
+            $('#card-errors').text('');
+            // Reset coupon UI
+            const toggleLink = document.getElementById('toggle-coupon-link');
+            const couponDetails = document.getElementById('coupon-details');
+            const promoInput = document.getElementById('promo-code');
+            const promoMessage = document.getElementById('promo-message');
+
+            if (couponDetails && !couponDetails.classList.contains('d-none')) {
+                couponDetails.classList.add('d-none');
+            }
+
+            if (toggleLink) {
+                toggleLink.textContent = 'Add a Coupon Code';
+            }
+
+            if (promoInput) {
+                promoInput.value = '';
+            }
+
+            if (promoMessage) {
+                promoMessage.textContent = '';
+            }
+        });
     });
 
     $(document).ready(function() {
@@ -2370,7 +2263,6 @@
         // Handle form submission with AJAX
         $('#editForm').on('submit', function(event) {
             event.preventDefault();
-            console.log(userId);
             let formData = {
                 form_name: $('#formName').val(),
                 question: $('#question').val(),
@@ -2382,7 +2274,6 @@
                 main_ans: $('#mainAns').val(),
                 _token: '{{ csrf_token() }}' // CSRF protection
             };
-            console.log(formData);
             $.ajax({
                 url: "{{ route('front.sample-plan-details-update') }}", // Laravel route to handle updates
                 type: "POST",
@@ -2436,7 +2327,6 @@
 
         $('#suplimentEditForm').on('submit', function(event) {
             event.preventDefault();
-            console.log(userId);
             let formData = {
                 form_name: $('#suplimentEditForm #formName').val(),
                 question: $('#suplimentEditForm #formQuestion').val(),
@@ -2448,7 +2338,6 @@
                 main_ans: $('#suplimentEditForm #mainAns').val(),
                 _token: '{{ csrf_token() }}' // CSRF protection
             };
-            console.log(formData);
             $.ajax({
                 url: "{{ route('front.sample-plan-details-update') }}", // Laravel route to handle updates
                 type: "POST",
@@ -2561,7 +2450,6 @@
 
         $(".view-past-history").click(function () {
             let type = $(this).attr("data-type");
-            console.log(type);
 
             $.ajax({
                 url: "{{ route('front.past.goals') }}",
@@ -2603,203 +2491,6 @@
             });
         });
     });
-
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     const ctx = document.getElementById('trainingChart').getContext('2d');
-//     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-
-//     const frequencyMap = {
-//         "1-2": 2,
-//         "3-4": 4,
-//         "5+": 7
-//     };
-
-//     const colors = {
-//         "Low intensity": "rgba(47, 202, 98, 0.6)",
-//         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-//         "High intensity": "rgba(232, 62, 53, 0.6)"
-//     };
-
-//     const borderColors = {
-//         "Low intensity": "rgba(47, 202, 98, 1)",
-//         "Moderate intensity": "rgba(255, 159, 64, 1)",
-//         "High intensity": "rgba(232, 62, 53, 1)"
-//     };
-
-//     const allBars = [];
-
-//     if (response) {
-//         Object.keys(response).forEach(frequency => {
-//             const intensities = response[frequency];
-//             intensities.forEach(intensity => {
-//                 allBars.push({
-//                     label: `${intensity} (${frequency})`,
-//                     intensity: intensity,
-//                     value: frequencyMap[frequency] || 0,
-//                     tooltip: frequency
-//                 });
-//             });
-//         });
-//     }
-
-//     const chart = new Chart(ctx, {
-//         type: 'bar',
-//         data: {
-//             labels: allBars.map(bar => bar.label),
-//             datasets: [{
-//                 label: '# of Days',
-//                 data: allBars.map(bar => bar.value),
-//                 backgroundColor: allBars.map(bar => colors[bar.intensity]),
-//                 borderColor: allBars.map(bar => borderColors[bar.intensity]),
-//                 borderWidth: 1
-//             }]
-//         },
-//         options: {
-//             responsive: true,
-//             plugins: {
-//                 tooltip: {
-//                     callbacks: {
-//                         label: function (context) {
-//                             const bar = allBars[context.dataIndex];
-//                             return `${bar.intensity}: ${bar.tooltip} days`;
-//                         }
-//                     }
-//                 },
-//                 legend: { display: false }
-//             },
-//             scales: {
-//                 y: {
-//                     title: {
-//                         display: true,
-//                         text: '# of Days'
-//                     },
-//                     min: 0,
-//                     max: 7,
-//                     stepSize: 1,
-//                     ticks: {
-//                         callback: function(value) {
-//                             return value.toString();
-//                         }
-//                     }
-//                 },
-//                 x: {
-//                     title: {
-//                         display: true,
-//                         text: 'Training Intensity (by Frequency)'
-//                     }
-//                 }
-//             }
-//         }
-//     });
-// });
-
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     const ctx = document.getElementById('trainingChart').getContext('2d');
-    //     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-    //     console.log(response);
-    //     const frequencyMap = { "1-2": 2, "3-4": 4, "5+": 7 };
-    //     const intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
-    //     const displayLabels = ["Low", "Moderate", "High"];
-
-    //     const colors = {
-    //         "Low intensity": "rgba(47, 202, 98, 0.6)",
-    //         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-    //         "High intensity": "rgba(232, 62, 53, 0.6)"
-    //     };
-
-    //     const borderColors = {
-    //         "Low intensity": "rgba(47, 202, 98, 1)",
-    //         "Moderate intensity": "rgba(255, 159, 64, 1)",
-    //         "High intensity": "rgba(232, 62, 53, 1)"
-    //     };
-
-    //     const datasets = [];
-
-    //     for (const intensity of intensityLabels) {
-    //         for (const [freqLabel, intensityArray] of Object.entries(response)) {
-    //             if (intensityArray.includes(intensity)) {
-    //                 const data = [null, null, null];  // index: 0=Low, 1=Moderate, 2=High
-    //                 const index = intensityLabels.indexOf(intensity);
-    //                 data[index] = frequencyMap[freqLabel] || 0;
-
-    //                 datasets.push({
-    //                     label: `${intensity} (${freqLabel})`,
-    //                     data: data,
-    //                     backgroundColor: colors[intensity],
-    //                     borderColor: borderColors[intensity],
-    //                     borderWidth: 1,
-    //                     intensity: intensity // for custom legend filtering
-    //                 });
-    //             }
-    //         }
-    //     }
-
-    //     new Chart(ctx, {
-    //         type: 'bar',
-    //         data: {
-    //             labels: displayLabels,
-    //             datasets: datasets
-    //         },
-    //         options: {
-    //             responsive: true,
-    //             plugins: {
-    //                 tooltip: {
-    //                     callbacks: {
-    //                         label: function (context) {
-    //                             const value = context.raw;
-    //                             const label = context.dataset.label.match(/\((.*?)\)/);
-    //                             return `${context.dataset.label.split(' (')[0]}: ${label ? label[1] : ''}`;
-    //                         }
-    //                     }
-    //                 },
-    //                 legend: {
-    //                     position: 'bottom',
-    //                     labels: {
-    //                         generateLabels: function (chart) {
-    //                             const seen = new Set();
-    //                             return chart.data.datasets
-    //                                 .filter(ds => {
-    //                                     if (!seen.has(ds.intensity)) {
-    //                                         seen.add(ds.intensity);
-    //                                         return true;
-    //                                     }
-    //                                     return false;
-    //                                 })
-    //                                 .map(ds => ({
-    //                                     text: ds.intensity.replace(' intensity', ''),
-    //                                     fillStyle: ds.backgroundColor,
-    //                                     strokeStyle: ds.borderColor,
-    //                                     lineWidth: 1,
-    //                                     hidden: false,
-    //                                     index: chart.data.datasets.indexOf(ds)
-    //                                 }));
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             scales: {
-    //                 y: {
-    //                     min: 0,
-    //                     max: 7,
-    //                     ticks: {
-    //                         stepSize: 1
-    //                     },
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Days per week'
-    //                     }
-    //                 },
-    //                 x: {
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Training Intensity'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     });
-    // });
 
     document.addEventListener("DOMContentLoaded", function () {
         const ctx = document.getElementById('trainingChart').getContext('2d');
@@ -2964,7 +2655,6 @@
             var formData = new FormData();
             var reportType = $('#report_type').val();
             var reportName = $('#file_name').val();
-            console.log(reportType);
             if (files.length === 0) {
                 alert("Please select at least one file to upload.");
                 return;

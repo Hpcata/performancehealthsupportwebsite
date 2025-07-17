@@ -14,13 +14,20 @@ use App\Models\UserPlan;
 use App\Mail\PlanPurchaseMail;
 use App\Mail\PrePlanDetailsSubmitMail;
 use App\Models\Payment;
+use GuzzleHttp\Client;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
+use App\Models\Plan;
 use App\Models\SportCategory;
+use App\Models\UserPrePlan;
+use App\Models\PrePlanDetail;
 
 class PaymentController extends Controller
 {
     public function processPayment(Request $request)
     {
         $isGuest = !auth()->guard('web')->check();
+        $userId = User::where('email', $request->email)->value('id');
 
         // Define validation rules
         $rules = [
@@ -29,7 +36,7 @@ class PaymentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'password' => $isGuest ? 'required|string|min:8' : 'nullable',
+            'password' => ($isGuest && !$userId) ? 'required|string|min:8' : 'nullable',
             'coupon_code' => 'nullable'
         ];
 
@@ -85,7 +92,7 @@ class PaymentController extends Controller
 
             // Apply coupon logic
             if (!empty($validated['coupon_code'])) {
-                $coupon = \App\Models\Coupon::where('code', $validated['coupon_code'])
+                $coupon = Coupon::where('code', $validated['coupon_code'])
                     ->where('status', true)
                     ->where('start_date', '<=', now())
                     ->where('end_date', '>=', now())
@@ -93,7 +100,7 @@ class PaymentController extends Controller
                     ->first();
 
                 if ($coupon) {
-                    $userUsageCount = \App\Models\CouponUsage::where('coupon_id', $coupon->id)
+                    $userUsageCount = CouponUsage::where('coupon_id', $coupon->id)
                         ->where('user_id', $user->id)
                         ->count();
 
@@ -121,9 +128,9 @@ class PaymentController extends Controller
             Log::debug('Final price after discount.', ['final_price' => $finalPrice]);
 
             // If payment required but no payment method provided
-            if ($finalPrice > 0 && empty($validated['payment_method_id'])) {
-                return response()->json(['success' => false, 'message' => 'Payment method is required.']);
-            }
+            // if ($finalPrice > 0 && empty($validated['payment_method_id'])) {
+            //     return response()->json(['success' => false, 'message' => 'Payment method is required.']);
+            // }
 
             $paymentIntentId = null;
             $status = 'discount_applied';
@@ -176,7 +183,7 @@ class PaymentController extends Controller
             // Track coupon usage
             if ($coupon) {
                 $coupon->increment('usage_count');
-                \App\Models\CouponUsage::create([
+                CouponUsage::create([
                     'coupon_id' => $coupon->id,
                     'user_id' => $user->id,
                 ]);
@@ -252,32 +259,23 @@ class PaymentController extends Controller
         $stepFill = $request->input('step_fill') == true ? 1 : 0;
 
         DB::beginTransaction();
-        // dd($request->all());
-        try {
-            $prePlanId = DB::table('user_pre_plans')
-                ->where('user_id', $user_id)
-                ->where('payment_id', $payment_id)
-                ->value('id');
-            // dd($prePlanId );
-            if (!$prePlanId) {
-                $prePlanId = DB::table('user_pre_plans')->insertGetId([
-                    'payment_id' => $payment_id,
-                    'user_id' => $user_id,
-                    'dob' => $request->ans['personal_details']['dob'] ?? null,
-                    'occupation' => $request->ans['personal_details']['occupation'] ?? null,
-                    'address' => $request->ans['personal_details']['postcode'] ?? null, // Fixed the double $$ here
-                    'culture' => null,
-                    'referredBy' => $request->ans['personal_details']['referredBy'] ?? null,
-                    'other' => $request->other ?? null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
 
-            // Remove old data for this step
+        try {
+            // Step 1: Create or find UserPrePlan
+            $prePlan = UserPrePlan::firstOrCreate(
+                ['user_id' => $user_id, 'payment_id' => $payment_id],
+                [
+                    'dob' => $answers['personal_details']['dob'] ?? null,
+                    'occupation' => $answers['personal_details']['occupation'] ?? null,
+                    'address' => $answers['personal_details']['postcode'] ?? null,
+                    'referredBy' => $answers['personal_details']['referredBy'] ?? null,
+                    'other' => $request->other,
+                ]
+            );
+
+            // Step 2: Delete existing data for that step
             if ($step !== null) {
-                DB::table('pre_plan_details')
-                    ->where('user_pre_plan_id', $prePlanId)
+                PrePlanDetail::where('user_pre_plan_id', $prePlan->id)
                     ->where('step', $step)
                     ->delete();
             }
@@ -300,7 +298,7 @@ class PaymentController extends Controller
                             }
 
                             $dataToInsert[] = [
-                                'user_pre_plan_id' => $prePlanId,
+                                'user_pre_plan_id' => $prePlan->id,
                                 'form_name' => $formattedSection,
                                 'form_slug' => $section,
                                 'question' => $subQuestionText,
@@ -319,7 +317,7 @@ class PaymentController extends Controller
                             : null;
 
                         $dataToInsert[] = [
-                            'user_pre_plan_id' => $prePlanId,
+                            'user_pre_plan_id' => $prePlan->id,
                             'form_name' => $formattedSection,
                             'form_slug' => $section,
                             'question' => $questionText,
@@ -333,34 +331,30 @@ class PaymentController extends Controller
                 }
             }
 
-            DB::table('pre_plan_details')->insert($dataToInsert);
+            // Step 4: Bulk insert
+            \App\Models\PrePlanDetail::insert($dataToInsert);
 
             DB::commit();
 
-            $payment = \App\Models\Payment::with('user')->where('id',$payment_id)->first();
-            $email = $payment->user->email;
-            $planName = \App\Models\Plan::where('id', $payment->plan_id)->first()->name;
-            $user = $payment->user;
-            // try {
-            //     Mail::to($email)->send(new PlanPurchaseMail($user, $planName));
-    
-            //     $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
-            //     Mail::to($adminEmail)->send(new PrePlanDetailsSubmitMail($user, $planName));  // passing 'true' to indicate it's an admin
-            // } catch (\Exception $e) {
-            //     Log::error('Error saving step: ' . $e->getMessage());
-            // }
+            // Optional email logic (you can re-enable if needed)
+            // $payment = \App\Models\Payment::with('user')->find($payment_id);
+            // $email = $payment->user->email ?? null;
+            // $planName = optional($payment->plan)->name ?? null;
+            // Mail::to($email)->send(new PlanPurchaseMail($payment->user, $planName));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Step data saved successfully!',
-                'redirect_url' => $step == 9 ? route('front.sub-home-page') : null // example redirect after last step
+                'redirect_url' => $step == 9 ? route('front.sub-home-page') : null
             ]);
 
         } catch (\Exception $e) {
-            // dd($e->getMessage());
             DB::rollBack();
             Log::error('Error saving step: ' . $e->getMessage());
-            // return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
         }
     }
 
