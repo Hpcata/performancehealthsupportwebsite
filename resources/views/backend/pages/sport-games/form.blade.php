@@ -55,7 +55,7 @@
                             $pivot = $categoryId ? $game->categories->find($categoryId)?->pivot : null;
                         @endphp
                         @if($pivot && $pivot->image_path)
-                            <img src="{{ asset('storage/' . $pivot->image_path) }}" width="100" class="mt-2">
+                            <img src="{{ webAssets('storage/' . $pivot->image_path) }}" width="100" class="mt-2">
                         @endif
                     @endif
                     @error('image')
