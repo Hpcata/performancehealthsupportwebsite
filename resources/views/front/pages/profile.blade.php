@@ -2626,11 +2626,6 @@
         });
     });
 
-    var reportsData = {!! json_encode($reports) !!};
-    var pastSupplements = {!! json_encode($pastSupplements ?? []) !!};
-    var pastSupplementDates = {!! json_encode($pastSupplementDates ?? []) !!};
-    var pastMedications = {!! json_encode($pastMedications ?? []) !!};
-    var pastMedicationDates = {!! json_encode($pastMedicationDates ?? []) !!};
     // Define the previewImage function
     function previewImage(fileUrl) {
         window.open(fileUrl, '_blank');
@@ -2845,45 +2840,46 @@
 
     // Function to open view past history modal (called by onclick attribute)
     function openViewPastHistoryModal(type) {
-        
-        // Get past items from global variables
-        let pastItems = [];
-        let pastDates = [];
-        
-        if (type === 'supplement') {
-            pastItems = pastSupplements;
-            pastDates = pastSupplementDates;
-        } else if (type === 'medication') {
-            pastItems = pastMedications;
-            pastDates = pastMedicationDates;
-        }
-        
-        let modalTitle = type === "supplement" ? "Past Supplements" : "Past Medications";
-        $("#viewPastItemsModalLabel").text(modalTitle);
+        $.ajax({
+            url: "{{ route('front.past.goals') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                type: type,
+                user_id: userId
+            },
+            success: function (data) {
+                let modalTitle = type === "supplement" ? "Past Supplements" : "Past Medications";
+                $("#viewPastItemsModalLabel").text(modalTitle);
 
-        let pastList = $("#pastItemsList");
-        pastList.html(""); // Clear existing list
+                let pastList = $("#pastItemsList");
+                pastList.html(""); // Clear existing list
 
-        if (pastItems.length > 0) {
-            $.each(pastItems, function (index, item) {
-                let displayText = item;
-                let startDate = pastDates[index] && pastDates[index].start ? pastDates[index].start : null;
-                let endDate = pastDates[index] && pastDates[index].end ? pastDates[index].end : null;
+                if (data.length > 0) {
+                    $.each(data, function (index, item) {
+                        let displayText = item.answer;
 
-                if (startDate && endDate) {
-                    displayText += ` <small>(Start: ${new Date(startDate).toLocaleDateString()} to End: ${new Date(endDate).toLocaleDateString()})</small>`;
-                } else if (startDate) {
-                    displayText += ` <small>(Start: ${new Date(startDate).toLocaleDateString()})</small>`;
+                        if (item.start_date && item.end_date) {
+                            displayText += ` <small>(Start: ${new Date(item.start_date).toLocaleDateString()} to End: ${new Date(item.end_date).toLocaleDateString()})</small>`;
+                        } else {
+                            displayText += ` <small>(Added on: ${new Date(item.created_at).toLocaleDateString()})</small>`;
+                        }
+
+                        pastList.append("<li>" + displayText + "</li>");
+                    });
+
+                } else {
+                    pastList.append("<li>No past records found.</li>");
                 }
 
-                pastList.append("<li>" + displayText + "</li>");
-            });
-        } else {
-            pastList.append("<li>No past records found.</li>");
-        }
-
-        $("#viewPastItemsModal").modal("show"); // Show modal with past data
+                $("#viewPastItemsModal").modal("show"); // Show modal with past data
+            },
+            error: function () {
+                alert("Error fetching past " + type + "s!");
+            }
+        });
     }
+
 
     // Function to save goal data (called by onclick attribute)
     function saveGoalData() {
