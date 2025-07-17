@@ -814,16 +814,16 @@ class PurchasePlanController extends Controller
 
     public function edit(User $user, $planId)
     {
-        // \DB::enableQueryLog();
-        // dd("Edit User Plan");
         try {
-       
             $payment = Payment::find($planId);
             $plan = $payment->plan;
             $subPlanIds = $plan->subPlans->pluck('id')->toArray();
 
             $userPlans = UserPlan::with([
-                'plan', 
+                // 'plan',
+                'plan.categories' => function ($query) {
+                    $query->select('categories.id', 'categories.title');
+                },
                 // 'userCategories.userSubCategories.userMeals.userItems.userSwapItems',
             ])
             ->where('user_id', $user->id)
@@ -883,9 +883,9 @@ class PurchasePlanController extends Controller
                 }
             }
             // dd($selectedMeals);
-            $categories = Category::all();
-            $subCategories = SubCategory::all();
-            $meals = Meal::all();
+            // $categories = Category::all();
+            // $subCategories = SubCategory::all();
+            // $meals = Meal::all();
 
             $activity = UserPlan::with([
                 'modifiedBy',
@@ -903,15 +903,18 @@ class PurchasePlanController extends Controller
 
             $foodPreferences = collect();
 
-            if (!empty($userPrePlan) && $userPrePlan->prePlanDetails) {
-                foreach ($userPrePlan->prePlanDetails as $detail) {
-                    $question = $detail->question ?? 'Unknown';
-                    $answers = json_decode($detail->answer, true);
-
-                    if (is_array($answers)) {
-                        $filteredAnswers = array_filter($answers);
-                        if (!empty($filteredAnswers)) {
-                            $foodPreferences->put($question, collect($filteredAnswers));
+            if (!empty($userPrePlan)) {
+                $usePrePlanDetails = $userPrePlan->prePlanDetails;
+                if($usePrePlanDetails) {
+                    foreach ($usePrePlanDetails as $detail) {
+                        $question = $detail->question ?? 'Unknown';
+                        $answers = json_decode($detail->answer, true);
+    
+                        if (is_array($answers)) {
+                            $filteredAnswers = array_filter($answers);
+                            if (!empty($filteredAnswers)) {
+                                $foodPreferences->put($question, collect($filteredAnswers));
+                            }
                         }
                     }
                 }
@@ -926,8 +929,9 @@ class PurchasePlanController extends Controller
 
             $groupedAnswers = [];
 
-            if (isset($otherFoods->prePlanDetails)) {
-                foreach ($otherFoods->prePlanDetails as $detail) {
+            $otherFoodsPrePlanDetails = $otherFoods->prePlanDetails;
+            if (isset($otherFoodsPrePlanDetails)) {
+                foreach ($otherFoodsPrePlanDetails as $detail) {
                     $question = $detail->question ?? null;
                     if (!$question) continue;
 
@@ -942,17 +946,11 @@ class PurchasePlanController extends Controller
                     }
                 }
             }
-            $otherFoods = $groupedAnswers;
-
-            // $queries = \DB::getQueryLog();
-            // \Log::info('Queries executed:', $queries);
-
-            // dd($userPlans);
-            // $userPlan = $userPlans->first();
+            $otherFoods = $groupedAnswers; 
             return view('backend.pages.plan.purchase-plan-edit', compact(
-                'userPlans','categories', 'subCategories', 'meals',
+                'userPlans',
                 'selectedMeals', 'selectedItems', 'selectedSwapItems',
-                'activity', 'payment', 'step5Foods', 'perPlanSelectedFoods', 'subCategories',
+                'activity', 'payment', 'step5Foods', 'perPlanSelectedFoods',
                 'totalCarbs', 'totalFat', 'totalProtein', 'totalEnergy', 'otherFoods', 'foodPreferences'
             ));
         } catch (\Exception $e) {
