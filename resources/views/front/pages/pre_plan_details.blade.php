@@ -583,8 +583,8 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Other" id="dietaryneeds4">
-                                                <label class="form-check-label" for="dietaryneeds4">
+                                                <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Other" id="dietaryneeds7">
+                                                <label class="form-check-label" for="dietaryneeds7">
                                                     Other
                                                 </label>
                                             </div>
@@ -842,9 +842,9 @@
                                                
                                                 <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Flat Bread][]" value="" id="repair8" data-food-key="Flat Bread" 
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Flat Bread][]" value="" id="repair-8" data-food-key="Flat Bread" 
                                                         data-food-group="grains">
-                                                        <label class="form-check-label" for="repair8">Flat Bread</label>
+                                                        <label class="form-check-label" for="repair-8">Flat Bread</label>
                                                     </div>
                                                     <div class="food-dropdown-wrapper" data-wrapper-for="Flat Bread"></div>
                                                 </div>
@@ -936,8 +936,8 @@
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][meat][Beef][]" value="" id="protein2" data-food-key="Beef" data-food-group="meat">
-                                                        <label class="form-check-label" for="protein2">Beef</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][meat][Beef][]" value="" id="protein02" data-food-key="Beef" data-food-group="meat">
+                                                        <label class="form-check-label" for="protein02">Beef</label>
                                                     </div>
                                                     <div class="food-dropdown-wrapper" data-wrapper-for="Beef"></div>
                                                 </div>
@@ -985,8 +985,8 @@
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][plant_based][Meat Alternatives][]" value="" id="protein2" data-food-key="Meat Alternatives" data-food-group="plant_based">
-                                                        <label class="form-check-label" for="protein2">Meat Alternatives</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][plant_based][Meat Alternatives][]" value="" id="protein-2" data-food-key="Meat Alternatives" data-food-group="plant_based">
+                                                        <label class="form-check-label" for="protein-2">Meat Alternatives</label>
                                                     </div>
                                                     <div class="food-dropdown-wrapper" data-wrapper-for="Meat Alternatives"></div>
                                                 </div>
@@ -1054,8 +1054,8 @@
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                            <input class="form-check-input food-checkbox fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="" id="protein2" data-food-key="Fruit" data-food-group="fruit">
-                                                        <label class="form-check-label" for="protein2">Fruit</label>
+                                                            <input class="form-check-input food-checkbox fruit-checkbox" type="checkbox" name="ans[food_preference][fruit][]" value="" id="protein20" data-food-key="Fruit" data-food-group="fruit">
+                                                        <label class="form-check-label" for="protein20">Fruit</label>
                                                     </div>
                                                     <div class="food-dropdown-wrapper" data-wrapper-for="Fruit"></div>
                                                 </div>
@@ -1072,8 +1072,8 @@
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input food-checkbox vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="" id="protein2" data-food-key="Vegetables" data-food-group="vegetables">
-                                                        <label class="form-check-label" for="protein2">Vegetables</label>
+                                                        <input class="form-check-input food-checkbox vegetable-checkbox" type="checkbox" name="ans[food_preference][vegetables][]" value="" id="protein21" data-food-key="Vegetables" data-food-group="vegetables">
+                                                        <label class="form-check-label" for="protein21">Vegetables</label>
                                                     </div>
                                                     <div class="food-dropdown-wrapper" data-wrapper-for="Vegetables"></div>
                                                 </div>
@@ -1086,8 +1086,8 @@
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][oils_butter][Butters][]" value="" id="protein2" data-food-key="Butters" data-food-group="oils_butter">
-                                                        <label class="form-check-label" for="protein2">Butters</label>
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][oils_butter][Butters][]" value="" id="protein22" data-food-key="Butters" data-food-group="oils_butter">
+                                                        <label class="form-check-label" for="protein22">Butters</label>
                                                     </div>
                                                     <div class="food-dropdown-wrapper" data-wrapper-for="Butters"></div>
                                                 </div>
@@ -1340,8 +1340,8 @@
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="Eggs" id="repair8">
-                                                        <label class="form-check-label" for="repair8">Eggs</label>
+                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="Eggs" id="repair12">
+                                                        <label class="form-check-label" for="repair12">Eggs</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1574,8 +1574,8 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Parents" id="getnutrition1">
-                                                <label class="form-check-label" for="getnutrition1">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Parents" id="getnutrition-1">
+                                                <label class="form-check-label" for="getnutrition-1">
                                                     Parents
                                                 </label>
                                             </div>
@@ -1586,8 +1586,8 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Friends" id="getnutrition2">
-                                                <label class="form-check-label" for="getnutrition2">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Friends" id="getnutrition-2">
+                                                <label class="form-check-label" for="getnutrition-2">
                                                     Friends
                                                 </label>
                                             </div>
@@ -1610,14 +1610,14 @@
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="TikTok" id="getnutrition4">
-                                                <label class="form-check-label" for="getnutrition4">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="TikTok" id="getnutrition-4">
+                                                <label class="form-check-label" for="getnutrition-4">
                                                     TikTok
                                                 </label>
                                             </div>
                                             <div class="form-check my-2">
-                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Other" id="getnutrition5">
-                                                <label class="form-check-label" for="getnutrition5">
+                                                <input class="form-check-input" type="Checkbox" name="ans[nutrition_goals][getnutrition][]" value="Other" id="getnutrition-5">
+                                                <label class="form-check-label" for="getnutrition-5">
                                                     Other:
                                                 </label>
                                             </div>
