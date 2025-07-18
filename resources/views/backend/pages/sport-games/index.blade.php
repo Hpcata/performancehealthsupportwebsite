@@ -52,7 +52,7 @@
                                         $pivot = $categoryId ? $game->categories->find($categoryId)?->pivot : null;
                                     @endphp
                                     @if($pivot && $pivot->image_path)
-                                        <img src="{{ asset('storage/' . $pivot->image_path) }}" width="80" height="80">
+                                        <img src="{{ webAssets('storage/' . $pivot->image_path) }}" width="80" height="80">
                                     @else
                                         <span>No image</span>
                                     @endif
