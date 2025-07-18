@@ -21,12 +21,12 @@ body {
     line-height: 1.6;
 }
 .container {
-    max-width: 846px;
+    max-width: 886px;
     margin: 0 auto;
     padding: 0 20px;
 }
 .header {
-    background: #2d3748;
+    background: #3b3b3b;
     color: #fff;
     position: sticky;
     top: 0;
@@ -40,7 +40,7 @@ body {
 .header .header-content {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 1rem 20px;
+    padding: 24px;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
@@ -67,7 +67,7 @@ body {
 .header .nav-center {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    gap: 20px;
 }
 .header .nav-center .nav-item,
 .header .nav-right .nav-item {
@@ -84,7 +84,17 @@ body {
 .header .nav-right {
     display: flex;
     justify-content: flex-end;
-    gap: 2rem;
+    gap: 20px;
+}
+.header .nav-end {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+}
+.header .nav-end .fas,
+.nav-item.dropdown .fas {
+    font-size: 14px;
 }
 .dropdown .dropdown-content {
     position: absolute;
@@ -231,9 +241,12 @@ body {
     margin-bottom: 8px;
 }
 .section-header h2 {
+    color: var(--Kerry-grey-700, #080808);
+
     font-size: 24px;
+    font-style: normal;
     font-weight: 700;
-    color: #1e293b;
+    line-height: normal;
 }
 .section-header .see-all {
     color: #3b82f6;
@@ -280,12 +293,41 @@ body {
 .training-plan .tabs .tab:hover {
     color: #3b82f6;
 }
-.challenges .challenge-cards,
+/* .challenges .challenge-cards,
 .surfing-videos .video-grid,
 .training-plan .meal-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, 252px);
+    gap: 24px;
+} */
+.challenges .challenge-cards,
+.surfing-videos .video-grid,
+.training-plan .meal-cards 
+.meals .meal-cards,
+.challenges .challenge-cards,
+.challenge-cards {
+    display: flex !important;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 24px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+.challenges .challenge-cards::-webkit-scrollbar,
+.challenge-cards::-webkit-scrollbar {
+    display: none;
+}
+.meal-cards.dragging,
+.challenge-cards.dragging {
+    cursor: grabbing;
+    user-select: none;
+}
+.challenges .challenge-card, .challenge-card {
+    min-width: 266px;
+    max-width: 266px;
+    flex: 0 0 266px;
+    scroll-snap-align: start;
 }
 .challenges .challenge-cards .challenge-card,
 .resources .resources-grid .resource-card,
@@ -301,10 +343,13 @@ body {
 }
 .challenges .challenge-cards .challenge-card img,
 .training-plan .meal-cards .meal-card img {
-    min-width: 252px;
+    max-width: 266px;
     height: 160px;
     object-fit: cover;
     border-radius: 12px;
+    min-height: 160px;
+    background-color: #f1f1f1;
+    width: 100%;
 }
 .challenges .challenge-cards .challenge-card h3,
 .training-plan .meal-cards .meal-card h3 {
@@ -1125,7 +1170,7 @@ body {
     height: 100vh;
 }
 .hero-background {
-background-image: url(/front/images/hero-section/tennis.webp);
+    background-image: url(/front/images/hero-section/tennis.webp);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -1140,10 +1185,9 @@ background-image: url(/front/images/hero-section/tennis.webp);
     width: 100%;
 }
 .hero-section {
-    
-        min-height: 320px;
-    
-        position: relative;
+    min-height: 320px;
+
+    position: relative;
 }
 .hero-overlay {
     position: absolute;
@@ -1353,16 +1397,18 @@ background-image: url(/front/images/hero-section/tennis.webp);
         display: block;
         background: 0 0;
         border: none;
-        font-size: 2rem;
+        width: 30px;
+        height: 22px;
         color: #fff;
         z-index: 2002;
     }
+
     .mobile-menu {
         display: flex;
         flex-direction: column;
         bottom: 0;
         width: 100vw;
-        height: 100vh;
+        height: max-content;
         background: #363636;
         color: #fff;
         z-index: 2000;
@@ -1373,32 +1419,38 @@ background-image: url(/front/images/hero-section/tennis.webp);
         padding-bottom: 16px;
         transition: transform 0.3s;
         transform: translateY(-120%);
+        border-radius: 0 0 0 18px;
     }
-    .mobile-menu.open {
-        transform: translateY(0);
-    }
+
     .mobile-menu-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 16px 20px 8px;
         border-bottom: 1px solid #555;
+        position: relative;
     }
     .mobile-menu-close {
-        background: 0 0;
+        background: none;
         border: none;
         color: #fff;
-        font-size: 2rem;
+        font-size: 3rem;
         cursor: pointer;
+        z-index: 2001;
+        position: absolute;
+        top: 10px;
+        right: 20px;
     }
     .mobile-menu-list {
         list-style: none;
         margin: 0;
-        padding: 80px 20px;
+        margin: 72px 0 0 0;
+        font-size: 1.1rem;
+        border-top: 1px solid #ffffff4a;
+        padding: 0;
     }
     .mobile-menu-list li {
         margin: 0;
-        padding: 14px 0;
         border: none;
     }
     .mobile-menu-list li.divider {
@@ -1481,16 +1533,15 @@ background-image: url(/front/images/hero-section/tennis.webp);
 }
 @media (max-width: 600px) {
     .hero-background {
-    border-radius: 0 0 36px 0;
-}
-.hero-overlay {
-  
-    border-radius: 0 0 36px 0;
-}
-.hero-section {
-        min-height: 160px;
-    background-color: #ffffff;
-}
+        border-radius: 0 0 36px 0;
+    }
+    .hero-overlay {
+        border-radius: 0 0 36px 0;
+    }
+    .hero-section {
+        min-height: 162px;
+        background-color: #ffffff;
+    }
     .profile-avatar-overlap {
         bottom: -89px;
     }
@@ -1669,6 +1720,9 @@ background-image: url(/front/images/hero-section/tennis.webp);
     }
 }
 @media (min-width: 1024px) {
+    .mobile-menu-overlay {
+        display: none !important;
+    }
     .hero-section {
         height: 500px;
     }
@@ -1694,4 +1748,217 @@ background-image: url(/front/images/hero-section/tennis.webp);
 }
 .plate-img {
     height: auto;
+}
+
+.dropdown-container {
+    position: relative;
+    width: 232px;
+    margin-top: 12px;
+    margin-bottom: 24px;
+}
+
+.dropdown-label {
+    color: var(--kerry-grey-600-main, #3b3b3b);
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.dropdown-button {
+    width: 100%;
+    padding: 6px 14px;
+
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+    border-radius: 6px;
+    border: 1px solid var(--Kerry-grey-200, #d8d8d8);
+    background: var(--White, #fff);
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.08);
+}
+
+.dropdown-button:hover {
+    border-color: #9ca3af;
+}
+
+.dropdown-button:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dropdown-content {
+    flex: 1;
+    min-height: 32px;
+}
+
+.dropdown-title {
+    font-weight: 500;
+    color: #111827;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.dropdown-subtitle {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.3;
+}
+
+.dropdown-arrow {
+    margin-left: 12px;
+    margin-top: 2px;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #6b7280;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.dropdown-button.open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all 0.2s ease;
+    margin-top: 4px;
+}
+
+.dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-option {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-option:last-child {
+    border-bottom: none;
+}
+
+.dropdown-option:hover {
+    background-color: #f9fafb;
+}
+
+.dropdown-option.selected {
+    background-color: #eff6ff;
+}
+
+.option-title {
+    font-weight: 500;
+    color: #111827;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.option-subtitle {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.3;
+}
+
+@media (max-width: 1024px) {
+    .mobile-menu-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1999;
+        transition: opacity 0.3s;
+        opacity: 0;
+    }
+    /* .mobile-menu.open + .mobile-menu-overlay,
+  .mobile-menu-overlay.open {
+    display: block;
+    opacity: 1;
+  } */
+    .mobile-menu-overlay.open {
+        display: block;
+        opacity: 1;
+    }
+    .mobile-menu {
+        z-index: 2000;
+        transition: transform 0.3s;
+        transform: translateY(-120%);
+    }
+    .mobile-menu.open {
+        transform: translateY(0);
+    }
+}
+.horizontal-scroll-arrow-wrapper {
+    position: relative;
+}
+
+.scroll-arrow-right {
+    position: absolute;
+    top: 41%;
+    right: 0.5rem;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 2;
+    transition: background 0.2s;
+}
+.scroll-arrow-right:active {
+    background: #eee;
+}
+.scroll-arrow-left {
+    position: absolute;
+    top: 41%;
+    left: 0.5rem;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 2;
+    transition: background 0.2s;
+}
+.scroll-arrow-left:active {
+    background: #eee;
 }

@@ -5,16 +5,53 @@ $auth = auth()->guard('web')->check();
 ?>
 
 @if (Route::is('front.profile') || Route::is('front.plans.details'))
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()" style=" position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:1999;"></div>
 <header class="mobile-header">
-    <img src="{{ frontAssets('images/logo (1) 1.svg') }}" alt="2LS Logo" class="mobile-logo-img" width="120" height="40" />
-    <button class="mobile-menu-open" aria-label="Open mobile menu" onclick="toggleMobileMenu()">
-        <i class="fas fa-bars" aria-hidden="true"></i>
+    <img src="{{ frontAssets('images/logo.svg') }}" alt="2LS Logo" class="mobile-logo-img" width="140" height="30" />
+    <button
+        class="mobile-menu-toggle"
+        aria-label="Toggle mobile menu"
+        onclick="toggleMobileMenu()"
+        style="background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;">
+        <span id="mobile-menu-icon">
+            <!-- This will be replaced by JS -->
+            <img src="{{ frontAssets('images/hamburger.svg') }}" alt="" id="hamburger-icon" style="display:inline;">
+            <span id="close-icon" style="display:none;">&times;</span>
+        </span>
     </button>
 </header>
+
+<!-- Mobile Menu Markup -->
+<div class="mobile-menu" id="mobile-menu" style="z-index:2000;">
+   
+    <ul class="mobile-menu-list" >
+        <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 16px 16px;">My Plans</a></li>
+        <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Challenges and Rewards</a></li>
+        @if(Auth::check())
+            <li class="mobile-menu-link"><a href="{{ route('front.profile', ['id' => Auth::user()->id]) }}" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">My Profile</a></li>
+        @endif
+        <li><div class="mobile-menu-divider" style="height:1px; background:#555; margin: 12px 16px;"></div></li>
+        <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Resources and Tools</a></li>
+        <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Store</a></li>
+        <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Main Website</a></li>
+        <li><div class="mobile-menu-divider" style="height:1px; background:#555; margin: 12px 16px;"></div></li>
+        @if(Auth::check())
+            <li class="mobile-menu-link">
+                <form id="logout-form-mobile" action="{{ route('front.logout') }}" method="POST" style="display: none;">@csrf</form>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form-mobile').submit(); toggleMobileMenu();" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Sign out</a>
+            </li>
+        @else
+            <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Sign in</a></li>
+        @endif
+    </ul>
+</div>
+
+
 <header class="header">
     <div class="header-content">
         <div class="logo">
-            <img src="{{ frontAssets('images/logo (1) 1.svg') }}" alt="2LS Logo" class="logo-img" width="120" height="40" />
+            <img src="{{ frontAssets('images/logo.svg') }}" alt="2LS Logo" class="logo-img" width="190" height="40" />
         </div>
         <nav class="nav-center">
             <span class="nav-item">My Plans</span>
@@ -30,14 +67,17 @@ $auth = auth()->guard('web')->check();
         </nav>
         <div class="nav-right">
             <div class="nav-item dropdown">
-                <span>My Account <i class="fas fa-chevron-down"></i></span>
+                <div class="nav-end">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+  <path d="M9 9C10.1935 9 11.3381 8.52589 12.182 7.68198C13.0259 6.83807 13.5 5.69347 13.5 4.5C13.5 3.30653 13.0259 2.16193 12.182 1.31802C11.3381 0.474106 10.1935 0 9 0C7.80653 0 6.66193 0.474106 5.81802 1.31802C4.97411 2.16193 4.5 3.30653 4.5 4.5C4.5 5.69347 4.97411 6.83807 5.81802 7.68198C6.66193 8.52589 7.80653 9 9 9ZM7.39336 10.6875C3.93047 10.6875 1.125 13.493 1.125 16.9559C1.125 17.5324 1.59258 18 2.16914 18H15.8309C16.4074 18 16.875 17.5324 16.875 16.9559C16.875 13.493 14.0695 10.6875 10.6066 10.6875H7.39336Z" fill="white"/>
+</svg><span>My Account <i class="fas fa-chevron-down"></i></span></div>
                 <div class="dropdown-content">
                     <a href="/billing">Billing</a>
                     <a href="/subscription">Subscription</a>
                     <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
-                    <a class="dropdown-item text-danger p-2" href="#" onclick="handleLogout(event)">
+                    <a class="p-2 text-danger dropdown-item" href="#" onclick="handleLogout(event)">
                         Logout
                     </a>
                 </div>
@@ -54,7 +94,7 @@ $auth = auth()->guard('web')->check();
                 <a class="navbar-brand" href="{{ route('front.index') }}">
                     <img src="{{ frontAssets('images/logo.svg') }}" alt="">
                 </a>
-                <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="collapsed navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -76,7 +116,7 @@ $auth = auth()->guard('web')->check();
                         </li>
                         @elseif($title == 'Contact')
                         <li class="nav-item">
-                            <a class="nav-link restriction-page " id="contact-us" href="{{ route('front.index') }}#contact"> Contact</a>
+                            <a class="nav-link restriction-page" id="contact-us" href="{{ route('front.index') }}#contact"> Contact</a>
                         </li>
                         @else
                         @if(Auth::check() && Auth::user()->is_superadmin == 0)
@@ -86,17 +126,17 @@ $auth = auth()->guard('web')->check();
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li>
-                                    <a class="dropdown-item text-dark p-2" href="{{ route('front.profile', ['id' => Auth::user()->id]) }}">My Profile</a>
+                                    <a class="p-2 text-dark dropdown-item" href="{{ route('front.profile', ['id' => Auth::user()->id]) }}">My Profile</a>
                                 </li>
                                 <!-- <li>
-                                    <a class="dropdown-item text-dark p-2" href="">View My Plan</a>
+                                    <a class="p-2 text-dark dropdown-item" href="">View My Plan</a>
                                 </li> -->
                                 <li>
                                     <!-- Logout form (hidden) -->
                                     <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
-                                    <a class="dropdown-item text-danger p-2" href="#" onclick="handleLogout(event)">
+                                    <a class="p-2 text-danger dropdown-item" href="#" onclick="handleLogout(event)">
                                         Logout
                                     </a>
                                 </li>
@@ -104,7 +144,7 @@ $auth = auth()->guard('web')->check();
                         </li>
                         @elseif($title == 'Login')
                         <li class="nav-item">
-                            <a class="nav-link restriction-page " id="login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fa-solid fa-user"></i> Login</a>
+                            <a class="nav-link restriction-page" id="login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fa-solid fa-user"></i> Login</a>
                         </li>
                         @else
                         <li class="nav-item">
@@ -219,4 +259,22 @@ $auth = auth()->guard('web')->check();
             });
         });
     });
+</script>
+
+<script>
+    function toggleMobileMenu() {
+        console.log('toggleMobileMenu called');
+        var menu = document.getElementById('mobile-menu');
+        var overlay = document.getElementById('mobile-menu-overlay');
+        var isOpen = menu.classList.contains('open');
+        if (isOpen) {
+            menu.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        } else {
+            menu.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+    }
 </script>
