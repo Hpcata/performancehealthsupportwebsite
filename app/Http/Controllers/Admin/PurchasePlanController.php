@@ -3460,7 +3460,7 @@ class PurchasePlanController extends Controller
                 // dd($selectedQty);
                 foreach ($selectedQty as $unitData) {
                     $originalQty = floatval($unitData['qty']);
-                    $adjustedQty = $originalQty / floatval($ratio);
+                    $adjustedQty = $originalQty * floatval($ratio);
 
                     // Optionally round or format:
                     $adjustedQty = round($adjustedQty, 2); // keep 2 decimal places
@@ -3489,7 +3489,7 @@ class PurchasePlanController extends Controller
                 // dd($selectedQty);
                 foreach ($selectedQty as $unitData) {
                     $originalQty = floatval($unitData['qty']);
-                    $adjustedQty = $originalQty / floatval($ratio);
+                    $adjustedQty = $originalQty * floatval($ratio);
     
                     // Optionally round or format:
                     $adjustedQty = round($adjustedQty, 2); // keep 2 decimal places
