@@ -247,14 +247,13 @@ class PaymentController extends Controller
 
         // Fetch only needed columns for stepData
         $stepData = DB::table('pre_plan_details')
-            ->select('id', 'step', 'field_name', 'field_value') // Specify only needed columns
             ->where('user_pre_plan_id', $userPrePlanId)
             ->get()
             ->groupBy('step');
 
         $sportCategories = SportCategory::select('id', 'name')->get(); // If you only need id and name
 
-        return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories','token'));
+        return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories','token'));
     }
 
     public function prePlanDetailsSave(Request $request)
