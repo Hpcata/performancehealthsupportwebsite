@@ -232,14 +232,14 @@ class FrontController extends Controller
                             'user' => $user
                         ]);
                     }
-            
+
                     Auth::guard('web')->logout();
                     return response()->json([
                         'success' => false,
                         'message' => 'Unauthorized access for this role.',
                     ], 500);
                 }
-    
+
             } else {
                 $redirectUrl = route('front.profile', ['id' => $user->id]);
                 return response()->json([
@@ -1685,9 +1685,9 @@ class FrontController extends Controller
             'sport' => 'required|string|max:255',
             'sport_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
-    
+
         $userPrePlan = UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $request->payment_id)->first();
-        
+
         $userPrePlan->occupation = $request->sport;
 
         if ($request->hasFile('sport_image')) {

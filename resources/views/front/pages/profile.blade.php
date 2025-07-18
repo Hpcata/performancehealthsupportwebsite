@@ -66,14 +66,14 @@
                             }
                         @endphp
                         @if($profileSetUp == 0)
-                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}&token={{ $user->questionnaire_token }}"
                             class="btn btn-danger btn-outline-danger mt-3 px-3 text-white"
                             >
                             Complete Your Profile
                             </a> 
                             <p class="mt-3 text-danger">* Finish Questionnaire to Continue</p>
                         @elseif(($profileSetUp == 1 || $profileSetUp == 0) && $user->email === 'zachtennis7@icloud.com')
-                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}&token={{ $user->questionnaire_token }}"
                             class="btn btn-danger btn-outline-danger mt-3 px-3 text-white @if($isMailSend) d-none @endif"
                             >
                             Complete Your Profile
@@ -605,11 +605,12 @@
                                             <div class="card-footer border-top-0 bg-white">
                                                 <div class="d-flex flex-wrap">
                                                 @if($user->email === 'zachtennis7@icloud.com' && ($profileSetUp == 1 || $profileSetUp == 0))
-                                                    <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}" class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $isMailSend == 1 ? 'd-none' : '' }}">
+                                                    <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}&token={{ $user->questionnaire_token }}"
+                                                        class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $isMailSend == 1 ? 'd-none' : '' }}">
                                                     Complete Your Profile
                                                 </a>
                                                 @else
-                                                <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                                                <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}&token={{ $user->questionnaire_token }}"
                                                 class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $profileSetUp == 1 ? 'd-none' : '' }}">
                                                     Complete Your Profile
                                                 </a>
@@ -1159,7 +1160,7 @@
             </div>
         </div>
     </div>
-    
+
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
