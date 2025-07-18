@@ -839,14 +839,13 @@ class FrontController extends Controller
         $startDate = now(); // Current date as the end of the range
         $endDate = null;    // To calculate the starting point of the range
 
-        // Set the timezone to ensure consistency (you can replace 'UTC' with your local timezone if needed)
         $timezone = 'UTC'; // Change this to your desired timezone if necessary
-        $startDate = $startDate->setTimezone($timezone)->startOfDay(); // Set timezone and strip time
+        $startDate = $startDate->setTimezone($timezone)->startOfDay();
 
         // Determine the date range based on the filter
         switch ($filter) {
             case '1W':
-                $endDate = now()->subWeek();  // 1 week ago from today
+                $endDate = now()->subWeek();
                 break;
             case '2W':
                 $endDate = now()->subWeeks(2);
@@ -865,57 +864,67 @@ class FrontController extends Controller
                 break;
             case 'ALL':
                 $endDate = WeightTracking::where('user_id', $userId)->orderBy('date', 'asc')->value('date');
-                $endDate = Carbon::parse($endDate)->setTimezone($timezone)->startOfDay(); // Ensure endDate has the correct timezone
+                $endDate = $endDate ? Carbon::parse($endDate)->setTimezone($timezone)->startOfDay() : now()->startOfDay();
                 break;
             default:
                 return response()->json(['error' => 'Invalid filter'], 400);
         }
 
-        // Set the timezone for the endDate to ensure proper comparison
-        $currentDate = $endDate->copy()->setTimezone($timezone)->startOfDay(); // Ensure $currentDate is in the same timezone and start of the day
+        // Generate full date list
+        $currentDate = $endDate->copy()->setTimezone($timezone)->startOfDay();
         $allDates = collect();
 
-        // Generate a complete list of dates between $endDate and $startDate
         while ($currentDate <= $startDate) {
-            $allDates->push($currentDate->format('Y-m-d')); // Add date in 'Y-m-d' format
-            $currentDate = $currentDate->addDay(); // Move to the next day
+            $allDates->push($currentDate->format('Y-m-d'));
+            $currentDate = $currentDate->addDay();
         }
 
-        // Fetch weights from the database
+        // Fetch weight data
         $weightsData = WeightTracking::where('user_id', $userId)
             ->when($endDate, function ($query) use ($startDate, $endDate) {
                 return $query->whereBetween('date', [$endDate, $startDate]);
             })
             ->orderBy('date', 'asc')
             ->get(['date', 'weight', 'weight_goal'])
-            ->keyBy('date'); // Key by date for easy lookup
+            ->keyBy('date');
+
         // Map weights to the complete list of dates
         $allWeights = $allDates->map(function ($date) use ($weightsData) {
             return [
-                'date' => \Carbon\Carbon::parse($date)->format('d/m/Y'), // Format for response
-                'weight' => $weightsData->has($date) ? $weightsData[$date]->weight : null // Use null if no weight exists for the date
+                'date' => \Carbon\Carbon::parse($date)->format('d/m/Y'),
+                'weight' => $weightsData->has($date) ? $weightsData[$date]->weight : null
             ];
         });
-        
+
+        // Group by Month-Year
         $groupedWeights = $allWeights->groupBy(function ($item) {
-            return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F Y'); // Group by "Month Year"
+            return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F Y');
         })->map(function ($items, $monthYear) {
             return [
-                'month' => $monthYear, // Now includes both month and year
+                'month' => $monthYear,
                 'weights' => $items
             ];
         })->values();
-        // Calculate start and goal weights
-        $startWeight = $weightsData->first() ? $weightsData->first()->weight : null;
-        $goalWeight = $weightsData->last() ? $weightsData->last()->weight_goal : null;
-    
-        // Calculate weight difference
+
+        // Get start & goal weights with fallback
+        if ($weightsData->isEmpty()) {
+            $latest = WeightTracking::where('user_id', $userId)
+                ->orderBy('date', 'desc')
+                ->first();
+
+            $startWeight = $latest ? $latest->weight : null;
+            $goalWeight = $latest ? $latest->weight_goal : null;
+        } else {
+            $startWeight = $weightsData->first()->weight;
+            $goalWeight = $weightsData->last()->weight_goal;
+        }
+
+        // Calculate difference
         $weightDiff = null;
         if ($startWeight !== null && $goalWeight !== null) {
             $weightDiff = abs($startWeight - $goalWeight);
         }
-    
-        // Return all the necessary data for the chart and modal
+
         return response()->json([
             'success' => true,
             'filter' => $filter,
