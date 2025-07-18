@@ -114,7 +114,7 @@
                 <h5 class="text-white">{{ $userPlan->user->first_name }}’s</h5>
                 <h1 class="text-white">Nutrition Plan <span>| {{ $userPlan->plan->name }}</span></h1>
                 @php
-                    $backgroundUrl = $sportImagePath ? asset('storage/' . $sportImagePath) : frontAssets('/images/banner-img.jpg');
+                    $backgroundUrl = $sportImagePath ? webAssets('storage/' . $sportImagePath) : frontAssets('/images/banner-img.jpg');
                 @endphp
                 <div class="header-img" style="background-image: url('{{ $backgroundUrl }}');"></div>
             </div>
@@ -175,7 +175,7 @@
                             <div class="row g-4">
                                 <div class="col-xl-3">
                                     <figure class="img-square">
-                                        <img src="{{ url('storage/'.$userMeal->meal->image ?? '') }}" alt="">
+                                        <img src="{{ webAssets('storage/'.$userMeal->meal->image ?? '') }}" alt="">
                                     </figure>
                                 </div>
                                 <div class="col-xl-9">
@@ -382,7 +382,7 @@
                             <div class="row g-4">
                                 <div class="col-xl-3">
                                     <figure class="img-square">
-                                        <img src="{{ url('storage/'.$userMeal->meal->image ?? '') }}" alt="">
+                                        <img src="{{ webAssets('storage/'.$userMeal->meal->image ?? '') }}" alt="">
                                     </figure>
                                 </div>
                                 <div class="col-xl-9">
