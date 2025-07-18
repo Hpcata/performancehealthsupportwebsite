@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\Meal;
 use App\Models\Payment;
 use App\Models\SportCategory;
-use App\Models\SportGame;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +18,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use App\Models\UserPrePlan;
 use App\Models\SportGame;
+use App\Models\UserItem;
+use App\Models\UserItemSwap;
+use App\Models\UserItemMeal;
+use App\Models\UserMeal;
 
 class PlanController extends Controller
 {
