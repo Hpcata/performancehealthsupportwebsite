@@ -440,7 +440,7 @@
                                         <div class="form-floating my-3">
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="radio" name="ans[social_information][cookinghome]" value="Me" id="cookinghome3">
-                                                <label class="form-check-label" for="lcookinghome3">
+                                                <label class="form-check-label" for="cookinghome3">
                                                     Me
                                                 </label>
                                             </div>
