@@ -1958,8 +1958,8 @@
         }
 
         // Stripe Payment
-        var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
-        // var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
+        // var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+        var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
         var elements = stripe.elements();
         var style = {
             base: {
@@ -2000,7 +2000,10 @@
             var planId = $(this).data('plan-id');  // Get the plan ID
             var price = $(this).data('plan-price');     // Get the plan price (if needed)
             var description = $(this).data('plan-description');     // Get the plan price (if needed)
-            
+            let name = $('#purchaseModal #name').val();
+            let email = $('#purchaseModal #email').val();
+            let phone = $('#purchaseModal #phone').val();
+
             // Update modal title with plan name (optional)
             $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name')+ '($' + price+')');
             $('#plan-description').text(description);
@@ -2025,9 +2028,9 @@
                         data: {
                             plan_id: planId,
                             price: price,
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                             coupon_code: discountCode,
                             _token: '{{ csrf_token() }}'
                         },
@@ -2063,9 +2066,9 @@
                         type: 'card',
                         card: card,
                         billing_details: {
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                         },
                     }).then(function(result) {
                         if (result.error) {
@@ -2081,10 +2084,10 @@
                                     payment_method_id: result.paymentMethod.id,
                                     plan_id: planId,
                                     price: price,
-                                    name: $('#name').val(),
-                                    email: $('#email').val(),
-                                    phone: $('#phone').val(),
-                                    coupon_code: dicountCode,
+                                    name: name,
+                                    email: email,
+                                    phone: phone,
+                                    coupon_code: discountCode,
                                     _token: '{{ csrf_token() }}'
                                 },
                                 success: function(response) {
