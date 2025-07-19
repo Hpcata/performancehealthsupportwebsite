@@ -238,7 +238,7 @@ class PaymentController extends Controller
 
         $sportCategories = SportCategory::select('id', 'name')->get(); // If you only need id and name
 
-        return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
+        return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
     }
 
     public function prePlanDetailsSave(Request $request)

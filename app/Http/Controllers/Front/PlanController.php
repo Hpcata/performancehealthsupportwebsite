@@ -111,7 +111,7 @@ class PlanController extends Controller
         ->where('user_plan_id', $plan_id)
         ->first();
         // $mealtime = MealTime::with('categories','categories.subcategories')->findOrFail($id);
-        return view('front.sub-category-details', compact('userMealTime','userPlan'));
+        return view('front.pages.sub-category-details', compact('userMealTime','userPlan'));
     }
 
 
@@ -535,7 +535,7 @@ class PlanController extends Controller
                 ->values(); // reindex
         });
        
-        $pdf = Pdf::loadView('front.plan-pdf', compact('userPlans', 'groupedData'))
+        $pdf = Pdf::loadView('front.pages.plan-pdf', compact('userPlans', 'groupedData'))
         ->setPaper('A4', 'portrait'); // Set page size and layout
 
         // Download the generated PDF
@@ -574,7 +574,7 @@ class PlanController extends Controller
             }
         }
         $printAllmeal = true;
-        return view('front.plan-preview', compact('userPlans', 'printAllmeal', 'sportImagePath'));
+        return view('front.pages.plan-preview', compact('userPlans', 'printAllmeal', 'sportImagePath'));
     }
 
     public function planPreview(Request $request)
@@ -612,7 +612,7 @@ class PlanController extends Controller
         }
         $printAllmeal = false;
 
-        return view('front.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal', 'sportImagePath'));
+        return view('front.pages.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal', 'sportImagePath'));
     }
 
     public function getDefaultPlanDetails($id)
