@@ -32,7 +32,7 @@ class Meal extends Model
     public function items()
     {
         return $this->belongsToMany(Item::class, 'item_meals')
-            ->withPivot('item_qty', 'item_qty_unit', 'carbs', 'protein', 'fat', 'selected_qty_unit')
+            ->withPivot('item_qty', 'item_qty_unit', 'carbs', 'protein', 'fat', 'energy', 'selected_qty_unit')
             ->withTimestamps();
     }
 

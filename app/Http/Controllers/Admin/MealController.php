@@ -6,14 +6,18 @@ use App\Models\Category;
 use App\Models\Meal;
 use App\Models\Item;
 use App\Models\UserItemMeal;
-use App\Models\SubCategory; // Import SubCategory model
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use GuzzleHttp\Client;
 use App\Models\Tag;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\MealsImport;
-use Psy\Readline\Hoa\Console;
+use Illuminate\Support\Facades\Log;
+use App\Models\UserItemSwap;
+use App\Models\UserPlan;
+use App\Models\UserCategory;
+use App\Models\UserMeal;
+use Illuminate\Support\Facades\DB;
+
 
 class MealController extends Controller
 {
@@ -59,10 +63,10 @@ class MealController extends Controller
 
     public function create()
     {
-        $subCategories = SubCategory::all(); // Fetch all subcategories
-        $foods = Item::all();
-        $tags = Tag::all();
-        $categories = \App\Models\Category::orderBy('order', 'asc')->get();
+        $subCategories = SubCategory::select('id','title')->get(); // Fetch all subcategories
+        $foods = Item::select('id','title')->get();
+        $tags = Tag::select('id','name')->get();
+        $categories = Category::orderBy('order', 'asc')->get();
 
         return view('backend.pages.meal.form', compact('subCategories','foods', 'tags', 'categories'));
     }
@@ -70,7 +74,6 @@ class MealController extends Controller
     public function store(Request $request)
     {
         try {
-       
             $data = $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
@@ -86,7 +89,6 @@ class MealController extends Controller
                 'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
                 'image.max' => 'The image may not be larger than 2MB.',
             ]);
-            // dd($request->all());
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('meals', 'public');
             } elseif ($request->filled('generated_image')) {
@@ -111,7 +113,7 @@ class MealController extends Controller
                     $decodedQtyUnits = json_decode($selectedQtyUnitRaw, true);
         
                     if (empty($decodedQtyUnits)) {
-                        $item = \App\Models\Item::find($foodId);
+                        $item = Item::find($foodId);
                         if ($item) {
                             $decodedQtyUnits = [[
                                 'qty' => $item->qty ?? '',
@@ -137,6 +139,7 @@ class MealController extends Controller
                         'protein' => $request->protein[$index] ?? '0',
                         'carbs' => $request->carbs[$index] ?? '0',
                         'fat' => $request->fat[$index] ?? '0',
+                        'energy' => $request->energy[$index] ?? '0',
                         'selected_qty_unit' => json_encode($decodedQtyUnits ?? [])
                     ];
                 }
@@ -154,7 +157,7 @@ class MealController extends Controller
             
             return redirect()->route('admin.meals.index')->with('success', 'Meal created successfully.');
         } catch(\Exception $e) {
-            dd($e->getMessage());
+            Log::error('Error creating meal: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while processing your request: ' . $e->getMessage());
         }
     }
@@ -167,7 +170,7 @@ class MealController extends Controller
         $subCategories = SubCategory::all(); // Fetch all subcategories
         $foods = Item::all();
         $tags = Tag::all();
-        $categories = \App\Models\Category::orderBy('order', 'asc')->get();
+        $categories = Category::orderBy('order', 'asc')->get();
 
         // $foods = Item::where('is_swiped',0)->get();
         return view('backend.pages.meal.form', compact('meal', 'subCategories','foods', 'tags', 'categories'));
@@ -175,7 +178,6 @@ class MealController extends Controller
 
     public function update(Request $request, Meal $meal)
     {
-        // dd($request->all());
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -195,7 +197,6 @@ class MealController extends Controller
             'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
             'image.max' => 'The image may not be larger than 2MB.',
         ]);
-        // dd($request->all());
         if ($request->hasFile('image')) {
             if ($meal->image) {
                 Storage::disk('public')->delete($meal->image);
@@ -212,10 +213,6 @@ class MealController extends Controller
             Storage::disk('public')->put($imageName, $imageContents);
             $data['image'] = $imageName;
         }
-        // $userIds = UserItemMeal::getUniqueUserIds();
-        // foreach ($userIds as $userId) {
-        //     dd($userId);
-        // }
         
         $meal->update($data);
         $meal->tags()->sync($request->input('tag_ids')); // attaches tags via pivot
@@ -233,7 +230,7 @@ class MealController extends Controller
                 $selectedQtyUnitRaw = $selectedQtyUnitsArray[$index];
                 $decodedQtyUnits = json_decode($selectedQtyUnitRaw, true);
                 if (empty($decodedQtyUnits)) {
-                    $item = \App\Models\Item::find($foodId); // Adjust namespace if needed
+                    $item = Item::find($foodId); // Adjust namespace if needed
             
                     if ($item) {
                         $decodedQtyUnits = [[
@@ -246,7 +243,6 @@ class MealController extends Controller
                         $selectedQtyUnitsArray[$index] = json_encode($decodedQtyUnits);
                     }
                 }
-                // dd($decodedQtyUnits );
                 $firstQty = '';
                 $firstUnit = '';
         
@@ -262,7 +258,7 @@ class MealController extends Controller
                     'protein' => $request->protein[$index] ?? '0',
                     'carbs' => $request->carbs[$index] ?? '0',
                     'fat' => $request->fat[$index] ?? '0',
-                    // 'energy' => $request->energy[$index] ?? '0',
+                    'energy' => $request->energy[$index] ?? '0',
                     'selected_qty_unit' => json_encode($decodedQtyUnits ?? []) // ✅ Fixed here
                 ];
             }
@@ -276,7 +272,8 @@ class MealController extends Controller
             if ($userIds->isNotEmpty()) {
                 foreach ($userIds as $userId) {
                     // Check if the user has an active plan
-                    $hasActivePlan = \DB::table('user_plans')
+                    $hasActivePlan = DB::table('user_plans')
+                        ->select('id')
                         ->where('user_id', $userId)
                         ->where('status', 'active') // Assuming 'status' indicates if the plan is active
                         ->exists();
@@ -286,7 +283,7 @@ class MealController extends Controller
                         foreach ($request->food_ids as $index => $foodId) {
                             $selectedQtyUnitRaw = $selectedQtyUnitsArray[$index];
                             $decodedQtyUnits = json_decode($selectedQtyUnitRaw, true);
-                            $item = \App\Models\Item::find($foodId); // Adjust namespace if needed
+                            $item = Item::find($foodId); // Adjust namespace if needed
                             if (empty($decodedQtyUnits)) {
                         
                                 if ($item) {
@@ -313,6 +310,7 @@ class MealController extends Controller
                             $exists = UserItemMeal::where('user_id', $userId)
                                 ->where('meal_id', $meal->id)
                                 ->where('item_id', $foodId)
+                                ->select('id')
                                 ->first();
                             $item = Item::find($foodId);
                             if (!$exists) {
@@ -330,7 +328,6 @@ class MealController extends Controller
                                     'selected_qty_unit' => $decodedQtyUnits
                                 ]);
                             }else {
-                                // dump($firstQty);
                                 $exists->qty = $firstQty;
                                 $exists->unit = $firstUnit;
                                 $exists->carbs = $request->carbs[$index] ?? '0';
@@ -344,14 +341,14 @@ class MealController extends Controller
                             // ✅ Create UserItemSwap entries if item has swapItems
                             if ($item && $item->swapItems()->exists()) {
                                 foreach ($item->swapItems as $swapItem) {
-                                    $alreadyExists = \App\Models\UserItemSwap::where('user_id', $userId)
+                                    $alreadyExists = UserItemSwap::where('user_id', $userId)
                                         ->where('meal_id', $meal->id)
                                         ->where('item_id', $item->id)
                                         ->where('swap_item_id', $swapItem->id)
                                         ->first();
 
                                     if (!$alreadyExists) {
-                                        \App\Models\UserItemSwap::create([
+                                        UserItemSwap::create([
                                             'user_id' => $userId,
                                             'meal_id' => $meal->id,
                                             'item_id' => $item->id,
@@ -381,7 +378,6 @@ class MealController extends Controller
                     }
                 }
             }
-            // $meal->items()->sync($request->food_ids);
         }
 
         if ($request->has('categories')) {
@@ -421,32 +417,29 @@ class MealController extends Controller
             $meal = Meal::find($validated['meal_id']);
 
             // Find User Plan
-            $userPlan = \App\Models\UserPlan::where('user_id', $validated['user_id'])
+            $userPlan = UserPlan::where('user_id', $validated['user_id'])
                 ->where('plan_id', $validated['plan_id'])
                 ->first();
 
             if (!$userPlan) {
                 return response()->json(['success' => false, 'message' => 'User plan not found.'], 404);
             }
-// dd($userPlan);
             // Find User Meal Time
-            $userMealTime = \App\Models\UserCategory::where('user_plan_id', $userPlan->id)
+            $userMealTime = UserCategory::where('user_plan_id', $userPlan->id)
                 ->where('id', $validated['meal_time_id'])
                 ->first();
-            // dd($userMealTime);
             if ($userMealTime) {
-                $userMeal = \App\Models\UserMeal::where('user_category_id', $userMealTime->id)
+                $userMeal = UserMeal::where('user_category_id', $userMealTime->id)
                                 ->where('id', $validated['meal_id'])
                                 ->where('user_plan_id', $userPlan->id)
                                 ->first();
-                // dd($userMeal);
-                $existingMeal = \App\Models\Meal::where('title', trim($validated['meal_name']))
+                $existingMeal = Meal::where('title', trim($validated['meal_name']))
                                 ->where('user_id', $validated['user_id'])
                                 ->first();
 
                 if (!$existingMeal) {
                     // Create a new meal
-                    $newMeal = new \App\Models\Meal();
+                    $newMeal = new Meal();
                     $newMeal->title = $validated['meal_name'];
                     $newMeal->user_id = $validated['user_id'];
                     $newMeal->save();
@@ -475,16 +468,15 @@ class MealController extends Controller
                     }
         
                     // Clone meal items
-                    $existingMealItems = \App\Models\UserItemMeal::where('user_id', $validated['user_id'])
+                    $existingMealItems = UserItemMeal::where('user_id', $validated['user_id'])
                         ->where('meal_id', $validated['meal_id'])
                         ->get();
 
-                    $existingMealSwapItems = \App\Models\UserItemSwap::where('user_id', $validated['user_id'])
+                    $existingMealSwapItems = UserItemSwap::where('user_id', $validated['user_id'])
                         ->where('meal_id', $validated['meal_id'])
                         ->get();
-                    // dd($existingMealSwapItems);
                     foreach ($existingMealItems as $existingMealItem) {
-                        \App\Models\UserItemMeal::create([
+                        UserItemMeal::create([
                             'user_id' => $validated['user_id'],
                             'meal_id' => $newMeal->id,
                             'item_id' => $existingMealItem->item_id,
@@ -498,7 +490,7 @@ class MealController extends Controller
                     }
 
                     foreach ($existingMealSwapItems as $existingMealSwapItem) {
-                        \App\Models\UserItemSwap::create([
+                        UserItemSwap::create([
                             'user_id' => $validated['user_id'],
                             'meal_id' => $newMeal->id,
                             'item_id' => $existingMealSwapItem->item_id,
@@ -535,166 +527,13 @@ class MealController extends Controller
             }
 
         } catch (\Exception $e) {
-            // dd($e->getMessage());
             // Log the error message for debugging
-            \Log::error('Error updating meal name: ' . $e->getMessage());
+            Log::error('Error updating meal name: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
-        // return response()->json(['success' => false, 'message' => 'Meal not updated.']);
     }
 
-    // public function updateMealName(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'meal_id' => 'required|integer',
-    //         'plan_id' => 'required|integer',
-    //         'user_id' => 'required|integer',
-    //         'meal_time_id' => 'required|integer',
-    //         // 'category_id' => 'required|integer',
-    //         'meal_name' => 'required|string|max:255',
-    //     ]);
-        
-    //     $userPlan = \App\Models\UserPlan::where('user_id', $validated['user_id'])->where('plan_id', $validated['plan_id'])->first();
-    //     // dd($userPlan);
-    //     $userMealTime = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
-    //                         ->where('meal_time_id', $validated['meal_time_id'])->first();
-    //     if($userMealTime){
-    //         $meal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTime->id)
-    //                         ->where('meal_id', $validated['meal_id'])
-    //                         ->where('user_plan_id', $userPlan->id)
-    //                         ->where('user_meal_time_id', $userMealTime->id)
-    //                         // ->where('user_category_id', $validated['category_id'])
-    //                         ->first();
-    //     }else{
-    //         $meal = \App\Models\Meal::where('id', $validated['meal_id'])->first();
-    //     }
-    //     // dd($meal->meal->title, $validated['meal_name']);
-    //     $existingMeal = Meal::where('title', $validated['meal_name'])->where('user_id', $validated['user_id'])->first();
-    //     if(!$existingMeal){
-            
-    //         $newMeal = new Meal();
-    //         $newMeal->title = $validated['meal_name'];
-    //         $newMeal->user_id = $validated['user_id'];
-    //         $newMeal->save();
-        
-    //         if ($meal) {
-    //             $existingCategories = $meal->categories->pluck('id')->toArray(); 
-    //             $newMeal->categories()->attach($existingCategories); // Attaching categories to new meal
-    //         }
-        
-    //         $existingMealItems = \App\Models\UserItemMeal::where('user_id', $validated['user_id'])->where('meal_id', $validated['meal_id'])->get();
-
-    //         foreach ($existingMealItems as $existingMealItem) {
-    //             $newMealItem = new UserItemMeal();
-    //             $newMealItem->user_id = $validated['user_id'];
-    //             $newMealItem->meal_id = $newMeal->id;
-    //             $newMealItem->item_id = $existingMealItem->item_id;
-    //             $newMealItem->qty = $existingMealItem->qty;
-    //             $newMealItem->unit = $existingMealItem->unit;
-    //             $newMealItem->carbs = $existingMealItem->carbs;
-    //             $newMealItem->fat = $existingMealItem->fat;
-    //             $newMealItem->protein = $existingMealItem->protein;
-    //             $newMealItem->save();
-
-    //             // $existingItemSwaps = \App\Models\UserItemSwap::where('user_id', $validated['user_id'])->where('item_id', $existingMealItem->item_id)->get();
-    //             // foreach ($existingItemSwaps as $existingItemSwap) {
-    //             //     $newItemSwap = new \App\Models\UserItemSwap();
-    //             //     $newItemSwap->user_id = $validated['user_id'];
-    //             //     $newItemSwap->item_id = $existingItemSwap->item_id;
-    //             //     $newItemSwap->swap_item_id = $existingItemSwap->swap_item_id;
-    //             //     $newItemSwap->qty = $existingItemSwap->qty;
-    //             //     $newItemSwap->save();
-    //             // }
-
-    //         }
-        
-    //         if ($meal) {
-    //             $meal->update([
-    //                 'meal_id' => $newMeal->id,
-    //                 'meal_name' => $validated['meal_name']
-    //             ]);
-    //             return response()->json(['success' => true, 'message' => 'Meal name updated successfully.']);
-    //         }
-    //     } else {
-
-    //         if ($meal) {
-    //             $meal->update([
-    //                 'meal_id' => $existingMeal->id,
-    //                 'meal_name' => $validated['meal_name']
-    //             ]);
-    //             return response()->json(['success' => true, 'message' => 'Meal name updated successfully.']);
-    //         }
-    //     }
-
-    //     return response()->json(['success' => false, 'message' => 'Meal not found.']);
-    // }
-
-    // public function updateMealName(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'meal_id' => 'required|integer',
-    //         'plan_id' => 'required|integer',
-    //         'user_id' => 'required|integer',
-    //         'meal_time_id' => 'required|integer',
-    //         // 'category_id' => 'required|integer',
-    //         'meal_name' => 'required|string|max:255',
-    //     ]);
-        
-    //     $userPlan = \App\Models\UserPlan::where('user_id', $validated['user_id'])->where('plan_id', $validated['plan_id'])->first();
-    //     // dd($userPlan);
-    //     $userMealTime = \App\Models\UserMealTime::where('user_plan_id', $userPlan->id)
-    //                         ->where('meal_time_id', $validated['meal_time_id'])->first();
-        
-    //     $meal = \App\Models\UserMeal::where('user_meal_time_id', $userMealTime->id)
-    //                     ->where('meal_id', $validated['meal_id'])
-    //                     ->where('user_plan_id', $userPlan->id)
-    //                     ->where('user_meal_time_id', $userMealTime->id)
-    //                     // ->where('user_category_id', $validated['category_id'])
-    //                     ->first();
-    
-    //     if ($meal) {
-    //         $meal->update(['meal_name' => $validated['meal_name']]);
-    //         return response()->json(['success' => true, 'message' => 'Meal name updated successfully.']);
-    //     }
-    
-    //     return response()->json(['success' => false, 'message' => 'Meal not found.']);
-    // }
-
-    // public function generateImage(Request $request)
-    // {
-    //     $prompt = "A beautifully plated dish of {$request->title} {$request->description}, professional food photography, vibrant colors, soft lighting, high resolution, delicious presentation, top-down view, 4K quality and close lookout image.";
-        
-    //     try {
-    //         $client = new Client();
-    //         $response = $client->post('https://api.openai.com/v1/images/generations', [
-    //             'headers' => [
-    //                 'Authorization' => 'Bearer '. config('services.openai.key'),
-    //                 'Content-Type'  => 'application/json',
-    //             ],
-    //             'json' => [
-    //             'prompt' => $prompt,
-    //             'n' => 1,
-    //             'size' => '512x512',
-    //             ],
-    //         ]);
-
-    //         $data = json_decode($response->getBody(), true);
-
-    //         $imageUrl = $data['data'][0]['url'] ?? null;
-    //         // dd($imageUrl);
-    //         if ($imageUrl) {
-    //             return response()->json(['image_url' => $this->compressAndSaveImage($imageUrl)]);
-    //         }
-
-    //         return response()->json(['error' => 'Image generation failed'], 500);
-    //     } catch (\Exception $e) {
-    //         // dd($e->getMessage());
-    //         \Log::error('OpenAI Image Generation Error: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Image generation error'], 500);
-    //     }
-    // }
-
-     public function generateImage(Request $request)
+    public function generateImage(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -795,8 +634,7 @@ class MealController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            dd($e->getMessage());
-            \Log::error('OpenAI API Error: ' . $e->getMessage());
+            Log::error('OpenAI API Error: ' . $e->getMessage());
             return response()->json([
                 'error' => 'Failed to connect to OpenAI',
                 'details' => $e->getMessage(),
@@ -830,7 +668,7 @@ class MealController extends Controller
             $basePrompt .= ". Make it look appetizing and professional.";
         }
 
-        \Log::debug('OpenAI API Prompt: ' . $basePrompt);
+        Log::debug('OpenAI API Prompt: ' . $basePrompt);
 
         try {
             $client = new \GuzzleHttp\Client();
@@ -861,7 +699,7 @@ class MealController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('OpenAI API Error: ' . $e->getMessage());
+            Log::error('OpenAI API Error: ' . $e->getMessage());
             return response()->json([
                 'error' => 'Failed to connect to OpenAI',
                 'details' => $e->getMessage(),
@@ -883,12 +721,10 @@ class MealController extends Controller
             $fileName = uniqid('meal_') . '.jpg';
             $storagePath = 'storage/meals/' . $fileName;
             file_put_contents(public_path($storagePath), $compressedImage);
-            // dd($storagePath);
 
             return asset('private/public/'.$storagePath);
         } catch (\Exception $e) {
-            // dd($e->getMessage());
-            \Log::error('Image Compression Error: ' . $e->getMessage());
+            Log::error('Image Compression Error: ' . $e->getMessage());
             return null;
         }
     }
@@ -896,7 +732,6 @@ class MealController extends Controller
     public function viewImport()
     {
         return view('backend.pages.meal.import-form');
-
     }
 
     public function import(Request $request)
@@ -913,7 +748,6 @@ class MealController extends Controller
         Excel::load($file, function($reader) {
             // Iterate through each row in the file
             $reader->each(function($row) {
-                // dd($row);
                 // Import data into the 'meals' table (you can modify this to fit your data structure)
                 Meal::create([
                     'title' => $row['breakfast'],           // Assuming 'breakfast' column in your sheet
