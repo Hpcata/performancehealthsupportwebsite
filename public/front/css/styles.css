@@ -302,7 +302,8 @@ body {
 } */
 .challenges .challenge-cards,
 .surfing-videos .video-grid,
-.training-plan .meal-cards .meals .meal-cards,
+.training-plan .meal-cards 
+.meals .meal-cards,
 .challenges .challenge-cards,
 .challenge-cards {
     display: flex !important;
@@ -322,8 +323,7 @@ body {
     cursor: grabbing;
     user-select: none;
 }
-.challenges .challenge-card,
-.challenge-card {
+.challenges .challenge-card, .challenge-card {
     min-width: 266px;
     max-width: 266px;
     flex: 0 0 266px;
@@ -1271,7 +1271,8 @@ body {
     height: 39px;
 }
 .btn-share:hover {
-    color: #fff;
+color: #fff;
+
 }
 .btn-outline {
     font-family: "Noto Sans", sans-serif;
@@ -1386,7 +1387,7 @@ body {
         align-items: center;
         justify-content: space-between;
         height: 72px;
-        background: #363636;
+        background: #3B3B3B;
         z-index: 2001;
         padding: 0 20px;
         box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
@@ -1916,62 +1917,63 @@ body {
     }
 }
 .share-dropdown {
-    min-width: 270px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.18);
-    padding: 0;
-    z-index: 2000;
-    font-family: inherit;
+
+  min-width: 270px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.18);
+  padding: 0;
+  z-index: 2000;
+  font-family: inherit;
 }
 
 .share-dropdown-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 18px 10px 18px;
-    font-size: 1.1rem;
-    font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 10px 18px;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .share-dropdown-close {
-    background: none;
-    border: none;
-    font-size: 1.4rem;
-    color: #222;
-    cursor: pointer;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    text-align: center;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #222;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
 }
 
 .share-dropdown-divider {
-    border: none;
-    border-top: 1px solid #e0e0e0;
-    margin: 0 0 0 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0 0 0 0;
 }
 
 .share-dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
-    font-size: 1.05rem;
-    color: #222;
-    cursor: pointer;
-    transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.15s;
 }
 
 .share-dropdown-item:hover {
-    background: #f5f5f5;
+  background: #f5f5f5;
 }
 
 .share-dropdown-icon {
-    width: 22px;
-    height: 22px;
-    flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 
 .dropdown-container {
@@ -2161,33 +2163,28 @@ body {
     background: #eee;
 }
 /* Remove default blue outline on all buttons and checkboxes when focused */
-button:focus,
-.btn:focus,
-.form-check-input:focus {
-    outline: none !important;
-    box-shadow: none !important;
+button:focus, .btn:focus, .form-check-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Make Bootstrap modal body scrollable if content overflows */
 .modal-lg .modal-content {
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 .modal-body {
-    overflow-y: auto;
-    max-height: 60vh;
+  overflow-y: auto;
+  max-height: 60vh;
 }
 /* Remove custom dropdown-menu rules that conflict with Bootstrap */
 .dropdown-menu {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-    display: none;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  display: none;
 }
 .dropdown-menu.show {
-    display: block;
-}
-dropdown-menu.show {
-    display: block;
+  display: block;
 }
