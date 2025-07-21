@@ -91,11 +91,11 @@
                                 </div>
                              
                                    
-                                @if ($meals->count() > 1)
+                                @if ($meals->count() > 3)
     <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-        <button class="scroll-arrow-left" aria-label="Scroll left"><svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-  <path d="M6 11L1 6L6 1" stroke="#626262" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></button>
+        <div class="scroll-arrow-left" aria-label="Scroll left"><svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
+  <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div>
         <div class="challenge-cards horizontal-scroll" id="meal-scroll-{{ $subCategory->id }}">
             @foreach ($meals as $meal)
                 <div class="challenge-card clickable">
@@ -111,9 +111,9 @@
                      
 
         </div>
-        <button class="scroll-arrow-right" aria-label="Scroll right"><svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-  <path d="M1 1L6 6L1 11" stroke="#626262" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></button>
+        <div class="scroll-arrow-right" aria-label="Scroll right"><svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
+  <path d="M1 1L6 6L1 11" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div>
     </div>
 @else
     <div class="challenge-cards horizontal-scroll" id="meal-scroll-{{ $subCategory->id }}">
