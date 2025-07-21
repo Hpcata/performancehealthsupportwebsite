@@ -99,7 +99,7 @@ class FrontController extends Controller
         $blogs = \App\Models\Blog::where('is_published', 1)->get();
         return view('front.blog', compact('blogs'));
         $blogs = Blog::where('is_published', 1)->get();
-        return view('front.pages.blog', compact('blogs'));
+        return view('front.blog', compact('blogs'));
     }
 
     public function blogDetails($id)
@@ -1442,17 +1442,7 @@ class FrontController extends Controller
 
     public function setUserSession($id)
     {
-        // Optional: restrict only for admin if needed
-        // if (!Auth::guard('admin')->check()) {
-        //     return response()->json(['error' => 'Unauthorized'], 403);
-        // }
-
-<<<<<<< HEAD
-        $user = \App\Models\User::findOrFail($id);
-=======
         $user = User::findOrFail($id);
-        // dd($user);
->>>>>>> ee155786303ee95b9bf84183e76608c3441f6aca
         // Set user session
         Auth::guard('web')->login($user);
 
@@ -1505,30 +1495,6 @@ class FrontController extends Controller
         ]);
     }
 
-    public function getProfile(Request $request, $userId)
-    {
-        try {
-            $paymentId = Payment::where('user_id', $userId)->value('id');
-
-            if (!$paymentId) {
-                return redirect()->back()->with('error', 'Plan not purchased.');
-            }
-
-            $userPlan = UserPlan::with([
-                'plan',
-                'userCategories.userSubCategories.userMeals.userItems'
-            ])
-            ->where('user_id', $userId)
-            ->first();
-
-            return view('front.pages.profile-landing', compact('userPlan'));
-
-        } catch (\Exception $e) {
-            Log::error('Error fetching user profile: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
-        }
-    }
-
     public function getMeals($planId, $categoryId)
     {
         $userCategory = UserCategory::where('user_plan_id', $planId)
@@ -1552,7 +1518,7 @@ class FrontController extends Controller
             if (count($meals) >= 3) break;
         }
 
-        return view('front.pages.partials.meal-cards', compact('meals'))->render();
+        return view('front.partials.meal-cards', compact('meals'))->render();
     }
 
 }

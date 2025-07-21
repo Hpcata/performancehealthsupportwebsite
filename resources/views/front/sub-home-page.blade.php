@@ -3859,10 +3859,13 @@
                                             $('#submit').prop('disabled', false);
                                             var user_id = response.data.user_id;
                                             var payment_id = response.data.payment_id;
+                                            var token = response.data.token;
 
                                             if(response.data.submit_questionnaire) {
                                                 if (response.redirect_url) {
-                                                    var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id;
+                                                    localStorage.setItem(`questionnaire_token_${user_id}`, token);
+
+                                                    var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id +'&token='+token;
                                                     setTimeout(function () {
                                                         window.location.href = redirectUrlWithUserId;
                                                     }, 3000);
@@ -3949,10 +3952,12 @@
                                                         
                                                         var user_id = response.data.user_id;
                                                         var payment_id = response.data.payment_id;
+                                                        var token = response.data.token;
 
                                                         if (response.redirect_url) {
+                                                            localStorage.setItem(`questionnaire_token_${user_id}`, token);
 
-                                                            var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id;
+                                                            var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id +'&token='+token;;
                                                             setTimeout(function() {
                                                                 window.location.href = redirectUrlWithUserId;
                                                             }, 3000);

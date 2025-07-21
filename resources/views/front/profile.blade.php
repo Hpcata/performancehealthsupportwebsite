@@ -52,14 +52,14 @@
                             }
                         @endphp
                         @if($profileSetUp == 0)
-                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}&token={{ $user->questionnaire_token }}"
                             class="btn btn-danger btn-outline-danger mt-3 px-3 text-white"
                             >
                             Complete Your Profile
                             </a> 
                             <p class="mt-3 text-danger">* Finish Questionnaire to Continue</p>
                         @elseif(($profileSetUp == 1 || $profileSetUp == 0) && $user->email === 'zachtennis7@icloud.com')
-                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                            <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}&token={{ $user->questionnaire_token }}"
                             class="btn btn-danger btn-outline-danger mt-3 px-3 text-white @if($isMailSend) d-none @endif"
                             >
                             Complete Your Profile
@@ -180,13 +180,6 @@
 
                                         <ul class="mb-3">
                                             <li>Sport: {{ $profileDetails['Sport'] }}
-                                                <button type="button" 
-                                                    class="btn btn-light edit-icon" 
-                                                    id="edit-sport-button"
-                                                    data-sport="{{ $profileDetails['Sport'] ?? '' }}"
-                                                    data-name="{{ $profileDetails['Name'] ?? '' }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
                                             </li>
                                         </ul>
 
@@ -524,11 +517,12 @@
                                             <div class="card-footer border-top-0 bg-white">
                                                 <div class="d-flex flex-wrap">
                                                 @if($user->email === 'zachtennis7@icloud.com' && ($profileSetUp == 1 || $profileSetUp == 0))
-                                                    <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}" class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $isMailSend == 1 ? 'd-none' : '' }}">
+                                                    <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}&token={{ $user->questionnaire_token }}"
+                                                        class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $isMailSend == 1 ? 'd-none' : '' }}">
                                                     Complete Your Profile
                                                 </a>
                                                 @else
-                                                <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}"
+                                                <a href="{{ route('front.pre-plan-details') }}?id={{ $payment->id }}&user_id={{ $user->id }}&token={{ $user->questionnaire_token }}"
                                                 class="btn btn-danger btn-outline-danger text-white m-2 px-3 {{ $profileSetUp == 1 ? 'd-none' : '' }}">
                                                     Complete Your Profile
                                                 </a>
@@ -861,61 +855,6 @@
         </div>
     </div>
 
-    {{-- <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- User info form -->
-                    <form id="payment-form">
-                        <div id="registration-details">
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="name" value="{{ $user->name }}">
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="email" value="{{ $user->email }}" >
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="phone" value="">
-                            </div>
-                        </div>
-                        <!-- Promo Code Section -->
-                        <div id="coupon-details">
-                            <div class="mb-3">
-                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
-                                    <input type="hidden" class="form-control" id="discount">
-                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
-                                </div>
-                                <small id="promo-message" class=""></small>
-                            </div>
-                        </div>
-                        <div id="payment-details">
-                            
-                            <!-- Stripe Payment Card Section -->
-                            <h6 class="mb-3">Payment Details</h6>
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
-                            Buy Now
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-3">
@@ -1174,48 +1113,6 @@
         </div>
     </div>
 
-    <!-- Edit Sport Modal -->
-    <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="{{ route('profile.update.sport') }}" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Sport Info</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="sport_name" class="form-label">Sport Name</label>
-                            <input type="text" name="sport" class="form-control" id="sport_name" value="{{ $userPrePlan->occupation ?? '' }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="sport_image" class="form-label">Sport Image</label>
-                            <input type="file" name="sport_image" class="form-control" id="sport_image" style="height: auto; border-radius: 5px;">
-                        </div>
-                        <!-- Existing Sport Image Preview -->
-                        @if(!empty($userPrePlan->sport_image))
-                            <div class="mb-3">
-                                <label class="form-label">Current Image:</label><br>
-                                <img src="{{ asset($userPrePlan->sport_image) }}" alt="Sport Image" width="120" height="120" class="rounded">
-                            </div>
-                        @endif
-
-                        <input type="hidden" name="user_id" id="sport_user_id" value="{{ auth()->id() }}">
-                        <input type="hidden" name="payment_id" id="payment_id" value="{{ $payment->id }}">
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" id="saveSportBtn" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
@@ -1356,44 +1253,6 @@
             $('#editHeightModal').find('#heightAnswer').val(answer);
             $('#editHeightModal').find('#formName').val(formName);
             $('#editHeightModal').modal('show'); 
-        });
-    });
-
-    $('#saveSportBtn').on('click', function () {
-        let formData = new FormData();
-        formData.append('sport', $('#sport_name').val());
-        formData.append('user_id', $('#sport_user_id').val());
-        formData.append('payment_id', $('#payment_id').val());
-        // formData.append('user_id', $('#sport_user_id').val());
-
-        let sportImage = $('#sport_image')[0].files[0];
-        if (sportImage) {
-            formData.append('sport_image', sportImage);
-        }
-
-        $.ajax({
-            url: '{{ route("profile.update.sport") }}',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert(response.message);
-                    $('#editSportModal').modal('hide');
-                    // Optionally, update the DOM with new values
-                    location.reload(); // or update DOM instead of full reload
-                } else {
-                    alert('Something went wrong!');
-                }
-            },
-            error: function (xhr) {
-                console.error(xhr.responseJSON);
-                alert('Validation failed or server error!');
-            }
         });
     });
 
