@@ -363,3 +363,7 @@ Route::prefix('quiz')->group(function () {
     Route::post('/complete', [FrontQuizController::class, 'completeQuiz'])->name('front.quiz.complete');
     Route::post('/abandon', [FrontQuizController::class, 'abandonQuiz'])->name('front.quiz.abandon');
 });
+
+Route::get('/invalid-token', function () {
+    return view('front.errors.Questionnaire_error')->with('message', 'Invalid or expired token.');
+})->name('invalid.token');
