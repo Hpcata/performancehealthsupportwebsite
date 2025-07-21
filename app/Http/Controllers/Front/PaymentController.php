@@ -232,14 +232,13 @@ class PaymentController extends Controller
 
         // Fetch only needed columns for stepData
         $stepData = DB::table('pre_plan_details')
-            ->select('id', 'step', 'field_name', 'field_value') // Specify only needed columns
             ->where('user_pre_plan_id', $userPrePlanId)
             ->get()
             ->groupBy('step');
 
         $sportCategories = SportCategory::select('id', 'name')->get(); // If you only need id and name
 
-        return view('front.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
+        return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories'));
     }
 
     public function prePlanDetailsSave(Request $request)
@@ -252,13 +251,11 @@ class PaymentController extends Controller
         $stepFill = $request->input('step_fill') == true ? 1 : 0;
 
         DB::beginTransaction();
-        // dd($request->all());
         try {
             $prePlanId = DB::table('user_pre_plans')
                 ->where('user_id', $user_id)
                 ->where('payment_id', $payment_id)
                 ->value('id');
-            // dd($prePlanId );
             if (!$prePlanId) {
                 $prePlanId = DB::table('user_pre_plans')->insertGetId([
                     'payment_id' => $payment_id,
@@ -341,15 +338,7 @@ class PaymentController extends Controller
             $email = $payment->user->email;
             $planName = \App\Models\Plan::where('id', $payment->plan_id)->first()->name;
             $user = $payment->user;
-            // try {
-            //     Mail::to($email)->send(new PlanPurchaseMail($user, $planName));
-    
-            //     $adminEmail = 'kerry@performancehealthsupport.com'; // Set admin email address
-            //     Mail::to($adminEmail)->send(new PrePlanDetailsSubmitMail($user, $planName));  // passing 'true' to indicate it's an admin
-            // } catch (\Exception $e) {
-            //     Log::error('Error saving step: ' . $e->getMessage());
-            // }
-
+           
             return response()->json([
                 'success' => true,
                 'message' => 'Step data saved successfully!',
@@ -357,7 +346,6 @@ class PaymentController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // dd($e->getMessage());
             DB::rollBack();
             Log::error('Error saving step: ' . $e->getMessage());
             // return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);

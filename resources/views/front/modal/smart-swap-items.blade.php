@@ -1,28 +1,5 @@
 <!-- Modal -->
- <!-- Meal ItemsModal -->
-    <div class="modal" id="mealItemModel" tabindex="-1" aria-labelledby="mealItemsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="mealItemsModalLabel">Title</h5>
-                    <button type="button" class="btn-close meal-item-model-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="mealItemsLoadingSpinner" class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-
-                    <!-- Subcategories Content -->
-                    <div id="mealItemsContainer" class="row g-4" style="display: none;"></div>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
-
-{{-- <div class="modal" id="smartSwapModal" tabindex="-1" aria-labelledby="smartSwapModalLabel" aria-hidden="true">
+<div class="modal" id="smartSwapModal" tabindex="-1" aria-labelledby="smartSwapModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -102,4 +79,4 @@
             </div>
         </div>
     </div>
-</div> --}}
+</div>

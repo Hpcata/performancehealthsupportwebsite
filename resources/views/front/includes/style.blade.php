@@ -1,5 +1,7 @@
 @if(Route::is('front.profile') || Route::is('front.plans.details'))
 <link rel="stylesheet" href="{{ frontAssets('css/styles.css') }}" />
+<link rel="stylesheet" href="{{ frontAssets('css/bootstrap/bootstrap.min.css') }}" />
+
 <!-- Preconnect for Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -348,6 +348,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/user/{user}/plan/{plan}/meals', [FrontPlanController::class, 'ajaxGetMeals'])->name('user.plan.meals');
 	Route::get('/get-meals/{plan}/{category}', [FrontController::class, 'getMeals'])->name('front.get-profile-meals');
+	Route::post('/meal-details', [FrontPlanController::class, 'getMealDetails'])->name('front.meal.details');
+	Route::post('/meal-smart-swaps', [FrontPlanController::class, 'getMealSmartSwaps'])->name('front.meal.smart.swaps');
 
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');

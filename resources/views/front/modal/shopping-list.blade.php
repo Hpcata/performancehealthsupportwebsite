@@ -1,18 +1,39 @@
-<!-- Shopping List Modal -->
-<div id="shopping-list-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height:     100vh; background: rgba(0, 0, 0, 0.5);">
-    <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 16px; width: 90vw; max-width: 800px; max-height: 90vh; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18); padding: 0; display: flex; flex-direction: column;">
-        <div style="padding: 24px; border-bottom: 1px solid #d8d8d8; display: flex; align-items: center; justify-content: space-between;">
-            <span style="font-size: 24px; font-weight: 700; color: #080808;">Shopping list</span>
-            <button id="shopping-list-close" aria-label="Close" style="background: none; border: none; font-size: 1.6rem; color: #222; cursor: pointer;">&times;</button>
-        </div>
-        <div style="flex: 1 1 auto; overflow-y: auto; padding: 18px 24px 24px 24px; max-height: 550px;">
-            <div id="shopping-list-content" style="font-size: 1rem; color: #222;">
-                
+<div class="modal" id="shoppingListModal" tabindex="-1" aria-labelledby="shoppingListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shoppingListModalLabel">Shopping list</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding-bottom: 0;">
+                <div class="mb-3">
+                    <input class="form-check-input" type="checkbox" id="selectAllShoppingList">
+                    <label class="ms-2 form-check-label" for="selectAllShoppingList">Select All</label>
+                </div>
+                <div class="mb-2" style="font-weight: bold; font-size: 1.2rem;">Savoury Breakfast</div>
+                <div class="mb-3 card">
+                    <div class="p-3 card-body">
+                        <div class="mb-2" style="font-weight: 600; font-size: 1.1rem;">
+                            <input class="me-2 form-check-input" type="checkbox" id="eggAvoEnergyToast">
+                            <label class="form-check-label" for="eggAvoEnergyToast">Egg & Avo Energy Toast</label>
+                        </div>
+                        <ul class="mb-0 list-unstyled">
+                            <li class="d-flex align-items-center mb-3">
+                                <input class="me-3 form-check-input" type="checkbox" id="item-spinach">
+                                <img src="https://via.placeholder.com/40x40?text=Img" alt="Baby Leaf Spinach" class="me-3" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">
+                                <div>
+                                    <span style="font-weight: 600; color: #4b5c6b;">Baby Leaf Spinach</span><br>
+                                    <span style="font-size: 0.97rem;"><b>QTY:</b> 13g or ½ handful</span>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="p-0 modal-footer" style="border-top: none;">
+                <button class="btn btn-primary mt-3" id="print-shopping-list" style="color: #fff; font-size: 1.1rem; border-radius: 8px 8px 8px 8px; height: 48px;">Print Shopping List Now</button>
             </div>
         </div>
-        <div style="padding: 0 24px 18px 0; display: flex; justify-content: flex-end; align-items: center;">
-            <button id="print-shopping-list" style="background: #2a5ca4; color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-size: 1rem; font-weight: 500; cursor: pointer; box-shadow: 0 2px 8px rgba(42, 92, 164, 0.08);">Print Shopping List</button>
-        </div>
     </div>
-</div>
-
+</div>  

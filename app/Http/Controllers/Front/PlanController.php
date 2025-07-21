@@ -756,5 +756,131 @@ class PlanController extends Controller
         return response()->json([
             'categories' => $result
         ]);
-    }  
+    }
+
+    /**
+     * Returns the meal details for a given user meal ID, plan ID, sub category ID, and category ID.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMealDetails(Request $request)
+    {
+        $request->validate([
+            'user_meal_id' => 'required|integer',
+            'user_plan_id' => 'required|integer',
+            'user_sub_category_id' => 'required|integer',
+            'user_category_id' => 'required|integer',
+        ]);
+
+        $userMeal = UserMeal::with([
+            'meal:id,title,image,description,note',
+            'userItems' => function ($query) use ($request) {
+                $query->where('user_meal_id', $request->user_meal_id)
+                    ->where('user_plan_id', $request->user_plan_id)
+                    ->where('user_sub_category_id', $request->user_sub_category_id)
+                    ->where('user_category_id', $request->user_category_id)
+                    ->with(['item:id,title,protein,carbs,fat,energy,image,qty,unit,selected_qty_unit']);
+            }
+        ])
+        ->select('id', 'user_plan_id', 'user_category_id', 'user_sub_category_id', 'meal_name', 'meal_id')
+        ->where('id', $request->user_meal_id)
+        ->where('user_plan_id', $request->user_plan_id)
+        ->where('user_sub_category_id', $request->user_sub_category_id)
+        ->where('user_category_id', $request->user_category_id)
+        ->first();
+
+        if (!$userMeal) {
+            return response()->json(['message' => 'User meal not found'], 404);
+        }
+
+        return response()->json([
+            'meal' => $userMeal,
+            'totalEnergy' => $userMeal->meal?->getTotalEnergyAttribute() ?? 0,
+            'totalProtein' => $userMeal->meal?->getTotalProteinsAttribute() ?? 0,
+            'totalCarbs' => $userMeal->meal?->getTotalCarbsAttribute() ?? 0,
+            'totalFats' => $userMeal->meal?->getTotalFatsAttribute() ?? 0,
+        ]);
+    }
+
+    public function getMealSmartSwaps(Request $request)
+    {
+        $request->validate([
+            'user_meal_id' => 'required|integer',
+            'user_plan_id' => 'required|integer',
+            'user_sub_category_id' => 'required|integer',
+            'user_category_id' => 'required|integer',
+        ]);
+
+        // Eager load the item and swapItems without filtering here
+        $userItems = UserItem::with([
+            'item:id,title,protein,carbs,fat,energy,image,qty,unit,selected_qty_unit,description,note',
+            'userSwapItems.swapItem' // Include item for swaps
+        ])
+        ->where('user_meal_id', $request->user_meal_id)
+        ->where('user_plan_id', $request->user_plan_id)
+        ->where('user_sub_category_id', $request->user_sub_category_id)
+        ->where('user_category_id', $request->user_category_id)
+        ->get();
+
+        if ($userItems->isEmpty()) {
+            return response()->json(['message' => 'No user items found'], 404);
+        }
+        $userPlan = UserPlan::where('id', $request->user_plan_id)
+            ->where('status', 'active')
+            ->first();
+        $items = $userItems->map(function ($userItem) use ($request, $userPlan) {
+            $item = $userItem->item;
+            $userItemMeal = UserItemMeal::where('user_id', $userPlan->user_id)
+                ->where('meal_id', $request->user_meal_id)
+                ->where('item_id', $userItem->id)
+                ->first();
+
+            // Filter swap items manually
+            $swapItems = $userItem->userSwapItems
+                ->where('user_plan_id', $request->user_plan_id)
+                ->where('user_sub_category_id', $request->user_sub_category_id)
+                ->where('user_meal_id', $request->user_meal_id)
+                ->values();
+
+            return [
+                'user_item_id' => $userItem->id,
+                'user_meal_id' => $userItem->userMeal->id ?? null,
+                'user_category_id' => $userItem->user_category_id,
+                'user_sub_category_id' => $userItem->user_sub_category_id,
+                'user_plan_id' => $userItem->user_plan_id,
+                'id' => $item->id,
+                'name' => $item->title,
+                'protein' => $item->protein,
+                'carbs' => $item->carbs,
+                'fat' => $item->fat,
+                'energy' => $item->energy,
+                'qty' => $userItemMeal->qty,
+                'unit' => $userItemMeal->unit,
+                'selected_qty_unit' => is_array($userItemMeal->selected_qty_unit)
+                    ? $userItemMeal->selected_qty_unit
+                    : json_decode($userItemMeal->selected_qty_unit, true),
+                'description' => $item->description,
+                'note' => $item->note ?? 'Nil',
+                'image' => isset($item->image)
+                    ? webAssets('storage/' . $item->image)
+                    : 'https://via.placeholder.com/300x200?text=No+Image',
+
+                // Include filtered swap items (with optional nested item data)
+                'swapItems' => $swapItems->map(function ($swap) {
+                    return [
+                        'swap_item_id' => $swap->id ?? null,
+                        'title' => $swap->swapItem->title ?? '',
+                        'image' => isset($swap->swapItem->image)
+                            ? webAssets('storage/' . $swap->swapItem->image)
+                            : 'https://via.placeholder.com/300x200?text=No+Image',
+                        
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json(['items' => $items]);
+    }
+
 }
