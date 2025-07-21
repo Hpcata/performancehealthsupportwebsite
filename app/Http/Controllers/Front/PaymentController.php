@@ -20,6 +20,9 @@ use App\Models\TrackingType;
 use App\Models\UserPlan;
 use App\Models\SportCategory;
 use Illuminate\Support\Str;
+use App\Models\Plan;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
 
 class PaymentController extends Controller
 {
@@ -88,7 +91,7 @@ class PaymentController extends Controller
                 Log::debug('New user created.', ['user_id' => $user->id]);
             }
 
-            $submitQuestionnaire = $isNewUser || !\App\Models\UserPrePlan::where('user_id', $user->id)->exists();
+            $submitQuestionnaire = $isNewUser || !UserPrePlan::where('user_id', $user->id)->exists();
 
             $existingPayment = Payment::where('plan_id', $validated['plan_id'])
                 ->where('user_id', $user->id)
@@ -111,7 +114,7 @@ class PaymentController extends Controller
                     ->first();
 
                 if ($coupon) {
-                    $userUsageCount = \App\Models\CouponUsage::where('coupon_id', $coupon->id)
+                    $userUsageCount = CouponUsage::where('coupon_id', $coupon->id)
                         ->where('user_id', $user->id)
                         ->count();
 
@@ -225,7 +228,7 @@ class PaymentController extends Controller
             // Track coupon usage
             if ($coupon) {
                 $coupon->increment('usage_count');
-                \App\Models\CouponUsage::create([
+                CouponUsage::create([
                     'coupon_id' => $coupon->id,
                     'user_id' => $user->id,
                 ]);
@@ -263,42 +266,42 @@ class PaymentController extends Controller
         $token = $request->query('token');
 
         if (!$token) {
-            abort(403, 'Missing token.');
+            return view('front.errors.questionnaire_error')->with('message', 'Missing token.');
         }
 
-        $user = \App\Models\User::where('questionnaire_token', $token)->first();
+        $user = User::where('questionnaire_token', $token)->first();
 
         if (!$user) {
-            abort(403, 'Invalid or expired token.');
+            return view('front.errors.Questionnaire_error')->with('message', 'Invalid or expired token.');
         }
 
         $userId = $request->user_id;
         $paymentId = $request->id;
 
-        // Only select required columns (e.g., 'id') from user_pre_plans
+        if (!$paymentId) {
+            return view('front.errors.questionnaire_error')->with('message', 'The questionnaire for this user could not be found. Please purchase a plan before continuing.');
+        }
+    
         $prePlan = DB::table('user_pre_plans')
-            ->select('id')  // Only select 'id' if that's all you use
+            ->select('id')
             ->where('user_id', $userId)
             ->where('payment_id', $paymentId)
             ->first();
-
+            
         $userPrePlanId = $prePlan->id ?? null;
 
-        // Get the max step completed (single value, efficient)
         $completedSteps = DB::table('pre_plan_details')
             ->where('user_pre_plan_id', $userPrePlanId)
             ->max('step');
 
-        // Determine the next step
         $nextStep = ($completedSteps < 9) ? $completedSteps + 1 : 9;
 
-        // Fetch only needed columns for stepData
         $stepData = DB::table('pre_plan_details')
             ->where('user_pre_plan_id', $userPrePlanId)
             ->get()
             ->groupBy('step');
 
-        $sportCategories = SportCategory::select('id', 'name')->get(); // If you only need id and name
+        $sportCategories = SportCategory::select('id', 'name')->get();
 
         return view('front.pages.pre_plan_details', compact('userId', 'paymentId', 'nextStep', 'stepData', 'sportCategories','token'));
     }
@@ -407,9 +410,9 @@ class PaymentController extends Controller
 
             DB::commit();
 
-            $payment = \App\Models\Payment::with('user')->where('id',$payment_id)->first();
+            $payment = Payment::with('user')->where('id',$payment_id)->first();
             $email = $payment->user->email;
-            $planName = \App\Models\Plan::where('id', $payment->plan_id)->first()->name;
+            $planName = Plan::where('id', $payment->plan_id)->first()->name;
             $user = $payment->user;
 
             if($step == 9) {
@@ -424,7 +427,7 @@ class PaymentController extends Controller
                     'payment_id' => $payment_id,
                 ]);
             }
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Step data saved successfully!',
@@ -434,7 +437,6 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error saving step: ' . $e->getMessage());
-            // return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
 

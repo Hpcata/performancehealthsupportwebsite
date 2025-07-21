@@ -380,3 +380,6 @@ Route::prefix('quiz')->group(function () {
 });
 
 Route::get('/about-us', [FrontController::class, 'aboutUs'])->name('front.about-us');
+Route::get('/invalid-token', function () {
+    return view('front.errors.Questionnaire_error')->with('message', 'Invalid or expired token.');
+})->name('invalid.token');

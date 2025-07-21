@@ -1806,16 +1806,23 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script>
+    const invalidTokenUrl = "{{ route('invalid.token') }}";
+
     document.addEventListener('DOMContentLoaded', function () {
         const urlParams = new URLSearchParams(window.location.search);
         const tokenFromUrl = urlParams.get('token');
-        const localKey = 'questionnaire_token';
+        const userIdFromUrl = urlParams.get('user_id');
 
+        if (!tokenFromUrl || !userIdFromUrl) {
+            window.location.href = invalidTokenUrl;
+            return;
+        }
+
+        const localKey = `questionnaire_token_${userIdFromUrl}`;
         const storedToken = localStorage.getItem(localKey);
 
         if (storedToken !== tokenFromUrl) {
-            // Mismatch or missing token: redirect to 404
-            window.location.href = '/404';
+            window.location.href = invalidTokenUrl;
         }
     });
 

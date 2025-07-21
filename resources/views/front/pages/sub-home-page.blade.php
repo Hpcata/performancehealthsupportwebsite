@@ -4478,7 +4478,7 @@
 
                                             if(response.data.submit_questionnaire) {
                                                 if (response.redirect_url) {
-                                                    localStorage.setItem('questionnaire_token', token);
+                                                    localStorage.setItem(`questionnaire_token_${user_id}`, token);
 
                                                     var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id + '&user_id=' + user_id +'&token='+token;
                                                     setTimeout(function () {
@@ -4570,7 +4570,7 @@
                                                         var token = response.data.token;
 
                                                         if (response.redirect_url) {
-                                                            localStorage.setItem('questionnaire_token', token);
+                                                            localStorage.setItem(`questionnaire_token_${user_id}`, token);
 
                                                             var redirectUrlWithUserId = response.redirect_url + '?id=' + payment_id +'&user_id='+ user_id +'&token='+token;;
                                                             setTimeout(function() {
