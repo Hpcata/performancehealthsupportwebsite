@@ -73,7 +73,7 @@
 	 -webkit-transition: ease 0.1s;
 	 transition: ease 0.1s;
 	 background: var(--primary-color);
-	 z-index: 1038;
+	 z-index: 9999 !important;
 	 margin: 25px;
 	 height: calc(100vh - 50px);
 	 width: 260px;
