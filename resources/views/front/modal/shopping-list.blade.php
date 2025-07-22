@@ -31,8 +31,8 @@
                     </div>
                 </div>
             </div>
-            <div class="p-0 modal-footer" style="border-top: none;">
-                <button class="btn btn-primary mt-3" id="print-shopping-list" style="color: #fff; font-size: 1.1rem; border-radius: 8px 8px 8px 8px; height: 48px;">Print Shopping List Now</button>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-blue" id="print-shopping-list">Print Shopping List Now</button>
             </div>
         </div>
     </div>

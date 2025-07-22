@@ -133,6 +133,9 @@ body {
 .main {
     padding: 0 0 2rem 0;
 }
+.btn-blue{
+    background-color: #4a84dd !important;
+}
 .welcome-section {
     margin-bottom: 119px;
     margin-top: 56px;
@@ -324,9 +327,9 @@ body {
 }
 .challenges .challenge-card,
 .challenge-card {
-    min-width: 266px;
-    max-width: 266px;
-    flex: 0 0 266px;
+    min-width: 270px;
+    max-width: 270px;
+    flex: 0 0 270px;
     scroll-snap-align: start;
 }
 .challenges .challenge-cards .challenge-card,
@@ -343,7 +346,7 @@ body {
 }
 .challenges .challenge-cards .challenge-card img,
 .training-plan .meal-cards .meal-card img {
-    max-width: 266px;
+    max-width: 270px;
     height: 160px;
     object-fit: cover;
     border-radius: 12px;
@@ -1733,13 +1736,13 @@ body {
 .scroll-arrow-right {
     position: absolute;
     top: 39%;
-    right: 16px;
+    right: 10px;
     transform: translateY(-50%);
     background: rgba(255, 255, 255, 0.9);
     border: none;
-    border-radius: 0;
+    border-radius: 12px;
     width: 27px;
-    height: 78%;
+    height: 18%;
     font-size: 1.5rem;
     color: #333;
     cursor: pointer;
@@ -1749,24 +1752,20 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 2;
     transition: background 0.2s;
-    background: linear-gradient(
-        to left,
-        rgb(0 0 0 / 36%) 50%,
-        rgba(255, 255, 255, 0)
-    );
-    border-radius: 0 12px 12px 0;
+    background: #000;
+    /* border-radius: 0 12px 12px 0; */
 }
 
 .scroll-arrow-left {
     position: absolute;
     top: 39%;
-    left: 0;
+    left: 10px;
     transform: translateY(-50%);
     background: rgba(255, 255, 255, 0.9);
     border: none;
-    border-radius: 50%;
+    border-radius: 12px;
     width: 27px;
-    height: 78%;
+    height: 18%;
     font-size: 1.5rem;
     color: #333;
     cursor: pointer;
@@ -1776,12 +1775,8 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 2;
     transition: background 0.2s;
-    background: linear-gradient(
-        to right,
-        rgb(0 0 0 / 36%) 50%,
-        rgba(255, 255, 255, 0)
-    );
-    border-radius: 12px 0 0 12px;
+    background: #000;
+    /* border-radius: 12px 0 0 12px; */
 }
 .scroll-arrow-left:active {
     background: #eee;
@@ -2189,6 +2184,9 @@ dropdown-menu.show {
     background-color: #eff6ff;
 }
 /* --- End Custom Training Load Dropdown Styles --- */
+#shoppingListModal .modal-footer{
+border-top: 1px solid #efefef;
+}
 @media (max-width: 1024px) {
     .mobile-header,
     .mobile-menu {
