@@ -30,7 +30,7 @@
 
             <div class="hero-content">
                 <div class="hero-bottom">
-                    <h1 class="hero-title">Sports Training Plan</h1>
+                    <h1 class="hero-title">Training Nutrition Plan</h1>
 
                     <div class="hero-top">
                         <p class="hero-subtitle-plan">BMX freestyle</p>
@@ -145,7 +145,7 @@
                     <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
                 </div>
                 <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                    @if($meals->count() > 1)
+                    @if($meals->count() > 3)
                         <div class="scroll-arrow-left" aria-label="Scroll left">
                             <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
                                 <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -171,22 +171,9 @@
                                 <h3>{{ $meal->meal->title }}</h3>
                             </div>
                         @endforeach
-
-                        @if($meals->count() > 0 && $meals->count() < 3)
-                            <div class="challenge-card" style="height: 160px;">
-                                <div style="height: 160px; background-color:#f1f1f1;position:relative;">
-                                    <img
-                                        src="{{ asset('front/images/sports-training/addmore.png') }}" alt="Add More"
-                                        style="width: 70px; height: 70px; min-height:50px; object-fit: contain; margin-top: 20px;"
-                                        height="100"
-                                        width="100" />
-                                    <h3 class="add-more-text">Add More Meals</h3>
-                                </div>
-                            </div>
-                        @endif
                     </div>
 
-                    @if($meals->count() > 1)
+                    @if($meals->count() > 3)
                         <div class="scroll-arrow-right" aria-label="Scroll right">
                             <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
                                 <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -201,8 +188,8 @@
             @endforeach
         </section>
 
-       <!-- Plate Breakdown and Training Load -->
-       <section
+        <!-- Plate Breakdown and Training Load -->
+        <section
             aria-label="Plate Breakdown and Training Load"
             style="margin-top: 2rem">
             <div class="section-header">
@@ -314,39 +301,39 @@
                 </ul>
             </div>
         </section>
+    </div>
+</main>
+
+<div id="print-plan-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5);">
+    <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 20px; width: 90vw; max-width: 1200px; max-height: 800px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18); padding: 0; display: flex; flex-direction: column;">
+        <button id="print-plan-modal-close" aria-label="Close" style="background: none; border: none; font-size: 2rem; color: #222; cursor: pointer; text-align: end; padding: 24px 40px; border-bottom: 1px solid #d8d8d8;">
+            &times;
+        </button>
+
+        <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
+            <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+
+            </div>
         </div>
-    </main>
 
-    <div id="print-plan-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5);">
-        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 20px; width: 90vw; max-width: 1200px; max-height: 800px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18); padding: 0; display: flex; flex-direction: column;">
-            <button id="print-plan-modal-close" aria-label="Close" style="background: none; border: none; font-size: 2rem; color: #222; cursor: pointer; text-align: end; padding: 24px 40px; border-bottom: 1px solid #d8d8d8;">
-                &times;
+        <div style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
+            <button id="download-plan-btn" style="background: #4a84dd; color: #fff; height: 46px; border: none; border-radius: 8px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer;" onclick="downloadPDF()">
+                Download Plan
             </button>
-
-            <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
-                <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
-
-                </div>
-            </div>
-
-            <div style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
-                <button id="download-plan-btn" style="background: #4a84dd; color: #fff; height: 46px; border: none; border-radius: 8px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer;" onclick="downloadPDF()">
-                    Download Plan
-                </button>
-            </div>
         </div>
     </div>
+</div>
 
-    @include('front.modal.shopping-list')
-    @include('front.modal.print-shopping-list')
-    @include('front.modal.meal-detail')
-    @include('front.modal.smart-swap')
-    @include('front.modal.smart-swap-items')
+@include('front.modal.shopping-list')
+@include('front.modal.print-shopping-list')
+@include('front.modal.meal-detail')
+@include('front.modal.smart-swap')
+@include('front.modal.smart-swap-items')
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-    <script>
+<script>
     const user = @json($userPlan);
     const userId = user.user_id;
     const userPlanId = user.id;
@@ -822,9 +809,9 @@
             }));
     }
 
-    $(document).ready(function() {
-        // Open modal on meal click
-        $('.challenge-card.clickable').on('click', function() {
+    $(document).ready(function () {
+        // Open Bootstrap modal on meal click
+        $('.clickable').on('click', function () {
             const user_meal_id = $(this).data('meal-id');
             const user_plan_id = $(this).data('user-plan-id');
             const user_sub_category_id = $(this).data('sub-category-id');
@@ -840,21 +827,21 @@
                     user_sub_category_id,
                     user_category_id
                 },
-                success: function(response) {
+                success: function (response) {
                     const meal = response.meal;
 
-                    // 🖼️ Meal header
-                    $('#recipe-dialog h2').text(meal.meal.title || 'Meal');
-                    $('#recipe-dialog .dialog-header p').text(meal.meal.description || '');
+                    // 🖼️ Set meal title and description
+                    $('.modal-body .dialog-header h2').text(meal.meal.title || 'Meal');
+                    $('.modal-body .dialog-header p').text(meal.meal.description || '');
 
-                    const imageUrl = meal.meal.image ?
-                        `{{ asset('storage') }}/` + meal.meal.image :
-                        `{{ asset('front/images/placeholder.png') }}`;
-                    $('#recipe-dialog .dialog-img').attr('src', imageUrl);
+                    const imageUrl = meal.meal.image
+                        ? `{{ asset('storage') }}/` + meal.meal.image
+                        : `{{ asset('front/images/placeholder.png') }}`;
+                    $('.modal-body .dialog-img').attr('src', imageUrl);
 
                     // 🥣 Ingredients
                     let ingredientsHtml = '';
-                    meal.user_items.forEach(function(userItem, index) {
+                    meal.user_items.forEach(function (userItem) {
                         const item = userItem.item;
                         if (!item) return;
 
@@ -878,47 +865,37 @@
                         ingredientsHtml += `<li>${qty}${space}${unit} ${item.title}</li>`;
                     });
 
-                    $('#recipe-dialog .dialog-body ul').html(ingredientsHtml);
+                    $('.modal-body ul').html(ingredientsHtml);
 
                     // 📝 Note
-                    $('.note').html(
+                    $('.modal-body .note').html(
                         `<strong>Note:</strong> ${meal.meal.note || 'No additional notes provided.'}`
                     );
 
-                    // 🔢 Nutrition info
-                    $('.nutrition-info').html(`
-                        <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span>
-                        <span style="color: #a60015">● Protein: ${response.totalProtein ?? 0} g</span>
-                        <span style="color: #3e8e00">● Carb: ${response.totalCarbs ?? 0} g</span>
+                    // 🔢 Nutrition Info
+                    $('.modal-body .nutrition-info').html(`
+                        <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span><br>
+                        <span style="color: #a60015">● Protein: ${response.totalProtein ?? 0} g</span><br>
+                        <span style="color: #3e8e00">● Carb: ${response.totalCarbs ?? 0} g</span><br>
                         <span style="color: #0077b6">● Fat: ${response.totalFats ?? 0} g</span>
                     `);
 
-                    // 🔁 Set data attributes on Smart Swap button for next modal
-                    $('.smart-swap-btn').attr('data-meal-id', user_meal_id);
-                    $('.smart-swap-btn').attr('data-user-plan-id', user_plan_id);
-                    $('.smart-swap-btn').attr('data-sub-category-id', user_sub_category_id);
-                    $('.smart-swap-btn').attr('data-category-id', user_category_id);
-                    $('.smart-swap-btn').attr('data-meal-name', meal.meal.title);
+                    // Set data attributes for Smart Swap
+                    $('.modal-body .smart-swap-btn')
+                        .attr('data-meal-id', user_meal_id)
+                        .attr('data-user-plan-id', user_plan_id)
+                        .attr('data-sub-category-id', user_sub_category_id)
+                        .attr('data-category-id', user_category_id)
+                        .attr('data-meal-name', meal.meal.title);
 
-                    // 👁️ Show modal
-                    $('#recipe-dialog').fadeIn();
+                    // 👁️ Show Bootstrap modal
+                    const modal = new bootstrap.Modal(document.getElementById('recipeDialogModal'));
+                    modal.show();
                 },
-                error: function() {
+                error: function () {
                     alert('Could not load meal details.');
                 }
             });
-        });
-
-        // Close modal on close button click
-        $('#dialog-close-btn').on('click', function() {
-            $('#recipe-dialog').fadeOut();
-        });
-
-        // Optional: Close when clicking outside the dialog box
-        $('#recipe-dialog').on('click', function(e) {
-            if ($(e.target).is('#recipe-dialog')) {
-                $(this).fadeOut();
-            }
         });
     });
 
@@ -938,9 +915,9 @@
         const modal = new bootstrap.Modal(modalEl[0]);
         modal.show();
 
-        const $mealItemsModalLabel = $('#mealItemsModalLabel');
-        const $mealItemsContainer = $('#mealItemsContainer');
-        const $mealItemsLoadingSpinner = $('#mealItemsLoadingSpinner');
+        const $mealItemsModalLabel = $('.swap-title'); // Set meal name here
+        const $mealItemsContainer = $('.swap-list'); // Container for item cards
+        const $mealItemsLoadingSpinner = $('#mealItemsLoadingSpinner'); // Optional: add loading spinner if you want
 
         if (!user_meal_id || !meal_name) {
             console.error('Invalid meal data.');
@@ -948,8 +925,10 @@
         }
 
         $mealItemsModalLabel.text(meal_name);
-        $mealItemsContainer.empty().hide();
-        $mealItemsLoadingSpinner.show();
+        $mealItemsContainer.empty();
+
+        // Optional: show spinner
+        // $mealItemsLoadingSpinner.show();
 
         $.ajax({
             url: '{{ route('front.meals.items', ':mealId') }}'
@@ -1000,77 +979,64 @@
                             displayQty = `${item.qty}${needsSpace ? ' ' : ''}${unit}`;
                         }
 
-                        let infoButton = '';
-                        if (item.description) {
-                            infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1 info-btn"
-                                data-bs-toggle="tooltip"
-                                title="${item.description}">
-                                <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="..." fill="white" />
-                                </svg>
-                                Info
-                            </button>`;
-                        }
-
-                        const swapButton = item.swapItems && item.swapItems.length > 0
-                            ? `<button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" 
-                                data-item-id="${item.id}"
-                                data-item-name="${item.name}"
-                                data-user-item-id="${item.user_item_id}"
-                                data-user-meal-id="${item.user_meal_id}"
-                                data-user-plan-id="${userPlanId}"
-                                data-sub-category-id="${userSubCategoryId}"
-                                data-user-category-id="${userCategoryId}">
-                                <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="..." fill="white"/>
-                                </svg>
-                                Swap
-                            </button>` : '';
-
                         const itemCard = `
-                            <div class="category-swap-list-box">
-                                <div class="category-swap-img">
-                                    <figure><img class="img-thumbnail" src="${item.image}" alt=""></figure>
-                                    <div class="info-tootlip">
-                                        <p>Food Details</p>
-                                        <ul>
-                                            <li>Protein: ${item.protein}g</li>
-                                            <li>Carbs: ${item.carbs}g</li>
-                                        </ul>
-                                    </div>
+                            <div class="swap-item">
+                                <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
+                                <div class="swap-item-info">
+                                    <div class="swap-item-name">${item.name}</div>
+                                    <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
                                 </div>
-                                <div class="category-swap-content">
-                                    <h5 class="m-0">${item.name}</h5>
-                                    <p class="align-items-center d-flex m-0 mt-2">
-                                        <strong class="me-2 text-nowrap">Qty :</strong>
-                                        <span>${displayQty}</span>
-                                    </p>
+                                <div class="swap-item-actions">
+                                    ${item.swapItems?.length > 0 ? `
+                                        <button class="smart-swap-btn item-swap-btn"
+                                            data-item-id="${item.id}"
+                                            data-item-name="${item.name}"
+                                            data-user-item-id="${item.user_item_id}"
+                                            data-user-meal-id="${item.user_meal_id}"
+                                            data-user-plan-id="${userPlanId}"
+                                            data-sub-category-id="${userSubCategoryId}"
+                                            data-user-category-id="${userCategoryId}">
+                                            <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; vertical-align: middle; margin-right: 4px;" />
+                                            Smart swap
+                                        </button>` : ''}
+                                    ${item.description ? `
+                                        <button class="smart-swap-btn" data-bs-toggle="tooltip" title="${item.description}">
+                                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
+                                        </button>` : ''}
                                 </div>
-                                <div class="category-swap-btn">
-                                    ${infoButton}
-                                    ${swapButton}
-                                </div>
-                            </div>`;
+                            </div>
+                        `;
 
                         $mealItemsContainer.append(itemCard);
                     });
+                    $('[data-bs-toggle="tooltip"]').tooltip();
 
                 } else {
                     $mealItemsContainer.html('<p class="text-center">No foods available in this meal.</p>');
                 }
 
-                $mealItemsLoadingSpinner.hide();
-                $mealItemsContainer.show();
+                // Optional: hide spinner
+                // $mealItemsLoadingSpinner.hide();
             },
             error: function () {
                 $mealItemsContainer.html('<p class="text-center text-danger">Failed to load foods.</p>');
-                $mealItemsLoadingSpinner.hide();
-                $mealItemsContainer.show();
+                // $mealItemsLoadingSpinner.hide();
             }
         });
-
-        $('#mealModel').modal('hide');
     }
+    $(document).on('click', '.meal-item-modal-close', function () {
+        const modalEl = $('#mealItemModel')[0];
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        
+        if (modalInstance) {
+            modalInstance.hide();
+        } else {
+            // fallback if instance wasn't created by Bootstrap JS
+            const newModal = new bootstrap.Modal(modalEl);
+            newModal.hide();
+        }
+    });
+
 
     $('body').on('click', '.item-swap-btn', function () {
         const itemId = $(this).data('item-id');
@@ -1208,10 +1174,6 @@
             }
         });
 
-    });
-
-    $('.meal-item-modal-close').on('click', function () {
-        $('#mealItemModel').modal('hide');
     });
 
     $('#mealItemModel').on('hidden.bs.modal', function () {
