@@ -5,7 +5,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="mealItemsModalLabel">Title</h5>
-                    <button type="button" class="btn-close meal-item-model-close" aria-label="Close"></button>
+                    <button type="button" class="btn-close meal-item-modal-close" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="mealItemsLoadingSpinner" class="text-center py-5">
@@ -40,8 +40,8 @@
                         class="swap-item-img"
                         />
                         <div class="swap-item-info">
-                        <div class="swap-item-name">Cavendish Bananas</div>
-                        <div class="swap-item-qty"><b>Qty :</b> 118g or 1 large</div>
+                        <div class="swap-item-name"></div>
+                        <div class="swap-item-qty"><b>Qty :</b> </div>
                         </div>
                         <div class="swap-item-actions">
                         
@@ -66,8 +66,8 @@
                             alt="Cavendish Bananas"
                             class="swap-item-img" />
                         <div class="swap-item-info">
-                            <div class="swap-item-name">Rolled Traditional Oats</div>
-                            <div class="swap-item-qty"><b>Qty :</b> 5g or 1 teaspoon</div>
+                            <div class="swap-item-name"></div>
+                            <div class="swap-item-qty"><b>Qty :</b> </div>
                         </div>
                         <div class="swap-item-actions">
                             <button class="smart-swap-btn">
