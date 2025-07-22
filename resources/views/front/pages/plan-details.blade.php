@@ -168,49 +168,66 @@
                 for peak performance. Protein stays the same. See the ideal ratios
                 and what foods to choose below.
             </p>
-            <div class="dropdown-container">
+            <div class="dropdown dropdown-container">
                 <label class="dropdown-label">Training load</label>
-                <button class="custom-dropdown-button" id="trainingLoadDropdownButton" type="button">
+                <button class="btn custom-dropdown-button dropdown-toggle" type="button" id="trainingLoadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="custom-dropdown-content">
-                        <div class="custom-dropdown-title">Low</div>
-                        <div class="custom-dropdown-subtitle">Low load, rest and recovery days</div>
+                        <div class="custom-dropdown-content-inner">
+                            <div class="custom-dropdown-title">Low</div>
+                            <div class="custom-dropdown-subtitle">Low load, rest and recovery days</div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#3B3B3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     </div>
-                    <div class="custom-dropdown-arrow"></div>
                 </button>
-                <div class="custom-dropdown-menu" id="trainingLoadDropdownMenu">
-                    <div class="custom-dropdown-option selected" data-value="low">
-                        <div class="option-title">Low</div>
-                        <div class="option-subtitle">Low load, rest and recovery days</div>
-                    </div>
-                    <div class="custom-dropdown-option" data-value="moderate">
-                        <div class="option-title">Moderate</div>
-                        <div class="option-subtitle">Balanced training and recovery</div>
-                    </div>
-                    <div class="custom-dropdown-option" data-value="high">
-                        <div class="option-title">High</div>
-                        <div class="option-subtitle">Intense training, peak performance</div>
-                    </div>
-                    <div class="custom-dropdown-option" data-value="peak">
-                        <div class="option-title">Peak</div>
-                        <div class="option-subtitle">Maximum load, competition ready</div>
-                    </div>
-                </div>
+                <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="trainingLoadDropdown">
+                    <li>
+                        <div class="custom-dropdown-option selected" data-value="low" data-image="{{ webAssets('front/images/low-load.png') }}">
+                            <div class="option-title">Low</div>
+                            <div class="option-subtitle">Low load, rest and recovery days</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="custom-dropdown-option" data-value="moderate" data-image="{{ webAssets('front/images/medium-load.png') }}">
+                            <div class="option-title">Moderate</div>
+                            <div class="option-subtitle">Balanced training and recovery</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="custom-dropdown-option" data-value="high" data-image="{{ webAssets('front/images/high-load.png') }}">
+                            <div class="option-title">High</div>
+                            <div class="option-subtitle">Intense training, peak performance</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="custom-dropdown-option" data-value="peak" data-image="{{ webAssets('front/images/high-load.png') }}">
+                            <div class="option-title">Peak</div>
+                            <div class="option-subtitle">Maximum load, competition ready</div>
+                        </div>
+                    </li>
+                </ul>
             </div>
 
-            <div style="
-                display: flex;
-                align-items: center;
-                gap: 1.5rem;
-                flex-wrap: wrap;
-                ">
-                <img src="{{ webAssets('front/images/plate.webp') }}"  alt="Plate like this image"
-                    style="width: 100%"
-                    width="806"
-                    height="590"
-                    class="plate-img" />
+            <div
+                style="
+              display: flex;
+              align-items: start;
+              gap: 1.5rem;
+              flex-wrap: wrap;
+              flex-direction:column;
+            ">
+                <img
+                    src="{{ webAssets('front/images/low-load.png') }}"
+                    alt="Plate like this image"
+                    width="318"
+                    height="350"
+                    class="plate-img" 
+                    id="plate-img"/>
                 <ul style="list-style: none; padding-left: 0; font-size: 1rem">
                     <li class="list-w-image">
-                        <img src="{{ webAssets('front/images/Bread.svg') }}"
+                        <img
+                            src="{{ webAssets('front/images/Bread.svg') }}"
                             alt="Plate like this image"
                             style="width: 32px; height: auto"
                             width="32"
@@ -220,26 +237,27 @@
                             <br />Get your carbs from bread or cereal at breakfast.
                         </div>
                     </li>
-
                     <li class="list-w-image">
-                        <img src="{{ webAssets('front/images/apple.svg') }}"
+                        <img
+                            src="{{ webAssets('front/images/apple.svg') }}"
                             alt="Plate like this image"
                             style="width: 32px; height: auto"
                             width="32"
                             height="33" />
                         <div>
-                            <span style="color: #3e8e00; font-weight: bold">Fruit and vegetables: Protect</span>
+                            <span style="color: #3E8E00; font-weight: bold">Fruit and vegetables: Protect</span>
                             <br />A quarter must be colourful fruit and vegetables.
                         </div>
                     </li>
                     <li class="list-w-image">
-                        <img src="{{ webAssets('front/images/boiled egg.svg') }}"
+                        <img
+                            src="{{ webAssets('front/images/boiled egg.svg') }}"
                             alt="Plate like this image"
                             style="width: 32px; height: auto"
                             width="32"
                             height="33" />
                         <div>
-                            <span style="color: #a60015; font-weight: bold">Protein: Repair foods</span>
+                            <span style="color: #A60015; font-weight: bold">Protein: Repair foods</span>
                             <br />One quarter stays protein. Try eggs or dairy.
                         </div>
                     </li>
@@ -310,6 +328,43 @@
     const assetBaseUrl = "{{ asset('storage') }}";
 
     // Ensure userId and userPlanId are already defined globally
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownOptions = document.querySelectorAll('.custom-dropdown-option');
+        const plateImg = document.getElementById('plate-img'); // Get the image element
+
+        dropdownOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                // Remove 'selected' class from all options
+                dropdownOptions.forEach(opt => opt.classList.remove('selected'));
+
+                // Add 'selected' class to clicked option
+                this.classList.add('selected');
+
+                // Update button text
+                const title = this.querySelector('.option-title').textContent;
+                const subtitle = this.querySelector('.option-subtitle').textContent;
+
+                const dropdown = this.closest('.dropdown');
+                dropdown.querySelector('.custom-dropdown-title').textContent = title;
+                dropdown.querySelector('.custom-dropdown-subtitle').textContent = subtitle;
+
+                // Optionally update hidden input if needed
+                const value = this.getAttribute('data-value');
+                const hiddenInput = dropdown.querySelector('input[type="hidden"]');
+                if (hiddenInput) {
+                    hiddenInput.value = value;
+                }
+
+                // Update plate image based on selection
+                const imageSrc = this.getAttribute('data-image');
+                if (plateImg && imageSrc) {
+                    plateImg.src = imageSrc;
+                }
+            });
+        });
+    });
+    // ...existing code...
 
     $(document).ready(function() {
         // Bind once
@@ -975,7 +1030,7 @@
                 // $mealItemsLoadingSpinner.hide();
             },
             error: function () {
-                $mealItemsContainer.html('<p class="text-center text-danger">Failed to load foods.</p>');
+                $mealItemsContainer.html('<p class="text-danger text-center">Failed to load foods.</p>');
                 // $mealItemsLoadingSpinner.hide();
             }
         });

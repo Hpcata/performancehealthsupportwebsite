@@ -90,21 +90,21 @@ document.addEventListener("DOMContentLoaded", () => {
             e.addEventListener("mouseleave", function () {
                 this.style.transform = "translateY(0)";
             });
-    }),
-    document.querySelectorAll(".dropdown").forEach((e) => {
-        let t;
-        e.addEventListener("mouseenter", function () {
-            clearTimeout(t);
-            const e = this.querySelector(".dropdown-content");
-            (e.style.opacity = "1"), (e.style.visibility = "visible"), (e.style.transform = "translateY(0)");
-        }),
-            e.addEventListener("mouseleave", function () {
-                const e = this.querySelector(".dropdown-content");
-                t = setTimeout(() => {
-                    (e.style.opacity = "0"), (e.style.visibility = "hidden"), (e.style.transform = "translateY(-10px)");
-                }, 100);
-            });
-    });
+    })
+    // document.querySelectorAll(".dropdown").forEach((e) => {
+    //     let t;
+    //     e.addEventListener("mouseenter", function () {
+    //         clearTimeout(t);
+    //         const e = this.querySelector(".dropdown-content");
+    //         (e.style.opacity = "1"), (e.style.visibility = "visible"), (e.style.transform = "translateY(0)");
+    //     }),
+    //         e.addEventListener("mouseleave", function () {
+    //             const e = this.querySelector(".dropdown-content");
+    //             t = setTimeout(() => {
+    //                 (e.style.opacity = "0"), (e.style.visibility = "hidden"), (e.style.transform = "translateY(-10px)");
+    //             }, 100);
+    //         });
+    // });
 const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     observer = new IntersectionObserver((e) => {
         e.forEach((e) => {

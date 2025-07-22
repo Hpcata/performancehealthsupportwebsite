@@ -2115,9 +2115,15 @@ button:focus,
     font-size: 14px;
     transition: border-color 0.2s ease;
     border-radius: 6px;
-    border: 1px solid var(--Kerry-grey-200, #d8d8d8);
-    background: var(--White, #fff);
+    border: 1px solid var(--Kerry-grey-200, #D8D8D8);
+    background: var(--White, #FFF);
     box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.08);
+}
+.custom-dropdown-menu.show
+ {
+
+    margin-top: 90px !important;
+
 }
 .custom-dropdown-button:hover {
     border-color: #9ca3af;
@@ -2130,6 +2136,16 @@ button:focus,
 .custom-dropdown-content {
     flex: 1;
     min-height: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.custom-dropdown-content-inner{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 .custom-dropdown-title {
     font-weight: 500;
