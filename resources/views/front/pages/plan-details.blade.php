@@ -41,75 +41,43 @@
         </div>
     </div>
     <div class="container">
-        <div class="action-buttons">
-            <button class="btn btn-share">
-                <img
-                    src="{{ frontAssets('images/dialog/share.svg') }}"
-                    alt="share-icon"
-                    class="share-icon" />
+        <div class="dropdown action-buttons">
+            <button class="btn btn-share dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+  <g clip-path="url(#clip0_3008_7695)">
+    <path d="M0.888672 8.50124V14.3194C0.888672 14.7052 1.07597 15.0752 1.40937 15.3479C1.74277 15.6207 2.19495 15.774 2.66645 15.774H13.3331C13.8046 15.774 14.2568 15.6207 14.5902 15.3479C14.9236 15.0752 15.1109 14.7052 15.1109 14.3194V8.50124M11.5553 4.13761L7.99978 1.22852M7.99978 1.22852L4.44423 4.13761M7.99978 1.22852V10.6831" stroke="#3B3B3B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <defs>
+    <clipPath id="clip0_3008_7695">
+      <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
+    </clipPath>
+  </defs>
+</svg>
                 Share
             </button>
-            <div class="share-dropdown" id="share-dropdown" style="display: none">
-                <div class="share-dropdown-header">
-                    <span>Share</span>
-                    <button
-                        class="share-dropdown-close"
-                        id="share-dropdown-close"
-                        aria-label="Close">
-                        &times;
-                    </button>
-                </div>
-                <hr class="share-dropdown-divider" />
-                <div class="share-dropdown-item">
-                    <img
-                        src="{{ frontAssets('images/dialog/Artboard.svg') }}"
-                        alt="Invite"
-                        class="share-dropdown-icon" />
-                    Invite a friend, parent or club
-                </div>
-                <div class="share-dropdown-item">
-                    <img
-                        src="{{ frontAssets('images/dialog/download.svg') }}"
-                        alt="Download"
-                        class="share-dropdown-icon" />
-                    <a href="javascript:void(0);" class="ms-0 print-plan-btn" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}" style="text-decoration:none; color:black"> Download plan</a>
-                </div>
-            </div>
-            <button class="btn-outline btn" id="shoppingList">Shopping list</button>
-        </div>
-        <!-- <div class="action-buttons">
-            <div class="dropdown">
-                <button class="d-flex align-items-center gap-2 btn btn-share" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="{{ frontAssets('images/share-icon.svg') }}" alt="share-icon" class="share-icon" style="width: 20px;" />
-                    Share
-                </button>
-                <ul class="dropdown-menu share-dropdown" aria-labelledby="shareDropdown">
-                    <div class="share-dropdown-header">
+            <ul class="dropdown-menu share-dropdown" aria-labelledby="shareDropdown" style="min-width: 270px;">
+                <li>
+                    <div class="d-flex align-items-center justify-content-between px-3 py-2 share-dropdown-header">
                         <span>Share</span>
-                        <button
-                            class="share-dropdown-close"
-                            id="share-dropdown-close"
-                            aria-label="Close">
-                            &times;
-                        </button>
+                        <button class="btn-close" data-bs-toggle="dropdown" aria-label="Close"></button>
                     </div>
-                    <li>
-                        <div class="share-dropdown-item">
-                            <img src="{{ frontAssets('images/dialog/Artboard.svg') }}" alt="Invite" style="width: 20px;" />
-                            Invite a friend, parent or club
-                        </div>
-                    </li>
-                    <li>
-
-                        <div class="share-dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#downloadPlanModal">
-                            <img src="{{ frontAssets('images/dialog/download.svg') }}" alt="Download" style="width: 20px;" />
-                            <a href="javascript:void(0);" class="ms-0 print-plan-btn" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}" style="text-decoration:none; color:black"> Download plan</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <button class="btn-outline btn" data-bs-toggle="modal" data-bs-target="#shoppingListModal">Shopping list</button>
-        </div> -->
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <div class="d-flex align-items-center share-dropdown-item">
+                        <img src="{{ frontAssets('images/dialog/Artboard.svg') }}" alt="Invite" class="me-2 share-dropdown-icon" />
+                        Invite a friend, parent or club
+                    </div>
+                </li>
+                <li>
+                    <div class="d-flex align-items-center share-dropdown-item">
+                        <img src="{{ frontAssets('images/dialog/download.svg') }}" alt="Download" class="me-2 share-dropdown-icon" />
+                        <a href="#" class="ms-0" data-bs-toggle="modal" data-bs-target="#print-plan-modal" style="text-decoration:none; color:black">Download plan</a>
+                    </div>
+                </li>
+            </ul>
+            <button class="btn-outline btn" id="shoppingList" data-bs-toggle="modal" data-bs-target="#shoppingListModal">Shopping list</button>
+        </div>
         <!-- Meal Sections -->
         <section aria-label="Meal Plan Categories">
             <!-- Sweet Breakfast -->
@@ -304,6 +272,266 @@
     </div>
 </main>
 
+<!-- Bootstrap Modal for Download Plan (keep your content inside) -->
+<div class="modal fade" id="print-plan-modal" tabindex="-1" aria-labelledby="printPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 20px;">
+        <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
+        <h5 class="modal-title" id="printPlanModalLabel">Download Plan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+        <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
+            <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+            <div
+            id="pdf-preview"
+            class="d-flex align-items-center justify-content-center"
+        >
+            <div
+            id="pdf-content"
+            class="bg-white"
+            style="
+                max-width: 940px;
+                width: 100%;
+                font-family: 'Inter', Arial, sans-serif;
+            "
+            >
+            <div class="mb-4">
+                <!-- PDF Hero Banner -->
+                <div
+                class="position-relative"
+                style="
+                    min-height: 200px;
+                    border-radius: 18px;
+                    overflow: hidden;
+                    background-color: #3b3b3b;
+                "
+                >
+                <img
+                    src="images/sports-hero-bg.webp"
+                    alt="Hero Banner"
+                    class="position-absolute end-0"
+                    style="
+                    width: 340px;
+                    height: 200px;
+                    object-fit: cover;
+                    border-radius: 81px 0 0 0;
+                    "
+                />
+                <div
+                    class="position-absolute inset-0"
+                    style="
+                    background: linear-gradient(
+                        90deg,
+                        rgba(0, 0, 0, 0.55) 0%,
+                        rgba(0, 0, 0, 0.15) 100%
+                    );
+                    "
+                ></div>
+                <div
+                    class="position-absolute d-flex align-items-center w-100 h-100"
+                    style="padding: 0 32px"
+                >
+                    <div>
+                    <img
+                        src="images/logo.png"
+                        alt="2LS Logo"
+                        style="height: 36px; margin-bottom: 50px"
+                    />
+                    <div
+                        class="mb-2 text-white fw-medium"
+                        style="font-size: 1.1rem"
+                    >
+                        Ava's
+                    </div>
+                    <div
+                        class="text-white fw-bold"
+                        style="font-size: 20px; line-height: 1.1"
+                    >
+                        <span class="text-white-50 fw-normal"
+                        >Nutrition Plan | Sports Training Plan</span
+                        >
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <span
+                class="text-primary fw-semibold"
+                style="font-size: 1.1rem; cursor: pointer"
+                >Breakfast</span
+                >
+                <span
+                class="text-primary fw-normal"
+                style="font-size: 1.1rem"
+                >
+                |
+                </span>
+                <span
+                class="text-primary fw-medium"
+                style="font-size: 1.1rem; cursor: pointer"
+                >Sweet Breakfast</span
+                >
+            </div>
+
+            <!-- Card 1 -->
+            <div
+                class="d-flex align-items-start gap-3 bg-light mb-3 p-3 rounded-3"
+            >
+                <img
+                src="images/sports-training/fooditem4.webp"
+                alt="Power Oatmeal Bowl"
+                class="rounded-3"
+                style="width: 190px; min-height: 190px; object-fit: cover"
+                />
+                <div>
+                <div class="text-dark fw-bold fs-5">Power Oatmeal Bowl</div>
+                <div class="mb-1 text-secondary" style="font-size: 14px">
+                    Hearty oats topped with fruit and nuts for sustained
+                    energy.
+                </div>
+                <div class="mb-3 text-dark" style="font-size: 14px">
+                    <b>Note:</b> Swap Almond Butter to Protein Powder for
+                    extra recovery support
+                </div>
+                <div class="d-flex flex-wrap gap-3" style="font-size: 14px">
+                    <span class="fw-semibold" style="color: #967500"
+                    >● Energy: 2090kJ</span
+                    >
+                    <span class="fw-semibold" style="color: #a60015"
+                    >● Protein: 28g</span
+                    >
+                    <span class="fw-semibold" style="color: #3e8e00"
+                    >● Carb: 68g</span
+                    >
+                    <span class="fw-semibold" style="color: #0077b6"
+                    >● Fat: 33g</span
+                    >
+                </div>
+                </div>
+                <div style="min-width: 310px">
+                <div
+                    class="mb-2 text-dark fw-bold"
+                    style="font-size: 1.05rem"
+                >
+                    Ingredients
+                </div>
+                <ul
+                    class="mb-0 ps-4 text-secondary"
+                    style="font-size: 14px"
+                >
+                    <li class="mb-1">
+                    5g or 1 teaspoon Rolled Traditional Oats
+                    </li>
+                    <li class="mb-1">250mL or 1 cup Full Cream Milk</li>
+                    <li class="mb-1">118g or 1 large Cavendish Bananas</li>
+                    <li class="mb-1">
+                    17g or 1 tablespoon Macro Black Chia Seeds
+                    </li>
+                    <li class="mb-1">
+                    5g or 1 teaspoon Natural Almond Butter
+                    </li>
+                    <li class="mb-1">
+                    5g or 1 teaspoon Capilano Honey Squeeze
+                    </li>
+                </ul>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div
+                class="d-flex align-items-start gap-3 bg-light mb-3 p-3 rounded-3"
+            >
+                <img
+                src="images/sports-training/fooditem2.webp"
+                alt="Weetbix Berry Bites & Protein Boost"
+                class="rounded-3"
+                style="width: 190px; min-height: 190px; object-fit: cover"
+                />
+                <div>
+                <div class="text-dark fw-bold fs-5">
+                    Weetbix Berry Bites & Protein Boost
+                </div>
+                <div class="mb-1 text-secondary" style="font-size: 14px">
+                    Weet-Bix Bites with milk and berries, paired with
+                    high-protein yoghurt and fruit or raisin toast with honey.
+                    Energising and satisfying.
+                </div>
+                <div class="d-flex flex-wrap gap-3" style="font-size: 14px">
+                    <span class="fw-semibold" style="color: #967500"
+                    >● Energy: 2249kJ</span
+                    >
+                    <span class="fw-semibold" style="color: #a60015"
+                    >● Protein: 30g</span
+                    >
+                    <span class="fw-semibold" style="color: #3e8e00"
+                    >● Carb: 77g</span
+                    >
+                    <span class="fw-semibold" style="color: #0077b6"
+                    >● Fat: 10g</span
+                    >
+                </div>
+                </div>
+                <div style="min-width: 310px">
+                <div
+                    class="mb-2 text-dark fw-bold"
+                    style="font-size: 1.05rem"
+                >
+                    Ingredients
+                </div>
+                <ul
+                    class="mb-0 ps-4 text-secondary"
+                    style="font-size: 14px"
+                >
+                    <li class="mb-1">
+                    50g or 1 cup Weet-Bix Bites Wild Berry
+                    </li>
+                    <li class="mb-1">250mL or 1 cup Full Cream Milk</li>
+                    <li class="mb-1">
+                    160g or 3 heaped spoons YoPRO Tub High Protein Yoghurt
+                    Vanilla
+                    </li>
+                    <li class="mb-1">118g or 1 large Cavendish Bananas</li>
+                </ul>
+                </div>
+            </div>
+            </div>
+        </div>
+            </div>
+        </div>
+        </div>
+        <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
+        <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
+            Download Plan
+        </button>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Bootstrap Modal for Shopping List -->
+<div class="modal fade" id="shoppingListModal" tabindex="-1" aria-labelledby="shoppingListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 20px;">
+        <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
+        <h5 class="modal-title" id="shoppingListModalLabel">Shopping List</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <!-- Your existing shopping list content will be injected here by JS -->
+        <div id="shopping-list-content-container">
+            <!-- Content loaded via AJAX or JS -->
+        </div>
+        </div>
+        <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
+        <button id="print-shopping-list" class="btn btn-primary">Print Shopping List</button>
+        </div>
+    </div>
+    </div>
+</div>
+
 <div id="print-plan-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5);">
     <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 20px; width: 90vw; max-width: 1200px; max-height: 800px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18); padding: 0; display: flex; flex-direction: column;">
         <button id="print-plan-modal-close" aria-label="Close" style="background: none; border: none; font-size: 2rem; color: #222; cursor: pointer; text-align: end; padding: 24px 40px; border-bottom: 1px solid #d8d8d8;">
@@ -322,6 +550,8 @@
             </button>
         </div>
     </div>
+</div>
+
 </div>
 
 @include('front.modal.shopping-list')
@@ -347,8 +577,8 @@
             const shoppingListModal = document.getElementById('shoppingListModal');
 
             // Show modal
-            const modal = new bootstrap.Modal(shoppingListModal);
-            modal.show();
+            // const modal = new bootstrap.Modal(shoppingListModal);
+            // modal.show();
 
             // Inject content
             const contentContainer = $('.modal-body');
@@ -360,7 +590,7 @@
                 success: function(response) {
                     const meals = response.meals;
                     let modalContent = `
-                        <div class="form-check mb-3">
+                        <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
                             <label class="form-check-label" for="selectAllCheckbox">Select All</label>
                         </div>
@@ -369,7 +599,7 @@
                     meals.forEach(meal => {
                         // Meal-level checkbox
                         modalContent += `
-                            <div class="form-check mb-2">
+                            <div class="mb-2 form-check">
                                 <input type="checkbox" class="form-check-input meal-checkbox" id="meal-${meal.meal_id}-checkbox" data-meal-id="${meal.meal_id}">
                                 <label class="form-check-label" for="meal-${meal.meal_id}-checkbox" style="font-weight: bold; font-size: 1.2rem;">${meal.meal_title}</label>
                             </div>
@@ -647,7 +877,7 @@
             };
 
             // ✅ Show loading message
-            $("#pdf-preview").html('<div class="text-center py-4">Loading preview...</div>');
+            $("#pdf-preview").html('<div class="py-4 text-center">Loading preview...</div>');
 
             // ✅ Fetch and inject preview HTML
             fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
@@ -662,7 +892,7 @@
                 })
                 .catch(err => {
                     console.error("Error loading preview:", err); // ✅ Debug error
-                    $("#pdf-preview").html('<div class="text-danger py-4">Error loading preview</div>');
+                    $("#pdf-preview").html('<div class="py-4 text-danger">Error loading preview</div>');
                 });
         });
     });
@@ -1068,7 +1298,7 @@
         // Clear existing items
         const $swapList = $('#smartSwapModal .swap-list');
         $swapList.html(`
-            <div class="text-center py-4">
+            <div class="py-4 text-center">
                 <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
             </div>
         `);
@@ -1081,7 +1311,7 @@
             dataType: 'json',
             success: function (data) {
                 if (!data || !data.items || !data.items.length) {
-                    $swapList.html('<p class="text-center text-muted">No swap items available.</p>');
+                    $swapList.html('<p class="text-muted text-center">No swap items available.</p>');
                     return;
                 }
 
