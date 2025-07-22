@@ -16,7 +16,8 @@ $auth = auth()->guard('web')->check();
         style="background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;">
         <span id="mobile-menu-icon">
             <!-- This will be replaced by JS -->
-            <img src="{{ frontAssets('images/hamburger.svg') }}" alt="" id="hamburger-icon" style="display:inline;">
+            <i class="fas fa-bars" aria-hidden="true" id="hamburger-icon"></i>
+            <!-- <img src="{{ frontAssets('images/hamburger.svg') }}" alt="" id="hamburger-icon" style="display:inline;"> -->
             <span id="close-icon" style="display:none;">&times;</span>
         </span>
     </button>

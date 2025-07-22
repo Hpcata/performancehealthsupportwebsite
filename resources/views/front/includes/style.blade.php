@@ -1,9 +1,11 @@
 @if(Route::is('front.profile') || Route::is('front.plans.details'))
 <link rel="stylesheet" href="{{ frontAssets('css/styles.css') }}" />
+<link rel="stylesheet" href="{{ frontAssets('css/bootstrap/bootstrap.min.css') }}" />
+
 <!-- Preconnect for Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <!-- Non-blocking Font Awesome -->
 <link
