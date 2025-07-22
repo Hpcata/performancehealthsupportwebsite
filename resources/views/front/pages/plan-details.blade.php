@@ -634,7 +634,7 @@
 
             // PDF generation options
             const options = {
-                margin: 0.5,
+                margin: [0.5], // top, right, bottom, left (in inches)
                 filename: 'shopping_list.pdf',
                 html2canvas: {
                     scale: 2
@@ -709,19 +709,9 @@
                 .set({
                     margin: [topMargin, leftRightMargin, bottomMargin, leftRightMargin],
                     filename: 'print-plan.pdf',
-                    image: {
-                        type: 'jpeg',
-                        quality: 1
-                    },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true
-                    },
-                    jsPDF: {
-                        unit: 'in',
-                        format: 'a4',
-                        orientation: 'portrait'
-                    }
+                    image: { type: 'jpeg', quality: 1 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
                 })
                 .from(element)
                 .toPdf()
@@ -781,19 +771,13 @@
                         pdf.setFontSize(9);
                         pdf.setFont(undefined, 'normal');
                         // Center vertically and horizontally
-                        pdf.text(`${i}`, circleCenterX, circleCenterY, {
-                            align: 'center',
-                            baseline: 'middle'
-                        });
+                        pdf.text(`${i}`, circleCenterX, circleCenterY, { align: 'center', baseline: 'middle' });
 
                         // Date text (right, blue, smaller font, vertically centered)
                         pdf.setTextColor(0, 116, 217); // blue
                         pdf.setFontSize(dateFontSize);
                         pdf.setFont(undefined, 'normal');
-                        pdf.text(dateText, dateX, dateY, {
-                            align: 'right',
-                            baseline: 'middle'
-                        });
+                        pdf.text(dateText, dateX, dateY, { align: 'right', baseline: 'middle' });
                     }
                 })
                 .save();
@@ -924,7 +908,7 @@
         const userPlanId = $(this).data('user-plan-id');
         const userSubCategoryId = $(this).data('sub-category-id');
         const userCategoryId = $(this).data('category-id');
-
+        $('#recipeDialogModal').modal('hide');
         mealItemModelReload(meal_id, meal_name, user_meal_id, userSubCategoryId, userPlanId, userCategoryId);
     });
 
@@ -1044,6 +1028,7 @@
             }
         });
     }
+
     $(document).on('click', '.meal-item-modal-close', function () {
         const modalEl = $('#mealItemModel')[0];
         const modalInstance = bootstrap.Modal.getInstance(modalEl);
@@ -1286,7 +1271,6 @@
         // Reinitialize tooltips
         $('[data-bs-toggle="tooltip"]').tooltip();
     });
-
 
    // Ensure the modal event is registered AFTER the DOM is ready
     $(document).ready(function () {

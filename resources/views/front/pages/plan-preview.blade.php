@@ -83,7 +83,7 @@
                             ->where('id', $subCategoryId)
                             ->first();
                         @endphp
-                        <div class="meal-block page-break-margin">
+                        <div class="meal-block">
                             <!-- Category Label -->
                             <div class="" style="margin-bottom: 18px;">
                                 <span style="color: #3b82f6; font-weight: 600; font-size: 1.1rem;">{{ $userMealTime->category->title }}</span>
