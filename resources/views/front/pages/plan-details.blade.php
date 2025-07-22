@@ -30,7 +30,7 @@
 
             <div class="hero-content">
                 <div class="hero-bottom">
-                    <h1 class="hero-title">Sports Training Plan</h1>
+                    <h1 class="hero-title">Training Nutrition Plan</h1>
 
                     <div class="hero-top">
                         <p class="hero-subtitle-plan">BMX freestyle</p>
@@ -145,7 +145,7 @@
                     <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
                 </div>
                 <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                    @if($meals->count() > 1)
+                    @if($meals->count() > 3)
                         <div class="scroll-arrow-left" aria-label="Scroll left">
                             <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
                                 <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -171,22 +171,9 @@
                                 <h3>{{ $meal->meal->title }}</h3>
                             </div>
                         @endforeach
-
-                        @if($meals->count() > 0 && $meals->count() < 3)
-                            <div class="challenge-card" style="height: 160px;">
-                                <div style="height: 160px; background-color:#f1f1f1;position:relative;">
-                                    <img
-                                        src="{{ asset('front/images/sports-training/addmore.png') }}" alt="Add More"
-                                        style="width: 70px; height: 70px; min-height:50px; object-fit: contain; margin-top: 20px;"
-                                        height="100"
-                                        width="100" />
-                                    <h3 class="add-more-text">Add More Meals</h3>
-                                </div>
-                            </div>
-                        @endif
                     </div>
 
-                    @if($meals->count() > 1)
+                    @if($meals->count() > 3)
                         <div class="scroll-arrow-right" aria-label="Scroll right">
                             <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
                                 <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -201,8 +188,8 @@
             @endforeach
         </section>
 
-       <!-- Plate Breakdown and Training Load -->
-       <section
+        <!-- Plate Breakdown and Training Load -->
+        <section
             aria-label="Plate Breakdown and Training Load"
             style="margin-top: 2rem">
             <div class="section-header">
@@ -314,630 +301,521 @@
                 </ul>
             </div>
         </section>
+    </div>
+</main>
+
+<div id="print-plan-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5);">
+    <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 20px; width: 90vw; max-width: 1200px; max-height: 800px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18); padding: 0; display: flex; flex-direction: column;">
+        <button id="print-plan-modal-close" aria-label="Close" style="background: none; border: none; font-size: 2rem; color: #222; cursor: pointer; text-align: end; padding: 24px 40px; border-bottom: 1px solid #d8d8d8;">
+            &times;
+        </button>
+
+        <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
+            <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+
+            </div>
         </div>
-    </main>
 
-    <div id="print-plan-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5);">
-        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 20px; width: 90vw; max-width: 1200px; max-height: 800px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18); padding: 0; display: flex; flex-direction: column;">
-            <button id="print-plan-modal-close" aria-label="Close" style="background: none; border: none; font-size: 2rem; color: #222; cursor: pointer; text-align: end; padding: 24px 40px; border-bottom: 1px solid #d8d8d8;">
-                &times;
+        <div style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
+            <button id="download-plan-btn" style="background: #4a84dd; color: #fff; height: 46px; border: none; border-radius: 8px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer;" onclick="downloadPDF()">
+                Download Plan
             </button>
-
-            <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
-                <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
-
-                </div>
-            </div>
-
-            <div style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
-                <button id="download-plan-btn" style="background: #4a84dd; color: #fff; height: 46px; border: none; border-radius: 8px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer;" onclick="downloadPDF()">
-                    Download Plan
-                </button>
-            </div>
         </div>
     </div>
+</div>
 
-    @include('front.modal.shopping-list')
-    @include('front.modal.print-shopping-list')
-    @include('front.modal.meal-detail')
-    @include('front.modal.smart-swap')
-    @include('front.modal.smart-swap-items')
+@include('front.modal.shopping-list')
+@include('front.modal.print-shopping-list')
+@include('front.modal.meal-detail')
+@include('front.modal.smart-swap')
+@include('front.modal.smart-swap-items')
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-    <script>
-        const user = @json($userPlan);
-        const userId = user.user_id;
-        const userPlanId = user.id;
-        const assetBaseUrl = "{{ asset('storage') }}";
+<script>
+    const user = @json($userPlan);
+    const userId = user.user_id;
+    const userPlanId = user.id;
+    const assetBaseUrl = "{{ asset('storage') }}";
 
-        // Ensure userId and userPlanId are already defined globally
+    // Ensure userId and userPlanId are already defined globally
 
-        $(document).ready(function() {
-            // Bind once
-            $(document).on('click', '#shoppingList', function() {
-                const shoppingListModal = document.getElementById('shoppingListModal');
+    $(document).ready(function() {
+        // Bind once
+        $(document).on('click', '#shoppingList', function() {
+            const shoppingListModal = document.getElementById('shoppingListModal');
 
-                // Show modal
-                const modal = new bootstrap.Modal(shoppingListModal);
-                modal.show();
+            // Show modal
+            const modal = new bootstrap.Modal(shoppingListModal);
+            modal.show();
 
-                // Inject content
-                const contentContainer = $('.modal-body');
-                contentContainer.html('<p>Loading...</p>');
+            // Inject content
+            const contentContainer = $('.modal-body');
+            contentContainer.html('<p>Loading...</p>');
 
-                $.ajax({
-                    url: '{{ route("front.get.meals.items") }}' + `?user_id=${userId}&user_plan_id=${userPlanId}`,
-                    method: 'GET',
-                    success: function(response) {
-                        const meals = response.meals;
-                        let modalContent = `
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
-                                <label class="form-check-label" for="selectAllCheckbox">Select All</label>
+            $.ajax({
+                url: '{{ route("front.get.meals.items") }}' + `?user_id=${userId}&user_plan_id=${userPlanId}`,
+                method: 'GET',
+                success: function(response) {
+                    const meals = response.meals;
+                    let modalContent = `
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
+                            <label class="form-check-label" for="selectAllCheckbox">Select All</label>
+                        </div>
+                    `;
+
+                    meals.forEach(meal => {
+                        // Meal-level checkbox
+                        modalContent += `
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input meal-checkbox" id="meal-${meal.meal_id}-checkbox" data-meal-id="${meal.meal_id}">
+                                <label class="form-check-label" for="meal-${meal.meal_id}-checkbox" style="font-weight: bold; font-size: 1.2rem;">${meal.meal_title}</label>
                             </div>
                         `;
 
-                        meals.forEach(meal => {
-                            // Meal-level checkbox
-                            modalContent += `
-                                <div class="mb-2 form-check">
-                                    <input type="checkbox" class="form-check-input meal-checkbox" id="meal-${meal.meal_id}-checkbox" data-meal-id="${meal.meal_id}">
-                                    <label class="form-check-label" for="meal-${meal.meal_id}-checkbox" style="font-weight: bold; font-size: 1.2rem;">${meal.meal_title}</label>
-                                </div>
-                            `;
+                        modalContent += `<div class="mb-3 card"><div class="p-3 card-body"><ul class="mb-0 list-unstyled meal-items" data-meal-id="${meal.meal_id}">`;
 
-                            modalContent += `<div class="mb-3 card"><div class="p-3 card-body"><ul class="mb-0 list-unstyled meal-items" data-meal-id="${meal.meal_id}">`;
+                        meal.items.forEach(item => {
+                            let selectedQtyUnits = [];
+                            try {
+                                selectedQtyUnits = item.selected_qty_unit ? JSON.parse(item.selected_qty_unit) : [];
+                                if (!Array.isArray(selectedQtyUnits)) selectedQtyUnits = [];
+                            } catch (e) {
+                                selectedQtyUnits = [];
+                            }
 
-                            meal.items.forEach(item => {
-                                let selectedQtyUnits = [];
-                                try {
-                                    selectedQtyUnits = item.selected_qty_unit ? JSON.parse(item.selected_qty_unit) : [];
-                                    if (!Array.isArray(selectedQtyUnits)) selectedQtyUnits = [];
-                                } catch (e) {
-                                    selectedQtyUnits = [];
-                                }
+                            const checkedUnits = selectedQtyUnits.filter(u =>
+                                u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1"
+                            );
 
-                                const checkedUnits = selectedQtyUnits.filter(u =>
-                                    u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1"
-                                );
+                            let qtyText = '';
+                            if (checkedUnits.length > 0) {
+                                qtyText = checkedUnits.map(unitObj => {
+                                    let rawQty = unitObj.qty;
+                                    let unit = unitObj.unit;
+                                    let qty = isNaN(rawQty) ? rawQty : parseFloat(rawQty);
 
-                                let qtyText = '';
-                                if (checkedUnits.length > 0) {
-                                    qtyText = checkedUnits.map(unitObj => {
-                                        let rawQty = unitObj.qty;
-                                        let unit = unitObj.unit;
-                                        let qty = isNaN(rawQty) ? rawQty : parseFloat(rawQty);
-
-                                        if (typeof rawQty === 'string' && rawQty.includes('/')) {
-                                            const parts = rawQty.split('/');
-                                            if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-                                                qty = parseFloat(parts[0]) / parseFloat(parts[1]);
-                                            }
+                                    if (typeof rawQty === 'string' && rawQty.includes('/')) {
+                                        const parts = rawQty.split('/');
+                                        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                                            qty = parseFloat(parts[0]) / parseFloat(parts[1]);
                                         }
+                                    }
 
-                                        if (['g', 'ml', 'mL'].includes(unit)) {
-                                            return `${Math.round(qty)}${unit}`;
-                                        }
+                                    if (['g', 'ml', 'mL'].includes(unit)) {
+                                        return `${Math.round(qty)}${unit}`;
+                                    }
 
-                                        let displayQty = rawQty;
-                                        const rounded = Math.round(qty * 100) / 100;
-                                        if (rounded === 0.25) displayQty = '¼';
-                                        else if (rounded === 0.5) displayQty = '½';
-                                        else if (rounded === 0.75) displayQty = '¾';
-
-                                        return `${displayQty} ${unit}`;
-                                    }).join(' or ');
-                                } else {
-                                    let qty = parseFloat(item.qty);
-                                    let unit = item.unit;
-                                    let displayQty = qty;
-
+                                    let displayQty = rawQty;
                                     const rounded = Math.round(qty * 100) / 100;
                                     if (rounded === 0.25) displayQty = '¼';
                                     else if (rounded === 0.5) displayQty = '½';
                                     else if (rounded === 0.75) displayQty = '¾';
 
-                                    qtyText = ['g', 'ml', 'mL'].includes(unit) ?
-                                        `${Math.round(qty)}${unit}` :
-                                        `${displayQty} ${unit}`;
-                                }
-
-                                modalContent += `
-                                    <li class="d-flex align-items-center mb-3">
-                                        <input class="me-3 form-check-input item-checkbox" type="checkbox" id="item-${item.id}" data-meal-id="${meal.meal_id}">
-                                        <input type="hidden" id="category" value="${item.category}">
-                                        <img src="${assetBaseUrl}/${item.image || ''}" alt="${item.title}" class="me-3" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">
-                                        <div>
-                                            <span style="font-weight: 600; color: #4b5c6b;">${item.title}</span><br>
-                                            <span style="font-size: 0.97rem;"><b>QTY:</b> ${qtyText}</span>
-                                        </div>
-                                    </li>
-                                `;
-                            });
-
-                            modalContent += `</ul></div></div>`;
-                        });
-
-                        contentContainer.html(modalContent);
-
-                        // === Checkbox Logic ===
-                        // Select All
-                        $('#selectAllCheckbox').on('change', function() {
-                            const isChecked = $(this).is(':checked');
-                            $('.meal-checkbox, .item-checkbox').prop('checked', isChecked);
-                        });
-
-                        // Meal checkbox controls items
-                        $('.meal-checkbox').on('change', function() {
-                            const mealId = $(this).data('meal-id');
-                            const isChecked = $(this).is(':checked');
-                            $(`.item-checkbox[data-meal-id="${mealId}"]`).prop('checked', isChecked);
-                        });
-
-                        // Item checkbox updates meal checkbox
-                        $('.item-checkbox').on('change', function() {
-                            const mealId = $(this).data('meal-id');
-                            const items = $(`.item-checkbox[data-meal-id="${mealId}"]`);
-                            const allChecked = items.length === items.filter(':checked').length;
-                            $(`#meal-${mealId}-checkbox`).prop('checked', allChecked);
-                        });
-                    },
-                    error: function(xhr) {
-                        console.error('Error fetching meals:', xhr);
-                        contentContainer.html('<p>Error loading data.</p>');
-                    }
-                });
-            });
-
-            $(document).on('click', '#print-shopping-list', function() {
-                let aggregatedItems = {};
-
-                // Loop through checked checkboxes inside shopping list modal
-                $('#shoppingListModal .item-checkbox:checked').each(function() {
-                    const listItem = $(this).closest('li');
-
-                    const itemName = listItem.find('span').first().text().trim() || "Unnamed";
-                    const category = listItem.find('input[type="hidden"]#category').val()?.trim() || "Uncategorized";
-
-                    const qtyContainer = listItem.find('div > span:contains("QTY:")');
-                    if (qtyContainer.length === 0) return;
-
-                    const fullText = qtyContainer.text().trim();
-                    const qtyTextMatch = fullText.match(/QTY:\s*(.+)/i);
-                    if (!qtyTextMatch) return;
-
-                    const qtyText = qtyTextMatch[1];
-                    const qtyParts = qtyText.split(" or ").map(part => part.trim());
-
-                    qtyParts.forEach(part => {
-                        const match = part.match(/^([\d¼½¾/.]+)\s*([a-zA-Z\s]+)$/);
-                        if (!match) return;
-
-                        let qtyRaw = match[1].trim();
-                        let unit = match[2].trim();
-
-                        const unicodeFractions = {
-                            '¼': 0.25,
-                            '½': 0.5,
-                            '¾': 0.75
-                        };
-                        let qty = unicodeFractions[qtyRaw] ?? null;
-
-                        if (qty === null) {
-                            if (qtyRaw.includes('/')) {
-                                const [num, den] = qtyRaw.split('/').map(Number);
-                                if (!isNaN(num) && !isNaN(den) && den !== 0) {
-                                    qty = num / den;
-                                }
+                                    return `${displayQty} ${unit}`;
+                                }).join(' or ');
                             } else {
-                                qty = parseFloat(qtyRaw);
+                                let qty = parseFloat(item.qty);
+                                let unit = item.unit;
+                                let displayQty = qty;
+
+                                const rounded = Math.round(qty * 100) / 100;
+                                if (rounded === 0.25) displayQty = '¼';
+                                else if (rounded === 0.5) displayQty = '½';
+                                else if (rounded === 0.75) displayQty = '¾';
+
+                                qtyText = ['g', 'ml', 'mL'].includes(unit) ?
+                                    `${Math.round(qty)}${unit}` :
+                                    `${displayQty} ${unit}`;
                             }
-                        }
 
-                        if (!qty || isNaN(qty)) return;
+                            modalContent += `
+                                <li class="d-flex align-items-center mb-3">
+                                    <input class="me-3 form-check-input item-checkbox" type="checkbox" id="item-${item.id}" data-meal-id="${meal.meal_id}">
+                                    <input type="hidden" id="category" value="${item.category}">
+                                    <img src="${assetBaseUrl}/${item.image || ''}" alt="${item.title}" class="me-3" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">
+                                    <div>
+                                        <span style="font-weight: 600; color: #4b5c6b;">${item.title}</span><br>
+                                        <span style="font-size: 0.97rem;"><b>QTY:</b> ${qtyText}</span>
+                                    </div>
+                                </li>
+                            `;
+                        });
 
-                        if (!aggregatedItems[category]) aggregatedItems[category] = {};
-                        if (!aggregatedItems[category][itemName]) aggregatedItems[category][itemName] = {};
-                        if (!aggregatedItems[category][itemName][unit]) aggregatedItems[category][itemName][unit] = 0;
-
-                        aggregatedItems[category][itemName][unit] += qty;
+                        modalContent += `</ul></div></div>`;
                     });
+
+                    contentContainer.html(modalContent);
+
+                    // === Checkbox Logic ===
+                    // Select All
+                    $('#selectAllCheckbox').on('change', function() {
+                        const isChecked = $(this).is(':checked');
+                        $('.meal-checkbox, .item-checkbox').prop('checked', isChecked);
+                    });
+
+                    // Meal checkbox controls items
+                    $('.meal-checkbox').on('change', function() {
+                        const mealId = $(this).data('meal-id');
+                        const isChecked = $(this).is(':checked');
+                        $(`.item-checkbox[data-meal-id="${mealId}"]`).prop('checked', isChecked);
+                    });
+
+                    // Item checkbox updates meal checkbox
+                    $('.item-checkbox').on('change', function() {
+                        const mealId = $(this).data('meal-id');
+                        const items = $(`.item-checkbox[data-meal-id="${mealId}"]`);
+                        const allChecked = items.length === items.filter(':checked').length;
+                        $(`#meal-${mealId}-checkbox`).prop('checked', allChecked);
+                    });
+                },
+                error: function(xhr) {
+                    console.error('Error fetching meals:', xhr);
+                    contentContainer.html('<p>Error loading data.</p>');
+                }
+            });
+        });
+
+        $(document).on('click', '#print-shopping-list', function() {
+            let aggregatedItems = {};
+
+            // Loop through checked checkboxes inside shopping list modal
+            $('#shoppingListModal .item-checkbox:checked').each(function() {
+                const listItem = $(this).closest('li');
+
+                const itemName = listItem.find('span').first().text().trim() || "Unnamed";
+                const category = listItem.find('input[type="hidden"]#category').val()?.trim() || "Uncategorized";
+
+                const qtyContainer = listItem.find('div > span:contains("QTY:")');
+                if (qtyContainer.length === 0) return;
+
+                const fullText = qtyContainer.text().trim();
+                const qtyTextMatch = fullText.match(/QTY:\s*(.+)/i);
+                if (!qtyTextMatch) return;
+
+                const qtyText = qtyTextMatch[1];
+                const qtyParts = qtyText.split(" or ").map(part => part.trim());
+
+                qtyParts.forEach(part => {
+                    const match = part.match(/^([\d¼½¾/.]+)\s*([a-zA-Z\s]+)$/);
+                    if (!match) return;
+
+                    let qtyRaw = match[1].trim();
+                    let unit = match[2].trim();
+
+                    const unicodeFractions = {
+                        '¼': 0.25,
+                        '½': 0.5,
+                        '¾': 0.75
+                    };
+                    let qty = unicodeFractions[qtyRaw] ?? null;
+
+                    if (qty === null) {
+                        if (qtyRaw.includes('/')) {
+                            const [num, den] = qtyRaw.split('/').map(Number);
+                            if (!isNaN(num) && !isNaN(den) && den !== 0) {
+                                qty = num / den;
+                            }
+                        } else {
+                            qty = parseFloat(qtyRaw);
+                        }
+                    }
+
+                    if (!qty || isNaN(qty)) return;
+
+                    if (!aggregatedItems[category]) aggregatedItems[category] = {};
+                    if (!aggregatedItems[category][itemName]) aggregatedItems[category][itemName] = {};
+                    if (!aggregatedItems[category][itemName][unit]) aggregatedItems[category][itemName][unit] = 0;
+
+                    aggregatedItems[category][itemName][unit] += qty;
                 });
-
-                // Build final HTML content in new style
-                let printHtml = '';
-
-                for (let [category, items] of Object.entries(aggregatedItems)) {
-                    printHtml += `
-                        <div style="margin-bottom: 12px">
-                            <span style="font-size: 14px; font-weight: 600; color: #3b3b3b;">${category}</span>
-                            <ul style="margin: 6px 0 0 0; list-style: none">
-                    `;
-
-                    for (let [itemName, unitMap] of Object.entries(items)) {
-                        const qtyText = Object.entries(unitMap).map(([unit, total]) => {
-                            const rounded = Math.round(total * 100) / 100;
-                            if (rounded === 0.25) return `¼ ${unit}`;
-                            if (rounded === 0.5) return `½ ${unit}`;
-                            if (rounded === 0.75) return `¾ ${unit}`;
-                            if (['g', 'ml', 'mL'].includes(unit)) return `${Math.round(total)}${unit}`;
-                            return `${rounded} ${unit}`;
-                        }).join(' or ');
-
-                        printHtml += `
-                            <li style="font-size: 14px; font-weight: 400; color: #3b3b3b; line-height: 28px;">
-                                <input type="checkbox" style="margin-right: 6px;" />
-                                ${qtyText} ${itemName}
-                            </li>
-                        `;
-                    }
-
-                    printHtml += '</ul></div>';
-                }
-
-                if (printHtml.trim() === '') {
-                    printHtml = '<p>No items selected.</p>';
-                }
-
-                $('#print-shopping-list-modal #shopping-list-content').html(printHtml);
-                $('#print-shopping-list-modal').fadeIn();
-
-                const printShoppingListModal = document.getElementById('print-shopping-list-modal');
-                const printShoppingListClose = document.getElementById('print-shopping-list-close');
-
-                // Show modal
-                printShoppingListModal.style.display = 'block';
-
-                // Close modal handler (only bind once)
-                printShoppingListClose.onclick = () => {
-                    printShoppingListModal.style.display = 'none';
-                };
-
-                printShoppingListModal.onclick = (e) => {
-                    if (e.target === printShoppingListModal) {
-                        printShoppingListModal.style.display = 'none';
-                    }
-                };
             });
 
-            $(document).on('click', '#download-pdf', function() {
-                const content = document.querySelector('#print-shopping-list-modal #shopping-list-content');
+            // Build final HTML content in new style
+            let printHtml = '';
 
-                if (!content || content.innerHTML.trim() === '') {
-                    alert('No items selected.');
-                    return;
-                }
-
-                // Create a temporary container with a header and the shopping list content
-                const container = document.createElement('div');
-                container.innerHTML = `
-                    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; color: #222;">
-                        <h2 style="text-align: center; margin-bottom: 20px;">Shopping List</h2>
-                        ${content.innerHTML}
-                    </div>
+            for (let [category, items] of Object.entries(aggregatedItems)) {
+                printHtml += `
+                    <div style="margin-bottom: 12px">
+                        <span style="font-size: 14px; font-weight: 600; color: #3b3b3b;">${category}</span>
+                        <ul style="margin: 6px 0 0 0; list-style: none">
                 `;
 
-                // PDF generation options
-                const options = {
-                    margin: 0.5,
-                    filename: 'shopping_list.pdf',
+                for (let [itemName, unitMap] of Object.entries(items)) {
+                    const qtyText = Object.entries(unitMap).map(([unit, total]) => {
+                        const rounded = Math.round(total * 100) / 100;
+                        if (rounded === 0.25) return `¼ ${unit}`;
+                        if (rounded === 0.5) return `½ ${unit}`;
+                        if (rounded === 0.75) return `¾ ${unit}`;
+                        if (['g', 'ml', 'mL'].includes(unit)) return `${Math.round(total)}${unit}`;
+                        return `${rounded} ${unit}`;
+                    }).join(' or ');
+
+                    printHtml += `
+                        <li style="font-size: 14px; font-weight: 400; color: #3b3b3b; line-height: 28px;">
+                            <input type="checkbox" style="margin-right: 6px;" />
+                            ${qtyText} ${itemName}
+                        </li>
+                    `;
+                }
+
+                printHtml += '</ul></div>';
+            }
+
+            if (printHtml.trim() === '') {
+                printHtml = '<p>No items selected.</p>';
+            }
+
+            $('#print-shopping-list-modal #shopping-list-content').html(printHtml);
+            $('#print-shopping-list-modal').fadeIn();
+
+            const printShoppingListModal = document.getElementById('print-shopping-list-modal');
+            const printShoppingListClose = document.getElementById('print-shopping-list-close');
+
+            // Show modal
+            printShoppingListModal.style.display = 'block';
+
+            // Close modal handler (only bind once)
+            printShoppingListClose.onclick = () => {
+                printShoppingListModal.style.display = 'none';
+            };
+
+            printShoppingListModal.onclick = (e) => {
+                if (e.target === printShoppingListModal) {
+                    printShoppingListModal.style.display = 'none';
+                }
+            };
+        });
+
+        $(document).on('click', '#download-pdf', function() {
+            const content = document.querySelector('#print-shopping-list-modal #shopping-list-content');
+
+            if (!content || content.innerHTML.trim() === '') {
+                alert('No items selected.');
+                return;
+            }
+
+            // Create a temporary container with a header and the shopping list content
+            const container = document.createElement('div');
+            container.innerHTML = `
+                <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; color: #222;">
+                    <h2 style="text-align: center; margin-bottom: 20px;">Shopping List</h2>
+                    ${content.innerHTML}
+                </div>
+            `;
+
+            // PDF generation options
+            const options = {
+                margin: 0.5,
+                filename: 'shopping_list.pdf',
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'in',
+                    format: 'letter',
+                    orientation: 'portrait'
+                }
+            };
+
+            // Generate and download the PDF
+            html2pdf().set(options).from(container).save();
+        });
+
+        $(".print-plan-btn").click(function() {
+            const planId = $(this).data("plan-id");
+            const userId = $(this).data("user-id");
+
+            const printPlanModal = document.getElementById('print-plan-modal');
+            const printPlanClose = document.getElementById('print-plan-modal-close');
+
+            // ✅ Show modal (your custom modal logic)
+            printPlanModal.style.display = 'block';
+
+            // ✅ Close modal on X click
+            printPlanClose.onclick = () => {
+                printPlanModal.style.display = 'none';
+            };
+
+            // ✅ Close modal when clicking outside the modal content
+            printPlanModal.onclick = (e) => {
+                if (e.target === printPlanModal) {
+                    printPlanModal.style.display = 'none';
+                }
+            };
+
+            // ✅ Show loading message
+            $("#pdf-preview").html('<div class="text-center py-4">Loading preview...</div>');
+
+            // ✅ Fetch and inject preview HTML
+            fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to load preview");
+                    }
+                    return res.text();
+                })
+                .then(html => {
+                    $("#pdf-preview").html(html); // ✅ Inject fetched HTML into modal
+                })
+                .catch(err => {
+                    console.error("Error loading preview:", err); // ✅ Debug error
+                    $("#pdf-preview").html('<div class="text-danger py-4">Error loading preview</div>');
+                });
+        });
+    });
+
+    window.logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO8AAAAiCAYAAAC3Bo7TAAAACXBIWXMAABYlAAAWJQFJUiTwAAAFGmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjUtMDYtMzBUMDg6Mjc6MTIrMDU6MzAiIHhtcDpNb2RpZnlEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjJlOTY2MjBmLWU4YWQt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'; // Replace with base64 logo image
+
+    function downloadPDF() {
+        const element = document.getElementById("pdf-content");
+        const images = element.querySelectorAll("img");
+
+        const promises = Array.from(images).map(img => {
+            return toDataURL(img.src).then(dataUrl => {
+                img.setAttribute("src", dataUrl);
+            }).catch(err => {
+                console.warn("Image failed to load as base64:", img.src);
+            });
+        });
+
+        Promise.all(promises).then(() => {
+            // Set margins (in inches: 1in = 25.4mm = 72pt)
+            const topMargin = 0.3; // ~15mm
+            const bottomMargin = 1.0; // ~18mm (footer + buffer)
+            const leftRightMargin = 0.3;
+
+            html2pdf()
+                .set({
+                    margin: [topMargin, leftRightMargin, bottomMargin, leftRightMargin],
+                    filename: 'print-plan.pdf',
+                    image: {
+                        type: 'jpeg',
+                        quality: 1
+                    },
                     html2canvas: {
-                        scale: 2
+                        scale: 2,
+                        useCORS: true
                     },
                     jsPDF: {
                         unit: 'in',
-                        format: 'letter',
+                        format: 'a4',
                         orientation: 'portrait'
                     }
-                };
-
-                // Generate and download the PDF
-                html2pdf().set(options).from(container).save();
-            });
-
-            $(".print-plan-btn").click(function() {
-                const planId = $(this).data("plan-id");
-                const userId = $(this).data("user-id");
-
-                const printPlanModal = document.getElementById('print-plan-modal');
-                const printPlanClose = document.getElementById('print-plan-modal-close');
-
-                // ✅ Show modal (your custom modal logic)
-                printPlanModal.style.display = 'block';
-
-                // ✅ Close modal on X click
-                printPlanClose.onclick = () => {
-                    printPlanModal.style.display = 'none';
-                };
-
-                // ✅ Close modal when clicking outside the modal content
-                printPlanModal.onclick = (e) => {
-                    if (e.target === printPlanModal) {
-                        printPlanModal.style.display = 'none';
-                    }
-                };
-
-                // ✅ Show loading message
-                $("#pdf-preview").html('<div class="py-4 text-center">Loading preview...</div>');
-
-                // ✅ Fetch and inject preview HTML
-                fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
-                    .then(res => {
-                        if (!res.ok) {
-                            throw new Error("Failed to load preview");
-                        }
-                        return res.text();
-                    })
-                    .then(html => {
-                        $("#pdf-preview").html(html); // ✅ Inject fetched HTML into modal
-                    })
-                    .catch(err => {
-                        console.error("Error loading preview:", err); // ✅ Debug error
-                        $("#pdf-preview").html('<div class="py-4 text-danger">Error loading preview</div>');
-                    });
-            });
-        });
-
-        window.logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO8AAAAiCAYAAAC3Bo7TAAAACXBIWXMAABYlAAAWJQFJUiTwAAAFGmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjUtMDYtMzBUMDg6Mjc6MTIrMDU6MzAiIHhtcDpNb2RpZnlEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjJlOTY2MjBmLWU4YWQt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'; // Replace with base64 logo image
-
-        function downloadPDF() {
-            const element = document.getElementById("pdf-content");
-            const images = element.querySelectorAll("img");
-
-            const promises = Array.from(images).map(img => {
-                return toDataURL(img.src).then(dataUrl => {
-                    img.setAttribute("src", dataUrl);
-                }).catch(err => {
-                    console.warn("Image failed to load as base64:", img.src);
-                });
-            });
-
-            Promise.all(promises).then(() => {
-                // Set margins (in inches: 1in = 25.4mm = 72pt)
-                const topMargin = 0.3; // ~15mm
-                const bottomMargin = 1.0; // ~18mm (footer + buffer)
-                const leftRightMargin = 0.3;
-
-                html2pdf()
-                    .set({
-                        margin: [topMargin, leftRightMargin, bottomMargin, leftRightMargin],
-                        filename: 'print-plan.pdf',
-                        image: {
-                            type: 'jpeg',
-                            quality: 1
-                        },
-                        html2canvas: {
-                            scale: 2,
-                            useCORS: true
-                        },
-                        jsPDF: {
-                            unit: 'in',
-                            format: 'a4',
-                            orientation: 'portrait'
-                        }
-                    })
-                    .from(element)
-                    .toPdf()
-                    .get('pdf')
-                    .then(pdf => {
-                        const totalPages = pdf.internal.getNumberOfPages();
-                        const pageWidth = pdf.internal.pageSize.getWidth();
-                        const pageHeight = pdf.internal.pageSize.getHeight();
-
-                        // Footer settings
-                        const footerHeight = 0.5; // in inches
-                        const footerY = pageHeight - bottomMargin + 0.15; // 0.15in above page bottom
-
-                        // Logo
-                        const logoWidth = 1.2;
-                        const logoHeight = 0.2;
-                        const logoX = 0.5;
-                        const logoY = footerY + (footerHeight - logoHeight) / 2;
-
-                        // Circle (page number)
-                        const circleRadius = 0.11;
-                        const circleCenterX = pageWidth / 2;
-                        const circleCenterY = footerY + footerHeight / 2;
-
-                        // Right-side text
-                        const dateText = `Nutrition Training Plan | ${new Date().toLocaleDateString('en-GB')}`;
-                        const dateFontSize = 9; // smaller font
-                        const dateColor = "#649ef7"; // blue
-                        const dateX = pageWidth - 0.5;
-                        const dateY = circleCenterY + 0.04; // align with circle
-
-                        for (let i = 1; i <= totalPages; i++) {
-                            pdf.setPage(i);
-
-                            // Draw a white rectangle to clear the footer area
-                            pdf.setFillColor(255, 255, 255);
-                            pdf.rect(
-                                0,
-                                pageHeight - bottomMargin,
-                                pageWidth,
-                                footerHeight,
-                                'F'
-                            );
-
-                            // Add logo (left, vertically centered)
-                            if (window.logoBase64) {
-                                pdf.addImage(window.logoBase64, 'PNG', logoX, logoY, logoWidth, logoHeight);
-                            }
-
-                            // Draw blue circle for page number (center)
-                            pdf.setDrawColor(0, 116, 217); // blue border (optional)
-                            pdf.setFillColor(0, 116, 217); // blue fill
-                            pdf.circle(circleCenterX, circleCenterY, circleRadius, 'F');
-
-                            // Page number in white, centered in the circle
-                            pdf.setTextColor(255, 255, 255);
-                            pdf.setFontSize(9);
-                            pdf.setFont(undefined, 'normal');
-                            // Center vertically and horizontally
-                            pdf.text(`${i}`, circleCenterX, circleCenterY, {
-                                align: 'center',
-                                baseline: 'middle'
-                            });
-
-                            // Date text (right, blue, smaller font, vertically centered)
-                            pdf.setTextColor(0, 116, 217); // blue
-                            pdf.setFontSize(dateFontSize);
-                            pdf.setFont(undefined, 'normal');
-                            pdf.text(dateText, dateX, dateY, {
-                                align: 'right',
-                                baseline: 'middle'
-                            });
-                        }
-                    })
-                    .save();
-            });
-        }
-
-        // Helper to convert images to base64
-        function toDataURL(url) {
-            return fetch(url, {
-                    mode: 'cors'
                 })
-                .then(response => response.blob())
-                .then(blob => new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                }));
-        }
+                .from(element)
+                .toPdf()
+                .get('pdf')
+                .then(pdf => {
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
 
-        function toDataURL(url) {
-            return fetch(url, {
-                    mode: 'cors'
-                })
-                .then(response => response.blob())
-                .then(blob => new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                }));
-        }
+                    // Footer settings
+                    const footerHeight = 0.5; // in inches
+                    const footerY = pageHeight - bottomMargin + 0.15; // 0.15in above page bottom
 
-        $(document).ready(function() {
-            // Open modal on meal click
-            $('.challenge-card.clickable').on('click', function() {
-                const user_meal_id = $(this).data('meal-id');
-                const user_plan_id = $(this).data('user-plan-id');
-                const user_sub_category_id = $(this).data('sub-category-id');
-                const user_category_id = $(this).data('category-id');
+                    // Logo
+                    const logoWidth = 1.2;
+                    const logoHeight = 0.2;
+                    const logoX = 0.5;
+                    const logoY = footerY + (footerHeight - logoHeight) / 2;
 
-                $.ajax({
-                    url: "{{ route('front.meal.details') }}",
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        user_meal_id,
-                        user_plan_id,
-                        user_sub_category_id,
-                        user_category_id
-                    },
-                    success: function(response) {
-                        const meal = response.meal;
+                    // Circle (page number)
+                    const circleRadius = 0.11;
+                    const circleCenterX = pageWidth / 2;
+                    const circleCenterY = footerY + footerHeight / 2;
 
-                        // 🖼️ Meal header
-                        $('#recipe-dialog h2').text(meal.meal.title || 'Meal');
-                        $('#recipe-dialog .dialog-header p').text(meal.meal.description || '');
+                    // Right-side text
+                    const dateText = `Nutrition Training Plan | ${new Date().toLocaleDateString('en-GB')}`;
+                    const dateFontSize = 9; // smaller font
+                    const dateColor = "#649ef7"; // blue
+                    const dateX = pageWidth - 0.5;
+                    const dateY = circleCenterY + 0.04; // align with circle
 
-                        const imageUrl = meal.meal.image ?
-                            `{{ asset('storage') }}/` + meal.meal.image :
-                            `{{ asset('front/images/placeholder.png') }}`;
-                        $('#recipe-dialog .dialog-img').attr('src', imageUrl);
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
 
-                        // 🥣 Ingredients
-                        let ingredientsHtml = '';
-                        meal.user_items.forEach(function(userItem, index) {
-                            const item = userItem.item;
-                            if (!item) return;
-
-                            const selectedUnits = item.selected_qty_unit || [];
-                            const selected = selectedUnits.find(u => u.checked) || null;
-
-                            let qty = '';
-                            let unit = '';
-
-                            if (selected) {
-                                qty = selected.qty;
-                                unit = selected.unit?.trim();
-                            } else {
-                                qty = item.qty;
-                                unit = item.unit?.trim();
-                            }
-
-                            const noSpaceUnits = ['g', 'ml', 'mL'];
-                            const space = noSpaceUnits.includes(unit) ? '' : ' ';
-
-                            ingredientsHtml += `<li>${qty}${space}${unit} ${item.title}</li>`;
-                        });
-
-                        $('#recipe-dialog .dialog-body ul').html(ingredientsHtml);
-
-                        // 📝 Note
-                        $('.note').html(
-                            `<strong>Note:</strong> ${meal.meal.note || 'No additional notes provided.'}`
+                        // Draw a white rectangle to clear the footer area
+                        pdf.setFillColor(255, 255, 255);
+                        pdf.rect(
+                            0,
+                            pageHeight - bottomMargin,
+                            pageWidth,
+                            footerHeight,
+                            'F'
                         );
 
-                        // 🔢 Nutrition info
-                        $('.nutrition-info').html(`
-                            <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span>
-                            <span style="color: #a60015">● Protein: ${response.totalProtein ?? 0} g</span>
-                            <span style="color: #3e8e00">● Carb: ${response.totalCarbs ?? 0} g</span>
-                            <span style="color: #0077b6">● Fat: ${response.totalFats ?? 0} g</span>
-                        `);
+                        // Add logo (left, vertically centered)
+                        if (window.logoBase64) {
+                            pdf.addImage(window.logoBase64, 'PNG', logoX, logoY, logoWidth, logoHeight);
+                        }
 
-                        // 🔁 Set data attributes on Smart Swap button for next modal
-                        $('.smart-swap-btn').attr('data-meal-id', user_meal_id);
-                        $('.smart-swap-btn').attr('data-user-plan-id', user_plan_id);
-                        $('.smart-swap-btn').attr('data-sub-category-id', user_sub_category_id);
-                        $('.smart-swap-btn').attr('data-category-id', user_category_id);
-                        $('.smart-swap-btn').attr('data-meal-name', meal.meal.title);
+                        // Draw blue circle for page number (center)
+                        pdf.setDrawColor(0, 116, 217); // blue border (optional)
+                        pdf.setFillColor(0, 116, 217); // blue fill
+                        pdf.circle(circleCenterX, circleCenterY, circleRadius, 'F');
 
-                        // 👁️ Show modal
-                        $('#recipe-dialog').fadeIn();
-                    },
-                    error: function() {
-                        alert('Could not load meal details.');
+                        // Page number in white, centered in the circle
+                        pdf.setTextColor(255, 255, 255);
+                        pdf.setFontSize(9);
+                        pdf.setFont(undefined, 'normal');
+                        // Center vertically and horizontally
+                        pdf.text(`${i}`, circleCenterX, circleCenterY, {
+                            align: 'center',
+                            baseline: 'middle'
+                        });
+
+                        // Date text (right, blue, smaller font, vertically centered)
+                        pdf.setTextColor(0, 116, 217); // blue
+                        pdf.setFontSize(dateFontSize);
+                        pdf.setFont(undefined, 'normal');
+                        pdf.text(dateText, dateX, dateY, {
+                            align: 'right',
+                            baseline: 'middle'
+                        });
                     }
-                });
-            });
-
-            // Close modal on close button click
-            $('#dialog-close-btn').on('click', function() {
-                $('#recipe-dialog').fadeOut();
-            });
-
-            // Optional: Close when clicking outside the dialog box
-            $('#recipe-dialog').on('click', function(e) {
-                if ($(e.target).is('#recipe-dialog')) {
-                    $(this).fadeOut();
-                }
-            });
+                })
+                .save();
         });
+    }
 
-        $(document).on('click', '.smart-swap-btn', function () {
-            const modalEl = $('#mealItemModel');
-            const modal = new bootstrap.Modal(modalEl[0]); // Note: pass DOM element, not jQuery obj
-            modal.show();
+    // Helper to convert images to base64
+    function toDataURL(url) {
+        return fetch(url, {
+                mode: 'cors'
+            })
+            .then(response => response.blob())
+            .then(blob => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            }));
+    }
 
+    function toDataURL(url) {
+        return fetch(url, {
+                mode: 'cors'
+            })
+            .then(response => response.blob())
+            .then(blob => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            }));
+    }
+
+    $(document).ready(function () {
+        // Open Bootstrap modal on meal click
+        $('.clickable').on('click', function () {
             const user_meal_id = $(this).data('meal-id');
             const user_plan_id = $(this).data('user-plan-id');
             const user_sub_category_id = $(this).data('sub-category-id');
             const user_category_id = $(this).data('category-id');
-            const mealName = $(this).data('meal-name');
-            const $mealItemsModalLabel = $('#mealItemsModalLabel');
-            const $mealItemsContainer = $('#mealItemsContainer');
-            const $mealItemsLoadingSpinner = $('#mealItemsLoadingSpinner');
-            const $mealItemsModal = $('#mealItemModel');
-            let currentMealId = null;
-            let currentMealName = null;
 
             $.ajax({
                 url: "{{ route('front.meal.details') }}",
@@ -949,21 +827,21 @@
                     user_sub_category_id,
                     user_category_id
                 },
-                success: function(response) {
+                success: function (response) {
                     const meal = response.meal;
 
-                    // 🖼️ Meal header
-                    $('#recipe-dialog h2').text(meal.meal.title || 'Meal');
-                    $('#recipe-dialog .dialog-header p').text(meal.meal.description || '');
+                    // 🖼️ Set meal title and description
+                    $('.modal-body .dialog-header h2').text(meal.meal.title || 'Meal');
+                    $('.modal-body .dialog-header p').text(meal.meal.description || '');
 
-                    const imageUrl = meal.meal.image ?
-                        `{{ asset('storage') }}/` + meal.meal.image :
-                        `{{ asset('front/images/placeholder.png') }}`;
-                    $('#recipe-dialog .dialog-img').attr('src', imageUrl);
+                    const imageUrl = meal.meal.image
+                        ? `{{ asset('storage') }}/` + meal.meal.image
+                        : `{{ asset('front/images/placeholder.png') }}`;
+                    $('.modal-body .dialog-img').attr('src', imageUrl);
 
                     // 🥣 Ingredients
                     let ingredientsHtml = '';
-                    meal.user_items.forEach(function(userItem, index) {
+                    meal.user_items.forEach(function (userItem) {
                         const item = userItem.item;
                         if (!item) return;
 
@@ -987,47 +865,37 @@
                         ingredientsHtml += `<li>${qty}${space}${unit} ${item.title}</li>`;
                     });
 
-                    $('#recipe-dialog .dialog-body ul').html(ingredientsHtml);
+                    $('.modal-body ul').html(ingredientsHtml);
 
                     // 📝 Note
-                    $('.note').html(
+                    $('.modal-body .note').html(
                         `<strong>Note:</strong> ${meal.meal.note || 'No additional notes provided.'}`
                     );
 
-                    // 🔢 Nutrition info
-                    $('.nutrition-info').html(`
-                        <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span>
-                        <span style="color: #a60015">● Protein: ${response.totalProtein ?? 0} g</span>
-                        <span style="color: #3e8e00">● Carb: ${response.totalCarbs ?? 0} g</span>
+                    // 🔢 Nutrition Info
+                    $('.modal-body .nutrition-info').html(`
+                        <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span><br>
+                        <span style="color: #a60015">● Protein: ${response.totalProtein ?? 0} g</span><br>
+                        <span style="color: #3e8e00">● Carb: ${response.totalCarbs ?? 0} g</span><br>
                         <span style="color: #0077b6">● Fat: ${response.totalFats ?? 0} g</span>
                     `);
 
-                    // 🔁 Set data attributes on Smart Swap button for next modal
-                    $('.smart-swap-btn').attr('data-meal-id', user_meal_id);
-                    $('.smart-swap-btn').attr('data-user-plan-id', user_plan_id);
-                    $('.smart-swap-btn').attr('data-sub-category-id', user_sub_category_id);
-                    $('.smart-swap-btn').attr('data-category-id', user_category_id);
-                    $('.smart-swap-btn').attr('data-meal-name', meal.meal.title);
+                    // Set data attributes for Smart Swap
+                    $('.modal-body .smart-swap-btn')
+                        .attr('data-meal-id', user_meal_id)
+                        .attr('data-user-plan-id', user_plan_id)
+                        .attr('data-sub-category-id', user_sub_category_id)
+                        .attr('data-category-id', user_category_id)
+                        .attr('data-meal-name', meal.meal.title);
 
-                    // 👁️ Show modal
-                    $('#recipe-dialog').fadeIn();
+                    // 👁️ Show Bootstrap modal
+                    const modal = new bootstrap.Modal(document.getElementById('recipeDialogModal'));
+                    modal.show();
                 },
-                error: function() {
+                error: function () {
                     alert('Could not load meal details.');
                 }
             });
-        });
-
-        // Close modal on close button click
-        $('#dialog-close-btn').on('click', function() {
-            $('#recipe-dialog').fadeOut();
-        });
-
-        // Optional: Close when clicking outside the dialog box
-        $('#recipe-dialog').on('click', function(e) {
-            if ($(e.target).is('#recipe-dialog')) {
-                $(this).fadeOut();
-            }
         });
     });
 
@@ -1047,9 +915,9 @@
         const modal = new bootstrap.Modal(modalEl[0]);
         modal.show();
 
-        const $mealItemsModalLabel = $('#mealItemsModalLabel');
-        const $mealItemsContainer = $('#mealItemsContainer');
-        const $mealItemsLoadingSpinner = $('#mealItemsLoadingSpinner');
+        const $mealItemsModalLabel = $('.swap-title'); // Set meal name here
+        const $mealItemsContainer = $('.swap-list'); // Container for item cards
+        const $mealItemsLoadingSpinner = $('#mealItemsLoadingSpinner'); // Optional: add loading spinner if you want
 
         if (!user_meal_id || !meal_name) {
             console.error('Invalid meal data.');
@@ -1057,8 +925,10 @@
         }
 
         $mealItemsModalLabel.text(meal_name);
-        $mealItemsContainer.empty().hide();
-        $mealItemsLoadingSpinner.show();
+        $mealItemsContainer.empty();
+
+        // Optional: show spinner
+        // $mealItemsLoadingSpinner.show();
 
         $.ajax({
             url: '{{ route('front.meals.items', ':mealId') }}'
@@ -1109,77 +979,64 @@
                             displayQty = `${item.qty}${needsSpace ? ' ' : ''}${unit}`;
                         }
 
-                        let infoButton = '';
-                        if (item.description) {
-                            infoButton = `<button class="btn btn-primary rounded-pill py-2 d-flex align-items-center m-1 info-btn"
-                                data-bs-toggle="tooltip"
-                                title="${item.description}">
-                                <svg class="me-2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="..." fill="white" />
-                                </svg>
-                                Info
-                            </button>`;
-                        }
-
-                        const swapButton = item.swapItems && item.swapItems.length > 0
-                            ? `<button class="item-swap-btn btn-swap btn btn-primary rounded-pill py-2 d-flex align-items-center m-1" 
-                                data-item-id="${item.id}"
-                                data-item-name="${item.name}"
-                                data-user-item-id="${item.user_item_id}"
-                                data-user-meal-id="${item.user_meal_id}"
-                                data-user-plan-id="${userPlanId}"
-                                data-sub-category-id="${userSubCategoryId}"
-                                data-user-category-id="${userCategoryId}">
-                                <svg class="me-2" width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="..." fill="white"/>
-                                </svg>
-                                Swap
-                            </button>` : '';
-
                         const itemCard = `
-                            <div class="category-swap-list-box">
-                                <div class="category-swap-img">
-                                    <figure><img class="img-thumbnail" src="${item.image}" alt=""></figure>
-                                    <div class="info-tootlip">
-                                        <p>Food Details</p>
-                                        <ul>
-                                            <li>Protein: ${item.protein}g</li>
-                                            <li>Carbs: ${item.carbs}g</li>
-                                        </ul>
-                                    </div>
+                            <div class="swap-item">
+                                <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
+                                <div class="swap-item-info">
+                                    <div class="swap-item-name">${item.name}</div>
+                                    <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
                                 </div>
-                                <div class="category-swap-content">
-                                    <h5 class="m-0">${item.name}</h5>
-                                    <p class="align-items-center d-flex m-0 mt-2">
-                                        <strong class="me-2 text-nowrap">Qty :</strong>
-                                        <span>${displayQty}</span>
-                                    </p>
+                                <div class="swap-item-actions">
+                                    ${item.swapItems?.length > 0 ? `
+                                        <button class="smart-swap-btn item-swap-btn"
+                                            data-item-id="${item.id}"
+                                            data-item-name="${item.name}"
+                                            data-user-item-id="${item.user_item_id}"
+                                            data-user-meal-id="${item.user_meal_id}"
+                                            data-user-plan-id="${userPlanId}"
+                                            data-sub-category-id="${userSubCategoryId}"
+                                            data-user-category-id="${userCategoryId}">
+                                            <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; vertical-align: middle; margin-right: 4px;" />
+                                            Smart swap
+                                        </button>` : ''}
+                                    ${item.description ? `
+                                        <button class="smart-swap-btn" data-bs-toggle="tooltip" title="${item.description}">
+                                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
+                                        </button>` : ''}
                                 </div>
-                                <div class="category-swap-btn">
-                                    ${infoButton}
-                                    ${swapButton}
-                                </div>
-                            </div>`;
+                            </div>
+                        `;
 
                         $mealItemsContainer.append(itemCard);
                     });
+                    $('[data-bs-toggle="tooltip"]').tooltip();
 
                 } else {
                     $mealItemsContainer.html('<p class="text-center">No foods available in this meal.</p>');
                 }
 
-                $mealItemsLoadingSpinner.hide();
-                $mealItemsContainer.show();
+                // Optional: hide spinner
+                // $mealItemsLoadingSpinner.hide();
             },
             error: function () {
                 $mealItemsContainer.html('<p class="text-center text-danger">Failed to load foods.</p>');
-                $mealItemsLoadingSpinner.hide();
-                $mealItemsContainer.show();
+                // $mealItemsLoadingSpinner.hide();
             }
         });
-
-        $('#mealModel').modal('hide');
     }
+    $(document).on('click', '.meal-item-modal-close', function () {
+        const modalEl = $('#mealItemModel')[0];
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        
+        if (modalInstance) {
+            modalInstance.hide();
+        } else {
+            // fallback if instance wasn't created by Bootstrap JS
+            const newModal = new bootstrap.Modal(modalEl);
+            newModal.hide();
+        }
+    });
+
 
     $('body').on('click', '.item-swap-btn', function () {
         const itemId = $(this).data('item-id');
@@ -1275,9 +1132,8 @@
                         </div>
                     </div>
 
-                $mealItemsModalLabel.text(mealName);
-                $mealItemsContainer.empty().hide();
-                $mealItemsLoadingSpinner.show();
+                    <div class="swap-item"><h3>Swap with</h3></div>
+                `;
 
                 // ✅ Build Swap Items HTML
                 let swapItemsHTML = '';
@@ -1302,9 +1158,8 @@
                                 ` : ''}
                             </div>
                         </div>
-
-                        <div class="swap-item"><h3>Swap with</h3></div>
                     `;
+                });
 
                 // ✅ Inject into DOM
                 $swapList.html(mainItem + swapItemsHTML);
@@ -1319,10 +1174,6 @@
             }
         });
 
-    });
-
-    $('.meal-item-modal-close').on('click', function () {
-        $('#mealItemModel').modal('hide');
     });
 
     $('#mealItemModel').on('hidden.bs.modal', function () {
@@ -1463,35 +1314,5 @@
         });
     });
 
-    </script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const dropdownButton = document.getElementById('trainingLoadDropdownButton');
-      const dropdownMenu = document.getElementById('trainingLoadDropdownMenu');
-      const dropdownOptions = dropdownMenu.querySelectorAll('.custom-dropdown-option');
-      const dropdownContent = dropdownButton.querySelector('.custom-dropdown-content');
-
-      dropdownButton.addEventListener('click', function(e) {
-        e.stopPropagation();
-        dropdownMenu.classList.toggle('open');
-        dropdownButton.classList.toggle('open');
-      });
-
-      dropdownOptions.forEach(option => {
-        option.addEventListener('click', function(e) {
-          dropdownOptions.forEach(opt => opt.classList.remove('selected'));
-          this.classList.add('selected');
-          dropdownContent.innerHTML = this.innerHTML;
-          dropdownMenu.classList.remove('open');
-          dropdownButton.classList.remove('open');
-        });
-      });
-
-      document.addEventListener('click', function(e) {
-        dropdownMenu.classList.remove('open');
-        dropdownButton.classList.remove('open');
-      });
-    });
-    </script>
+</script>
 @endsection
