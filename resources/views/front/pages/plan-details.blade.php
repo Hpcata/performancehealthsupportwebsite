@@ -44,15 +44,15 @@
         <div class="dropdown action-buttons">
             <button class="btn btn-share dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-  <g clip-path="url(#clip0_3008_7695)">
-    <path d="M0.888672 8.50124V14.3194C0.888672 14.7052 1.07597 15.0752 1.40937 15.3479C1.74277 15.6207 2.19495 15.774 2.66645 15.774H13.3331C13.8046 15.774 14.2568 15.6207 14.5902 15.3479C14.9236 15.0752 15.1109 14.7052 15.1109 14.3194V8.50124M11.5553 4.13761L7.99978 1.22852M7.99978 1.22852L4.44423 4.13761M7.99978 1.22852V10.6831" stroke="#3B3B3B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
-  <defs>
-    <clipPath id="clip0_3008_7695">
-      <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
-    </clipPath>
-  </defs>
-</svg>
+                <g clip-path="url(#clip0_3008_7695)">
+                    <path d="M0.888672 8.50124V14.3194C0.888672 14.7052 1.07597 15.0752 1.40937 15.3479C1.74277 15.6207 2.19495 15.774 2.66645 15.774H13.3331C13.8046 15.774 14.2568 15.6207 14.5902 15.3479C14.9236 15.0752 15.1109 14.7052 15.1109 14.3194V8.50124M11.5553 4.13761L7.99978 1.22852M7.99978 1.22852L4.44423 4.13761M7.99978 1.22852V10.6831" stroke="#3B3B3B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+                <defs>
+                    <clipPath id="clip0_3008_7695">
+                    <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
+                    </clipPath>
+                </defs>
+            </svg>
                 Share
             </button>
             <ul class="dropdown-menu share-dropdown" aria-labelledby="shareDropdown" style="min-width: 270px;">
@@ -72,7 +72,7 @@
                 <li>
                     <div class="d-flex align-items-center share-dropdown-item">
                         <img src="{{ frontAssets('images/dialog/download.svg') }}" alt="Download" class="me-2 share-dropdown-icon" />
-                        <a href="#" class="ms-0" data-bs-toggle="modal" data-bs-target="#print-plan-modal" style="text-decoration:none; color:black">Download plan</a>
+                        <a href="#" class="ms-0 print-plan-btn" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}" style="text-decoration:none; color:black">Download plan</a>
                     </div>
                 </li>
             </ul>
@@ -132,7 +132,7 @@
                                 data-category-id="{{ $userCategory->id }}"
                                 data-user-plan-id="{{ $userPlan->id }}">
                                 <img
-                                    src="/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/food1.webp"
+                                    src="{{ webAssets('storage/'.$meal->meal->image) }}"
                                     alt="{{ $meal->meal->title }}"
                                     height="252"
                                     width="160" />
@@ -169,69 +169,48 @@
                 and what foods to choose below.
             </p>
             <div class="dropdown-container">
-              <label class="dropdown-label">Training load</label>
-              <button class="custom-dropdown-button" id="trainingLoadDropdownButton" type="button">
-                <div class="custom-dropdown-content">
-                  <div class="custom-dropdown-title">Low</div>
-                  <div class="custom-dropdown-subtitle">Low load, rest and recovery days</div>
+                <label class="dropdown-label">Training load</label>
+                <button class="custom-dropdown-button" id="trainingLoadDropdownButton" type="button">
+                    <div class="custom-dropdown-content">
+                        <div class="custom-dropdown-title">Low</div>
+                        <div class="custom-dropdown-subtitle">Low load, rest and recovery days</div>
+                    </div>
+                    <div class="custom-dropdown-arrow"></div>
+                </button>
+                <div class="custom-dropdown-menu" id="trainingLoadDropdownMenu">
+                    <div class="custom-dropdown-option selected" data-value="low">
+                        <div class="option-title">Low</div>
+                        <div class="option-subtitle">Low load, rest and recovery days</div>
+                    </div>
+                    <div class="custom-dropdown-option" data-value="moderate">
+                        <div class="option-title">Moderate</div>
+                        <div class="option-subtitle">Balanced training and recovery</div>
+                    </div>
+                    <div class="custom-dropdown-option" data-value="high">
+                        <div class="option-title">High</div>
+                        <div class="option-subtitle">Intense training, peak performance</div>
+                    </div>
+                    <div class="custom-dropdown-option" data-value="peak">
+                        <div class="option-title">Peak</div>
+                        <div class="option-subtitle">Maximum load, competition ready</div>
+                    </div>
                 </div>
-                <div class="custom-dropdown-arrow"></div>
-              </button>
-              <div class="custom-dropdown-menu" id="trainingLoadDropdownMenu">
-                <div class="custom-dropdown-option selected" data-value="low">
-                  <div class="option-title">Low</div>
-                  <div class="option-subtitle">Low load, rest and recovery days</div>
-                </div>
-                <div class="custom-dropdown-option" data-value="moderate">
-                  <div class="option-title">Moderate</div>
-                  <div class="option-subtitle">Balanced training and recovery</div>
-                </div>
-                <div class="custom-dropdown-option" data-value="high">
-                  <div class="option-title">High</div>
-                  <div class="option-subtitle">Intense training, peak performance</div>
-                </div>
-                <div class="custom-dropdown-option" data-value="peak">
-                  <div class="option-title">Peak</div>
-                  <div class="option-subtitle">Maximum load, competition ready</div>
-                </div>
-              </div>
             </div>
 
-            <!-- <div class="input-wrap">
-                <label for="training-load-select" style="font-weight: 600">Training load</label>
-                <div class="select-wrapper">
-                    <select id="training-load-select" class="two-line-select">
-                        <option value="low">
-                            Low – Low load, rest and recovery days
-                        </option>
-                        <option value="medium">Medium – Moderate training</option>
-                        <option value="high">High – Intense training</option>
-                    </select>
-                    <img
-                        src="{{ webAssets('front/images/arrow-down.svg') }}"
-                        alt="Arrow"
-                        class="select-arrow" />
-                </div>
-            </div> -->
-            <div
-                style="
-              display: flex;
-              align-items: start;
-              gap: 1.5rem;
-              flex-wrap: wrap;
-              flex-direction:column;
-            ">
-                <img
-                    src="/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/low-load.png"
-                    alt="Plate like this image"
-                    
-                    width="318"
-                    height="350"
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                ">
+                <img src="{{ webAssets('front/images/plate.webp') }}"  alt="Plate like this image"
+                    style="width: 100%"
+                    width="806"
+                    height="590"
                     class="plate-img" />
                 <ul style="list-style: none; padding-left: 0; font-size: 1rem">
                     <li class="list-w-image">
-                        <img
-                            src="/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/Bread.svg"
+                        <img src="{{ webAssets('front/images/Bread.svg') }}"
                             alt="Plate like this image"
                             style="width: 32px; height: auto"
                             width="32"
@@ -243,8 +222,7 @@
                     </li>
 
                     <li class="list-w-image">
-                        <img
-                            src="/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/apple.svg"
+                        <img src="{{ webAssets('front/images/apple.svg') }}"
                             alt="Plate like this image"
                             style="width: 32px; height: auto"
                             width="32"
@@ -255,8 +233,7 @@
                         </div>
                     </li>
                     <li class="list-w-image">
-                        <img
-                            src="/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/boiled egg.svg"
+                        <img src="{{ webAssets('front/images/boiled egg.svg') }}"
                             alt="Plate like this image"
                             style="width: 32px; height: auto"
                             width="32"
@@ -273,246 +250,31 @@
 </main>
 
 <!-- Bootstrap Modal for Download Plan (keep your content inside) -->
-<div class="modal fade" id="print-plan-modal" tabindex="-1" aria-labelledby="printPlanModalLabel" aria-hidden="true">
+<div class="modal" id="print-plan-modal" tabindex="-1" aria-labelledby="printPlanModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content" style="border-radius: 20px;">
-        <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
-        <h5 class="modal-title" id="printPlanModalLabel">Download Plan</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" style="padding: 0;">
-        <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
-            <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
-            <div
-            id="pdf-preview"
-            class="d-flex align-items-center justify-content-center"
-        >
-            <div
-            id="pdf-content"
-            class="bg-white"
-            style="
-                max-width: 940px;
-                width: 100%;
-                font-family: 'Inter', Arial, sans-serif;
-            "
-            >
-            <div class="mb-4">
-                <!-- PDF Hero Banner -->
-                <div
-                class="position-relative"
-                style="
-                    min-height: 200px;
-                    border-radius: 18px;
-                    overflow: hidden;
-                    background-color: #3b3b3b;
-                "
-                >
-                <img
-                    src="images/sports-hero-bg.webp"
-                    alt="Hero Banner"
-                    class="position-absolute end-0"
-                    style="
-                    width: 340px;
-                    height: 200px;
-                    object-fit: cover;
-                    border-radius: 81px 0 0 0;
-                    "
-                />
-                <div
-                    class="position-absolute inset-0"
-                    style="
-                    background: linear-gradient(
-                        90deg,
-                        rgba(0, 0, 0, 0.55) 0%,
-                        rgba(0, 0, 0, 0.15) 100%
-                    );
-                    "
-                ></div>
-                <div
-                    class="position-absolute d-flex align-items-center w-100 h-100"
-                    style="padding: 0 32px"
-                >
-                    <div>
-                    <img
-                        src="images/logo.png"
-                        alt="2LS Logo"
-                        style="height: 36px; margin-bottom: 50px"
-                    />
-                    <div
-                        class="mb-2 text-white fw-medium"
-                        style="font-size: 1.1rem"
-                    >
-                        Ava's
-                    </div>
-                    <div
-                        class="text-white fw-bold"
-                        style="font-size: 20px; line-height: 1.1"
-                    >
-                        <span class="text-white-50 fw-normal"
-                        >Nutrition Plan | Sports Training Plan</span
-                        >
-                    </div>
+        <div class="modal-content" style="border-radius: 20px;">
+            <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
+                <h5 class="modal-title" id="printPlanModalLabel">Download Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
+                    <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+                       
                     </div>
                 </div>
-                </div>
             </div>
-
-            <div class="mb-3">
-                <span
-                class="text-primary fw-semibold"
-                style="font-size: 1.1rem; cursor: pointer"
-                >Breakfast</span
-                >
-                <span
-                class="text-primary fw-normal"
-                style="font-size: 1.1rem"
-                >
-                |
-                </span>
-                <span
-                class="text-primary fw-medium"
-                style="font-size: 1.1rem; cursor: pointer"
-                >Sweet Breakfast</span
-                >
-            </div>
-
-            <!-- Card 1 -->
-            <div
-                class="d-flex align-items-start gap-3 bg-light mb-3 p-3 rounded-3"
-            >
-                <img
-                src="images/sports-training/fooditem4.webp"
-                alt="Power Oatmeal Bowl"
-                class="rounded-3"
-                style="width: 190px; min-height: 190px; object-fit: cover"
-                />
-                <div>
-                <div class="text-dark fw-bold fs-5">Power Oatmeal Bowl</div>
-                <div class="mb-1 text-secondary" style="font-size: 14px">
-                    Hearty oats topped with fruit and nuts for sustained
-                    energy.
-                </div>
-                <div class="mb-3 text-dark" style="font-size: 14px">
-                    <b>Note:</b> Swap Almond Butter to Protein Powder for
-                    extra recovery support
-                </div>
-                <div class="d-flex flex-wrap gap-3" style="font-size: 14px">
-                    <span class="fw-semibold" style="color: #967500"
-                    >● Energy: 2090kJ</span
-                    >
-                    <span class="fw-semibold" style="color: #a60015"
-                    >● Protein: 28g</span
-                    >
-                    <span class="fw-semibold" style="color: #3e8e00"
-                    >● Carb: 68g</span
-                    >
-                    <span class="fw-semibold" style="color: #0077b6"
-                    >● Fat: 33g</span
-                    >
-                </div>
-                </div>
-                <div style="min-width: 310px">
-                <div
-                    class="mb-2 text-dark fw-bold"
-                    style="font-size: 1.05rem"
-                >
-                    Ingredients
-                </div>
-                <ul
-                    class="mb-0 ps-4 text-secondary"
-                    style="font-size: 14px"
-                >
-                    <li class="mb-1">
-                    5g or 1 teaspoon Rolled Traditional Oats
-                    </li>
-                    <li class="mb-1">250mL or 1 cup Full Cream Milk</li>
-                    <li class="mb-1">118g or 1 large Cavendish Bananas</li>
-                    <li class="mb-1">
-                    17g or 1 tablespoon Macro Black Chia Seeds
-                    </li>
-                    <li class="mb-1">
-                    5g or 1 teaspoon Natural Almond Butter
-                    </li>
-                    <li class="mb-1">
-                    5g or 1 teaspoon Capilano Honey Squeeze
-                    </li>
-                </ul>
-                </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div
-                class="d-flex align-items-start gap-3 bg-light mb-3 p-3 rounded-3"
-            >
-                <img
-                src="images/sports-training/fooditem2.webp"
-                alt="Weetbix Berry Bites & Protein Boost"
-                class="rounded-3"
-                style="width: 190px; min-height: 190px; object-fit: cover"
-                />
-                <div>
-                <div class="text-dark fw-bold fs-5">
-                    Weetbix Berry Bites & Protein Boost
-                </div>
-                <div class="mb-1 text-secondary" style="font-size: 14px">
-                    Weet-Bix Bites with milk and berries, paired with
-                    high-protein yoghurt and fruit or raisin toast with honey.
-                    Energising and satisfying.
-                </div>
-                <div class="d-flex flex-wrap gap-3" style="font-size: 14px">
-                    <span class="fw-semibold" style="color: #967500"
-                    >● Energy: 2249kJ</span
-                    >
-                    <span class="fw-semibold" style="color: #a60015"
-                    >● Protein: 30g</span
-                    >
-                    <span class="fw-semibold" style="color: #3e8e00"
-                    >● Carb: 77g</span
-                    >
-                    <span class="fw-semibold" style="color: #0077b6"
-                    >● Fat: 10g</span
-                    >
-                </div>
-                </div>
-                <div style="min-width: 310px">
-                <div
-                    class="mb-2 text-dark fw-bold"
-                    style="font-size: 1.05rem"
-                >
-                    Ingredients
-                </div>
-                <ul
-                    class="mb-0 ps-4 text-secondary"
-                    style="font-size: 14px"
-                >
-                    <li class="mb-1">
-                    50g or 1 cup Weet-Bix Bites Wild Berry
-                    </li>
-                    <li class="mb-1">250mL or 1 cup Full Cream Milk</li>
-                    <li class="mb-1">
-                    160g or 3 heaped spoons YoPRO Tub High Protein Yoghurt
-                    Vanilla
-                    </li>
-                    <li class="mb-1">118g or 1 large Cavendish Bananas</li>
-                </ul>
-                </div>
-            </div>
+            <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
+                <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
+                    Download Plan
+                </button>
             </div>
         </div>
-            </div>
-        </div>
-        </div>
-        <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
-        <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
-            Download Plan
-        </button>
-        </div>
-    </div>
     </div>
 </div>
 
 <!-- Bootstrap Modal for Shopping List -->
-<div class="modal fade" id="shoppingListModal" tabindex="-1" aria-labelledby="shoppingListModalLabel" aria-hidden="true">
+<div class="modal" id="shoppingListModal" tabindex="-1" aria-labelledby="shoppingListModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content" style="border-radius: 20px;">
         <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
@@ -530,28 +292,6 @@
         </div>
     </div>
     </div>
-</div>
-
-<div id="print-plan-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5);">
-    <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 20px; width: 90vw; max-width: 1200px; max-height: 800px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18); padding: 0; display: flex; flex-direction: column;">
-        <button id="print-plan-modal-close" aria-label="Close" style="background: none; border: none; font-size: 2rem; color: #222; cursor: pointer; text-align: end; padding: 24px 40px; border-bottom: 1px solid #d8d8d8;">
-            &times;
-        </button>
-
-        <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
-            <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
-
-            </div>
-        </div>
-
-        <div style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
-            <button id="download-plan-btn" style="background: #4a84dd; color: #fff; height: 46px; border: none; border-radius: 8px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer;" onclick="downloadPDF()">
-                Download Plan
-            </button>
-        </div>
-    </div>
-</div>
-
 </div>
 
 @include('front.modal.shopping-list')
@@ -854,47 +594,33 @@
             html2pdf().set(options).from(container).save();
         });
 
-        $(".print-plan-btn").click(function() {
+        $(".print-plan-btn").click(function () {
             const planId = $(this).data("plan-id");
             const userId = $(this).data("user-id");
 
-            const printPlanModal = document.getElementById('print-plan-modal');
-            const printPlanClose = document.getElementById('print-plan-modal-close');
-
-            // ✅ Show modal (your custom modal logic)
-            printPlanModal.style.display = 'block';
-
-            // ✅ Close modal on X click
-            printPlanClose.onclick = () => {
-                printPlanModal.style.display = 'none';
-            };
-
-            // ✅ Close modal when clicking outside the modal content
-            printPlanModal.onclick = (e) => {
-                if (e.target === printPlanModal) {
-                    printPlanModal.style.display = 'none';
-                }
-            };
-
-            // ✅ Show loading message
+            // ✅ Bootstrap 5 modal instance
+            const printPlanModalEl = document.getElementById('print-plan-modal');
+            const printPlanModal = new bootstrap.Modal(printPlanModalEl);
+            
+            printPlanModal.show(); // ✅ Show the modal
+            // ✅ Reset preview content with loading text
             $("#pdf-preview").html('<div class="py-4 text-center">Loading preview...</div>');
 
-            // ✅ Fetch and inject preview HTML
+            // ✅ Fetch preview content via AJAX and inject
             fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
                 .then(res => {
-                    if (!res.ok) {
-                        throw new Error("Failed to load preview");
-                    }
+                    if (!res.ok) throw new Error("Failed to load preview");
                     return res.text();
                 })
                 .then(html => {
-                    $("#pdf-preview").html(html); // ✅ Inject fetched HTML into modal
+                    $("#pdf-preview").html(html); // ✅ Inject fetched HTML
                 })
                 .catch(err => {
-                    console.error("Error loading preview:", err); // ✅ Debug error
+                    console.error("Error loading preview:", err);
                     $("#pdf-preview").html('<div class="py-4 text-danger">Error loading preview</div>');
                 });
         });
+
     });
 
     window.logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO8AAAAiCAYAAAC3Bo7TAAAACXBIWXMAABYlAAAWJQFJUiTwAAAFGmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjUtMDYtMzBUMDg6Mjc6MTIrMDU6MzAiIHhtcDpNb2RpZnlEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjJlOTY2MjBmLWU4YWQt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'; // Replace with base64 logo image
