@@ -6,7 +6,7 @@
     </button>
 
     <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
-      <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;" >
+      <div id="pdf-preview" style="width: 100%; height: 100%; max-height: 500px; " >
         <div id="pdf-content" style="background: #fff; max-width: 940px; width: 100%; font-family: 'Inter', Arial, sans-serif;" >
           <!-- Hero Section -->
           <div style="margin-bottom: 24px;">
@@ -36,7 +36,7 @@
           </div>
 
           <!-- Food Card -->
-          <div style="display: flex; gap: 18px; background: #f5f5f5; border-radius: 16px; padding: 18px; margin-bottom: 16px; align-items: flex-start;">
+          <div style="display: flex; gap: 18px; background: #f5f5f5; border-radius: 16px; padding: 18px; margin-bottom: 16px; align-items: flex-start;background-color:#fff;">
             <img src="images/sports-training/fooditem4.webp" alt="Power Oatmeal Bowl" style="width: 190px; min-height: 190px; object-fit: cover; border-radius: 12px;" />
             <div>
               <div style="font-size: 1.1rem; font-weight: 700; color: #222;">Power Oatmeal Bowl</div>
@@ -53,7 +53,7 @@
                 <span style="color: #0077b6; font-weight: 600;">● Fat: 33g</span>
               </div>
             </div>
-            <div style="min-width: 310px;">
+            <div style="max-width: 310px;">
               <div style="font-size: 1.05rem; font-weight: 700; color: #222; margin-bottom: 4px;">Ingredients</div>
               <ul style="font-size: 14px; color: #444; margin: 0; padding-left: 18px;">
                 <li style="margin-bottom: 4px;">5g or 1 teaspoon Rolled Traditional Oats</li>
@@ -69,10 +69,6 @@
       </div>
     </div>
 
-    <div style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
-      <button id="download-plan-btn" style="background: #4a84dd; color: #fff; height: 46px; border: none; border-radius: 8px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer;">
-        Download Plan
-      </button>
-    </div>
+    
   </div>
 </div>

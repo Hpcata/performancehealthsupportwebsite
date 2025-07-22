@@ -103,9 +103,9 @@
                             @endphp
 
                             <!-- Food Card -->
-                            <div style="display: flex; gap: 18px; background: #f5f5f5; border-radius: 16px; padding: 18px; margin-bottom: 16px; align-items: flex-start;">
+                            <div style="display: flex; gap: 18px; background: #f5f5f5; border-radius: 16px; padding: 18px; margin-bottom: 16px; align-items: flex-start;" class="responsive-download-plan">
                             <img src="https://performancehealthsupport.com/private/public/storage/meal_times/tUKBVYgJ0jG8DdTjmGLtnQR8anCvRMkcZUaY6Ono.jpg" alt="{{ $userMeal->meal->title }}"
-                                style="width: 190px; min-height: 190px; object-fit: cover; border-radius: 12px;" />
+                                style="width: 190px; min-height: 190px; object-fit: cover; border-radius: 12px;" class="download-plan-food-img"/>
                             <div class="meal-block page-break-margin">
                                 <div style="font-size: 1.1rem; font-weight: 700; color: #222;">{{ $userMeal->meal->title }}</div>
                                 @if ($userMeal->meal->description)
@@ -124,7 +124,7 @@
                                 @endif
                             </div>
 
-                            <div style="min-width: 310px;">
+                            <div style="max-width: 310px;">
                                 <div style="font-size: 1.05rem; font-weight: 700; color: #222; margin-bottom: 4px;">Ingredients</div>
                                 <ul style="font-size: 14px; color: #444; margin: 0; padding-left: 18px;">
                                 @foreach ($userItems as $userItem)
