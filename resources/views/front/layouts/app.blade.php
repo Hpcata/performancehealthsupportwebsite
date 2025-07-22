@@ -85,6 +85,21 @@
     @include('front.includes.footer')
 
     @stack('scripts')
+
+    <script id="delphi-bubble-script">
+    window.delphi = {...(window.delphi ?? {}) };
+    window.delphi.bubble = {
+        config: "663f5909-3622-47c9-9287-28233409948f",
+        overrides: {
+        landingPage: "CHAT",
+        },
+        trigger: {
+        color: "#0090FF",
+        },
+    };
+    </script>
+
+    <script id="delphi-bubble-bootstrap" src="https://embed.delphi.ai/loader.js"></script>
 </body>
 
 </html>
