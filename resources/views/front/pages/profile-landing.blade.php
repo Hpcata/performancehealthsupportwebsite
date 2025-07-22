@@ -14,7 +14,7 @@
                 <div class="welcome-message">
                     <h2>Welcome back legend! How's your week going?</h2>
                     <div class="welcome-row">
-                        <a href="#" class="start-chat">Start chat</a>
+                        <a href="#" class="start-chat" id="start-chat-link">Start chat</a>
                         <span class="assistant-name">Kerry O'Bryan Virtual</span>
                     </div>
                 </div>
@@ -43,25 +43,25 @@
             <div class="tabs">
                 @php $firstTab = true; @endphp
                 @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
-                    @php
-                        $category = $userCategory->category;
-                        $hasValidMeal = $userCategory->userSubCategories()
-                            ->where('user_plan_id', $userPlan->id)
-                            ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
-                                $q->where('user_plan_id', $userPlan->id)
-                                ->where('user_category_id', $userCategory->id);
-                            })->exists();
-                    @endphp
+                @php
+                $category = $userCategory->category;
+                $hasValidMeal = $userCategory->userSubCategories()
+                ->where('user_plan_id', $userPlan->id)
+                ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                $q->where('user_plan_id', $userPlan->id)
+                ->where('user_category_id', $userCategory->id);
+                })->exists();
+                @endphp
 
-                    @if ($hasValidMeal && $category)
-                        <button
-                            class="tab {{ $firstTab ? 'active' : '' }}"
-                            data-category-id="{{ $category->id }}"
-                            data-plan-id="{{ $userPlan->id }}">
-                            {{ $category->title }}
-                        </button>
-                        @php $firstTab = false; @endphp
-                    @endif
+                @if ($hasValidMeal && $category)
+                <button
+                    class="tab {{ $firstTab ? 'active' : '' }}"
+                    data-category-id="{{ $category->id }}"
+                    data-plan-id="{{ $userPlan->id }}">
+                    {{ $category->title }}
+                </button>
+                @php $firstTab = false; @endphp
+                @endif
                 @endforeach
             </div>
 
@@ -70,28 +70,8 @@
                     <p>Loading meals...</p>
                 </div>
             </div>
-
-            <!-- <div class="meal-cards">
-                <div class="meal-card">
-                
-                    <img src="{{ frontAssets('images/food1.webp') }}" alt="Oats with banana and berries breakfast" width="600" height="400" />
-                
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-                <div class="meal-card">
-                
-                    <img src="{{ frontAssets('images/food2.webp') }}" alt="Oats with banana and berries breakfast" />
-                
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-                <div class="meal-card">
-            
-                    <img src="{{ frontAssets('images/food1.webp') }}" alt="Oats with banana and berries breakfast" />
-            
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-            </div> -->
         </section>
+
         @endif
         <!-- Challenges -->
         <section class="challenges">
@@ -154,7 +134,7 @@
                     <div class="resource-title">Supplement scanner</div>
                 </div>
 
-                <div class="resource-card-custom resource-chat">
+                <div class="resource-card-custom resource-chat" id="chat-to-virtual-kez-btn">
                     <img
                         src="{{ frontAssets('images/cardimg-2.webp') }}"
                         class="resource-bg-img"
@@ -256,28 +236,28 @@
             <div class="consults-plans-grid">
                 <div class="plan-card-custom plan-competition">
                     <div class="">
-                    <div class="plan-title">Competition Plan</div>
-                    <div class="plan-desc">
-                        Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
-                    </div>
+                        <div class="plan-title">Competition Plan</div>
+                        <div class="plan-desc">
+                            Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
+                        </div>
                     </div>
                     <div class="">
-                    <div class="consult-user-row">
-                        <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                            class="consult-avatar"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                             <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                            class="consult-avatar overlap1"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                        <span>21 meals • 18 Nutrition tips</span>
-                    </div>
-                    <!-- <div class="plan-meta">
-                <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
-                tips
-              </div> -->
-                    <button class="btn-consult">Learn more</button>
+                        <div class="consult-user-row">
+                            <img
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                class="consult-avatar"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <img
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                class="consult-avatar overlap1"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <span>21 meals • 18 Nutrition tips</span>
+                        </div>
+                        <!-- <div class="plan-meta">
+                            <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
+                            tips
+                        </div> -->
+                        <button class="btn-consult">Learn more</button>
                     </div>
                 </div>
                 <div class="plan-card-custom plan-injury">
@@ -499,6 +479,10 @@
         if (firstTab) {
             loadMeals(firstTab.dataset.planId, firstTab.dataset.categoryId);
         }
+
+        $('#start-chat-link, #chat-to-virtual-kez-btn').click(function(){
+            $('#delphi-bubble-trigger').click();
+        })
     });
 </script>
 
