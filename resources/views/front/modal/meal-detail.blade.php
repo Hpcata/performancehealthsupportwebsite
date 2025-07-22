@@ -38,7 +38,7 @@
                         <li></li>
                         
                     </ul>
-                    <button class="smart-swap-btn">
+                    <button class="smart-swap-btn" id="smart-swap-btn">
                         <img
                             src="{{ frontAssets('images/dialog/swap.svg') }}"
                             alt="Snap"
