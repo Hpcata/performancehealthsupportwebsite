@@ -72,7 +72,7 @@
                 <li>
                     <div class="d-flex align-items-center share-dropdown-item">
                         <img src="{{ frontAssets('images/dialog/download.svg') }}" alt="Download" class="me-2 share-dropdown-icon" />
-                        <a href="#" class="ms-0 print-plan-btn" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}" style="text-decoration:none; color:black">Download plan</a>
+                        <a href="#" class="ms-0 print-plan-btn" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}" style="text-decoration:none; color:#3b3b3b">Download plan</a>
                     </div>
                 </li>
             </ul>
@@ -270,23 +270,24 @@
 <!-- Bootstrap Modal for Download Plan (keep your content inside) -->
 <div class="modal" id="print-plan-modal" tabindex="-1" aria-labelledby="printPlanModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 20px;">
+        <div class="modal-content" style="border-radius: 12px;">
             <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
                 <h5 class="modal-title" id="printPlanModalLabel">Download Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="padding: 0;">
-                <div style="flex: 1 1 auto; overflow-y: auto; padding: 36px;">
-                    <div id="pdf-preview" style="width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+                <div style="flex: 1 1 auto; overflow-y: auto; padding: 16px 16px 0 16px;">
+                    <div id="pdf-preview" style="width: 100%; height: 100%; max-height: 350px; display: flex; justify-content: center; overflow:auto;">
                        
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
+                 <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
                 <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
                     Download Plan
                 </button>
             </div>
+            </div>
+           
         </div>
     </div>
 </div>
@@ -296,7 +297,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content" style="border-radius: 20px;">
         <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
-        <h5 class="modal-title" id="shoppingListModalLabel">Shopping List</h5>
+        <h5 class="modal-title" id="shoppingListModalLabel">Shopping Lists</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -305,7 +306,7 @@
             <!-- Content loaded via AJAX or JS -->
         </div>
         </div>
-        <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8;">
+        <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8; background-color:#fff; border-radius:0 0 12px 12px; ">
         <button id="print-shopping-list" class="btn btn-primary">Print Shopping List</button>
         </div>
     </div>
@@ -460,7 +461,7 @@
                                 <li class="d-flex align-items-center mb-3">
                                     <input class="me-3 form-check-input item-checkbox" type="checkbox" id="item-${item.id}" data-meal-id="${meal.meal_id}">
                                     <input type="hidden" id="category" value="${item.category}">
-                                    <img src="${assetBaseUrl}/${item.image || ''}" alt="${item.title}" class="me-3" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">
+                                    <img src="${assetBaseUrl}/${item.image || ''}" alt="${item.title}" class="me-3" style="width:50px;height:50px;object-fit:cover;border-radius:4px;background-color:#f1f1f1;">
                                     <div>
                                         <span style="font-weight: 600; color: #4b5c6b;">${item.title}</span><br>
                                         <span style="font-size: 0.97rem;"><b>QTY:</b> ${qtyText}</span>
@@ -993,6 +994,7 @@
                         const itemCard = `
                             <div class="swap-item">
                                 <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
+                                 <div class="swap-wrap">
                                 <div class="swap-item-info">
                                     <div class="swap-item-name">${item.name}</div>
                                     <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
@@ -1008,12 +1010,13 @@
                                             data-sub-category-id="${userSubCategoryId}"
                                             data-user-category-id="${userCategoryId}">
                                             <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; vertical-align: middle; margin-right: 4px;" />
-                                            Smart swap
+                                            <span>Smart swap</span>
                                         </button>` : ''}
                                     ${item.description ? `
                                         <button class="smart-swap-btn" data-bs-toggle="tooltip" title="${item.description}">
                                             <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
                                         </button>` : ''}
+                                </div>
                                 </div>
                             </div>
                         `;
@@ -1130,6 +1133,7 @@
                 let mainItem = `
                     <div class="swap-item" id="mainSwapItem" data-item-id="${item.id}" style="border-bottom: none">
                         <img src="${data.item_image}" alt="${data.item_name}" class="swap-item-img"/>
+                         <div class="">
                         <div class="swap-item-info">
                             <div class="swap-item-name">${data.item_name}</div>
                             <div class="swap-item-qty"><b>Qty:</b> ${mainQtyText}</div>
@@ -1140,6 +1144,7 @@
                                     <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
                                 </button>
                             ` : ''}
+                        </div>
                         </div>
                     </div>
 
@@ -1154,6 +1159,7 @@
                     swapItemsHTML += `
                         <div class="swap-item">
                             <img src="${swapItem.swap_item_image}" alt="${swapItem.swap_item_name}" class="swap-item-img"/>
+                             <div class="">
                             <div class="swap-item-info">
                                 <div class="swap-item-name">${swapItem.swap_item_name}</div>
                                 <div class="swap-item-qty"><b>Qty:</b> ${swapQtyText}</div>
@@ -1168,6 +1174,7 @@
                                     </button>
                                 ` : ''}
                             </div>
+                             </div>
                         </div>
                     `;
                 });
@@ -1240,6 +1247,7 @@
         // === Replace clicked swap item with the original main item ===
         const revertedHTML = `
             <img src="${currentMainItem.image}" alt="${currentMainItem.name}" class="swap-item-img"/>
+             <div class="">
             <div class="swap-item-info">
                 <div class="swap-item-name">${currentMainItem.name}</div>
                 <div class="swap-item-qty"><b>Qty:</b> ${currentMainItem.qty}</div>
@@ -1253,6 +1261,7 @@
                         <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
                     </button>` : ''}
             </div>
+             </div>
         `;
 
         $clickedSwap.html(revertedHTML);

@@ -16,6 +16,7 @@
                             alt="Cavendish Bananas"
                             class="swap-item-img"
                             />
+                             <div class="">
                             <div class="swap-item-info">
                             <div class="swap-item-name">Cavendish Bananas</div>
                             <div class="swap-item-qty"><b>Qty :</b> 118g or 1 large</div>
@@ -29,6 +30,7 @@
                                 style="width: 18px; vertical-align: middle"
                                 />
                             </button>
+                            </div>
                             </div>
                         </div>
 

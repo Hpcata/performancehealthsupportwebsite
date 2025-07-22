@@ -20,7 +20,7 @@
                         <ul class="mb-0 list-unstyled">
                             <li class="d-flex align-items-center mb-3">
                                 <input class="me-3 form-check-input" type="checkbox" id="item-spinach">
-                                <img src="https://via.placeholder.com/40x40?text=Img" alt="Baby Leaf Spinach" class="me-3" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">
+                                <img src="https://via.placeholder.com/40x40?text=Img" alt="Baby Leaf Spinach" class="me-3" style="width:50px;height:50px;object-fit:cover;border-radius:4px;background-color:#f1f1f1;">
                                 <div>
                                     <span style="font-weight: 600; color: #4b5c6b;">Baby Leaf Spinach</span><br>
                                     <span style="font-size: 0.97rem;"><b>QTY:</b> 13g or ½ handful</span>
