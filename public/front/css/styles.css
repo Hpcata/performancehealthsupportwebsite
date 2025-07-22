@@ -133,7 +133,7 @@ body {
 .main {
     padding: 0 0 2rem 0;
 }
-.btn-blue{
+.btn-blue {
     background-color: #4a84dd !important;
 }
 .welcome-section {
@@ -347,6 +347,7 @@ body {
 .challenges .challenge-cards .challenge-card img,
 .training-plan .meal-cards .meal-card img {
     max-width: 270px;
+    min-width: 270px;
     height: 160px;
     object-fit: cover;
     border-radius: 12px;
@@ -1263,37 +1264,35 @@ body {
 }
 .btn-share {
     display: flex !important;
-    font-family: "Noto Sans", sans-serif;
+    color: var(--kerry-grey-600-main, #3b3b3b) !important;
+
+    font-size: 14px !important;
+    font-style: normal !important;
     font-weight: 600 !important;
-    font-style: normal;
-    padding: 12px 24px !important;
-    border-radius: 16px !important;
-    font-size: 16px !important;
-    line-height: 100% !important;
-    letter-spacing: 0;
-    background-color: #4a84dd !important;
-    color: #fff !important;
-    height: 39px !important;
+    line-height: normal !important;
+    padding: 10px 14px !important;
+    font-family: "Noto Sans", sans-serif;
+    border-radius: 6px !important;
+    border: 1px solid var(--Kerry-grey-200, #d8d8d8) !important;
+    background: var(--White, #fff) !important;
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.08) !important;
 }
 .btn-share:hover {
     color: #fff;
 }
 .btn-outline {
+    color: var(--kerry-grey-600-main, #3b3b3b) !important;
+
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    line-height: normal !important;
+    padding: 10px 14px !important;
     font-family: "Noto Sans", sans-serif;
-    font-weight: 600;
-    font-style: normal;
-    font-size: 14px;
-    line-height: 100%;
-    letter-spacing: 0;
-    font-family: "Noto Sans", sans-serif;
-    font-weight: 600;
-    font-style: normal;
-    color: #3b3b3b;
-    background-color: #fff;
-    border: 1px solid #d8d8d8;
-    padding: 12px 14px;
-    height: 39px;
-    box-shadow: 0 2px 8px 0 rgb(0 0 0 / 0.08);
+    border-radius: 6px !important;
+    border: 1px solid var(--Kerry-grey-200, #d8d8d8) !important;
+    background: var(--White, #fff) !important;
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.08) !important;
 }
 .btn-outline:hover {
     background-color: #f9fafb;
@@ -1583,10 +1582,14 @@ body {
     align-items: center;
     gap: 12px;
     padding: 14px 18px;
-    font-size: 1.05rem;
-    color: #222;
+
     cursor: pointer;
     transition: background 0.15s;
+    color: var(--kerry-grey-600-main, #3b3b3b);
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
 }
 
 .share-dropdown-item:hover {
@@ -1807,10 +1810,17 @@ button:focus,
     display: none;
 }
 .dropdown-menu.show {
+    border-radius: 8px;
+    margin-top: 50px !important;
+    background: var(--White, #fff);
+    box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     display: block;
 }
-dropdown-menu.show {
+.dropdown-menu.show {
     display: block;
+}
+.dropdown-toggle::after {
+    display: none !important;
 }
 
 .recipe-dialog {
@@ -2184,8 +2194,8 @@ dropdown-menu.show {
     background-color: #eff6ff;
 }
 /* --- End Custom Training Load Dropdown Styles --- */
-#shoppingListModal .modal-footer{
-border-top: 1px solid #efefef;
+#shoppingListModal .modal-footer {
+    border-top: 1px solid #efefef;
 }
 @media (max-width: 1024px) {
     .mobile-header,
@@ -2299,8 +2309,8 @@ border-top: 1px solid #efefef;
         display: none;
     }
     .scroll-arrow-right,
-    .scroll-arrow-left{ 
-    display: none;
+    .scroll-arrow-left {
+        display: none;
     }
 }
 @media (max-width: 900px) {
