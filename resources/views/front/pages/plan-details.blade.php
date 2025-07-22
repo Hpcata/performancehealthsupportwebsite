@@ -30,7 +30,7 @@
 
             <div class="hero-content">
                 <div class="hero-bottom">
-                    <h1 class="hero-title">Sports Training Plan</h1>
+                    <h1 class="hero-title">Training Nutrition Plan</h1>
 
                     <div class="hero-top">
                         <p class="hero-subtitle-plan">BMX freestyle</p>
@@ -43,13 +43,13 @@
     <div class="container">
         <div class="dropdown action-buttons">
             <button class="btn btn-share dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
-  <g clip-path="url(#clip0_3005_7374)">
-    <path d="M0.913086 9.0018V14.9806C0.913086 15.377 1.10556 15.7572 1.44816 16.0375C1.79076 16.3178 2.25543 16.4753 2.73994 16.4753H13.701C14.1856 16.4753 14.6502 16.3178 14.9928 16.0375C15.3354 15.7572 15.5279 15.377 15.5279 14.9806V9.0018M11.8742 4.51771L8.22049 1.52832M8.22049 1.52832L4.56679 4.51771M8.22049 1.52832V11.2438" stroke="#fff" stroke-width="1.43864" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+  <g clip-path="url(#clip0_3008_7695)">
+    <path d="M0.888672 8.50124V14.3194C0.888672 14.7052 1.07597 15.0752 1.40937 15.3479C1.74277 15.6207 2.19495 15.774 2.66645 15.774H13.3331C13.8046 15.774 14.2568 15.6207 14.5902 15.3479C14.9236 15.0752 15.1109 14.7052 15.1109 14.3194V8.50124M11.5553 4.13761L7.99978 1.22852M7.99978 1.22852L4.44423 4.13761M7.99978 1.22852V10.6831" stroke="#3B3B3B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <defs>
-    <clipPath id="clip0_3005_7374">
-      <rect width="16.4417" height="16.4417" fill="white" transform="translate(0 0.779297)"/>
+    <clipPath id="clip0_3008_7695">
+      <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
     </clipPath>
   </defs>
 </svg>

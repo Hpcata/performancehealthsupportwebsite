@@ -133,7 +133,7 @@ body {
 .main {
     padding: 0 0 2rem 0;
 }
-.btn-blue{
+.btn-blue {
     background-color: #4a84dd !important;
 }
 .welcome-section {
@@ -1264,37 +1264,35 @@ body {
 }
 .btn-share {
     display: flex !important;
-    font-family: "Noto Sans", sans-serif;
+    color: var(--kerry-grey-600-main, #3b3b3b) !important;
+
+    font-size: 14px !important;
+    font-style: normal !important;
     font-weight: 600 !important;
-    font-style: normal;
-            padding: 12px 24px !important;
-        border-radius: 16px !important;
-        font-size: 16px !important;
-    line-height: 100% !important;
-    letter-spacing: 0;
-    background-color: #4a84dd !important;
-    color: #fff !important;
-    height: 39px !important;
+    line-height: normal !important;
+    padding: 10px 14px !important;
+    font-family: "Noto Sans", sans-serif;
+    border-radius: 6px !important;
+    border: 1px solid var(--Kerry-grey-200, #d8d8d8) !important;
+    background: var(--White, #fff) !important;
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.08) !important;
 }
 .btn-share:hover {
-color: #fff;
+    color: #fff;
 }
 .btn-outline {
+    color: var(--kerry-grey-600-main, #3b3b3b) !important;
+
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    line-height: normal !important;
+    padding: 10px 14px !important;
     font-family: "Noto Sans", sans-serif;
-    font-weight: 600;
-    font-style: normal;
-    font-size: 14px;
-    line-height: 100%;
-    letter-spacing: 0;
-    font-family: "Noto Sans", sans-serif;
-    font-weight: 600;
-    font-style: normal;
-    color: #3b3b3b;
-    background-color: #fff;
-    border: 1px solid #d8d8d8;
-    padding: 12px 14px;
-    height: 39px;
-    box-shadow: 0 2px 8px 0 rgb(0 0 0 / 0.08);
+    border-radius: 6px !important;
+    border: 1px solid var(--Kerry-grey-200, #d8d8d8) !important;
+    background: var(--White, #fff) !important;
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.08) !important;
 }
 .btn-outline:hover {
     background-color: #f9fafb;
@@ -1542,66 +1540,66 @@ color: #fff;
     }
 }
 .share-dropdown {
-  min-width: 270px;
-  background: #fff;
-  border-radius: 10px;
+    min-width: 270px;
+    background: #fff;
+    border-radius: 10px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.18);
-  padding: 0;
-  z-index: 2000;
-  font-family: inherit;
+    padding: 0;
+    z-index: 2000;
+    font-family: inherit;
 }
 
 .share-dropdown-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 18px 10px 18px;
-  font-size: 1.1rem;
-  font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 10px 18px;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .share-dropdown-close {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  color: #222;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #222;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
 }
 
 .share-dropdown-divider {
-  border: none;
-  border-top: 1px solid #e0e0e0;
-  margin: 0 0 0 0;
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 0 0 0 0;
 }
 
 .share-dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
 
-  cursor: pointer;
-  transition: background 0.15s;
-  color: var(--kerry-grey-600-main, #3B3B3B);
-font-size: 18px;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
+    cursor: pointer;
+    transition: background 0.15s;
+    color: var(--kerry-grey-600-main, #3b3b3b);
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
 }
 
 .share-dropdown-item:hover {
-  background: #f5f5f5;
+    background: #f5f5f5;
 }
 
 .share-dropdown-icon {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
 }
 
 .dropdown-container {
@@ -1739,7 +1737,7 @@ line-height: normal;
 }
 
 .scroll-arrow-right {
-position: absolute;
+    position: absolute;
     top: 39%;
     right: 10px;
     transform: translateY(-50%);
@@ -1777,7 +1775,7 @@ position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 2;
     transition: background 0.2s;
     background: #000;
@@ -1790,38 +1788,38 @@ position: absolute;
 button:focus,
 .btn:focus,
 .form-check-input:focus {
-  outline: none !important;
-  box-shadow: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 /* Make Bootstrap modal body scrollable if content overflows */
 .modal-lg .modal-content {
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
 .modal-body {
-  overflow-y: auto;
-  max-height: 60vh;
+    overflow-y: auto;
+    max-height: 60vh;
 }
 /* Remove custom dropdown-menu rules that conflict with Bootstrap */
 .dropdown-menu {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: none !important;
-  display: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    display: none;
 }
 .dropdown-menu.show {
     border-radius: 8px;
     margin-top: 50px !important;
-background: var(--White, #FFF);
-box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
-  display: block;
+    background: var(--White, #fff);
+    box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
+    display: block;
 }
 .dropdown-menu.show {
-  display: block;
+    display: block;
 }
-.dropdown-toggle::after{
+.dropdown-toggle::after {
     display: none !important;
 }
 
@@ -1835,9 +1833,9 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     padding: 0;
     position: relative;
     animation: fadeIn 0.2s;
-  }
-  
-  @keyframes fadeIn {
+}
+
+@keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(30px);
@@ -1846,9 +1844,9 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
         opacity: 1;
         transform: translateY(0);
     }
-  }
-  
-  .dialog-close {
+}
+
+.dialog-close {
     position: absolute;
     top: 18px;
     right: 18px;
@@ -1864,47 +1862,47 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     line-height: 36px;
     text-align: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-  
-  .dialog-main-view {
+}
+
+.dialog-main-view {
     padding: 32px 32px 24px 32px;
-  }
-  
-  .dialog-header {
+}
+
+.dialog-header {
     display: flex;
     align-items: flex-end;
     gap: 24px;
     border-bottom: 1px solid #d8d8d8;
     padding-bottom: 24px;
     margin-bottom: 24px;
-  }
-  
-  .dialog-header h2 {
+}
+
+.dialog-header h2 {
     font-size: 1.25rem;
     font-weight: 700;
     margin: 0 0 6px 0;
-  }
-  
-  .dialog-header p {
+}
+
+.dialog-header p {
     font-size: 1rem;
     color: #444;
     margin: 0 0 12px 0;
-  }
-  
-  .dialog-img {
+}
+
+.dialog-img {
     width: 318px;
     height: 318px;
     object-fit: cover;
     border-radius: 12px;
     margin-left: 8px;
-  }
-  
-  .dialog-actions {
+}
+
+.dialog-actions {
     display: flex;
     gap: 10px;
     margin-bottom: 8px;
-  }
-  
+}
+
 .snap-btn,
 .share-btn,
 .smart-swap-btn {
@@ -1921,76 +1919,76 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     gap: 4px;
     transition: background 0.15s;
     box-shadow: 0 2.06px 8.22px rgba(0, 0, 0, 0.08);
-  }
-  
+}
+
 .snap-btn:hover,
 .share-btn:hover,
 .smart-swap-btn:hover {
     background: #eaeaea;
-  }
-  
-  .dialog-body h3 {
+}
+
+.dialog-body h3 {
     font-size: 18px;
     font-weight: 600;
     margin: 0 0 8px 0;
-  }
-  
-  .dialog-body ul {
+}
+
+.dialog-body ul {
     margin: 0 0 12px 18px;
     padding: 0;
     font-size: 1rem;
     font-weight: 400;
     line-height: 28px;
-  }
-  
-  .smart-swap-btn {
+}
+
+.smart-swap-btn {
     margin-bottom: 24px;
     margin-top: 4px;
-  }
-  
-  .dialog-body p {
+}
+
+.dialog-body p {
     margin: 8px 0;
-  }
-  
-  .note {
+}
+
+.note {
     font-size: 0.95rem;
     color: #555;
     margin-top: 8px;
-  }
-  
-  .nutrition-info {
+}
+
+.nutrition-info {
     display: flex;
     gap: 18px;
     font-size: 0.98rem;
     margin-top: 16px;
     flex-wrap: wrap;
-  }
-  
-  /* Smart Swap UI styles */
-  .smart-swap-body {
+}
+
+/* Smart Swap UI styles */
+.smart-swap-body {
     padding: 0;
     background: #fff;
     border-radius: 18px;
     width: 100%;
     max-width: 790px;
     min-height: 400px;
-  }
-  
-  .swap-header {
+}
+
+.swap-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 28px 32px 18px 32px;
     border-bottom: 1px solid #eee;
-  }
-  
-  .swap-title {
+}
+
+.swap-title {
     font-size: 1.5rem;
     font-weight: 700;
     color: #222;
-  }
-  
-  #dialog-close-btn-2 {
+}
+
+#dialog-close-btn-2 {
     background: none;
     border: none;
     font-size: 2rem;
@@ -2001,13 +1999,13 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     height: 36px;
     line-height: 36px;
     text-align: center;
-  }
-  
-  .swap-list {
+}
+
+.swap-list {
     padding: 0 32px 32px 32px;
-  }
-  
-  .swap-item {
+}
+
+.swap-item {
     display: flex;
     align-items: center;
     gap: 22px;
@@ -2017,9 +2015,9 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     padding: 18px 18px 18px 0;
     box-shadow: none;
     position: relative;
-  }
-  
-  .swap-item-img {
+}
+
+.swap-item-img {
     border: 1px solid #d8d8d8;
     width: 100px;
     height: 100px;
@@ -2027,31 +2025,31 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     border-radius: 8px;
     background: #fff;
     margin-left: 18px;
-  }
-  
-  .swap-item-info {
+}
+
+.swap-item-info {
     flex: 1;
-  }
-  
-  .swap-item-name {
+}
+
+.swap-item-name {
     font-size: 1.15rem;
     font-weight: 700;
     color: #222;
     margin-bottom: 4px;
-  }
-  
-  .swap-item-qty {
+}
+
+.swap-item-qty {
     font-size: 1rem;
     color: #444;
-  }
-  
-  .swap-item-actions {
+}
+
+.swap-item-actions {
     display: flex;
     align-items: center;
     gap: 10px;
-  }
-  
-  .swap-btn {
+}
+
+.swap-btn {
     background: #fff;
     border: 1.5px solid #d8d8d8;
     border-radius: 8px;
@@ -2065,13 +2063,13 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     gap: 7px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: background 0.15s;
-  }
-  
-  .swap-btn:hover {
+}
+
+.swap-btn:hover {
     background: #f5f5f5;
-  }
-  
-  .info-btn {
+}
+
+.info-btn {
     background: #fff;
     border: 1.5px solid #d8d8d8;
     border-radius: 8px;
@@ -2083,17 +2081,17 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     align-items: center;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: background 0.15s;
-  }
-  
-  .info-btn:hover {
+}
+
+.info-btn:hover {
     background: #f5f5f5;
-  }
-  
-  .swap-arrow {
+}
+
+.swap-arrow {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
 .bottom-btn {
     border-top: 1px solid #d8d8d8;
     padding: 20px;
@@ -2103,7 +2101,7 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     display: flex;
     justify-content: end;
     align-items: center;
-  } 
+}
 
 /* --- Custom Training Load Dropdown Styles --- */
 .custom-dropdown-button {
@@ -2196,8 +2194,8 @@ box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
     background-color: #eff6ff;
 }
 /* --- End Custom Training Load Dropdown Styles --- */
-#shoppingListModal .modal-footer{
-border-top: 1px solid #efefef;
+#shoppingListModal .modal-footer {
+    border-top: 1px solid #efefef;
 }
 @media (max-width: 1024px) {
     .mobile-header,
@@ -2311,8 +2309,8 @@ border-top: 1px solid #efefef;
         display: none;
     }
     .scroll-arrow-right,
-    .scroll-arrow-left{ 
-    display: none;
+    .scroll-arrow-left {
+        display: none;
     }
 }
 @media (max-width: 900px) {
