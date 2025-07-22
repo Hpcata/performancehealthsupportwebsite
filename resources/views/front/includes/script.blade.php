@@ -13,4 +13,6 @@
 <script src="{!! frontAssets('js/glightbox.min.js') !!}"></script>
 <script src="{!! frontAssets('js/custom.js') !!}"></script>
 <script src="{!! frontAssets('js/general.js') !!}"></script>
+<script src="{!! frontAssets('js/bootstrap/bootstrap.bundle.min.js') !!}"></script>
+
 @endif

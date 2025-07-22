@@ -331,7 +331,7 @@ Route::group(['middleware' => 'auth'], function () {
 	
 	// TODO : New Design profile-landing page Route// 
 	Route::get('/profile-landing/{id}', [FrontController::class, 'getProfile'])->name('front.profile');
-	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
+	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile-old');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
 	Route::post('/food/quantity/update', [FrontController::class, 'updateFoodQuantity'])->name('front.food-quantity-update');
 

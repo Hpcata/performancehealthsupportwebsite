@@ -54,6 +54,7 @@
 
 <link rel="stylesheet" href="{!! frontAssets('css/tiny-slider.css') !!}">
 <link rel="stylesheet" href="{!! frontAssets('css/style-1.css') !!}">
+<link rel="stylesheet" href="{{ frontAssets('css/bootstrap/bootstrap.min.css') }}" />
 
 <link rel="preload" href="{!! frontAssets('css/tiny-slider.min.css') !!}" as="style" onload="this.rel='stylesheet'">
 <link rel="preload" href="{!! frontAssets('css/aos.min.css') !!}" as="style" onload="this.rel='stylesheet'">

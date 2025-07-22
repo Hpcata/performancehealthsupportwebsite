@@ -18,7 +18,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
-use App\Models\UserPrePlan;
 use App\Models\SportGame;
 use App\Models\UserPrePlan;
 use App\Models\UserItem;
@@ -846,7 +845,7 @@ class PlanController extends Controller
             'message' => 'Click tracked successfully.',
         ]);
     }
-    
+
     /**
      * Returns the meal details for a given user meal ID, plan ID, sub category ID, and category ID.
      *

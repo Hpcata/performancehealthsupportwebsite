@@ -92,7 +92,7 @@
                 </div>
             </div> -->
         </section>
-
+        @endif
         <!-- Challenges -->
         <section class="challenges">
             <div class="section-header">

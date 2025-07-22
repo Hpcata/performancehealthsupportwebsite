@@ -221,8 +221,10 @@ class FrontController extends Controller
                             'login_time' => now()->toDateTimeString(),
                         ]);
                         return response()->json([
-                            'success' => false,
-                            'message' => 'Unauthorized access for this role.',
+                            'success' => true,
+                            'redirect_url' => $redirectUrl,
+                            'message' => 'Login successful.',
+                            'user' => $user
                         ]);
                     }
             

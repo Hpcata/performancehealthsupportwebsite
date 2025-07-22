@@ -617,7 +617,7 @@
                             <div class="col-md-6">
                                 <div class="nutrition-login-form mt-4 mt-md-0">
                                     <h3>Sign In</h3>
-                                    <form action="#" id="front-page-login-form">
+                                    <form action="javascript:void();" id="front-page-login-form">
                                         <div class="form-group">
                                             <label>Email</label>
                                             <input type="text" class="form-control" id="front-page-login-email">

@@ -195,6 +195,7 @@ $auth = auth()->guard('web')->check();
         </div>
     </div>
 </div>
+@endif
 
 <script>
     function handleLogout(event) {

@@ -42,6 +42,7 @@
         </div>
     </div>
 </div>
+@endif
 <!-- Includes the script file -->
 @include('front.includes.script')
 
