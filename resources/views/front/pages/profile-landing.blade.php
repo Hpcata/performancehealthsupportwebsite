@@ -120,7 +120,7 @@
                 <a href="#" class="see-all">See all</a>
             </div>
             <div class="resources-custom-grid">
-                <div class="resource-card-custom resource-supplement">
+                <div class="resource-card-custom resource-supplement cursor-pointer" id="scanner-btn">
                     <img
                         src="{{ frontAssets('images/cardbg.webp') }}"
                         class="resource-bg-img"
@@ -134,7 +134,7 @@
                     <div class="resource-title">Supplement scanner</div>
                 </div>
 
-                <div class="resource-card-custom resource-chat" id="chat-to-virtual-kez-btn">
+                <div class="resource-card-custom resource-chat cursor-pointer" id="chat-to-virtual-kez-btn">
                     <img
                         src="{{ frontAssets('images/cardimg-2.webp') }}"
                         class="resource-bg-img"
@@ -482,7 +482,11 @@
 
         $('#start-chat-link, #chat-to-virtual-kez-btn').click(function(){
             $('#delphi-bubble-trigger').click();
-        })
+        });
+
+        $('#scanner-btn').click(function(){
+            location.href = "https://phenomenal-torrone-cee914.netlify.app/";
+        });
     });
 </script>
 

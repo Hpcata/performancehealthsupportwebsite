@@ -2735,3 +2735,7 @@ border-bottom: none;
 .dialog-content::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
