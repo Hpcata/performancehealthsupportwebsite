@@ -277,17 +277,17 @@
             </div>
             <div class="modal-body" style="padding: 0;">
                 <div style="flex: 1 1 auto; overflow-y: auto; padding: 16px 16px 0 16px;">
-                    <div id="pdf-preview" style="width: 100%; height: 100%; max-height: 550px; display: flex; justify-content: center; overflow:auto;">
+                    <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center; overflow:auto;" class="downloadplan-inner-content">
                        
                     </div>
                 </div>
-                 <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
+               
+            </div>
+             <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
                 <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
                     Download Plan
                 </button>
             </div>
-            </div>
-           
         </div>
     </div>
 </div>

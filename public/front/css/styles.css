@@ -2256,7 +2256,28 @@ border-bottom: none;
     gap: 24px;
     width: 100%;
 }
+.downloadplan-inner-content{
+    max-height: 550px;
+}
+@media (max-width: 1800px) {
+    .downloadplan-inner-content{
+    max-height: 470px;
+}
+}
+@media (max-width: 1680px) {
+    .downloadplan-inner-content{
+    max-height: 400px;
+}
+}
+@media (max-width: 1440px) {
+    .downloadplan-inner-content{
+    max-height: 350px;
+}
+}
 @media (max-width: 1024px) {
+    .downloadplan-inner-content{
+    max-height: 350px;
+}
     .responsive-modal-footer, .modal-footer{
     padding: 20px !important;
 }
