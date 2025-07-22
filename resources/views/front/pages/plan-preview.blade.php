@@ -115,8 +115,8 @@
                                 <div style="display: flex; gap: 18px; background: #f5f5f5; border-radius: 16px; padding: 18px; margin-bottom: 16px; align-items: flex-start;" class="responsive-download-plan">
                                     <img src="{{ asset('storage/' . $userMeal->meal->image) }}" alt="{{ $userMeal->meal->title }}"
                                         style="width: 190px; min-height: 190px; object-fit: cover; border-radius: 12px;" class="download-plan-food-img"/>
-                                    <div class="">
-                                        <div style="font-size: 1.1rem; font-weight: 700; color: #222;">{{ $userMeal->meal->title }}</div>
+                                    <div class="" style="max-width:350px;">
+                                        <div style="font-size: 1.1rem; font-weight: 700; color: #222;>{{ $userMeal->meal->title }}</div>
                                         @if ($userMeal->meal->description)
                                         <div style="font-size: 14px; color: #444; margin-bottom: 4px;">{{ $userMeal->meal->description }}</div>
                                         @endif

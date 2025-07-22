@@ -277,7 +277,7 @@
             </div>
             <div class="modal-body" style="padding: 0;">
                 <div style="flex: 1 1 auto; overflow-y: auto; padding: 16px 16px 0 16px;">
-                    <div id="pdf-preview" style="width: 100%; height: 100%; max-height: 350px; display: flex; justify-content: center; overflow:auto;">
+                    <div id="pdf-preview" style="width: 100%; height: 100%; max-height: 550px; display: flex; justify-content: center; overflow:auto;">
                        
                     </div>
                 </div>
