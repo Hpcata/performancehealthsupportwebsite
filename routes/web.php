@@ -330,7 +330,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/plans/preview/', [FrontPlanController::class, 'planPreview'])->name('front.plans.preview');
 	
 	// TODO : New Design profile-landing page Route// 
-	// Route::get('/profile-landing/{id}', [FrontController::class, 'getProfile'])->name('front.profile');
+	Route::get('/profile-landing/{id}', [FrontController::class, 'getProfile'])->name('front.profile');
 	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
 	Route::post('/food/quantity/update', [FrontController::class, 'updateFoodQuantity'])->name('front.food-quantity-update');
@@ -348,6 +348,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/user/{user}/plan/{plan}/meals', [FrontPlanController::class, 'ajaxGetMeals'])->name('user.plan.meals');
 	Route::post('/track/click', [FrontPlanController::class, 'trackClick'])->name('front.track.click');
 	Route::get('/get-meals/{plan}/{category}', [FrontController::class, 'getMeals'])->name('front.get-profile-meals');
+	Route::post('/meal-details', [FrontPlanController::class, 'getMealDetails'])->name('front.meal.details');
+	Route::post('/meal-smart-swaps', [FrontPlanController::class, 'getMealSmartSwaps'])->name('front.meal.smart.swaps');
 
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');

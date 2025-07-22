@@ -38,15 +38,15 @@ use Illuminate\Support\Facades\Validator;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
 use App\Models\SportCategory;
+use App\Models\SportGame;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
+use App\Models\Page;
 use App\Models\UserItem;
 use App\Models\UserItemMeal;
 use App\Models\UserMeal;
-use App\Models\Page;
-use App\Models\Coupon;
-use App\Models\UserCategory;
 use App\Models\PrePlanQuesionFile;
 use App\Models\Flag;
-use App\Models\CouponUsage;
 
 class FrontController extends Controller
 {
@@ -127,7 +127,6 @@ class FrontController extends Controller
         // Step 2: Retrieve all plans that are NOT sub-plans
         $plans = Plan::whereNotIn('id', $subPlanIds)->get();
 
-        // dd($plans);
         $page = Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
         
         $requirements = [];
@@ -144,7 +143,6 @@ class FrontController extends Controller
 
     public function register(Request $request)
     {
-        // dd($request->all());
         $firstName = explode(' ', $request->input('name'))[0]; // First name from full name
         $lastName = explode(' ', $request->input('name'))[1] ?? ''; // Last name from full name
 
@@ -223,10 +221,8 @@ class FrontController extends Controller
                             'login_time' => now()->toDateTimeString(),
                         ]);
                         return response()->json([
-                            'success' => true,
-                            'redirect_url' => $redirectUrl,
-                            'message' => 'Login successful.',
-                            'user' => $user
+                            'success' => false,
+                            'message' => 'Unauthorized access for this role.',
                         ]);
                     }
             
@@ -247,7 +243,6 @@ class FrontController extends Controller
                 ]);
             }
         }
-
         // If user doesn't exist or password doesn't match
         return response()->json([
             'success' => false,
@@ -449,7 +444,6 @@ class FrontController extends Controller
     {
         $user = User::find($request->user_id);
         $rules = []; // Initialize the $rules array
-        // dd($request->all());
         if ($request->has('name')) {
             $rules['name'] = 'string|max:255';
         }
@@ -494,13 +488,11 @@ class FrontController extends Controller
                 unlink(public_path($user->profile_image));
             }
         
-            // Save the new profile image path in the database
             $user->profile_image = $filePath;
 
             $sectionElement = 'update_profile_image';
         }
 
-        // Save the user
         $user->save();
 
         $click = ActivityTracker::click($sectionElement, $user->id);
@@ -1718,9 +1710,37 @@ class FrontController extends Controller
         ]);
     }
 
+    public function getProfile(Request $request, $userId)
+    {
+        try {
+            $payment = Payment::where('user_id', $userId)->first();
+
+            if (!$payment) {
+                return redirect()->back()->with('error', 'Plan not purchased.');
+            }
+
+            $userPlan = UserPlan::with([
+                'plan',
+                'userCategories.userSubCategories.userMeals.userItems'
+            ])
+            ->where('user_id', $userId)
+            ->first();
+
+            return view('front.pages.profile-landing', compact('userPlan'));
+            
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error fetching user profile: ' . $e->getMessage());
+
+            // Redirect back with a generic error message
+            return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
+        }
+    }
+
+
     public function getMeals($planId, $categoryId)
     {
-        $userCategory = UserCategory::where('user_plan_id', $planId)
+        $userCategory = \App\Models\UserCategory::where('user_plan_id', $planId)
             ->where('id', $categoryId)
             ->first();
 
@@ -1731,9 +1751,7 @@ class FrontController extends Controller
         $meals = [];
 
         foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
-            foreach ($subCategory->userMeals->where('user_plan_id', $planId)
-                        ->where('user_category_id', $userCategory->id)
-                        ->where('user_sub_category_id', $subCategory->id) as $meal) {
+            foreach ($subCategory->userMeals->where('user_plan_id', $planId) as $meal) {
                 if (count($meals) < 3) {
                     $meals[] = $meal;
                 }

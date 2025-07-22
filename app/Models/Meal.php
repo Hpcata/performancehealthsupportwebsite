@@ -49,16 +49,29 @@ class Meal extends Model
                     ->wherePivot('is_swiped',0);
     }
 
-    public function totalProtein()
+    public function getTotalProteinsAttribute()
     {
-        return $this->items()->sum('protein');
+        return $this->items()->sum('item_meals.protein');
     }
 
-    public function totalCarbs()
+    public function getTotalCarbsAttribute()
     {
-        return $this->items()->sum('carbs');
+        return $this->items()->sum('item_meals.carbs');
     }
 
+    public function getTotalFatsAttribute()
+    {
+        return $this->items()->sum('item_meals.fat');
+    }
+
+    public function getTotalEnergyAttribute()
+    {
+        return $this->items->sum(function ($item) {
+            // Use regex to extract numeric part from "1200kJ", "783 kcal", etc.
+            return floatval(preg_replace('/[^0-9.]/', '', $item->energy));
+        });
+    }
+    
     public function tags()
     {
         return $this->belongsToMany(Tag::class); // Uses 'item_tag' pivot table by default

@@ -3131,10 +3131,10 @@
                 }
             });
            
-            const carbs = parseFloat($('#editItemModal #modalCarbs').text()) || 0;
-            const protein = parseFloat($('#editItemModal #modalProtein').text()) || 0;
-            const fat = parseFloat($('#editItemModal #modalFat').text()) || 0;
-            const energy = parseFloat($('#editItemModal #modalEnergy').text()) || 0;
+            const carbs = parseFloat($('#modalCarbs').text()) || 0;
+            const protein = parseFloat($('#modalProtein').text()) || 0;
+            const fat = parseFloat($('#modalFat').text()) || 0;
+            const energy = parseFloat($('#modalEnergy').text()) || 0;
             const updatedHTML = `
                 <div class="d-flex justify-content-between align-items-start mb-0">
                     <div class="col-9">

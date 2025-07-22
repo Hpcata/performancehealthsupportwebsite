@@ -82,8 +82,8 @@
                                                 <div class="plan-list-info">
                                                     <h5>{{ $userMeal->meal->title }}</h5>
                                                     <ul>
-                                                        <li>Carbs: {{ $userMeal->meal->totalCarbs() }}g</li>
-                                                        <li>Protein: {{ $userMeal->meal->totalProtein() }}g</li>
+                                                        <li>Carbs: {{ $userMeal->meal->getTotalCarbsAttribute() }}g</li>
+                                                        <li>Protein: {{ $userMeal->meal->getTotalProteinsAttribute() }}g</li>
                                                     </ul>
                                                 </div>
                                                 <div class="plan-list-btn">
