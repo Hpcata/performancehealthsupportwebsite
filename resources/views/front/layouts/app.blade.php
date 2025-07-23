@@ -97,6 +97,7 @@
         color: "#0090FF",
         },
     };
+
     </script>
 
     <script id="delphi-bubble-bootstrap" src="https://embed.delphi.ai/loader.js"></script>
@@ -126,7 +127,7 @@
                 </div>
                 <div class="modal-body text-center">
                     <h4>Ooops!</h4>	
-                    <p id="error-message">Something went wrong.</p>
+                    <p id="error-message">Something went wrong. Please try again.</p>
                 </div>
             </div>
         </div>

@@ -57,7 +57,7 @@
                                 <ul>
                                     <li></li>
                                 </ul>
-                                <button class="smart-swap-btn" id="smart-swap-btn">
+                                <button class="smart-swap-btn meal-item-btn">
                                     <img
                                         src="{{ frontAssets('images/dialog/swap.svg') }}"
                                         alt="Snap"
