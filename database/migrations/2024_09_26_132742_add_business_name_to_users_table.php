@@ -14,7 +14,7 @@ return new class extends Migration
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
                 if (! Schema::hasColumn('users', 'business_name')) {
-                    $table->string('business_name')->nullable()->after('last_name');
+                    $table->string('business_name')->nullable()->after('email');
                 }
             });
         }
