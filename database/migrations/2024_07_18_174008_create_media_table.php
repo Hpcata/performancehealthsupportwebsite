@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('media', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->nullable();
-            $table->string('path')->nullable()->index();
-            $table->string('media_type')->nullable();
-            $table->string('extension')->nullable();
-            $table->string('size')->nullable();
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('media')) {
+            Schema::create('media', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->nullable();
+                $table->string('path')->nullable()->index();
+                $table->string('media_type')->nullable();
+                $table->string('extension')->nullable();
+                $table->string('size')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -27,6 +29,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('media');
+        if (Schema::hasTable('media')) {
+            Schema::dropIfExists('media');
+        }
     }
 };

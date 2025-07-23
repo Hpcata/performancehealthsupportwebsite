@@ -13,10 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('sport_trackings', function (Blueprint $table) {
-            $table->string('name')->nullable()->after('id');
-            $table->string('email')->nullable()->after('name');
-        });
+        if (Schema::hasTable('sport_trackings')) {
+            Schema::table('sport_trackings', function (Blueprint $table) {
+                if (! Schema::hasColumn('sport_trackings', 'name')) {
+                    $table->string('name')->nullable()->after('id');
+                }
+
+                if (! Schema::hasColumn('sport_trackings', 'email')) {
+                    $table->string('email')->nullable()->after('name');
+                }
+            });
+        }
     }
 
     /**
@@ -26,9 +33,16 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('sport_trackings', function (Blueprint $table) {
-            $table->dropColumn('name');
-            $table->dropColumn('email');
-        });
+        if (Schema::hasTable('sport_trackings')) {
+            Schema::table('sport_trackings', function (Blueprint $table) {
+                if (Schema::hasColumn('sport_trackings', 'name')) {
+                    $table->dropColumn('name');
+                }
+
+                if (Schema::hasColumn('sport_trackings', 'email')) {
+                    $table->dropColumn('email');
+                }
+            });
+        }
     }
 };

@@ -8,28 +8,31 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('site_settings', function (Blueprint $table) {
-            $table->id();
-            $table->string('page_id')->index();
-            $table->string('meta_key')->index();
-            $table->text('meta_value');
-            $table->integer('sort_order')->nullable();
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('site_settings')) {
+            Schema::create('site_settings', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('page_id')->nullable()->index(); // Assuming it might relate to pages
+                $table->string('meta_key')->index();                        // e.g., site_title, footer_text
+                $table->text('meta_value')->nullable();                     // The setting value
+                $table->integer('sort_order')->nullable();                  // Optional sorting
+                $table->timestamps();
+
+                // Optional: If linked to `pages` table
+                // $table->foreign('page_id')->references('id')->on('pages')->onDelete('set null');
+            });
+        }
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('site_settings');
+        if (Schema::hasTable('site_settings')) {
+            Schema::dropIfExists('site_settings');
+        }
     }
 };

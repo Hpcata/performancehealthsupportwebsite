@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('items', function (Blueprint $table) {
-            $table->decimal('fat', 5, 2)->nullable()->after('carbs'); // Nullable in case the payment isn't tied to a user
-        });
+        if (Schema::hasTable('items') && ! Schema::hasColumn('items', 'fat')) {
+            Schema::table('items', function (Blueprint $table) {
+                $table->decimal('fat', 5, 2)->nullable()->after('carbs');
+            });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('items', function (Blueprint $table) {
-            $table->dropColumn('fat');
-        });
+        if (Schema::hasTable('items') && Schema::hasColumn('items', 'fat')) {
+            Schema::table('items', function (Blueprint $table) {
+                $table->dropColumn('fat');
+            });
+        }
     }
 };
