@@ -711,7 +711,9 @@
                     filename: 'print-plan.pdf',
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { scale: 2, useCORS: true },
-                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+                            pagebreak: { mode: ['css', 'legacy'] } // <-- Add this line
+
                 })
                 .from(element)
                 .toPdf()
@@ -876,10 +878,10 @@
 
                     // 🔢 Nutrition Info
                     $('#recipeDialogModal .modal-body .nutrition-info').html(`
-                        <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span><br>
                         <span style="color: #a60015">● Protein: ${response.totalProtein ?? 0} g</span><br>
                         <span style="color: #3e8e00">● Carb: ${response.totalCarbs ?? 0} g</span><br>
-                        <span style="color: #0077b6">● Fat: ${response.totalFats ?? 0} g</span>
+                        <span style="color: #0077b6">● Fat: ${response.totalFats ?? 0} g</span><br>
+                        <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span>
                     `);
 
                     // Set data attributes for Smart Swap
