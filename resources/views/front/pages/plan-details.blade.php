@@ -92,27 +92,27 @@
             @foreach ($userPlans as $userPlan)
             @foreach ($userPlan->userCategories as $userCategory)
             @php
-            $validSubCategories = $userCategory->userSubCategories->filter(function ($subCategory) use ($userPlan, $userCategory) {
-            return $subCategory->userMeals
-            ->where('user_plan_id', $userPlan->id)
-            ->where('user_category_id', $userCategory->id)
-            ->where('user_sub_category_id', $subCategory->id)
-            ->isNotEmpty();
-            });
+                $validSubCategories = $userCategory->userSubCategories->filter(function ($subCategory) use ($userPlan, $userCategory) {
+                    return $subCategory->userMeals
+                    ->where('user_plan_id', $userPlan->id)
+                    ->where('user_category_id', $userCategory->id)
+                    ->where('user_sub_category_id', $subCategory->id)
+                    ->isNotEmpty();
+                });
             @endphp
 
             @foreach ($validSubCategories as $subCategory)
             @php
-            $meals = $subCategory->userMeals
-            ->where('user_plan_id', $userPlan->id)
-            ->where('user_category_id', $userCategory->id)
-            ->where('user_sub_category_id', $subCategory->id)
-            ->take(3);
-            $mealCount = $subCategory->userMeals
-            ->where('user_plan_id', $userPlan->id)
-            ->where('user_category_id', $userCategory->id)
-            ->where('user_sub_category_id', $subCategory->id)
-            ->count();
+                $meals = $subCategory->userMeals
+                    ->where('user_plan_id', $userPlan->id)
+                    ->where('user_category_id', $userCategory->id)
+                    ->where('user_sub_category_id', $subCategory->id);
+                    
+                $mealCount = $subCategory->userMeals
+                    ->where('user_plan_id', $userPlan->id)
+                    ->where('user_category_id', $userCategory->id)
+                    ->where('user_sub_category_id', $subCategory->id)
+                    ->count();
             @endphp
 
             @if ($mealCount > 0)
@@ -121,7 +121,7 @@
                     <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
                 </div>
                 <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                    @if($meals->count() > 3)
+                    @if($mealCount > 3)
                         <div class="scroll-arrow-left" aria-label="Scroll left">
                             <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
                                 <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -149,7 +149,7 @@
                         @endforeach
                     </div>
 
-                    @if($meals->count() > 3)
+                    @if($mealCount > 3)
                         <div class="scroll-arrow-right" aria-label="Scroll right">
                             <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
                                 <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -272,13 +272,6 @@
                 </ul>
             </div>
         </section>
-
-        	<button class="btn-outline btn" data-bs-toggle="modal" data-bs-target="#errormodalmain">
-  error
-</button>
-
-   
-
     </div>
 </main>
 
@@ -383,10 +376,10 @@
     // ...existing code...
 
     function showLoader() {
-        $('#loader').show();
+        $('#loader').css('display', 'flex');
     }
     function hideLoader() {
-        $('#loader').hide();
+        $('#loader').css('display', 'none');
     }
 
     $(document).ready(function() {
@@ -680,7 +673,7 @@
             hideLoader();
         });
 
-        $(".print-plan-btn").click(function () {
+        $(document).on('click', ".print-plan-btn", function () {
             showLoader();
             const planId = $(this).data("plan-id");
             const userId = $(this).data("user-id");
@@ -692,7 +685,9 @@
             printPlanModal.show(); // ✅ Show the modal
             showLoader();
             // ✅ Reset preview content with loading text
-            $("#pdf-preview").html('<div class="py-4 text-center">Loading preview...</div>');
+            $("#pdf-preview").html(`<div class="py-4 text-center">
+                <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+            </div>`);
 
             // ✅ Fetch preview content via AJAX and inject
             fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
@@ -704,18 +699,19 @@
                     $("#pdf-preview").html(html); // ✅ Inject fetched HTML
                 })
                 .catch(err => {
-                    console.error("Error loading preview:", err);
                     $("#pdf-preview").html('<div class="py-4 text-danger">Error loading preview</div>');
                 });
 
                 hideLoader();
         });
 
+        $('#print-plan-modal').on('hide.bs.modal', function () {
+            window.location.reload(); // Reload page to reset state  
+        });
+        
         $('#shoppingListModal').on('hidden.bs.modal', function () {
             $(this).find('.modal-body').html(''); // Clear modal content
-            console.log('Shopping list modal closed and content cleared.');
         });
-
 
     });
 
@@ -769,7 +765,7 @@
                     const logoY = footerY + (footerHeight - logoHeight) / 2;
 
                     // Circle (page number)
-                    const circleRadius = 0.11;
+                    const circleRadius = 0.15;
                     const circleCenterX = pageWidth / 2;
                     const circleCenterY = footerY + footerHeight / 2;
 
@@ -799,14 +795,15 @@
                         }
 
                         // Draw blue circle for page number (center)
-                        pdf.setDrawColor(0, 116, 217); // blue border (optional)
-                        pdf.setFillColor(0, 116, 217); // blue fill
-                        pdf.circle(circleCenterX, circleCenterY, circleRadius, 'F');
+                        // pdf.setDrawColor(0, 116, 217); // blue border (optional)
+                        // pdf.setFillColor(0, 116, 217); // blue fill
+                        // pdf.circle(circleCenterX, circleCenterY, circleRadius, 'F');
 
                         // Page number in white, centered in the circle
-                        pdf.setTextColor(255, 255, 255);
-                        pdf.setFontSize(9);
-                        pdf.setFont(undefined, 'normal');
+                        pdf.setTextColor(0, 116, 217);
+                        pdf.setFontSize(11);
+                        pdf.setFont(undefined, 'bold');
+
                         // Center vertically and horizontally
                         pdf.text(`${i}`, circleCenterX, circleCenterY, { align: 'center', baseline: 'middle' });
 
@@ -851,9 +848,7 @@
 
     $(document).ready(function () {
         // Open Bootstrap modal on meal click
-        $('.clickable').on('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+        $('.clickable').on('click', function () {
             const user_meal_id = $(this).data('meal-id');
             const user_plan_id = $(this).data('user-plan-id');
             const user_sub_category_id = $(this).data('sub-category-id');
@@ -910,17 +905,24 @@
 
                     $('#recipeDialogModal .modal-body ul').html(ingredientsHtml);
 
-                    // 📝 Note
-                    $('#recipeDialogModal .modal-body .note').html(
-                        `<strong>Note:</strong> ${meal.meal.note || 'No additional notes provided.'}`
-                    );
+                    // 📝 Instructions / Note
+                    if (meal.meal.note && meal.meal.note.trim() !== '') {
+                        $('#recipeDialogModal .modal-body .note').html(
+                            `<strong>Note:</strong> ${meal.meal.note}`
+                        ).show();
+                        $('#recipeDialogModal .modal-body h3:contains("Instructions")').show();
+                    } else {
+                        $('#recipeDialogModal .modal-body .note').hide();
+                        $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
+                    }
+                    // $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
 
                     // 🔢 Nutrition Info
                     $('#recipeDialogModal .modal-body .nutrition-info').html(`
-                        <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span><br>
-                        <span style="color: #a60015">● Protein: ${response.totalProtein ?? 0} g</span><br>
-                        <span style="color: #3e8e00">● Carb: ${response.totalCarbs ?? 0} g</span><br>
-                        <span style="color: #0077b6">● Fat: ${response.totalFats ?? 0} g</span>
+                        <span style="color: #a60015">●</span> Protein: ${(Number(response.totalProtein) || 0).toFixed(2)} g<br>
+                        <span style="color: #3e8e00">●</span> Carb: ${(Number(response.totalCarbs) || 0).toFixed(2)} g<br>
+                        <span style="color: #0077b6">●</span> Fat: ${(Number(response.totalFats) || 0).toFixed(2)} g<br>
+                        <span style="color: #967500">●</span> Energy: ${(Number(response.totalEnergy) || 0).toFixed(2)} kJ
                     `);
 
                     // Set data attributes for Smart Swap
@@ -944,15 +946,16 @@
         });
     });
 
-    $(document).on('click', '.meal-item-btn', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const meal_id = $(this).data('meal-id');
-        const meal_name = $(this).data('meal-name');
-        const user_meal_id = $(this).data('meal-id');
-        const userPlanId = $(this).data('user-plan-id');
-        const userSubCategoryId = $(this).data('sub-category-id');
-        const userCategoryId = $(this).data('category-id');
+    $(document).on('click', '.meal-item-btn', function () {
+        const $btn = $(this);
+
+        const meal_id = $btn.attr('data-meal-id');
+        const meal_name = $btn.attr('data-meal-name');
+        const user_meal_id = $btn.attr('data-meal-id');
+        const userPlanId = $btn.attr('data-user-plan-id');
+        const userSubCategoryId = $btn.attr('data-sub-category-id');
+        const userCategoryId = $btn.attr('data-category-id');
+
         $('#recipeDialogModal').modal('hide');
         mealItemModelReload(meal_id, meal_name, user_meal_id, userSubCategoryId, userPlanId, userCategoryId);
     });
@@ -1086,7 +1089,6 @@
             newModal.hide();
         }
     });
-
 
     $('body').on('click', '.item-swap-btn', function () {
         const itemId = $(this).data('item-id');

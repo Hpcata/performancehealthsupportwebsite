@@ -1993,10 +1993,10 @@ button:focus,
 
 .note {
     color: #3b3b3be6;
-    font-size: 16.442px;
+    /* font-size: 16.442px; */
     font-style: normal;
-    font-weight: 600;
-    line-height: normal;
+    /* font-weight: 600; */
+    /* line-height: normal; */
     margin-top: 8px;
 }
 
