@@ -120,7 +120,7 @@
                 <!-- <a href="#" class="see-all">See all</a> -->
             </div>
             <div class="resources-custom-grid">
-                <div class="resource-card-custom resource-supplement cursor-pointer hover-card" id="scanner-btn">
+                <div class="cursor-pointer resource-card-custom resource-supplement hover-card" id="scanner-btn">
                     <img
                         src="{{ frontAssets('images/cardbg.webp') }}"
                         class="resource-bg-img"
@@ -134,7 +134,7 @@
                     <div class="resource-title">Supplement scanner</div>
                 </div>
 
-                <div class="resource-card-custom resource-chat cursor-pointer hover-card" id="chat-to-virtual-kez-btn">
+                <div class="cursor-pointer resource-card-custom resource-chat hover-card" id="chat-to-virtual-kez-btn">
                     <img
                         src="{{ frontAssets('images/cardimg-2.webp') }}"
                         class="resource-bg-img"
@@ -230,11 +230,11 @@
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
                     </div>
-                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="btn-consult text-decoration-none">Book consult</a>
+                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
                 </div>
             </div>
             <div class="consults-plans-grid">
-                <div class="plan-card-custom plan-competition ">
+                <div class="plan-card-custom plan-competition">
                     <div class="">
                         <div class="plan-title">Competition Plan</div>
                         <div class="plan-desc">
@@ -285,9 +285,9 @@
         <section class="surfing-videos">
             <h2>What's hot in... Surfing</h2>
             <div class="video-grid">
-                <div class="video-card ">
+                <div class="video-card">
                     <div class="video-thumbnail hover-card">
-                        <div class="video-player " id="video-player-1">
+                        <div class="video-player" id="video-player-1">
                             <img
                                 src="{{ frontAssets('images/instaimg1.webp') }}"
                                 alt="Surfing video thumbnail"
@@ -331,7 +331,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="video-card ">
+                <div class="video-card">
                     <div class="video-thumbnail hover-card">
                         <div class="video-player" id="video-player-2">
                             <img
@@ -377,7 +377,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="video-card ">
+                <div class="video-card">
                     <div class="video-thumbnail hover-card">
                         <div class="video-player" id="video-player-3">
                             <img
@@ -487,7 +487,40 @@
         $('#scanner-btn').click(function(){
             location.href = "https://phenomenal-torrone-cee914.netlify.app/";
         });
+
+        document.querySelectorAll('.challenge-card.clickable.hover-card').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                var comingSoonModal = document.getElementById('comingSoonModal');
+                if (comingSoonModal && typeof bootstrap !== 'undefined') {
+                    e.preventDefault();
+                    var modal = new bootstrap.Modal(comingSoonModal);
+                    modal.show();
+                }
+            });
+        });
     });
 </script>
+
+<!-- Coming Soon Modal -->
+<div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-coming-soon modal-dialog-centered">
+        <div class="modal-content">
+            <div class="justify-content-center modal-header">
+                <div class="icon-box">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-center modal-body">
+                <h4>Coming Soon!</h4>
+                <p>This feature is coming soon.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection

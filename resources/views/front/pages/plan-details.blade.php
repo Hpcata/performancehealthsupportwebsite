@@ -291,7 +291,7 @@
                 </div>
                
             </div>
-             <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
+             <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
                 <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
                     Download Plan
                 </button>
@@ -314,7 +314,7 @@
             <!-- Content loaded via AJAX or JS -->
         </div>
         </div>
-        <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8; background-color:#fff; border-radius:0 0 12px 12px; ">
+        <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; background-color:#fff; border-radius:0 0 12px 12px; ">
         <button id="print-shopping-list" class="btn btn-primary">Print Shopping List</button>
         </div>
     </div>
@@ -1032,7 +1032,8 @@
                         const itemCard = `
                             <div class="swap-item">
                                 <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
-                                 <div class="swap-wrap">
+                                <div class="flex-wrapper"> 
+                               
                                 <div class="swap-item-info">
                                     <div class="swap-item-name">${item.name}</div>
                                     <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
@@ -1055,6 +1056,7 @@
                                             <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
                                         </button>` : ''}
                                 </div>
+                                 </div>
                                 </div>
                             </div>
                         `;
@@ -1171,7 +1173,7 @@
                 let mainItem = `
                     <div class="swap-item" id="mainSwapItem" data-item-id="${item.id}" style="border-bottom: none">
                         <img src="${data.item_image}" alt="${data.item_name}" class="swap-item-img"/>
-                         <div class="">
+                         <div class="flex-wrapper">
                         <div class="swap-item-info">
                             <div class="swap-item-name">${data.item_name}</div>
                             <div class="swap-item-qty"><b>Qty:</b> ${mainQtyText}</div>
@@ -1186,7 +1188,7 @@
                         </div>
                     </div>
 
-                    <div class="swap-item"><h3>Swap with</h3></div>
+                    <div class="swap-item swap-item-h3"><h3>Swap with</h3></div>
                 `;
 
                 // ✅ Build Swap Items HTML
@@ -1197,14 +1199,14 @@
                     swapItemsHTML += `
                         <div class="swap-item">
                             <img src="${swapItem.swap_item_image}" alt="${swapItem.swap_item_name}" class="swap-item-img"/>
-                             <div class="">
+                             <div class="flex-wrapper">
                             <div class="swap-item-info">
                                 <div class="swap-item-name">${swapItem.swap_item_name}</div>
                                 <div class="swap-item-qty"><b>Qty:</b> ${swapQtyText}</div>
                             </div>
                             <div class="swap-item-actions">
                                 <button class="smart-swap-btn swap-btn" data-swap-item-id="${swapItem.swap_item_id}">
-                                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" />Swap
+                                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" /><span>Swap</span>
                                 </button>
                                 ${swapItem.swap_item_description ? `
                                     <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${swapItem.swap_item_description}">
@@ -1285,14 +1287,14 @@
         // === Replace clicked swap item with the original main item ===
         const revertedHTML = `
             <img src="${currentMainItem.image}" alt="${currentMainItem.name}" class="swap-item-img"/>
-             <div class="">
+             <div class="flex-wrapper">
             <div class="swap-item-info">
                 <div class="swap-item-name">${currentMainItem.name}</div>
                 <div class="swap-item-qty"><b>Qty:</b> ${currentMainItem.qty}</div>
             </div>
             <div class="swap-item-actions">
                 <button class="smart-swap-btn swap-btn" data-swap-item-id="${currentMainItem.id}">
-                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" />Swap
+                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" /><span>Swap</span>
                 </button>
                 ${currentMainItem.description ? `
                     <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${currentMainItem.description}">
@@ -1393,6 +1395,29 @@
         $(this).find('.modal-body').html('');
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Blade inline script: DOMContentLoaded fired');
+        document.querySelectorAll('.horizontal-scroll-arrow-wrapper').forEach(function(wrapper) {
+          const scrollContainer = wrapper.querySelector('.horizontal-scroll');
+          const leftArrow = wrapper.querySelector('.scroll-arrow-left');
+          const rightArrow = wrapper.querySelector('.scroll-arrow-right');
+          if (leftArrow && scrollContainer) {
+            leftArrow.addEventListener('click', function(e) {
+              e.preventDefault();
+              console.log('Blade inline: Left arrow clicked');
+              scrollContainer.scrollBy({ left: -scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
+            });
+          }
+          if (rightArrow && scrollContainer) {
+            rightArrow.addEventListener('click', function(e) {
+              e.preventDefault();
+              console.log('Blade inline: Right arrow clicked');
+              scrollContainer.scrollBy({ left: scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
+            });
+          }
+        });
+    });
+
 </script>
 
 
@@ -1400,7 +1425,7 @@
 <div class="modal" id="errormodalmain" tabindex="-1" aria-labelledby="testLabel" aria-hidden="true">
 	<div class="modal-dialog modal-confirm modal-dialog-centered">
 		<div class="modal-content">
-			<div class="modal-header justify-content-center">
+			<div class="justify-content-center modal-header">
 				<div class="icon-box">
 					<i class="fas fa-exclamation-circle"></i>
 				</div>
@@ -1413,7 +1438,7 @@
 </svg>
                     </button>
 			</div>
-			<div class="modal-body text-center">
+			<div class="text-center modal-body">
 				<h4>Ooops!</h4>	
 				<p>Something went wrong.</p>
 				
@@ -1421,4 +1446,38 @@
 		</div>
 	</div>
 </div> 
+
+<!-- Coming Soon Modal -->
+<div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-coming-soon modal-dialog-centered">
+        <div class="modal-content">
+            <div class="justify-content-center modal-header">
+                <div class="icon-box">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-center modal-body">
+                <h4>Coming Soon!</h4>
+                <p>This feature is coming soon.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var inviteDiv = document.querySelector('.share-dropdown-item');
+        if(inviteDiv) {
+            inviteDiv.addEventListener('click', function(e) {
+                e.preventDefault();
+                var comingSoonModal = new bootstrap.Modal(document.getElementById('comingSoonModal'));
+                comingSoonModal.show();
+            });
+        }
+    });
+</script>
 @endsection
