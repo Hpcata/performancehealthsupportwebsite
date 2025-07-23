@@ -10,7 +10,7 @@
     <div class="container">
         <!-- Welcome Section -->
         <section class="welcome-section">
-            <div class="welcome-card">
+            <div class="welcome-card hover-card">
                 <div class="welcome-message">
                     <h2>Welcome back legend! How's your week going?</h2>
                     <div class="welcome-row">
@@ -77,10 +77,10 @@
         <section class="challenges">
             <div class="section-header">
                 <h2>Challenges</h2>
-                <a href="/challenges" class="see-all">See all</a>
+                <!-- <a href="/challenges" class="see-all">See all</a> -->
             </div>
             <div class="challenge-cards">
-                <div class="challenge-card clickable">
+                <div class="challenge-card clickable hover-card">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
@@ -90,7 +90,7 @@
                         <span>30</span>
                     </div>
                 </div>
-                <div class="challenge-card clickable">
+                <div class="challenge-card clickable hover-card">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
                         alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
@@ -100,7 +100,7 @@
                         <span>10</span>
                     </div>
                 </div>
-                <div class="challenge-card clickable">
+                <div class="challenge-card clickable hover-card">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
@@ -117,10 +117,10 @@
         <section class="resources">
             <div class="section-header">
                 <h2>Resources and tools</h2>
-                <a href="#" class="see-all">See all</a>
+                <!-- <a href="#" class="see-all">See all</a> -->
             </div>
             <div class="resources-custom-grid">
-                <div class="resource-card-custom resource-supplement cursor-pointer" id="scanner-btn">
+                <div class="resource-card-custom resource-supplement cursor-pointer hover-card" id="scanner-btn">
                     <img
                         src="{{ frontAssets('images/cardbg.webp') }}"
                         class="resource-bg-img"
@@ -134,7 +134,7 @@
                     <div class="resource-title">Supplement scanner</div>
                 </div>
 
-                <div class="resource-card-custom resource-chat cursor-pointer" id="chat-to-virtual-kez-btn">
+                <div class="resource-card-custom resource-chat cursor-pointer hover-card" id="chat-to-virtual-kez-btn">
                     <img
                         src="{{ frontAssets('images/cardimg-2.webp') }}"
                         class="resource-bg-img"
@@ -155,7 +155,7 @@
                 </div>
             </div>
             <div class="resources-custom-grid grid-2">
-                <div class="resource-card-custom resource-video">
+                <div class="resource-card-custom resource-video hover-card">
                     <div
                         class="video-thumb-container"
                         onclick="openVideoPopup('https://www.w3schools.com/html/mov_bbb.mp4')">
@@ -184,7 +184,7 @@
                     </div>
                 </div>
 
-                <div class="resource-card-custom resource-video">
+                <div class="resource-card-custom resource-video hover-card">
                     <div class="video-thumb-container">
                         <img
                             src="{{ frontAssets('images/gym.webp') }}"
@@ -218,7 +218,7 @@
             </div>
             <div class="consults-plans-grid grid-1">
                 <div class="consultation-card-custom">
-                    <div class="consult-title">Private consult</div>
+                    <div class="consult-title"></div>
                     <div class="consult-desc">
                         Get answers from a real-life expert coaching Elite Athletes and
                         Olympians.
@@ -230,11 +230,11 @@
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
                     </div>
-                    <button class="btn-consult">Book consult</button>
+                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="btn-consult text-decoration-none">Book consult</a>
                 </div>
             </div>
             <div class="consults-plans-grid">
-                <div class="plan-card-custom plan-competition">
+                <div class="plan-card-custom plan-competition ">
                     <div class="">
                         <div class="plan-title">Competition Plan</div>
                         <div class="plan-desc">
@@ -285,9 +285,9 @@
         <section class="surfing-videos">
             <h2>What's hot in... Surfing</h2>
             <div class="video-grid">
-                <div class="video-card">
-                    <div class="video-thumbnail">
-                        <div class="video-player" id="video-player-1">
+                <div class="video-card ">
+                    <div class="video-thumbnail hover-card">
+                        <div class="video-player " id="video-player-1">
                             <img
                                 src="{{ frontAssets('images/instaimg1.webp') }}"
                                 alt="Surfing video thumbnail"
@@ -331,8 +331,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="video-card">
-                    <div class="video-thumbnail">
+                <div class="video-card ">
+                    <div class="video-thumbnail hover-card">
                         <div class="video-player" id="video-player-2">
                             <img
                                 src="{{ frontAssets('images/instaimg2.webp') }}"
@@ -377,8 +377,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="video-card">
-                    <div class="video-thumbnail">
+                <div class="video-card ">
+                    <div class="video-thumbnail hover-card">
                         <div class="video-player" id="video-player-3">
                             <img
                                 src="{{ frontAssets('images/instaimg1.webp') }}"
