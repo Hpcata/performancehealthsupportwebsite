@@ -13,17 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->integer('plan_id');
-            $table->decimal('price', 10, 2);
-            $table->string('name');
-            $table->string('email');
-            $table->string('phone');
-            $table->string('payment_intent_id')->unique();
-            $table->string('status');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('payments')) {
+            Schema::create('payments', function (Blueprint $table) {
+                $table->id();
+                $table->integer('plan_id');
+                $table->decimal('price', 10, 2);
+                $table->string('name');
+                $table->string('email');
+                $table->string('phone');
+                $table->string('payment_intent_id')->unique();
+                $table->string('status');
+                $table->timestamps();
+
+                // Optional: Add foreign key if plan_id references plans table
+                // $table->foreign('plan_id')->references('id')->on('plans')->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -33,6 +38,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payments');
+        if (Schema::hasTable('payments')) {
+            Schema::dropIfExists('payments');
+        }
     }
 };

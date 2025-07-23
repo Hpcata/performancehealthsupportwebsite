@@ -13,18 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('meal_subcategory', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('meal_id');
-            $table->unsignedBigInteger('sub_category_id');
-            $table->timestamps();
+        if (! Schema::hasTable('meal_subcategory')) {
+            Schema::create('meal_subcategory', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('meal_id');
+                $table->unsignedBigInteger('sub_category_id');
+                $table->timestamps();
 
-            // Define the foreign key constraints
-            $table->foreign('meal_id')->references('id')->on('meals')->onDelete('cascade');
-            $table->foreign('sub_category_id')->references('id')->on('subcategories')->onDelete('cascade');
+                // Foreign key constraints
+                $table->foreign('meal_id')->references('id')->on('meals')->onDelete('cascade');
+                $table->foreign('sub_category_id')->references('id')->on('subcategories')->onDelete('cascade');
 
-            // $table->primary(['meal_id', 'sub_category_id']);
-        });
+                // Optional composite unique constraint
+                // $table->unique(['meal_id', 'sub_category_id']);
+            });
+        }
     }
 
     /**
@@ -34,6 +37,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('meal_subcategory');
+        if (Schema::hasTable('meal_subcategory')) {
+            Schema::dropIfExists('meal_subcategory');
+        }
     }
 };

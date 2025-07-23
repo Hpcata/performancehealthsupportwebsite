@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('flags', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            // $table->string('icon')->nullable(); // Path to uploaded icon file
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('flags')) {
+            Schema::create('flags', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                // $table->string('icon')->nullable(); // Path to uploaded icon file
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,7 +30,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('flags');
-
+        if (Schema::hasTable('flags')) {
+            Schema::dropIfExists('flags');
+        }
     }
 };

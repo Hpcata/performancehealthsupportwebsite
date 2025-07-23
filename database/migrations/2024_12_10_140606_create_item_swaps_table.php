@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('item_swaps', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('item_id')->constrained()->onDelete('cascade');
-            $table->foreignId('swap_item_id')->constrained('items')->onDelete('cascade');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('item_swaps')) {
+            Schema::create('item_swaps', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('item_id')->constrained()->onDelete('cascade');
+                $table->foreignId('swap_item_id')->constrained('items')->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,6 +30,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('item_swaps');
+        if (Schema::hasTable('item_swaps')) {
+            Schema::dropIfExists('item_swaps');
+        }
     }
 };

@@ -13,12 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('subcategories_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('item_id')->constrained()->onDelete('cascade');
-            $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
+        // Create the table only if it doesn't already exist
+        if (! Schema::hasTable('subcategories_items')) {
+            Schema::create('subcategories_items', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('item_id')->constrained()->onDelete('cascade');
+                $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,6 +31,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subcategories_items');
+        // Drop the table only if it exists
+        if (Schema::hasTable('subcategories_items')) {
+            Schema::dropIfExists('subcategories_items');
+        }
     }
 };
