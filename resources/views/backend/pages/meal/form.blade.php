@@ -127,37 +127,37 @@
                                                 @if(isset($meal) && $meal->items->count() > 0)
                                                     @foreach ($meal->items as $item)
                                                         @php
-        $quantityInfo = '';
+                                                            $quantityInfo = '';
 
-        if (!empty($item->pivot->selected_qty_unit)) {
-            $decoded = json_decode($item->pivot->selected_qty_unit, true);
+                                                            if (!empty($item->pivot->selected_qty_unit)) {
+                                                                $decoded = json_decode($item->pivot->selected_qty_unit, true);
 
-            if (is_array($decoded)) {
-                $parts = [];
+                                                                if (is_array($decoded)) {
+                                                                    $parts = [];
 
-                foreach ($decoded as $unitSet) {
-                    $qty = $unitSet['qty'] ?? '';
-                    $unit = $unitSet['unit'] ?? '';
-                    $checked = $unitSet['checked'] ?? false;
+                                                                    foreach ($decoded as $unitSet) {
+                                                                        $qty = $unitSet['qty'] ?? '';
+                                                                        $unit = $unitSet['unit'] ?? '';
+                                                                        $checked = $unitSet['checked'] ?? false;
 
-                    if ($checked && $qty && $unit) {
-                        $noSpaceUnits = ['g', 'ml', 'mL'];
-                        $space = in_array($unit, $noSpaceUnits) ? '' : ' ';
-                        $parts[] = $qty . $space . $unit;
-                    }
-                }
+                                                                        if ($checked && $qty && $unit) {
+                                                                            $noSpaceUnits = ['g', 'ml', 'mL'];
+                                                                            $space = in_array($unit, $noSpaceUnits) ? '' : ' ';
+                                                                            $parts[] = $qty . $space . $unit;
+                                                                        }
+                                                                    }
 
-                if (!empty($parts)) {
-                    $quantityInfo = implode(' or ', $parts);
-                }
-            }
-        }
+                                                                    if (!empty($parts)) {
+                                                                        $quantityInfo = implode(' or ', $parts);
+                                                                    }
+                                                                }
+                                                            }
 
-        if (empty($quantityInfo)) {
-            $noSpaceUnits = ['g', 'ml', 'mL'];
-            $space = in_array($item->pivot->item_qty_unit, $noSpaceUnits) ? '' : ' ';
-            $quantityInfo = $item->pivot->item_qty . $space . $item->pivot->item_qty_unit;
-        }
+                                                            if (empty($quantityInfo)) {
+                                                                $noSpaceUnits = ['g', 'ml', 'mL'];
+                                                                $space = in_array($item->pivot->item_qty_unit, $noSpaceUnits) ? '' : ' ';
+                                                                $quantityInfo = $item->pivot->item_qty . $space . $item->pivot->item_qty_unit;
+                                                            }
                                                         @endphp
 
                                                         <tr class="food-row">
