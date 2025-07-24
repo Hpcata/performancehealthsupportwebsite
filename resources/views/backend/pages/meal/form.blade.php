@@ -303,7 +303,7 @@
                     <div id="dynamicQtyMeasurementContainer"></div>
 
                     <div class="nutrition-info mt-3">
-                    <p><strong>Energy:</strong> <span id="modalEnergy">0kJ </span>, <strong>Protein:</strong> <span id="modalProtein">0g </span>, <strong>Carb:</strong> <span id="modalCarbs">0g </span>, <strong>Fat:</strong> <span id="modalFat">0g </span></p>
+                    <p><strong>Protein:</strong> <span id="modalProtein">0g </span>, <strong>Carb:</strong> <span id="modalCarbs">0g </span>, <strong>Fat:</strong> <span id="modalFat">0g </span>, <strong>Energy:</strong> <span id="modalEnergy">0kJ </span></p>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -587,7 +587,7 @@
                 row.find('.hidden-energy').val(numericEnergy);
                 row.find('.hidden-serving-size').val(selectedFood.serving_size);
                 row.find('.hidden-serving-size-unit').val(selectedFood.serving_size_unit);
-                row.find('.nutrition-info').text(`Energy: ${numericEnergy}kJ, Protein: ${protein}g, Carb: ${carb}g, Fat: ${fat}g`);
+                row.find('.nutrition-info').text(`Protein: ${protein}g, Carb: ${carb}g, Fat: ${fat}g, Energy: ${numericEnergy}kJ`);
 
                 let selectedUnits = [];
 
@@ -667,7 +667,7 @@
                             @endforeach
                         </select>
                         <p class="food-title-qty mt-2 mb-0"><strong></strong></p>
-                        <p class="nutrition-info mt-2 mb-0 text-muted">Energy: 0kJ, Protein: 0g, Carb: 0g, Fat: 0g</p>
+                        <p class="nutrition-info mt-2 mb-0 text-muted">Protein: 0g, Carb: 0g, Fat: 0g, Energy: 0kJ</p>
                     </td>
                     <td>
                         <button type="button" class="btn btn-outline-success edit-food" data-carbs="" data-protein="" data-fat="" data-serving-size="" data-serving-size-unit="">
@@ -975,7 +975,7 @@
             });
 
             // Update nutrition info for the specific row
-            const nutritionText = `Energy: ${updatedEnergy}kJ, Protein: ${updatedProtein}g, Carb: ${updatedCarbs}g, Fat: ${updatedFat}g`;
+            const nutritionText = `Protein: ${updatedProtein}g, Carb: ${updatedCarbs}g, Fat: ${updatedFat}g, Energy: ${updatedEnergy}kJ`;
             $editingRow.find('.nutrition-info').text(nutritionText);
 
             $editingRow.find('.hidden-protein').val(updatedProtein);
