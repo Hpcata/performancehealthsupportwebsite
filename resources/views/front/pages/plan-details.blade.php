@@ -89,79 +89,83 @@
         <!-- Meal Sections -->
         <section aria-label="Meal Plan Categories">
             <!-- Sweet Breakfast -->
-            @foreach ($userPlans as $userPlan)
-            @foreach ($userPlan->userCategories as $userCategory)
-            @php
-                $validSubCategories = $userCategory->userSubCategories->filter(function ($subCategory) use ($userPlan, $userCategory) {
-                    return $subCategory->userMeals
-                    ->where('user_plan_id', $userPlan->id)
-                    ->where('user_category_id', $userCategory->id)
-                    ->where('user_sub_category_id', $subCategory->id)
-                    ->isNotEmpty();
-                });
-            @endphp
+            @if ($userPlans->isNotEmpty())
+                @foreach ($userPlans as $userPlan)
+                    @if ($userPlan->userCategories->isNotEmpty())
+                        @foreach ($userPlan->userCategories as $userCategory)
+                            @php
+                                $validSubCategories = $userCategory->userSubCategories->filter(function ($subCategory) use ($userPlan, $userCategory) {
+                                    return $subCategory->userMeals
+                                    ->where('user_plan_id', $userPlan->id)
+                                    ->where('user_category_id', $userCategory->id)
+                                    ->where('user_sub_category_id', $subCategory->id)
+                                    ->isNotEmpty();
+                                });
+                            @endphp
 
-            @foreach ($validSubCategories as $subCategory)
-            @php
-                $meals = $subCategory->userMeals
-                    ->where('user_plan_id', $userPlan->id)
-                    ->where('user_category_id', $userCategory->id)
-                    ->where('user_sub_category_id', $subCategory->id);
-                    
-                $mealCount = $subCategory->userMeals
-                    ->where('user_plan_id', $userPlan->id)
-                    ->where('user_category_id', $userCategory->id)
-                    ->where('user_sub_category_id', $subCategory->id)
-                    ->count();
-            @endphp
+                            @foreach ($validSubCategories as $subCategory)
+                                @php
+                                    $meals = $subCategory->userMeals
+                                        ->where('user_plan_id', $userPlan->id)
+                                        ->where('user_category_id', $userCategory->id)
+                                        ->where('user_sub_category_id', $subCategory->id);
+                                        
+                                    $mealCount = $subCategory->userMeals
+                                        ->where('user_plan_id', $userPlan->id)
+                                        ->where('user_category_id', $userCategory->id)
+                                        ->where('user_sub_category_id', $subCategory->id)
+                                        ->count();
+                                @endphp
 
-            @if ($mealCount > 0)
-            <section class="challenges" aria-label="Meal Plan Categories">
-                <div class="section-header">
-                    <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
-                </div>
-                <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                    @if($mealCount > 3)
-                        <div class="scroll-arrow-left" aria-label="Scroll left">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-                                <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                    @endif
+                                @if ($mealCount > 0)
+                                <section class="challenges" aria-label="Meal Plan Categories">
+                                    <div class="section-header">
+                                        <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
+                                    </div>
+                                    <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
+                                        @if($mealCount > 3)
+                                            <div class="scroll-arrow-left" aria-label="Scroll left">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
+                                                    <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        @endif
 
-                    <div class="challenge-cards horizontal-scroll">
-                        @foreach ($meals as $meal)
-                            <div class="challenge-card clickable"
-                                data-title="{{ $meal->meal->title }}"
-                                data-plan-id="{{ $userPlan->id }}"
-                                data-meal-id="{{ $meal->id }}"
-                                data-user-id="{{ $user->id }}"
-                                data-sub-category-id="{{ $subCategory->id }}"
-                                data-category-id="{{ $userCategory->id }}"
-                                data-user-plan-id="{{ $userPlan->id }}">
-                                <img
-                                    src="{{ webAssets('storage/'.$meal->meal->image) }}"
-                                    alt="{{ $meal->meal->title }}"
-                                    height="252"
-                                    width="160" />
-                                <h3>{{ $meal->meal->title }}</h3>
-                            </div>
+                                        <div class="challenge-cards horizontal-scroll">
+                                            @foreach ($meals as $meal)
+                                                <div class="challenge-card clickable"
+                                                    data-title="{{ $meal->meal->title }}"
+                                                    data-plan-id="{{ $userPlan->id }}"
+                                                    data-meal-id="{{ $meal->id }}"
+                                                    data-user-id="{{ $user->id }}"
+                                                    data-sub-category-id="{{ $subCategory->id }}"
+                                                    data-category-id="{{ $userCategory->id }}"
+                                                    data-user-plan-id="{{ $userPlan->id }}">
+                                                    <img
+                                                        src="{{ webAssets('storage/'.$meal->meal->image) }}"
+                                                        alt="{{ $meal->meal->title }}"
+                                                        height="252"
+                                                        width="160" />
+                                                    <h3>{{ $meal->meal->title }}</h3>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        @if($mealCount > 3)
+                                            <div class="scroll-arrow-right" aria-label="Scroll right">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
+                                                    <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </section>
+                                @endif
+                            @endforeach
                         @endforeach
-                    </div>
-
-                    @if($mealCount > 3)
-                        <div class="scroll-arrow-right" aria-label="Scroll right">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
-                                <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
                     @endif
-                </div>
-            </section>
+                @endforeach
             @endif
-            @endforeach
-            @endforeach
-            @endforeach
         </section>
 
         <!-- Plate Breakdown and Training Load -->
@@ -401,6 +405,11 @@
                 method: 'GET',
                 success: function(response) {
                     const meals = response.meals;
+                    if (!meals || meals.length === 0) {
+                        contentContainer.html('<p>No meal foods found for this plan.</p>');
+                        hideLoader();
+                        return;
+                    }
                     let modalContent = `
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
@@ -601,7 +610,7 @@
 
                     printHtml += `
                         <li style="font-size: 14px; font-weight: 400; color: #3b3b3b; line-height: 28px;">
-                            <input type="checkbox" style="margin-right: 6px;" />
+                            <input type="checkbox" style="margin-right: 6px; " />
                             ${qtyText} ${itemName}
                         </li>
                     `;
@@ -637,9 +646,8 @@
 
         $(document).on('click', '#download-pdf', function() {
             showLoader();
-
             const content = document.querySelector('#print-shopping-list-modal #shopping-list-content');
-
+            
             if (!content || content.innerHTML.trim() === '') {
                 $('#errormodalmain').modal('show');
                 return;
@@ -653,24 +661,37 @@
                     ${content.innerHTML}
                 </div>
             `;
-
+            // console.log(container.innerHTML);
             // PDF generation options
-            const options = {
-                margin: [0.5], // top, right, bottom, left (in inches)
-                filename: 'shopping_list.pdf',
-                html2canvas: {
-                    scale: 2
-                },
-                jsPDF: {
-                    unit: 'in',
-                    format: 'letter',
-                    orientation: 'portrait'
-                }
-            };
+            // const options = {
+            //     margin: [0.5], // top, right, bottom, left (in inches)
+            //     filename: 'shopping_list.pdf',
+            //     html2canvas: {
+            //         scale: 2
+            //     },
+            //     jsPDF: {
+            //         unit: 'in',
+            //         format: 'letter',
+            //         orientation: 'portrait'
+            //     }
+            // };
 
             // Generate and download the PDF
-            html2pdf().set(options).from(container).save();
+            // html2pdf().set(options).from(container).save();
+              html2pdf().from(container).set({
+                margin: 0.5,
+                filename: 'test.pdf',
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            }).save();
             hideLoader();
+            // Close the modal after download
+            $('#print-shopping-list-modal').fadeOut();
+            // Reset the modal content
+            $('#print-shopping-list-modal #shopping-list-content').html('');
+            // Hide the modal
+            $('#shoppingListModal').modal('hide');
+
         });
 
         $(document).on('click', ".print-plan-btn", function () {
