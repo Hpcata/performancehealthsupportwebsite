@@ -2969,7 +2969,7 @@ button:focus,
     border: none;
 }
 .modal-confirm .modal-header {
-    background: #e85e6c;
+    background: rgba(187, 8, 31, 1);
     border-bottom: none;
     position: relative;
     text-align: center;
@@ -3055,7 +3055,7 @@ button:focus,
  }
 
  .modal-coming-soon .modal-header {
-    background: #4CAF50;;
+    background: rgba(62, 142, 0, 1);
     border-bottom: none;
     position: relative;
     text-align: center;
