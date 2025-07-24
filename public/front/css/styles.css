@@ -2314,6 +2314,9 @@ button:focus,
     }
 }
 @media (max-width: 1024px) {
+     #recipeDialogModal .dialog-header {
+        flex-direction: column-reverse;
+    }
     .dialog-actions {
         display: none;
     }
@@ -2584,9 +2587,7 @@ button:focus,
         width: 90%;
         font-size: 18px;
     }
-    #recipeDialogModal .dialog-header {
-        flex-direction: column-reverse;
-    }
+   
     .header .nav-center,
     .header .nav-right {
         display: none;

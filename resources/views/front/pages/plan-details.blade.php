@@ -919,10 +919,10 @@
 
                     // 🔢 Nutrition Info
                     $('#recipeDialogModal .modal-body .nutrition-info').html(`
-                        <span style="color: #a60015">●</span> Protein: ${(Number(response.totalProtein) || 0).toFixed(2)} g<br>
-                        <span style="color: #3e8e00">●</span> Carb: ${(Number(response.totalCarbs) || 0).toFixed(2)} g<br>
-                        <span style="color: #0077b6">●</span> Fat: ${(Number(response.totalFats) || 0).toFixed(2)} g<br>
-                        <span style="color: #967500">●</span> Energy: ${(Number(response.totalEnergy) || 0).toFixed(2)} kJ
+                        <span style="color: #a60015">●  <span style="color:rgba(59, 59, 59, 1)">Protein: ${(Number(response.totalProtein) || 0).toFixed(2)} g</span></span>
+                        <span style="color: #3e8e00">●  <span style="color:rgba(59, 59, 59, 1)">Carb: ${(Number(response.totalCarbs) || 0).toFixed(2)} g</span></span>
+                        <span style="color: #0077b6">●  <span style="color:rgba(59, 59, 59, 1)">Fat: ${(Number(response.totalFats) || 0).toFixed(2)} g</span></span>
+                        <span style="color: #967500">●  <span style="color:rgba(59, 59, 59, 1)">Energy: ${(Number(response.totalEnergy) || 0).toFixed(2)} kJ</span></span>
                     `);
 
                     // Set data attributes for Smart Swap
