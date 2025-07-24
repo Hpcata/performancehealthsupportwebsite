@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->longText('email_signature')->nullable()->after('email'); // Adjust "after" to the appropriate column
-        });
+        if (Schema::hasTable('users') && ! Schema::hasColumn('users', 'email_signature')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->longText('email_signature')->nullable()->after('email');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('email_signature');
-        });
+        if (Schema::hasTable('users') && Schema::hasColumn('users', 'email_signature')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('email_signature');
+            });
+        }
     }
 };

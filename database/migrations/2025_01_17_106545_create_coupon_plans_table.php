@@ -13,16 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('coupon_plans', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('coupon_id');
-            $table->unsignedBigInteger('plan_id');
-            $table->timestamps();
+        if (! Schema::hasTable('coupon_plans')) {
+            Schema::create('coupon_plans', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('coupon_id');
+                $table->unsignedBigInteger('plan_id');
+                $table->timestamps();
 
-            $table->foreign('coupon_id')->references('id')->on('coupons')->onDelete('cascade');
-            $table->foreign('plan_id')->references('id')->on('plans')->onDelete('cascade');
+                // Foreign key constraints
+                $table->foreign('coupon_id')->references('id')->on('coupons')->onDelete('cascade');
+                $table->foreign('plan_id')->references('id')->on('plans')->onDelete('cascade');
 
-        });
+                // Optional: prevent duplicate coupon-plan relationships
+                $table->unique(['coupon_id', 'plan_id']);
+            });
+        }
     }
 
     /**
@@ -32,6 +37,17 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('coupon_plans');
+        if (Schema::hasTable('coupon_plans')) {
+            Schema::table('coupon_plans', function (Blueprint $table) {
+                // Drop foreign key constraints
+                $table->dropForeign(['coupon_id']);
+                $table->dropForeign(['plan_id']);
+
+                // Drop unique index
+                $table->dropUnique(['coupon_id', 'plan_id']);
+            });
+
+            Schema::dropIfExists('coupon_plans');
+        }
     }
 };

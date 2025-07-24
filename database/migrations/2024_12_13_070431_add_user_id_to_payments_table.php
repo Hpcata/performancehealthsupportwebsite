@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable(); // Nullable in case the payment isn't tied to a user
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+        if (Schema::hasTable('payments') && ! Schema::hasColumn('payments', 'user_id')) {
+            Schema::table('payments', function (Blueprint $table) {
+                $table->unsignedBigInteger('user_id')->nullable()->after('id');
+
+                if (Schema::hasTable('users')) {
+                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                }
+            });
+        }
     }
 
     /**
@@ -26,8 +31,11 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('user_id');
-        });
+        if (Schema::hasTable('payments') && Schema::hasColumn('payments', 'user_id')) {
+            Schema::table('payments', function (Blueprint $table) {
+                $table->dropForeign(['user_id']);
+                $table->dropColumn('user_id');
+            });
+        }
     }
 };

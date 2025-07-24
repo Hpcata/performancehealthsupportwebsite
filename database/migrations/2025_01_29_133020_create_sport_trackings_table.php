@@ -13,14 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sport_trackings', function (Blueprint $table) {
-            $table->id();
-            $table->string('sport');
-            $table->string('state');
-            $table->string('sport_game')->nullable();
-            $table->string('ip_address')->nullable();
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('sport_trackings')) {
+            Schema::create('sport_trackings', function (Blueprint $table) {
+                $table->id();
+                $table->string('sport');
+                $table->string('state');
+                $table->string('sport_game')->nullable();
+                $table->string('ip_address')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -30,6 +32,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sport_trackings');
+        if (Schema::hasTable('sport_trackings')) {
+            Schema::dropIfExists('sport_trackings');
+        }
     }
 };

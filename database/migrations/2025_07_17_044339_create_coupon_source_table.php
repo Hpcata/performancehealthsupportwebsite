@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $tableName = 'coupon_source';
+
     /**
      * Run the migrations.
      *
@@ -13,12 +15,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('coupon_source', function (Blueprint $table) {
-            $table->id();
-            $table->string('slug', 50)->index();
-            $table->string('name', 100);
-            $table->timestamps();
-        });
+        if (! Schema::hasTable($this->tableName)) {
+            Schema::create($this->tableName, function (Blueprint $table) {
+                $table->id();
+                $table->string('slug', 50)->index();
+                $table->string('name', 100);
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,6 +32,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('coupon_source');
+        if (Schema::hasTable($this->tableName)) {
+            Schema::dropIfExists($this->tableName);
+        }
     }
 };

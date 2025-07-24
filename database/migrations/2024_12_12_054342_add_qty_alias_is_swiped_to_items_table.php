@@ -13,11 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('items', function (Blueprint $table) {
-            $table->integer('qty')->default(0); // Quantity with a default value of 0
-            $table->string('alias')->nullable(); // Nullable string field for aliage
-            $table->boolean('is_swiped')->default(false); // Boolean field for whether the item is swiped
-        });
+        if (Schema::hasTable('items')) {
+            Schema::table('items', function (Blueprint $table) {
+                if (! Schema::hasColumn('items', 'qty')) {
+                    $table->integer('qty')->default(0);
+                }
+                if (! Schema::hasColumn('items', 'alias')) {
+                    $table->string('alias')->nullable();
+                }
+                if (! Schema::hasColumn('items', 'is_swiped')) {
+                    $table->boolean('is_swiped')->default(false);
+                }
+            });
+        }
     }
 
     /**
@@ -27,8 +35,18 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('items', function (Blueprint $table) {
-            $table->dropColumn(['qty', 'alias', 'is_swiped']); // Remove the added columns
-        });
+        if (Schema::hasTable('items')) {
+            Schema::table('items', function (Blueprint $table) {
+                if (Schema::hasColumn('items', 'qty')) {
+                    $table->dropColumn('qty');
+                }
+                if (Schema::hasColumn('items', 'alias')) {
+                    $table->dropColumn('alias');
+                }
+                if (Schema::hasColumn('items', 'is_swiped')) {
+                    $table->dropColumn('is_swiped');
+                }
+            });
+        }
     }
 };

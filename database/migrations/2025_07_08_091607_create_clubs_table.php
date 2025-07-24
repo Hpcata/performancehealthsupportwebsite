@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('clubs', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('logo')->nullable();
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('clubs')) {
+            Schema::create('clubs', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('logo')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,6 +30,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('clubs');
+        if (Schema::hasTable('clubs')) {
+            Schema::dropIfExists('clubs');
+        }
     }
 };
