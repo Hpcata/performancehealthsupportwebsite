@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('user_plans', function (Blueprint $table) {
-            $table->timestamp('mail_sent_at')->nullable()->after('is_mail_sent');
-        });
+        if (Schema::hasTable('user_plans') && ! Schema::hasColumn('user_plans', 'mail_sent_at')) {
+            Schema::table('user_plans', function (Blueprint $table) {
+                $table->timestamp('mail_sent_at')->nullable()->after('is_mail_sent');
+            });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('user_plans', function (Blueprint $table) {
-            $table->dropColumn('mail_sent_at');
-        });
+        if (Schema::hasTable('user_plans') && Schema::hasColumn('user_plans', 'mail_sent_at')) {
+            Schema::table('user_plans', function (Blueprint $table) {
+                $table->dropColumn('mail_sent_at');
+            });
+        }
     }
 };

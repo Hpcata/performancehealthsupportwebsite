@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('queries', function (Blueprint $table) {
-            $table->enum('status', ['archive', 'completed'])->default('completed')->after('message');
-        });
+        if (Schema::hasTable('queries') && ! Schema::hasColumn('queries', 'status')) {
+            Schema::table('queries', function (Blueprint $table) {
+                $table->enum('status', ['archive', 'completed'])
+                    ->default('completed')
+                    ->after('message');
+            });
+        }
     }
 
     /**
@@ -21,8 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('queries', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        if (Schema::hasTable('queries') && Schema::hasColumn('queries', 'status')) {
+            Schema::table('queries', function (Blueprint $table) {
+                $table->dropColumn('status');
+            });
+        }
     }
 };

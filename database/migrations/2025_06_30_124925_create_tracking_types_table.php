@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tracking_types', function (Blueprint $table) {
-            $table->id();
-            $table->string('type', 100)->unique();       
-            $table->string('description', 255)->nullable();
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('tracking_types')) {
+            Schema::create('tracking_types', function (Blueprint $table) {
+                $table->id();
+                $table->string('type', 100)->unique();
+                $table->string('description', 255)->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,6 +30,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tracking_types');
+        if (Schema::hasTable('tracking_types')) {
+            Schema::dropIfExists('tracking_types');
+        }
     }
 };
