@@ -1703,10 +1703,3 @@ background-image: url(/front/images/hero-section/tennis.webp);
         padding: 48px;
     }
 }
-.plate-img {
-    height: auto;
-}
-
-.sidebar.sidebar-mini .sidebar-mini-text {
-  display: none !important;
-}

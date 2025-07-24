@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('inquiry_message', function (Blueprint $table) {
-            $table->string('subject')->after('user_id'); // Adjust 'after' to place it where you need in the table
-        });
+        if (Schema::hasTable('inquiry_message') && ! Schema::hasColumn('inquiry_message', 'subject')) {
+            Schema::table('inquiry_message', function (Blueprint $table) {
+                $table->string('subject')->after('user_id');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('inquiry_message', function (Blueprint $table) {
-            $table->dropColumn('subject');
-        });
+        if (Schema::hasTable('inquiry_message') && Schema::hasColumn('inquiry_message', 'subject')) {
+            Schema::table('inquiry_message', function (Blueprint $table) {
+                $table->dropColumn('subject');
+            });
+        }
     }
 };

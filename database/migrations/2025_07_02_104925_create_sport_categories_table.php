@@ -6,27 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('sport_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
-        });
+        // Create table only if it doesn't already exist
+        if (! Schema::hasTable('sport_categories')) {
+            Schema::create('sport_categories', function (Blueprint $table) {
+                $table->id();
+                $table->string('name', 100)->unique();
+                $table->timestamps();
+            });
+        }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('sport_categories');
+        // Drop table only if it exists
+        if (Schema::hasTable('sport_categories')) {
+            Schema::dropIfExists('sport_categories');
+        }
     }
 };

@@ -13,25 +13,30 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('trackings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('type_id')->constrained('tracking_types');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('section_element_id')->nullable();
-            $table->unsignedBigInteger('user_click_id')->nullable();
-            $table->unsignedBigInteger('ip');
-            $table->json('details')->nullable();
-            $table->timestamps();
+        if (! Schema::hasTable('trackings')) {
+            Schema::create('trackings', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('type_id')->constrained('tracking_types');
+                $table->unsignedBigInteger('user_id')->nullable();
+                $table->unsignedBigInteger('section_element_id')->nullable();
+                $table->unsignedBigInteger('user_click_id')->nullable();
+                $table->unsignedBigInteger('ip');
+                $table->json('details')->nullable();
+                $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
-            $table->foreign('section_element_id')->references('id')->on('section_elements')->onDelete('set null');
-            $table->foreign('user_click_id')->references('id')->on('user_clicks')->onDelete('set null');
-            $table->index(['type_id', 'created_at'], 'trackings_type_created_at_index');
-            $table->index(['created_at'], 'trackings_created_at_index');
-            $table->index(['ip'], 'trackings_ip_index');
-            $table->index(['user_id'], 'trackings_user_index');
-            $table->index(['type_id'], 'trackings_type_index');
-        });
+                // Foreign key constraints
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+                $table->foreign('section_element_id')->references('id')->on('section_elements')->onDelete('set null');
+                $table->foreign('user_click_id')->references('id')->on('user_clicks')->onDelete('set null');
+
+                // Indexes
+                $table->index(['type_id', 'created_at'], 'trackings_type_created_at_index');
+                $table->index(['created_at'], 'trackings_created_at_index');
+                $table->index(['ip'], 'trackings_ip_index');
+                $table->index(['user_id'], 'trackings_user_index');
+                $table->index(['type_id'], 'trackings_type_index');
+            });
+        }
     }
 
     /**
@@ -41,6 +46,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('trackings');
+        if (Schema::hasTable('trackings')) {
+            Schema::dropIfExists('trackings');
+        }
     }
 };

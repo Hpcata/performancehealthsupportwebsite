@@ -8,33 +8,34 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('name');
-            $table->string('subtitle')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->string('description')->nullable();
-            $table->string('image')->nullable();
-            $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
-        });
+        if (! Schema::hasTable('plans')) {
+            Schema::create('plans', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+                $table->string('name');
+                $table->string('subtitle')->nullable();
+                $table->decimal('price', 10, 2);
+                $table->string('description')->nullable();
+                $table->string('image')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('plans');
+        if (Schema::hasTable('plans')) {
+            Schema::table('plans', function (Blueprint $table) {
+                $table->dropForeign(['user_id']);
+            });
+
+            Schema::dropIfExists('plans');
+        }
     }
 };

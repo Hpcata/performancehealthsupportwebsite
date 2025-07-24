@@ -13,20 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('meal_tag', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('meal_id');
-            $table->unsignedBigInteger('tag_id');
-            $table->timestamps(); // Adds created_at and updated_at
+        if (! Schema::hasTable('meal_tag')) {
+            Schema::create('meal_tag', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('meal_id');
+                $table->unsignedBigInteger('tag_id');
+                $table->timestamps(); // Adds created_at and updated_at
 
-            // Foreign keys
-            $table->foreign('meal_id')->references('id')->on('meals')->onDelete('cascade');
-            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+                // Foreign keys
+                $table->foreign('meal_id')->references('id')->on('meals')->onDelete('cascade');
+                $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
 
-            // Composite primary key
-            // $table->primary(['item_id', 'tag_id']);
-
-        });
+                // Composite primary key (optional)
+                // $table->primary(['meal_id', 'tag_id']);
+            });
+        }
     }
 
     /**
@@ -36,7 +37,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('meal_tag');
-
+        if (Schema::hasTable('meal_tag')) {
+            Schema::dropIfExists('meal_tag');
+        }
     }
 };
