@@ -66,7 +66,7 @@
             </div>
 
             <div class="tab-content challenges">
-                <div class="challenge-cards" id="meal-cards-wrapper">
+                <div class="challenge-cards position-relative" id="meal-cards-wrapper">
                     <p>Loading meals...</p>
                 </div>
             </div>
@@ -79,37 +79,54 @@
                 <h2>Challenges</h2>
                 <!-- <a href="/challenges" class="see-all">See all</a> -->
             </div>
-            <div class="challenge-cards">
-                <div class="challenge-card clickable hover-card">
+            <div class="challenge-cards horizontal-scroll">
+             
+                <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+                   
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
                     </div>
                 </div>
-                <div class="challenge-card clickable hover-card">
+                <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
                         alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
                     <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
+                     
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>10</span>
                     </div>
                 </div>
-                <div class="challenge-card clickable hover-card">
+                <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+                    
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
                     </div>
                 </div>
+                 <div class="challenge-card clickable hover-card coming-soon-popup">
+                    <img
+                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                        alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                    <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+                    
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <span>30</span>
+                    </div>
+                </div>
+           
+              
             </div>
         </section>
 
@@ -488,7 +505,7 @@
             location.href = "https://phenomenal-torrone-cee914.netlify.app/";
         });
 
-        document.querySelectorAll('.challenge-card.clickable.hover-card').forEach(function(card) {
+        document.querySelectorAll('.coming-soon-popup').forEach(function(card) {
             card.addEventListener('click', function(e) {
                 var comingSoonModal = document.getElementById('comingSoonModal');
                 if (comingSoonModal && typeof bootstrap !== 'undefined') {

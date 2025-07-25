@@ -22,7 +22,7 @@
 @endif
 <main class="main">
      <!-- Loader -->
-    <!-- <div id="loader">
+    <!-- <div id="loader" class="d-none">
         <div class="box" id="loader1"></div>
         <div class="box" id="loader2"></div>
         <div class="box" id="loader3"></div>
@@ -147,6 +147,7 @@
                                                         height="252"
                                                         width="160" />
                                                     <h3>{{ $meal->meal->title }}</h3>
+                                                    <div class="quick-view-overlay">Quick View</div>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -379,11 +380,16 @@
     });
     // ...existing code...
 
+    // function showLoader() {
+       
+    //     $('#loader').css('display', 'd-flex');
+
+    // }
     function showLoader() {
-        $('#loader').css('display', 'flex');
-    }
+    $('#loader').removeClass('d-none');
+}
     function hideLoader() {
-        $('#loader').css('display', 'none');
+         $('#loader').addClass('d-none');
     }
 
     $(document).ready(function() {
@@ -752,6 +758,7 @@
         });
 
         Promise.all(promises).then(() => {
+
             // Set margins (in inches: 1in = 25.4mm = 72pt)
             const topMargin = 0.3; // ~15mm
             const bottomMargin = 1.0; // ~18mm (footer + buffer)

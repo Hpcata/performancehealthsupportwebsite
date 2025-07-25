@@ -316,6 +316,7 @@ body {
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
 }
+
 .challenges .challenge-cards::-webkit-scrollbar,
 .challenge-cards::-webkit-scrollbar {
     display: none;
@@ -331,6 +332,34 @@ body {
     max-width: 270px;
     flex: 0 0 270px;
     scroll-snap-align: start;
+    position: relative;
+    overflow: hidden;
+}
+.quick-view-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 160px;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 2;
+    border-radius: 12px;
+    pointer-events: none;
+    padding: 16px;
+}
+
+.challenge-card:hover .quick-view-overlay {
+    opacity: 1;
+    pointer-events: auto;
 }
 .challenges .challenge-cards .challenge-card,
 .resources .resources-grid .resource-card,
