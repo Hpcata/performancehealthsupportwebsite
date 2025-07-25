@@ -118,49 +118,51 @@
                                 @endphp
 
                                 @if ($mealCount > 0)
-                                <section class="challenges" aria-label="Meal Plan Categories">
-                                    <div class="section-header">
-                                        <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
-                                    </div>
-                                    <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                                        @if($mealCount > 3)
-                                            <div class="scroll-arrow-left" aria-label="Scroll left">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-                                                    <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                    @if(isset($subCategory->subCategory))
+                                        <section class="challenges" aria-label="Meal Plan Categories">
+                                            <div class="section-header">
+                                                <h2>{{ $subCategory->subCategory->title ?? '' }} ({{ $mealCount }})</h2>
                                             </div>
-                                        @endif
+                                            <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
+                                                @if($mealCount > 3)
+                                                    <div class="scroll-arrow-left" aria-label="Scroll left">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
+                                                            <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </svg>
+                                                    </div>
+                                                @endif
 
-                                        <div class="challenge-cards horizontal-scroll">
-                                            @foreach ($meals as $meal)
-                                                <div class="challenge-card clickable"
-                                                    data-title="{{ $meal->meal->title }}"
-                                                    data-plan-id="{{ $userPlan->id }}"
-                                                    data-meal-id="{{ $meal->id }}"
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-sub-category-id="{{ $subCategory->id }}"
-                                                    data-category-id="{{ $userCategory->id }}"
-                                                    data-user-plan-id="{{ $userPlan->id }}">
-                                                    <img
-                                                        src="{{ webAssets('storage/'.$meal->meal->image) }}"
-                                                        alt="{{ $meal->meal->title }}"
-                                                        height="252"
-                                                        width="160" />
-                                                    <h3>{{ $meal->meal->title }}</h3>
-                                                    <div class="quick-view-overlay">{{ $meal->meal->description ?? '' }}</div>
+                                                <div class="challenge-cards horizontal-scroll">
+                                                    @foreach ($meals as $meal)
+                                                        <div class="challenge-card clickable"
+                                                            data-title="{{ $meal->meal->title }}"
+                                                            data-plan-id="{{ $userPlan->id }}"
+                                                            data-meal-id="{{ $meal->id }}"
+                                                            data-user-id="{{ $user->id }}"
+                                                            data-sub-category-id="{{ $subCategory->id }}"
+                                                            data-category-id="{{ $userCategory->id }}"
+                                                            data-user-plan-id="{{ $userPlan->id }}">
+                                                            <img
+                                                                src="{{ webAssets('storage/'.$meal->meal->image) }}"
+                                                                alt="{{ $meal->meal->title }}"
+                                                                height="252"
+                                                                width="160" />
+                                                            <h3>{{ $meal->meal->title }}</h3>
+                                                            <div class="quick-view-overlay">{{ $meal->meal->description ?? '' }}</div>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
-                                            @endforeach
-                                        </div>
 
-                                        @if($mealCount > 3)
-                                            <div class="scroll-arrow-right" aria-label="Scroll right">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
-                                                    <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                                @if($mealCount > 3)
+                                                    <div class="scroll-arrow-right" aria-label="Scroll right">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
+                                                            <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </svg>
+                                                    </div>
+                                                @endif
                                             </div>
-                                        @endif
-                                    </div>
-                                </section>
+                                        </section>
+                                    @endif
                                 @endif
                             @endforeach
                         @endforeach
