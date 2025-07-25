@@ -155,7 +155,7 @@
                 </div>
             </div>
             <div class="resources-custom-grid grid-2">
-                <div class="resource-card-custom resource-video hover-card">
+                <div class="resource-card-custom resource-video clickable hover-card">
                     <div
                         class="video-thumb-container"
                         onclick="openVideoPopup('https://www.w3schools.com/html/mov_bbb.mp4')">
@@ -184,7 +184,7 @@
                     </div>
                 </div>
 
-                <div class="resource-card-custom resource-video hover-card">
+                <div class="resource-card-custom resource-video clickable hover-card">
                     <div class="video-thumb-container">
                         <img
                             src="{{ frontAssets('images/gym.webp') }}"
@@ -488,7 +488,7 @@
             location.href = "https://phenomenal-torrone-cee914.netlify.app/";
         });
 
-        document.querySelectorAll('.challenge-card.clickable.hover-card').forEach(function(card) {
+        document.querySelectorAll('.hover-card').forEach(function(card) {
             card.addEventListener('click', function(e) {
                 var comingSoonModal = document.getElementById('comingSoonModal');
                 if (comingSoonModal && typeof bootstrap !== 'undefined') {

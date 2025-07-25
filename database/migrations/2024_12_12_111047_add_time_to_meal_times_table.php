@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('meal_times', function (Blueprint $table) {
-            $table->time('time')->nullable()->after('description'); // Adding time column
-        });
+        if (Schema::hasTable('meal_times') && ! Schema::hasColumn('meal_times', 'time')) {
+            Schema::table('meal_times', function (Blueprint $table) {
+                $table->time('time')->nullable()->after('description');
+            });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('meal_times', function (Blueprint $table) {
-            $table->dropColumn('time'); // Removing time column
-        });
+        if (Schema::hasTable('meal_times') && Schema::hasColumn('meal_times', 'time')) {
+            Schema::table('meal_times', function (Blueprint $table) {
+                $table->dropColumn('time');
+            });
+        }
     }
 };

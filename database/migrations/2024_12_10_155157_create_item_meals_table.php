@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('item_meals', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('item_id')->constrained()->onDelete('cascade');
-            $table->foreignId('meal_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('item_meals')) {
+            Schema::create('item_meals', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('item_id')->constrained()->onDelete('cascade');
+                $table->foreignId('meal_id')->constrained()->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,6 +30,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('item_meals');
+        if (Schema::hasTable('item_meals')) {
+            Schema::dropIfExists('item_meals');
+        }
     }
 };

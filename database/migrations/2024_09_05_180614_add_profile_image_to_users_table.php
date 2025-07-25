@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('profile_image')->nullable(); // Add profile_image column
-        });
+        if (Schema::hasTable('users') && ! Schema::hasColumn('users', 'profile_image')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('profile_image')->nullable(); // Add profile_image column
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('profile_image'); // Remove profile_image column on rollback
-        });
+        if (Schema::hasTable('users') && Schema::hasColumn('users', 'profile_image')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('profile_image'); // Remove profile_image column
+            });
+        }
     }
 };
