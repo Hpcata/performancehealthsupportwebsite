@@ -609,11 +609,10 @@
                     }).join(' or ');
 
                     printHtml += `
-                        <li style="font-size: 14px; font-weight: 400; color: #3b3b3b; line-height: 28px;">
-                            <input type="checkbox" style="margin-right: 6px; " />
-                            ${qtyText} ${itemName}
-                        </li>
-                    `;
+                    <li style="display: flex; align-items: center; font-size: 14px; font-weight: 400; color: #3b3b3b; line-height: 1.4; padding: 4px 0;">
+                        <span style="display: inline-block; width: 16px; height: 16px; border: 1px solid #3b3b3b; margin-right: 8px; box-sizing: border-box;"></span>
+                        <span style="flex: 1;">${qtyText} ${itemName}</span>
+                    </li>`;
                 }
 
                 printHtml += '</ul></div>';
@@ -680,7 +679,7 @@
             // html2pdf().set(options).from(container).save();
               html2pdf().from(container).set({
                 margin: 0.5,
-                filename: 'test.pdf',
+                filename: 'shopping_list.pdf',
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             }).save();
