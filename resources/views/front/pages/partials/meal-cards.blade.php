@@ -8,7 +8,7 @@
         <!-- Meal Card -->
         <div class="challenge-card">
             <img
-                src="{{ webAssets('storage/' . ($meal['image'] ?? 'food1.webp')) }}"
+                src="{{ $meal['image'] }}"
                 alt="{{ $meal['name'] ?? 'Meal' }}"
                 width="600"
                 height="400"
