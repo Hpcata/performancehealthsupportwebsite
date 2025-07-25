@@ -1171,35 +1171,6 @@
             });
         });
 
-        // $('button[name="action"][value="view"]').on('click', function(e) {
-        //     e.preventDefault();
-
-        //     var user_id = $(this).data('user-id');  // Assume you set a data attribute with the user's ID on the button
-        //     var payment_id = $(this).data('payment-id');  // Assume you set a data attribute with the user's ID on the button
-
-        //     $.ajax({
-        //         url: '{{ route("admin.handle-plan-action") }}',  // URL to your controller method for storing the form
-        //         method: 'POST',
-        //         data: {
-        //             action: 'view',
-        //             user_id: user_id,
-        //             payment_id : payment_id,
-        //             _token: '{{ csrf_token() }}'
-        //         },
-        //         success: function(response) {
-        //             if (response.status === 'success') {
-        //                 window.open(response.redirect_url, '_blank');
-        //                 // window.location.href = response.redirect_url;  // Redirect to user profile page
-        //             } else {
-        //                 alert('Error: ' + response.message);
-        //             }
-        //         },
-        //         error: function(xhr) {
-        //             alert('Something went wrong!');
-        //         }
-        //     });
-        // });
-
         // Handle the "Send" button click (Send meal plan)
         $('button[name="action"][value="send"]').on('click', function(e) {
             e.preventDefault();
@@ -1261,14 +1232,6 @@
                 }
             });
         });
-
-
-        // $(document).on('click', '.view-info', function () {
-        //     // alert('22');
-        //     var description = $(this).data('description') || 'N/A';
-        //     $('#modalDescription').text(description);
-        //     $('#itemInfoModal').modal('show');
-        // });
     });
     // $('#swapFoods').val(null).trigger('change');
 
@@ -1575,7 +1538,6 @@
             `;
         }
 
-       
         // Function to calculate nutrition
         function calculateMealNutrition() {
             let grandTotalCarbs = 0;
@@ -1645,6 +1607,16 @@
             const unselectedMeals = oldMeals.filter(mealId => !currentSelectedMeals.includes(mealId));
             previouslySelectedMeals[`${planId}_${mealTimeId}`] = currentSelectedMeals;
 
+            // 1️⃣ Reset all food counts for this meal time
+            // Find all food item IDs in all current meal containers for this planId and mealTimeId
+            // $(`#selectedMeals${planId}_${mealTimeId} .meal-container`).each(function() {
+            //     $(this).find('input[name^="items"]').each(function() {
+            //         const itemId = $(this).val();
+            //         // Reset count to zero (or remove from UI if needed)
+            //         updateFoodCount(itemId, -9999, null); // Use a large negative to force reset
+            //     });
+            // });
+            
             // Handle unselected meals first
             unselectedMeals.forEach(mealId => {
                 const removedMealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
@@ -1722,6 +1694,13 @@
                                     response.total_energy
                                 );
                                 mealContainers[mealId] = mealContainer;
+                                if (newMeals.includes(String(mealId)) || newMeals.includes(mealId)) {
+                                    if (Array.isArray(response.data)) {
+                                        response.data.forEach(item => {
+                                            updateFoodCount(item.id, 1, 'green');
+                                        });
+                                    }
+                                }
                                 resolve();
                             } else {
                                 reject('Failed to fetch meal details');
@@ -2757,16 +2736,17 @@
                             categoryWrapper.addClass('d-none');
                         }
                     } else {
-                        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+                        countLabel.text(countText.replace(/\s*\(\d+\)$/, ''))
+                            .removeClass('text-primary text-success text-purple text-dark')
+                            .addClass('text-dark');
                     }
                 }
                 return;
             }
-
             if (newCount > 0) {
                 countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
             } else {
-                countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+                countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark'); // <-- Reset to default color
             }
         }
 
@@ -3228,107 +3208,102 @@
                         const $updatedRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
                         const $swapListItems = $updatedRow.find('td').eq(2).find('li[data-swap-item-id]');
                         const ratio = parseFloat($('#editItemModal #ratio').val());
-                        console.log('get ratio :', ratio);
-                        if(ratio != 0 && !isNaN(ratio)) {
+
+                        if (ratio !== 0 && !isNaN(ratio)) {
                             $swapListItems.each(function () {
                                 const $swapLi = $(this);
-                                const swapItemId = $swapLi.data('swap-item-id');
-
-                                // Get the first <p> that has "(100g or 1 cup)" style text
+                                const $checkbox = $swapLi.find('input[type="checkbox"]');
+                                const $editBtn = $swapLi.find('.edit-swap-item');
                                 const $quantityP = $swapLi.find('p').first();
-                                let originalText = $quantityP.text().trim();
+                                const $nutritionP = $swapLi.find('p').last();
 
-                                // Remove surrounding parentheses and split by 'or'
-                                if (originalText.startsWith('(') && originalText.endsWith(')')) {
-                                    originalText = originalText.slice(1, -1);
+                                // Step 1: Nutrition update
+                                const origEnergy = parseFloat($checkbox.attr('data-energy')) || 0;
+                                const origProtein = parseFloat($checkbox.attr('data-protein')) || 0;
+                                const origCarbs = parseFloat($checkbox.attr('data-carbs')) || 0;
+                                const origFat = parseFloat($checkbox.attr('data-fat')) || 0;
+
+                                const newEnergy = (origEnergy * ratio).toFixed(2);
+                                const newProtein = (origProtein * ratio).toFixed(2);
+                                const newCarbs = (origCarbs * ratio).toFixed(2);
+                                const newFat = (origFat * ratio).toFixed(2);
+
+                                $nutritionP.text(
+                                    `Energy: ${Math.round(newEnergy)}kJ | Protein: ${Math.round(newProtein)}g | Carb: ${Math.round(newCarbs)}g | Fat: ${Math.round(newFat)}g`
+                                );
+
+                                $checkbox.attr('data-energy', newEnergy);
+                                $checkbox.attr('data-protein', newProtein);
+                                $checkbox.attr('data-carbs', newCarbs);
+                                $checkbox.attr('data-fat', newFat);
+
+                                // Step 2: Update Units (use only updatedUnits now)
+                                let selectedUnits;
+                                try {
+                                    selectedUnits = JSON.parse($editBtn.attr('data-selected-qty-unit') || '[]');
+                                } catch (e) {
+                                    console.warn('Invalid JSON:', e);
+                                    selectedUnits = [];
                                 }
 
-                                const parts = originalText.split('or').map(part => part.trim());
-                                const updatedParts = parts.map(part => {
-                                    const match = part.match(/^([\d./]+)\s*(\w+)$/);  // e.g. "100g" or "1 cup"
-                                    if (!match) return part;
-
-                                    let [_, qty, unit] = match;
-
-                                    // Convert fractions like 1/2
-                                    if (qty.includes('/')) {
-                                        const [num, denom] = qty.split('/');
-                                        qty = parseFloat(num) / parseFloat(denom);
-                                    } else {
-                                        qty = parseFloat(qty);
-                                    }
-
-                                    if (isNaN(qty)) return part;
-
-                                    const newQty = (qty * ratio).toFixed(2).replace(/\.00$/, '');
-
-                                    // Units that should not have space
-                                    const noSpaceUnits = ['g', 'ml', 'mL'];
-
-                                    return noSpaceUnits.includes(unit) ? `${newQty}${unit}` : `${newQty} ${unit}`;
+                                const updatedUnits = selectedUnits.map(unit => {
+                                    const baseQty = parseFloat(unit.qty);
+                                    if (isNaN(baseQty)) return unit;
+                                    return {
+                                        ...unit,
+                                        qty: (baseQty * ratio).toFixed(2).replace(/\.00$/, '')
+                                    };
                                 });
 
-                                // Set updated text back with parentheses
-                                $quantityP.text(`(${updatedParts.join(' or ')})`);
+                                // Step 3: Build qty string for display
+                                const noSpaceUnits = ['g', 'ml', 'mL'];
 
-                                const $nutritionP = $swapLi.find('p').last();
-                                const nutritionText = $nutritionP.text();
-                                const match = nutritionText.match(/Energy:\s*(\d+(?:\.\d+)?)kJ\s*\|\s*Protein:\s*(\d+(?:\.\d+)?)g\s*\|\s*Carb:\s*(\d+(?:\.\d+)?)g\s*\|\s*Fat:\s*(\d+(?:\.\d+)?)g/);
+                                const checkedUnits = updatedUnits.filter(u => u.checked);
+                                const qtyDisplayParts = checkedUnits.map(u => {
+                                    return noSpaceUnits.includes(u.unit)
+                                        ? `${u.qty}${u.unit}`
+                                        : `${u.qty} ${u.unit}`;
+                                });
 
-                                let swapEnergy = 0, swapProtein = 0, swapCarbs = 0, swapFat = 0;
+                                $quantityP.text(`(${qtyDisplayParts.join(' or ')})`);
 
-                                if (match) {
-                                    swapEnergy = parseFloat(match[1]);
-                                    swapProtein = parseFloat(match[2]);
-                                    swapCarbs = parseFloat(match[3]);
-                                    swapFat = parseFloat(match[4]);
-                                }
+                                // Step 4: Update button attributes
+                                const updatedJSON = JSON.stringify(updatedUnits);
+                                $editBtn.attr('data-selected-qty-unit', updatedJSON);
 
-                                // Adjust values
-                                const adjustedEnergy = (swapEnergy * ratio).toFixed(2);
-                                const adjustedProtein = Math.round(swapProtein * ratio);
-                                const adjustedCarbs = Math.round(swapCarbs * ratio);
-                                const adjustedFat = Math.round(swapFat * ratio);
-
-                                // Prepare data for backend
-                                const swapData = {
-                                    swap_item_id: swapItemId,
-                                    item_id: itemId,
-                                    plan_id: planId,
-                                    meal_id: mealId,
-                                    meal_time_id: mealTimeId,
-                                    user_id: userId,
-                                    food_energy: adjustedEnergy,
-                                    food_protein: adjustedProtein,
-                                    food_carbs: adjustedCarbs,
-                                    food_fat: adjustedFat,
-                                    ratio: ratio,
-                                    _token: '{{ csrf_token() }}'
-                                };
-
-                                // AJAX call to update swap item in DB
+                                // Optional: Ajax DB update
+                                const swapItemId = $swapLi.data('swap-item-id');
                                 $.ajax({
                                     url: '{{ route("admin.update-swap-item") }}',
                                     method: 'POST',
-                                    data: swapData,
+                                    data: {
+                                        swap_item_id: swapItemId,
+                                        item_id: itemId,
+                                        plan_id: planId,
+                                        meal_id: mealId,
+                                        meal_time_id: mealTimeId,
+                                        user_id: userId,
+                                        food_energy: newEnergy,
+                                        food_protein: newProtein,
+                                        food_carbs: newCarbs,
+                                        food_fat: newFat,
+                                        ratio: ratio,
+                                        _token: '{{ csrf_token() }}'
+                                    },
                                     success: function (resp) {
-                                        if (resp.success) {
-                                            // Update nutrition info in HTML
-                                            $nutritionP.html(
-                                                `Energy: ${adjustedEnergy}kJ | Protein: ${adjustedProtein}g | Carb: ${adjustedCarbs}g | Fat: ${adjustedFat}g`
-                                            );
-                                            $('#editItemModal #ratio').val(0);
-                                        } else {
-                                            console.warn(`Swap item ${swapItemId} failed to update in DB`);
+                                        if (!resp.success) {
+                                            console.warn(`Swap item ${swapItemId} update failed.`);
                                         }
                                     },
                                     error: function () {
-                                        console.error(`Error updating swap item ${swapItemId}`);
+                                        console.warn(`Error updating swap item ${swapItemId}`);
                                     }
                                 });
                             });
+
+                            $('#editItemModal #ratio').val(0); // reset ratio
                         }
-                        console.log('Main food and swap items updated successfully.');
+
                     } else {
                         alert('Failed to update food.');
                     }
@@ -3678,45 +3653,6 @@
                 }
             });
         });
-
-        // $(document).on('click', '.delete-swap-item', function () {
-        //     const button = $(this);
-
-        //     const swapItemId = button.data('swap-item-id');
-        //     const itemId = button.data('item-id');
-        //     const mealId = button.data('meal-id');
-        //     const planId = button.data('plan-id');
-        //     const mealTimeId = button.data('meal-time-id');
-        //     const userId = button.data('user-id');
-
-        //     if (!confirm('Are you sure you want to delete this swap item?')) return;
-
-        //     const $li = button.closest('li');
-        //     const $ul = $li.closest('ul');
-
-        //     // Remove the swap item
-        //     $li.remove();
-        //     // updateFoodCount(swapItemId, -1, null);
-
-        //     // Check if there are any <li> left in the list
-        //     if ($ul.children('li').length === 0) {
-        //         // Add "No swap items available" message
-        //         $ul.append(`
-        //             <li class="d-flex justify-content-between align-items-start mb-2">
-        //                 <div class="col-9">
-        //                     <span class="text-muted">No swap items available</span>
-        //                 </div>
-        //                 <div>
-        //                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-        //                         data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-        //                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-        //                         title="Add"><i class="icofont-plus"></i>
-        //                     </button>
-        //                 </div>
-        //             </li>
-        //         `);
-        //     }
-        // });
 
         let swapDeleteParams = null;
 
