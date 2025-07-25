@@ -21,6 +21,14 @@
 </style>
 @endif
 <main class="main">
+     <!-- Loader -->
+    <!-- <div id="loader" class="d-none">
+        <div class="box" id="loader1"></div>
+        <div class="box" id="loader2"></div>
+        <div class="box" id="loader3"></div>
+        <div class="box" id="loader4"></div>
+        <div class="box" id="loader5"></div>
+    </div> -->
     <!-- Hero Banner -->
     <div class="hero-container">
         <div class="hero-section">
@@ -81,79 +89,84 @@
         <!-- Meal Sections -->
         <section aria-label="Meal Plan Categories">
             <!-- Sweet Breakfast -->
-            @foreach ($userPlans as $userPlan)
-            @foreach ($userPlan->userCategories as $userCategory)
-            @php
-            $validSubCategories = $userCategory->userSubCategories->filter(function ($subCategory) use ($userPlan, $userCategory) {
-            return $subCategory->userMeals
-            ->where('user_plan_id', $userPlan->id)
-            ->where('user_category_id', $userCategory->id)
-            ->where('user_sub_category_id', $subCategory->id)
-            ->isNotEmpty();
-            });
-            @endphp
+            @if ($userPlans->isNotEmpty())
+                @foreach ($userPlans as $userPlan)
+                    @if ($userPlan->userCategories->isNotEmpty())
+                        @foreach ($userPlan->userCategories as $userCategory)
+                            @php
+                                $validSubCategories = $userCategory->userSubCategories->filter(function ($subCategory) use ($userPlan, $userCategory) {
+                                    return $subCategory->userMeals
+                                    ->where('user_plan_id', $userPlan->id)
+                                    ->where('user_category_id', $userCategory->id)
+                                    ->where('user_sub_category_id', $subCategory->id)
+                                    ->isNotEmpty();
+                                });
+                            @endphp
 
-            @foreach ($validSubCategories as $subCategory)
-            @php
-            $meals = $subCategory->userMeals
-            ->where('user_plan_id', $userPlan->id)
-            ->where('user_category_id', $userCategory->id)
-            ->where('user_sub_category_id', $subCategory->id)
-            ->take(3);
-            $mealCount = $subCategory->userMeals
-            ->where('user_plan_id', $userPlan->id)
-            ->where('user_category_id', $userCategory->id)
-            ->where('user_sub_category_id', $subCategory->id)
-            ->count();
-            @endphp
+                            @foreach ($validSubCategories as $subCategory)
+                                @php
+                                    $meals = $subCategory->userMeals
+                                        ->where('user_plan_id', $userPlan->id)
+                                        ->where('user_category_id', $userCategory->id)
+                                        ->where('user_sub_category_id', $subCategory->id);
+                                        
+                                    $mealCount = $subCategory->userMeals
+                                        ->where('user_plan_id', $userPlan->id)
+                                        ->where('user_category_id', $userCategory->id)
+                                        ->where('user_sub_category_id', $subCategory->id)
+                                        ->count();
+                                @endphp
 
-            @if ($mealCount > 0)
-            <section class="challenges" aria-label="Meal Plan Categories">
-                <div class="section-header">
-                    <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
-                </div>
-                <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                    @if($meals->count() > 3)
-                        <div class="scroll-arrow-left" aria-label="Scroll left">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-                                <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                    @endif
+                                @if ($mealCount > 0)
+                                <section class="challenges" aria-label="Meal Plan Categories">
+                                    <div class="section-header">
+                                        <h2>{{ $subCategory->subCategory->title }} ({{ $mealCount }})</h2>
+                                    </div>
+                                    <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
+                                        @if($mealCount > 3)
+                                            <div class="scroll-arrow-left" aria-label="Scroll left">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
+                                                    <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        @endif
 
-                    <div class="challenge-cards horizontal-scroll">
-                        @foreach ($meals as $meal)
-                            <div class="challenge-card clickable"
-                                data-title="{{ $meal->meal->title }}"
-                                data-plan-id="{{ $userPlan->id }}"
-                                data-meal-id="{{ $meal->id }}"
-                                data-user-id="{{ $user->id }}"
-                                data-sub-category-id="{{ $subCategory->id }}"
-                                data-category-id="{{ $userCategory->id }}"
-                                data-user-plan-id="{{ $userPlan->id }}">
-                                <img
-                                    src="{{ webAssets('storage/'.$meal->meal->image) }}"
-                                    alt="{{ $meal->meal->title }}"
-                                    height="252"
-                                    width="160" />
-                                <h3>{{ $meal->meal->title }}</h3>
-                            </div>
+                                        <div class="challenge-cards horizontal-scroll">
+                                            @foreach ($meals as $meal)
+                                                <div class="challenge-card clickable"
+                                                    data-title="{{ $meal->meal->title }}"
+                                                    data-plan-id="{{ $userPlan->id }}"
+                                                    data-meal-id="{{ $meal->id }}"
+                                                    data-user-id="{{ $user->id }}"
+                                                    data-sub-category-id="{{ $subCategory->id }}"
+                                                    data-category-id="{{ $userCategory->id }}"
+                                                    data-user-plan-id="{{ $userPlan->id }}">
+                                                    <img
+                                                        src="{{ webAssets('storage/'.$meal->meal->image) }}"
+                                                        alt="{{ $meal->meal->title }}"
+                                                        height="252"
+                                                        width="160" />
+                                                    <h3>{{ $meal->meal->title }}</h3>
+                                                    <div class="quick-view-overlay">{{ $meal->meal->description ?? '' }}</div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        @if($mealCount > 3)
+                                            <div class="scroll-arrow-right" aria-label="Scroll right">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
+                                                    <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </section>
+                                @endif
+                            @endforeach
                         @endforeach
-                    </div>
-
-                    @if($meals->count() > 3)
-                        <div class="scroll-arrow-right" aria-label="Scroll right">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
-                                <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
                     @endif
-                </div>
-            </section>
+                @endforeach
             @endif
-            @endforeach
-            @endforeach
-            @endforeach
         </section>
 
         <!-- Plate Breakdown and Training Load -->
@@ -266,7 +279,7 @@
         </section>
     </div>
 </main>
-   
+
 <!-- Bootstrap Modal for Download Plan (keep your content inside) -->
 <div class="modal" id="print-plan-modal" tabindex="-1" aria-labelledby="printPlanModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -277,17 +290,17 @@
             </div>
             <div class="modal-body" style="padding: 0;">
                 <div style="flex: 1 1 auto; overflow-y: auto; padding: 16px 16px 0 16px;">
-                    <div id="pdf-preview" style="width: 100%; height: 100%; max-height: 550px; display: flex; justify-content: center; overflow:auto;">
+                    <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center; overflow:auto;" class="downloadplan-inner-content">
                        
                     </div>
                 </div>
-                 <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
+               
+            </div>
+             <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
                 <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
                     Download Plan
                 </button>
             </div>
-            </div>
-           
         </div>
     </div>
 </div>
@@ -306,7 +319,7 @@
             <!-- Content loaded via AJAX or JS -->
         </div>
         </div>
-        <div class="modal-footer" style="text-align: end; padding: 20px 40px; border-top: 1px solid #d8d8d8; background-color:#fff; border-radius:0 0 12px 12px; ">
+        <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; background-color:#fff; border-radius:0 0 12px 12px; ">
         <button id="print-shopping-list" class="btn btn-primary">Print Shopping List</button>
         </div>
     </div>
@@ -367,10 +380,23 @@
     });
     // ...existing code...
 
+    // function showLoader() {
+       
+    //     $('#loader').css('display', 'd-flex');
+
+    // }
+    function showLoader() {
+    $('#loader').removeClass('d-none');
+}
+    function hideLoader() {
+         $('#loader').addClass('d-none');
+    }
+
     $(document).ready(function() {
         // Bind once
         $(document).on('click', '#shoppingList', function() {
             const shoppingListModal = document.getElementById('shoppingListModal');
+            showLoader();
 
             // Show modal
             // const modal = new bootstrap.Modal(shoppingListModal);
@@ -378,13 +404,18 @@
 
             // Inject content
             const contentContainer = $('#shoppingListModal .modal-body');
-            contentContainer.html('<p>Loading...</p>');
+            // contentContainer.html('<p>Loading...</p>');
 
             $.ajax({
                 url: '{{ route("front.get.meals.items") }}' + `?user_id=${userId}&user_plan_id=${userPlanId}`,
                 method: 'GET',
                 success: function(response) {
                     const meals = response.meals;
+                    if (!meals || meals.length === 0) {
+                        contentContainer.html('<p>No meal foods found for this plan.</p>');
+                        hideLoader();
+                        return;
+                    }
                     let modalContent = `
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
@@ -496,10 +527,14 @@
                         const allChecked = items.length === items.filter(':checked').length;
                         $(`#meal-${mealId}-checkbox`).prop('checked', allChecked);
                     });
+                    hideLoader();
+
                 },
                 error: function(xhr) {
                     console.error('Error fetching meals:', xhr);
                     contentContainer.html('<p>Error loading data.</p>');
+                    hideLoader();
+
                 }
             });
         });
@@ -580,11 +615,10 @@
                     }).join(' or ');
 
                     printHtml += `
-                        <li style="font-size: 14px; font-weight: 400; color: #3b3b3b; line-height: 28px;">
-                            <input type="checkbox" style="margin-right: 6px;" />
-                            ${qtyText} ${itemName}
-                        </li>
-                    `;
+                    <li style="display: flex; align-items: center; font-size: 14px; font-weight: 400; color: #3b3b3b; line-height: 1.4; padding: 4px 0;">
+                        <span style="display: inline-block; width: 16px; height: 16px; border: 1px solid #3b3b3b; margin-right: 8px; box-sizing: border-box;"></span>
+                        <span style="flex: 1;">${qtyText} ${itemName}</span>
+                    </li>`;
                 }
 
                 printHtml += '</ul></div>';
@@ -616,10 +650,11 @@
         });
 
         $(document).on('click', '#download-pdf', function() {
+            showLoader();
             const content = document.querySelector('#print-shopping-list-modal #shopping-list-content');
-
+            
             if (!content || content.innerHTML.trim() === '') {
-                alert('No items selected.');
+                $('#errormodalmain').modal('show');
                 return;
             }
 
@@ -631,26 +666,41 @@
                     ${content.innerHTML}
                 </div>
             `;
-
+            // console.log(container.innerHTML);
             // PDF generation options
-            const options = {
-                margin: [0.5], // top, right, bottom, left (in inches)
-                filename: 'shopping_list.pdf',
-                html2canvas: {
-                    scale: 2
-                },
-                jsPDF: {
-                    unit: 'in',
-                    format: 'letter',
-                    orientation: 'portrait'
-                }
-            };
+            // const options = {
+            //     margin: [0.5], // top, right, bottom, left (in inches)
+            //     filename: 'shopping_list.pdf',
+            //     html2canvas: {
+            //         scale: 2
+            //     },
+            //     jsPDF: {
+            //         unit: 'in',
+            //         format: 'letter',
+            //         orientation: 'portrait'
+            //     }
+            // };
 
             // Generate and download the PDF
-            html2pdf().set(options).from(container).save();
+            // html2pdf().set(options).from(container).save();
+              html2pdf().from(container).set({
+                margin: 0.5,
+                filename: 'shopping_list.pdf',
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            }).save();
+            hideLoader();
+            // Close the modal after download
+            $('#print-shopping-list-modal').fadeOut();
+            // Reset the modal content
+            $('#print-shopping-list-modal #shopping-list-content').html('');
+            // Hide the modal
+            $('#shoppingListModal').modal('hide');
+
         });
 
-        $(".print-plan-btn").click(function () {
+        $(document).on('click', ".print-plan-btn", function () {
+            showLoader();
             const planId = $(this).data("plan-id");
             const userId = $(this).data("user-id");
 
@@ -659,8 +709,11 @@
             const printPlanModal = new bootstrap.Modal(printPlanModalEl);
             
             printPlanModal.show(); // ✅ Show the modal
+            showLoader();
             // ✅ Reset preview content with loading text
-            $("#pdf-preview").html('<div class="py-4 text-center">Loading preview...</div>');
+            $("#pdf-preview").html(`<div class="py-4 text-center">
+                <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+            </div>`);
 
             // ✅ Fetch preview content via AJAX and inject
             fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
@@ -672,22 +725,26 @@
                     $("#pdf-preview").html(html); // ✅ Inject fetched HTML
                 })
                 .catch(err => {
-                    console.error("Error loading preview:", err);
                     $("#pdf-preview").html('<div class="py-4 text-danger">Error loading preview</div>');
                 });
+
+                hideLoader();
         });
 
+        $('#print-plan-modal').on('hide.bs.modal', function () {
+            window.location.reload(); // Reload page to reset state  
+        });
+        
         $('#shoppingListModal').on('hidden.bs.modal', function () {
             $(this).find('.modal-body').html(''); // Clear modal content
-            console.log('Shopping list modal closed and content cleared.');
         });
-
 
     });
 
     window.logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO8AAAAiCAYAAAC3Bo7TAAAACXBIWXMAABYlAAAWJQFJUiTwAAAFGmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjUtMDYtMzBUMDg6Mjc6MTIrMDU6MzAiIHhtcDpNb2RpZnlEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjJlOTY2MjBmLWU4YWQt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'; // Replace with base64 logo image
 
     function downloadPDF() {
+        showLoader();
         const element = document.getElementById("pdf-content");
         const images = element.querySelectorAll("img");
 
@@ -700,6 +757,7 @@
         });
 
         Promise.all(promises).then(() => {
+
             // Set margins (in inches: 1in = 25.4mm = 72pt)
             const topMargin = 0.3; // ~15mm
             const bottomMargin = 1.0; // ~18mm (footer + buffer)
@@ -711,7 +769,9 @@
                     filename: 'print-plan.pdf',
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { scale: 2, useCORS: true },
-                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+                            pagebreak: { mode: ['css', 'legacy'] } // <-- Add this line
+
                 })
                 .from(element)
                 .toPdf()
@@ -732,7 +792,7 @@
                     const logoY = footerY + (footerHeight - logoHeight) / 2;
 
                     // Circle (page number)
-                    const circleRadius = 0.11;
+                    const circleRadius = 0.15;
                     const circleCenterX = pageWidth / 2;
                     const circleCenterY = footerY + footerHeight / 2;
 
@@ -762,14 +822,15 @@
                         }
 
                         // Draw blue circle for page number (center)
-                        pdf.setDrawColor(0, 116, 217); // blue border (optional)
-                        pdf.setFillColor(0, 116, 217); // blue fill
-                        pdf.circle(circleCenterX, circleCenterY, circleRadius, 'F');
+                        // pdf.setDrawColor(0, 116, 217); // blue border (optional)
+                        // pdf.setFillColor(0, 116, 217); // blue fill
+                        // pdf.circle(circleCenterX, circleCenterY, circleRadius, 'F');
 
                         // Page number in white, centered in the circle
-                        pdf.setTextColor(255, 255, 255);
-                        pdf.setFontSize(9);
-                        pdf.setFont(undefined, 'normal');
+                        pdf.setTextColor(0, 116, 217);
+                        pdf.setFontSize(11);
+                        pdf.setFont(undefined, 'bold');
+
                         // Center vertically and horizontally
                         pdf.text(`${i}`, circleCenterX, circleCenterY, { align: 'center', baseline: 'middle' });
 
@@ -782,6 +843,7 @@
                 })
                 .save();
         });
+        hideLoader();
     }
 
     // Helper to convert images to base64
@@ -818,6 +880,7 @@
             const user_plan_id = $(this).data('user-plan-id');
             const user_sub_category_id = $(this).data('sub-category-id');
             const user_category_id = $(this).data('category-id');
+            showLoader();
 
             $.ajax({
                 url: "{{ route('front.meal.details') }}",
@@ -869,17 +932,24 @@
 
                     $('#recipeDialogModal .modal-body ul').html(ingredientsHtml);
 
-                    // 📝 Note
-                    $('#recipeDialogModal .modal-body .note').html(
-                        `<strong>Note:</strong> ${meal.meal.note || 'No additional notes provided.'}`
-                    );
+                    // 📝 Instructions / Note
+                    if (meal.meal.note && meal.meal.note.trim() !== '') {
+                        $('#recipeDialogModal .modal-body .note').html(
+                            `<strong>Note:</strong> ${meal.meal.note}`
+                        ).show();
+                        $('#recipeDialogModal .modal-body h3:contains("Instructions")').show();
+                    } else {
+                        $('#recipeDialogModal .modal-body .note').hide();
+                        $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
+                    }
+                    // $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
 
                     // 🔢 Nutrition Info
                     $('#recipeDialogModal .modal-body .nutrition-info').html(`
-                        <span style="color: #967500">● Energy: ${response.totalEnergy ?? 0} kJ</span><br>
-                        <span style="color: #a60015">● Protein: ${response.totalProtein ?? 0} g</span><br>
-                        <span style="color: #3e8e00">● Carb: ${response.totalCarbs ?? 0} g</span><br>
-                        <span style="color: #0077b6">● Fat: ${response.totalFats ?? 0} g</span>
+                        <span style="color: #a60015">●  <span style="color:rgba(59, 59, 59, 1)">Protein: ${(Number(response.totalProtein) || 0).toFixed(2)} g</span></span>
+                        <span style="color: #3e8e00">●  <span style="color:rgba(59, 59, 59, 1)">Carb: ${(Number(response.totalCarbs) || 0).toFixed(2)} g</span></span>
+                        <span style="color: #0077b6">●  <span style="color:rgba(59, 59, 59, 1)">Fat: ${(Number(response.totalFats) || 0).toFixed(2)} g</span></span>
+                        <span style="color: #967500">●  <span style="color:rgba(59, 59, 59, 1)">Energy: ${(Number(response.totalEnergy) || 0).toFixed(2)} kJ</span></span>
                     `);
 
                     // Set data attributes for Smart Swap
@@ -893,21 +963,26 @@
                     // 👁️ Show Bootstrap modal
                     const modal = new bootstrap.Modal(document.getElementById('recipeDialogModal'));
                     modal.show();
+                    hideLoader();
                 },
                 error: function () {
-                    alert('Could not load meal details.');
+                    $('#errormodalmain').modal('show');
+                    hideLoader();
                 }
             });
         });
     });
 
-    $(document).on('click', '#smart-swap-btn', function () {
-        const meal_id = $(this).data('meal-id');
-        const meal_name = $(this).data('meal-name');
-        const user_meal_id = $(this).data('meal-id');
-        const userPlanId = $(this).data('user-plan-id');
-        const userSubCategoryId = $(this).data('sub-category-id');
-        const userCategoryId = $(this).data('category-id');
+    $(document).on('click', '.meal-item-btn', function () {
+        const $btn = $(this);
+
+        const meal_id = $btn.attr('data-meal-id');
+        const meal_name = $btn.attr('data-meal-name');
+        const user_meal_id = $btn.attr('data-meal-id');
+        const userPlanId = $btn.attr('data-user-plan-id');
+        const userSubCategoryId = $btn.attr('data-sub-category-id');
+        const userCategoryId = $btn.attr('data-category-id');
+
         $('#recipeDialogModal').modal('hide');
         mealItemModelReload(meal_id, meal_name, user_meal_id, userSubCategoryId, userPlanId, userCategoryId);
     });
@@ -984,7 +1059,8 @@
                         const itemCard = `
                             <div class="swap-item">
                                 <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
-                                 <div class="swap-wrap">
+                                <div class="flex-wrapper"> 
+                               
                                 <div class="swap-item-info">
                                     <div class="swap-item-name">${item.name}</div>
                                     <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
@@ -1007,6 +1083,7 @@
                                             <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
                                         </button>` : ''}
                                 </div>
+                                 </div>
                                 </div>
                             </div>
                         `;
@@ -1041,7 +1118,6 @@
             newModal.hide();
         }
     });
-
 
     $('body').on('click', '.item-swap-btn', function () {
         const itemId = $(this).data('item-id');
@@ -1124,7 +1200,7 @@
                 let mainItem = `
                     <div class="swap-item" id="mainSwapItem" data-item-id="${item.id}" style="border-bottom: none">
                         <img src="${data.item_image}" alt="${data.item_name}" class="swap-item-img"/>
-                         <div class="">
+                         <div class="flex-wrapper">
                         <div class="swap-item-info">
                             <div class="swap-item-name">${data.item_name}</div>
                             <div class="swap-item-qty"><b>Qty:</b> ${mainQtyText}</div>
@@ -1139,7 +1215,7 @@
                         </div>
                     </div>
 
-                    <div class="swap-item"><h3>Swap with</h3></div>
+                    <div class="swap-item swap-item-h3"><h3>Swap with</h3></div>
                 `;
 
                 // ✅ Build Swap Items HTML
@@ -1150,14 +1226,14 @@
                     swapItemsHTML += `
                         <div class="swap-item">
                             <img src="${swapItem.swap_item_image}" alt="${swapItem.swap_item_name}" class="swap-item-img"/>
-                             <div class="">
+                             <div class="flex-wrapper">
                             <div class="swap-item-info">
                                 <div class="swap-item-name">${swapItem.swap_item_name}</div>
                                 <div class="swap-item-qty"><b>Qty:</b> ${swapQtyText}</div>
                             </div>
                             <div class="swap-item-actions">
                                 <button class="smart-swap-btn swap-btn" data-swap-item-id="${swapItem.swap_item_id}">
-                                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" />Swap
+                                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" /><span>Swap</span>
                                 </button>
                                 ${swapItem.swap_item_description ? `
                                     <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${swapItem.swap_item_description}">
@@ -1238,14 +1314,14 @@
         // === Replace clicked swap item with the original main item ===
         const revertedHTML = `
             <img src="${currentMainItem.image}" alt="${currentMainItem.name}" class="swap-item-img"/>
-             <div class="">
+             <div class="flex-wrapper">
             <div class="swap-item-info">
                 <div class="swap-item-name">${currentMainItem.name}</div>
                 <div class="swap-item-qty"><b>Qty:</b> ${currentMainItem.qty}</div>
             </div>
             <div class="swap-item-actions">
                 <button class="smart-swap-btn swap-btn" data-swap-item-id="${currentMainItem.id}">
-                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" />Swap
+                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" /><span>Swap</span>
                 </button>
                 ${currentMainItem.description ? `
                     <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${currentMainItem.description}">
@@ -1318,15 +1394,117 @@
             },
             error: function (xhr, status, error) {
                 // Handle error response
-                console.error("Failed to apply swaps:", error);
-                alert("Failed to apply changes. Please try again.");
+                if (xhr.status === 422) {
+                    // Laravel-style validation error handling
+                    let errors = xhr.responseJSON?.errors;
+                    let messageHtml = '';
+
+                    if (errors) {
+                        // fallback if error messages not formatted
+                        messageHtml = '<h4>Ooops!</h4><p>Invalid swap. Please check and try again.</p>';
+                    }
+
+                    $('#errormodalmain .modal-body').html(messageHtml);
+                } else {
+                    // Generic fallback for other HTTP errors
+                    $('#errormodalmain .modal-body').html('<h4>Ooops!</h4>	<p>Invalid swap. Please try again later.</p>');
+                }
+
+                $('#errormodalmain').modal('show');
             }
         });
     });
 
+    $('#errormodalmain').on('hidden.bs.modal', function () {
+        $(this).find('.modal-body').html('');
+    });
     $('#shoppingListModal').on('hidden.bs.modal', function () {
         $(this).find('.modal-body').html('');
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Blade inline script: DOMContentLoaded fired');
+        document.querySelectorAll('.horizontal-scroll-arrow-wrapper').forEach(function(wrapper) {
+          const scrollContainer = wrapper.querySelector('.horizontal-scroll');
+          const leftArrow = wrapper.querySelector('.scroll-arrow-left');
+          const rightArrow = wrapper.querySelector('.scroll-arrow-right');
+          if (leftArrow && scrollContainer) {
+            leftArrow.addEventListener('click', function(e) {
+              e.preventDefault();
+              console.log('Blade inline: Left arrow clicked');
+              scrollContainer.scrollBy({ left: -scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
+            });
+          }
+          if (rightArrow && scrollContainer) {
+            rightArrow.addEventListener('click', function(e) {
+              e.preventDefault();
+              console.log('Blade inline: Right arrow clicked');
+              scrollContainer.scrollBy({ left: scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
+            });
+          }
+        });
+    });
+
+</script>
+
+
+   <!-- Error Modal HTML -->
+<div class="modal" id="errormodalmain" tabindex="-1" aria-labelledby="testLabel" aria-hidden="true">
+	<div class="modal-dialog modal-confirm modal-dialog-centered">
+		<div class="modal-content">
+			<div class="justify-content-center modal-header">
+				<div class="icon-box">
+					<i class="fas fa-exclamation-circle"></i>
+				</div>
+			    <button class="dialog-close" 
+                style="    top: -20px;
+    right: -20px;"
+                data-bs-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+  <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
+</svg>
+                    </button>
+			</div>
+			<div class="text-center modal-body">
+				<h4>Ooops!</h4>	
+				<p>Something went wrong.</p>
+				
+			</div>
+		</div>
+	</div>
+</div> 
+
+<!-- Coming Soon Modal -->
+<div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-coming-soon modal-dialog-centered">
+        <div class="modal-content">
+            <div class="justify-content-center modal-header">
+                <div class="icon-box">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-center modal-body">
+                <h4>Coming Soon!</h4>
+                <p>This feature is coming soon.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var inviteDiv = document.querySelector('.share-dropdown-item');
+        if(inviteDiv) {
+            inviteDiv.addEventListener('click', function(e) {
+                e.preventDefault();
+                var comingSoonModal = new bootstrap.Modal(document.getElementById('comingSoonModal'));
+                comingSoonModal.show();
+            });
+        }
+    });
 </script>
 @endsection

@@ -1753,12 +1753,14 @@ class FrontController extends Controller
         $meals = [];
 
         foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
-            foreach ($subCategory->userMeals->where('user_plan_id', $planId) as $meal) {
-                if (count($meals) < 3) {
-                    $meals[] = $meal;
-                }
+            foreach ($subCategory->userMeals->where('user_plan_id', $planId)->where('user_category_id', $userCategory->id) as $meal) {
+                $meals[] = [
+                    'id' => $meal->meal->id,
+                    'name' => $meal->meal->title,
+                    'image' => webAssets('storage/' . $meal->meal->image),
+                    'description' => $meal->meal->description,
+                ];
             }
-            if (count($meals) >= 3) break;
         }
 
         return view('front.pages.partials.meal-cards', compact('meals'))->render();

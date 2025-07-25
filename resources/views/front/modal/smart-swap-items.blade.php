@@ -1,6 +1,6 @@
     <!-- Modal -->
     <div class="modal" id="smartSwapModal" tabindex="-1" aria-labelledby="smartSwapModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title swap-title" id="smartSwapModalLabel">Swap: Cavendish Bananas</h5>
@@ -57,7 +57,7 @@
                             width: 18px;
                             vertical-align: middle;
                             margin-right: 4px;
-                        " />Swap
+                        " /><span>Swap</span>
                                 </button>
                                 <button class="smart-swap-btn">
                                     <img

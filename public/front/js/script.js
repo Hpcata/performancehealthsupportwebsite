@@ -1,3 +1,4 @@
+console.log('script.js loaded at top');
 function playVideoInCard(e) {
     const t = document.getElementById(`video-player-${e}`),
         o = t.querySelector(".video-backdrop"),
@@ -490,8 +491,10 @@ function setupArrowScroll(wrapperSelector) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    console.log('DOMContentLoaded event fired in script.js');
     enableDragScroll(".horizontal-scroll");
     enableDragScroll(".challenge-cards");
     enableWheelHorizontalScroll(".horizontal-scroll");
     setupArrowScroll(".horizontal-scroll-arrow-wrapper");
 });
+console.log('script.js loaded at bottom');

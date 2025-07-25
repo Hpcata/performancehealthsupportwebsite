@@ -10,11 +10,11 @@
     <div class="container">
         <!-- Welcome Section -->
         <section class="welcome-section">
-            <div class="welcome-card">
+            <div class="welcome-card hover-card">
                 <div class="welcome-message">
                     <h2>Welcome back legend! How's your week going?</h2>
                     <div class="welcome-row">
-                        <a href="#" class="start-chat">Start chat</a>
+                        <a href="#" class="start-chat" id="start-chat-link">Start chat</a>
                         <span class="assistant-name">Kerry O'Bryan Virtual</span>
                     </div>
                 </div>
@@ -43,93 +43,90 @@
             <div class="tabs">
                 @php $firstTab = true; @endphp
                 @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
-                    @php
-                        $category = $userCategory->category;
-                        $hasValidMeal = $userCategory->userSubCategories()
-                            ->where('user_plan_id', $userPlan->id)
-                            ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
-                                $q->where('user_plan_id', $userPlan->id)
-                                ->where('user_category_id', $userCategory->id);
-                            })->exists();
-                    @endphp
+                @php
+                $category = $userCategory->category;
+                $hasValidMeal = $userCategory->userSubCategories()
+                    ->where('user_plan_id', $userPlan->id)
+                    ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                        $q->where('user_plan_id', $userPlan->id)
+                        ->where('user_category_id', $userCategory->id);
+                    })->exists();
+                @endphp
 
-                    @if ($hasValidMeal && $category)
-                        <button
-                            class="tab {{ $firstTab ? 'active' : '' }}"
-                            data-category-id="{{ $category->id }}"
-                            data-plan-id="{{ $userPlan->id }}">
-                            {{ $category->title }}
-                        </button>
-                        @php $firstTab = false; @endphp
-                    @endif
+                @if ($hasValidMeal && $category)
+                <button
+                    class="tab {{ $firstTab ? 'active' : '' }}"
+                    data-category-id="{{ $category->id }}"
+                    data-plan-id="{{ $userPlan->id }}">
+                    {{ $category->title }}
+                </button>
+                @php $firstTab = false; @endphp
+                @endif
                 @endforeach
             </div>
 
             <div class="tab-content challenges">
-                <div class="challenge-cards" id="meal-cards-wrapper">
+                <div class="challenge-cards position-relative" id="meal-cards-wrapper">
                     <p>Loading meals...</p>
                 </div>
             </div>
-
-            <!-- <div class="meal-cards">
-                <div class="meal-card">
-                
-                    <img src="{{ frontAssets('images/food1.webp') }}" alt="Oats with banana and berries breakfast" width="600" height="400" />
-                
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-                <div class="meal-card">
-                
-                    <img src="{{ frontAssets('images/food2.webp') }}" alt="Oats with banana and berries breakfast" />
-                
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-                <div class="meal-card">
-            
-                    <img src="{{ frontAssets('images/food1.webp') }}" alt="Oats with banana and berries breakfast" />
-            
-                    <h3>Energy breakfast Oats with banana and berries</h3>
-                </div>
-            </div> -->
         </section>
+
         @endif
         <!-- Challenges -->
         <section class="challenges">
             <div class="section-header">
                 <h2>Challenges</h2>
-                <a href="/challenges" class="see-all">See all</a>
+                <!-- <a href="/challenges" class="see-all">See all</a> -->
             </div>
-            <div class="challenge-cards">
-                <div class="challenge-card clickable">
+            <div class="challenge-cards horizontal-scroll">
+             
+                <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+                   
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
                     </div>
                 </div>
-                <div class="challenge-card clickable">
+                <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
                         alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
                     <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
+                     
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>10</span>
                     </div>
                 </div>
-                <div class="challenge-card clickable">
+                <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+                    
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
                     </div>
                 </div>
+                 <div class="challenge-card clickable hover-card coming-soon-popup">
+                    <img
+                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                        alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                    <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+                    
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <span>30</span>
+                    </div>
+                </div>
+           
+              
             </div>
         </section>
 
@@ -137,10 +134,10 @@
         <section class="resources">
             <div class="section-header">
                 <h2>Resources and tools</h2>
-                <a href="#" class="see-all">See all</a>
+                <!-- <a href="#" class="see-all">See all</a> -->
             </div>
             <div class="resources-custom-grid">
-                <div class="resource-card-custom resource-supplement">
+                <div class="cursor-pointer resource-card-custom resource-supplement hover-card" id="scanner-btn">
                     <img
                         src="{{ frontAssets('images/cardbg.webp') }}"
                         class="resource-bg-img"
@@ -154,7 +151,7 @@
                     <div class="resource-title">Supplement scanner</div>
                 </div>
 
-                <div class="resource-card-custom resource-chat">
+                <div class="cursor-pointer resource-card-custom resource-chat hover-card" id="chat-to-virtual-kez-btn">
                     <img
                         src="{{ frontAssets('images/cardimg-2.webp') }}"
                         class="resource-bg-img"
@@ -175,7 +172,7 @@
                 </div>
             </div>
             <div class="resources-custom-grid grid-2">
-                <div class="resource-card-custom resource-video">
+                <div class="resource-card-custom resource-video clickable hover-card">
                     <div
                         class="video-thumb-container"
                         onclick="openVideoPopup('https://www.w3schools.com/html/mov_bbb.mp4')">
@@ -204,7 +201,7 @@
                     </div>
                 </div>
 
-                <div class="resource-card-custom resource-video">
+                <div class="resource-card-custom resource-video clickable hover-card">
                     <div class="video-thumb-container">
                         <img
                             src="{{ frontAssets('images/gym.webp') }}"
@@ -238,7 +235,7 @@
             </div>
             <div class="consults-plans-grid grid-1">
                 <div class="consultation-card-custom">
-                    <div class="consult-title">Private consult</div>
+                    <div class="consult-title"></div>
                     <div class="consult-desc">
                         Get answers from a real-life expert coaching Elite Athletes and
                         Olympians.
@@ -250,34 +247,34 @@
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
                     </div>
-                    <button class="btn-consult">Book consult</button>
+                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
                 </div>
             </div>
             <div class="consults-plans-grid">
                 <div class="plan-card-custom plan-competition">
                     <div class="">
-                    <div class="plan-title">Competition Plan</div>
-                    <div class="plan-desc">
-                        Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
-                    </div>
+                        <div class="plan-title">Competition Plan</div>
+                        <div class="plan-desc">
+                            Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
+                        </div>
                     </div>
                     <div class="">
-                    <div class="consult-user-row">
-                        <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                            class="consult-avatar"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                             <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                            class="consult-avatar overlap1"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                        <span>21 meals • 18 Nutrition tips</span>
-                    </div>
-                    <!-- <div class="plan-meta">
-                <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
-                tips
-              </div> -->
-                    <button class="btn-consult">Learn more</button>
+                        <div class="consult-user-row">
+                            <img
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                class="consult-avatar"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <img
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                class="consult-avatar overlap1"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <span>21 meals • 18 Nutrition tips</span>
+                        </div>
+                        <!-- <div class="plan-meta">
+                            <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
+                            tips
+                        </div> -->
+                        <button class="btn-consult">Learn more</button>
                     </div>
                 </div>
                 <div class="plan-card-custom plan-injury">
@@ -306,7 +303,7 @@
             <h2>What's hot in... Surfing</h2>
             <div class="video-grid">
                 <div class="video-card">
-                    <div class="video-thumbnail">
+                    <div class="video-thumbnail hover-card">
                         <div class="video-player" id="video-player-1">
                             <img
                                 src="{{ frontAssets('images/instaimg1.webp') }}"
@@ -352,7 +349,7 @@
                     </div>
                 </div>
                 <div class="video-card">
-                    <div class="video-thumbnail">
+                    <div class="video-thumbnail hover-card">
                         <div class="video-player" id="video-player-2">
                             <img
                                 src="{{ frontAssets('images/instaimg2.webp') }}"
@@ -398,7 +395,7 @@
                     </div>
                 </div>
                 <div class="video-card">
-                    <div class="video-thumbnail">
+                    <div class="video-thumbnail hover-card">
                         <div class="video-player" id="video-player-3">
                             <img
                                 src="{{ frontAssets('images/instaimg1.webp') }}"
@@ -499,7 +496,48 @@
         if (firstTab) {
             loadMeals(firstTab.dataset.planId, firstTab.dataset.categoryId);
         }
+
+        $('#start-chat-link, #chat-to-virtual-kez-btn').click(function(){
+            $('#delphi-bubble-trigger').click();
+        });
+
+        $('#scanner-btn').click(function(){
+            location.href = "https://phenomenal-torrone-cee914.netlify.app/";
+        });
+
+        document.querySelectorAll('.coming-soon-popup').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                var comingSoonModal = document.getElementById('comingSoonModal');
+                if (comingSoonModal && typeof bootstrap !== 'undefined') {
+                    e.preventDefault();
+                    var modal = new bootstrap.Modal(comingSoonModal);
+                    modal.show();
+                }
+            });
+        });
     });
 </script>
+
+<!-- Coming Soon Modal -->
+<div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-coming-soon modal-dialog-centered">
+        <div class="modal-content">
+            <div class="justify-content-center modal-header">
+                <div class="icon-box">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-center modal-body">
+                <h4>Coming Soon!</h4>
+                <p>This feature is coming soon.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection

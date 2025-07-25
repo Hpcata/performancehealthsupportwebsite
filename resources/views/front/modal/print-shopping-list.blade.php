@@ -11,7 +11,7 @@
             </div>
         </div>
         <div style="    text-align: end;
-    padding: 20px 40px;
+    padding: 12px 16px;
     border-top: 1px solid #d8d8d8;" class="responsive-modal-footer">
             <button id="download-pdf" class="btn btn-primary" style="padding: 12px 28px; font-size: 1rem; font-weight: 500; cursor: pointer; box-shadow: 0 2px 8px rgba(42, 92, 164, 0.08);">Download PDF</button>
         </div>

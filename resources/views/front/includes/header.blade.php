@@ -78,7 +78,7 @@ $auth = auth()->guard('web')->check();
                     <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
-                    <a class="p-2 text-danger dropdown-item" href="#" onclick="handleLogout(event)">
+                    <a class="p-2 text-danger dropdown-item" style="padding:0.75rem 1rem !important;" href="#" onclick="handleLogout(event)">
                         Logout
                     </a>
                 </div>
