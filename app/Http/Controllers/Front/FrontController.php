@@ -1754,14 +1754,13 @@ class FrontController extends Controller
 
         foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
             foreach ($subCategory->userMeals->where('user_plan_id', $planId)->where('user_category_id', $userCategory->id) as $meal) {
-                // TODO: Frontend side slider implemente then remove this condition
-                if (count($meals) < 3) {
-                    $meals[] = $meal;
-                }
-
+                $meals[] = [
+                    'id' => $meal->meal->id,
+                    'name' => $meal->meal->title,
+                    'image' => webAssets('storage/' . $meal->meal->image),
+                    'description' => $meal->meal->description,
+                ];
             }
-            // TODO: Frontend side slider implemente then remove this condition
-            if (count($meals) >= 3) break;
         }
 
         return view('front.pages.partials.meal-cards', compact('meals'))->render();

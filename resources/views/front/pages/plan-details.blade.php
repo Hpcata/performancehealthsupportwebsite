@@ -147,7 +147,7 @@
                                                         height="252"
                                                         width="160" />
                                                     <h3>{{ $meal->meal->title }}</h3>
-                                                    <div class="quick-view-overlay">Quick View</div>
+                                                    <div class="quick-view-overlay">{{ $meal->meal->description ?? '' }}</div>
                                                 </div>
                                             @endforeach
                                         </div>
