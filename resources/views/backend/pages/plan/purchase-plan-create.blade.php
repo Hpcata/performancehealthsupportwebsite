@@ -1241,6 +1241,29 @@
     });
 
     $(document).ready(function () {
+        function getPercentageChange(id) {
+            var data = window.mesureofnewaddedfood && window.mesureofnewaddedfood[id] ? window.mesureofnewaddedfood[id] : null;
+            if (data && typeof data[0] !== 'undefined' && typeof data[0].old !== 'undefined' && 
+                typeof data[1] !== 'undefined' && typeof data[1].new !== 'undefined') {
+                var oldData = data[0].old;
+                var newData = data[1].new;
+
+                for (var i = 0; i < oldData.length; i++) {
+                    if (oldData[i].checked) {
+                        var newItem = newData.find(item => item.unit === oldData[i].unit && item.checked);
+                        if (newItem && oldData[i].qty !== newItem.qty) {
+                            var oldQty = oldData[i].qty;
+                            var newQty = newItem.qty;
+                            var ratio = newQty / oldQty;
+                            return ratio.toFixed(2); // Return ratio with 2 decimal places
+                        }
+                    }
+                }
+                return 1; // Return 1 if no change is found (ratio of 1 means no change)
+            }
+            return null; // Return null if data is unavailable
+        }
+
         const previouslySelectedMeals = {};
 
         // Step 1: Handle meal time checkbox changes
@@ -4425,6 +4448,20 @@
 
             $('#foodDropdown').on('select2:select', function (e) {
                 const data = e.params.data;
+
+                // Initialize window.mesureofnewaddedfood if it doesn’t exist
+                if (typeof window.mesureofnewaddedfood === 'undefined') {
+                    window.mesureofnewaddedfood = {};
+                }
+
+                // Check if the property for data.id is an array; if not, make it one
+                if (!Array.isArray(window.mesureofnewaddedfood[data.id])) {
+                    window.mesureofnewaddedfood[data.id] = [];
+                }
+
+                // Safely push the selected quantity unit
+                window.mesureofnewaddedfood[data.id].push({"old":data.selected_qty_unit});
+
                 let selectedQtyUnits = [];
 
                 try {
@@ -4554,6 +4591,21 @@
                 }
             });
 
+            // Initialize window.mesureofnewaddedfood if it doesn’t exist
+            if (typeof window.mesureofnewaddedfood === 'undefined') {
+                window.mesureofnewaddedfood = {};
+            }
+
+            // Check if the property for foodId is an array; if not, make it one
+            if (!Array.isArray(window.mesureofnewaddedfood[foodId])) {
+                window.mesureofnewaddedfood[foodId] = [];
+            }
+
+            // Safely push the selected quantity unit
+            window.mesureofnewaddedfood[foodId].push({"new":selectedQtyUnits});
+
+            var percentage = getPercentageChange(foodId);
+
             const $mealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
            
             const $tableBody = $mealContainer.find('.items-table-body');
@@ -4681,7 +4733,7 @@
                                             title="${item.description}">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success edit-item"
+                                        <button type="button" class="btn btn-sm btn-outline-success edit-item main-food-edit-link"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${qty}" data-item-unit="${unit}"
                                             data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
@@ -4706,6 +4758,10 @@
                     `;
 
                     $tableBody.append(rowHTML);
+                    $tableBody.find('button.main-food-edit-link').click();
+                    $('#editItemModal #ratio').val(parseFloat(percentage));
+                    $('#editItemModal').modal('hide');
+                    $('#editItemModal #saveItemChanges').click();
 
                     updateFoodCount(item.id, 1, 'green')
 
