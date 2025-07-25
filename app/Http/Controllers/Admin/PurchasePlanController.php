@@ -1805,6 +1805,12 @@ class PurchasePlanController extends Controller
 
     public function updateFoodSwapFoods(Request $request) 
     {
+        $selectedQtyUnit = collect($request->selected_qty_unit)
+             ->firstWhere('checked', true);
+
+        $qty = isset($selectedQtyUnit['qty']) ? $selectedQtyUnit['qty'] : null;
+        $unit = isset($selectedQtyUnit['unit']) ? $selectedQtyUnit['unit'] : null;
+
         if($request->type == "item-update") {
             $userItemMeal = UserItemMeal::with('items')
                 ->where('user_id', $request->user_id)
@@ -1814,11 +1820,6 @@ class PurchasePlanController extends Controller
 
             $savedItem = null;
 
-            $selectedQtyUnit = collect($request->selected_qty_unit)
-             ->firstWhere('checked', true);
-
-            $qty = isset($selectedQtyUnit['qty']) ? $selectedQtyUnit['qty'] : null;
-            $unit = isset($selectedQtyUnit['unit']) ? $selectedQtyUnit['unit'] : null;
             // ✅ Update or create UserItemMeal
             if ($userItemMeal) {
                 $userItemMeal->update([
@@ -1833,7 +1834,6 @@ class PurchasePlanController extends Controller
                 ]);
                 $savedItem = $userItemMeal->load('items');
             } else {
-
                 $savedItem = UserItemMeal::create([
                     'user_id' => $request->user_id,
                     'item_id' => $request->item_id,
@@ -1857,55 +1857,76 @@ class PurchasePlanController extends Controller
             ]);
         }
         if($request->type == "swap-food-update") {
-            $selectedQtyUnit = collect($request->swap_selected_qty_unit)
-             ->firstWhere('checked', true);
-
-            $qty = isset($selectedQtyUnit['qty']) ? $selectedQtyUnit['qty'] : null;
-            $unit = isset($selectedQtyUnit['unit']) ? $selectedQtyUnit['unit'] : null;
-
+            
             $existingSwap = UserItemSwap::with('swapItem')
                 ->where('item_id', $request->item_id)
                 ->where('meal_id', $request->meal_id)
                 ->where('swap_item_id', $request->swap_item_id)
                 ->where('user_id', $request->user_id)
                 ->first();
-            if ($existingSwap) {
-                $existingSwap->update([
-                    'qty' => $qty,
-                    'carbs' => $request->swap_food_carbs,
-                    'protein' => $request->swap_food_protein,
-                    'fat' => $request->swap_food_fat,
-                    'energy' => $request->swap_food_energy,
-                    'unit' => $unit,
-                    'selected_qty_unit' => $request->swap_selected_qty_unit,
-                    'updated_at' => now(),
-                ]);
-                $savedSwapItems[] = $existingSwap->load('swapItem');
-            } else {
-                $swapItem = UserItemSwap::create([
-                    'item_id' => $request->item_id,
-                    'swap_item_id' => $request->swap_item_id,
-                    'user_id' => $request->user_id,
-                    'meal_id' => $request->meal_id,
-                    'qty' => $qty,
-                    'carbs' => $request->swap_food_carbs,
-                    'protein' => $request->swap_food_protein,
-                    'fat' => $request->swap_food_fat,
-                    'energy' => $request->swap_food_energy,
-                    'unit' => $unit,
-                    'selected_qty_unit' => $request->swap_selected_qty_unit,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                $savedSwapItems[] = $swapItem->load('swapItem');
+            if (!$existingSwap) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Swap food not found.'
+                ], 404);
             }
+            
+            $existingSwap->update([
+                'qty' => $qty,
+                'carbs' => $request->swap_food_carbs,
+                'protein' => $request->swap_food_protein,
+                'fat' => $request->swap_food_fat,
+                'energy' => $request->swap_food_energy,
+                'unit' => $unit,
+                'selected_qty_unit' => $request->swap_selected_qty_unit,
+                'updated_at' => now(),
+            ]);
+            $savedSwapItems[] = $existingSwap->load('swapItem');
             return response()->json([
                 'success' => true,
                 'swapItem' => $savedSwapItems,
                 'message' => 'Swap foods updated successfully!'
             ]);
         }
+        if($request->type == "add-swap-food") {
+           
+            $existingSwap = UserItemSwap::with('swapItem')
+                ->where('item_id', $request->item_id)
+                ->where('meal_id', $request->meal_id)
+                ->where('swap_item_id', $request->swap_item_id)
+                ->where('user_id', $request->user_id)
+                ->first();
 
+            if ($existingSwap) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Swap food already exists.'
+                ]);
+            }
+            
+            $swapItem = UserItemSwap::create([
+                'item_id' => $request->item_id,
+                'swap_item_id' => $request->swap_item_id,
+                'user_id' => $request->user_id,
+                'meal_id' => $request->meal_id,
+                'qty' => $qty,
+                'carbs' => $request->swap_food_carbs,
+                'protein' => $request->swap_food_protein,
+                'fat' => $request->swap_food_fat,
+                'energy' => $request->swap_food_energy,
+                'unit' => $unit,
+                'selected_qty_unit' => $request->swap_selected_qty_unit,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $savedSwapItems[] = $swapItem->load('swapItem');
+        
+            return response()->json([
+                'success' => true,
+                'swapItem' => $savedSwapItems,
+                'message' => 'Swap foods updated successfully!'
+            ]);
+        }
     }
 
     public function deletePurchasePlanFood(Request $request)
@@ -2936,6 +2957,82 @@ class PurchasePlanController extends Controller
         } catch (\Exception $e) {
             Log::error('Error updating swap item: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to update swap item.'], 500);
+        }
+    }
+
+    public function deleteUserMealFood(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|integer',
+            'meal_id' => 'required|integer',
+            'item_id' => 'required|integer',
+        ]);
+
+        try {
+            // Find the UserItemMeal entry
+            $userItemMeal = UserItemMeal::where('user_id', $request->user_id)
+                ->where('meal_id', $request->meal_id)
+                ->where('item_id', $request->item_id)
+                ->first();
+
+            if (!$userItemMeal) {
+                return response()->json(['success' => false, 'message' => 'Food item not found in user meal.']);
+            }
+
+            // Delete the UserItemMeal entry
+            $userItemMeal->delete();
+
+            $swapItems = UserItemSwap::with('swapItem')
+                        ->where('item_id', $request->item_id)
+                        ->where('user_id', $request->user_id)
+                        ->where('meal_id', $request->meal_id)
+                        ->get();
+
+            if ($swapItems->isNotEmpty()) {
+                foreach ($swapItems as $swapItem) {
+                    // Delete the UserItemSwap entries associated with this item
+                    UserItemSwap::where('user_id', $request->user_id)
+                        ->where('item_id', $swapItem->item_id)
+                        ->where('swap_item_id', $swapItem->swap_item_id)
+                        ->where('meal_id', $request->meal_id)
+                        ->delete();
+                }
+            }
+
+            return response()->json(['success' => true, 'message' => 'Food item deleted successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error deleting food item: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to delete food item.'], 500);
+        }
+    }
+
+
+    public function deleteUserMealSwapFood(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|integer',
+            'meal_id' => 'required|integer',
+            'swap_item_id' => 'required|integer',
+        ]);
+
+        try {
+            // Find the UserItemSwap entry
+            $userItemSwap = UserItemSwap::where('user_id', $request->user_id)
+                ->where('meal_id', $request->meal_id)
+                ->where('swap_item_id', $request->swap_item_id)
+                ->first();
+
+            if (!$userItemSwap) {
+                return response()->json(['success' => false, 'message' => 'Swap food item not found in user meal.']);
+            }
+
+            // Delete the UserItemSwap entry
+            $userItemSwap->delete();
+
+            return response()->json(['success' => true, 'message' => 'Swap food item deleted successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error deleting swap food item: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to delete swap food item.'], 500);
         }
     }
 }
