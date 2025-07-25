@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('item_meals', function (Blueprint $table) {
-            $table->integer('order')->nullable()->after('meal_id');
-        });
+        if (Schema::hasTable('item_meals') && ! Schema::hasColumn('item_meals', 'order')) {
+            Schema::table('item_meals', function (Blueprint $table) {
+                $table->integer('order')->nullable()->after('meal_id');
+            });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('item_meals', function (Blueprint $table) {
-            $table->dropColumn('order');
-        });
+        if (Schema::hasTable('item_meals') && Schema::hasColumn('item_meals', 'order')) {
+            Schema::table('item_meals', function (Blueprint $table) {
+                $table->dropColumn('order');
+            });
+        }
     }
 };

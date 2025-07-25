@@ -8,31 +8,31 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('sections', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('page_id')->constrained()->onDelete('cascade');
-            $table->string('title')->nullable(); // Header, section-1, section-2, etc.
-            $table->string('type'); // Header, section-1, section-2, etc.
-            $table->text('content')->nullable(); // JSON to store section data
-            $table->boolean('enabled')->default(true);
-            $table->integer('order')->default(0);
-            $table->string('image')->nullable();
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('sections')) {
+            Schema::create('sections', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('page_id')->constrained('pages')->onDelete('cascade');
+                $table->string('title')->nullable();       // Optional title
+                $table->string('type');                    // e.g., header, section-1, etc.
+                $table->text('content')->nullable();       // JSON structure for flexibility
+                $table->boolean('enabled')->default(true); // Visibility toggle
+                $table->integer('order')->default(0);      // Sort order
+                $table->string('image')->nullable();       // Optional image path
+                $table->timestamps();
+            });
+        }
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('sections');
+        if (Schema::hasTable('sections')) {
+            Schema::dropIfExists('sections');
+        }
     }
 };

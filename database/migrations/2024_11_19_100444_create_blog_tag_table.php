@@ -8,26 +8,31 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('blog_tag', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('blog_id')->constrained()->onDelete('cascade');
-            $table->foreignId('tag_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('blog_tag')) {
+            Schema::create('blog_tag', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('blog_id')->constrained('blogs')->onDelete('cascade');
+                $table->foreignId('tag_id')->constrained('tags')->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('blog_tag');
+        if (Schema::hasTable('blog_tag')) {
+            Schema::table('blog_tag', function (Blueprint $table) {
+                $table->dropForeign(['blog_id']);
+                $table->dropForeign(['tag_id']);
+            });
+
+            Schema::dropIfExists('blog_tag');
+        }
     }
 };

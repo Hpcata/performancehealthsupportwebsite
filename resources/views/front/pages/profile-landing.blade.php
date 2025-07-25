@@ -46,11 +46,11 @@
                 @php
                 $category = $userCategory->category;
                 $hasValidMeal = $userCategory->userSubCategories()
-                ->where('user_plan_id', $userPlan->id)
-                ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
-                $q->where('user_plan_id', $userPlan->id)
-                ->where('user_category_id', $userCategory->id);
-                })->exists();
+                    ->where('user_plan_id', $userPlan->id)
+                    ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                        $q->where('user_plan_id', $userPlan->id)
+                        ->where('user_category_id', $userCategory->id);
+                    })->exists();
                 @endphp
 
                 @if ($hasValidMeal && $category)
@@ -172,7 +172,7 @@
                 </div>
             </div>
             <div class="resources-custom-grid grid-2">
-                <div class="resource-card-custom resource-video hover-card">
+                <div class="resource-card-custom resource-video clickable hover-card">
                     <div
                         class="video-thumb-container"
                         onclick="openVideoPopup('https://www.w3schools.com/html/mov_bbb.mp4')">
@@ -201,7 +201,7 @@
                     </div>
                 </div>
 
-                <div class="resource-card-custom resource-video hover-card">
+                <div class="resource-card-custom resource-video clickable hover-card">
                     <div class="video-thumb-container">
                         <img
                             src="{{ frontAssets('images/gym.webp') }}"

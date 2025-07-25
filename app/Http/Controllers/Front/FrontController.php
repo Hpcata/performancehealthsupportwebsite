@@ -1753,11 +1753,14 @@ class FrontController extends Controller
         $meals = [];
 
         foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
-            foreach ($subCategory->userMeals->where('user_plan_id', $planId) as $meal) {
+            foreach ($subCategory->userMeals->where('user_plan_id', $planId)->where('user_category_id', $userCategory->id) as $meal) {
+                // TODO: Frontend side slider implemente then remove this condition
                 if (count($meals) < 3) {
                     $meals[] = $meal;
                 }
+
             }
+            // TODO: Frontend side slider implemente then remove this condition
             if (count($meals) >= 3) break;
         }
 

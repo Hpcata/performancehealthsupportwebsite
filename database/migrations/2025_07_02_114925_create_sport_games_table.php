@@ -13,12 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sport_games', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('image_path')->nullable();
-            $table->timestamps();
-        });
+        // Only create the table if it doesn't exist
+        if (! Schema::hasTable('sport_games')) {
+            Schema::create('sport_games', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('image_path')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,6 +31,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sport_games');
+        // Only drop the table if it exists
+        if (Schema::hasTable('sport_games')) {
+            Schema::dropIfExists('sport_games');
+        }
     }
 };
