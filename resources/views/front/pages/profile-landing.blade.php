@@ -43,41 +43,34 @@
             <div class="tabs">
                 @php $firstTab = true; @endphp
                 @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
-                @php
-                $category = $userCategory->category;
-                $hasValidMeal = $userCategory->userSubCategories()
-                    ->where('user_plan_id', $userPlan->id)
-                    ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
-                        $q->where('user_plan_id', $userPlan->id)
-                        ->where('user_category_id', $userCategory->id);
-                    })->exists();
-                @endphp
+                    @php
+                    $category = $userCategory->category;
+                    $hasValidMeal = $userCategory->userSubCategories()
+                        ->where('user_plan_id', $userPlan->id)
+                        ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                            $q->where('user_plan_id', $userPlan->id)
+                            ->where('user_category_id', $userCategory->id);
+                        })->exists();
+                    @endphp
 
-                @if ($hasValidMeal && $category)
-                <button
-                    class="tab {{ $firstTab ? 'active' : '' }}"
-                    data-category-id="{{ $category->id }}"
-                    data-plan-id="{{ $userPlan->id }}">
-                    {{ $category->title }}
-                </button>
-                @php $firstTab = false; @endphp
-                @endif
+                    @if ($hasValidMeal && $category)
+                        <button
+                            class="tab {{ $firstTab ? 'active' : '' }}"
+                            data-category-id="{{ $category->id }}"
+                            data-plan-id="{{ $userPlan->id }}">
+                            {{ $category->title }}
+                        </button>
+                        @php $firstTab = false; @endphp
+                    @endif
                 @endforeach
             </div>
 
             <div class="tab-content challenges">
                 <div class="horizontal-scroll-arrow-wrapper">
-                  
-
-    <div class="challenge-cards horizontal-scroll" id="meal-cards-wrapper">
-        <p>Loading meals...</p>
-    </div>
-
-
-</div>
-                <!-- <div class="position-relative challenge-cards horizontal-scroll " id="meal-cards-wrapper">
-                    <p>Loading meals...</p>
-                </div> -->
+                    <div class="challenge-cards horizontal-scroll" id="meal-cards-wrapper">
+                        <p>Loading meals...</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -89,13 +82,13 @@
                 <!-- <a href="/challenges" class="see-all">See all</a> -->
             </div>
             <div class="challenge-cards horizontal-scroll">
-             
+
                 <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-                   
+
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
@@ -106,7 +99,7 @@
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
                         alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
                     <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
-                     
+
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>10</span>
@@ -117,7 +110,7 @@
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-                    
+
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
@@ -128,14 +121,14 @@
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-                    
+
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
                     </div>
                 </div>
-           
-              
+
+
             </div>
         </section>
 
