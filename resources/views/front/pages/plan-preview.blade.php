@@ -117,7 +117,7 @@
 </head>
 <body>
 @if($printAllmeal)
-    <div id="pdf-content" style="padding-bottom:60px; position:relative;">
+    <div id="pdf-content" style="padding-bottom:0px; position:relative;">
         @foreach($userPlans as $userPlan)
             <div class="header-box">
                 <figure class="logo">

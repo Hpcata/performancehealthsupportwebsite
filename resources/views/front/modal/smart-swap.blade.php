@@ -39,11 +39,11 @@
                   <span class="swap-title">Oats with banana and berries</span>
 
                   <button
-                    class="dialog-close meal-item-modal-close"
+                    class="meal-item-modal-close btn-close"
                     id="dialog-close-btn"
                     aria-label="Close"
                   >
-                    &times;
+                   
                   </button>
                 </div>
                 <div class="swap-list">
