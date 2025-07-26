@@ -1235,7 +1235,7 @@ body {
     height: 100vh;
 }
 .hero-background {
-    background-image: url("http://localhost/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/cricket.jpg");
+    background-image: url(/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/hero-section/cricket.jpg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
