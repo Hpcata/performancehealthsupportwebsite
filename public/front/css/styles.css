@@ -1782,58 +1782,9 @@ body {
     color: #6b7280;
     line-height: 1.3;
 }
-.horizontal-scroll-arrow-wrapper {
-    position: relative;
-}
 
-.scroll-arrow-right {
-    position: absolute;
-    top: 39%;
-    right: 10px;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 12px;
-    width: 27px;
-    height: 18%;
-    font-size: 1.5rem;
-    color: #333;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 2;
-    transition: background 0.2s;
-    background: #000;
-    /* border-radius: 0 12px 12px 0; */
-}
 
-.scroll-arrow-left {
-    position: absolute;
-    top: 39%;
-    left: 10px;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 12px;
-    width: 27px;
-    height: 18%;
-    font-size: 1.5rem;
-    color: #333;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 2;
-    transition: background 0.2s;
-    background: #000;
-    /* border-radius: 12px 0 0 12px; */
-}
-.scroll-arrow-left:active {
-    background: #eee;
-}
+
 /* Remove default blue outline on all buttons and checkboxes when focused */
 button:focus,
 .btn:focus,

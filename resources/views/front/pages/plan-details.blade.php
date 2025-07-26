@@ -123,14 +123,8 @@
                                             <div class="section-header">
                                                 <h2>{{ $subCategory->subCategory->title ?? '' }} ({{ $mealCount }})</h2>
                                             </div>
-                                            <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                                                @if($mealCount > 3)
-                                                    <div class="scroll-arrow-left" aria-label="Scroll left">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-                                                            <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                        </svg>
-                                                    </div>
-                                                @endif
+                                          
+                                               
 
                                                 <div class="challenge-cards horizontal-scroll">
                                                     @foreach ($meals as $meal)
@@ -157,14 +151,8 @@
                                                     @endforeach
                                                 </div>
 
-                                                @if($mealCount > 3)
-                                                    <div class="scroll-arrow-right" aria-label="Scroll right">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
-                                                            <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                        </svg>
-                                                    </div>
-                                                @endif
-                                            </div>
+                                               
+                                          
                                         </section>
                                     @endif
                                 @endif
@@ -1428,28 +1416,7 @@
         $(this).find('.modal-body').html('');
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Blade inline script: DOMContentLoaded fired');
-        document.querySelectorAll('.horizontal-scroll-arrow-wrapper').forEach(function(wrapper) {
-          const scrollContainer = wrapper.querySelector('.horizontal-scroll');
-          const leftArrow = wrapper.querySelector('.scroll-arrow-left');
-          const rightArrow = wrapper.querySelector('.scroll-arrow-right');
-          if (leftArrow && scrollContainer) {
-            leftArrow.addEventListener('click', function(e) {
-              e.preventDefault();
-              console.log('Blade inline: Left arrow clicked');
-              scrollContainer.scrollBy({ left: -scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
-            });
-          }
-          if (rightArrow && scrollContainer) {
-            rightArrow.addEventListener('click', function(e) {
-              e.preventDefault();
-              console.log('Blade inline: Right arrow clicked');
-              scrollContainer.scrollBy({ left: scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
-            });
-          }
-        });
-    });
+
 
 </script>
 
