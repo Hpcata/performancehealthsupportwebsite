@@ -52,10 +52,10 @@
                                 <th>ID</th>
                                 <th>Title</th>
                                 <th>Image</th>
+                                <th>Total Energy (kJ)</th>
                                 <th>Total Protein (g)</th>
                                 <th>Total Carbs (g)</th>
                                 <th>Total Fat (g)</th>
-                                <th>Total Energy (kJ)</th>
                                 <th>Description</th>
                                 <!-- <th>Created At</th> -->
                                 <th>Sub Categories</th>
@@ -101,6 +101,13 @@
                 {
                     data: "items",
                     render: function (data) {
+                        let totalEnergy = data.reduce((sum, item) => sum + parseFloat(item.pivot.energy || 0), 0);
+                        return totalEnergy.toFixed(2) + " kJ";
+                    }
+                },
+                {
+                    data: "items",
+                    render: function (data) {
                         let totalProtein = data.reduce((sum, item) => sum + parseFloat(item.pivot.protein || 0), 0);
                         return totalProtein.toFixed(2) + " g";
                     }
@@ -117,13 +124,6 @@
                     render: function (data) {
                         let totalfats = data.reduce((sum, item) => sum + parseFloat(item.pivot.fat || 0), 0);
                         return totalfats.toFixed(2) + " g";
-                    }
-                },
-                {
-                    data: "items",
-                    render: function (data) {
-                        let totalEnergy = data.reduce((sum, item) => sum + parseFloat(item.pivot.energy || 0), 0);
-                        return totalEnergy.toFixed(2) + " kJ";
                     }
                 },
                 {
