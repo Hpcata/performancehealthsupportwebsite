@@ -1,4 +1,3 @@
-console.log('script.js loaded at top');
 function playVideoInCard(e) {
     const t = document.getElementById(`video-player-${e}`),
         o = t.querySelector(".video-backdrop"),
@@ -10,7 +9,10 @@ function playVideoInCard(e) {
         n.play(),
         t.classList.add("playing"),
         n.addEventListener("ended", () => {
-            (o.style.display = "block"), (s.style.display = "flex"), (n.style.display = "none"), t.classList.remove("playing");
+            (o.style.display = "block"),
+                (s.style.display = "flex"),
+                (n.style.display = "none"),
+                t.classList.remove("playing");
         }),
         n.addEventListener("click", () => {
             n.paused ? n.play() : n.pause();
@@ -21,23 +23,41 @@ document.addEventListener("DOMContentLoaded", () => {
         t = document.querySelector(".meal-cards"),
         o = {
             breakfast: [
-                { name: "Energy breakfast Oats with banana and berries", image: "images/food1.webp" },
-                { name: "Protein Pancakes with Greek Yogurt", image: "images/food2.webp" },
+                {
+                    name: "Energy breakfast Oats with banana and berries",
+                    image: "images/food1.webp",
+                },
+                {
+                    name: "Protein Pancakes with Greek Yogurt",
+                    image: "images/food2.webp",
+                },
                 { name: "Avocado Toast with Eggs", image: "images/food1.webp" },
             ],
             lunch: [
-                { name: "Grilled Chicken Salad Bowl", image: "images/food1.webp" },
+                {
+                    name: "Grilled Chicken Salad Bowl",
+                    image: "images/food1.webp",
+                },
                 { name: "Quinoa Power Bowl", image: "images/food2.webp" },
                 { name: "Turkey and Hummus Wrap", image: "images/food1.webp" },
             ],
             dinner: [
-                { name: "Salmon with Sweet Potato", image: "images/food1.webp" },
+                {
+                    name: "Salmon with Sweet Potato",
+                    image: "images/food1.webp",
+                },
                 { name: "Lean Beef Stir Fry", image: "images/food2.webp" },
                 { name: "Vegetarian Buddha Bowl", image: "images/food1.webp" },
             ],
             supplements: [
-                { name: "Pre-Workout Energy Boost", image: "images/food1.webp" },
-                { name: "Post-Workout Recovery Shake", image: "images/food2.webp" },
+                {
+                    name: "Pre-Workout Energy Boost",
+                    image: "images/food1.webp",
+                },
+                {
+                    name: "Post-Workout Recovery Shake",
+                    image: "images/food2.webp",
+                },
                 { name: "Daily Multivitamin Pack", image: "images/food1.webp" },
             ],
             snacks: [
@@ -47,19 +67,25 @@ document.addEventListener("DOMContentLoaded", () => {
             ],
             drinks: [
                 { name: "Green Smoothie Blend", image: "images/food1.webp" },
-                { name: "Electrolyte Sports Drink", image: "images/food2.webp" },
+                {
+                    name: "Electrolyte Sports Drink",
+                    image: "images/food2.webp",
+                },
                 { name: "Protein Recovery Shake", image: "images/food1.webp" },
             ],
         };
     e.forEach((n) => {
         n.addEventListener("click", function () {
-            e.forEach((e) => e.classList.remove("active")), this.classList.add("active");
+            e.forEach((e) => e.classList.remove("active")),
+                this.classList.add("active");
             const n = this.getAttribute("data-tab");
             !(function (e) {
                 (t.innerHTML = ""),
                     e.forEach((e) => {
                         const o = document.createElement("div");
-                        (o.className = "meal-card"), (o.innerHTML = `\n                <img src="${e.image}" alt="${e.name}">\n                <h3>${e.name}</h3>\n            `), t.appendChild(o);
+                        (o.className = "meal-card"),
+                            (o.innerHTML = `\n                <img src="${e.image}" alt="${e.name}">\n                <h3>${e.name}</h3>\n            `),
+                            t.appendChild(o);
                     });
             })(o[n] || o.breakfast);
         });
@@ -91,25 +117,27 @@ document.addEventListener("DOMContentLoaded", () => {
             e.addEventListener("mouseleave", function () {
                 this.style.transform = "translateY(0)";
             });
-    })
-    // document.querySelectorAll(".dropdown").forEach((e) => {
-    //     let t;
-    //     e.addEventListener("mouseenter", function () {
-    //         clearTimeout(t);
-    //         const e = this.querySelector(".dropdown-content");
-    //         (e.style.opacity = "1"), (e.style.visibility = "visible"), (e.style.transform = "translateY(0)");
-    //     }),
-    //         e.addEventListener("mouseleave", function () {
-    //             const e = this.querySelector(".dropdown-content");
-    //             t = setTimeout(() => {
-    //                 (e.style.opacity = "0"), (e.style.visibility = "hidden"), (e.style.transform = "translateY(-10px)");
-    //             }, 100);
-    //         });
-    // });
+    });
+// document.querySelectorAll(".dropdown").forEach((e) => {
+//     let t;
+//     e.addEventListener("mouseenter", function () {
+//         clearTimeout(t);
+//         const e = this.querySelector(".dropdown-content");
+//         (e.style.opacity = "1"), (e.style.visibility = "visible"), (e.style.transform = "translateY(0)");
+//     }),
+//         e.addEventListener("mouseleave", function () {
+//             const e = this.querySelector(".dropdown-content");
+//             t = setTimeout(() => {
+//                 (e.style.opacity = "0"), (e.style.visibility = "hidden"), (e.style.transform = "translateY(-10px)");
+//             }, 100);
+//         });
+// });
 const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     observer = new IntersectionObserver((e) => {
         e.forEach((e) => {
-            e.isIntersecting && ((e.target.style.opacity = "1"), (e.target.style.transform = "translateY(0)"));
+            e.isIntersecting &&
+                ((e.target.style.opacity = "1"),
+                (e.target.style.transform = "translateY(0)"));
         });
     }, observerOptions);
 function openVideoPopup(e) {
@@ -126,10 +154,14 @@ function toggleMobileMenu() {
     document.getElementById("mobile-menu").classList.toggle("open");
 }
 function openVideoPopup(e) {
-    (document.getElementById("popup-video").src = e), document.getElementById("video-popup").classList.add("show"), document.body.classList.add("no-scroll");
+    (document.getElementById("popup-video").src = e),
+        document.getElementById("video-popup").classList.add("show"),
+        document.body.classList.add("no-scroll");
 }
 function closeVideoPopup() {
-    document.getElementById("video-popup").classList.remove("show"), (document.getElementById("popup-video").src = ""), document.body.classList.remove("no-scroll");
+    document.getElementById("video-popup").classList.remove("show"),
+        (document.getElementById("popup-video").src = ""),
+        document.body.classList.remove("no-scroll");
 }
 function openFullscreenVideoPopup(e) {
     const t = document.getElementById("fullscreen-video-popup");
@@ -146,7 +178,13 @@ function openFullscreenVideoPopup(e) {
         (o.style.alignItems = "center"),
         (o.style.justifyContent = "center");
     const n = document.createElement("video");
-    (n.src = e), (n.controls = !0), (n.autoplay = !0), (n.style.width = "100vw"), (n.style.height = "100vh"), (n.style.objectFit = "contain"), (n.style.background = "#000");
+    (n.src = e),
+        (n.controls = !0),
+        (n.autoplay = !0),
+        (n.style.width = "100vw"),
+        (n.style.height = "100vh"),
+        (n.style.objectFit = "contain"),
+        (n.style.background = "#000");
     const s = document.createElement("span");
     (s.innerHTML = "&times;"),
         (s.style.position = "absolute"),
@@ -171,7 +209,10 @@ function openFullscreenVideoPopup(e) {
         document.body.appendChild(o);
 }
 document.querySelectorAll("section").forEach((e) => {
-    (e.style.opacity = "0"), (e.style.transform = "translateY(20px)"), (e.style.transition = "opacity 0.6s ease, transform 0.6s ease"), observer.observe(e);
+    (e.style.opacity = "0"),
+        (e.style.transform = "translateY(20px)"),
+        (e.style.transition = "opacity 0.6s ease, transform 0.6s ease"),
+        observer.observe(e);
 });
 const selectWrapper = document.querySelector(".select-wrapper"),
     select = document.querySelector(".two-line-select");
@@ -212,12 +253,14 @@ if (closeBtn2 && dialog) {
 }
 
 // Show smart-swap-body2 on info button click
-document.querySelectorAll('.swap-item-actions .smart-swap-btn img[alt="Info"]').forEach(function (img) {
-    img.parentElement.addEventListener("click", function () {
-        document.querySelector(".smart-swap-body").style.display = "none";
-        document.querySelector(".smart-swap-body2").style.display = "block";
+document
+    .querySelectorAll('.swap-item-actions .smart-swap-btn img[alt="Info"]')
+    .forEach(function (img) {
+        img.parentElement.addEventListener("click", function () {
+            document.querySelector(".smart-swap-body").style.display = "none";
+            document.querySelector(".smart-swap-body2").style.display = "block";
+        });
     });
-});
 
 // Close smart-swap-body2
 const closeBtn3 = document.getElementById("dialog-close-btn-3");
@@ -283,99 +326,116 @@ if (closeBtn3) {
 //         });
 //     }
 
-    // Download PDF functionality
-    const downloadPdfBtn = document.getElementById("download-pdf-btn");
-    if (downloadPdfBtn) {
-        downloadPdfBtn.addEventListener("click", function () {
-            const pdfContent = document.getElementById("pdf-content");
-            if (!pdfContent) return;
-            // Dynamically load html2pdf if not present
-            if (typeof html2pdf === "undefined") {
-                const script = document.createElement("script");
-                script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-                script.onload = () => {
-                    html2pdf()
-                        .set({
-                            margin: 0,
-                            filename: "nutrition-plan.pdf",
-                            image: { type: "jpeg", quality: 0.98 },
-                            html2canvas: { scale: 2 },
-                            jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
-                        })
-                        .from(pdfContent)
-                        .save();
-                };
-                document.body.appendChild(script);
-            } else {
+// Download PDF functionality
+const downloadPdfBtn = document.getElementById("download-pdf-btn");
+if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener("click", function () {
+        const pdfContent = document.getElementById("pdf-content");
+        if (!pdfContent) return;
+        // Dynamically load html2pdf if not present
+        if (typeof html2pdf === "undefined") {
+            const script = document.createElement("script");
+            script.src =
+                "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+            script.onload = () => {
                 html2pdf()
                     .set({
                         margin: 0,
                         filename: "nutrition-plan.pdf",
                         image: { type: "jpeg", quality: 0.98 },
                         html2canvas: { scale: 2 },
-                        jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
+                        jsPDF: {
+                            unit: "pt",
+                            format: "a4",
+                            orientation: "portrait",
+                        },
                     })
                     .from(pdfContent)
                     .save();
-            }
-        });
-    }
+            };
+            document.body.appendChild(script);
+        } else {
+            html2pdf()
+                .set({
+                    margin: 0,
+                    filename: "nutrition-plan.pdf",
+                    image: { type: "jpeg", quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: {
+                        unit: "pt",
+                        format: "a4",
+                        orientation: "portrait",
+                    },
+                })
+                .from(pdfContent)
+                .save();
+        }
+    });
+}
 
-    // Shopping List Modal logic
-    // const shoppingListBtn = document.querySelector(".btn-outline.btn");
-    // const shoppingListModal = document.getElementById("shopping-list-modal");
-    // const shoppingListClose = document.getElementById("shopping-list-close");
-    // if (shoppingListBtn && shoppingListModal && shoppingListClose) {
-    //     shoppingListBtn.addEventListener("click", function () {
-    //         shoppingListModal.style.display = "block";
-    //     });
-    //     shoppingListClose.addEventListener("click", function () {
-    //         shoppingListModal.style.display = "none";
-    //     });
-    //     shoppingListModal.addEventListener("click", function (e) {
-    //         if (e.target === shoppingListModal) {
-    //             shoppingListModal.style.display = "none";
-    //         }
-    //     });
-    // }
+// Shopping List Modal logic
+// const shoppingListBtn = document.querySelector(".btn-outline.btn");
+// const shoppingListModal = document.getElementById("shopping-list-modal");
+// const shoppingListClose = document.getElementById("shopping-list-close");
+// if (shoppingListBtn && shoppingListModal && shoppingListClose) {
+//     shoppingListBtn.addEventListener("click", function () {
+//         shoppingListModal.style.display = "block";
+//     });
+//     shoppingListClose.addEventListener("click", function () {
+//         shoppingListModal.style.display = "none";
+//     });
+//     shoppingListModal.addEventListener("click", function (e) {
+//         if (e.target === shoppingListModal) {
+//             shoppingListModal.style.display = "none";
+//         }
+//     });
+// }
 
-    // Shopping List PDF download
-    const shoppingListDownload = document.getElementById("shopping-list-download");
-    if (shoppingListDownload) {
-        shoppingListDownload.addEventListener("click", function () {
-            const content = document.getElementById("shopping-list-content");
-            if (!content) return;
-            if (typeof html2pdf === "undefined") {
-                const script = document.createElement("script");
-                script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-                script.onload = () => {
-                    html2pdf()
-                        .set({
-                            margin: 0,
-                            filename: "shopping-list.pdf",
-                            image: { type: "jpeg", quality: 0.98 },
-                            html2canvas: { scale: 2 },
-                            jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
-                        })
-                        .from(content)
-                        .save();
-                };
-                document.body.appendChild(script);
-            } else {
+// Shopping List PDF download
+const shoppingListDownload = document.getElementById("shopping-list-download");
+if (shoppingListDownload) {
+    shoppingListDownload.addEventListener("click", function () {
+        const content = document.getElementById("shopping-list-content");
+        if (!content) return;
+        if (typeof html2pdf === "undefined") {
+            const script = document.createElement("script");
+            script.src =
+                "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+            script.onload = () => {
                 html2pdf()
                     .set({
                         margin: 0,
                         filename: "shopping-list.pdf",
                         image: { type: "jpeg", quality: 0.98 },
                         html2canvas: { scale: 2 },
-                        jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
+                        jsPDF: {
+                            unit: "pt",
+                            format: "a4",
+                            orientation: "portrait",
+                        },
                     })
                     .from(content)
                     .save();
-            }
-        });
-    }
-
+            };
+            document.body.appendChild(script);
+        } else {
+            html2pdf()
+                .set({
+                    margin: 0,
+                    filename: "shopping-list.pdf",
+                    image: { type: "jpeg", quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: {
+                        unit: "pt",
+                        format: "a4",
+                        orientation: "portrait",
+                    },
+                })
+                .from(content)
+                .save();
+        }
+    });
+}
 
 // competition plan script
 function toggleSection(section) {
@@ -402,5 +462,3 @@ function updateCountdown() {
 
 // Initialize countdown
 setInterval(updateCountdown, 60000); // Update every minute
-
-// Add this inside your <script> tag or in a separate JS file

@@ -1838,10 +1838,7 @@ button:focus,
     /* overflow-y: auto;
     max-height: 60vh; */
 }
-.dialog-content {
-    overflow-y: auto;
-    max-height: 80vh;
-}
+
 /* Remove custom dropdown-menu rules that conflict with Bootstrap */
 .dropdown-menu {
     opacity: 1 !important;
@@ -2592,23 +2589,42 @@ height: 100%;
     opacity: 1;
     pointer-events: auto;
 }
-
+.dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
 @media (max-width: 1800px) {
     .downloadplan-inner-content {
         max-height: 510px;
     }
+    .dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
 }
 @media (max-width: 1680px) {
     .downloadplan-inner-content {
         max-height: 410px;
     }
+    .dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
 }
 @media (max-width: 1440px) {
     .downloadplan-inner-content {
         max-height: 350px;
     }
+    .dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
 }
 @media (max-width: 1024px) {
+    .dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
         .slider-arrow.right-arrow,
     .slider-arrow.left-arrow {
         display: none !important;

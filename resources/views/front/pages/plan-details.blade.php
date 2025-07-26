@@ -148,54 +148,7 @@
                                                             <h3>{{ $meal->meal->title }}</h3>
                                                             <div class="quick-view-overlay"><span style="">Quick View</span></div>
                                                         </div>
-                                                          <div class="challenge-card clickable"
-                                                            data-title="{{ $meal->meal->title }}"
-                                                            data-plan-id="{{ $userPlan->id }}"
-                                                            data-meal-id="{{ $meal->id }}"
-                                                            data-user-id="{{ $user->id }}"
-                                                            data-sub-category-id="{{ $subCategory->id }}"
-                                                            data-category-id="{{ $userCategory->id }}"
-                                                            data-user-plan-id="{{ $userPlan->id }}">
-                                                            <img
-                                                                src="{{ webAssets('storage/'.$meal->meal->image) }}"
-                                                                alt="{{ $meal->meal->title }}"
-                                                                height="252"
-                                                                width="160" />
-                                                            <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay">
-                                                                <span style="padding: 12px;
-                                                                    border-radius: 12px;
-                                                                    background-color: #0d6efd;
-                                                                    font-weight: 700;
-                                                                    cursor:pointer;">
-                                                                    Quick View
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                          <div class="challenge-card clickable"
-                                                            data-title="{{ $meal->meal->title }}"
-                                                            data-plan-id="{{ $userPlan->id }}"
-                                                            data-meal-id="{{ $meal->id }}"
-                                                            data-user-id="{{ $user->id }}"
-                                                            data-sub-category-id="{{ $subCategory->id }}"
-                                                            data-category-id="{{ $userCategory->id }}"
-                                                            data-user-plan-id="{{ $userPlan->id }}">
-                                                            <img
-                                                                src="{{ webAssets('storage/'.$meal->meal->image) }}"
-                                                                alt="{{ $meal->meal->title }}"
-                                                                height="252"
-                                                                width="160" />
-                                                            <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay">
-                                                                <span style="padding: 12px;
-                                                                border-radius: 12px;
-                                                                background-color: #0d6efd;
-                                                                font-weight: 700;
-                                                                cursor:pointer;">
-                                                                Quick View
-                                                                </span>
-                                                            </div>
-                                                        </div>
+                                                         
                                                     @endforeach
                                                 </div>
                                                <button class="right-arrow slider-arrow">
