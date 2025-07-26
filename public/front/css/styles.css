@@ -2296,7 +2296,7 @@ button:focus,
     background-color: #4a84dd !important;
 }
 .slider-arrow.right-arrow {
-height: 100%;
+    height: 100%;
     position: absolute;
     right: -63px;
     top: 40%;
@@ -2316,7 +2316,7 @@ height: 100%;
     top: 40%;
     transform: translateY(-50%);
     z-index: 2;
-     background: transparent;
+    background: transparent;
     border: none;
     width: 70px;
     height: 36px;
@@ -2927,20 +2927,20 @@ height: 100%;
 }
 @media (max-width: 600px) {
     .hero-content {
-    position: absolute;
-    bottom: 21px;
-}
-.hero-bottom {
-    color: #fff;
-    width: 96%;
-}
+        position: absolute;
+        bottom: 21px;
+    }
+    .hero-bottom {
+        color: #fff;
+        width: 96%;
+    }
     .shopping-list-wrap {
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -30%);
-    width: 95vw;
-    max-width: 800px;
-}
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -30%);
+        width: 95vw;
+        max-width: 800px;
+    }
     .modal-confirm .modal-content {
         width: 80%;
         margin: 0 auto;
@@ -3188,6 +3188,6 @@ height: 100%;
     }
 }
 
-#print-plan-modal .modal-title{
-font-size: 18px;
+#print-plan-modal .modal-title {
+    font-size: 18px;
 }

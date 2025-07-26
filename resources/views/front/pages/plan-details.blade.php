@@ -1486,8 +1486,6 @@
     });
 </script>
 <script>
-
-
 // card slider functionality
 $(document).ready(function() {
     // For each slider-wrapper (handles multiple carousels if present)

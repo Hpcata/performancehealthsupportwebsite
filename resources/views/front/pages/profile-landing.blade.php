@@ -66,12 +66,21 @@
             </div>
 
             <div class="tab-content challenges">  
-                <div class="challenge-cards" id="meal-cards-wrapper">
+                  <div class="slider-wrapper" style="position:relative;">
+                                            <button class="left-arrow slider-arrow" >
+                                                <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </button>   
+                <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;"  id="meal-cards-wrapper">
                     <p>Loading meals...</p>
                 </div>
-                
-
-
+                 <button class="right-arrow slider-arrow">
+                                                    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
                 <!-- <div class="position-relative challenge-cards" id="meal-cards-wrapper">
                     <p>Loading meals...</p>
                 </div> -->
@@ -547,5 +556,45 @@
         </div>
     </div>
 </div>
+<script>
+// card slider functionality
+$(document).ready(function() {
+    // For each slider-wrapper (handles multiple carousels if present)
+    $('.slider-wrapper').each(function(idx) {
+        var $wrapper = $(this);
+        var $scroll = $wrapper.find('.challenge-cards');
+        var $cards = $scroll.find('.challenge-card');
+        var cardWidth = $cards.length ? $cards.outerWidth(true) : 200;
 
+        $wrapper.find('.left-arrow').on('click', function(e) {
+            e.preventDefault();
+            var before = $scroll.scrollLeft();
+            $scroll.animate({ scrollLeft: before - cardWidth }, 300, function() {
+                var after = $scroll.scrollLeft();
+                console.log(`[Slider ${idx}] Left arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+            });
+        });
+
+        $wrapper.find('.right-arrow').on('click', function(e) {
+            e.preventDefault();
+            var before = $scroll.scrollLeft();
+            $scroll.animate({ scrollLeft: before + cardWidth }, 300, function() {
+                var after = $scroll.scrollLeft();
+                console.log(`[Slider ${idx}] Right arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+            });
+        });
+    });
+});
+$(document).ready(function() {
+    $('.slider-wrapper').each(function() {
+        var $wrapper = $(this);
+        var $cards = $wrapper.find('.challenge-card');
+        if ($cards.length <= 1) {
+            $wrapper.find('.slider-arrow').hide();
+        } else {
+            $wrapper.find('.slider-arrow').show();
+        }
+    });
+});
+</script>
 @endsection
