@@ -60,7 +60,7 @@ $auth = auth()->guard('web')->check();
             <div class="nav-item dropdown">
                 <span>Resources <i class="fas fa-chevron-down"></i></span>
                 <div class="dropdown-content">
-                    <a href="#">Supplement Scanner</a>
+                    <a href="#" id="scanner-btn">Supplement Scanner</a>
                     <a href="#">Level-Up Library</a>
                     <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank">BioHealth Passport</a>
                 </div>
