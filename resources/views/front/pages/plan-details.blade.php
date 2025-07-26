@@ -119,14 +119,18 @@
 
                                 @if ($mealCount > 0)
                                     @if(isset($subCategory->subCategory))
+                                      
                                         <section class="challenges" aria-label="Meal Plan Categories">
                                             <div class="section-header">
                                                 <h2>{{ $subCategory->subCategory->title ?? '' }} ({{ $mealCount }})</h2>
                                             </div>
-                                          
-                                               
-
-                                                <div class="challenge-cards horizontal-scroll">
+                                            <div class="" style="position:relative;">
+                                            <button class="slider-arrow left-arrow" >
+    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>   
+                                                <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
                                                     @foreach ($meals as $meal)
                                                         <div class="challenge-card clickable"
                                                             data-title="{{ $meal->meal->title }}"
@@ -142,18 +146,63 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay"><span style="padding: 12px;
-    border-radius: 12px;
-    background-color: #0d6efd;
-    font-weight: 700;
-    cursor:pointer;">Quick View</span></div>
+                                                            <div class="quick-view-overlay"><span style="">Quick View</span></div>
                                                         </div>
+
+
+
+
+                                                          <div class="challenge-card clickable"
+                                                            data-title="{{ $meal->meal->title }}"
+                                                            data-plan-id="{{ $userPlan->id }}"
+                                                            data-meal-id="{{ $meal->id }}"
+                                                            data-user-id="{{ $user->id }}"
+                                                            data-sub-category-id="{{ $subCategory->id }}"
+                                                            data-category-id="{{ $userCategory->id }}"
+                                                            data-user-plan-id="{{ $userPlan->id }}">
+                                                            <img
+                                                                src="{{ webAssets('storage/'.$meal->meal->image) }}"
+                                                                alt="{{ $meal->meal->title }}"
+                                                                height="252"
+                                                                width="160" />
+                                                            <h3>{{ $meal->meal->title }}</h3>
+                                                            <div class="quick-view-overlay"><span style="padding: 12px;
+                                        border-radius: 12px;
+                                        background-color: #0d6efd;
+                                        font-weight: 700;
+                                        cursor:pointer;">Quick View</span></div>
+                                                        </div>
+                                                          <div class="challenge-card clickable"
+                                                            data-title="{{ $meal->meal->title }}"
+                                                            data-plan-id="{{ $userPlan->id }}"
+                                                            data-meal-id="{{ $meal->id }}"
+                                                            data-user-id="{{ $user->id }}"
+                                                            data-sub-category-id="{{ $subCategory->id }}"
+                                                            data-category-id="{{ $userCategory->id }}"
+                                                            data-user-plan-id="{{ $userPlan->id }}">
+                                                            <img
+                                                                src="{{ webAssets('storage/'.$meal->meal->image) }}"
+                                                                alt="{{ $meal->meal->title }}"
+                                                                height="252"
+                                                                width="160" />
+                                                            <h3>{{ $meal->meal->title }}</h3>
+                                                            <div class="quick-view-overlay"><span style="padding: 12px;
+                                        border-radius: 12px;
+                                        background-color: #0d6efd;
+                                        font-weight: 700;
+                                        cursor:pointer;">Quick View</span></div>
+                                                        </div>
+                                                        
                                                     @endforeach
                                                 </div>
-
-                                               
-                                          
+                                               <button class="slider-arrow right-arrow">
+    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+                                            </div>
                                         </section>
+
                                     @endif
                                 @endif
                             @endforeach
@@ -282,9 +331,9 @@
                 <h5 class="modal-title" id="printPlanModalLabel">Download Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="padding: 0;">
-                <div style="flex: 1 1 auto; overflow-y: auto; padding: 16px 16px 0 16px;">
-                    <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center; overflow:auto;" class="downloadplan-inner-content">
+            <div class="modal-body" style="padding: 0;    overflow: auto;">
+                <div style="flex: 1 1 auto; padding: 16px 16px 0 16px;">
+                    <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center;" class="downloadplan-inner-content">
                        
                     </div>
                 </div>
@@ -1479,5 +1528,47 @@
             });
         }
     });
+</script>
+<script>
+// ...existing code...
+$(document).ready(function() {
+    // For each slider-wrapper (handles multiple carousels if present)
+    $('.slider-wrapper').each(function(idx) {
+        var $wrapper = $(this);
+        var $scroll = $wrapper.find('.challenge-cards');
+        var $cards = $scroll.find('.challenge-card');
+        var cardWidth = $cards.length ? $cards.outerWidth(true) : 200;
+
+        $wrapper.find('.left-arrow').on('click', function(e) {
+            e.preventDefault();
+            var before = $scroll.scrollLeft();
+            $scroll.animate({ scrollLeft: before - cardWidth }, 300, function() {
+                var after = $scroll.scrollLeft();
+                console.log(`[Slider ${idx}] Left arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+            });
+        });
+
+        $wrapper.find('.right-arrow').on('click', function(e) {
+            e.preventDefault();
+            var before = $scroll.scrollLeft();
+            $scroll.animate({ scrollLeft: before + cardWidth }, 300, function() {
+                var after = $scroll.scrollLeft();
+                console.log(`[Slider ${idx}] Right arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+            });
+        });
+    });
+});
+// ...existing code...
+$(document).ready(function() {
+    $('.slider-wrapper').each(function() {
+        var $wrapper = $(this);
+        var $cards = $wrapper.find('.challenge-card');
+        if ($cards.length <= 4) {
+            $wrapper.find('.slider-arrow').hide();
+        } else {
+            $wrapper.find('.slider-arrow').show();
+        }
+    });
+});
 </script>
 @endsection

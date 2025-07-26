@@ -403,3 +403,4 @@ function updateCountdown() {
 // Initialize countdown
 setInterval(updateCountdown, 60000); // Update every minute
 
+// Add this inside your <script> tag or in a separate JS file
