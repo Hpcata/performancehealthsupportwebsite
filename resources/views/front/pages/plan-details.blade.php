@@ -36,7 +36,7 @@
                 <div class="hero-overlay"></div>
             </div>
 
-            <div class="hero-content">
+            <div class="hero-content container">
                 <div class="hero-bottom">
                     <h1 class="hero-title">Training Nutrition Plan</h1>
 
