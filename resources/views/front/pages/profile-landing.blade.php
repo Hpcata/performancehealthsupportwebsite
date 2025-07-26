@@ -65,22 +65,11 @@
                 @endforeach
             </div>
 
-            <div class="tab-content challenges">
-              
-                  
-                                            <button class="slider-arrow left-arrow" >
-    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-</button>   
-    <div class="challenge-cards" id="meal-cards-wrapper">
-        <p>Loading meals...</p>
-    </div>
-  <button class="slider-arrow right-arrow">
-    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-</button>
+            <div class="tab-content challenges">  
+                <div class="challenge-cards" id="meal-cards-wrapper">
+                    <p>Loading meals...</p>
+                </div>
+                
 
 
                 <!-- <div class="position-relative challenge-cards" id="meal-cards-wrapper">
@@ -97,11 +86,8 @@
                 <!-- <a href="/challenges" class="see-all">See all</a> -->
             </div>
             <div class="slider-container">
-                                                     <button class="slider-arrow slider-arrow-prev"><</button>
-                                                     <div class="challenge-cards" id="customize-controls">
-                                                 </div>
-                                                 <button class="slider-arrow slider-arrow-next">></button>
-             
+                                                 
+             <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
                 <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
@@ -146,7 +132,7 @@
                         <span>30</span>
                     </div>
                 </div>
-           
+           </div>
               
             </div>
         </section>

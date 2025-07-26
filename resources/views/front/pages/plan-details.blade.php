@@ -124,12 +124,12 @@
                                             <div class="section-header">
                                                 <h2>{{ $subCategory->subCategory->title ?? '' }} ({{ $mealCount }})</h2>
                                             </div>
-                                            <div class="" style="position:relative;">
-                                            <button class="slider-arrow left-arrow" >
-    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-</button>   
+                                            <div class="slider-wrapper" style="position:relative;">
+                                            <button class="left-arrow slider-arrow" >
+                                                <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </button>   
                                                 <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
                                                     @foreach ($meals as $meal)
                                                         <div class="challenge-card clickable"
@@ -148,10 +148,6 @@
                                                             <h3>{{ $meal->meal->title }}</h3>
                                                             <div class="quick-view-overlay"><span style="">Quick View</span></div>
                                                         </div>
-
-
-
-
                                                           <div class="challenge-card clickable"
                                                             data-title="{{ $meal->meal->title }}"
                                                             data-plan-id="{{ $userPlan->id }}"
@@ -166,11 +162,15 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay"><span style="padding: 12px;
-                                        border-radius: 12px;
-                                        background-color: #0d6efd;
-                                        font-weight: 700;
-                                        cursor:pointer;">Quick View</span></div>
+                                                            <div class="quick-view-overlay">
+                                                                <span style="padding: 12px;
+                                                                    border-radius: 12px;
+                                                                    background-color: #0d6efd;
+                                                                    font-weight: 700;
+                                                                    cursor:pointer;">
+                                                                    Quick View
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                           <div class="challenge-card clickable"
                                                             data-title="{{ $meal->meal->title }}"
@@ -186,20 +186,23 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay"><span style="padding: 12px;
-                                        border-radius: 12px;
-                                        background-color: #0d6efd;
-                                        font-weight: 700;
-                                        cursor:pointer;">Quick View</span></div>
+                                                            <div class="quick-view-overlay">
+                                                                <span style="padding: 12px;
+                                                                border-radius: 12px;
+                                                                background-color: #0d6efd;
+                                                                font-weight: 700;
+                                                                cursor:pointer;">
+                                                                Quick View
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        
                                                     @endforeach
                                                 </div>
-                                               <button class="slider-arrow right-arrow">
-    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-</button>
+                                               <button class="right-arrow slider-arrow">
+                                                    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                                </button>
                                             </div>
                                         </section>
 
@@ -329,7 +332,7 @@
         <div class="modal-content" style="border-radius: 12px;">
             <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
                 <h5 class="modal-title" id="printPlanModalLabel">Download Plan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="meal-item-modal-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="padding: 0;    overflow: auto;">
                 <div style="flex: 1 1 auto; padding: 16px 16px 0 16px;">
@@ -1530,7 +1533,9 @@
     });
 </script>
 <script>
-// ...existing code...
+
+
+// card slider functionality
 $(document).ready(function() {
     // For each slider-wrapper (handles multiple carousels if present)
     $('.slider-wrapper').each(function(idx) {
@@ -1558,7 +1563,6 @@ $(document).ready(function() {
         });
     });
 });
-// ...existing code...
 $(document).ready(function() {
     $('.slider-wrapper').each(function() {
         var $wrapper = $(this);

@@ -2300,16 +2300,15 @@ button:focus,
     background-color: #4a84dd !important;
 }
 .slider-arrow.right-arrow {
+height: 100%;
     position: absolute;
-    right: -50px;
+    right: -63px;
     top: 40%;
     transform: translateY(-50%);
     z-index: 2;
-    background: #fff;
+    background: transparent;
     border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 70px;
     box-shadow: none;
     display: flex;
     align-items: center;
@@ -2317,14 +2316,13 @@ button:focus,
 }
 .slider-arrow.left-arrow {
     position: absolute;
-    left: -50px;
+    left: -63px;
     top: 40%;
     transform: translateY(-50%);
     z-index: 2;
-    background: #fff;
+     background: transparent;
     border: none;
-    border-radius: 50%;
-    width: 36px;
+    width: 70px;
     height: 36px;
     box-shadow: none;
     display: flex;
@@ -2583,6 +2581,19 @@ button:focus,
     display: flex;
     flex-direction: column;
 }
+/* Hide arrows by default */
+.slider-wrapper .slider-arrow {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+/* Show arrows on hover */
+.slider-wrapper:hover .slider-arrow {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 @media (max-width: 1800px) {
     .downloadplan-inner-content {
         max-height: 510px;
@@ -2599,6 +2610,10 @@ button:focus,
     }
 }
 @media (max-width: 1024px) {
+        .slider-arrow.right-arrow,
+    .slider-arrow.left-arrow {
+        display: none !important;
+    }
     #recipeDialogModal .dialog-header {
         flex-direction: column-reverse;
     }
@@ -2916,10 +2931,7 @@ button:focus,
     .mobile-menu-toggle {
         margin: 0 !important;
     }
-    .slider-arrow.right-arrow,
-    .slider-arrow.left-arrow {
-        display: none !important;
-    }
+
     .flex-wrapper {
         flex-direction: column;
         gap: 10px;
@@ -3151,4 +3163,8 @@ button:focus,
     #print-plan-modal .modal-content {
         max-height: 80vh;
     }
+}
+
+#print-plan-modal .modal-title{
+font-size: 18px;
 }
