@@ -462,3 +462,19 @@ function updateCountdown() {
 
 // Initialize countdown
 setInterval(updateCountdown, 60000); // Update every minute
+
+ // Target all horizontal scroll containers
+$(document).ready(function() {
+   
+    $('.challenge-cards, .challenges .challenge-cards, .surfing-videos .video-grid, .training-plan .meal-cards, .consults-plans-grid').each(function() {
+        var $el = $(this);
+        var scrollTimeout;
+        $el.on('scroll', function() {
+            $el.addClass('show-scrollbar');
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(function() {
+                $el.removeClass('show-scrollbar');
+            }, 700); // Hide after 700ms of no scroll
+        });
+    });
+});

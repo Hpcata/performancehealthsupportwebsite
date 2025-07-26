@@ -280,7 +280,7 @@
 </main>
 
 <!-- Bootstrap Modal for Download Plan (keep your content inside) -->
-<div class="modal" id="print-plan-modal" tabindex="-1" aria-labelledby="printPlanModalLabel" aria-hidden="true">
+<div class="modal print-plan-modal" id="print-plan-modal" tabindex="-1" aria-labelledby="printPlanModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content" style="border-radius: 12px;">
             <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
@@ -319,7 +319,7 @@
         </div>
         </div>
         <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; background-color:#fff; border-radius:0 0 12px 12px; ">
-        <button id="print-shopping-list" class="btn btn-primary">Print Shopping List</button>
+        <button id="print-shopping-list" class="btn btn-primary">Create shopping list</button>
         </div>
     </div>
     </div>

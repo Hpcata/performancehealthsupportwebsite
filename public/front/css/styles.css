@@ -76,10 +76,11 @@ body {
     font-weight: 500;
     cursor: pointer;
 }
+
 .footer .footer-content .footer-nav a:hover,
 .header .nav-center .nav-item:hover,
 .header .nav-right .nav-item:hover {
-    color: #fff;
+      color:rgba(162, 197, 250, 1);
 }
 .header .nav-right {
     display: flex;
@@ -92,16 +93,21 @@ body {
     gap: 8px;
     align-items: center;
 }
+.header .nav-end:hover {
+    color:rgba(162, 197, 250, 1)
+}
+.header .nav-end:hover svg path{
+    fill:rgba(162, 197, 250, 1)
+}
 .header .nav-end .fas,
 .nav-item.dropdown .fas {
     font-size: 14px;
 }
 .dropdown .dropdown-content {
     position: absolute;
-    top: 100%;
+    top: 140%;
     left: 0;
     background: #fff;
-    border: 1px solid #e2e8f0;
     border-radius: 8px;
     box-shadow: 0 10px 25px rgb(0 0 0 / 0.1);
     min-width: 200px;
@@ -116,7 +122,7 @@ body {
     padding: 0.75rem 1rem;
     color: #626262;
     text-decoration: none;
-    border-bottom: 1px solid #f1f5f9;
+  border-radius: 8px ;
 }
 .dropdown .dropdown-content a:hover {
     background: #f8fafc;
@@ -1574,46 +1580,7 @@ body {
 .modal {
     /* z-index: 9999 !important; */
 }
-@media (max-width: 1024px) {
-    .mobile-menu-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: 1999;
-        transition: opacity 0.3s;
-        opacity: 0;
-    }
-    .responsive-download-plan {
-        flex-direction: column;
-    }
-    .responsive-download-plan .download-plan-food-img {
-        width: 80px !important;
-        height: 80px !important;
-        min-height: 80px !important;
-    }
-    #print-plan-modal .modal-content,
-    #shoppingListModal .modal-content {
-        max-height: 80vh;
-    }
-    .mobile-menu-overlay.open {
-        display: block;
-        opacity: 1;
-    }
 
-    .mobile-menu {
-        z-index: 2000;
-        transition: transform 0.3s;
-        transform: translateY(-120%);
-        border-radius: 0 0 0 18px;
-    }
-    .mobile-menu.open {
-        transform: translateY(0);
-    }
-}
 .share-dropdown {
     min-width: 270px;
     background: #fff;
@@ -1862,10 +1829,9 @@ button:focus,
 
 .recipe-dialog {
     background: #fff;
-    border-radius: 18px;
-    /* Updated shadow to match Figma: 0px 2.06px 4.11px rgba(0,0,0,0.08) */
+    border-radius: 12px;
     box-shadow: 0 2.06px 4.11px rgba(0, 0, 0, 0.08);
-    max-width: 790px;
+    /* max-width: 790px; */
     width: 100%;
     padding: 0;
     position: relative;
@@ -2592,6 +2558,23 @@ button:focus,
 .dialog-content {
     overflow-y: auto;
     max-height: 90vh;
+    scrollbar-width: none; /* Firefox */
+}
+.dialog-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+/* Show scrollbars when .show-scrollbar is added */
+.show-scrollbar {
+    scrollbar-width: thin !important; /* Firefox */
+}
+.show-scrollbar::-webkit-scrollbar {
+    display: block !important;
+    height: 8px;
+    background: #eee;
+}
+.show-scrollbar::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 8px;
 }
 @media (max-width: 1800px) {
     .downloadplan-inner-content {
@@ -2621,6 +2604,48 @@ button:focus,
 }
 }
 @media (max-width: 1024px) {
+      .modal.print-plan-modal{
+        z-index: 9999 !important;
+    }
+    .mobile-menu-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1999;
+        transition: opacity 0.3s;
+        opacity: 0;
+    }
+    .responsive-download-plan {
+        flex-direction: column;
+    }
+    .responsive-download-plan .download-plan-food-img {
+        width: 80px !important;
+        height: 80px !important;
+        min-height: 80px !important;
+    }
+    #print-plan-modal .modal-content,
+    #shoppingListModal .modal-content {
+        max-height: 80vh;
+    }
+    .mobile-menu-overlay.open {
+        display: block;
+        opacity: 1;
+    }
+
+    .mobile-menu {
+        z-index: 2000;
+        transition: transform 0.3s;
+        transform: translateY(-120%);
+        border-radius: 0 0 0 18px;
+    }
+    .mobile-menu.open {
+        transform: translateY(0);
+    }
+
     .dialog-content {
     overflow-y: auto;
     max-height: 90vh;
@@ -2751,7 +2776,7 @@ button:focus,
     .mobile-menu-list {
         list-style: none;
         margin: 0;
-        margin: 72px 0 0 0;
+        margin: 72px 0 0 0 !important;
         font-size: 1.1rem;
         border-top: 1px solid #ffffff4a;
         padding: 0;
@@ -2823,6 +2848,7 @@ button:focus,
     }
 }
 @media (max-width: 768px) {
+   
     .modal-lg .modal-content,
     #print-plan-modal .modal-content,
     #shoppingListModal .modal-content {
@@ -2926,6 +2952,10 @@ button:focus,
     }
 }
 @media (max-width: 600px) {
+   
+    #print-plan-modal .modal-content, #shoppingListModal .modal-content {
+    max-height: 70vh;
+}
     .hero-content {
         position: absolute;
         bottom: 21px;
