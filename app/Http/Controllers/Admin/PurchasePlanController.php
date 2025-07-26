@@ -1647,7 +1647,7 @@ class PurchasePlanController extends Controller
             }])
             ->get()
             ->groupBy('id');
-            
+
         foreach ($mealTimesData as $data) {
             $planId = $data['plan_id'];
             $mealTimeId = $data['meal_time_id'];
@@ -1704,27 +1704,63 @@ class PurchasePlanController extends Controller
                 $userMeals = collect();
 
                 if ($userMealTimes->isNotEmpty()) {
-                    $userMeals = $userMealTimes->first()->userSubCategories->flatMap(function ($category) use ($userPlan) {
-                        return $category->userMeals->map(function ($userMeal) use ($userPlan) {
-                            $userItemsData = $userMeal->userItems->where('user_plan_id', $userPlan->id)->toArray();
-                            $itemIds = array_column($userItemsData, 'id');
+                    $firstMealTime = $userMealTimes->first();
 
-                            $items = !empty($itemIds) ? DB::table('items')
-                                ->selectRaw('SUM(carbs) as carbs, SUM(protein) as protein, SUM(fat) as fat, SUM(energy) as energy')
-                                ->whereIn('id', $itemIds)
-                                ->first() : (object) ['carbs' => 0, 'protein' => 0, 'fat' => 0, 'energy' => 0];
+                    if ($firstMealTime) {
+                        $userSubCategories = $firstMealTime->userSubCategories;
 
-                            return [
-                                'id' => $userMeal->id,
-                                'name' => $userMeal->meal_name,
-                                'image' => $userMeal->meal && $userMeal->meal->image ? asset('private/public/storage/' . $userMeal->meal->image) : null,
-                                'carbs' => round($items->carbs ?? 0, 2),
-                                'protein' => round($items->protein ?? 0, 2),
-                                'fat' => round($items->fat ?? 0, 2),
-                                'energy' => round($items->energy ?? 0, 2),
-                            ];
+                        // Gather all item IDs for this user plan
+                        $allItemIds = $userSubCategories->flatMap(function ($category) use ($userPlan) {
+                            return $category->userMeals->flatMap(function ($userMeal) use ($userPlan) {
+                                return $userMeal->userItems
+                                    ->where('user_plan_id', $userPlan->id)
+                                    ->pluck('id');
+                            });
+                        })->unique()->values();
+
+                        // Fetch nutrition data in bulk and typecast values
+                        $itemNutrition = DB::table('items')
+                            ->selectRaw('id,
+                                COALESCE(carbs, 0) as carbs,
+                                COALESCE(protein, 0) as protein,
+                                COALESCE(fat, 0) as fat,
+                                COALESCE(energy, 0) as energy')
+                            ->whereIn('id', $allItemIds)
+                            ->get()
+                            ->keyBy('id');
+
+                        // Map meals
+                        $userMeals = $userSubCategories->flatMap(function ($category) use ($userPlan, $itemNutrition) {
+                            return $category->userMeals->map(function ($userMeal) use ($userPlan, $itemNutrition) {
+                                $userItems = $userMeal->userItems
+                                    ->where('user_plan_id', $userPlan->id);
+
+                                $totals = ['carbs' => 0.0, 'protein' => 0.0, 'fat' => 0.0, 'energy' => 0.0];
+
+                                foreach ($userItems as $item) {
+                                    $nutrients = $itemNutrition->get($item->id);
+                                    if ($nutrients) {
+                                        $totals['carbs'] += (float) $nutrients->carbs;
+                                        $totals['protein'] += (float) $nutrients->protein;
+                                        $totals['fat'] += (float) $nutrients->fat;
+                                        $totals['energy'] += (float) $nutrients->energy;
+                                    }
+                                }
+
+                                return [
+                                    'id' => $userMeal->id,
+                                    'name' => $userMeal->meal_name,
+                                    'image' => $userMeal->meal && $userMeal->meal->image
+                                        ? asset('private/public/storage/' . $userMeal->meal->image)
+                                        : null,
+                                    'carbs' => round($totals['carbs'], 2),
+                                    'protein' => round($totals['protein'], 2),
+                                    'fat' => round($totals['fat'], 2),
+                                    'energy' => round($totals['energy'], 2),
+                                ];
+                            });
                         });
-                    });
+                    }
                 }
 
                 $meals = $meals->map(function ($meal) use ($userMeals) {
