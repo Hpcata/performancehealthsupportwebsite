@@ -1277,111 +1277,233 @@
         const payment = @json($payment);
         const userId = payment.user_id;
         const loader = $('#loader');
+        const isNewFlow = true;
 
-        $('.meal-time-checkbox').each(function() {
-            const checkbox = $(this);
-            const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
-            const mealTimeId = checkbox.data('mealtime-id');
-            const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
-            const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
-            const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
-            const mealSelect = $(dropdownId).find('select');
-            const mealTimeDetailsDiv = checkbox.closest('li').find('.mealTimeDetailsDiv');
+        if(isNewFlow) {
+            const mealTimeData = [];
+            $('.meal-time-checkbox').each(function() {
+                const checkbox = $(this);
+                const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
+                const mealTimeId = checkbox.data('mealtime-id');
+                const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
 
-            const selectedMealsArray = preSelectedMeals[planId]?.[mealTimeId] || [];
+                mealTimeData.push({
+                    planId,
+                    mealTimeId,
+                    userId,
+                    dropdownId: `#addMealDropdown${planId}_${mealTimeId}`,
+                    selectedMealsId: `#selectedMeals${planId}_${mealTimeId}`,
+                    mealTimeDetailsDiv: checkbox.closest('li').find('.mealTimeDetailsDiv'),
+                    selectedMealsArray: preSelectedMeals[planId]?.[mealTimeId] || []
+                });
+            });
 
-            if (selectedMealsArray.length > 0) {
-                $(dropdownId).show();
-                $(selectedMealsId).show();
-                mealTimeDetailsDiv.css('display', 'none');
-                initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
-
+            // Single AJAX call to fetch meals for all meal times
+            if (mealTimeData.length > 0) {
                 $.ajax({
-                    url: '{{ route("admin.get-meals-by-mealtime") }}',
+                    url: '{{ route("admin.get-meals-by-mealtime-batch") }}',
                     method: 'POST',
                     data: {
-                        plan_id: planId,
-                        meal_time_id: mealTimeId,
-                        user_id: userId,
+                        meal_times: mealTimeData.map(data => ({
+                            plan_id: data.planId,
+                            meal_time_id: data.mealTimeId,
+                            user_id: data.userId
+                        })),
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        if (response.success) {
-                            mealSelect.empty(); // Clear previous options
-
-                            const orderedMealIds = selectedMealsArray.map(id => parseInt(id));
-
-                            // Create a map for quick lookup
-                            const mealMap = {};
-                            response.meals.forEach(meal => {
-                                mealMap[meal.id] = meal;
-                            });
-
-                            // Add selected meals in the order from preSelectedMeals
-                            orderedMealIds.forEach(mealId => {
-                                const meal = mealMap[mealId];
-                                if (meal) {
-                                    mealSelect.append(new Option(meal.name, meal.id, true, true));
+                        if (response.success && response.meal_data) {
+                            mealTimeData.forEach(data => {
+                                const { planId, mealTimeId, dropdownId, selectedMealsId, mealTimeDetailsDiv, selectedMealsArray } = data;
+                                const mealSelect = $(dropdownId).find('select');
+    
+                                if (selectedMealsArray.length > 0) {
+                                    $(dropdownId).show();
+                                    $(selectedMealsId).show();
+                                    mealTimeDetailsDiv.css('display', 'none');
+                                    initializeSelect2(mealSelect, mealTimeId);
+    
+                                    const meals = response.meal_data[`${planId}_${mealTimeId}`] || [];
+                                    mealSelect.empty();
+    
+                                    const orderedMealIds = selectedMealsArray.map(id => parseInt(id));
+                                    const mealMap = {};
+                                    meals.forEach(meal => {
+                                        mealMap[meal.id] = meal;
+                                    });
+    
+                                    orderedMealIds.forEach(mealId => {
+                                        const meal = mealMap[mealId];
+                                        if (meal) {
+                                            mealSelect.append(new Option(meal.name, meal.id, true, true));
+                                        }
+                                    });
+    
+                                    meals.forEach(meal => {
+                                        if (!orderedMealIds.includes(meal.id)) {
+                                            mealSelect.append(new Option(meal.name, meal.id, false, false));
+                                        }
+                                    });
+    
+                                    const stringIds = orderedMealIds.map(String);
+                                    mealSelect.val(stringIds).trigger('change'); // update here
+                                    // previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
+                                } else {
+                                    $(dropdownId).find('input[type="checkbox"]').prop('checked', false);
+                                    $(dropdownId).hide();
+                                    $(selectedMealsId).hide();
+                                    mealTimeDetailsDiv.css('display', 'block');
                                 }
+    
+                                // Handle meal removal
+                                mealSelect.on('select2:unselect', function(e) {
+                                    const mealId = parseInt(e.params.data.id);
+                                    const planId = data.planId;
+                                    const mealTimeId = data.mealTimeId;
+                                    const userId = data.userId;
+    
+                                    if (Array.isArray(preSelectedMeals[planId]?.[mealTimeId])) {
+                                        const index = preSelectedMeals[planId][mealTimeId].indexOf(mealId);
+                                        if (index !== -1) {
+                                            preSelectedMeals[planId][mealTimeId].splice(index, 1);
+                                        }
+                                    }
+    
+                                    // Batch meal removals can be implemented here if needed
+                                    $.ajax({
+                                        url: '{{ route("admin.remove-user-meal") }}',
+                                        method: 'POST',
+                                        data: {
+                                            user_id: userId,
+                                            meal_id: mealId,
+                                            plan_id: planId,
+                                            _token: '{{ csrf_token() }}'
+                                        },
+                                        success: function(response) {
+                                            console.log(response.message || 'Meal removed successfully');
+                                        },
+                                        error: function(xhr) {
+                                            alert('Failed to remove meal. Please try again.');
+                                        }
+                                    });
+    
+                                    $(this).find(`option[value="${mealId}"]`).remove();
+                                    $(this).trigger('change');
+                                });
                             });
-
-                            // Add remaining unselected meals
-                            response.meals.forEach(meal => {
-                                if (!orderedMealIds.includes(meal.id)) {
-                                    mealSelect.append(new Option(meal.name, meal.id, false, false));
-                                }
-                            });
-
-                            const stringIds = orderedMealIds.map(String);
-                            mealSelect.val(stringIds).trigger('change');
-                            previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
                         }
                     },
                     error: function() {
                         alert('Error occurred while loading meals.');
                     }
                 });
-
-            } else {
-                checkbox.prop('checked', false);
-                $(dropdownId).hide();
-                $(selectedMealsId).hide();
-                mealTimeDetailsDiv.css('display', 'block');
             }
-
-            // Handle meal removal when "X" is clicked in select2
-            mealSelect.on('select2:unselect', function(e) {
-                let mealId = parseInt(e.params.data.id);
-
-                if (Array.isArray(preSelectedMeals[planId]?.[mealTimeId])) {
-                    const index = preSelectedMeals[planId][mealTimeId].indexOf(mealId);
-                    if (index !== -1) {
-                        preSelectedMeals[planId][mealTimeId].splice(index, 1);
-                    }
+        } else {
+            $('.meal-time-checkbox').each(function() {
+                const checkbox = $(this);
+                const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
+                const mealTimeId = checkbox.data('mealtime-id');
+                const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
+                const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
+                const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
+                const mealSelect = $(dropdownId).find('select');
+                const mealTimeDetailsDiv = checkbox.closest('li').find('.mealTimeDetailsDiv');
+    
+                const selectedMealsArray = preSelectedMeals[planId]?.[mealTimeId] || [];
+    
+                if (selectedMealsArray.length > 0) {
+                    $(dropdownId).show();
+                    $(selectedMealsId).show();
+                    mealTimeDetailsDiv.css('display', 'none');
+                    initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
+    
+                    $.ajax({
+                        url: '{{ route("admin.get-meals-by-mealtime") }}',
+                        method: 'POST',
+                        data: {
+                            plan_id: planId,
+                            meal_time_id: mealTimeId,
+                            user_id: userId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                mealSelect.empty(); // Clear previous options
+    
+                                const orderedMealIds = selectedMealsArray.map(id => parseInt(id));
+    
+                                // Create a map for quick lookup
+                                const mealMap = {};
+                                response.meals.forEach(meal => {
+                                    mealMap[meal.id] = meal;
+                                });
+    
+                                // Add selected meals in the order from preSelectedMeals
+                                orderedMealIds.forEach(mealId => {
+                                    const meal = mealMap[mealId];
+                                    if (meal) {
+                                        mealSelect.append(new Option(meal.name, meal.id, true, true));
+                                    }
+                                });
+    
+                                // Add remaining unselected meals
+                                response.meals.forEach(meal => {
+                                    if (!orderedMealIds.includes(meal.id)) {
+                                        mealSelect.append(new Option(meal.name, meal.id, false, false));
+                                    }
+                                });
+    
+                                const stringIds = orderedMealIds.map(String);
+                                mealSelect.val(stringIds).trigger('change');
+                                previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
+                            }
+                        },
+                        error: function() {
+                            alert('Error occurred while loading meals.');
+                        }
+                    });
+    
+                } else {
+                    checkbox.prop('checked', false);
+                    $(dropdownId).hide();
+                    $(selectedMealsId).hide();
+                    mealTimeDetailsDiv.css('display', 'block');
                 }
-
-                // Send AJAX to remove meal
-                $.ajax({
-                    url: '{{ route("admin.remove-user-meal") }}',
-                    method: 'POST',
-                    data: {
-                        user_id: userId,
-                        meal_id: mealId,
-                        plan_id: planId,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        console.log(response.message || 'Meal removed successfully');
-                    },
-                    error: function(xhr) {
-                        alert('Failed to remove meal. Please try again.');
+    
+                // Handle meal removal when "X" is clicked in select2
+                mealSelect.on('select2:unselect', function(e) {
+                    let mealId = parseInt(e.params.data.id);
+    
+                    if (Array.isArray(preSelectedMeals[planId]?.[mealTimeId])) {
+                        const index = preSelectedMeals[planId][mealTimeId].indexOf(mealId);
+                        if (index !== -1) {
+                            preSelectedMeals[planId][mealTimeId].splice(index, 1);
+                        }
                     }
+    
+                    // Send AJAX to remove meal
+                    $.ajax({
+                        url: '{{ route("admin.remove-user-meal") }}',
+                        method: 'POST',
+                        data: {
+                            user_id: userId,
+                            meal_id: mealId,
+                            plan_id: planId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            console.log(response.message || 'Meal removed successfully');
+                        },
+                        error: function(xhr) {
+                            alert('Failed to remove meal. Please try again.');
+                        }
+                    });
+    
+                    $(this).find(`option[value="${mealId}"]`).remove(); // Remove option
+                    $(this).trigger('change'); // Refresh Select2
                 });
-
-                $(this).find(`option[value="${mealId}"]`).remove(); // Remove option
-                $(this).trigger('change'); // Refresh Select2
             });
-        });
+        }
 
         let planID = 0;
         let mealtimeID = 0;
@@ -1591,7 +1713,7 @@
             // Handle unselected meals first
             unselectedMeals.forEach(mealId => {
                 const removedMealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
-                
+
                 if (removedMealContainer.length) {
                     // Decrement item and swap item counts
                     removedMealContainer.find('input[name^="items"]').each(function() {
@@ -1616,7 +1738,7 @@
                             alert('Failed to remove meal. Please try again.');
                         }
                     });
-                    
+
                     // Remove the meal container
                     removedMealContainer.remove();
                     // Trigger meal count update
@@ -1628,6 +1750,7 @@
             const orderedMealIds = currentSelectedMeals.map(id => parseInt(id));
             const mealContainers = {}; // Store containers by mealId
 
+            const foodIdsForDetailsBatch = [];
             // For each mealId, fetch and create the container as you already do:
             const mealCreationPromises = orderedMealIds.map((mealId, index) => {
                 return new Promise((resolve, reject) => {
@@ -1663,7 +1786,7 @@
                                 if (newMeals.includes(String(mealId)) || newMeals.includes(mealId)) {
                                     if (Array.isArray(response.data)) {
                                         response.data.forEach(item => {
-                                            updateFoodCount(item.id, 1, 'green');
+                                            foodIdsForDetailsBatch.push(item.id);
                                         });
                                     }
                                 }
@@ -1680,6 +1803,15 @@
             });
             $(document).off('mealAdded');
             $(document).off('mealRemoved');
+
+            // Call your function after all promises resolve
+            Promise.all(mealCreationPromises)
+            .then(() => {
+                getFoodDetailsForGivenIds(foodIdsForDetailsBatch);
+            })
+            .catch(error => {
+                console.error('Error in promise chain:', error);
+            });
 
             Promise.all(mealCreationPromises).then(() => {
                 // After all AJAX calls, append containers in the correct order
@@ -2397,10 +2529,6 @@
                                                 title="Add More"><i class="icofont-plus"></i></button>
                                         </div>
                                     </li>`;
-
-                                // swapFoods.map(swapItem =>
-                                //     updateFoodCount(swapItem.id, 1, 'green')
-                                // );
                             } else {
                                 swapItemsHTML = `
                                     <li class="d-flex justify-content-between align-items-start mb-2">
@@ -2600,6 +2728,38 @@
                         const targetSection = hasFlags ? '#category-section' : '#recommendations-food-section';
 
                         processFoodUpdate(foodId, change, foodData.title, categoryName, targetSection);
+                    } else {
+                        console.error('Invalid response format');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('AJAX error:', xhr.responseText);
+                }
+            });
+        }
+
+        function getFoodDetailsForGivenIds(ids) {
+            var foodIds = ids.join(',');
+            $.ajax({
+                url: '{{ route("admin.get-food-details-batch") }}?food_ids=' + foodIds,
+                method: 'GET',
+                success: function(response) {
+                    if(response.items) {
+                        $.each(response.items, function(key, value) {
+                            if(value) {
+                                const foodData = value;
+    
+                                // Check if food has flags
+                                const hasFlags = foodData.flags && foodData.flags.length > 0;
+                                const categoryName = hasFlags
+                                    ? foodData.flags[0].name
+                                    : (foodData.category && foodData.category.name) ? foodData.category.name : 'Uncategorized';
+    
+                                const targetSection = hasFlags ? '#category-section' : '#recommendations-food-section';
+    
+                                processFoodUpdate(key, 1, foodData.title, categoryName, targetSection);
+                            }
+                        });
                     } else {
                         console.error('Invalid response format');
                     }

@@ -1238,10 +1238,6 @@ class PurchasePlanController extends Controller
                     $totalFat += $item->pivot->fat ?? $item->fat;
                     $totalEnergy += floatval($item->energy) ?? floatval($item->energy);
                     $swapItems = $item->swapItems->map(function ($swapItem){
-                        // $totalCarbs += $swapItem->carbs;
-                        // $totalProtein += $swapItem->protein;
-                        // $totalFat += $swapItem->fat;
-                    
                         return [
                             'id' => $swapItem->id,
                             'name' => $swapItem->title,
@@ -1299,7 +1295,7 @@ class PurchasePlanController extends Controller
                         ->first();
 
                     if ($userMealTimes) {
-                        $userUpdateMeal = \App\Models\UserMeal::where('user_category_id', $userMealTimes->id)
+                        $userUpdateMeal = \App\Models\UserMeal::select('meal_name')->where('user_category_id', $userMealTimes->id)
                             ->where('id', $request->meal_id)
                             ->first();
                     }
@@ -1323,11 +1319,22 @@ class PurchasePlanController extends Controller
                         $itemsList[$item['id']] = $item;
                     }
                 }
-                
-                $data = $userMeal->map(function ($item) use($userId, &$totalCarbs, &$totalProtein, &$totalFat, &$totalEnergy, $request , &$itemsList) {
-                    $isNew = \App\Models\ItemMeal::where('meal_id', $request->meal_id)
-                        ->where('item_id', $item->item_id)
-                        ->exists() ? 0 : 1;
+
+                $meal_ids = array_unique(array_column($itemIds, 'meal_id'));
+                $item_ids = array_unique(array_column($itemIds, 'item_id'));
+                $existingMealAndItemsQuery = \App\Models\ItemMeal::select(['id', 'meal_id', 'item_id'])->whereIn('meal_id', $meal_ids)
+                        ->whereIn('item_id', $item_ids)
+                        ->get();
+                $existingMealAndItems = [];
+                if($meal_ids && $item_ids) {
+                    $existingMealAndItemsQuery = $existingMealAndItemsQuery->toArray();
+                    foreach($existingMealAndItemsQuery as $mealItem) {
+                        $existingMealAndItems[] = $mealItem['meal_id'].'_'.$mealItem['item_id'];
+                    }
+                }
+
+                $data = $userMeal->map(function ($item) use($userId, &$totalCarbs, &$totalProtein, &$totalFat, &$totalEnergy, $request , &$itemsList, $existingMealAndItems) {
+                    $isNew = in_array($request->meal_id.'_'.$item->item_id, $existingMealAndItems) ? 0 : 1;
 
                     $totalCarbs += isset($item->carbs) ? $item->carbs : $item->items->carbs;
                     $totalProtein += isset($item->protein) ? $item->protein : $item->items->protein;
@@ -1360,7 +1367,7 @@ class PurchasePlanController extends Controller
                         $swapItems = $swapItems->map(function ($swapFood) {
                             $swapItem = optional($swapFood->swapItem);
 
-                            return [    
+                            return [
                                 'id' => $swapItem->id,
                                 'name' => $swapItem->title,
                                 'qty' => $swapFood->qty,
@@ -1597,6 +1604,142 @@ class PurchasePlanController extends Controller
             'success' => true,
             'meals' => $meals->values()
         ]);
+    }
+
+    public function getMealsByMealTimeBatch(Request $request)
+    {
+        // Validate input
+        $request->validate([
+            'meal_times' => 'required|array',
+            'meal_times.*.plan_id' => 'required|integer',
+            'meal_times.*.meal_time_id' => 'required|integer',
+            'meal_times.*.user_id' => 'required|integer',
+        ]);
+
+        $mealTimesData = $request->meal_times;
+        $search = strtolower($request->input('search', ''));
+        $mealTimeIds = array_column($mealTimesData, 'meal_time_id');
+        $userIds = array_unique(array_column($mealTimesData, 'user_id'));
+        $planIds = array_unique(array_column($mealTimesData, 'plan_id'));
+
+        // Fetch all meal times with related data in one query
+        $mealTimes = Category::with('subCategories.meals.items')
+            ->whereIn('id', $mealTimeIds)
+            ->get()
+            ->keyBy('id');
+
+        // Prepare response structure
+        $response = ['success' => true, 'meal_data' => []];
+
+        // Fetch user plans for all users and plans
+        $userPlans = UserPlan::whereIn('user_id', $userIds)
+            ->whereIn('plan_id', $planIds)
+            ->get()
+            ->keyBy(function ($plan) {
+                return "{$plan->user_id}_{$plan->plan_id}";
+            });
+
+        // Fetch user categories and their meals in one query
+        $userCategories = UserCategory::whereIn('id', $mealTimeIds)
+            ->whereIn('user_plan_id', $userPlans->pluck('id'))
+            ->with(['userSubCategories.userMeals.userItems' => function ($query) use ($userPlans) {
+                $query->whereIn('user_plan_id', $userPlans->pluck('id'));
+            }])
+            ->get()
+            ->groupBy('id');
+            
+        foreach ($mealTimesData as $data) {
+            $planId = $data['plan_id'];
+            $mealTimeId = $data['meal_time_id'];
+            $userId = $data['user_id'];
+            $key = "{$planId}_{$mealTimeId}";
+
+            $response['meal_data'][$key] = [];
+
+            $mealTime = $mealTimes->get($mealTimeId);
+            if (!$mealTime) {
+                continue; // Skip if meal time not found
+            }
+
+            $meals = collect();
+
+            // Process meals for the meal time
+            foreach ($mealTime->subCategories as $category) {
+                foreach ($category->meals as $meal) {
+                    $allowedUser = is_null($meal->user_id) || in_array($meal->user_id, [$userId, 7, 3]);
+                    $matchesSearch = empty($search) ||
+                        str_contains(strtolower($meal->title), $search) ||
+                        str_contains(strtolower($category->title), $search);
+
+                    if ($allowedUser && $matchesSearch) {
+                        $carbs = 0;
+                        $protein = 0;
+                        $fat = 0;
+                        $energy = 0;
+
+                        foreach ($meal->items as $item) {
+                            $carbs += $item->pivot->carbs ?? $item->carbs ?? 0;
+                            $protein += $item->pivot->protein ?? $item->protein ?? 0;
+                            $fat += $item->pivot->fat ?? $item->fat ?? 0;
+                            $energy += $item->pivot->energy ?? floatval($item->energy ?? 0);
+                        }
+
+                        $meals->push([
+                            'id' => $meal->id,
+                            'name' => $meal->title,
+                            'image' => $meal->image ? webAssets('storage/' . $meal->image) : null,
+                            'carbs' => round($carbs, 2),
+                            'protein' => round($protein, 2),
+                            'fat' => round($fat, 2),
+                            'energy' => round($energy, 2),
+                        ]);
+                    }
+                }
+            }
+
+            // Replace names with user meal names if found
+            $userPlan = $userPlans->get("{$userId}_{$planId}");
+            if ($userPlan) {
+                $userMealTimes = $userCategories->get($mealTimeId, collect());
+                $userMeals = collect();
+
+                if ($userMealTimes->isNotEmpty()) {
+                    $userMeals = $userMealTimes->first()->userSubCategories->flatMap(function ($category) use ($userPlan) {
+                        return $category->userMeals->map(function ($userMeal) use ($userPlan) {
+                            $userItemsData = $userMeal->userItems->where('user_plan_id', $userPlan->id)->toArray();
+                            $itemIds = array_column($userItemsData, 'id');
+
+                            $items = !empty($itemIds) ? DB::table('items')
+                                ->selectRaw('SUM(carbs) as carbs, SUM(protein) as protein, SUM(fat) as fat, SUM(energy) as energy')
+                                ->whereIn('id', $itemIds)
+                                ->first() : (object) ['carbs' => 0, 'protein' => 0, 'fat' => 0, 'energy' => 0];
+
+                            return [
+                                'id' => $userMeal->id,
+                                'name' => $userMeal->meal_name,
+                                'image' => $userMeal->meal && $userMeal->meal->image ? asset('private/public/storage/' . $userMeal->meal->image) : null,
+                                'carbs' => round($items->carbs ?? 0, 2),
+                                'protein' => round($items->protein ?? 0, 2),
+                                'fat' => round($items->fat ?? 0, 2),
+                                'energy' => round($items->energy ?? 0, 2),
+                            ];
+                        });
+                    });
+                }
+
+                $meals = $meals->map(function ($meal) use ($userMeals) {
+                    $match = $userMeals->firstWhere('id', $meal['id']);
+                    if ($match && !empty($match['name'])) {
+                        $meal['name'] = $match['name'];
+                    }
+                    return $meal;
+                });
+            }
+
+            $response['meal_data'][$key] = $meals->values()->toArray();
+        }
+
+        return response()->json($response);
     }
 
     public function getPrePlanDetails($id)
