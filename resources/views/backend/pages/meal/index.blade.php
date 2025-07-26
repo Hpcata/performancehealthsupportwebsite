@@ -154,7 +154,7 @@
                                 <a href="${editUrl}" class="btn btn-outline-secondary">
                                     <i class="icofont-edit text-success"></i>
                                 </a>
-                                <form action="${deleteUrl}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?')">
+                                <form action="${deleteUrl}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this meal?')">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="btn btn-outline-secondary">
