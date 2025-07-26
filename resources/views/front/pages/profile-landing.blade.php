@@ -249,7 +249,7 @@
                     </div>
                     <div class="consult-user-row">
                         <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                            src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
                             class="consult-avatar"
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
@@ -257,6 +257,30 @@
                     <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
                 </div>
             </div>
+            @php
+                $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
+                $userPlan = $userPlan ?? null;
+
+                $latestMealImages = isset($userPlan->userMeals) ? $userPlan->userMeals()
+                    ->with('meal')
+                    ->latest()
+                    ->get()
+                    ->map(function ($userMeal) {
+                        return $userMeal->meal?->image
+                            ? asset('storage/' . $userMeal->meal->image)
+                            : null;
+                    })
+                    ->filter(function ($image) {
+                        return !empty($image); // filters out null and empty strings
+                    })
+                    ->take(2)
+                    ->values()
+                    ->toArray() : [];
+
+                $mealImage1 = $latestMealImages[0] ?? frontAssets('images/sports-training/fooditem1.webp');
+                $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
+            @endphp
+
             <div class="consults-plans-grid">
                 <div class="plan-card-custom plan-competition">
                     <div class="">
@@ -268,14 +292,14 @@
                     <div class="">
                         <div class="consult-user-row">
                             <img
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                src="{{ $mealImage1 }}"
                                 class="consult-avatar"
                                 alt="Kerry O'Bryan, expert coach avatar" />
                             <img
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                src="{{ $mealImage2 }}"
                                 class="consult-avatar overlap1"
                                 alt="Kerry O'Bryan, expert coach avatar" />
-                            <span>21 meals • 18 Nutrition tips</span>
+                            <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                         </div>
                         <!-- <div class="plan-meta">
                             <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
@@ -291,14 +315,14 @@
                     </div>
                     <div class="consult-user-row">
                         <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                            src="{{ $mealImage1 }}"
                             class="consult-avatar"
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                            src="{{ $mealImage2 }}"
                             class="consult-avatar overlap1"
                             alt="Kerry O'Bryan, expert coach avatar" />
-                        <span>21 meals • 18 Nutrition tips</span>
+                        <span>{{ $mealCount }}  meals • 18 Nutrition tips</span>
                     </div>
                     <button class="btn-consult">Learn more</button>
                 </div>
