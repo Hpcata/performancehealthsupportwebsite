@@ -1388,7 +1388,7 @@
                                     });
     
                                     $(this).find(`option[value="${mealId}"]`).remove();
-                                    $(this).trigger('change');
+                                    // $(this).trigger('change');
                                 });
                             });
                         }
@@ -2740,6 +2740,9 @@
 
         function getFoodDetailsForGivenIds(ids) {
             var foodIds = ids.join(',');
+            if(!foodIds) {
+                return false;
+            }
             $.ajax({
                 url: '{{ route("admin.get-food-details-batch") }}?food_ids=' + foodIds,
                 method: 'GET',
