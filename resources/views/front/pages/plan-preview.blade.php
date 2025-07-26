@@ -126,7 +126,7 @@
                 <h5 class="text-white">{{ $userPlan->user->first_name }}’s</h5>
                 <h1 class="text-white">Nutrition Plan <span>| {{ $userPlan->plan->name }}</span></h1>
                 @php
-                    $backgroundUrl = $sportImagePath ? webAssets('storage/' . $sportImagePath) : frontAssets('/images/banner-img.jpg');
+                    $backgroundUrl = $sportImagePath ? webAssets('storage/' . $sportImagePath) : frontAssets('/images/bannerimg.png');
                 @endphp
                 <div class="header-img" style="background-image: url('{{ $backgroundUrl }}');"></div>
             </div>

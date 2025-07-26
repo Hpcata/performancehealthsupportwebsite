@@ -4,22 +4,7 @@
 @section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-@if (!empty($sportGameData['sport_image']))
-<style>
-    .hero-background {
-        background-image: url('{{ webAssets("storage/" . $sportGameData['sport_image']) }}') !important;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        height: 100%;
-        max-width: 100%;
-        position: absolute;
-        right: 0;
-        border-radius: 0 0 36px 0;
-        width: 100%;
-    }
-</style>
-@endif
+
 <main class="main">
      <!-- Loader -->
     <!-- <div id="loader" class="d-none">
@@ -32,16 +17,21 @@
     <!-- Hero Banner -->
     <div class="hero-container">
         <div class="hero-section">
-            <div class="hero-background">
-                <div class="hero-overlay"></div>
-            </div>
-
+            @if (!empty($sportGameData['sport_image']))
+                <div class="hero-background" style="background-image: url('{{ webAssets('storage/' . $sportGameData['sport_image']) }}')" >
+                    <div class="hero-overlay"></div>
+                </div>
+            @else
+                <div class="hero-background" style="background-image: url('{{ frontAssets('images/bannerimg.png') }}');" >
+                    <div class="hero-overlay"></div>
+                </div>
+            @endif
             <div class="hero-content">
                 <div class="hero-bottom">
                     <h1 class="hero-title">Training Nutrition Plan</h1>
 
                     <div class="hero-top">
-                        <p class="hero-subtitle-plan">BMX freestyle</p>
+                        <p class="hero-subtitle-plan">{{ isset($sportGameData['sport_image']) ? $sportGameData['sport_name'] : '' }}</p>
                         <a href="#" class="view-all-link"> View all plans </a>
                     </div>
                 </div>
@@ -148,11 +138,11 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay"><span style="padding: 12px;
-    border-radius: 12px;
-    background-color: #0d6efd;
-    font-weight: 700;
-    cursor:pointer;">Quick View</span></div>
+                                                            <div class="quick-view-overlay">
+                                                                <span style="padding: 12px; border-radius: 12px; background-color: #0d6efd;
+                                                                font-weight: 700;
+                                                                cursor:pointer;">Quick View</span>
+                                                            </div>
                                                         </div>
                                                     @endforeach
                                                 </div>
