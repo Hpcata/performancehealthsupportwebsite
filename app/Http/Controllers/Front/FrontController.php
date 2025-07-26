@@ -2,51 +2,52 @@
 
 namespace App\Http\Controllers\Front;
 
+use Hash;
+use Exception;
+use Carbon\Carbon;
+use App\Models\Blog;
+use App\Models\Flag;
+use App\Models\Page;
 use App\Models\Plan;
 use App\Models\User;
+use App\Models\Query;
+use App\Models\Coupon;
+use App\Models\Payment;
+use App\Models\UserItem;
+use App\Models\UserMeal;
+use App\Models\UserPlan;
+use App\Models\SportGame;
+use App\Models\CouponUsage;
+use App\Models\GoalHistory;
+use App\Models\UserPrePlan;
+use App\Mail\QueryGenerated;
+use App\Models\TrackingType;
+use App\Models\UserCategory;
+use App\Models\UserItemMeal;
 use App\Services\UrlService;
 use Illuminate\Http\Request;
+use App\Models\PrePlanDetail;
+use App\Models\Questionnaire;
+use App\Models\SportCategory;
+use App\Models\SportTracking;
 use App\Services\JsonService;
+use App\Models\WeightTracking;
+use App\Mail\SportInterestMail;
 use App\Services\StripeService;
+use App\Services\ActivityTracker;
+use App\Models\PrePlanQuesionFile;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\QueryRequest;
-use App\Mail\QueryGenerated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Query;
-use App\Models\Blog;
-use Exception;
-use Hash;
-use App\Models\UserPlan;
-use Illuminate\Support\Facades\File;
-use App\Models\Questionnaire;
-use App\Models\WeightTracking;
-use App\Models\Payment;
-use App\Models\SportTracking;
-use App\Models\UserPrePlan;
-use App\Models\PrePlanDetail;
-use App\Models\GoalHistory;
-use App\Mail\SportInterestMail;
-use Carbon\Carbon;
-use GrahamCampbell\ResultType\Success;
 use App\Mail\SportInterestMailAdmin;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use GrahamCampbell\ResultType\Success;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use App\Services\ActivityTracker;
-use App\Models\TrackingType;
-use App\Models\SportCategory;
-use App\Models\SportGame;
-use App\Models\Coupon;
-use App\Models\CouponUsage;
-use App\Models\Page;
-use App\Models\UserItem;
-use App\Models\UserItemMeal;
-use App\Models\UserMeal;
-use App\Models\PrePlanQuesionFile;
-use App\Models\Flag;
 
 class FrontController extends Controller
 {
@@ -1742,26 +1743,29 @@ class FrontController extends Controller
 
     public function getMeals($planId, $categoryId)
     {
-        $userCategory = \App\Models\UserCategory::where('user_plan_id', $planId)
-            ->where('id', $categoryId)
-            ->first();
+        $userCategory = UserCategory::where([
+            ['user_plan_id', '=', $planId],
+            ['id', '=', $categoryId],
+        ])->first();
 
         if (!$userCategory) {
             return '<p>No meals found.</p>';
         }
 
-        $meals = [];
+        $userMeals = UserMeal::with('meal:id,title,image,description')
+            ->where('user_plan_id', $planId)
+            ->where('user_category_id', $userCategory->id)
+            ->get();
 
-        foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
-            foreach ($subCategory->userMeals->where('user_plan_id', $planId)->where('user_category_id', $userCategory->id) as $meal) {
-                $meals[] = [
-                    'id' => $meal->meal->id,
-                    'name' => $meal->meal->title,
-                    'image' => webAssets('storage/' . $meal->meal->image),
-                    'description' => $meal->meal->description,
-                ];
-            }
-        }
+        $meals = $userMeals->map(function ($userMeal) {
+            $meal = $userMeal->meal;
+            return [
+                'id' => $meal->id,
+                'name' => $meal->title,
+                'image' => webAssets('storage/' . $meal->image),
+                'description' => $meal->description,
+            ];
+        });
 
         return view('front.pages.partials.meal-cards', compact('meals'))->render();
     }

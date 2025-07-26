@@ -252,6 +252,10 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		Route::post('/update-swap-item', [PurchasePlanController::class, 'updateSwapItem'])->name('admin.update-swap-item');
 		Route::get('/admin/user/details', [UserController::class, 'getUserDetails'])->name('admin.user.details');
 
+		// Athlete plan meal food delete
+		Route::post('delete-food-item', [PurchasePlanController::class, 'deleteUserMealFood'])->name('admin.delete-user-meal-food');
+		Route::post('delete-swap-food-item', [PurchasePlanController::class, 'deleteUserMealSwapFood'])->name('admin.delete-user-meal-swap-food');
+
 		// User routes
 		Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
 		Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
