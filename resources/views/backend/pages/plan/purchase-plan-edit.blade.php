@@ -4437,7 +4437,6 @@
             $('[data-bs-toggle="tooltip"]').tooltip();
             // updateFoodCount(swapItemId, 1, 'green');
 
->>>>>>> b80281822f0171244c3d8db9c794e1b157369a4e
             const modalEl = document.getElementById('addMoreSwapItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
 
