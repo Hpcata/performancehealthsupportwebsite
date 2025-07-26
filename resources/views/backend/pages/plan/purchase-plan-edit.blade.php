@@ -75,7 +75,7 @@
         /* display: inline-block; */
         max-width: 100%;
     }
-   
+
     .food-label{
         font-weight:normal !important;
     }
@@ -134,7 +134,7 @@
                         <div class="row">
                             <div class="panel-group col-md-8" id="accordion">
                                 @foreach ($userPlans as $userPlan)
-                                <?php 
+                                <?php
                                 $plan = $userPlan->plan; ?>
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
@@ -213,7 +213,7 @@
                                     <span class="">
                                         <strong>Key: </strong>
                                         <p class="mb-0" style="color: black; font-size:15px;">Athlete Preferences</p>
-                                        <p class="mb-0" style="color: #7258db; font-size:15px;">Included Preferences </p> 
+                                        <p class="mb-0" style="color: #7258db; font-size:15px;">Included Preferences </p>
                                         <p class="mb-0" style="color: #198754; font-size:15px;">Recommendations</p>
                                     </span>
                                     <div class="category-section mb-3" id="category-section">
@@ -343,7 +343,7 @@
                             <a href="{{ route('front.profile', ['id' => $payment->user_id, 'admin_view' => 1]) }}"
                             target="_blank" class="btn btn-success">
                                 View User Profile
-                            </a>                            
+                            </a>
                             <button
                                 type="button"
                                 name="action"
@@ -832,7 +832,7 @@
         $(document).on('click', '.view-user-profile', function(event) {
             event.preventDefault();
             event.stopPropagation();
-            
+
             if (hasUnsavedChanges) {
                 intendedProfileAction = this;
                 const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
@@ -842,7 +842,7 @@
                 // If no unsaved changes, proceed with normal profile view
                 const userId = $(this).data('user-id');
                 const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-                
+
                 $.ajax({
                     url: sessionUrl,
                     method: 'GET',
@@ -909,7 +909,7 @@
             if (intendedProfileAction) {
                 const userId = intendedProfileAction.getAttribute('data-user-id');
                 const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-                
+
                 $.ajax({
                     url: sessionUrl,
                     method: 'GET',
@@ -978,7 +978,7 @@
             hasUnsavedChanges = false;
         });
     });
-    
+
     $(document).on('blur', '.modalQtyInput', function () {
         let value = parseFloat($(this).val());
 
@@ -992,16 +992,12 @@
     $(document).ready(function() {
         $(document).on('click', '.user-pre-plan-details', function() {
             const paymentId = $(this).data('payment-id');
-
-            console.log('Clicked on user-pre-plan-details button with paymentId:', paymentId);
-
             $.ajax({
                 url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                 method: 'GET',
 
                 success: function(response) {
                     if (response.success) {
-                        console.log(response.data);
 
                         let modalContent = '';
 
@@ -1252,7 +1248,7 @@
     $(document).ready(function() {
         function getPercentageChange(id) {
             var data = window.mesureofnewaddedfood && window.mesureofnewaddedfood[id] ? window.mesureofnewaddedfood[id] : null;
-            if (data && typeof data[0] !== 'undefined' && typeof data[0].old !== 'undefined' && 
+            if (data && typeof data[0] !== 'undefined' && typeof data[0].old !== 'undefined' &&
                 typeof data[1] !== 'undefined' && typeof data[1].new !== 'undefined') {
                 var oldData = data[0].old;
                 var newData = data[1].new;
@@ -1281,13 +1277,10 @@
         const userId = payment.user_id;
         const loader = $('#loader');
 
-        console.log(preSelectedMeals);
-
         $('.meal-time-checkbox').each(function() {
             const checkbox = $(this);
             const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
             const mealTimeId = checkbox.data('mealtime-id');
-            console.log(`Checkbox for Plan ID: ${planId}, Meal Time ID: ${mealTimeId} initialized.`);
             const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
             const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
             const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
@@ -1300,7 +1293,6 @@
                 $(dropdownId).show();
                 $(selectedMealsId).show();
                 mealTimeDetailsDiv.css('display', 'none');
-                console.log(`Showing dropdown for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
                 initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
 
                 $.ajax({
@@ -1350,7 +1342,6 @@
                 });
 
             } else {
-                console.log(`Hiding dropdown for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
                 checkbox.prop('checked', false);
                 $(dropdownId).hide();
                 $(selectedMealsId).hide();
@@ -1379,7 +1370,6 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        console.log(response.message || 'Meal removed successfully');
                     },
                     error: function(xhr) {
                         alert('Failed to remove meal. Please try again.');
@@ -1413,11 +1403,11 @@
                 mealTimeDetailsDiv.css('display', 'block');
                 $(dropdownId).show();
                 $(selectedMealsId).show();
-                
+
                 // Only initialize Select2 and load meals if they haven't been loaded before
                 if (!mealSelect.data('select2')) {
                     initializeSelect2(mealSelect, mealTimeId);
-                    
+
                     // Load meals only if they haven't been loaded before
                     if (!previouslySelectedMeals[`${planId}_${mealTimeId}`]) {
                         $.ajax({
@@ -1433,7 +1423,7 @@
                                 if (response.success) {
                                     mealSelect.empty();
                                     const sortedMeals = response.meals.sort((a, b) => a.id - b.id);
-                                    
+
                                     sortedMeals.forEach(meal => {
                                         let selectedMeal = null;
                                         if (preSelectedMeals[planId]?.[mealTimeId]?.[meal.id]) {
@@ -1447,7 +1437,7 @@
 
                                         const userMealId = isSelected ? selectedMeal : null;
                                         mealSelect.append(`
-                                            <option value="${meal.id}" ${isSelected ? 'selected' : ''} 
+                                            <option value="${meal.id}" ${isSelected ? 'selected' : ''}
                                                     id="${userMealId ? userMealId : ''}">
                                                 ${meal.name}
                                             </option>
@@ -1469,7 +1459,7 @@
                 $(dropdownId).hide();
                 $(selectedMealsId).hide();
             }
-            
+
             calculateMealNutrition();
         });
 
@@ -1572,30 +1562,18 @@
                 grandTotalProtein += totalProtein;
                 grandTotalFat += totalFat;
                 grandTotalEnergy += totalEnergy;
-
-                // console.log(`Meal Details:
-                // - Total Carb: ${totalCarbs.toFixed(2)}g
-                // - Total Protein: ${totalProtein.toFixed(2)}g
-                // - Total Fat: ${totalFat.toFixed(2)}g`);
             });
 
             $('#allCarbsTotal').text(`${Math.round(grandTotalCarbs)}g`);
             $('#allProteinTotal').text(`${Math.round(grandTotalProtein)}g`);
             $('#allFatTotal').text(`${Math.round(grandTotalFat)}g`);
             $('#allEnergyTotal').text(`${Math.round(grandTotalEnergy)}kJ`);
-
-            // console.log(`Total Nutrition Values:
-            // - Total Carb: ${grandTotalCarbs.toFixed(2)}g
-            // - Total Protein: ${grandTotalProtein.toFixed(2)}g
-            // - Total Fat: ${grandTotalFat.toFixed(2)}g`);
         }
 
         $('.meal-items-select').on('change', function() {
             const ids = $(this).attr('id').replace('mealItems', '').split('_');
             const planId = ids[0];
             const mealTimeId = ids[1];
-            console.log(`Meal items select changed for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
-            console.log('Selected values:', $(this).val());
             planID = planId;
             mealtimeID = mealTimeId;
 
@@ -1616,11 +1594,11 @@
             //         updateFoodCount(itemId, -9999, null); // Use a large negative to force reset
             //     });
             // });
-            
+
             // Handle unselected meals first
             unselectedMeals.forEach(mealId => {
                 const removedMealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
-                
+
                 if (removedMealContainer.length) {
                     // Decrement item and swap item counts
                     removedMealContainer.find('input[name^="items"]').each(function() {
@@ -1632,7 +1610,7 @@
                     //     const swapItemId = $(this).val();
                     //     updateFoodCount(swapItemId, -1, null); // Decrease swap item count
                     // });
-                   
+
                     // Send AJAX to remove meal and its items
                     $.ajax({
                         url: '{{ route("admin.remove-user-meal") }}',
@@ -1650,7 +1628,7 @@
                             alert('Failed to remove meal. Please try again.');
                         }
                     });
-                    
+
                     // Remove the meal container
                     removedMealContainer.remove();
                     // Trigger meal count update
@@ -1741,7 +1719,6 @@
         }
 
         function createMealContainer(planId, mealTimeId, mealId, mealName, mealNote, items, userId, preSelectedItems, preSelectedSwapItems, totalCarbs, totalFat, totalProtein, totalEnergy) {
-            console.log('Creating meal container with items:', items);
             let mealContainer = $(`
                 <div id="mealContainer_${planId}_${mealTimeId}_${mealId}" class="meal-container mt-3">
                     <input type="hidden" name="meals[${planId}][${mealTimeId}][]" value="${mealId}">
@@ -1757,9 +1734,9 @@
                             style="font-weight: bold; font-size: 14px; color: #6610f2; width: 100%;" />
                     </div>
                     <p class="mb-2" style="font-size: 14px; color:grey;"><strong>
-                        Meal Total: Energy: <span class="totalEnergy">${(totalEnergy)}kJ</span> | 
-                        Protein: <span class="totalProtein">${Math.round(totalProtein)}g</span> | 
-                        Carb: <span class="totalCarbs">${Math.round(totalCarbs)}g</span> | 
+                        Meal Total: Energy: <span class="totalEnergy">${(totalEnergy)}kJ</span> |
+                        Protein: <span class="totalProtein">${Math.round(totalProtein)}g</span> |
+                        Carb: <span class="totalCarbs">${Math.round(totalCarbs)}g</span> |
                         Fat: <span class="totalFat">${Math.round(totalFat)}g</span>
                         </strong>
                     </p>
@@ -1775,7 +1752,7 @@
                                 Add More Food
                             </button>
                         </div>
-                        
+
                     </div>
                 </div>
             `);
@@ -1819,7 +1796,6 @@
                         })();
 
                     let swapItemsHTML = '';
-                    console.log('swapsFoods:', swapsFoods);
                     if (swapsFoods.length > 0) {
                         swapItemsHTML = swapsFoods.map(swapItem => {
                             const isSelectedSwapItem = preSelectedSwapItems?.[mealTimeId]?.[mealId]?.[item.id]?.includes(swapItem.id);
@@ -1849,14 +1825,13 @@
                                 return `(${display})`;
                                 })();
 
-                                console.log('swapItemQtyUnitDisplay:', swapItemQtyUnitDisplay);
                             return `
                                 <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
                                     <div class="d-flex justify-content-between align-items-start mb-0">
                                         <div class="col-9">
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked
                                                     data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy ?? 0)}">
                                                 <label class="form-check-label">${swapItem.name}</label>
                                             </div>
@@ -1895,7 +1870,7 @@
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                         title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
@@ -1908,7 +1883,7 @@
                             <div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                     title="Add"><i class="icofont-plus"></i>
                                 </button>
                             </div>
@@ -1940,12 +1915,12 @@
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}" 
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}"
                                             data-selected-qty-unit='${JSON.stringify(item.selected_qty_unit)}'
                                             title="Edit"><i class="icofont-edit"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"  
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"
                                             title="Delete"><i class="icofont-ui-delete"></i></button>
                                     </div>
                                 </div>
@@ -1993,7 +1968,6 @@
                         })();
 
                     let swapItemsHTML = '';
-                    console.log('swapsFoods:', swapsFoods);
                     if (swapsFoods.length > 0) {
                         swapItemsHTML = swapsFoods.map(swapItem => {
                             const isSelectedSwapItem = preSelectedSwapItems?.[mealTimeId]?.[mealId]?.[item.id]?.includes(swapItem.id);
@@ -2023,14 +1997,13 @@
                                 return `(${display})`;
                                 })();
 
-                                console.log('swapItemQtyUnitDisplay:', swapItemQtyUnitDisplay);
                             return `
                                 <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
                                     <div class="d-flex justify-content-between align-items-start mb-0">
                                         <div class="col-9">
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked
                                                     data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy ?? 0)}">
                                                 <label class="form-check-label">${swapItem.name}</label>
                                             </div>
@@ -2069,7 +2042,7 @@
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                         title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
@@ -2082,7 +2055,7 @@
                             <div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                     title="Add"><i class="icofont-plus"></i>
                                 </button>
                             </div>
@@ -2114,12 +2087,12 @@
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}" 
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}"
                                             data-selected-qty-unit='${JSON.stringify(item.selected_qty_unit)}'
                                             title="Edit"><i class="icofont-edit"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"  
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"
                                             title="Delete"><i class="icofont-ui-delete"></i></button>
                                     </div>
                                 </div>
@@ -2156,9 +2129,6 @@
                     $(tableBodyEl).find('tr').each(function () {
                         newOrder.push($(this).data('item-id'));
                     });
-                    // Store newOrder as needed (e.g., in a hidden input or JS variable)
-                    // Example: window.currentItemOrder = newOrder;
-                    console.log('New order:', newOrder);
                 }
             });
 
@@ -2196,8 +2166,6 @@
         $(document).on('change','.food-checkbox', function () {
             const foodId = $(this).data('food-id');
             const foodName = $(this).data('food-name');
-            // const uniqueMealTimeIds = mealTimeIds.filter((value, index, self) => self.indexOf(value) === index);
-            // console.log(uniqueMealTimeIds);
             if (!$(this).is(':checked')) return;
 
             // Update modal title & hidden inputs
@@ -2222,8 +2190,7 @@
                         const protein = Math.round(foodItem.protein * 10) / 10;
                         const fat = Math.round(foodItem.fat * 10) / 10;
                         const energy = parseFloat(foodItem.energy) ? parseFloat(foodItem.energy) : 0;
-                        console.log(energy);
-                    let selectedQtyUnits = [];
+                        let selectedQtyUnits = [];
 
                         try {
                             const rawJson = foodItem.selected_qty_unit;
@@ -2234,7 +2201,7 @@
                                     selectedQtyUnits = rawJson; // Already parsed
                                 }
                             }
-                    } catch (e) {
+                        } catch (e) {
                             console.warn('Invalid selected_qty_unit JSON:', e);
                         }
 
@@ -2295,7 +2262,7 @@
 
         $('#saveMealFood').on('click', function () {
             const modal = $('#mealFoodAddModal');
-            
+
             const anyChecked = $('#mealFoodAddModal .qty-unit-row').find('.qtyCheckboxSelector:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
@@ -2346,7 +2313,7 @@
                     }
                 }
             });
-          
+
             $.ajax({
                 url: '{{ route("admin.add-food") }}',
                 type: 'POST',
@@ -2371,16 +2338,15 @@
                     const item = response.item;
                     const swapFoods = item.swap_items || [];
                     let swapItemsHTML = '';
-                    
+
                     // Get unique meal time IDs from the selected meals
                     const uniqueMealTimeIds = [...new Set(mealTimeIds)];
-                    console.log('uniqueMealTimeIds:', uniqueMealTimeIds);
 
                     uniqueMealTimeIds.forEach(mealTimeId => {
                         meals.forEach(mealId => {
                             const mealContainerId = `#mealContainer_${planID}_${mealTimeId}_${mealId}`;
                             const mealContainer = $(mealContainerId);
-                            
+
                             const tableBody = $(mealContainerId).find('.items-table-body');
 
                             if (swapFoods.length > 0) {
@@ -2393,7 +2359,7 @@
 
                                     return `
                                         <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
-                                            <div class="d-flex justify-content-between align-items-start mb-0"> 
+                                            <div class="d-flex justify-content-between align-items-start mb-0">
                                                 <div class="col-9">
                                                     <div class="d-flex align-items-start">
                                                         <input type="checkbox" name="swap_items[${planID}][${mealTimeId}][${mealId}][${item.id}][]"
@@ -2436,7 +2402,7 @@
                                         <div>
                                             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                                 title="Add More"><i class="icofont-plus"></i></button>
                                         </div>
                                     </li>`;
@@ -2545,7 +2511,7 @@
             $('#mealFoodAddModal').find('input').val('');
             $('#mealFoodAddModal').find('select').val('').trigger('change');
         });
-        
+
          $('#addMoreFoodModal').on('hide.bs.modal', function() {
             $('#addMoreFoodModal').find('input').val('');
             $('#addMoreFoodModal').find('select').val('').trigger('change');
@@ -2784,7 +2750,7 @@
                 } else {
                     if (!preSelectedFoods.includes(Number(foodId))) {
                         foodWrapper.remove();
-                        
+
                         // Check if category has no more visible food items
                         const remainingFoods = categoryWrapper.find('.form-check:visible');
                         if (remainingFoods.length === 0) {
@@ -2802,9 +2768,8 @@
         }
 
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-           
+
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
-            console.log(AU_UNIT_EQUIVALENTS);
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
             if ($rows.length === 0) return;
@@ -2822,9 +2787,6 @@
                 const currentQty = parseFraction(currentQtyRaw);
                 if (!currentQty || !currentUnit) return;
 
-                console.log(currentQty, currentUnit);
-                console.log(AU_UNIT_EQUIVALENTS);
-
                 const normalizedUnitEquivalents = {};
                 Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
                     normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
@@ -2832,13 +2794,12 @@
 
                 // Later in your function
                 const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
-                console.log(baseEquivalent);
                 if (!baseEquivalent) {
                     console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
                 const ratio = currentQty / baseEquivalent;
-            
+
                 $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalProtein`).text((Math.round(baseProtein * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalFat`).text((Math.round(baseFat * ratio * 10) / 10) + 'g');
@@ -2879,7 +2840,7 @@
                 return result || null;
             }
         }
-        
+
         function setupDynamicMeasurementSync(modal) {
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
@@ -2930,7 +2891,7 @@
                 });
             });
         }
-       
+
         function parseFraction(input) {
             if (input === undefined || input === null) return null;
 
@@ -3047,7 +3008,6 @@
                 // }
 
                 $('#editItemModal #ratio').val(ratio);
-                console.log(`Ratio compared to original row: ${ratio}`);
                 // Optionally: update nutrition or UI here
             });
 
@@ -3413,7 +3373,6 @@
             if (!Array.isArray(selectedQtyUnits) || selectedQtyUnits.length === 0) {
                 selectedQtyUnits = [{ qty: swapQty, unit: swapUnit, checked: false }];
             }
-            console.log(selectedQtyUnits);
             const buildQtyUnitRows = (units) => {
                 const $container = $(`${modalId} #dynamicQtyMeasurementContainer`).empty();
                 units.forEach(({ qty, unit, checked }, index) => {
@@ -3504,7 +3463,7 @@
                     }
                 }
             });
-            
+
             if (invalidQty) {
                 alert('Please enter a quantity greater than 0 for all selected options.');
                 return;
@@ -3804,7 +3763,7 @@
                 $('#editSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#editSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#editSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#editSwapItemModal');
                 setupDynamicMeasurementSync('#editSwapItemModal');
             });
@@ -3962,7 +3921,7 @@
                 $('#addSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#addSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#addSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#addSwapItemModal');
                 setupDynamicMeasurementSync('#addSwapItemModal');
             });
@@ -4073,7 +4032,7 @@
                     <div>
                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                             title="Add More"><i class="icofont-plus"></i></button>
                     </div>
                 </li>
@@ -4123,7 +4082,7 @@
                     modal.hide();
                 }
             });
-            
+
             // calculateTotals(planId, mealTimeId, mealId);
             // calculateMealNutrition();
         });
@@ -4279,7 +4238,7 @@
                 $('#addMoreSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#addMoreSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#addMoreSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#addMoreSwapItemModal');
                 setupDynamicMeasurementSync('#addMoreSwapItemModal');
             });
@@ -4385,7 +4344,7 @@
 
             // Check if there are any existing swap items
             const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
-            
+
             if (existingItems.length > 0) {
                 // If there are existing items, append the new item after them
                 existingItems.last().after(updatedLI);
@@ -4393,7 +4352,7 @@
                 // If no existing items, replace the entire content
                 swapItemsContainer.html(updatedLI);
             }
-            
+
             // // Add the + icon button at the end
             // const addButton = `
             //     <li class="d-flex justify-content-between align-items-start mb-2">
@@ -4403,14 +4362,14 @@
             //         <div>
             //             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
             //                 data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-            //                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+            //                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
             //                 title="Add"><i class="icofont-plus"></i>
             //             </button>
             //         </div>
             //     </li>
             // `;
             // swapItemsContainer.append(addButton);
-            
+
             $('[data-bs-toggle="tooltip"]').tooltip();
             // updateFoodCount(swapItemId, 1, 'green');
 
@@ -4454,8 +4413,6 @@
         });
 
         $('#addMoreSwapItemModal').on('hidden.bs.modal', function () {
-            console.log('Add More Swap Item Modal hidden');
-
             // Reset all inputs inside the modal
             $(this).find('input').val('');
 
@@ -4751,7 +4708,7 @@
                                         <div class="col-9">
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked
                                                     data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${swapItem.energy}">
                                                 <label class="form-check-label">${swapItem.title}</label>
                                             </div>
@@ -4794,7 +4751,7 @@
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                         title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
@@ -4825,7 +4782,7 @@
                                                 data-carbs="${carbs}" data-protein="${protein}" data-fat="${fat}" data-energy="${energy}">
                                             <label class="form-check-label flex-grow-1">${item.title}</label>
                                         </div>
-                                        
+
                                     </div>
                                     <div>
                                         <button type="button" class="btn btn-sm btn-outline-primary"
@@ -4917,7 +4874,6 @@
 
         function updateMealCount(planId, mealTimeId) {
             const selectedMeals = $(`#selectedMeals${planId}_${mealTimeId} .meal-container`).length;
-            console.log(selectedMeals);
             $(`#mealCount${planId}_${mealTimeId}`).text(`${selectedMeals}`);
         }
 
@@ -4966,7 +4922,6 @@
             },
             success: function(response) {
                 if (response.success) {
-                    console.log(response.message);
                     alert('Meal name updated successfully!');
 
                     // ✅ Find the correct dropdown using plan_id & meal_time_id
@@ -5000,18 +4955,18 @@
         function initializeTooltips() {
             // First dispose all existing tooltips
             $('[data-bs-toggle="tooltip"]').tooltip('dispose');
-            
+
             // Initialize new tooltips
             $('[data-bs-toggle="tooltip"]').each(function() {
                 const $this = $(this);
                 const description = $this.data('description');
-                
+
                 // Set both title attributes for consistency
                 $this.attr({
                     'title': description,
                     'data-bs-original-title': description
                 });
-                
+
                 // Initialize Bootstrap tooltip
                 new bootstrap.Tooltip(this, {
                     trigger: 'hover',
@@ -5112,7 +5067,6 @@
             const query = $('#searchFoodQuery').val().trim();
             const searchType = $('#searchFoodType').val();
 
-            console.log(query, searchType, mealId, mealTimeId, userId, planId);
             // If query is empty, show alert
             if (query === '') {
                 alert('Please enter a search term.');
@@ -5150,11 +5104,11 @@
                                         <td>${item.fat ?? 'N/A'}</td>
                                         <td><img src="${imagePath}" alt="Food Image" width="50" height="50"></td>
                                         <td>
-                                            <button class="btn btn-success add-food-btn" 
-                                                    data-food-id="${item.id}" 
-                                                    data-meal-id="${mealId}" 
-                                                    data-mealtime-id="${mealTimeId}" 
-                                                    data-user-id="${userId}" 
+                                            <button class="btn btn-success add-food-btn"
+                                                    data-food-id="${item.id}"
+                                                    data-meal-id="${mealId}"
+                                                    data-mealtime-id="${mealTimeId}"
+                                                    data-user-id="${userId}"
                                                     data-plan-id="${planId}">
                                                 Add Food
                                             </button>
@@ -5197,15 +5151,15 @@
                                         <td>${product.nutrition.fat || 'N/A'}</td>
                                         <td><img src="${product.image}" width="50" height="50"></td>
                                         <td>
-                                            <button class="btn btn-success add-woolworths-food" 
-                                                    data-name="${product.name}" 
-                                                    data-image="${product.image}" 
-                                                    data-protein="${product.nutrition.protein || 0}" 
+                                            <button class="btn btn-success add-woolworths-food"
+                                                    data-name="${product.name}"
+                                                    data-image="${product.image}"
+                                                    data-protein="${product.nutrition.protein || 0}"
                                                     data-carbs="${product.nutrition.carbohydrate || 0}"
                                                     data-fat="${product.nutrition.fat || 0}"
                                                     data-energy="${product.nutrition.energy || 0}"
-                                                    data-serving-size="${product.nutrition.serving_size || 0}" 
-                                                    data-serving-per-pack="${product.nutrition.serving_per_pack || 0}" 
+                                                    data-serving-size="${product.nutrition.serving_size || 0}"
+                                                    data-serving-per-pack="${product.nutrition.serving_per_pack || 0}"
                                                     data-category="${product.category || '' }"
                                                     data-meal-id="${mealId}" data-mealtime-id="${mealTimeId}" data-plan-id="${planId}" data-user-id="${userId}">
                                                 Add Woolworths Food
@@ -5276,8 +5230,8 @@
                                 <tr data-food-id="${food.id}" data-item-id="${food.id}" data-item-id="${food.id}">
                                     <td width="45%">
                                         <div class="d-flex align-items-start">
-                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]" 
-                                                value="${food.id}" 
+                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
+                                                value="${food.id}"
                                                 class="form-check-input me-2 d-none" data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}" checked>
                                             <label class="form-check-label flex-grow-1">${food.title} (${food.qty}${food.unit})</label>
                                         </div>
@@ -5290,7 +5244,7 @@
                                                 <div>
                                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                                         data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                                         title="Add More"><i class="icofont-plus"></i></button>
                                                 </div>
                                             </li>
@@ -5302,19 +5256,19 @@
                                             title="${food.description}">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
-                                        <button class="btn btn-sm edit-food btn-outline-success" 
-                                                data-food-id="${food.id}" 
-                                                data-meal-id="${mealId}" 
+                                        <button class="btn btn-sm edit-food btn-outline-success"
+                                                data-food-id="${food.id}"
+                                                data-meal-id="${mealId}"
                                                 data-swap-foods='${JSON.stringify(swapFoods)}'
-                                                data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}" 
-                                                data-swapfood-qty="${swapFoods[0]?.qty || ''}" 
-                                                data-swapfood-unit="${swapFoods[0]?.unit || ''}" 
+                                                data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}"
+                                                data-swapfood-qty="${swapFoods[0]?.qty || ''}"
+                                                data-swapfood-unit="${swapFoods[0]?.unit || ''}"
                                                 data-food-qty="${food.qty}"
                                                 data-food-unit="${food.unit}">
                                             <i class="icofont-edit"></i>
                                         </button>
-                                        <button class="btn  btn-sm delete-food btn-outline-danger" 
-                                                data-food-id="${food.id}" 
+                                        <button class="btn  btn-sm delete-food btn-outline-danger"
+                                                data-food-id="${food.id}"
                                                 data-meal-id="${mealId}"
                                                 data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}">
                                             <i class="icofont-ui-delete"></i>
@@ -5385,7 +5339,7 @@
                         const food = response.data;
                         const mealContainerId = `#mealContainer_${planId}_${mealTimeId}_${mealId}`;
                         const tableBody = $(mealContainerId).find('.items-table-body');
-                        
+
                         const selectedQtyUnits = {
                             qty: food.qty,
                             unit: food.unit
@@ -5401,7 +5355,7 @@
                             <div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                                             data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                     title="Add"><i class="icofont-plus"></i>
                                 </button>
                             </div>
@@ -5485,7 +5439,7 @@
         const planId = $(this).data('plan-id');
         const mealTimeId = $(this).data('meal-time-id');
         const mealId = $(this).data('meal-id');
-        
+
         if (confirm('Are you sure you want to remove this meal?')) {
             $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
             // Trigger the mealRemoved event
@@ -5497,7 +5451,6 @@
         $('#nutritionToggle').on('change', function () {
             var isChecked = $(this).is(':checked') ? 1 : 0;
             var paymentId = $(this).data('payment-id');
-            console.log('Nutrition Info flag:', isChecked, 'Payment ID:', paymentId);
             $.ajax({
                 url: '{{ route("admin.update-nutrition-flag") }}', // Your Laravel route
                 method: 'POST',

@@ -1,7 +1,5 @@
 @php $mealCount = count($meals); @endphp
 @if(count($meals) > 0)
-
-
     @foreach($meals as $meal)
         @if($loop->index >= 3)
             @break
@@ -24,7 +22,6 @@
     cursor:pointer;">Quick View</span></div>
         </div>
     @endforeach
-    
 @else
     <p>No meals available.</p>
 @endif
