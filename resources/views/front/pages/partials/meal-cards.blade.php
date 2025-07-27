@@ -1,9 +1,7 @@
 @php $mealCount = count($meals); @endphp
 @if (count($meals) > 0)
     @foreach ($meals as $meal)
-        @if ($loop->index >= 3)
-            @break
-        @endif
+       
         <!-- Meal Card -->
         <div class="challenge-card">
             <img src="{{ $meal['image'] }}" alt="{{ $meal['name'] ?? 'Meal' }}" width="600" height="400" />

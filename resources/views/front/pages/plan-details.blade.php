@@ -1633,7 +1633,7 @@ function initResponsiveSlider(wrapper) {
 
         wrapper._sliderInstance = tns({
             container: container,
-            items: 4,
+            items: 6,
             slideBy: 1,
             gutter: 16,
             controls: false,
@@ -1645,10 +1645,10 @@ function initResponsiveSlider(wrapper) {
             preventScrollOnTouch: 'force',
             speed: 400,
             responsive: {
-                1200: { items: 4 },
-                900: { items: 3 },
-                600: { items: 2 },
-                0: { items: 1 }
+                1200: { items: 6 },
+                900: { items: 6 },
+                600: { items: 6 },
+                0: { items: 6 }
             }
         });
         // Arrow controls
