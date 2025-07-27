@@ -197,7 +197,51 @@ function openFullscreenVideoPopup(e) {
         (s.style.background = "rgba(0,0,0,0.3)"),
         (s.style.borderRadius = "50%"),
         (s.style.width = "3rem"),
-        (s.style.height = "3rem"),
+        (s.style.height = "3rem");
+}
+
+let mealCardsSlider = null;
+
+function initMealCardsSlider() {
+    const mealCardsWrapper = document.getElementById('meal-cards-wrapper');
+    if (mealCardsWrapper && mealCardsWrapper.children.length > 0) {
+        mealCardsSlider = tns({
+            container: '#meal-cards-wrapper',
+            items: 1,
+            slideBy: 'page',
+            autoplay: false,
+            mouseDrag: true,
+            nav: false,
+            controls: true,
+            controlsContainer: '.training-plan .slider-wrapper',
+            responsive: {
+                768: {
+                    items: 2
+                },
+                992: {
+                    items: 3
+                },
+                1200: {
+                    items: 4
+                }
+            }
+        });
+    }
+}
+
+// Call the initialization function when the DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initMealCardsSlider();
+});
+
+// Re-initialize slider on window resize if needed
+window.addEventListener('resize', () => {
+    if (mealCardsSlider) {
+        mealCardsSlider.destroy();
+        mealCardsSlider = null;
+    }
+    initMealCardsSlider();
+});
         (s.style.display = "flex"),
         (s.style.alignItems = "center"),
         (s.style.justifyContent = "center"),

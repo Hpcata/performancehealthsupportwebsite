@@ -1571,7 +1571,13 @@
             }
         });
     </script>
- <script>
+
+
+
+
+<script>
+let sliderInstances = [];
+
 function enableNativeScroll(container) {
     if (!container) return;
     container.classList.add('native-scroll');
@@ -1598,66 +1604,104 @@ function disableNativeScroll(container) {
     });
 }
 
+// Wait for all images in a container to load, then call callback
+function imagesLoaded(container, callback) {
+    const images = container ? container.querySelectorAll('img') : [];
+    let loaded = 0;
+    if (!images.length) return callback();
+    images.forEach(img => {
+        if (img.complete) {
+            loaded++;
+            if (loaded === images.length) callback();
+        } else {
+            img.addEventListener('load', () => {
+                loaded++;
+                if (loaded === images.length) callback();
+            });
+            img.addEventListener('error', () => {
+                loaded++;
+                if (loaded === images.length) callback();
+            });
+        }
+    });
+}
+
 function initResponsiveSlider(wrapper) {
     const container = wrapper.querySelector('.challenge-cards-slider');
     const cards = container ? container.querySelectorAll('.challenge-card') : [];
     const isMobile = window.innerWidth <= 1024;
 
-    // Destroy previous Tiny Slider instance if exists
+    // Completely reset container style added by tns
     if (wrapper._sliderInstance && typeof wrapper._sliderInstance.destroy === 'function') {
         wrapper._sliderInstance.destroy();
         wrapper._sliderInstance = null;
+
+        // Clear Tiny Slider inline styles and classes
+        container.removeAttribute('style');
+        container.className = 'challenge-cards-slider'; // Reset to base class
+        cards.forEach(card => {
+            card.removeAttribute('style');
+            card.classList.remove('tns-item');
+        });
     }
 
     // Always hide arrows initially
     wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
 
-    // Remove previous hover listeners to avoid stacking
+    // Remove hover listeners
     wrapper.onmouseenter = null;
     wrapper.onmouseleave = null;
 
-    if (isMobile) {
-        enableNativeScroll(container);
-    } else if (typeof tns === 'function' && container && cards.length > 1) {
-        disableNativeScroll(container);
+    function runSlider() {
+        if (isMobile) {
+            enableNativeScroll(container);
+        } else if (typeof tns === 'function' && container && cards.length > 1) {
+            disableNativeScroll(container);
 
-        // Only show arrows on hover if more than 4 cards
-        if (cards.length > 4) {
-            wrapper.onmouseenter = function() {
-                wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = '');
-            };
-            wrapper.onmouseleave = function() {
-                wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
-            };
-        }
-
-        wrapper._sliderInstance = tns({
-            container: container,
-            items: 6,
-            slideBy: 1,
-            gutter: 16,
-            controls: false,
-            nav: false,
-            mouseDrag: true,
-            loop: false,
-            edgePadding: 0,
-            rewind: false,
-            preventScrollOnTouch: 'force',
-            speed: 400,
-            responsive: {
-                1200: { items: 6 },
-                900: { items: 6 },
-                600: { items: 6 },
-                0: { items: 6 }
+            // Show arrows on hover if more than 4 cards
+            if (cards.length > 4) {
+                wrapper.onmouseenter = function() {
+                    wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = '');
+                };
+                wrapper.onmouseleave = function() {
+                    wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
+                };
             }
-        });
-        // Arrow controls
-        const leftArrow = wrapper.querySelector('.left-arrow');
-        const rightArrow = wrapper.querySelector('.right-arrow');
-        if (leftArrow) leftArrow.onclick = () => wrapper._sliderInstance.goTo('prev');
-        if (rightArrow) rightArrow.onclick = () => wrapper._sliderInstance.goTo('next');
+
+            wrapper._sliderInstance = tns({
+                container: container,
+                items: 4,
+                slideBy: 1,
+                gutter: 16,
+                controls: false,
+                nav: false,
+                mouseDrag: true,
+                loop: false,
+                edgePadding: 0,
+                rewind: false,
+                preventScrollOnTouch: 'force',
+                speed: 400,
+                responsive: {
+                    1200: { items: 4 },
+                    900: { items: 3 },
+                    600: { items: 2 },
+                    0: { items: 1 }
+                }
+            });
+
+            // Arrow control bindings
+            const leftArrow = wrapper.querySelector('.left-arrow');
+            const rightArrow = wrapper.querySelector('.right-arrow');
+            if (leftArrow) leftArrow.onclick = () => wrapper._sliderInstance.goTo('prev');
+            if (rightArrow) rightArrow.onclick = () => wrapper._sliderInstance.goTo('next');
+        }
     }
+
+    imagesLoaded(container, () => {
+        setTimeout(runSlider, 50); // Give DOM a moment to stabilize after resize
+    });
 }
+
 
 // Initial load for all sliders
 document.addEventListener('DOMContentLoaded', function() {
@@ -1666,11 +1710,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Re-init on resize
+// Debounced re-init on resize
+let resizeTimeout;
 window.addEventListener('resize', function() {
-    document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
-        initResponsiveSlider(wrapper);
-    });
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+        document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
+            initResponsiveSlider(wrapper);
+        });
+    }, 200);
 });
+
+// Meals slider re-init for AJAX or dynamic content
+function initMealsSlider() {
+    const wrapper = document.querySelector('#meal-cards-wrapper')?.closest('.slider-wrapper');
+    if (wrapper) {
+        // Wait for images to load before initializing slider
+        const container = wrapper.querySelector('.challenge-cards-slider');
+        imagesLoaded(container, function() {
+            initResponsiveSlider(wrapper);
+        });
+    }
+}
+console.log('Destroying slider...');
+wrapper._sliderInstance.destroy();
+console.log('Destroyed, reinitializing...');
 </script>
 @endsection
