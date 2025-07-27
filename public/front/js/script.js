@@ -477,4 +477,20 @@ $(document).ready(function() {
             }, 700); // Hide after 700ms of no scroll
         });
     });
+
+    // Tiny-Slider initialization for #meal-cards-wrapper
+    var mealCardsSlider = tns({
+        container: '#meal-cards-wrapper',
+        items: 1,
+        slideBy: 'page',
+        autoplay: false,
+        mouseDrag: true,
+        controls: true,
+        nav: false,
+        responsive: {
+            640: { items: 2 },
+            768: { items: 3 },
+            1024: { items: 4 }
+        }
+    });
 });

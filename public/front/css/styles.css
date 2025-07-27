@@ -40,7 +40,7 @@ body {
 .header .header-content {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 24px;
+padding: 22px 24px;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
@@ -143,8 +143,8 @@ body {
     background-color: #4a84dd !important;
 }
 .welcome-section {
-    margin-bottom: 119px;
-    margin-top: 56px;
+    margin-bottom: 154px;
+    margin-top: 60px;
 }
 .welcome-section .notification-bar {
     position: absolute;
@@ -247,7 +247,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 24px;
 }
 .section-header h2 {
     color: var(--Kerry-grey-700, #080808);
@@ -255,7 +255,8 @@ body {
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
-    line-height: normal;
+        line-height: 33px;
+    margin-bottom: 0;
 }
 .section-header .see-all {
     color: #3b82f6;
@@ -275,29 +276,37 @@ body {
 .training-plan .tabs {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1.5rem;
-    overflow: auto;
+    margin-bottom: 24px;
+    overflow-x: auto;
     padding-bottom: 1px;
 }
 .training-plan .tabs::-webkit-scrollbar {
     display: none;
 }
 .training-plan .tabs .tab {
-    background: 0 0;
+    background: white;
     border: 1px solid #4a84dd;
     padding: 10px 14px;
     border-radius: 50px;
     cursor: pointer;
     color: #4a84dd;
+    font-size: 14px;
     transition: 0.3s;
-    font-weight: 400;
+    font-weight: 600;
     box-sizing: border-box;
+    white-space: nowrap;
+        line-height: 15px;
 }
 .training-plan .tabs .tab.active {
     background-color: #e0ecfd;
     color: #3b82f6;
     border-width: 2px;
     font-weight: 600;
+}
+.training-plan .tabs .tab:hover {
+    background-color: #e0ecfd;
+    color: #3b82f6;
+ 
 }
 .training-plan .tabs .tab:hover {
     color: #3b82f6;
@@ -421,7 +430,7 @@ body {
     padding: 0;
     margin-top: 12px;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 500;
     line-height: normal;
     color: #080808;
 }
@@ -837,8 +846,6 @@ body {
     box-shadow: 0 4px 24px 0 rgb(59 130 246 / 0.1);
     padding: 20px;
     max-width: 480px;
-    margin-top: 32px;
-    margin-left: 8px;
 }
 .consultation-card-custom,
 .resource-card-custom {
@@ -866,8 +873,8 @@ body {
 }
 .profile-avatar-overlap {
     position: absolute;
-    left: 0;
-    bottom: -95px;
+       left: 0;
+    bottom: -98px;
     width: 78px;
     height: 78px;
     object-fit: cover;
@@ -876,11 +883,11 @@ body {
 }
 .welcome-arrow {
     clip-path: polygon(0 0, 100% 0, 100% 0, 53% 100%, 53% 100%, 37% 40%);
-    width: 20px;
-    height: 18px;
-    left: 30px;
+       width: 20px;
+    height: 22px;
+    left: 28px;
     position: absolute;
-    bottom: -17px;
+     bottom: -20px;
     background: #000;
     background: linear-gradient(135deg, #e0edff 0, #c7dbfa 100%);
 }
@@ -2262,15 +2269,15 @@ button:focus,
     background-color: #4a84dd !important;
 }
 .slider-arrow.right-arrow {
-    height: 100%;
+   
     position: absolute;
     right: -63px;
-    top: 40%;
-    transform: translateY(-50%);
+    top: 0;
     z-index: 2;
     background: transparent;
     border: none;
     width: 70px;
+     height: 200px;
     box-shadow: none;
     display: flex;
     align-items: center;
@@ -2279,13 +2286,12 @@ button:focus,
 .slider-arrow.left-arrow {
     position: absolute;
     left: -63px;
-    top: 40%;
-    transform: translateY(-50%);
+    top: 0;
     z-index: 2;
     background: transparent;
     border: none;
     width: 70px;
-    height: 36px;
+      height: 200px;
     box-shadow: none;
     display: flex;
     align-items: center;
@@ -2604,6 +2610,27 @@ button:focus,
 }
 }
 @media (max-width: 1024px) {
+      .challenge-cards-slider {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+  }
+  .challenge-card {
+    min-width: 80vw;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+  .slider-arrow,
+  .tns-nav,
+  .tns-controls {
+    display: none !important;
+  }
+    .challenge-cards-slider.native-scroll {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
       .modal.print-plan-modal{
         z-index: 9999 !important;
     }
@@ -3220,4 +3247,7 @@ button:focus,
 
 #print-plan-modal .modal-title {
     font-size: 18px;
+}
+.challenge-cards-slider {
+    overflow: hidden;
 }
