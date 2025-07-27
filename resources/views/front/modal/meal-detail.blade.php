@@ -67,7 +67,7 @@
                                     <strong>Note:</strong>
                                 </p>
 
-                                <h3 style="margin-top:24px;margin-bottom:8px;">Nutrition information</h3>
+                                <h3 style="margin-bottom:8px;">Nutrition information</h3>
                                 <div class="nutrition-info">
 
                                     <span style="color: #8cc900">● <span style="color:rgba(59, 59, 59, 1)">Energy: 0 kJ</span></span>

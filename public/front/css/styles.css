@@ -32,6 +32,10 @@ body {
     top: 0;
     z-index: 100;
 }
+.video-grid{
+    padding: 2px;
+    padding-top: 0;
+}
 .dropdown,
 .surfing-videos .video-grid .video-card .video-thumbnail,
 .video-player {

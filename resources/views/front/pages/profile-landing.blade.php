@@ -1,7 +1,8 @@
 @extends(frontView('layouts.app'))
 
 @section('title', 'Best Sports Nutritionist & Dietitians Australia | Kerry O’Bryan')
-@section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength
+@section('meta_description',
+    'Performance Health Support offers expert care from top sports nutritionists, strength
     coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
@@ -87,8 +88,8 @@
                             </button>
                         </div>
                         <!-- <div class="position-relative challenge-cards" id="meal-cards-wrapper">
-                        <p>Loading meals...</p>
-                    </div> -->
+                            <p>Loading meals...</p>
+                        </div> -->
                     </div>
                 </section>
 
@@ -307,9 +308,9 @@
                                 <span>21 meals • 18 Nutrition tips</span>
                             </div>
                             <!-- <div class="plan-meta">
-                                <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
-                                tips
-                            </div> -->
+                                    <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
+                                    tips
+                                </div> -->
                             <button class="btn-consult">Learn more</button>
                         </div>
                     </div>
@@ -566,116 +567,124 @@
     </div>
 
 
-<script>
-let sliderInstances = [];
+    <script>
+        let sliderInstances = [];
 
-function enableNativeScroll(container) {
-    if (!container) return;
-    container.classList.add('native-scroll');
-    container.style.overflowX = 'auto';
-    container.style.display = 'flex';
-    container.style.gap = '16px';
-    container.querySelectorAll('.challenge-card').forEach(card => {
-        card.style.minWidth = '80vw';
-        card.style.flex = '0 0 auto';
-        card.style.scrollSnapAlign = 'start';
-    });
-}
-
-function disableNativeScroll(container) {
-    if (!container) return;
-    container.classList.remove('native-scroll');
-    container.style.overflowX = '';
-    container.style.display = '';
-    container.style.gap = '';
-    container.querySelectorAll('.challenge-card').forEach(card => {
-        card.style.minWidth = '';
-        card.style.flex = '';
-        card.style.scrollSnapAlign = '';
-    });
-}
-
-function initResponsiveSlider(wrapper) {
-    const container = wrapper.querySelector('.challenge-cards-slider');
-    const cards = container ? container.querySelectorAll('.challenge-card') : [];
-    const isMobile = window.innerWidth <= 1024;
-
-    // Destroy previous Tiny Slider instance if exists
-    if (wrapper._sliderInstance && typeof wrapper._sliderInstance.destroy === 'function') {
-        wrapper._sliderInstance.destroy();
-        wrapper._sliderInstance = null;
-    }
-
-    // Always hide arrows initially
-    wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
-
-    // Remove previous hover listeners to avoid stacking
-    wrapper.onmouseenter = null;
-    wrapper.onmouseleave = null;
-
-    if (isMobile) {
-        enableNativeScroll(container);
-    } else if (typeof tns === 'function' && container && cards.length > 1) {
-        disableNativeScroll(container);
-
-        // Only show arrows on hover if more than 4 cards
-        if (cards.length > 4) {
-            wrapper.onmouseenter = function() {
-                wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = '');
-            };
-            wrapper.onmouseleave = function() {
-                wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
-            };
+        function enableNativeScroll(container) {
+            if (!container) return;
+            container.classList.add('native-scroll');
+            container.style.overflowX = 'auto';
+            container.style.display = 'flex';
+            container.style.gap = '16px';
+            container.querySelectorAll('.challenge-card').forEach(card => {
+                card.style.minWidth = '80vw';
+                card.style.flex = '0 0 auto';
+                card.style.scrollSnapAlign = 'start';
+            });
         }
 
-        wrapper._sliderInstance = tns({
-            container: container,
-            items: 6,
-            slideBy: 1,
-            gutter: 16,
-            controls: false,
-            nav: false,
-            mouseDrag: true,
-            loop: false,
-            edgePadding: 0,
-            rewind: false,
-            preventScrollOnTouch: 'force',
-            speed: 400,
-            responsive: {
-                1200: { items: 6 },
-                900: { items: 6 },
-                600: { items: 2 },
-                0: { items: 1 }
+        function disableNativeScroll(container) {
+            if (!container) return;
+            container.classList.remove('native-scroll');
+            container.style.overflowX = '';
+            container.style.display = '';
+            container.style.gap = '';
+            container.querySelectorAll('.challenge-card').forEach(card => {
+                card.style.minWidth = '';
+                card.style.flex = '';
+                card.style.scrollSnapAlign = '';
+            });
+        }
+
+        function initResponsiveSlider(wrapper) {
+            const container = wrapper.querySelector('.challenge-cards-slider');
+            const cards = container ? container.querySelectorAll('.challenge-card') : [];
+            const isMobile = window.innerWidth <= 1024;
+
+            // Destroy previous Tiny Slider instance if exists
+            if (wrapper._sliderInstance && typeof wrapper._sliderInstance.destroy === 'function') {
+                wrapper._sliderInstance.destroy();
+                wrapper._sliderInstance = null;
             }
+
+            // Always hide arrows initially
+            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
+
+            // Remove previous hover listeners to avoid stacking
+            wrapper.onmouseenter = null;
+            wrapper.onmouseleave = null;
+
+            if (isMobile) {
+                enableNativeScroll(container);
+            } else if (typeof tns === 'function' && container && cards.length > 1) {
+                disableNativeScroll(container);
+
+                // Only show arrows on hover if more than 4 cards
+                if (cards.length > 4) {
+                    wrapper.onmouseenter = function() {
+                        wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = '');
+                    };
+                    wrapper.onmouseleave = function() {
+                        wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
+                    };
+                }
+
+                wrapper._sliderInstance = tns({
+                    container: container,
+                    items: 6,
+                    slideBy: 1,
+                    gutter: 16,
+                    controls: false,
+                    nav: false,
+                    mouseDrag: true,
+                    loop: false,
+                    edgePadding: 0,
+                    rewind: false,
+                    preventScrollOnTouch: 'force',
+                    speed: 400,
+                    responsive: {
+                        1200: {
+                            items: 6
+                        },
+                        900: {
+                            items: 6
+                        },
+                        600: {
+                            items: 2
+                        },
+                        0: {
+                            items: 1
+                        }
+                    }
+                });
+                // Arrow controls
+                const leftArrow = wrapper.querySelector('.left-arrow');
+                const rightArrow = wrapper.querySelector('.right-arrow');
+                if (leftArrow) leftArrow.onclick = () => wrapper._sliderInstance.goTo('prev');
+                if (rightArrow) rightArrow.onclick = () => wrapper._sliderInstance.goTo('next');
+            }
+        }
+
+        // Initial load for all sliders
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
+                initResponsiveSlider(wrapper);
+            });
         });
-        // Arrow controls
-        const leftArrow = wrapper.querySelector('.left-arrow');
-        const rightArrow = wrapper.querySelector('.right-arrow');
-        if (leftArrow) leftArrow.onclick = () => wrapper._sliderInstance.goTo('prev');
-        if (rightArrow) rightArrow.onclick = () => wrapper._sliderInstance.goTo('next');
-    }
-}
 
-// Initial load for all sliders
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
-        initResponsiveSlider(wrapper);
-    });
-});
+        // Re-init on resize
+        window.addEventListener('resize', function() {
+            document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
+                initResponsiveSlider(wrapper);
+            });
+        });
 
-// Re-init on resize
-window.addEventListener('resize', function() {
-    document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
-        initResponsiveSlider(wrapper);
-    });
-});
-
-// Meals slider re-init for AJAX or dynamic content
-function initMealsSlider() {
-    const wrapper = document.querySelector('#meal-cards-wrapper')?.closest('.slider-wrapper');
-    if (wrapper) {
-        initResponsiveSlider(wrapper);
-    }
-}
-</script>
+        // Meals slider re-init for AJAX or dynamic content
+        function initMealsSlider() {
+            const wrapper = document.querySelector('#meal-cards-wrapper')?.closest('.slider-wrapper');
+            if (wrapper) {
+                initResponsiveSlider(wrapper);
+            }
+        }
+    </script>
 @endsection

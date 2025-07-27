@@ -35,6 +35,7 @@
 </noscript>
 <link rel="preload" as="image" href="{{ frontAssets('images/food1.webp') }}" type="image/webp">
 <link rel="preload" as="image" href="{{ frontAssets('images/logo.webp') }}" type="image/webp">
+<link rel="stylesheet" href="{!! frontAssets('css/tiny-slider.css') !!}">
 @else
 <!-- Existing code style -->
 <!-- Fallback for browsers that don't support preload -->
@@ -52,7 +53,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link rel="stylesheet" href="{!! frontAssets('css/tiny-slider.css') !!}">
+
 <link rel="stylesheet" href="{!! frontAssets('css/style-1.css') !!}">
 <link rel="stylesheet" href="{{ frontAssets('css/bootstrap/bootstrap.min.css') }}" />
 
