@@ -256,7 +256,6 @@ class MealController extends Controller
             $meal->items()->sync($foodItems);
         }
 
-        
         if ($request->has('categories')) {
             $meal->subCategories()->sync($request->categories); // Sync subcategories
         }
@@ -270,9 +269,21 @@ class MealController extends Controller
 
     public function destroy(Meal $meal)
     {
+        if (!$meal->isDeletable()) {
+            return redirect()->route('admin.meals.index')
+                ->with('error', 'This meal cannot be deleted because it is currently in use.');
+        }
+
         if ($meal->image) {
             Storage::disk('public')->delete($meal->image);
         }
+
+        $meal->categories()->detach();
+        $meal->subCategories()->detach();
+        $meal->items()->detach();
+        $meal->tags()->detach();
+        $meal->userItems()->detach();
+        $meal->userMealItems()->detach();
 
         $meal->delete();
 

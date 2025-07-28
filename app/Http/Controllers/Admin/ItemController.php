@@ -8,12 +8,15 @@ use App\Models\Meal;
 use Illuminate\Http\Request;
 use App\Models\Tag;
 use App\Models\Flag;
+use Illuminate\Support\Facades\Storage;
+use App\Models\UserItemSwap;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ItemController extends Controller
 {
     public function index(Request $request)
     {
-
         if ($request->ajax()) {
             $query = $request->input('query');
             $foodId = $request->input('food_id') ?? null;
@@ -45,7 +48,6 @@ class ItemController extends Controller
         $items = Item::with('meals', 'swapItems', 'flags')->orderBy('updated_at', 'DESC')->get();
         return view('backend.pages.item.index', compact('items'));
     }
-
 
     public function create()
     {
@@ -130,14 +132,14 @@ class ItemController extends Controller
         if ($request->is_swiped == 1 && $request->has('swap_item_ids')) {
             $item->swapItems()->sync($request->swap_item_ids);
 
-            $userIds = \DB::table('user_item_swaps')
+            $userIds = DB::table('user_item_swaps')
                             ->distinct()
                             ->pluck('user_id');
                             
             if ($userIds->isNotEmpty()) {
                 foreach ($userIds as $userId) {
                     // Check if the user has an active plan
-                    $hasActivePlan = \DB::table('user_plans')
+                    $hasActivePlan = DB::table('user_plans')
                         ->where('user_id', $userId)
                         ->where('status', 'active') // Assuming 'status' indicates if the plan is active
                         ->exists();
@@ -148,14 +150,14 @@ class ItemController extends Controller
 
                             $swapItem = Item::find($swapItemId);
                             
-                            $exists = \DB::table('user_item_swaps')
+                            $exists = DB::table('user_item_swaps')
                                 ->where('user_id', $userId)
                                 ->where('item_id', $item->id)
                                 ->where('swap_item_id', $swapItemId)
                                 ->exists();
                             
                             if (!$exists) {
-                                \DB::table('user_item_swaps')->insert([
+                                DB::table('user_item_swaps')->insert([
                                     'user_id' => $userId,
                                     'item_id' => $item->id,
                                     'swap_item_id' => $swapItemId,
@@ -191,7 +193,6 @@ class ItemController extends Controller
 
     public function update(Request $request, Item $item)
     {
-        // dd($request->all());
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'short_description' => 'nullable|string',
@@ -222,21 +223,17 @@ class ItemController extends Controller
             // 'category_id' => 'required|exists:food_categories,id',
         ]);
         
-        // dd($request->all());
-        
-        // dd($data);
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if it exists
             if ($item->image) {
-                \Storage::delete('public/' . $item->image);
+                Storage::delete('public/' . $item->image);
             }
-            //  dd($request->file('image'));
             $path = $request->file('image')->store('items', 'public'); // Store image
 
             $data['image'] = $path;
         }
-        // 
+
         if ($request->has('selected_qty_unit') && $request->selected_qty_unit != null) {
             $rawSelectedUnit = $request->selected_qty_unit;
         
@@ -254,35 +251,29 @@ class ItemController extends Controller
             $data['selected_qty_unit'] = ($decoded);
         }
         
-        
-        // dd($data);
         if ($request->has('is_locked')){
             $data['is_locked'] = $request->is_locked;
         }else {
             $data['is_locked'] = 0;
         }
         
-        // dd($request->is_swiped);
         // Update item
         $item->update($data);
         $item->tags()->sync($request->input('tag_ids')); // attaches tags via pivot
         $item->flags()->sync($request->input('flag_ids')); // attaches tags via pivot
 
-        // dd($item);
         if ($request->is_swiped == 1) {
-            // dd('11');
             // Sync the swap items (this will attach new ones and detach the old ones)
             if ($request->has('swap_item_ids')) {
                 $item->swapItems()->sync($request->swap_item_ids);
-                // dd($item->swapItems()->get());
-                $userIds = \DB::table('user_item_swaps')
+                $userIds = DB::table('user_item_swaps')
                             ->distinct()
                             ->pluck('user_id');
 
                 if ($userIds->isNotEmpty()) {
                     foreach ($userIds as $userId) {
                         // Check if the user has an active plan
-                        $hasActivePlan = \DB::table('user_plans')
+                        $hasActivePlan = DB::table('user_plans')
                             ->where('user_id', $userId)
                             ->where('status', 'active') // Assuming 'status' indicates if the plan is active
                             ->exists();
@@ -292,13 +283,13 @@ class ItemController extends Controller
                             foreach ($request->swap_item_ids as $swapItemId) {
                                 $swapItem = Item::find($swapItemId);
 
-                                $exists = \App\Models\UserItemSwap::where('user_id', $userId)
+                                $exists = UserItemSwap::where('user_id', $userId)
                                     ->where('item_id', $item->id)
                                     ->where('swap_item_id', $swapItemId)
                                     ->first();
                                 
                                 if (!$exists) {
-                                    \DB::table('user_item_swaps')->insert([
+                                    DB::table('user_item_swaps')->insert([
                                         'user_id' => $userId,
                                         'item_id' => $item->id,
                                         'swap_item_id' => $swapItemId,
@@ -329,24 +320,29 @@ class ItemController extends Controller
                 }
             }
         }
-        // dd('33');
         return redirect()->route('admin.items.index')->with('success', 'Item updated successfully.');
     }
 
     public function destroy(Item $item)
     {
-        // Delete item image if exists
-        if ($item->image) {
-            \Storage::delete('public/' . $item->image);
+        if (!$item->isDeletable()) {
+            Log::warning("Attempt to delete item with ID {$item->id} that is in use.");
+            return redirect()->route('admin.items.index')
+                ->with('error', "Unable to delete this food. It is still linked to other records.");
         }
 
-        // Detach subcategories and swap items
+        // Delete item image if exists
+        if ($item->image) {
+            Storage::delete('public/' . $item->image);
+        }
+
+        // Detach pivot relationships
         $item->meals()->detach();
         $item->swapItems()->detach();
         $item->tags()->detach();
         $item->flags()->detach();
 
-        // Delete item
+        // Delete the item
         $item->delete();
 
         return redirect()->route('admin.items.index')->with('success', 'Item deleted successfully.');
@@ -405,7 +401,6 @@ class ItemController extends Controller
         if (!$item) {
             return response()->json(['error' => 'Food not found'], 404);
         }
-        // dd($item);
         return response()->json([
             'item' => [
                 'id' => $item->id,

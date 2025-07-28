@@ -374,16 +374,10 @@
             });
         });
     });
-    // ...existing code...
-
-    // function showLoader() {
-
-    //     $('#loader').css('display', 'd-flex');
-
-    // }
+    
     function showLoader() {
-    $('#loader').removeClass('d-none');
-}
+        $('#loader').removeClass('d-none');
+    }
     function hideLoader() {
          $('#loader').addClass('d-none');
     }
@@ -393,10 +387,6 @@
         $(document).on('click', '#shoppingList', function() {
             const shoppingListModal = document.getElementById('shoppingListModal');
             showLoader();
-
-            // Show modal
-            // const modal = new bootstrap.Modal(shoppingListModal);
-            // modal.show();
 
             // Inject content
             const contentContainer = $('#shoppingListModal .modal-body');
@@ -732,6 +722,7 @@
         });
 
         $('#shoppingListModal').on('hidden.bs.modal', function () {
+            $('.modal-backdrop').remove();
             $(this).find('.modal-body').html(''); // Clear modal content
         });
 
@@ -969,6 +960,18 @@
         });
     });
 
+    $(document).on('hide.bs.modal', '#recipeDialogModal', function () {
+        // Clear the modal content when it is closed
+        $('#recipeDialogModal .modal-body .dialog-header h2').text('');
+        $('#recipeDialogModal .modal-body .dialog-header p').text('');
+        $('#recipeDialogModal .modal-body .dialog-img').attr('src', '');
+        $('#recipeDialogModal .modal-body ul').empty();
+        $('#recipeDialogModal .modal-body .note').hide();
+        $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
+        $('#recipeDialogModal .modal-body .nutrition-info').empty();
+        $('.modal-backdrop').remove();
+    });
+
     $(document).on('click', '.meal-item-btn', function () {
         const $btn = $(this);
 
@@ -1115,7 +1118,7 @@
         }
     });
 
-    $('body').on('click', '.item-swap-btn', function () {
+    $(document).on('click', '.item-swap-btn', function () {
         const itemId = $(this).data('item-id');
         const itemName = $(this).data('item-name');
         const userItemId = $(this).data('user-item-id');
@@ -1258,6 +1261,7 @@
     });
 
     $('#mealItemModel').on('hidden.bs.modal', function () {
+        $('.modal-backdrop').remove();
         $('#mealItemsContainer').empty();
         $('#mealItemsLoadingSpinner').hide();
     });
@@ -1344,14 +1348,12 @@
         $('[data-bs-toggle="tooltip"]').tooltip();
     });
 
-   // Ensure the modal event is registered AFTER the DOM is ready
-    $(document).ready(function () {
-        $('#smartSwapModal').on('hidden.bs.modal', function () {
-            currentMainItem = null;
-            swaps = []; // Reset swaps array
-            $('#smartSwapModalLabel').text(''); // Clear modal title
-            $('#smartSwapModal .swap-list').empty(); // Clear HTML inside modal
-        });
+    $('#smartSwapModal').on('hidden.bs.modal', function () {
+        currentMainItem = null;
+        swaps = []; // Reset swaps array
+        $('#smartSwapModalLabel').text(''); // Clear modal title
+        $('#smartSwapModal .swap-list').empty(); // Clear HTML inside modal
+        $('.modal-backdrop').remove();
     });
 
     // Apply Swap Changes functionality
@@ -1413,64 +1415,13 @@
 
     $('#errormodalmain').on('hidden.bs.modal', function () {
         $(this).find('.modal-body').html('');
+        $('.modal-backdrop').remove();
     });
     $('#shoppingListModal').on('hidden.bs.modal', function () {
         $(this).find('.modal-body').html('');
+        $('.modal-backdrop').remove();
     });
 
-
-
-</script>
-
-
-   <!-- Error Modal HTML -->
-<div class="modal" id="errormodalmain" tabindex="-1" aria-labelledby="testLabel" aria-hidden="true">
-	<div class="modal-dialog modal-confirm modal-dialog-centered">
-		<div class="modal-content">
-			<div class="justify-content-center modal-header">
-				<div class="icon-box">
-					<i class="fas fa-exclamation-circle"></i>
-				</div>
-			    <button class="dialog-close"
-                style="    top: -20px;
-    right: -20px;"
-                data-bs-dismiss="modal" aria-label="Close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-  <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
-</svg>
-                    </button>
-			</div>
-			<div class="text-center modal-body">
-				<h4>Ooops!</h4>
-				<p>Something went wrong.</p>
-
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- Coming Soon Modal -->
-<div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
-    <div class="modal-dialog modal-confirm modal-coming-soon modal-dialog-centered">
-        <div class="modal-content">
-            <div class="justify-content-center modal-header">
-                <div class="icon-box">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="text-center modal-body">
-                <h4>Coming Soon!</h4>
-                <p>This feature is coming soon.</p>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
     document.addEventListener('DOMContentLoaded', function() {
         var inviteDiv = document.querySelector('.share-dropdown-item');
         if(inviteDiv) {
@@ -1481,48 +1432,44 @@
             });
         }
     });
-</script>
-<script>
+    // card slider functionality
+    $(document).ready(function() {
+        // For each slider-wrapper (handles multiple carousels if present)
+        $('.slider-wrapper').each(function(idx) {
+            var $wrapper = $(this);
+            var $scroll = $wrapper.find('.challenge-cards');
+            var $cards = $scroll.find('.challenge-card');
+            var cardWidth = $cards.length ? $cards.outerWidth(true) : 200;
 
-
-// card slider functionality
-$(document).ready(function() {
-    // For each slider-wrapper (handles multiple carousels if present)
-    $('.slider-wrapper').each(function(idx) {
-        var $wrapper = $(this);
-        var $scroll = $wrapper.find('.challenge-cards');
-        var $cards = $scroll.find('.challenge-card');
-        var cardWidth = $cards.length ? $cards.outerWidth(true) : 200;
-
-        $wrapper.find('.left-arrow').on('click', function(e) {
-            e.preventDefault();
-            var before = $scroll.scrollLeft();
-            $scroll.animate({ scrollLeft: before - cardWidth }, 300, function() {
-                var after = $scroll.scrollLeft();
-                console.log(`[Slider ${idx}] Left arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+            $wrapper.find('.left-arrow').on('click', function(e) {
+                e.preventDefault();
+                var before = $scroll.scrollLeft();
+                $scroll.animate({ scrollLeft: before - cardWidth }, 300, function() {
+                    var after = $scroll.scrollLeft();
+                    console.log(`[Slider ${idx}] Left arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+                });
             });
-        });
 
-        $wrapper.find('.right-arrow').on('click', function(e) {
-            e.preventDefault();
-            var before = $scroll.scrollLeft();
-            $scroll.animate({ scrollLeft: before + cardWidth }, 300, function() {
-                var after = $scroll.scrollLeft();
-                console.log(`[Slider ${idx}] Right arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+            $wrapper.find('.right-arrow').on('click', function(e) {
+                e.preventDefault();
+                var before = $scroll.scrollLeft();
+                $scroll.animate({ scrollLeft: before + cardWidth }, 300, function() {
+                    var after = $scroll.scrollLeft();
+                    console.log(`[Slider ${idx}] Right arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+                });
             });
         });
     });
-});
-$(document).ready(function() {
-    $('.slider-wrapper').each(function() {
-        var $wrapper = $(this);
-        var $cards = $wrapper.find('.challenge-card');
-        if ($cards.length <= 4) {
-            $wrapper.find('.slider-arrow').hide();
-        } else {
-            $wrapper.find('.slider-arrow').show();
-        }
+    $(document).ready(function() {
+        $('.slider-wrapper').each(function() {
+            var $wrapper = $(this);
+            var $cards = $wrapper.find('.challenge-card');
+            if ($cards.length <= 4) {
+                $wrapper.find('.slider-arrow').hide();
+            } else {
+                $wrapper.find('.slider-arrow').show();
+            }
+        });
     });
-});
 </script>
 @endsection
