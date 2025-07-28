@@ -638,7 +638,6 @@ padding: 22px 24px;
     background: rgb(255 255 255 / 0.3);
 }
 .surfing-videos h2 {
-    margin-bottom: 1.5rem;
     color: #1e293b;
 }
 .surfing-videos .video-grid .video-card {
@@ -1056,10 +1055,11 @@ padding: 22px 24px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
+    border: 2px solid #fff;
 }
 .consult-avatar.overlap1 {
     position: absolute;
-    left: 10%;
+  left: 20px;
 }
 .btn-consult {
     background: #3b82f6;
