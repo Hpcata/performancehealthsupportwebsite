@@ -1764,6 +1764,9 @@ class FrontController extends Controller
                 'name' => $meal->title,
                 'image' => webAssets('storage/' . $meal->image),
                 'description' => $meal->description,
+                'user_category_id' => $userMeal->user_category_id,
+                'user_sub_category_id' => $userMeal->user_sub_category_id,
+                'user_plan_id' => $userMeal->user_plan_id,
             ];
         });
 

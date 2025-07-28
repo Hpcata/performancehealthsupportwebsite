@@ -13,7 +13,13 @@
                 height="400"
             />
             <h3>{{ $meal['name'] ?? 'Untitled Meal' }}</h3>
-            <div class="quick-view-overlay">
+            <div class="quick-view-overlay quick-view-btn"
+                 data-meal-id="{{ $meal['id'] }}"
+                 data-user-plan-id="{{ $meal['user_plan_id'] }}"
+                 data-sub-category-id="{{ $meal['user_sub_category_id'] }}"
+                 data-category-id="{{ $meal['user_category_id'] }}"
+                 data-meal-title="{{ $meal['name'] ?? '' }}"
+                 >
                 <span style="padding: 12px; border-radius: 12px; background-color: #0d6efd; font-weight: 700; cursor:pointer;">
                     Quick View
                 </span>
