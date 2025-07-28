@@ -13,7 +13,7 @@ $auth = auth()->guard('web')->check();
         class="mobile-menu-toggle"
         aria-label="Toggle mobile menu"
         onclick="toggleMobileMenu()"
-        style="background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;">
+        style="background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;margin: 0 !important;">
         <span id="mobile-menu-icon">
             <!-- This will be replaced by JS -->
             <i class="fas fa-bars" aria-hidden="true" id="hamburger-icon"></i>

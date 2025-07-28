@@ -107,7 +107,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-secondary"
-                                                onclick="return confirm('Are you sure you want to delete this record?');">
+                                                onclick="return confirm('Are you sure you want to delete this food?');">
                                                 <i class="icofont-ui-delete text-danger"></i>
                                             </button>
                                         </form>

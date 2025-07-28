@@ -4,22 +4,7 @@
 @section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-@if (!empty($sportGameData['sport_image']))
-<style>
-    .hero-background {
-        background-image: url('{{ webAssets("storage/" . $sportGameData['sport_image']) }}') !important;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        height: 100%;
-        max-width: 100%;
-        position: absolute;
-        right: 0;
-        border-radius: 0 0 36px 0;
-        width: 100%;
-    }
-</style>
-@endif
+
 <main class="main">
      <!-- Loader -->
     <!-- <div id="loader" class="d-none">
@@ -32,16 +17,21 @@
     <!-- Hero Banner -->
     <div class="hero-container">
         <div class="hero-section">
-            <div class="hero-background">
-                <div class="hero-overlay"></div>
-            </div>
-
+            @if (!empty($sportGameData['sport_image']))
+                <div class="hero-background" style="background-image: url('{{ webAssets('storage/' . $sportGameData['sport_image']) }}')" >
+                    <div class="hero-overlay"></div>
+                </div>
+            @else
+                <div class="hero-background" style="background-image: url('{{ frontAssets('images/bannerimg.png') }}');" >
+                    <div class="hero-overlay"></div>
+                </div>
+            @endif
             <div class="hero-content">
                 <div class="hero-bottom">
                     <h1 class="hero-title">Training Nutrition Plan</h1>
 
                     <div class="hero-top">
-                        <p class="hero-subtitle-plan">BMX freestyle</p>
+                        <p class="hero-subtitle-plan">{{ isset($sportGameData['sport_image']) ? $sportGameData['sport_name'] : '' }}</p>
                         <a href="#" class="view-all-link"> View all plans </a>
                     </div>
                 </div>
@@ -109,7 +99,7 @@
                                         ->where('user_plan_id', $userPlan->id)
                                         ->where('user_category_id', $userCategory->id)
                                         ->where('user_sub_category_id', $subCategory->id);
-                                        
+
                                     $mealCount = $subCategory->userMeals
                                         ->where('user_plan_id', $userPlan->id)
                                         ->where('user_category_id', $userCategory->id)
@@ -119,20 +109,18 @@
 
                                 @if ($mealCount > 0)
                                     @if(isset($subCategory->subCategory))
+
                                         <section class="challenges" aria-label="Meal Plan Categories">
                                             <div class="section-header">
                                                 <h2>{{ $subCategory->subCategory->title ?? '' }} ({{ $mealCount }})</h2>
                                             </div>
-                                            <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                                                @if($mealCount > 3)
-                                                    <div class="scroll-arrow-left" aria-label="Scroll left">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-                                                            <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                        </svg>
-                                                    </div>
-                                                @endif
-
-                                                <div class="challenge-cards horizontal-scroll">
+                                            <div class="slider-wrapper" style="position:relative;">
+                                            <button class="left-arrow slider-arrow" >
+                                                <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </button>
+                                                <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
                                                     @foreach ($meals as $meal)
                                                         <div class="challenge-card clickable"
                                                             data-title="{{ $meal->meal->title }}"
@@ -148,24 +136,34 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay"><span style="padding: 12px;
-    border-radius: 12px;
-    background-color: #0d6efd;
-    font-weight: 700;
-    cursor:pointer;">Quick View</span></div>
+                                                            <div class="quick-view-overlay">
+                                                                <span
+                                                                    style="padding: 12px;
+                                                                    border-radius: 12px;
+                                                                    background-color:#709ef1;
+                                                                    font-weight: 700;
+                                                                    cursor:pointer;">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                        height="16" viewBox="0 0 18 18"
+                                                                        fill="none">
+                                                                        <path
+                                                                            d="M1 5.50117H14L12.4 6.70117C12.2949 6.77996 12.2064 6.87867 12.1395 6.99167C12.0726 7.10467 12.0286 7.22974 12.0101 7.35974C11.9915 7.48975 11.9987 7.62213 12.0313 7.74935C12.0639 7.87656 12.1212 7.99611 12.2 8.10117C12.2931 8.22536 12.4139 8.32616 12.5528 8.39559C12.6916 8.46502 12.8448 8.50117 13 8.50117C13.2164 8.50117 13.4269 8.43099 13.6 8.30117L17.6 5.30117C17.7223 5.20784 17.8214 5.08756 17.8897 4.94967C17.9579 4.81178 17.9934 4.66001 17.9934 4.50617C17.9934 4.35232 17.9579 4.20055 17.8897 4.06266C17.8214 3.92478 17.7223 3.80449 17.6 3.71117L13.74 0.711166C13.5305 0.548057 13.2647 0.474862 13.0013 0.507681C12.7378 0.540499 12.4981 0.676645 12.335 0.886166C12.1719 1.09569 12.0987 1.36142 12.1315 1.62491C12.1643 1.8884 12.3005 2.12806 12.51 2.29117L14.08 3.50117H1C0.734784 3.50117 0.48043 3.60652 0.292893 3.79406C0.105357 3.9816 0 4.23595 0 4.50117C0 4.76638 0.105357 5.02074 0.292893 5.20827C0.48043 5.39581 0.734784 5.50117 1 5.50117ZM17 12.5012H4L5.6 11.3012C5.81217 11.142 5.95244 10.9051 5.98995 10.6426C6.02746 10.38 5.95913 10.1133 5.8 9.90117C5.64087 9.68899 5.40397 9.54872 5.14142 9.51122C4.87887 9.47371 4.61217 9.54204 4.4 9.70117L0.4 12.7012C0.277693 12.7945 0.178568 12.9148 0.110337 13.0527C0.0421059 13.1905 0.00660944 13.3423 0.00660944 13.4962C0.00660944 13.65 0.0421059 13.8018 0.110337 13.9397C0.178568 14.0776 0.277693 14.1978 0.4 14.2912L4.26 17.2912C4.43455 17.4266 4.64905 17.5005 4.87 17.5012C5.02272 17.5008 5.17332 17.4655 5.31026 17.3979C5.4472 17.3303 5.56684 17.2322 5.66 17.1112C5.82239 16.9027 5.89567 16.6384 5.86381 16.3761C5.83196 16.1138 5.69756 15.8747 5.49 15.7112L3.92 14.5012H17C17.2652 14.5012 17.5196 14.3958 17.7071 14.2083C17.8946 14.0207 18 13.7664 18 13.5012C18 13.2359 17.8946 12.9816 17.7071 12.7941C17.5196 12.6065 17.2652 12.5012 17 12.5012Z"
+                                                                            fill="#ffffff" />
+                                                                    </svg>
+                                                                    Smart Swap
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     @endforeach
                                                 </div>
-
-                                                @if($mealCount > 3)
-                                                    <div class="scroll-arrow-right" aria-label="Scroll right">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
-                                                            <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                        </svg>
-                                                    </div>
-                                                @endif
+                                               <button class="right-arrow slider-arrow">
+                                                    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                                </button>
                                             </div>
                                         </section>
+
                                     @endif
                                 @endif
                             @endforeach
@@ -241,7 +239,7 @@
                     alt="Plate like this image"
                     width="318"
                     height="350"
-                    class="plate-img" 
+                    class="plate-img"
                     id="plate-img"/>
                 <ul style="list-style: none; padding-left: 0; font-size: 1rem">
                     <li class="list-w-image">
@@ -292,15 +290,15 @@
         <div class="modal-content" style="border-radius: 12px;">
             <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
                 <h5 class="modal-title" id="printPlanModalLabel">Download Plan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="meal-item-modal-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="padding: 0;">
-                <div style="flex: 1 1 auto; overflow-y: auto; padding: 16px 16px 0 16px;">
-                    <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center; overflow:auto;" class="downloadplan-inner-content">
-                       
+            <div class="modal-body" style="padding: 0;    overflow: auto;">
+                <div style="flex: 1 1 auto; padding: 16px 16px 0 16px;">
+                    <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center;" class="downloadplan-inner-content">
+
                     </div>
                 </div>
-               
+
             </div>
              <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
                 <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
@@ -348,7 +346,7 @@
     const assetBaseUrl = "{{ asset('storage') }}";
 
     // Ensure userId and userPlanId are already defined globally
-    
+
     document.addEventListener('DOMContentLoaded', function () {
         const dropdownOptions = document.querySelectorAll('.custom-dropdown-option');
         const plateImg = document.getElementById('plate-img'); // Get the image element
@@ -384,16 +382,10 @@
             });
         });
     });
-    // ...existing code...
-
-    // function showLoader() {
-       
-    //     $('#loader').css('display', 'd-flex');
-
-    // }
+    
     function showLoader() {
-    $('#loader').removeClass('d-none');
-}
+        $('#loader').removeClass('d-none');
+    }
     function hideLoader() {
          $('#loader').addClass('d-none');
     }
@@ -403,10 +395,6 @@
         $(document).on('click', '#shoppingList', function() {
             const shoppingListModal = document.getElementById('shoppingListModal');
             showLoader();
-
-            // Show modal
-            // const modal = new bootstrap.Modal(shoppingListModal);
-            // modal.show();
 
             // Inject content
             const contentContainer = $('#shoppingListModal .modal-body');
@@ -658,7 +646,7 @@
         $(document).on('click', '#download-pdf', function() {
             showLoader();
             const content = document.querySelector('#print-shopping-list-modal #shopping-list-content');
-            
+
             if (!content || content.innerHTML.trim() === '') {
                 $('#errormodalmain').modal('show');
                 return;
@@ -713,7 +701,7 @@
             // ✅ Bootstrap 5 modal instance
             const printPlanModalEl = document.getElementById('print-plan-modal');
             const printPlanModal = new bootstrap.Modal(printPlanModalEl);
-            
+
             printPlanModal.show(); // ✅ Show the modal
             showLoader();
             // ✅ Reset preview content with loading text
@@ -738,10 +726,11 @@
         });
 
         $('#print-plan-modal').on('hide.bs.modal', function () {
-            window.location.reload(); // Reload page to reset state  
+            window.location.reload(); // Reload page to reset state
         });
-        
+
         $('#shoppingListModal').on('hidden.bs.modal', function () {
+            $('.modal-backdrop').remove();
             $(this).find('.modal-body').html(''); // Clear modal content
         });
 
@@ -979,6 +968,18 @@
         });
     });
 
+    $(document).on('hide.bs.modal', '#recipeDialogModal', function () {
+        // Clear the modal content when it is closed
+        $('#recipeDialogModal .modal-body .dialog-header h2').text('');
+        $('#recipeDialogModal .modal-body .dialog-header p').text('');
+        $('#recipeDialogModal .modal-body .dialog-img').attr('src', '');
+        $('#recipeDialogModal .modal-body ul').empty();
+        $('#recipeDialogModal .modal-body .note').hide();
+        $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
+        $('#recipeDialogModal .modal-body .nutrition-info').empty();
+        $('.modal-backdrop').remove();
+    });
+
     $(document).on('click', '.meal-item-btn', function () {
         const $btn = $(this);
 
@@ -1035,7 +1036,7 @@
                             console.warn('Failed to parse selected_qty_unit for item:', item.name, e);
                         }
 
-                        const checkedUnits = selectedUnits.filter(u => 
+                        const checkedUnits = selectedUnits.filter(u =>
                             u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1"
                         );
 
@@ -1065,8 +1066,8 @@
                         const itemCard = `
                             <div class="swap-item">
                                 <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
-                                <div class="flex-wrapper"> 
-                               
+                                <div class="flex-wrapper">
+
                                 <div class="swap-item-info">
                                     <div class="swap-item-name">${item.name}</div>
                                     <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
@@ -1115,7 +1116,7 @@
     $(document).on('click', '.meal-item-modal-close', function () {
         const modalEl = $('#mealItemModel')[0];
         const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        
+
         if (modalInstance) {
             modalInstance.hide();
         } else {
@@ -1125,7 +1126,7 @@
         }
     });
 
-    $('body').on('click', '.item-swap-btn', function () {
+    $(document).on('click', '.item-swap-btn', function () {
         const itemId = $(this).data('item-id');
         const itemName = $(this).data('item-name');
         const userItemId = $(this).data('user-item-id');
@@ -1211,7 +1212,7 @@
                             <div class="swap-item-name">${data.item_name}</div>
                             <div class="swap-item-qty"><b>Qty:</b> ${mainQtyText}</div>
                         </div>
-                        <div class="swap-item-actions"> 
+                        <div class="swap-item-actions">
                             ${item.description ? `
                                 <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${item.description}">
                                     <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
@@ -1268,6 +1269,7 @@
     });
 
     $('#mealItemModel').on('hidden.bs.modal', function () {
+        $('.modal-backdrop').remove();
         $('#mealItemsContainer').empty();
         $('#mealItemsLoadingSpinner').hide();
     });
@@ -1354,14 +1356,12 @@
         $('[data-bs-toggle="tooltip"]').tooltip();
     });
 
-   // Ensure the modal event is registered AFTER the DOM is ready
-    $(document).ready(function () {
-        $('#smartSwapModal').on('hidden.bs.modal', function () {
-            currentMainItem = null;
-            swaps = []; // Reset swaps array
-            $('#smartSwapModalLabel').text(''); // Clear modal title
-            $('#smartSwapModal .swap-list').empty(); // Clear HTML inside modal
-        });
+    $('#smartSwapModal').on('hidden.bs.modal', function () {
+        currentMainItem = null;
+        swaps = []; // Reset swaps array
+        $('#smartSwapModalLabel').text(''); // Clear modal title
+        $('#smartSwapModal .swap-list').empty(); // Clear HTML inside modal
+        $('.modal-backdrop').remove();
     });
 
     // Apply Swap Changes functionality
@@ -1372,7 +1372,7 @@
         const userPlanId = $(this).data('user-plan-id');
         const userSubCategoryId = $(this).data('user-sub-category-id');
         const userCategoryId = $(this).data('user-category-id');
-       
+
         $.ajax({
             url: "{{ route('front.items.swaps') }}", // Laravel route to handle the request
             method: "GET",
@@ -1389,7 +1389,7 @@
             success: function (response) {
                 // Handle success response
                 swaps = [];
-                
+
                 if(response.success){
                     $('#smartSwapModal').modal('hide');
                     var meal_id = response.data['meal_id'];
@@ -1423,85 +1423,13 @@
 
     $('#errormodalmain').on('hidden.bs.modal', function () {
         $(this).find('.modal-body').html('');
+        $('.modal-backdrop').remove();
     });
     $('#shoppingListModal').on('hidden.bs.modal', function () {
         $(this).find('.modal-body').html('');
+        $('.modal-backdrop').remove();
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Blade inline script: DOMContentLoaded fired');
-        document.querySelectorAll('.horizontal-scroll-arrow-wrapper').forEach(function(wrapper) {
-          const scrollContainer = wrapper.querySelector('.horizontal-scroll');
-          const leftArrow = wrapper.querySelector('.scroll-arrow-left');
-          const rightArrow = wrapper.querySelector('.scroll-arrow-right');
-          if (leftArrow && scrollContainer) {
-            leftArrow.addEventListener('click', function(e) {
-              e.preventDefault();
-              console.log('Blade inline: Left arrow clicked');
-              scrollContainer.scrollBy({ left: -scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
-            });
-          }
-          if (rightArrow && scrollContainer) {
-            rightArrow.addEventListener('click', function(e) {
-              e.preventDefault();
-              console.log('Blade inline: Right arrow clicked');
-              scrollContainer.scrollBy({ left: scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
-            });
-          }
-        });
-    });
-
-</script>
-
-
-   <!-- Error Modal HTML -->
-<div class="modal" id="errormodalmain" tabindex="-1" aria-labelledby="testLabel" aria-hidden="true">
-	<div class="modal-dialog modal-confirm modal-dialog-centered">
-		<div class="modal-content">
-			<div class="justify-content-center modal-header">
-				<div class="icon-box">
-					<i class="fas fa-exclamation-circle"></i>
-				</div>
-			    <button class="dialog-close" 
-                style="    top: -20px;
-    right: -20px;"
-                data-bs-dismiss="modal" aria-label="Close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-  <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
-</svg>
-                    </button>
-			</div>
-			<div class="text-center modal-body">
-				<h4>Ooops!</h4>	
-				<p>Something went wrong.</p>
-				
-			</div>
-		</div>
-	</div>
-</div> 
-
-<!-- Coming Soon Modal -->
-<div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
-    <div class="modal-dialog modal-confirm modal-coming-soon modal-dialog-centered">
-        <div class="modal-content">
-            <div class="justify-content-center modal-header">
-                <div class="icon-box">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="text-center modal-body">
-                <h4>Coming Soon!</h4>
-                <p>This feature is coming soon.</p>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
     document.addEventListener('DOMContentLoaded', function() {
         var inviteDiv = document.querySelector('.share-dropdown-item');
         if(inviteDiv) {
@@ -1511,6 +1439,45 @@
                 comingSoonModal.show();
             });
         }
+    });
+    // card slider functionality
+    $(document).ready(function() {
+        // For each slider-wrapper (handles multiple carousels if present)
+        $('.slider-wrapper').each(function(idx) {
+            var $wrapper = $(this);
+            var $scroll = $wrapper.find('.challenge-cards');
+            var $cards = $scroll.find('.challenge-card');
+            var cardWidth = $cards.length ? $cards.outerWidth(true) : 200;
+
+            $wrapper.find('.left-arrow').on('click', function(e) {
+                e.preventDefault();
+                var before = $scroll.scrollLeft();
+                $scroll.animate({ scrollLeft: before - cardWidth }, 300, function() {
+                    var after = $scroll.scrollLeft();
+                    console.log(`[Slider ${idx}] Left arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+                });
+            });
+
+            $wrapper.find('.right-arrow').on('click', function(e) {
+                e.preventDefault();
+                var before = $scroll.scrollLeft();
+                $scroll.animate({ scrollLeft: before + cardWidth }, 300, function() {
+                    var after = $scroll.scrollLeft();
+                    console.log(`[Slider ${idx}] Right arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+                });
+            });
+        });
+    });
+    $(document).ready(function() {
+        $('.slider-wrapper').each(function() {
+            var $wrapper = $(this);
+            var $cards = $wrapper.find('.challenge-card');
+            if ($cards.length <= 4) {
+                $wrapper.find('.slider-arrow').hide();
+            } else {
+                $wrapper.find('.slider-arrow').show();
+            }
+        });
     });
 </script>
 @endsection
