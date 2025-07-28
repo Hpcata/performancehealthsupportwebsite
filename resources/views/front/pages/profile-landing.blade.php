@@ -39,6 +39,7 @@
                             <a href="#" class="see-all">See Plan</a>
                         </div>
                     @endif
+
                     {{-- Tabs --}}
                     <div class="tabs">
                         @php $firstTab = true; @endphp
@@ -67,6 +68,10 @@
                         @endforeach
                     </div>
 
+
+
+
+
                     <div class="tab-content challenges">
                         <div class="slider-wrapper" style="position:relative;">
                             <button class="left-arrow slider-arrow">
@@ -88,37 +93,38 @@
                             </button>
                         </div>
                         <!-- <div class="position-relative challenge-cards" id="meal-cards-wrapper">
-                            <p>Loading meals...</p>
-                        </div> -->
+                                <p>Loading meals...</p>
+                            </div> -->
                     </div>
                 </section>
 
             @endif
-            {{-- Tabs --}}
-            <div class="tabs">
-                @php $firstTab = true; @endphp
-                @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
-                    @php
-                    $category = $userCategory->category;
-                    $hasValidMeal = $userCategory->userSubCategories()
-                        ->where('user_plan_id', $userPlan->id)
-                        ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
-                            $q->where('user_plan_id', $userPlan->id)
-                            ->where('user_category_id', $userCategory->id);
-                        })->exists();
-                    @endphp
 
-                    @if ($hasValidMeal && $category)
-                        <button
-                            class="tab {{ $firstTab ? 'active' : '' }}"
-                            data-category-id="{{ $category->id }}"
-                            data-plan-id="{{ $userPlan->id }}">
-                            {{ $category->title }}
-                        </button>
-                        @php $firstTab = false; @endphp
-                    @endif
-                @endforeach
-            </div>
+
+
+            <!-- Challenges -->
+            <section class="challenges">
+                <div class="section-header">
+                    <h2>Challenges</h2>
+                    <!-- <a href="/challenges" class="see-all">See all</a> -->
+                </div>
+                <div class="slider-container">
+
+                    <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
+                        <div class="challenge-card clickable hover-card coming-soon-popup">
+                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                                alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                            <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <span>30</span>
+                            </div>
+                        </div>
+                        <div class="challenge-card clickable hover-card coming-soon-popup">
+                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
+                                alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
+                            <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
 
                             <div class="rating">
                                 <i class="fas fa-star"></i>
@@ -145,95 +151,12 @@
                                 <span>30</span>
                             </div>
                         </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                                alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                            <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-
-        @endif
-        <!-- Challenges -->
-        <section class="challenges">
-            <div class="section-header">
-                <h2>Challenges</h2>
-                <!-- <a href="/challenges" class="see-all">See all</a> -->
-            </div>
-            <div class="slider-container">
-                                                 
-             <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
-                <div class="challenge-card clickable hover-card coming-soon-popup">
-                    <img
-                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                        alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                    <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <span>30</span>
                     </div>
-                </div>
-                <div class="challenge-card clickable hover-card coming-soon-popup">
-                    <img
-                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
-                        alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
-                    <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
 
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <span>10</span>
-                    </div>
-                </div>
-                <div class="challenge-card clickable hover-card coming-soon-popup">
-                    <img
-                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                        alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                    <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <span>30</span>
-                    </div>
-                </div>
-                 <div class="challenge-card clickable hover-card coming-soon-popup">
-                    <img
-                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                        alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                    <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <span>30</span>
-                    </div>
-                </div>
-           </div>
-              
-            </div>
-        </section>
-
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <span>30</span>
-                            </div>
-                        </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                                alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                            <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <span>30</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="right-arrow slider-arrow">
-                        <svg width="18" height="24" viewBox="0 0 18 32" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
                 </div>
             </section>
+
+
 
             <!-- Resources and Tools -->
             <section class="resources">
@@ -252,8 +175,7 @@
                         <div class="resource-title">Supplement scanner</div>
                     </div>
 
-                    <div class="cursor-pointer resource-card-custom resource-chat hover-card"
-                        id="chat-to-virtual-kez-btn">
+                    <div class="cursor-pointer resource-card-custom resource-chat hover-card" id="chat-to-virtual-kez-btn">
                         <img src="{{ frontAssets('images/cardimg-2.webp') }}" class="resource-bg-img"
                             alt="Chat resource background" />
                         <div class="icon-bg">
@@ -312,94 +234,90 @@
                 </div>
             </section>
 
-        <!-- Optimize Performance -->
-        <section class="optimize-performance">
-            <div class="section-header">
-                <h2>Optimise your performance</h2>
-                <a href="#" class="see-all">All Plans</a>
-            </div>
-            <div class="consults-plans-grid grid-1">
-                <div class="consultation-card-custom">
-                    <div class="consult-title"></div>
-                    <div class="consult-desc">
-                        Get answers from a real-life expert coaching Elite Athletes and
-                        Olympians.
-                    </div>
-                    <div class="consult-user-row">
-                        <img
-                            src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
-                            class="consult-avatar"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                        <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
-                    </div>
-                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
+            <!-- Optimize Performance -->
+            <section class="optimize-performance">
+                <div class="section-header">
+                    <h2>Optimise your performance</h2>
+                    <a href="#" class="see-all">All Plans</a>
                 </div>
-            </div>
-            @php
-                $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
-                $userPlan = $userPlan ?? null;
-
-                $latestMealImages = isset($userPlan->userMeals) ? $userPlan->userMeals()
-                    ->with('meal')
-                    ->latest()
-                    ->get()
-                    ->map(function ($userMeal) {
-                        return $userMeal->meal?->image
-                            ? asset('storage/' . $userMeal->meal->image)
-                            : null;
-                    })
-                    ->filter(function ($image) {
-                        return !empty($image); // filters out null and empty strings
-                    })
-                    ->take(2)
-                    ->values()
-                    ->toArray() : [];
-
-                $mealImage1 = $latestMealImages[0] ?? frontAssets('images/sports-training/fooditem1.webp');
-                $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
-            @endphp
-
-            <div class="consults-plans-grid">
-                <div class="plan-card-custom plan-competition">
-                    <div class="">
-                        <div class="plan-title">Competition Plan</div>
-                        <div class="plan-desc">
-                            Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
+                <div class="consults-plans-grid grid-1">
+                    <div class="consultation-card-custom">
+                        <div class="consult-title"></div>
+                        <div class="consult-desc">
+                            Get answers from a real-life expert coaching Elite Athletes and
+                            Olympians.
                         </div>
                         <div class="consult-user-row">
-                            <img
-                                src="{{ $mealImage1 }}"
-                                class="consult-avatar"
+                            <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
+                                class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
+                            <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
+                        </div>
+                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank"
+                            class="text-decoration-none btn-consult">Book consult</a>
+                    </div>
+                </div>
+                @php
+                    $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
+                    $userPlan = $userPlan ?? null;
+
+                    $latestMealImages = isset($userPlan->userMeals)
+                        ? $userPlan
+                            ->userMeals()
+                            ->with('meal')
+                            ->latest()
+                            ->get()
+                            ->map(function ($userMeal) {
+                                return $userMeal->meal?->image ? asset('storage/' . $userMeal->meal->image) : null;
+                            })
+                            ->filter(function ($image) {
+                                return !empty($image); // filters out null and empty strings
+                            })
+                            ->take(2)
+                            ->values()
+                            ->toArray()
+                        : [];
+
+                    $mealImage1 = $latestMealImages[0] ?? frontAssets('images/sports-training/fooditem1.webp');
+                    $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
+                @endphp
+
+                <div class="consults-plans-grid">
+                    <div class="plan-card-custom plan-competition">
+                        <div class="">
+                            <div class="plan-title">Competition Plan</div>
+                            <div class="plan-desc">
+                                Unlock your best performance with a fully customised 24-hour competition day meal
+                                plan—designed to fuel you from the night before through recovery, tailored to your sport,
+                                your preferences, and your game-day goals.
+                            </div>
+                            <div class="consult-user-row">
+                                <img src="{{ $mealImage1 }}" class="consult-avatar"
+                                    alt="Kerry O'Bryan, expert coach avatar" />
+                                <img src="{{ $mealImage2 }}" class="consult-avatar overlap1"
+                                    alt="Kerry O'Bryan, expert coach avatar" />
+                                <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
+                            </div>
+                            <button class="btn-consult">Learn more</button>
+                        </div>
+                    </div>
+                    <div class="plan-card-custom plan-injury">
+                        <div class="plan-title">Injury</div>
+                        <div class="plan-desc">
+                            Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of
+                            healing-focused meals, expert tips, and supplement guidance to accelerate recovery, reduce
+                            inflammation, and get you back to full strength, faster—all built on a food-first approach.
+                        </div>
+                        <div class="consult-user-row">
+                            <img src="{{ $mealImage1 }}" class="consult-avatar"
                                 alt="Kerry O'Bryan, expert coach avatar" />
-                            <img
-                                src="{{ $mealImage2 }}"
-                                class="consult-avatar overlap1"
+                            <img src="{{ $mealImage2 }}" class="consult-avatar overlap1"
                                 alt="Kerry O'Bryan, expert coach avatar" />
                             <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                         </div>
                         <button class="btn-consult">Learn more</button>
                     </div>
                 </div>
-                <div class="plan-card-custom plan-injury">
-                    <div class="plan-title">Injury</div>
-                    <div class="plan-desc">
-                        Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of healing-focused meals, expert tips, and supplement guidance to accelerate recovery, reduce inflammation, and get you back to full strength, faster—all built on a food-first approach.
-                    </div>
-                    <div class="consult-user-row">
-                        <img
-                            src="{{ $mealImage1 }}"
-                            class="consult-avatar"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                        <img
-                            src="{{ $mealImage2 }}"
-                            class="consult-avatar overlap1"
-                            alt="Kerry O'Bryan, expert coach avatar" />
-                        <span>{{ $mealCount }}  meals • 18 Nutrition tips</span>
-                    </div>
-                    <button class="btn-consult">Learn more</button>
-                </div>
-            </div>
-        </section>
+            </section>
 
             <!-- Surfing Videos -->
             <section class="surfing-videos">
@@ -635,165 +553,173 @@
     </div>
 
 
-<script>
-let sliderInstances = [];
+    <script>
+        let sliderInstances = [];
 
-function enableNativeScroll(container) {
-    if (!container) return;
-    container.classList.add('native-scroll');
-    container.style.overflowX = 'auto';
-    container.style.display = 'flex';
-    container.style.gap = '16px';
-    container.querySelectorAll('.challenge-card').forEach(card => {
-        card.style.minWidth = '80vw';
-        card.style.flex = '0 0 auto';
-        card.style.scrollSnapAlign = 'start';
-    });
-}
-
-function disableNativeScroll(container) {
-    if (!container) return;
-    container.classList.remove('native-scroll');
-    container.style.overflowX = '';
-    container.style.display = '';
-    container.style.gap = '';
-    container.querySelectorAll('.challenge-card').forEach(card => {
-        card.style.minWidth = '';
-        card.style.flex = '';
-        card.style.scrollSnapAlign = '';
-    });
-}
-
-// Wait for all images in a container to load, then call callback
-function imagesLoaded(container, callback) {
-    const images = container ? container.querySelectorAll('img') : [];
-    let loaded = 0;
-    if (!images.length) return callback();
-    images.forEach(img => {
-        if (img.complete) {
-            loaded++;
-            if (loaded === images.length) callback();
-        } else {
-            img.addEventListener('load', () => {
-                loaded++;
-                if (loaded === images.length) callback();
-            });
-            img.addEventListener('error', () => {
-                loaded++;
-                if (loaded === images.length) callback();
+        function enableNativeScroll(container) {
+            if (!container) return;
+            container.classList.add('native-scroll');
+            container.style.overflowX = 'auto';
+            container.style.display = 'flex';
+            container.style.gap = '16px';
+            container.querySelectorAll('.challenge-card').forEach(card => {
+                card.style.minWidth = '80vw';
+                card.style.flex = '0 0 auto';
+                card.style.scrollSnapAlign = 'start';
             });
         }
-    });
-}
 
-function initResponsiveSlider(wrapper) {
-    const container = wrapper.querySelector('.challenge-cards-slider');
-    const cards = container ? container.querySelectorAll('.challenge-card') : [];
-    const isMobile = window.innerWidth <= 1024;
+        function disableNativeScroll(container) {
+            if (!container) return;
+            container.classList.remove('native-scroll');
+            container.style.overflowX = '';
+            container.style.display = '';
+            container.style.gap = '';
+            container.querySelectorAll('.challenge-card').forEach(card => {
+                card.style.minWidth = '';
+                card.style.flex = '';
+                card.style.scrollSnapAlign = '';
+            });
+        }
 
-    // Completely reset container style added by tns
-    if (wrapper._sliderInstance && typeof wrapper._sliderInstance.destroy === 'function') {
-        wrapper._sliderInstance.destroy();
-        wrapper._sliderInstance = null;
-
-        // Clear Tiny Slider inline styles and classes
-        container.removeAttribute('style');
-        container.className = 'challenge-cards-slider'; // Reset to base class
-        cards.forEach(card => {
-            card.removeAttribute('style');
-            card.classList.remove('tns-item');
-        });
-    }
-
-    // Always hide arrows initially
-    wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
-
-    // Remove hover listeners
-    wrapper.onmouseenter = null;
-    wrapper.onmouseleave = null;
-
-    function runSlider() {
-        if (isMobile) {
-            enableNativeScroll(container);
-        } else if (typeof tns === 'function' && container && cards.length > 1) {
-            disableNativeScroll(container);
-
-            // Show arrows on hover if more than 4 cards
-            if (cards.length > 4) {
-                wrapper.onmouseenter = function() {
-                    wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = '');
-                };
-                wrapper.onmouseleave = function() {
-                    wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
-                };
-            }
-
-            wrapper._sliderInstance = tns({
-                container: container,
-                items: 4,
-                slideBy: 1,
-                gutter: 16,
-                controls: false,
-                nav: false,
-                mouseDrag: true,
-                loop: false,
-                edgePadding: 0,
-                rewind: false,
-                preventScrollOnTouch: 'force',
-                speed: 400,
-                responsive: {
-                    1200: { items: 4 },
-                    900: { items: 3 },
-                    600: { items: 2 },
-                    0: { items: 1 }
+        // Wait for all images in a container to load, then call callback
+        function imagesLoaded(container, callback) {
+            const images = container ? container.querySelectorAll('img') : [];
+            let loaded = 0;
+            if (!images.length) return callback();
+            images.forEach(img => {
+                if (img.complete) {
+                    loaded++;
+                    if (loaded === images.length) callback();
+                } else {
+                    img.addEventListener('load', () => {
+                        loaded++;
+                        if (loaded === images.length) callback();
+                    });
+                    img.addEventListener('error', () => {
+                        loaded++;
+                        if (loaded === images.length) callback();
+                    });
                 }
             });
-
-            // Arrow control bindings
-            const leftArrow = wrapper.querySelector('.left-arrow');
-            const rightArrow = wrapper.querySelector('.right-arrow');
-            if (leftArrow) leftArrow.onclick = () => wrapper._sliderInstance.goTo('prev');
-            if (rightArrow) rightArrow.onclick = () => wrapper._sliderInstance.goTo('next');
         }
-    }
 
-    imagesLoaded(container, () => {
-        setTimeout(runSlider, 50); // Give DOM a moment to stabilize after resize
-    });
-}
+        function initResponsiveSlider(wrapper) {
+            const container = wrapper.querySelector('.challenge-cards-slider');
+            const cards = container ? container.querySelectorAll('.challenge-card') : [];
+            const isMobile = window.innerWidth <= 1024;
+
+            // Completely reset container style added by tns
+            if (wrapper._sliderInstance && typeof wrapper._sliderInstance.destroy === 'function') {
+                wrapper._sliderInstance.destroy();
+                wrapper._sliderInstance = null;
+
+                // Clear Tiny Slider inline styles and classes
+                container.removeAttribute('style');
+                container.className = 'challenge-cards-slider'; // Reset to base class
+                cards.forEach(card => {
+                    card.removeAttribute('style');
+                    card.classList.remove('tns-item');
+                });
+            }
+
+            // Always hide arrows initially
+            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
+
+            // Remove hover listeners
+            wrapper.onmouseenter = null;
+            wrapper.onmouseleave = null;
+
+            function runSlider() {
+                if (isMobile) {
+                    enableNativeScroll(container);
+                } else if (typeof tns === 'function' && container && cards.length > 1) {
+                    disableNativeScroll(container);
+
+                    // Show arrows on hover if more than 4 cards
+                    if (cards.length > 4) {
+                        wrapper.onmouseenter = function() {
+                            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = '');
+                        };
+                        wrapper.onmouseleave = function() {
+                            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
+                        };
+                    }
+
+                    wrapper._sliderInstance = tns({
+                        container: container,
+                        items: 4,
+                        slideBy: 1,
+                        gutter: 16,
+                        controls: false,
+                        nav: false,
+                        mouseDrag: true,
+                        loop: false,
+                        edgePadding: 0,
+                        rewind: false,
+                        preventScrollOnTouch: 'force',
+                        speed: 400,
+                        responsive: {
+                            1200: {
+                                items: 4
+                            },
+                            900: {
+                                items: 3
+                            },
+                            600: {
+                                items: 2
+                            },
+                            0: {
+                                items: 1
+                            }
+                        }
+                    });
+
+                    // Arrow control bindings
+                    const leftArrow = wrapper.querySelector('.left-arrow');
+                    const rightArrow = wrapper.querySelector('.right-arrow');
+                    if (leftArrow) leftArrow.onclick = () => wrapper._sliderInstance.goTo('prev');
+                    if (rightArrow) rightArrow.onclick = () => wrapper._sliderInstance.goTo('next');
+                }
+            }
+
+            imagesLoaded(container, () => {
+                setTimeout(runSlider, 50); // Give DOM a moment to stabilize after resize
+            });
+        }
 
 
-// Initial load for all sliders
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
-        initResponsiveSlider(wrapper);
-    });
-});
-
-// Debounced re-init on resize
-let resizeTimeout;
-window.addEventListener('resize', function() {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(function() {
-        document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
-            initResponsiveSlider(wrapper);
+        // Initial load for all sliders
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
+                initResponsiveSlider(wrapper);
+            });
         });
-    }, 200);
-});
 
-// Meals slider re-init for AJAX or dynamic content
-function initMealsSlider() {
-    const wrapper = document.querySelector('#meal-cards-wrapper')?.closest('.slider-wrapper');
-    if (wrapper) {
-        // Wait for images to load before initializing slider
-        const container = wrapper.querySelector('.challenge-cards-slider');
-        imagesLoaded(container, function() {
-            initResponsiveSlider(wrapper);
+        // Debounced re-init on resize
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
+                    initResponsiveSlider(wrapper);
+                });
+            }, 200);
         });
-    }
-}
-console.log('Destroying slider...');
-wrapper._sliderInstance.destroy();
-console.log('Destroyed, reinitializing...');
-</script>
+
+        // Meals slider re-init for AJAX or dynamic content
+        function initMealsSlider() {
+            const wrapper = document.querySelector('#meal-cards-wrapper')?.closest('.slider-wrapper');
+            if (wrapper) {
+                // Wait for images to load before initializing slider
+                const container = wrapper.querySelector('.challenge-cards-slider');
+                imagesLoaded(container, function() {
+                    initResponsiveSlider(wrapper);
+                });
+            }
+        }
+        console.log('Destroying slider...');
+        wrapper._sliderInstance.destroy();
+        console.log('Destroyed, reinitializing...');
+    </script>
 @endsection
