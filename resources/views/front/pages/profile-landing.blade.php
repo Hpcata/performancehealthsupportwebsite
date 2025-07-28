@@ -265,71 +265,7 @@
                         <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
                     </div>
                 </div>
-                @php
-                    $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
-                    $userPlan = $userPlan ?? null;
-
-                    $latestMealImages = isset($userPlan->userMeals) ? $userPlan->userMeals()
-                        ->with('meal')
-                        ->latest()
-                        ->get()
-                        ->map(function ($userMeal) {
-                            return $userMeal->meal?->image
-                                ? asset('storage/' . $userMeal->meal->image)
-                                : null;
-                        })
-                        ->filter(function ($image) {
-                            return !empty($image); // filters out null and empty strings
-                        })
-                        ->take(2)
-                        ->values()
-                        ->toArray() : [];
-
-                    $mealImage1 = $latestMealImages[0] ?? frontAssets('images/sports-training/fooditem1.webp');
-                    $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
-                @endphp
-
-                <div class="consults-plans-grid">
-                    <div class="plan-card-custom plan-competition">
-                        <div class="">
-                            <div class="plan-title">Competition Plan</div>
-                            <div class="plan-desc">
-                                Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
-                            </div>
-                        </div>
-                        <div class="">
-                            <div class="consult-user-row">
-                                <img
-                                    src="{{ $mealImage1 }}"
-                                    class="consult-avatar"
-                                    alt="Kerry O'Bryan, expert coach avatar" />
-                                <img
-                                    src="{{ $mealImage2 }}"
-                                    class="consult-avatar overlap1"
-                                    alt="Kerry O'Bryan, expert coach avatar" />
-                                <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
-                            </div>
-                            <!-- <div class="plan-meta">
-                                <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
-                                tips
-                            </div> -->
-                            <button class="btn-consult">Learn more</button>
-                        </div>
-                    </div>
-                    <div class="plan-card-custom plan-injury">
-                        <div class="plan-title">Injury</div>
-                        <div class="plan-desc">
-                            Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of healing-focused meals, expert tips, and supplement guidance to accelerate recovery, reduce inflammation, and get you back to full strength, faster—all built on a food-first approach.
-                        </div>
-                        <div class="consult-user-row">
-                            <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
-                                class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                            <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
-                        </div>
-                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank"
-                            class="text-decoration-none btn-consult">Book consult</a>
-                    </div>
-                </div>
+                
                 @php
                     $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
                     $userPlan = $userPlan ?? null;
@@ -553,7 +489,7 @@
             function updateArrowVisibility() {
                 const cards = scrollContainer.querySelectorAll(".challenge-card");
                 console.log("card length", cards.length);
-                const shouldShowArrows = cards.length >= 4;
+                const shouldShowArrows = cards.length > 4;
 
                 if (shouldShowArrows) {
                     leftArrow.style.display = 'block';
