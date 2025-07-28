@@ -259,7 +259,8 @@
                             <img
                                 src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
                                 class="consult-avatar"
-                                alt="Kerry O'Bryan, expert coach avatar" />
+                                alt="Kerry O'Bryan, expert coach avatar" 
+                                style="border:none;"/>
                             <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
                         </div>
                         <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
@@ -331,7 +332,10 @@
 
             <!-- Surfing Videos -->
             <section class="surfing-videos">
-                <h2>What's hot in... Surfing</h2>
+                <div class="section-header">
+                   <h2>What's hot in... Surfing</h2>
+                </div>
+               
                 <div class="video-grid">
                     <div class="video-card">
                         <div class="video-thumbnail hover-card">
