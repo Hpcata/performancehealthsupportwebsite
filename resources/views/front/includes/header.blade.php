@@ -4,7 +4,7 @@ $headerData = json_decode($setting['meta_value'], true);
 $auth = auth()->guard('web')->check();
 ?>
 
-@if (Route::is('front.profile') || Route::is('front.plans.details'))
+@if (Route::is('front.profile') || Route::is('front.plans.details') || Route::is('front.profile.resource-and-tools'))
 <!-- Mobile Menu Overlay -->
 <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()" style=" position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:1999;"></div>
 <header class="mobile-header">

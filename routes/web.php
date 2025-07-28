@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Front\QuizController as FrontQuizController;
 use App\Http\Controllers\Admin\SportCategoryController;
 use App\Http\Controllers\Admin\SportGameController;
+use App\Http\Controllers\Front\Profile\ResourceAndToolsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -355,6 +356,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/meal-details', [FrontPlanController::class, 'getMealDetails'])->name('front.meal.details');
 	Route::post('/meal-smart-swaps', [FrontPlanController::class, 'getMealSmartSwaps'])->name('front.meal.smart.swaps');
 
+	Route::get('/resource-and-tools', [ResourceAndToolsController::class, 'index'])->name('front.profile.resource-and-tools');
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');
 
