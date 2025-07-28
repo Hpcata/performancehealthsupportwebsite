@@ -3256,15 +3256,14 @@ font-size: 18px;
     align-items: center;
     justify-content: space-between;
 }
-.challenges .challenge-card img.swap-icon{
-width: 18px !important;
-max-width: 18px !important;
-min-width: 18px !important;
-height: 18px !important;
-max-width: 18px !important;
-min-width: 18px !important;
-}
-.btn-consult.btn-swap{
-padding: 8px !important;
-font-size: 14px !important;
+.meal-card-swap-btn{
+ background-color: #649EF7;
+    color: #fff;
+    padding: 10px;
+    font-size: 14px;
+    display: flex;
+    margin-top: 4px;
+    margin-left: 4px;
+    justify-content: flex-end;
+    justify-self: flex-end;
 }
