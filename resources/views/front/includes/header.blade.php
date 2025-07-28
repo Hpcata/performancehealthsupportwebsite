@@ -29,15 +29,15 @@ $auth = auth()->guard('web')->check();
     <ul class="mobile-menu-list" >
         <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 16px 16px;">My Plans</a></li>
         <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Challenges and Rewards</a></li>
-        @if(Auth::check())
-            <li class="mobile-menu-link"><a href="{{ route('front.profile', ['id' => Auth::user()->id]) }}" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">My Profile</a></li>
+        @if(Auth::check() && Auth::guard('web')->user()->is_superadmin == 0)
+            <li class="mobile-menu-link"><a href="{{ route('front.profile', ['id' => Auth::guard('web')->user()->id]) }}" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">My Profile</a></li>
         @endif
         <li><div class="mobile-menu-divider" style="height:1px; background:#555; margin: 12px 16px;"></div></li>
         <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Resources and Tools</a></li>
         <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Store</a></li>
         <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Main Website</a></li>
         <li><div class="mobile-menu-divider" style="height:1px; background:#555; margin: 12px 16px;"></div></li>
-        @if(Auth::check())
+        @if(Auth::check() && Auth::guard('web')->user()->is_superadmin == 0)
             <li class="mobile-menu-link">
                 <form id="logout-form-mobile" action="{{ route('front.logout') }}" method="POST" style="display: none;">@csrf</form>
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form-mobile').submit(); toggleMobileMenu();" style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Sign out</a>
@@ -60,31 +60,38 @@ $auth = auth()->guard('web')->check();
             <div class="nav-item dropdown">
                 <span>Resources <i class="fas fa-chevron-down"></i></span>
                 <div class="dropdown-content">
-                    <a href="/articles">Supplement Scanner</a>
-                    <a href="/videos">Level-Up Library</a>
-                    <a href="/tools">BioHealth Passport</a>
+                    <a href="#" id="scanner-btn">Supplement Scanner</a>
+                    <a href="#">Level-Up Library</a>
+                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank">BioHealth Passport</a>
                 </div>
             </div>
         </nav>
-        <div class="nav-right">
-            <div class="nav-item dropdown">
-                <div class="nav-end">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
-  <path d="M9 9C10.1935 9 11.3381 8.52589 12.182 7.68198C13.0259 6.83807 13.5 5.69347 13.5 4.5C13.5 3.30653 13.0259 2.16193 12.182 1.31802C11.3381 0.474106 10.1935 0 9 0C7.80653 0 6.66193 0.474106 5.81802 1.31802C4.97411 2.16193 4.5 3.30653 4.5 4.5C4.5 5.69347 4.97411 6.83807 5.81802 7.68198C6.66193 8.52589 7.80653 9 9 9ZM7.39336 10.6875C3.93047 10.6875 1.125 13.493 1.125 16.9559C1.125 17.5324 1.59258 18 2.16914 18H15.8309C16.4074 18 16.875 17.5324 16.875 16.9559C16.875 13.493 14.0695 10.6875 10.6066 10.6875H7.39336Z" fill="white"/>
-</svg><span>My Account <i class="fas fa-chevron-down"></i></span></div>
-                <div class="dropdown-content">
-                    
-                    <a href="/subscription">My Profile</a>
-                    <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    <a class="p-2 dropdown-item" style="padding:0.75rem 1rem !important;" href="#" onclick="handleLogout(event)">
-                        Sign Out
-                    </a>
+        @if(Auth::check() && Auth::guard('web')->user()->is_superadmin == 0)
+            <div class="nav-right">
+                <div class="nav-item dropdown">
+                    <div class="nav-end">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M9 9C10.1935 9 11.3381 8.52589 12.182 7.68198C13.0259 6.83807 13.5 5.69347 13.5 4.5C13.5 3.30653 13.0259 2.16193 12.182 1.31802C11.3381 0.474106 10.1935 0 9 0C7.80653 0 6.66193 0.474106 5.81802 1.31802C4.97411 2.16193 4.5 3.30653 4.5 4.5C4.5 5.69347 4.97411 6.83807 5.81802 7.68198C6.66193 8.52589 7.80653 9 9 9ZM7.39336 10.6875C3.93047 10.6875 1.125 13.493 1.125 16.9559C1.125 17.5324 1.59258 18 2.16914 18H15.8309C16.4074 18 16.875 17.5324 16.875 16.9559C16.875 13.493 14.0695 10.6875 10.6066 10.6875H7.39336Z" fill="white"/>
+                    </svg>
+                    <span>My Account <i class="fas fa-chevron-down"></i></span></div>
+                    <div class="dropdown-content">
+                        <a href="{{ route('front.profile-old', ['id' => Auth::guard('web')->user()->id]) }}">My Profile</a>
+                        <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <a class="p-2 dropdown-item" style="padding:0.75rem 1rem !important;" href="#" onclick="handleLogout(event)">
+                            Sign Out
+                        </a>
+                    </div>
                 </div>
+                <span class="nav-item">Main website</span>
             </div>
-            <span class="nav-item">Main website</span>
-        </div>
+        @else
+            <div class="nav-right">
+                <!-- <span class="nav-item" id="login">Sign in</span> -->
+                <a href="{{ route('front.index') }}" class="nav-item" style="text-decoration: none;">Main website</a>  
+            </div>
+        @endif
     </div>
 </header>
 @else
@@ -120,14 +127,16 @@ $auth = auth()->guard('web')->check();
                             <a class="nav-link restriction-page" id="contact-us" href="{{ route('front.index') }}#contact"> Contact</a>
                         </li>
                         @else
-                        @if(Auth::check() && Auth::user()->is_superadmin == 0)
+                        @if(Auth::check() && Auth::guard('web')->user()->is_superadmin == 0)
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user"></i>
                                 My Account
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li>
-                                    <a class="p-2 text-dark dropdown-item" href="{{ route('front.profile', ['id' => Auth::user()->id]) }}">My Profile</a>
+                                    <a class="p-2 text-dark dropdown-item" href="{{ route('front.profile-old', ['id' => Auth::guard('web')->user()->id]) }}">
+                                        My Profile
+                                    </a>
                                 </li>
                                 <!-- <li>
                                     <a class="p-2 text-dark dropdown-item" href="">View My Plan</a>
