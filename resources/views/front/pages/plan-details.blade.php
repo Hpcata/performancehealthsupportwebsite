@@ -10,12 +10,12 @@
     <main class="main">
         <!-- Loader -->
         <!-- <div id="loader" class="d-none">
-                    <div class="box" id="loader1"></div>
-                    <div class="box" id="loader2"></div>
-                    <div class="box" id="loader3"></div>
-                    <div class="box" id="loader4"></div>
-                    <div class="box" id="loader5"></div>
-                </div> -->
+                        <div class="box" id="loader1"></div>
+                        <div class="box" id="loader2"></div>
+                        <div class="box" id="loader3"></div>
+                        <div class="box" id="loader4"></div>
+                        <div class="box" id="loader5"></div>
+                    </div> -->
         <!-- Hero Banner -->
         <div class="hero-container">
             <div class="hero-section">
@@ -159,18 +159,7 @@
                                                                     <h3>{{ $meal->meal->title }}
 
                                                                     </h3>
-                                                                        <button
-                                                                            class="smart-swap-btn meal-card-swap-btn"
-                                                                            style="">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                width="16" height="16"
-                                                                                viewBox="0 0 18 18" fill="none"
-                                                                                style="margin-right:4px;">
-                                                                                <path
-                                                                                    d="M1 5.50117H14L12.4 6.70117C12.2949 6.77996 12.2064 6.87867 12.1395 6.99167C12.0726 7.10467 12.0286 7.22974 12.0101 7.35974C11.9915 7.48975 11.9987 7.62213 12.0313 7.74935C12.0639 7.87656 12.1212 7.99611 12.2 8.10117C12.2931 8.22536 12.4139 8.32616 12.5528 8.39559C12.6916 8.46502 12.8448 8.50117 13 8.50117C13.2164 8.50117 13.4269 8.43099 13.6 8.30117L17.6 5.30117C17.7223 5.20784 17.8214 5.08756 17.8897 4.94967C17.9579 4.81178 17.9934 4.66001 17.9934 4.50617C17.9934 4.35232 17.9579 4.20055 17.8897 4.06266C17.8214 3.92478 17.7223 3.80449 17.6 3.71117L13.74 0.711166C13.5305 0.548057 13.2647 0.474862 13.0013 0.507681C12.7378 0.540499 12.4981 0.676645 12.335 0.886166C12.1719 1.09569 12.0987 1.36142 12.1315 1.62491C12.1643 1.8884 12.3005 2.12806 12.51 2.29117L14.08 3.50117H1C0.734784 3.50117 0.48043 3.60652 0.292893 3.79406C0.105357 3.9816 0 4.23595 0 4.50117C0 4.76638 0.105357 5.02074 0.292893 5.20827C0.48043 5.39581 0.734784 5.50117 1 5.50117ZM17 12.5012H4L5.6 11.3012C5.81217 11.142 5.95244 10.9051 5.98995 10.6426C6.02746 10.38 5.95913 10.1133 5.8 9.90117C5.64087 9.68899 5.40397 9.54872 5.14142 9.51122C4.87887 9.47371 4.61217 9.54204 4.4 9.70117L0.4 12.7012C0.277693 12.7945 0.178568 12.9148 0.110337 13.0527C0.0421059 13.1905 0.00660944 13.3423 0.00660944 13.4962C0.00660944 13.65 0.0421059 13.8018 0.110337 13.9397C0.178568 14.0776 0.277693 14.1978 0.4 14.2912L4.26 17.2912C4.43455 17.4266 4.64905 17.5005 4.87 17.5012C5.02272 17.5008 5.17332 17.4655 5.31026 17.3979C5.4472 17.3303 5.56684 17.2322 5.66 17.1112C5.82239 16.9027 5.89567 16.6384 5.86381 16.3761C5.83196 16.1138 5.69756 15.8747 5.49 15.7112L3.92 14.5012H17C17.2652 14.5012 17.5196 14.3958 17.7071 14.2083C17.8946 14.0207 18 13.7664 18 13.5012C18 13.2359 17.8946 12.9816 17.7071 12.7941C17.5196 12.6065 17.2652 12.5012 17 12.5012Z"
-                                                                                    fill="#fff" />
-                                                                            </svg>Smart swap
-                                                                        </button>
+
                                                                 </div>
                                                                 <div class="quick-view-overlay">
                                                                     <span
@@ -179,12 +168,16 @@
                                                                     background-color:#709ef1;
                                                                     font-weight: 700;
                                                                     cursor:pointer;">
-                                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18" fill="none">
-  <path d="M1 5.50117H14L12.4 6.70117C12.2949 6.77996 12.2064 6.87867 12.1395 6.99167C12.0726 7.10467 12.0286 7.22974 12.0101 7.35974C11.9915 7.48975 11.9987 7.62213 12.0313 7.74935C12.0639 7.87656 12.1212 7.99611 12.2 8.10117C12.2931 8.22536 12.4139 8.32616 12.5528 8.39559C12.6916 8.46502 12.8448 8.50117 13 8.50117C13.2164 8.50117 13.4269 8.43099 13.6 8.30117L17.6 5.30117C17.7223 5.20784 17.8214 5.08756 17.8897 4.94967C17.9579 4.81178 17.9934 4.66001 17.9934 4.50617C17.9934 4.35232 17.9579 4.20055 17.8897 4.06266C17.8214 3.92478 17.7223 3.80449 17.6 3.71117L13.74 0.711166C13.5305 0.548057 13.2647 0.474862 13.0013 0.507681C12.7378 0.540499 12.4981 0.676645 12.335 0.886166C12.1719 1.09569 12.0987 1.36142 12.1315 1.62491C12.1643 1.8884 12.3005 2.12806 12.51 2.29117L14.08 3.50117H1C0.734784 3.50117 0.48043 3.60652 0.292893 3.79406C0.105357 3.9816 0 4.23595 0 4.50117C0 4.76638 0.105357 5.02074 0.292893 5.20827C0.48043 5.39581 0.734784 5.50117 1 5.50117ZM17 12.5012H4L5.6 11.3012C5.81217 11.142 5.95244 10.9051 5.98995 10.6426C6.02746 10.38 5.95913 10.1133 5.8 9.90117C5.64087 9.68899 5.40397 9.54872 5.14142 9.51122C4.87887 9.47371 4.61217 9.54204 4.4 9.70117L0.4 12.7012C0.277693 12.7945 0.178568 12.9148 0.110337 13.0527C0.0421059 13.1905 0.00660944 13.3423 0.00660944 13.4962C0.00660944 13.65 0.0421059 13.8018 0.110337 13.9397C0.178568 14.0776 0.277693 14.1978 0.4 14.2912L4.26 17.2912C4.43455 17.4266 4.64905 17.5005 4.87 17.5012C5.02272 17.5008 5.17332 17.4655 5.31026 17.3979C5.4472 17.3303 5.56684 17.2322 5.66 17.1112C5.82239 16.9027 5.89567 16.6384 5.86381 16.3761C5.83196 16.1138 5.69756 15.8747 5.49 15.7112L3.92 14.5012H17C17.2652 14.5012 17.5196 14.3958 17.7071 14.2083C17.8946 14.0207 18 13.7664 18 13.5012C18 13.2359 17.8946 12.9816 17.7071 12.7941C17.5196 12.6065 17.2652 12.5012 17 12.5012Z" fill="#ffffff"/>
-</svg>
-                                                                    Smart Swap
-                                                                </span>
-                                                            </div>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="16" height="16"
+                                                                            viewBox="0 0 18 18" fill="none">
+                                                                            <path
+                                                                                d="M1 5.50117H14L12.4 6.70117C12.2949 6.77996 12.2064 6.87867 12.1395 6.99167C12.0726 7.10467 12.0286 7.22974 12.0101 7.35974C11.9915 7.48975 11.9987 7.62213 12.0313 7.74935C12.0639 7.87656 12.1212 7.99611 12.2 8.10117C12.2931 8.22536 12.4139 8.32616 12.5528 8.39559C12.6916 8.46502 12.8448 8.50117 13 8.50117C13.2164 8.50117 13.4269 8.43099 13.6 8.30117L17.6 5.30117C17.7223 5.20784 17.8214 5.08756 17.8897 4.94967C17.9579 4.81178 17.9934 4.66001 17.9934 4.50617C17.9934 4.35232 17.9579 4.20055 17.8897 4.06266C17.8214 3.92478 17.7223 3.80449 17.6 3.71117L13.74 0.711166C13.5305 0.548057 13.2647 0.474862 13.0013 0.507681C12.7378 0.540499 12.4981 0.676645 12.335 0.886166C12.1719 1.09569 12.0987 1.36142 12.1315 1.62491C12.1643 1.8884 12.3005 2.12806 12.51 2.29117L14.08 3.50117H1C0.734784 3.50117 0.48043 3.60652 0.292893 3.79406C0.105357 3.9816 0 4.23595 0 4.50117C0 4.76638 0.105357 5.02074 0.292893 5.20827C0.48043 5.39581 0.734784 5.50117 1 5.50117ZM17 12.5012H4L5.6 11.3012C5.81217 11.142 5.95244 10.9051 5.98995 10.6426C6.02746 10.38 5.95913 10.1133 5.8 9.90117C5.64087 9.68899 5.40397 9.54872 5.14142 9.51122C4.87887 9.47371 4.61217 9.54204 4.4 9.70117L0.4 12.7012C0.277693 12.7945 0.178568 12.9148 0.110337 13.0527C0.0421059 13.1905 0.00660944 13.3423 0.00660944 13.4962C0.00660944 13.65 0.0421059 13.8018 0.110337 13.9397C0.178568 14.0776 0.277693 14.1978 0.4 14.2912L4.26 17.2912C4.43455 17.4266 4.64905 17.5005 4.87 17.5012C5.02272 17.5008 5.17332 17.4655 5.31026 17.3979C5.4472 17.3303 5.56684 17.2322 5.66 17.1112C5.82239 16.9027 5.89567 16.6384 5.86381 16.3761C5.83196 16.1138 5.69756 15.8747 5.49 15.7112L3.92 14.5012H17C17.2652 14.5012 17.5196 14.3958 17.7071 14.2083C17.8946 14.0207 18 13.7664 18 13.5012C18 13.2359 17.8946 12.9816 17.7071 12.7941C17.5196 12.6065 17.2652 12.5012 17 12.5012Z"
+                                                                                fill="#ffffff" />
+                                                                        </svg>
+                                                                        Smart Swap
+                                                                    </span>
+                                                                </div>
                                                         @endforeach
                                                     </div>
                                                     <button class="right-arrow slider-arrow">
@@ -633,7 +626,7 @@
                                                 qty = parseFloat(parts[
                                                         0]) /
                                                     parseFloat(parts[
-                                                    1]);
+                                                        1]);
                                             }
                                         }
 
@@ -799,7 +792,7 @@
                             if (rounded === 0.5) return `½ ${unit}`;
                             if (rounded === 0.75) return `¾ ${unit}`;
                             if (['g', 'ml', 'mL'].includes(unit))
-                            return `${Math.round(total)}${unit}`;
+                                return `${Math.round(total)}${unit}`;
                             return `${rounded} ${unit}`;
                         }).join(' or ');
 
@@ -1257,8 +1250,7 @@
                                 selectedUnits = typeof item.selected_qty_unit === 'string' ?
                                     JSON.parse(item.selected_qty_unit) :
                                     Array.isArray(item.selected_qty_unit) ?
-                                    item.selected_qty_unit :
-                                    [];
+                                    item.selected_qty_unit : [];
                             } catch (e) {
                                 console.warn('Failed to parse selected_qty_unit for item:', item.name,
                                     e);
@@ -1305,21 +1297,21 @@
                                 </div>
                                 <div class="swap-item-actions">
                                     ${item.swapItems?.length > 0 ? `
-                                            <button class="smart-swap-btn item-swap-btn"
-                                                data-item-id="${item.id}"
-                                                data-item-name="${item.name}"
-                                                data-user-item-id="${item.user_item_id}"
-                                                data-user-meal-id="${item.user_meal_id}"
-                                                data-user-plan-id="${userPlanId}"
-                                                data-sub-category-id="${userSubCategoryId}"
-                                                data-user-category-id="${userCategoryId}">
-                                                <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; vertical-align: middle; margin-right: 4px;" />
-                                                <span>Smart swap</span>
-                                            </button>` : ''}
+                                                <button class="smart-swap-btn item-swap-btn"
+                                                    data-item-id="${item.id}"
+                                                    data-item-name="${item.name}"
+                                                    data-user-item-id="${item.user_item_id}"
+                                                    data-user-meal-id="${item.user_meal_id}"
+                                                    data-user-plan-id="${userPlanId}"
+                                                    data-sub-category-id="${userSubCategoryId}"
+                                                    data-user-category-id="${userCategoryId}">
+                                                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; vertical-align: middle; margin-right: 4px;" />
+                                                    <span>Smart swap</span>
+                                                </button>` : ''}
                                     ${item.description ? `
-                                            <button class="smart-swap-btn" data-bs-toggle="tooltip" title="${item.description}">
-                                                <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
-                                            </button>` : ''}
+                                                <button class="smart-swap-btn" data-bs-toggle="tooltip" title="${item.description}">
+                                                    <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
+                                                </button>` : ''}
                                 </div>
                                  </div>
                                 </div>
@@ -1401,7 +1393,7 @@
                 success: function(data) {
                     if (!data || !data.items || !data.items.length) {
                         $swapList.html(
-                        '<p class="text-muted text-center">No swap items available.</p>');
+                            '<p class="text-muted text-center">No swap items available.</p>');
                         return;
                     }
 
@@ -1446,10 +1438,10 @@
                         </div>
                         <div class="swap-item-actions">
                             ${item.description ? `
-                                    <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${item.description}">
-                                        <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
-                                    </button>
-                                ` : ''}
+                                        <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${item.description}">
+                                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
+                                        </button>
+                                    ` : ''}
                         </div>
                         </div>
                     </div>
@@ -1476,10 +1468,10 @@
                                     <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" /><span>Swap</span>
                                 </button>
                                 ${swapItem.swap_item_description ? `
-                                        <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${swapItem.swap_item_description}">
-                                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
-                                        </button>
-                                    ` : ''}
+                                            <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${swapItem.swap_item_description}">
+                                                <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
+                                            </button>
+                                        ` : ''}
                             </div>
                              </div>
                         </div>
@@ -1565,9 +1557,9 @@
                     <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" /><span>Swap</span>
                 </button>
                 ${currentMainItem.description ? `
-                        <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${currentMainItem.description}">
-                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
-                        </button>` : ''}
+                            <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${currentMainItem.description}">
+                                <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
+                            </button>` : ''}
             </div>
              </div>
         `;
@@ -1694,7 +1686,7 @@
                         var after = $scroll.scrollLeft();
                         console.log(
                             `[Slider ${idx}] Left arrow clicked. ScrollLeft before: ${before}, after: ${after}`
-                            );
+                        );
                     });
                 });
 
@@ -1707,7 +1699,7 @@
                         var after = $scroll.scrollLeft();
                         console.log(
                             `[Slider ${idx}] Right arrow clicked. ScrollLeft before: ${before}, after: ${after}`
-                            );
+                        );
                     });
                 });
             });
