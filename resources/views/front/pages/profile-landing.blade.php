@@ -20,46 +20,45 @@
                             <span class="assistant-name">Kerry O'Bryan Virtual</span>
                         </div>
                     </div>
-                    <img src="{{ frontAssets('images/profile.svg') }}" alt="Profile" class="profile-avatar-overlap" />
+                    <img
+                        src="{{ frontAssets('images/profile.svg') }}"
+                        alt="Profile"
+                        class="profile-avatar-overlap" />
                 </div>
                 <div class="welcome-arrow"></div>
             </section>
-            @if (isset($userPlan->plan))
+            @if(isset($userPlan->plan))
                 <!-- Sports Training Plan -->
                 <section class="training-plan">
-                    @if (isset($userPlan->plan))
-                        <div class="section-header">
-                            <h2>{{ isset($userPlan->plan) ? $userPlan->plan->name : '' }}</h2>
-                            <a href="{{ route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]) }}"
-                                class="see-all">See Plan</a>
-                        </div>
+                    @if(isset($userPlan->plan))
+                    <div class="section-header">
+                        <h2>{{ isset($userPlan->plan) ? $userPlan->plan->name : '' }}</h2>
+                        <a href="{{ route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]) }}" class="see-all">See Plan</a>
+                    </div>
                     @else
-                        <div class="section-header">
-                            <h2></h2>
-                            <a href="#" class="see-all">See Plan</a>
-                        </div>
+                    <div class="section-header">
+                        <h2></h2>
+                        <a href="#" class="see-all">See Plan</a>
+                    </div>
                     @endif
-
                     {{-- Tabs --}}
                     <div class="tabs">
                         @php $firstTab = true; @endphp
                         @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
                             @php
-                                $category = $userCategory->category;
-                                $hasValidMeal = $userCategory
-                                    ->userSubCategories()
-                                    ->where('user_plan_id', $userPlan->id)
-                                    ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
-                                        $q->where('user_plan_id', $userPlan->id)->where(
-                                            'user_category_id',
-                                            $userCategory->id,
-                                        );
-                                    })
-                                    ->exists();
+                            $category = $userCategory->category;
+                            $hasValidMeal = $userCategory->userSubCategories()
+                                ->where('user_plan_id', $userPlan->id)
+                                ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                                    $q->where('user_plan_id', $userPlan->id)
+                                        ->where('user_category_id', $userCategory->id);
+                                })->exists();
                             @endphp
 
                             @if ($hasValidMeal && $category)
-                                <button class="tab {{ $firstTab ? 'active' : '' }}" data-category-id="{{ $category->id }}"
+                                <button
+                                    class="tab {{ $firstTab ? 'active' : '' }}"
+                                    data-category-id="{{ $category->id }}"
                                     data-plan-id="{{ $userPlan->id }}">
                                     {{ $category->title }}
                                 </button>
@@ -68,39 +67,25 @@
                         @endforeach
                     </div>
 
-
-
-
-
                     <div class="tab-content challenges">
                         <div class="slider-wrapper" style="position:relative;">
                             <button class="left-arrow slider-arrow">
-                                <svg width="18" height="24" viewBox="0 0 18 32" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round" />
+                                <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
-                            <div class="challenge-cards challenge-cards-slider" id="meal-cards-wrapper">
-                                <p class="loading-meal-section">Loading meals...</p>
+                            <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;"  id="meal-cards-wrapper">
+                                <p>Loading meals...</p>
                             </div>
                             <button class="right-arrow slider-arrow">
-                                <svg width="18" height="24" viewBox="0 0 18 32" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round" />
+                                <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
                         </div>
-                        <!-- <div class="position-relative challenge-cards" id="meal-cards-wrapper">
-                                <p>Loading meals...</p>
-                            </div> -->
                     </div>
                 </section>
-
             @endif
-
-
 
             <!-- Challenges -->
             <section class="challenges">
@@ -110,53 +95,55 @@
                 </div>
                 <div class="slider-container">
 
-                    <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                                alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                            <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+                <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
+                    <div class="challenge-card clickable hover-card coming-soon-popup">
+                        <img
+                            src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                            alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                        <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
 
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <span>30</span>
-                            </div>
-                        </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
-                                alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
-                            <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
-
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <span>10</span>
-                            </div>
-                        </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                                alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                            <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <span>30</span>
-                            </div>
-                        </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                                alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                            <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <span>30</span>
-                            </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <span>30</span>
                         </div>
                     </div>
+                    <div class="challenge-card clickable hover-card coming-soon-popup">
+                        <img
+                            src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
+                            alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
+                        <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
+
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <span>10</span>
+                        </div>
+                    </div>
+                    <div class="challenge-card clickable hover-card coming-soon-popup">
+                        <img
+                            src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                            alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                        <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <span>30</span>
+                        </div>
+                    </div>
+                     <div class="challenge-card clickable hover-card coming-soon-popup">
+                        <img
+                            src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                            alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                        <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <span>30</span>
+                        </div>
+                    </div>
+               </div>
 
                 </div>
             </section>
-
-
 
             <!-- Resources and Tools -->
             <section class="resources">
@@ -166,20 +153,28 @@
                 </div>
                 <div class="resources-custom-grid">
                     <div class="cursor-pointer resource-card-custom resource-supplement hover-card" id="scanner-btn">
-                        <img src="{{ frontAssets('images/cardbg.webp') }}" class="resource-bg-img"
+                        <img
+                            src="{{ frontAssets('images/cardbg.webp') }}"
+                            class="resource-bg-img"
                             alt="Supplement scanner background" />
                         <div class="icon-bg">
-                            <img src="{{ frontAssets('images/camera.svg') }}" class="resource-bg-img"
+                            <img
+                                src="{{ frontAssets('images/camera.svg') }}"
+                                class="resource-bg-img"
                                 alt="Camera icon for supplement scanner" />
                         </div>
                         <div class="resource-title">Supplement scanner</div>
                     </div>
 
                     <div class="cursor-pointer resource-card-custom resource-chat hover-card" id="chat-to-virtual-kez-btn">
-                        <img src="{{ frontAssets('images/cardimg-2.webp') }}" class="resource-bg-img"
+                        <img
+                            src="{{ frontAssets('images/cardimg-2.webp') }}"
+                            class="resource-bg-img"
                             alt="Chat resource background" />
                         <div class="icon-bg">
-                            <img src="{{ frontAssets('images/chat.svg') }}" class="resource-bg-img"
+                            <img
+                                src="{{ frontAssets('images/chat.svg') }}"
+                                class="resource-bg-img"
                                 alt="Chat icon for virtual Kez" />
                         </div>
                         <div class="resource-title">Chat to Virtual Kez</div>
@@ -193,9 +188,12 @@
                 </div>
                 <div class="resources-custom-grid grid-2">
                     <div class="resource-card-custom resource-video clickable hover-card">
-                        <div class="video-thumb-container"
+                        <div
+                            class="video-thumb-container"
                             onclick="openVideoPopup('https://www.w3schools.com/html/mov_bbb.mp4')">
-                            <img src="{{ frontAssets('images/video-bg.webp') }}" class="video-thumb"
+                            <img
+                                src="{{ frontAssets('images/video-bg.webp') }}"
+                                class="video-thumb"
                                 alt="Video thumbnail for whey protein post-training" />
                             <div class="video-icon-overlay">
                                 <i class="fa-solid fa-play"></i>
@@ -208,15 +206,21 @@
                             </div>
                             <div class="video-meta">
                                 <span>
-                                    <img src="{{ frontAssets('images/Clock.webp') }}" class="clock-img" alt="Clock icon"
-                                        width="16" height="16" /></span><span>5 min • Video</span>
+                                    <img
+                                        src="{{ frontAssets('images/Clock.webp') }}"
+                                        class="clock-img"
+                                        alt="Clock icon"
+                                        width="16"
+                                        height="16" /></span><span>5 min • Video</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="resource-card-custom resource-video clickable hover-card">
                         <div class="video-thumb-container">
-                            <img src="{{ frontAssets('images/gym.webp') }}" class="video-thumb"
+                            <img
+                                src="{{ frontAssets('images/gym.webp') }}"
+                                class="video-thumb"
                                 alt="Gym video thumbnail" />
                         </div>
                         <div class="video-info">
@@ -226,8 +230,12 @@
                             </div>
                             <div class="video-meta">
                                 <span>
-                                    <img src="{{ frontAssets('images/Clock.webp') }}" class="clock-img" alt="Clock icon"
-                                        width="16" height="16" /></span><span>5 min • Video</span>
+                                    <img
+                                        src="{{ frontAssets('images/Clock.webp') }}"
+                                        class="clock-img"
+                                        alt="Clock icon"
+                                        width="16"
+                                        height="16" /></span><span>5 min • Video</span>
                             </div>
                         </div>
                     </div>
@@ -246,6 +254,72 @@
                         <div class="consult-desc">
                             Get answers from a real-life expert coaching Elite Athletes and
                             Olympians.
+                        </div>
+                        <div class="consult-user-row">
+                            <img
+                                src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
+                                class="consult-avatar"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
+                        </div>
+                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
+                    </div>
+                </div>
+                @php
+                    $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
+                    $userPlan = $userPlan ?? null;
+
+                    $latestMealImages = isset($userPlan->userMeals) ? $userPlan->userMeals()
+                        ->with('meal')
+                        ->latest()
+                        ->get()
+                        ->map(function ($userMeal) {
+                            return $userMeal->meal?->image
+                                ? asset('storage/' . $userMeal->meal->image)
+                                : null;
+                        })
+                        ->filter(function ($image) {
+                            return !empty($image); // filters out null and empty strings
+                        })
+                        ->take(2)
+                        ->values()
+                        ->toArray() : [];
+
+                    $mealImage1 = $latestMealImages[0] ?? frontAssets('images/sports-training/fooditem1.webp');
+                    $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
+                @endphp
+
+                <div class="consults-plans-grid">
+                    <div class="plan-card-custom plan-competition">
+                        <div class="">
+                            <div class="plan-title">Competition Plan</div>
+                            <div class="plan-desc">
+                                Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="consult-user-row">
+                                <img
+                                    src="{{ $mealImage1 }}"
+                                    class="consult-avatar"
+                                    alt="Kerry O'Bryan, expert coach avatar" />
+                                <img
+                                    src="{{ $mealImage2 }}"
+                                    class="consult-avatar overlap1"
+                                    alt="Kerry O'Bryan, expert coach avatar" />
+                                <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
+                            </div>
+                            <!-- <div class="plan-meta">
+                                <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
+                                tips
+                            </div> -->
+                            <button class="btn-consult">Learn more</button>
+                        </div>
+                    </div>
+                    <div class="plan-card-custom plan-injury">
+                        <div class="plan-title">Injury</div>
+                        <div class="plan-desc">
+                            Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of healing-focused meals, expert tips, and supplement guidance to accelerate recovery, reduce inflammation, and get you back to full strength, faster—all built on a food-first approach.
                         </div>
                         <div class="consult-user-row">
                             <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
@@ -312,7 +386,7 @@
                                 alt="Kerry O'Bryan, expert coach avatar" />
                             <img src="{{ $mealImage2 }}" class="consult-avatar overlap1"
                                 alt="Kerry O'Bryan, expert coach avatar" />
-                            <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
+                            <span>{{ $mealCount }}  meals • 18 Nutrition tips</span>
                         </div>
                         <button class="btn-consult">Learn more</button>
                     </div>
@@ -326,10 +400,16 @@
                     <div class="video-card">
                         <div class="video-thumbnail hover-card">
                             <div class="video-player" id="video-player-1">
-                                <img src="{{ frontAssets('images/instaimg1.webp') }}" alt="Surfing video thumbnail"
-                                    class="video-backdrop" width="372" height="249" />
+                                <img
+                                    src="{{ frontAssets('images/instaimg1.webp') }}"
+                                    alt="Surfing video thumbnail"
+                                    class="video-backdrop"
+                                    width="372"
+                                    height="249" />
                                 <video style="display: none">
-                                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                                    <source
+                                        src="https://www.w3schools.com/html/mov_bbb.mp4"
+                                        type="video/mp4" />
                                 </video>
                                 <button class="play-btn" aria-label="Play video" onclick="playVideoInCard(1)">
                                     <i class="fas fa-play"></i>
@@ -339,13 +419,14 @@
                         </div>
                         <div class="video-info">
                             <div class="top">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=30&h=30&fit=crop&crop=face"
-                                    alt="Channel avatar for surfboard_co" class="channel-avatar" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=30&h=30&fit=crop&crop=face"
+                                    alt="Channel avatar for surfboard_co"
+                                    class="channel-avatar" />
                                 <div class="channel-name">
                                     <div class="channel-name-main">
                                         <label class="insta-handle-name">surfboard_co</label>
-                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge"
-                                            width="16" height="16" />
+                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
                                     </div>
                                     <label>Turnstile . LIGHT DESIGN</label>
                                 </div>
@@ -356,8 +437,7 @@
                                     pros alike.
                                 </p>
                                 <div class="insta-like-wrapper">
-                                    <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20"
-                                        height="18" style="width:20px;" />
+                                    <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;" />
                                     <span class="likes">892 likes</span>
                                 </div>
                             </div>
@@ -366,10 +446,16 @@
                     <div class="video-card">
                         <div class="video-thumbnail hover-card">
                             <div class="video-player" id="video-player-2">
-                                <img src="{{ frontAssets('images/instaimg2.webp') }}" alt="Surfing video thumbnail"
-                                    class="video-backdrop" width="372" height="249" />
+                                <img
+                                    src="{{ frontAssets('images/instaimg2.webp') }}"
+                                    alt="Surfing video thumbnail"
+                                    class="video-backdrop"
+                                    width="372"
+                                    height="249" />
                                 <video style="display: none">
-                                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                                    <source
+                                        src="https://www.w3schools.com/html/mov_bbb.mp4"
+                                        type="video/mp4" />
                                 </video>
                                 <button class="play-btn" aria-label="Play video" onclick="playVideoInCard(2)">
                                     <i class="fas fa-play"></i>
@@ -379,13 +465,14 @@
                         </div>
                         <div class="video-info">
                             <div class="top">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=30&h=30&fit=crop&crop=face"
-                                    alt="Channel avatar for surfboard_co" class="channel-avatar" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=30&h=30&fit=crop&crop=face"
+                                    alt="Channel avatar for surfboard_co"
+                                    class="channel-avatar" />
                                 <div class="channel-name">
                                     <div class="channel-name-main">
                                         <label class="insta-handle-name">surfboard_co</label>
-                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge"
-                                            width="16" height="16" />
+                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
                                     </div>
                                     <label>Turnstile . LIGHT DESIGN</label>
                                 </div>
@@ -396,8 +483,7 @@
                                     pros alike.
                                 </p>
                                 <div class="insta-like-wrapper">
-                                    <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20"
-                                        height="18" style="width:20px;" />
+                                    <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;" />
                                     <span class="likes">892 likes</span>
                                 </div>
                             </div>
@@ -406,10 +492,16 @@
                     <div class="video-card">
                         <div class="video-thumbnail hover-card">
                             <div class="video-player" id="video-player-3">
-                                <img src="{{ frontAssets('images/instaimg1.webp') }}" alt="Surfing video thumbnail"
-                                    class="video-backdrop" width="372" height="249" />
+                                <img
+                                    src="{{ frontAssets('images/instaimg1.webp') }}"
+                                    alt="Surfing video thumbnail"
+                                    class="video-backdrop"
+                                    width="372"
+                                    height="249" />
                                 <video style="display: none">
-                                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                                    <source
+                                        src="https://www.w3schools.com/html/mov_bbb.mp4"
+                                        type="video/mp4" />
                                 </video>
                                 <button class="play-btn" aria-label="Play video" onclick="playVideoInCard(3)">
                                     <i class="fas fa-play"></i>
@@ -419,13 +511,14 @@
                         </div>
                         <div class="video-info">
                             <div class="top">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=30&h=30&fit=crop&crop=face"
-                                    alt="Channel avatar for surfboard_co" class="channel-avatar" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=30&h=30&fit=crop&crop=face"
+                                    alt="Channel avatar for surfboard_co"
+                                    class="channel-avatar" />
                                 <div class="channel-name">
                                     <div class="channel-name-main">
                                         <label class="insta-handle-name">surfboard_co</label>
-                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge"
-                                            width="16" height="16" />
+                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
                                     </div>
                                     <label>Turnstile . LIGHT DESIGN</label>
                                 </div>
@@ -436,8 +529,7 @@
                                     pros alike.
                                 </p>
                                 <div class="insta-like-wrapper">
-                                    <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20"
-                                        height="18" style="width:20px;" />
+                                    <img src="{{ frontAssets('images/like.webp') }}" alt="Like icon" width="20" height="18" style="width:20px;" />
                                     <span class="likes">892 likes</span>
                                 </div>
                             </div>
@@ -447,18 +539,42 @@
             </section>
         </div>
     </main>
-    <!-- Tiny Slider CSS -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css" /> -->
-    <!-- Tiny Slider JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
-    <script>
-        const getMealsRoute = @json(route('front.get-profile-meals', ['plan' => 'PLAN_ID', 'category' => 'CATEGORY_ID']));
-    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('.tab');
             const contentWrapper = document.getElementById('meal-cards-wrapper');
+            const scrollContainer = document.getElementById("meal-cards-wrapper");
+            const leftArrow = document.querySelector(".left-arrow");
+            const rightArrow = document.querySelector(".right-arrow");
+            const scrollAmount = 300;
+
+            // Show arrows only if 4 or more cards exist
+            function updateArrowVisibility() {
+                const cards = scrollContainer.querySelectorAll(".challenge-card");
+                console.log("card length", cards.length);
+                const shouldShowArrows = cards.length >= 4;
+
+                if (shouldShowArrows) {
+                    leftArrow.style.display = 'block';
+                    rightArrow.style.display = 'block';
+                } else {
+                    leftArrow.style.display = 'none';
+                    rightArrow.style.display = 'none';
+                }
+            }
+
+            // Scroll behavior
+            leftArrow.addEventListener("click", () => {
+                scrollContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+            });
+
+            rightArrow.addEventListener("click", () => {
+                scrollContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
+            });
+
+            // Call once after load
+            updateArrowVisibility();
 
             function loadMeals(planId, categoryId) {
                 contentWrapper.innerHTML = '<p>Loading meals...</p>';
@@ -478,7 +594,10 @@
                     })
                     .then(html => {
                         contentWrapper.innerHTML = html;
-                        initMealsSlider();
+                        // 🔥 Important: Wait for DOM to update, then check arrows
+                        requestAnimationFrame(() => {
+                            updateArrowVisibility();
+                        });
                     })
                     .catch(() => {
                         contentWrapper.innerHTML = '<p>Error loading meals.</p>';
@@ -504,11 +623,11 @@
                 loadMeals(firstTab.dataset.planId, firstTab.dataset.categoryId);
             }
 
-            $('#start-chat-link, #chat-to-virtual-kez-btn').click(function() {
+            $('#start-chat-link, #chat-to-virtual-kez-btn').click(function(){
                 $('#delphi-bubble-trigger').click();
             });
 
-            $('#scanner-btn').click(function() {
+            $('#scanner-btn').click(function(){
                 location.href = "https://phenomenal-torrone-cee914.netlify.app/";
             });
 
@@ -525,7 +644,6 @@
         });
     </script>
 
-
     <!-- Coming Soon Modal -->
     <div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
         <div class="modal-dialog modal-confirm modal-coming-soon modal-dialog-centered">
@@ -534,13 +652,9 @@
                     <div class="icon-box">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal"
-                        aria-label="Close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
-                            fill="none">
-                            <path
-                                d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z"
-                                fill="#3B3B3B" />
+                    <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
                         </svg>
                     </button>
                 </div>
