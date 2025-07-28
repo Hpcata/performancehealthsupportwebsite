@@ -117,7 +117,7 @@
 </head>
 <body>
 @if($printAllmeal)
-    <div id="pdf-content" style="padding-bottom:60px; position:relative;">
+    <div id="pdf-content" style="padding-bottom:0px; position:relative;">
         @foreach($userPlans as $userPlan)
             <div class="header-box">
                 <figure class="logo">
@@ -126,7 +126,7 @@
                 <h5 class="text-white">{{ $userPlan->user->first_name }}’s</h5>
                 <h1 class="text-white">Nutrition Plan <span>| {{ $userPlan->plan->name }}</span></h1>
                 @php
-                    $backgroundUrl = $sportImagePath ? webAssets('storage/' . $sportImagePath) : frontAssets('/images/banner-img.jpg');
+                    $backgroundUrl = $sportImagePath ? webAssets('storage/' . $sportImagePath) : frontAssets('/images/bannerimg.png');
                 @endphp
                 <div class="header-img" style="background-image: url('{{ $backgroundUrl }}');"></div>
             </div>

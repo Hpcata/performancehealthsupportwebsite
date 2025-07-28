@@ -2925,7 +2925,6 @@
 
                             $('#editItemModal #ratio').val(0); // reset ratio
                         }
-                        console.log('Main food and swap items updated successfully.');
                     } else {
                         alert('Failed to update food.');
                     }
@@ -2938,7 +2937,6 @@
 
         let mainDeleteParams = null;
 
-        // Show main item delete modal
         $(document).on('click', '.delete-item', function () {
             const $btn = $(this);
             const itemId = $btn.data('item-id');
@@ -2949,43 +2947,79 @@
 
             const $row = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
             const $tableBody = $row.closest('tbody');
-            const allSwapLis = $row.find('li');
             const remainingRows = $tableBody.find('tr').length;
+            const allSwapLis = $row.find('li');
 
             mainDeleteParams = {
-                $row, $tableBody, allSwapLis,
-                itemId, mealId, mealTimeId, planId, userId, remainingRows
+                $row, $tableBody, remainingRows,
+                itemId, mealId, mealTimeId, planId, allSwapLis, userId
             };
 
             new bootstrap.Modal(document.getElementById('deleteMainItemModal')).show();
         });
 
-        // Confirm delete for main item
         $('#confirmDeleteMainItem').on('click', function () {
-            const { $row, $tableBody, allSwapLis, itemId, mealId, mealTimeId, planId, remainingRows } = mainDeleteParams;
+            const {
+                $row, $tableBody, remainingRows,
+                itemId, mealId, mealTimeId,
+                planId, allSwapLis, userId
+            } = mainDeleteParams;
 
-            $row.find('input[type="checkbox"]').prop('checked', false);
-            $row.remove();
+            $.ajax({
+                url: '{{ route("admin.delete-user-meal-food") }}',
+                type: 'POST',
+                data: {
+                    item_id: itemId,
+                    meal_id: mealId,
+                    meal_time_id: mealTimeId,
+                    plan_id: planId,
+                    user_id: userId,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // ✅ Safe to remove from DOM now
+                        $row.find('input[type="checkbox"]').prop('checked', false);
+                        $row.remove();
 
-            if (remainingRows === 1) {
-                $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
-                const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
-                $select.find(`option[value="${mealId}"]`).remove();
-                $select.trigger('change');
-            }
+                        if (remainingRows === 1) {
+                            $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+                            const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
+                            $select.find(`option[value="${mealId}"]`).remove();
+                            $select.trigger('change');
+                        }
 
-            updateFoodCount(itemId, -1, null);
+                        updateFoodCount(itemId, -1, null);
 
-            allSwapLis.each(function () {
-                const swapItemId = $(this).data('swap-item-id');
-                updateFoodCount(swapItemId, -1, null);
+                        calculateTotals(planId, mealTimeId, mealId);
+                        calculateMealNutrition();
+
+                        mainDeleteParams = null;
+                        $('#deleteMainItemModal').modal('hide');
+                    } else {
+                        $row.find('input[type="checkbox"]').prop('checked', false);
+                        $row.remove();
+
+                        if (remainingRows === 1) {
+                            $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+                            const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
+                            $select.find(`option[value="${mealId}"]`).remove();
+                            $select.trigger('change');
+                        }
+
+                        updateFoodCount(itemId, -1, null);
+
+                        calculateTotals(planId, mealTimeId, mealId);
+                        calculateMealNutrition();
+
+                        mainDeleteParams = null;
+                        $('#deleteMainItemModal').modal('hide');
+                    }
+                },
+                error: function() {
+                    alert('Failed to delete food item.');
+                }
             });
-
-            calculateTotals(planId, mealTimeId, mealId);
-            calculateMealNutrition();
-
-            mainDeleteParams = null;
-            bootstrap.Modal.getInstance(document.getElementById('deleteMainItemModal')).hide();
         });
 
         $(document).on('click', '.edit-swap-item', function () {
@@ -3261,7 +3295,6 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        console.log('Swap food updated successfully');
                         modal.hide();
                     } else {
                         alert('Failed to update swap items.');
@@ -3282,82 +3315,83 @@
             const $li = $btn.closest('li');
             const $ul = $li.closest('ul');
 
-            const swapItemId = $btn.data('swap-item-id');
-            const itemId = $btn.data('item-id');
-            const mealId = $btn.data('meal-id');
-            const planId = $btn.data('plan-id');
-            const mealTimeId = $btn.data('meal-time-id');
-            const userId = $btn.data('user-id');
-
             swapDeleteParams = {
-                $li, $ul, swapItemId, itemId, mealId, planId, mealTimeId, userId
+                $li, $ul,
+                itemId: $btn.data('item-id'),
+                mealId: $btn.data('meal-id'),
+                mealTimeId: $btn.data('meal-time-id'),
+                planId: $btn.data('plan-id'),
+                userId: $btn.data('user-id'),
+                swapItemId: $btn.data('swap-item-id')
             };
 
             new bootstrap.Modal(document.getElementById('deleteSwapItemModal')).show();
         });
 
-        // Confirm delete for swap item
         $('#confirmDeleteSwapItem').on('click', function () {
-            const { $li, $ul, swapItemId } = swapDeleteParams;
+            const {
+                $li, $ul,
+                itemId, mealId, mealTimeId,
+                planId, userId, swapItemId
+            } = swapDeleteParams;
 
-            // Remove the deleted swap item
-            $li.remove();
-            updateFoodCount(swapItemId, -1, null);
+            $.ajax({
+                url: '{{ route("admin.delete-user-meal-swap-food") }}',
+                type: 'POST',
+                data: {
+                    item_id: itemId,
+                    meal_id: mealId,
+                    meal_time_id: mealTimeId,
+                    plan_id: planId,
+                    user_id: userId,
+                    swap_item_id: swapItemId,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // ✅ Remove the deleted swap item from DOM
+                        $li.remove();
 
-            // Check if only one <li> remains (which is the 'Add More' button container)
-            const $remainingItems = $ul.find('li').not($li);
-            if ($remainingItems.length === 1 && $remainingItems.find('.add-more-swap-item').length) {
-                const $messageLi = $remainingItems.first(); // Get that existing LI
-                const $col9 = $messageLi.find('.col-9');
+                        // Check if only one <li> remains and it's the 'Add More' button
+                        const $remainingItems = $ul.find('li');
+                        const onlyAddMoreBtnLeft = $remainingItems.length === 1 &&
+                            $remainingItems.find('.add-more-swap-item').length;
 
-                // Inject the message into the .col-9 div
-                $col9.html('<span class="text-muted">No swap items available</span>');
-            }
+                        if (onlyAddMoreBtnLeft) {
+                            const $messageLi = $remainingItems.first();
+                            const $col9 = $messageLi.find('.col-9');
+                            $col9.html('<span class="text-muted">No swap items available</span>');
+                        }
 
-            swapDeleteParams = null;
+                        // Hide the modal
+                        bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
+                        swapDeleteParams = null;
 
-            // Hide the modal
-            bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
+                    } else {
+                        // ✅ Remove the deleted swap item from DOM
+                        $li.remove();
+
+                        // Check if only one <li> remains and it's the 'Add More' button
+                        const $remainingItems = $ul.find('li');
+                        const onlyAddMoreBtnLeft = $remainingItems.length === 1 &&
+                            $remainingItems.find('.add-more-swap-item').length;
+
+                        if (onlyAddMoreBtnLeft) {
+                            const $messageLi = $remainingItems.first();
+                            const $col9 = $messageLi.find('.col-9');
+                            $col9.html('<span class="text-muted">No swap items available</span>');
+                        }
+
+                        // Hide the modal
+                        bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
+                        swapDeleteParams = null;
+                    }
+                },
+                error: function () {
+                    alert('Failed to delete swap food item.');
+                }
+            });
         });
-
-        // $(document).on('click', '.delete-swap-item', function () {
-        //     const button = $(this);
-
-        //     const swapItemId = button.data('swap-item-id');
-        //     const itemId = button.data('item-id');
-        //     const mealId = button.data('meal-id');
-        //     const planId = button.data('plan-id');
-        //     const mealTimeId = button.data('meal-time-id');
-        //     const userId = button.data('user-id');
-
-        //     if (!confirm('Are you sure you want to delete this swap item?')) return;
-
-        //     const $li = button.closest('li');
-        //     const $ul = $li.closest('ul');
-
-        //     // Remove the swap item
-        //     $li.remove();
-        //     updateFoodCount(swapItemId, -1, null);
-
-        //     // Check if there are any <li> left in the list
-        //     if ($ul.children('li').length === 0) {
-        //         // Add "No swap items available" message
-        //         $ul.append(`
-        //             <li class="d-flex justify-content-between align-items-start mb-2">
-        //                 <div class="col-9">
-        //                     <span class="text-muted">No swap items available</span>
-        //                 </div>
-        //                 <div>
-        //                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-        //                         data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-        //                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-        //                         title="Add"><i class="icofont-plus"></i>
-        //                     </button>
-        //                 </div>
-        //             </li>
-        //         `);
-        //     }
-        // });
 
         $(document).ready(function () {
             $('#swapFoodDropdown').select2({
@@ -3744,13 +3778,6 @@
                 </li>
             `;
 
-            const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            // Find and replace only the current <li> using swapItemId
-            const liToReplace = currentItemRow.find(`td:nth-child(3) ul`);
-            liToReplace.replaceWith(updatedLI);
-
-            updateFoodCount(swapItemId, 1, 'green');
-
             const modalEl = document.getElementById('addSwapItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
 
@@ -3771,15 +3798,21 @@
                     swap_food_fat: fat,
                     swap_food_energy: energy,
                     swap_selected_qty_unit: selectedQtyUnits,
-                    type: 'swap-food-update',
+                    type: 'add-swap-food',
                     _token: '{{ csrf_token() }}'
                 },
                 success: function (response) {
                     if (response.success) {
-                        console.log('swap food added successfully');
+                        const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+                        // Find and replace only the current <li> using swapItemId
+                        const liToReplace = currentItemRow.find(`td:nth-child(3) ul`);
+                        liToReplace.replaceWith(updatedLI);
+
+                        updateFoodCount(swapItemId, 1, 'green');
+
                         modal.hide();
                     } else {
-                        alert('Failed to update swap items.');
+                        alert(response.message || 'Failed to add swap item.');
                         modal.hide();
                     }
                 },
@@ -3789,8 +3822,6 @@
                 }
             });
             
-            // calculateTotals(planId, mealTimeId, mealId);
-            // calculateMealNutrition();
         });
 
         $(document).on('click', '.add-more-swap-item', function () {
@@ -4048,36 +4079,7 @@
             const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
             const swapItemsContainer = currentItemRow.find(`td:nth-child(3)`);
 
-            // Check if there are any existing swap items
-            const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
-            if (existingItems.length > 0) {
-                // If there are existing items, append the new item after them
-                existingItems.last().after(updatedLI);
-            } else {
-                // If no existing items, replace the entire content
-                swapItemsContainer.html(updatedLI);
-            }
             
-            // // Add the + icon button at the end
-            // const addButton = `
-            //     <li class="d-flex justify-content-between align-items-start mb-2">
-            //         <div class="col-9">
-            //             <span class="text-muted"></span>
-            //         </div>
-            //         <div>
-            //             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
-            //                 data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-            //                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-            //                 title="Add"><i class="icofont-plus"></i>
-            //             </button>
-            //         </div>
-            //     </li>
-            // `;
-            // swapItemsContainer.append(addButton);
-            
-            $('[data-bs-toggle="tooltip"]').tooltip();
-            // updateFoodCount(swapItemId, 1, 'green');
-
             const modalEl = document.getElementById('addMoreSwapItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
 
@@ -4098,20 +4100,31 @@
                     swap_food_fat: fat,
                     swap_food_energy: energy,
                     swap_selected_qty_unit: selectedQtyUnits,
-                    type: 'swap-food-update',
+                    type: 'add-swap-food',
                     _token: '{{ csrf_token() }}'
                 },
                 success: function (response) {
                     if (response.success) {
-                        console.log('swap food added successfully');
+                        // Check if there are any existing swap items
+                        const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
+                        if (existingItems.length > 0) {
+                            // If there are existing items, append the new item after them
+                            existingItems.last().after(updatedLI);
+                        } else {
+                            // If no existing items, replace the entire content
+                            swapItemsContainer.html(updatedLI);
+                        }
+                        
+                        $('[data-bs-toggle="tooltip"]').tooltip();
+
                         modal.hide();
                     } else {
-                        alert('Failed to update swap items.');
+                        alert(response.message || 'Failed to update swap items.');
                         modal.hide();
                     }
                 },
                 error: function () {
-                    alert('An error occurred while updating swap items.');
+                    alert('Failed to update swap items.');
                     modal.hide();
                 }
             });

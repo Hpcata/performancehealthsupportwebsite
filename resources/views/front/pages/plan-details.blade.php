@@ -4,22 +4,7 @@
 @section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-@if (!empty($sportGameData['sport_image']))
-<style>
-    .hero-background {
-        background-image: url('{{ webAssets("storage/" . $sportGameData['sport_image']) }}') !important;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        height: 100%;
-        max-width: 100%;
-        position: absolute;
-        right: 0;
-        border-radius: 0 0 36px 0;
-        width: 100%;
-    }
-</style>
-@endif
+
 <main class="main">
      <!-- Loader -->
     <!-- <div id="loader" class="d-none">
@@ -32,16 +17,21 @@
     <!-- Hero Banner -->
     <div class="hero-container">
         <div class="hero-section">
-            <div class="hero-background">
-                <div class="hero-overlay"></div>
-            </div>
-
+            @if (!empty($sportGameData['sport_image']))
+                <div class="hero-background" style="background-image: url('{{ webAssets('storage/' . $sportGameData['sport_image']) }}')" >
+                    <div class="hero-overlay"></div>
+                </div>
+            @else
+                <div class="hero-background" style="background-image: url('{{ frontAssets('images/bannerimg.png') }}');" >
+                    <div class="hero-overlay"></div>
+                </div>
+            @endif
             <div class="hero-content">
                 <div class="hero-bottom">
                     <h1 class="hero-title">Training Nutrition Plan</h1>
 
                     <div class="hero-top">
-                        <p class="hero-subtitle-plan">BMX freestyle</p>
+                        <p class="hero-subtitle-plan">{{ isset($sportGameData['sport_image']) ? $sportGameData['sport_name'] : '' }}</p>
                         <a href="#" class="view-all-link"> View all plans </a>
                     </div>
                 </div>
@@ -109,7 +99,7 @@
                                         ->where('user_plan_id', $userPlan->id)
                                         ->where('user_category_id', $userCategory->id)
                                         ->where('user_sub_category_id', $subCategory->id);
-                                        
+
                                     $mealCount = $subCategory->userMeals
                                         ->where('user_plan_id', $userPlan->id)
                                         ->where('user_category_id', $userCategory->id)
@@ -119,20 +109,18 @@
 
                                 @if ($mealCount > 0)
                                     @if(isset($subCategory->subCategory))
+
                                         <section class="challenges" aria-label="Meal Plan Categories">
                                             <div class="section-header">
                                                 <h2>{{ $subCategory->subCategory->title ?? '' }} ({{ $mealCount }})</h2>
                                             </div>
-                                            <div class="horizontal-scroll-arrow-wrapper" style="position: relative;">
-                                                @if($mealCount > 3)
-                                                    <div class="scroll-arrow-left" aria-label="Scroll left">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-                                                            <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                        </svg>
-                                                    </div>
-                                                @endif
-
-                                                <div class="challenge-cards horizontal-scroll">
+                                            <div class="slider-wrapper" style="position:relative;">
+                                            <button class="left-arrow slider-arrow" >
+                                                <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </button>
+                                                <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
                                                     @foreach ($meals as $meal)
                                                         <div class="challenge-card clickable"
                                                             data-title="{{ $meal->meal->title }}"
@@ -150,25 +138,24 @@
                                                             <h3>{{ $meal->meal->title }}</h3>
                                                             <div class="quick-view-overlay">
                                                                 <span style="padding: 12px;
-                                                                border-radius: 12px;
-                                                                background-color: #0d6efd;
-                                                                font-weight: 700;
-                                                                cursor:pointer;">Quick View
+                                                                    border-radius: 12px;
+                                                                    background-color: #0d6efd;
+                                                                    font-weight: 700;
+                                                                    cursor:pointer;">
+                                                                    Quick View
                                                                 </span>
                                                             </div>
                                                         </div>
                                                     @endforeach
                                                 </div>
-
-                                                @if($mealCount > 3)
-                                                    <div class="scroll-arrow-right" aria-label="Scroll right">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none" style="transform: rotate(180deg);">
-                                                            <path d="M6 11L1 6L6 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                        </svg>
-                                                    </div>
-                                                @endif
+                                               <button class="right-arrow slider-arrow">
+                                                    <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <polyline points="4,4 14,16 4,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                                </button>
                                             </div>
                                         </section>
+
                                     @endif
                                 @endif
                             @endforeach
@@ -244,7 +231,7 @@
                     alt="Plate like this image"
                     width="318"
                     height="350"
-                    class="plate-img" 
+                    class="plate-img"
                     id="plate-img"/>
                 <ul style="list-style: none; padding-left: 0; font-size: 1rem">
                     <li class="list-w-image">
@@ -295,15 +282,15 @@
         <div class="modal-content" style="border-radius: 12px;">
             <div class="modal-header" style="border-bottom: 1px solid #d8d8d8;">
                 <h5 class="modal-title" id="printPlanModalLabel">Download Plan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="meal-item-modal-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="padding: 0;">
-                <div style="flex: 1 1 auto; overflow-y: auto; padding: 16px 16px 0 16px;">
-                    <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center; overflow:auto;" class="downloadplan-inner-content">
-                       
+            <div class="modal-body" style="padding: 0;    overflow: auto;">
+                <div style="flex: 1 1 auto; padding: 16px 16px 0 16px;">
+                    <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center;" class="downloadplan-inner-content">
+
                     </div>
                 </div>
-               
+
             </div>
              <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
                 <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
@@ -351,7 +338,7 @@
     const assetBaseUrl = "{{ asset('storage') }}";
 
     // Ensure userId and userPlanId are already defined globally
-    
+
     document.addEventListener('DOMContentLoaded', function () {
         const dropdownOptions = document.querySelectorAll('.custom-dropdown-option');
         const plateImg = document.getElementById('plate-img'); // Get the image element
@@ -651,7 +638,7 @@
         $(document).on('click', '#download-pdf', function() {
             showLoader();
             const content = document.querySelector('#print-shopping-list-modal #shopping-list-content');
-            
+
             if (!content || content.innerHTML.trim() === '') {
                 $('#errormodalmain').modal('show');
                 return;
@@ -706,7 +693,7 @@
             // ✅ Bootstrap 5 modal instance
             const printPlanModalEl = document.getElementById('print-plan-modal');
             const printPlanModal = new bootstrap.Modal(printPlanModalEl);
-            
+
             printPlanModal.show(); // ✅ Show the modal
             showLoader();
             // ✅ Reset preview content with loading text
@@ -731,9 +718,9 @@
         });
 
         $('#print-plan-modal').on('hide.bs.modal', function () {
-            window.location.reload(); // Reload page to reset state  
+            window.location.reload(); // Reload page to reset state
         });
-        
+
         $('#shoppingListModal').on('hidden.bs.modal', function () {
             $('.modal-backdrop').remove();
             $(this).find('.modal-body').html(''); // Clear modal content
@@ -1041,7 +1028,7 @@
                             console.warn('Failed to parse selected_qty_unit for item:', item.name, e);
                         }
 
-                        const checkedUnits = selectedUnits.filter(u => 
+                        const checkedUnits = selectedUnits.filter(u =>
                             u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1"
                         );
 
@@ -1071,8 +1058,8 @@
                         const itemCard = `
                             <div class="swap-item">
                                 <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
-                                <div class="flex-wrapper"> 
-                               
+                                <div class="flex-wrapper">
+
                                 <div class="swap-item-info">
                                     <div class="swap-item-name">${item.name}</div>
                                     <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
@@ -1121,7 +1108,7 @@
     $(document).on('click', '.meal-item-modal-close', function () {
         const modalEl = $('#mealItemModel')[0];
         const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        
+
         if (modalInstance) {
             modalInstance.hide();
         } else {
@@ -1217,7 +1204,7 @@
                             <div class="swap-item-name">${data.item_name}</div>
                             <div class="swap-item-qty"><b>Qty:</b> ${mainQtyText}</div>
                         </div>
-                        <div class="swap-item-actions"> 
+                        <div class="swap-item-actions">
                             ${item.description ? `
                                 <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${item.description}">
                                     <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
@@ -1377,7 +1364,7 @@
         const userPlanId = $(this).data('user-plan-id');
         const userSubCategoryId = $(this).data('user-sub-category-id');
         const userCategoryId = $(this).data('user-category-id');
-       
+
         $.ajax({
             url: "{{ route('front.items.swaps') }}", // Laravel route to handle the request
             method: "GET",
@@ -1394,7 +1381,7 @@
             success: function (response) {
                 // Handle success response
                 swaps = [];
-                
+
                 if(response.success){
                     $('#smartSwapModal').modal('hide');
                     var meal_id = response.data['meal_id'];
@@ -1436,29 +1423,6 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Blade inline script: DOMContentLoaded fired');
-        document.querySelectorAll('.horizontal-scroll-arrow-wrapper').forEach(function(wrapper) {
-          const scrollContainer = wrapper.querySelector('.horizontal-scroll');
-          const leftArrow = wrapper.querySelector('.scroll-arrow-left');
-          const rightArrow = wrapper.querySelector('.scroll-arrow-right');
-          if (leftArrow && scrollContainer) {
-            leftArrow.addEventListener('click', function(e) {
-              e.preventDefault();
-              console.log('Blade inline: Left arrow clicked');
-              scrollContainer.scrollBy({ left: -scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
-            });
-          }
-          if (rightArrow && scrollContainer) {
-            rightArrow.addEventListener('click', function(e) {
-              e.preventDefault();
-              console.log('Blade inline: Right arrow clicked');
-              scrollContainer.scrollBy({ left: scrollContainer.clientWidth * 0.8, behavior: 'smooth' });
-            });
-          }
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
         var inviteDiv = document.querySelector('.share-dropdown-item');
         if(inviteDiv) {
             inviteDiv.addEventListener('click', function(e) {
@@ -1467,6 +1431,45 @@
                 comingSoonModal.show();
             });
         }
+    });
+    // card slider functionality
+    $(document).ready(function() {
+        // For each slider-wrapper (handles multiple carousels if present)
+        $('.slider-wrapper').each(function(idx) {
+            var $wrapper = $(this);
+            var $scroll = $wrapper.find('.challenge-cards');
+            var $cards = $scroll.find('.challenge-card');
+            var cardWidth = $cards.length ? $cards.outerWidth(true) : 200;
+
+            $wrapper.find('.left-arrow').on('click', function(e) {
+                e.preventDefault();
+                var before = $scroll.scrollLeft();
+                $scroll.animate({ scrollLeft: before - cardWidth }, 300, function() {
+                    var after = $scroll.scrollLeft();
+                    console.log(`[Slider ${idx}] Left arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+                });
+            });
+
+            $wrapper.find('.right-arrow').on('click', function(e) {
+                e.preventDefault();
+                var before = $scroll.scrollLeft();
+                $scroll.animate({ scrollLeft: before + cardWidth }, 300, function() {
+                    var after = $scroll.scrollLeft();
+                    console.log(`[Slider ${idx}] Right arrow clicked. ScrollLeft before: ${before}, after: ${after}`);
+                });
+            });
+        });
+    });
+    $(document).ready(function() {
+        $('.slider-wrapper').each(function() {
+            var $wrapper = $(this);
+            var $cards = $wrapper.find('.challenge-card');
+            if ($cards.length <= 4) {
+                $wrapper.find('.slider-arrow').hide();
+            } else {
+                $wrapper.find('.slider-arrow').show();
+            }
+        });
     });
 </script>
 @endsection

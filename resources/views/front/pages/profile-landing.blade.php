@@ -43,39 +43,36 @@
             <div class="tabs">
                 @php $firstTab = true; @endphp
                 @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
-                @php
-                $category = $userCategory->category;
-                $hasValidMeal = $userCategory->userSubCategories()
-                    ->where('user_plan_id', $userPlan->id)
-                    ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
-                        $q->where('user_plan_id', $userPlan->id)
-                        ->where('user_category_id', $userCategory->id);
-                    })->exists();
-                @endphp
+                    @php
+                    $category = $userCategory->category;
+                    $hasValidMeal = $userCategory->userSubCategories()
+                        ->where('user_plan_id', $userPlan->id)
+                        ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                            $q->where('user_plan_id', $userPlan->id)
+                            ->where('user_category_id', $userCategory->id);
+                        })->exists();
+                    @endphp
 
-                @if ($hasValidMeal && $category)
-                <button
-                    class="tab {{ $firstTab ? 'active' : '' }}"
-                    data-category-id="{{ $category->id }}"
-                    data-plan-id="{{ $userPlan->id }}">
-                    {{ $category->title }}
-                </button>
-                @php $firstTab = false; @endphp
-                @endif
+                    @if ($hasValidMeal && $category)
+                        <button
+                            class="tab {{ $firstTab ? 'active' : '' }}"
+                            data-category-id="{{ $category->id }}"
+                            data-plan-id="{{ $userPlan->id }}">
+                            {{ $category->title }}
+                        </button>
+                        @php $firstTab = false; @endphp
+                    @endif
                 @endforeach
             </div>
 
-            <div class="tab-content challenges">
-                <div class="horizontal-scroll-arrow-wrapper">
-                  
-
-    <div class="challenge-cards horizontal-scroll" id="meal-cards-wrapper">
-        <p>Loading meals...</p>
-    </div>
+            <div class="tab-content challenges">  
+                <div class="challenge-cards" id="meal-cards-wrapper">
+                    <p>Loading meals...</p>
+                </div>
+                
 
 
-</div>
-                <!-- <div class="position-relative challenge-cards horizontal-scroll " id="meal-cards-wrapper">
+                <!-- <div class="position-relative challenge-cards" id="meal-cards-wrapper">
                     <p>Loading meals...</p>
                 </div> -->
             </div>
@@ -88,14 +85,15 @@
                 <h2>Challenges</h2>
                 <!-- <a href="/challenges" class="see-all">See all</a> -->
             </div>
-            <div class="challenge-cards horizontal-scroll">
-             
+            <div class="slider-container">
+                                                 
+             <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
                 <div class="challenge-card clickable hover-card coming-soon-popup">
                     <img
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-                   
+
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
@@ -106,7 +104,7 @@
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
                         alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
                     <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
-                     
+
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>10</span>
@@ -117,7 +115,7 @@
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-                    
+
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
@@ -128,13 +126,13 @@
                         src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                         alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                     <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
-                    
+
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <span>30</span>
                     </div>
                 </div>
-           
+           </div>
               
             </div>
         </section>
@@ -251,7 +249,7 @@
                     </div>
                     <div class="consult-user-row">
                         <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                            src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
                             class="consult-avatar"
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
@@ -259,6 +257,30 @@
                     <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
                 </div>
             </div>
+            @php
+                $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
+                $userPlan = $userPlan ?? null;
+
+                $latestMealImages = isset($userPlan->userMeals) ? $userPlan->userMeals()
+                    ->with('meal')
+                    ->latest()
+                    ->get()
+                    ->map(function ($userMeal) {
+                        return $userMeal->meal?->image
+                            ? asset('storage/' . $userMeal->meal->image)
+                            : null;
+                    })
+                    ->filter(function ($image) {
+                        return !empty($image); // filters out null and empty strings
+                    })
+                    ->take(2)
+                    ->values()
+                    ->toArray() : [];
+
+                $mealImage1 = $latestMealImages[0] ?? frontAssets('images/sports-training/fooditem1.webp');
+                $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
+            @endphp
+
             <div class="consults-plans-grid">
                 <div class="plan-card-custom plan-competition">
                     <div class="">
@@ -270,14 +292,14 @@
                     <div class="">
                         <div class="consult-user-row">
                             <img
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                src="{{ $mealImage1 }}"
                                 class="consult-avatar"
                                 alt="Kerry O'Bryan, expert coach avatar" />
                             <img
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                src="{{ $mealImage2 }}"
                                 class="consult-avatar overlap1"
                                 alt="Kerry O'Bryan, expert coach avatar" />
-                            <span>21 meals • 18 Nutrition tips</span>
+                            <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                         </div>
                         <!-- <div class="plan-meta">
                             <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
@@ -293,14 +315,14 @@
                     </div>
                     <div class="consult-user-row">
                         <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                            src="{{ $mealImage1 }}"
                             class="consult-avatar"
                             alt="Kerry O'Bryan, expert coach avatar" />
                         <img
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                            src="{{ $mealImage2 }}"
                             class="consult-avatar overlap1"
                             alt="Kerry O'Bryan, expert coach avatar" />
-                        <span>21 meals • 18 Nutrition tips</span>
+                        <span>{{ $mealCount }}  meals • 18 Nutrition tips</span>
                     </div>
                     <button class="btn-consult">Learn more</button>
                 </div>
@@ -526,103 +548,7 @@
         });
     });
 </script>
-<script>
-    function enableDragScroll(selector) {
-    const containers = document.querySelectorAll(selector);
-    containers.forEach((container) => {
-        let isDown = false;
-        let startX;
-        let scrollLeft;
 
-        container.addEventListener("mousedown", (e) => {
-            isDown = true;
-            container.classList.add("dragging");
-            startX = e.pageX - container.offsetLeft;
-            scrollLeft = container.scrollLeft;
-        });
-        container.addEventListener("mouseleave", () => {
-            isDown = false;
-            container.classList.remove("dragging");
-        });
-        container.addEventListener("mouseup", () => {
-            isDown = false;
-            container.classList.remove("dragging");
-        });
-        container.addEventListener("mousemove", (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - container.offsetLeft;
-            const walk = (x - startX) * 1.5;
-            container.scrollLeft = scrollLeft - walk;
-        });
-
-        // Touch events for mobile
-        container.addEventListener("touchstart", (e) => {
-            isDown = true;
-            startX = e.touches[0].pageX - container.offsetLeft;
-            scrollLeft = container.scrollLeft;
-        });
-        container.addEventListener("touchend", () => {
-            isDown = false;
-        });
-        container.addEventListener("touchmove", (e) => {
-            if (!isDown) return;
-            const x = e.touches[0].pageX - container.offsetLeft;
-            const walk = (x - startX) * 1.5;
-            container.scrollLeft = scrollLeft - walk;
-        });
-    });
-}
-
-function enableWheelHorizontalScroll(selector) {
-    document.querySelectorAll(selector).forEach((container) => {
-        container.addEventListener(
-            "wheel",
-            function (e) {
-                if (container.scrollWidth > container.clientWidth) {
-                    e.preventDefault();
-                    container.scrollLeft += e.deltaY;
-                }
-            },
-            { passive: false }
-        );
-    });
-}
-
-function setupArrowScroll(wrapperSelector) {
-    console.log("setupArrowScroll running");
-    document.querySelectorAll(wrapperSelector).forEach((wrapper) => {
-        const scrollContainer = wrapper.querySelector(".horizontal-scroll");
-        const leftArrow = wrapper.querySelector(".scroll-arrow-left");
-        const rightArrow = wrapper.querySelector(".scroll-arrow-right");
-
-        if (!scrollContainer) return;
-        if (leftArrow) {
-            leftArrow.addEventListener("click", function (e) {
-                e.preventDefault();
-                console.log("Left arrow clicked");
-                scrollContainer.scrollBy({ left: -scrollContainer.clientWidth * 0.8, behavior: "smooth" });
-            });
-        }
-        if (rightArrow) {
-            rightArrow.addEventListener("click", function (e) {
-                e.preventDefault();
-                console.log("Right arrow clicked");
-                scrollContainer.scrollBy({ left: scrollContainer.clientWidth * 0.8, behavior: "smooth" });
-            });
-        }
-    });
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    console.log('DOMContentLoaded event fired in script.js');
-    enableDragScroll(".horizontal-scroll");
-    enableDragScroll(".challenge-cards");
-    enableWheelHorizontalScroll(".horizontal-scroll");
-    setupArrowScroll(".horizontal-scroll-arrow-wrapper");
-});
-console.log('script.js loaded at bottom sam');
-</script>
 
 <!-- Coming Soon Modal -->
 <div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
