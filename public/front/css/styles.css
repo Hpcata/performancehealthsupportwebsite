@@ -32,6 +32,10 @@ body {
     top: 0;
     z-index: 100;
 }
+.video-grid{
+    padding: 2px;
+    padding-top: 0;
+}
 .dropdown,
 .surfing-videos .video-grid .video-card .video-thumbnail,
 .video-player {
@@ -40,7 +44,7 @@ body {
 .header .header-content {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 24px;
+padding: 22px 24px;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
@@ -76,10 +80,11 @@ body {
     font-weight: 500;
     cursor: pointer;
 }
+
 .footer .footer-content .footer-nav a:hover,
 .header .nav-center .nav-item:hover,
 .header .nav-right .nav-item:hover {
-    color: #fff;
+      color:rgba(162, 197, 250, 1);
 }
 .header .nav-right {
     display: flex;
@@ -92,16 +97,21 @@ body {
     gap: 8px;
     align-items: center;
 }
+.header .nav-end:hover {
+    color:rgba(162, 197, 250, 1)
+}
+.header .nav-end:hover svg path{
+    fill:rgba(162, 197, 250, 1)
+}
 .header .nav-end .fas,
 .nav-item.dropdown .fas {
     font-size: 14px;
 }
 .dropdown .dropdown-content {
     position: absolute;
-    top: 100%;
+    top: 140%;
     left: 0;
     background: #fff;
-    border: 1px solid #e2e8f0;
     border-radius: 8px;
     box-shadow: 0 10px 25px rgb(0 0 0 / 0.1);
     min-width: 200px;
@@ -116,7 +126,7 @@ body {
     padding: 0.75rem 1rem;
     color: #626262;
     text-decoration: none;
-    border-bottom: 1px solid #f1f5f9;
+  border-radius: 8px ;
 }
 .dropdown .dropdown-content a:hover {
     background: #f8fafc;
@@ -137,8 +147,9 @@ body {
     background-color: #4a84dd !important;
 }
 .welcome-section {
-    margin-bottom: 119px;
-    margin-top: 56px;
+    margin-bottom: 154px;
+    margin-top: 60px;
+    position: relative;
 }
 .welcome-section .notification-bar {
     position: absolute;
@@ -241,7 +252,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 24px;
 }
 .section-header h2 {
     color: var(--Kerry-grey-700, #080808);
@@ -249,7 +260,8 @@ body {
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
-    line-height: normal;
+        line-height: 33px;
+    margin-bottom: 0;
 }
 .section-header .see-all {
     color: #3b82f6;
@@ -269,29 +281,37 @@ body {
 .training-plan .tabs {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1.5rem;
-    overflow: auto;
+    margin-bottom: 24px;
+    overflow-x: auto;
     padding-bottom: 1px;
 }
 .training-plan .tabs::-webkit-scrollbar {
     display: none;
 }
 .training-plan .tabs .tab {
-    background: 0 0;
+    background: white;
     border: 1px solid #4a84dd;
     padding: 10px 14px;
     border-radius: 50px;
     cursor: pointer;
     color: #4a84dd;
+    font-size: 14px;
     transition: 0.3s;
-    font-weight: 400;
+    font-weight: 600;
     box-sizing: border-box;
+    white-space: nowrap;
+        line-height: 15px;
 }
 .training-plan .tabs .tab.active {
     background-color: #e0ecfd;
     color: #3b82f6;
     border-width: 2px;
     font-weight: 600;
+}
+.training-plan .tabs .tab:hover {
+    background-color: #e0ecfd;
+    color: #3b82f6;
+ 
 }
 .training-plan .tabs .tab:hover {
     color: #3b82f6;
@@ -310,12 +330,9 @@ body {
 .challenge-cards {
     display: flex !important;
     flex-direction: row;
-    overflow-x: auto;
-    scroll-behavior: smooth;
+
     gap: 20px;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+
 }
 .slider-arrow {
     font-size: 1.5rem;
@@ -362,7 +379,7 @@ body {
     width: 100%;
     height: 100%;
     max-height: 200px;
-    background: rgba(0, 0, 0, 0.65);
+
     color: #fff;
     display: flex;
     align-items: center;
@@ -379,7 +396,7 @@ body {
 .quick-view-overlay span {
     padding: 12px;
     border-radius: 12px;
-    background-color: #0d6efd87;
+    background-color: #709ef1;
     font-weight: 700;
     cursor: pointer;
 }
@@ -415,7 +432,7 @@ body {
     padding: 0;
     margin-top: 12px;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 500;
     line-height: normal;
     color: #080808;
 }
@@ -831,8 +848,7 @@ body {
     box-shadow: 0 4px 24px 0 rgb(59 130 246 / 0.1);
     padding: 20px;
     max-width: 480px;
-    margin-top: 32px;
-    margin-left: 8px;
+    
 }
 .consultation-card-custom,
 .resource-card-custom {
@@ -860,8 +876,8 @@ body {
 }
 .profile-avatar-overlap {
     position: absolute;
-    left: 0;
-    bottom: -95px;
+       left: 0;
+    bottom: -98px;
     width: 78px;
     height: 78px;
     object-fit: cover;
@@ -870,11 +886,11 @@ body {
 }
 .welcome-arrow {
     clip-path: polygon(0 0, 100% 0, 100% 0, 53% 100%, 53% 100%, 37% 40%);
-    width: 20px;
-    height: 18px;
-    left: 30px;
+       width: 20px;
+    height: 22px;
+    left: 28px;
     position: absolute;
-    bottom: -17px;
+     bottom: -20px;
     background: #000;
     background: linear-gradient(135deg, #e0edff 0, #c7dbfa 100%);
 }
@@ -1574,46 +1590,7 @@ body {
 .modal {
     /* z-index: 9999 !important; */
 }
-@media (max-width: 1024px) {
-    .mobile-menu-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: 1999;
-        transition: opacity 0.3s;
-        opacity: 0;
-    }
-    .responsive-download-plan {
-        flex-direction: column;
-    }
-    .responsive-download-plan .download-plan-food-img {
-        width: 80px !important;
-        height: 80px !important;
-        min-height: 80px !important;
-    }
-    #print-plan-modal .modal-content,
-    #shoppingListModal .modal-content {
-        max-height: 80vh;
-    }
-    .mobile-menu-overlay.open {
-        display: block;
-        opacity: 1;
-    }
 
-    .mobile-menu {
-        z-index: 2000;
-        transition: transform 0.3s;
-        transform: translateY(-120%);
-        border-radius: 0 0 0 18px;
-    }
-    .mobile-menu.open {
-        transform: translateY(0);
-    }
-}
 .share-dropdown {
     min-width: 270px;
     background: #fff;
@@ -1838,10 +1815,7 @@ button:focus,
     /* overflow-y: auto;
     max-height: 60vh; */
 }
-.dialog-content {
-    overflow-y: auto;
-    max-height: 80vh;
-}
+
 /* Remove custom dropdown-menu rules that conflict with Bootstrap */
 .dropdown-menu {
     opacity: 1 !important;
@@ -1865,10 +1839,9 @@ button:focus,
 
 .recipe-dialog {
     background: #fff;
-    border-radius: 18px;
-    /* Updated shadow to match Figma: 0px 2.06px 4.11px rgba(0,0,0,0.08) */
+    border-radius: 12px;
     box-shadow: 0 2.06px 4.11px rgba(0, 0, 0, 0.08);
-    max-width: 790px;
+    /* max-width: 790px; */
     width: 100%;
     padding: 0;
     position: relative;
@@ -1991,10 +1964,10 @@ button:focus,
     color: #3b3b3b;
 }
 
-.smart-swap-btn {
+/* .smart-swap-btn {
     margin-bottom: 24px;
     margin-top: 4px;
-}
+} */
 
 .dialog-body p {
     margin: 8px 0;
@@ -2299,15 +2272,15 @@ button:focus,
     background-color: #4a84dd !important;
 }
 .slider-arrow.right-arrow {
-height: 100%;
+   
     position: absolute;
     right: -63px;
-    top: 40%;
-    transform: translateY(-50%);
+    top: 0;
     z-index: 2;
     background: transparent;
     border: none;
     width: 70px;
+     height: 200px;
     box-shadow: none;
     display: flex;
     align-items: center;
@@ -2316,13 +2289,12 @@ height: 100%;
 .slider-arrow.left-arrow {
     position: absolute;
     left: -63px;
-    top: 40%;
-    transform: translateY(-50%);
+    top: 0;
     z-index: 2;
-     background: transparent;
+    background: transparent;
     border: none;
     width: 70px;
-    height: 36px;
+      height: 200px;
     box-shadow: none;
     display: flex;
     align-items: center;
@@ -2592,23 +2564,122 @@ height: 100%;
     opacity: 1;
     pointer-events: auto;
 }
-
+.dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+    scrollbar-width: none; /* Firefox */
+}
+.dialog-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+/* Show scrollbars when .show-scrollbar is added */
+.show-scrollbar {
+    scrollbar-width: thin !important; /* Firefox */
+}
+.show-scrollbar::-webkit-scrollbar {
+    display: block !important;
+    height: 8px;
+    background: #eee;
+}
+.show-scrollbar::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 8px;
+}
 @media (max-width: 1800px) {
     .downloadplan-inner-content {
         max-height: 510px;
     }
+    .dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
 }
 @media (max-width: 1680px) {
     .downloadplan-inner-content {
         max-height: 410px;
     }
+    .dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
 }
 @media (max-width: 1440px) {
     .downloadplan-inner-content {
         max-height: 350px;
     }
+    .dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
 }
 @media (max-width: 1024px) {
+      .challenge-cards-slider {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+  }
+  .challenge-card {
+    min-width: 80vw;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+  .slider-arrow,
+  .tns-nav,
+  .tns-controls {
+    display: none !important;
+  }
+    .challenge-cards-slider.native-scroll {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+      .modal.print-plan-modal{
+        z-index: 9999 !important;
+    }
+    .mobile-menu-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1999;
+        transition: opacity 0.3s;
+        opacity: 0;
+    }
+    .responsive-download-plan {
+        flex-direction: column;
+    }
+    .responsive-download-plan .download-plan-food-img {
+        width: 80px !important;
+        height: 80px !important;
+        min-height: 80px !important;
+    }
+    #print-plan-modal .modal-content,
+    #shoppingListModal .modal-content {
+        max-height: 80vh;
+    }
+    .mobile-menu-overlay.open {
+        display: block;
+        opacity: 1;
+    }
+
+    .mobile-menu {
+        z-index: 2000;
+        transition: transform 0.3s;
+        transform: translateY(-120%);
+        border-radius: 0 0 0 18px;
+    }
+    .mobile-menu.open {
+        transform: translateY(0);
+    }
+
+    .dialog-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
         .slider-arrow.right-arrow,
     .slider-arrow.left-arrow {
         display: none !important;
@@ -2735,7 +2806,7 @@ height: 100%;
     .mobile-menu-list {
         list-style: none;
         margin: 0;
-        margin: 72px 0 0 0;
+        margin: 72px 0 0 0 !important;
         font-size: 1.1rem;
         border-top: 1px solid #ffffff4a;
         padding: 0;
@@ -2807,6 +2878,7 @@ height: 100%;
     }
 }
 @media (max-width: 768px) {
+   
     .modal-lg .modal-content,
     #print-plan-modal .modal-content,
     #shoppingListModal .modal-content {
@@ -2910,21 +2982,25 @@ height: 100%;
     }
 }
 @media (max-width: 600px) {
+   
+    #print-plan-modal .modal-content, #shoppingListModal .modal-content {
+    max-height: 70vh;
+}
     .hero-content {
-    position: absolute;
-    bottom: 21px;
-}
-.hero-bottom {
-    color: #fff;
-    width: 96%;
-}
+        position: absolute;
+        bottom: 21px;
+    }
+    .hero-bottom {
+        color: #fff;
+        width: 96%;
+    }
     .shopping-list-wrap {
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -30%);
-    width: 95vw;
-    max-width: 800px;
-}
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -30%);
+        width: 95vw;
+        max-width: 800px;
+    }
     .modal-confirm .modal-content {
         width: 80%;
         margin: 0 auto;
@@ -3174,4 +3250,20 @@ height: 100%;
 
 #print-plan-modal .modal-title{
 font-size: 18px;
+}
+.heading-wrap{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.meal-card-swap-btn{
+ background-color: #649EF7;
+    color: #fff;
+    padding: 10px;
+    font-size: 14px;
+    display: flex;
+    margin-top: 4px;
+    margin-left: 4px;
+    justify-content: flex-end;
+    justify-self: flex-end;
 }
