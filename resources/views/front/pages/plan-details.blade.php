@@ -99,7 +99,7 @@
                                         ->where('user_plan_id', $userPlan->id)
                                         ->where('user_category_id', $userCategory->id)
                                         ->where('user_sub_category_id', $subCategory->id);
-                                        
+
                                     $mealCount = $subCategory->userMeals
                                         ->where('user_plan_id', $userPlan->id)
                                         ->where('user_category_id', $userCategory->id)
@@ -109,7 +109,7 @@
 
                                 @if ($mealCount > 0)
                                     @if(isset($subCategory->subCategory))
-                                      
+
                                         <section class="challenges" aria-label="Meal Plan Categories">
                                             <div class="section-header">
                                                 <h2>{{ $subCategory->subCategory->title ?? '' }} ({{ $mealCount }})</h2>
@@ -119,26 +119,10 @@
                                                 <svg width="18" height="24" viewBox="0 0 18 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                                                 </svg>
-                                            </button>   
+                                            </button>
                                                 <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
                                                     @foreach ($meals as $meal)
                                                         <div class="challenge-card clickable"
-                                                            data-title="{{ $meal->meal->title }}"
-                                                            data-plan-id="{{ $userPlan->id }}"
-                                                            data-meal-id="{{ $meal->id }}"
-                                                            data-user-id="{{ $user->id }}"
-                                                            data-sub-category-id="{{ $subCategory->id }}"
-                                                            data-category-id="{{ $userCategory->id }}"
-                                                            data-user-plan-id="{{ $userPlan->id }}">
-                                                            <img
-                                                                src="{{ webAssets('storage/'.$meal->meal->image) }}"
-                                                                alt="{{ $meal->meal->title }}"
-                                                                height="252"
-                                                                width="160" />
-                                                            <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay"><span style="">Quick View</span></div>
-                                                        </div>
-                                                          <div class="challenge-card clickable"
                                                             data-title="{{ $meal->meal->title }}"
                                                             data-plan-id="{{ $userPlan->id }}"
                                                             data-meal-id="{{ $meal->id }}"
@@ -159,30 +143,6 @@
                                                                     font-weight: 700;
                                                                     cursor:pointer;">
                                                                     Quick View
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                          <div class="challenge-card clickable"
-                                                            data-title="{{ $meal->meal->title }}"
-                                                            data-plan-id="{{ $userPlan->id }}"
-                                                            data-meal-id="{{ $meal->id }}"
-                                                            data-user-id="{{ $user->id }}"
-                                                            data-sub-category-id="{{ $subCategory->id }}"
-                                                            data-category-id="{{ $userCategory->id }}"
-                                                            data-user-plan-id="{{ $userPlan->id }}">
-                                                            <img
-                                                                src="{{ webAssets('storage/'.$meal->meal->image) }}"
-                                                                alt="{{ $meal->meal->title }}"
-                                                                height="252"
-                                                                width="160" />
-                                                            <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay">
-                                                                <span style="padding: 12px;
-                                                                border-radius: 12px;
-                                                                background-color: #0d6efd;
-                                                                font-weight: 700;
-                                                                cursor:pointer;">
-                                                                Quick View
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -271,7 +231,7 @@
                     alt="Plate like this image"
                     width="318"
                     height="350"
-                    class="plate-img" 
+                    class="plate-img"
                     id="plate-img"/>
                 <ul style="list-style: none; padding-left: 0; font-size: 1rem">
                     <li class="list-w-image">
@@ -327,10 +287,10 @@
             <div class="modal-body" style="padding: 0;    overflow: auto;">
                 <div style="flex: 1 1 auto; padding: 16px 16px 0 16px;">
                     <div id="pdf-preview" style="width: 100%; height: 100%; display: flex; justify-content: center;" class="downloadplan-inner-content">
-                       
+
                     </div>
                 </div>
-               
+
             </div>
              <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
                 <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
@@ -378,7 +338,7 @@
     const assetBaseUrl = "{{ asset('storage') }}";
 
     // Ensure userId and userPlanId are already defined globally
-    
+
     document.addEventListener('DOMContentLoaded', function () {
         const dropdownOptions = document.querySelectorAll('.custom-dropdown-option');
         const plateImg = document.getElementById('plate-img'); // Get the image element
@@ -417,7 +377,7 @@
     // ...existing code...
 
     // function showLoader() {
-       
+
     //     $('#loader').css('display', 'd-flex');
 
     // }
@@ -688,7 +648,7 @@
         $(document).on('click', '#download-pdf', function() {
             showLoader();
             const content = document.querySelector('#print-shopping-list-modal #shopping-list-content');
-            
+
             if (!content || content.innerHTML.trim() === '') {
                 $('#errormodalmain').modal('show');
                 return;
@@ -743,7 +703,7 @@
             // ✅ Bootstrap 5 modal instance
             const printPlanModalEl = document.getElementById('print-plan-modal');
             const printPlanModal = new bootstrap.Modal(printPlanModalEl);
-            
+
             printPlanModal.show(); // ✅ Show the modal
             showLoader();
             // ✅ Reset preview content with loading text
@@ -768,9 +728,9 @@
         });
 
         $('#print-plan-modal').on('hide.bs.modal', function () {
-            window.location.reload(); // Reload page to reset state  
+            window.location.reload(); // Reload page to reset state
         });
-        
+
         $('#shoppingListModal').on('hidden.bs.modal', function () {
             $(this).find('.modal-body').html(''); // Clear modal content
         });
@@ -1065,7 +1025,7 @@
                             console.warn('Failed to parse selected_qty_unit for item:', item.name, e);
                         }
 
-                        const checkedUnits = selectedUnits.filter(u => 
+                        const checkedUnits = selectedUnits.filter(u =>
                             u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1"
                         );
 
@@ -1095,8 +1055,8 @@
                         const itemCard = `
                             <div class="swap-item">
                                 <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
-                                <div class="flex-wrapper"> 
-                               
+                                <div class="flex-wrapper">
+
                                 <div class="swap-item-info">
                                     <div class="swap-item-name">${item.name}</div>
                                     <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
@@ -1145,7 +1105,7 @@
     $(document).on('click', '.meal-item-modal-close', function () {
         const modalEl = $('#mealItemModel')[0];
         const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        
+
         if (modalInstance) {
             modalInstance.hide();
         } else {
@@ -1241,7 +1201,7 @@
                             <div class="swap-item-name">${data.item_name}</div>
                             <div class="swap-item-qty"><b>Qty:</b> ${mainQtyText}</div>
                         </div>
-                        <div class="swap-item-actions"> 
+                        <div class="swap-item-actions">
                             ${item.description ? `
                                 <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${item.description}">
                                     <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
@@ -1402,7 +1362,7 @@
         const userPlanId = $(this).data('user-plan-id');
         const userSubCategoryId = $(this).data('user-sub-category-id');
         const userCategoryId = $(this).data('user-category-id');
-       
+
         $.ajax({
             url: "{{ route('front.items.swaps') }}", // Laravel route to handle the request
             method: "GET",
@@ -1419,7 +1379,7 @@
             success: function (response) {
                 // Handle success response
                 swaps = [];
-                
+
                 if(response.success){
                     $('#smartSwapModal').modal('hide');
                     var meal_id = response.data['meal_id'];
@@ -1471,7 +1431,7 @@
 				<div class="icon-box">
 					<i class="fas fa-exclamation-circle"></i>
 				</div>
-			    <button class="dialog-close" 
+			    <button class="dialog-close"
                 style="    top: -20px;
     right: -20px;"
                 data-bs-dismiss="modal" aria-label="Close">
@@ -1481,13 +1441,13 @@
                     </button>
 			</div>
 			<div class="text-center modal-body">
-				<h4>Ooops!</h4>	
+				<h4>Ooops!</h4>
 				<p>Something went wrong.</p>
-				
+
 			</div>
 		</div>
 	</div>
-</div> 
+</div>
 
 <!-- Coming Soon Modal -->
 <div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
