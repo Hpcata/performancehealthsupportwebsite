@@ -1251,7 +1251,7 @@ padding: 22px 24px;
     height: 100vh;
 }
 .hero-background {
-    background-image: url(/performancehealthsupportwebsite/performancehealthsupportwebsite/public/front/images/hero-section/cricket.jpg);
+    /* background-image: url("{{ asset(images/bannerimg.png') }}"); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

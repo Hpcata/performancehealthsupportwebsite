@@ -94,35 +94,31 @@
                 </section>
 
             @endif
-            <!-- Challenges -->
-            <section class="challenges">
-                <div class="section-header">
-                    <h2>Challenges</h2>
-                    <!-- <a href="/challenges" class="see-all">See all</a> -->
-                </div>
-                <div class="slider-wrapper" style="position:relative;">
-                    <button class="left-arrow slider-arrow">
-                        <svg width="18" height="24" viewBox="0 0 18 32" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="14,4 4,16 14,28" stroke="#080808" stroke-width="3" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <div class="challenge-cards challenge-cards-slider">
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                                alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                            <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+            {{-- Tabs --}}
+            <div class="tabs">
+                @php $firstTab = true; @endphp
+                @foreach ($userPlan->userCategories->where('user_plan_id', $userPlan->id) as $userCategory)
+                    @php
+                    $category = $userCategory->category;
+                    $hasValidMeal = $userCategory->userSubCategories()
+                        ->where('user_plan_id', $userPlan->id)
+                        ->whereHas('userMeals', function ($q) use ($userPlan, $userCategory) {
+                            $q->where('user_plan_id', $userPlan->id)
+                            ->where('user_category_id', $userCategory->id);
+                        })->exists();
+                    @endphp
 
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <span>30</span>
-                            </div>
-                        </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
-                                alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
-                            <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
+                    @if ($hasValidMeal && $category)
+                        <button
+                            class="tab {{ $firstTab ? 'active' : '' }}"
+                            data-category-id="{{ $category->id }}"
+                            data-plan-id="{{ $userPlan->id }}">
+                            {{ $category->title }}
+                        </button>
+                        @php $firstTab = false; @endphp
+                    @endif
+                @endforeach
+            </div>
 
                             <div class="rating">
                                 <i class="fas fa-star"></i>
@@ -154,15 +150,64 @@
                                 alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                             <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
 
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <span>30</span>
-                            </div>
-                        </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
-                            <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
-                                alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
-                            <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+        @endif
+        <!-- Challenges -->
+        <section class="challenges">
+            <div class="section-header">
+                <h2>Challenges</h2>
+                <!-- <a href="/challenges" class="see-all">See all</a> -->
+            </div>
+            <div class="slider-container">
+                                                 
+             <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
+                <div class="challenge-card clickable hover-card coming-soon-popup">
+                    <img
+                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                        alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                    <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <span>30</span>
+                    </div>
+                </div>
+                <div class="challenge-card clickable hover-card coming-soon-popup">
+                    <img
+                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
+                        alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
+                    <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
+
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <span>10</span>
+                    </div>
+                </div>
+                <div class="challenge-card clickable hover-card coming-soon-popup">
+                    <img
+                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                        alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                    <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <span>30</span>
+                    </div>
+                </div>
+                 <div class="challenge-card clickable hover-card coming-soon-popup">
+                    <img
+                        src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
+                        alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
+                    <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
+
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <span>30</span>
+                    </div>
+                </div>
+           </div>
+              
+            </div>
+        </section>
 
                             <div class="rating">
                                 <i class="fas fa-star"></i>
@@ -267,71 +312,94 @@
                 </div>
             </section>
 
-            <!-- Optimize Performance -->
-            <section class="optimize-performance">
-                <div class="section-header">
-                    <h2>Optimise your performance</h2>
-                    <a href="#" class="see-all">All Plans</a>
-                </div>
-                <div class="consults-plans-grid grid-1">
-                    <div class="consultation-card-custom">
-                        <div class="consult-title"></div>
-                        <div class="consult-desc">
-                            Get answers from a real-life expert coaching Elite Athletes and
-                            Olympians.
-                        </div>
-                        <div class="consult-user-row">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                                class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                            <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
-                        </div>
-                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank"
-                            class="text-decoration-none btn-consult">Book consult</a>
+        <!-- Optimize Performance -->
+        <section class="optimize-performance">
+            <div class="section-header">
+                <h2>Optimise your performance</h2>
+                <a href="#" class="see-all">All Plans</a>
+            </div>
+            <div class="consults-plans-grid grid-1">
+                <div class="consultation-card-custom">
+                    <div class="consult-title"></div>
+                    <div class="consult-desc">
+                        Get answers from a real-life expert coaching Elite Athletes and
+                        Olympians.
                     </div>
-                </div>
-                <div class="consults-plans-grid">
-                    <div class="plan-card-custom plan-competition">
-                        <div class="">
-                            <div class="plan-title">Competition Plan</div>
-                            <div class="plan-desc">
-                                Unlock your best performance with a fully customised 24-hour competition day meal
-                                plan—designed to fuel you from the night before through recovery, tailored to your sport,
-                                your preferences, and your game-day goals.
-                            </div>
-                        </div>
-                        <div class="">
-                            <div class="consult-user-row">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                                    class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                                    class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
-                                <span>21 meals • 18 Nutrition tips</span>
-                            </div>
-                            <!-- <div class="plan-meta">
-                                    <i class="fa-solid fa-utensils"></i> 21 meals • 18 Nutrition
-                                    tips
-                                </div> -->
-                            <button class="btn-consult">Learn more</button>
-                        </div>
+                    <div class="consult-user-row">
+                        <img
+                            src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
+                            class="consult-avatar"
+                            alt="Kerry O'Bryan, expert coach avatar" />
+                        <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
                     </div>
-                    <div class="plan-card-custom plan-injury">
-                        <div class="plan-title">Injury</div>
+                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="text-decoration-none btn-consult">Book consult</a>
+                </div>
+            </div>
+            @php
+                $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
+                $userPlan = $userPlan ?? null;
+
+                $latestMealImages = isset($userPlan->userMeals) ? $userPlan->userMeals()
+                    ->with('meal')
+                    ->latest()
+                    ->get()
+                    ->map(function ($userMeal) {
+                        return $userMeal->meal?->image
+                            ? asset('storage/' . $userMeal->meal->image)
+                            : null;
+                    })
+                    ->filter(function ($image) {
+                        return !empty($image); // filters out null and empty strings
+                    })
+                    ->take(2)
+                    ->values()
+                    ->toArray() : [];
+
+                $mealImage1 = $latestMealImages[0] ?? frontAssets('images/sports-training/fooditem1.webp');
+                $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
+            @endphp
+
+            <div class="consults-plans-grid">
+                <div class="plan-card-custom plan-competition">
+                    <div class="">
+                        <div class="plan-title">Competition Plan</div>
                         <div class="plan-desc">
-                            Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of
-                            healing-focused meals, expert tips, and supplement guidance to accelerate recovery, reduce
-                            inflammation, and get you back to full strength, faster—all built on a food-first approach.
+                            Unlock your best performance with a fully customised 24-hour competition day meal plan—designed to fuel you from the night before through recovery, tailored to your sport, your preferences, and your game-day goals.
                         </div>
                         <div class="consult-user-row">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                                class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                                class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
-                            <span>21 meals • 18 Nutrition tips</span>
+                            <img
+                                src="{{ $mealImage1 }}"
+                                class="consult-avatar"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <img
+                                src="{{ $mealImage2 }}"
+                                class="consult-avatar overlap1"
+                                alt="Kerry O'Bryan, expert coach avatar" />
+                            <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                         </div>
                         <button class="btn-consult">Learn more</button>
                     </div>
                 </div>
-            </section>
+                <div class="plan-card-custom plan-injury">
+                    <div class="plan-title">Injury</div>
+                    <div class="plan-desc">
+                        Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of healing-focused meals, expert tips, and supplement guidance to accelerate recovery, reduce inflammation, and get you back to full strength, faster—all built on a food-first approach.
+                    </div>
+                    <div class="consult-user-row">
+                        <img
+                            src="{{ $mealImage1 }}"
+                            class="consult-avatar"
+                            alt="Kerry O'Bryan, expert coach avatar" />
+                        <img
+                            src="{{ $mealImage2 }}"
+                            class="consult-avatar overlap1"
+                            alt="Kerry O'Bryan, expert coach avatar" />
+                        <span>{{ $mealCount }}  meals • 18 Nutrition tips</span>
+                    </div>
+                    <button class="btn-consult">Learn more</button>
+                </div>
+            </div>
+        </section>
 
             <!-- Surfing Videos -->
             <section class="surfing-videos">

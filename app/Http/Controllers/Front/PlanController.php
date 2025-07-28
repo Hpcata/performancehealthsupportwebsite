@@ -86,17 +86,40 @@ class PlanController extends Controller
 
         $sportGameData = null;
         if ($userPrePlan && $userPrePlan->occupation) {
+            $occupation = strtolower($userPrePlan->occupation); // "bmx freestyle"
+
+            // Step 1: Try full match first (case-insensitive)
             $sportGame = SportGame::with('categories')
-                            ->where('name', $userPrePlan->occupation)
-                            ->first();
+                ->whereRaw('LOWER(name) = ?', [$occupation])
+                ->first();
+
+            // Step 2: If no full match, split into keywords and check each
+            if (!$sportGame) {
+                $keywords = explode(' ', $occupation);
+
+                foreach ($keywords as $keyword) {
+                    $sportGame = SportGame::with('categories')
+                        ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                        ->first();
+
+                    if ($sportGame) {
+                        break; // first matching keyword wins
+                    }
+                }
+            }
+
+            // Step 3: Extract image if found
+            $sportGameData = null;
+
             if ($sportGame && $sportGame->categories->isNotEmpty()) {
-                $category = $sportGame->categories->first(); // or loop if multiple
+                $category = $sportGame->categories->first();
 
                 $sportGameData = [
                     'sport_name' => $sportGame->name,
                     'sport_image' => $category->pivot->image_path ?? null,
                 ];
             }
+
         }
 
         return view('front.pages.plan-details', compact('userPlans', 'plan', 'user', 'sportGameData'));
@@ -628,13 +651,38 @@ class PlanController extends Controller
         $userPrePlan = UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $payment->id)->first();
 
         $sportImagePath = null;
-        if(isset($userPrePlan) && isset($userPrePlan->occupation)) { 
-            $sportGame = SportGame::with('categories')->where('name',   $userPrePlan->occupation)->first();
+       
+        if (isset($userPrePlan) && isset($userPrePlan->occupation)) {
+            $occupation = strtolower(trim($userPrePlan->occupation));
+            
+            // Step 1: Full match
+            $sportGame = SportGame::with('categories')
+                ->whereRaw('LOWER(name) = ?', [$occupation])
+                ->first();
+
+            // Step 2: If no full match, try keyword match
+            if (!$sportGame) {
+                $keywords = explode(' ', $occupation);
+
+                foreach ($keywords as $keyword) {
+                    $sportGame = SportGame::with('categories')
+                        ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                        ->first();
+
+                    if ($sportGame) {
+                        break; // first keyword match wins
+                    }
+                }
+            }
+
+            // Step 3: Get category and image path
             $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
-            if ($category) {
-                $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+
+            if ($category && isset($category->pivot->image_path)) {
+                $sportImagePath = $category->pivot->image_path;
             }
         }
+        
         $printAllmeal = true;
         return view('front.pages.plan-preview', compact('userPlans', 'printAllmeal', 'sportImagePath'));
     }
@@ -665,13 +713,38 @@ class PlanController extends Controller
         $userPrePlan = UserPrePlan::where('user_id', $request->user_id)->where('payment_id', $payment->id)->first();
 
         $sportImagePath = null;
-        if(isset($userPrePlan) && isset($userPrePlan->occupation)) { 
-            $sportGame = SportGame::with('categories')->where('name', $userPrePlan->occupation)->first();
+       
+        if (isset($userPrePlan) && isset($userPrePlan->occupation)) {
+            $occupation = strtolower(trim($userPrePlan->occupation));
+            
+            // Step 1: Full match
+            $sportGame = SportGame::with('categories')
+                ->whereRaw('LOWER(name) = ?', [$occupation])
+                ->first();
+
+            // Step 2: If no full match, try keyword match
+            if (!$sportGame) {
+                $keywords = explode(' ', $occupation);
+
+                foreach ($keywords as $keyword) {
+                    $sportGame = SportGame::with('categories')
+                        ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                        ->first();
+
+                    if ($sportGame) {
+                        break; // first keyword match wins
+                    }
+                }
+            }
+
+            // Step 3: Get category and image path
             $category = isset($sportGame->categories) ? $sportGame->categories->first() : null;
-            if ($category) {
-                $sportImagePath = ($category->pivot->image_path) ? $category->pivot->image_path : '';
+
+            if ($category && isset($category->pivot->image_path)) {
+                $sportImagePath = $category->pivot->image_path;
             }
         }
+
         $printAllmeal = false;
 
         return view('front.pages.plan-preview', compact('userPlans', 'groupedData', 'printAllmeal', 'sportImagePath'));

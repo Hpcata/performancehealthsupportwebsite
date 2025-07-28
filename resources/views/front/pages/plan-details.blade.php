@@ -5,46 +5,35 @@
     coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-    @if (!empty($sportGameData['sport_image']))
-        <style>
-            .hero-background {
-                background-image: url('{{ webAssets('storage/' . $sportGameData['sport_image']) }}') !important;
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                height: 100%;
-                max-width: 100%;
-                position: absolute;
-                right: 0;
-                border-radius: 0 0 36px 0;
-                width: 100%;
-            }
-        </style>
-    @endif
-    <main class="main">
-        <!-- Loader -->
-        <!-- <div id="loader" class="d-none">
-            <div class="box" id="loader1"></div>
-            <div class="box" id="loader2"></div>
-            <div class="box" id="loader3"></div>
-            <div class="box" id="loader4"></div>
-            <div class="box" id="loader5"></div>
-        </div> -->
-        <!-- Hero Banner -->
-        <div class="hero-container">
-            <div class="hero-section">
-                <div class="hero-background">
+
+<main class="main">
+     <!-- Loader -->
+    <!-- <div id="loader" class="d-none">
+        <div class="box" id="loader1"></div>
+        <div class="box" id="loader2"></div>
+        <div class="box" id="loader3"></div>
+        <div class="box" id="loader4"></div>
+        <div class="box" id="loader5"></div>
+    </div> -->
+    <!-- Hero Banner -->
+    <div class="hero-container">
+        <div class="hero-section">
+            @if (!empty($sportGameData['sport_image']))
+                <div class="hero-background" style="background-image: url('{{ webAssets('storage/' . $sportGameData['sport_image']) }}')" >
                     <div class="hero-overlay"></div>
                 </div>
+            @else
+                <div class="hero-background" style="background-image: url('{{ frontAssets('images/bannerimg.png') }}');" >
+                    <div class="hero-overlay"></div>
+                </div>
+            @endif
+            <div class="hero-content">
+                <div class="hero-bottom">
+                    <h1 class="hero-title">Training Nutrition Plan</h1>
 
-                <div class="hero-content container">
-                    <div class="hero-bottom">
-                        <h1 class="hero-title">Training Nutrition Plan</h1>
-
-                        <div class="hero-top">
-                            <p class="hero-subtitle-plan">BMX freestyle</p>
-                            <a href="#" class="view-all-link"> View all plans </a>
-                        </div>
+                    <div class="hero-top">
+                        <p class="hero-subtitle-plan">{{ isset($sportGameData['sport_image']) ? $sportGameData['sport_name'] : '' }}</p>
+                        <a href="#" class="view-all-link"> View all plans </a>
                     </div>
                 </div>
             </div>
