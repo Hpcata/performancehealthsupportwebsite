@@ -474,9 +474,16 @@
                 </div>
             </section>
         </div>
+        @include('front.modal.shopping-list')
+        @include('front.modal.print-shopping-list')
+        @include('front.modal.meal-detail')
+        @include('front.modal.smart-swap')
+        @include('front.modal.smart-swap-items')
     </main>
-
+    
     <script>
+        const user = @json($userPlan);
+        const userId = user.user_id;
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('.tab');
             const contentWrapper = document.getElementById('meal-cards-wrapper');
@@ -578,198 +585,570 @@
                 });
             });
         });
-    </script>
-
-    <!-- Coming Soon Modal -->
-    <div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">
-        <div class="modal-dialog modal-confirm modal-coming-soon modal-dialog-centered">
-            <div class="modal-content">
-                <div class="justify-content-center modal-header">
-                    <div class="icon-box">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal" aria-label="Close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="text-center modal-body">
-                    <h4>Coming Soon!</h4>
-                    <p>This feature is coming soon.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <script>
-        let sliderInstances = [];
-
-        function enableNativeScroll(container) {
-            if (!container) return;
-            container.classList.add('native-scroll');
-            container.style.overflowX = 'auto';
-            container.style.display = 'flex';
-            container.style.gap = '16px';
-            container.querySelectorAll('.challenge-card').forEach(card => {
-                card.style.minWidth = '80vw';
-                card.style.flex = '0 0 auto';
-                card.style.scrollSnapAlign = 'start';
-            });
+        
+        function showLoader() {
+            $('#loader').removeClass('d-none');
+        }
+        function hideLoader() {
+            $('#loader').addClass('d-none');
         }
 
-        function disableNativeScroll(container) {
-            if (!container) return;
-            container.classList.remove('native-scroll');
-            container.style.overflowX = '';
-            container.style.display = '';
-            container.style.gap = '';
-            container.querySelectorAll('.challenge-card').forEach(card => {
-                card.style.minWidth = '';
-                card.style.flex = '';
-                card.style.scrollSnapAlign = '';
-            });
-        }
+        $(document).ready(function () {
+            // Open Bootstrap modal on meal click
+            $('body').on('click', '.quick-view-btn', function () {
+                const user_meal_id = $(this).data('meal-id');
+                const user_plan_id = $(this).data('user-plan-id');
+                const user_sub_category_id = $(this).data('sub-category-id');
+                const user_category_id = $(this).data('category-id');
+                showLoader();
 
-        // Wait for all images in a container to load, then call callback
-        function imagesLoaded(container, callback) {
-            const images = container ? container.querySelectorAll('img') : [];
-            let loaded = 0;
-            if (!images.length) return callback();
-            images.forEach(img => {
-                if (img.complete) {
-                    loaded++;
-                    if (loaded === images.length) callback();
-                } else {
-                    img.addEventListener('load', () => {
-                        loaded++;
-                        if (loaded === images.length) callback();
-                    });
-                    img.addEventListener('error', () => {
-                        loaded++;
-                        if (loaded === images.length) callback();
-                    });
-                }
-            });
-        }
+                $.ajax({
+                    url: "{{ route('front.meal.details') }}",
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        user_meal_id,
+                        user_plan_id,
+                        user_sub_category_id,
+                        user_category_id
+                    },
+                    success: function (response) {
+                        const meal = response.meal;
 
-        function initResponsiveSlider(wrapper) {
-            const container = wrapper.querySelector('.challenge-cards-slider');
-            const cards = container ? container.querySelectorAll('.challenge-card') : [];
-            const isMobile = window.innerWidth <= 1024;
+                        // 🖼️ Set meal title and description
+                        $('#recipeDialogModal .modal-body .dialog-header h2').text(meal.meal.title || 'Meal');
+                        $('#recipeDialogModal .modal-body .dialog-header p').text(meal.meal.description || '');
 
-            // Completely reset container style added by tns
-            if (wrapper._sliderInstance && typeof wrapper._sliderInstance.destroy === 'function') {
-                wrapper._sliderInstance.destroy();
-                wrapper._sliderInstance = null;
+                        const imageUrl = meal.meal.image
+                            ? `{{ asset('storage') }}/` + meal.meal.image
+                            : `{{ asset('front/images/placeholder.png') }}`;
+                        $('#recipeDialogModal .modal-body .dialog-img').attr('src', imageUrl);
 
-                // Clear Tiny Slider inline styles and classes
-                container.removeAttribute('style');
-                container.className = 'challenge-cards-slider'; // Reset to base class
-                cards.forEach(card => {
-                    card.removeAttribute('style');
-                    card.classList.remove('tns-item');
-                });
-            }
+                        // 🥣 Ingredients
+                        let ingredientsHtml = '';
+                        meal.user_items.forEach(function (userItem) {
+                            const item = userItem.item;
+                            if (!item) return;
 
-            // Always hide arrows initially
-            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
+                            const selectedUnits = item.selected_qty_unit || [];
+                            const selected = selectedUnits.find(u => u.checked) || null;
 
-            // Remove hover listeners
-            wrapper.onmouseenter = null;
-            wrapper.onmouseleave = null;
+                            let qty = '';
+                            let unit = '';
 
-            function runSlider() {
-                if (isMobile) {
-                    enableNativeScroll(container);
-                } else if (typeof tns === 'function' && container && cards.length > 1) {
-                    disableNativeScroll(container);
-
-                    // Show arrows on hover if more than 4 cards
-                    if (cards.length > 4) {
-                        wrapper.onmouseenter = function() {
-                            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = '');
-                        };
-                        wrapper.onmouseleave = function() {
-                            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
-                        };
-                    }
-
-                    wrapper._sliderInstance = tns({
-                        container: container,
-                        items: 4,
-                        slideBy: 1,
-                        gutter: 16,
-                        controls: false,
-                        nav: false,
-                        mouseDrag: true,
-                        loop: false,
-                        edgePadding: 0,
-                        rewind: false,
-                        preventScrollOnTouch: 'force',
-                        speed: 400,
-                        responsive: {
-                            1200: {
-                                items: 4
-                            },
-                            900: {
-                                items: 3
-                            },
-                            600: {
-                                items: 2
-                            },
-                            0: {
-                                items: 1
+                            if (selected) {
+                                qty = selected.qty;
+                                unit = selected.unit?.trim();
+                            } else {
+                                qty = item.qty;
+                                unit = item.unit?.trim();
                             }
+
+                            const noSpaceUnits = ['g', 'ml', 'mL'];
+                            const space = noSpaceUnits.includes(unit) ? '' : ' ';
+
+                            ingredientsHtml += `<li>${qty}${space}${unit} ${item.title}</li>`;
+                        });
+
+                        $('#recipeDialogModal .modal-body ul').html(ingredientsHtml);
+
+                        // 📝 Instructions / Note
+                        if (meal.meal.note && meal.meal.note.trim() !== '') {
+                            $('#recipeDialogModal .modal-body .note').html(
+                                `<strong>Note:</strong> ${meal.meal.note}`
+                            ).show();
+                            $('#recipeDialogModal .modal-body h3:contains("Instructions")').show();
+                        } else {
+                            $('#recipeDialogModal .modal-body .note').hide();
+                            $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
                         }
-                    });
+                        // $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
 
-                    // Arrow control bindings
-                    const leftArrow = wrapper.querySelector('.left-arrow');
-                    const rightArrow = wrapper.querySelector('.right-arrow');
-                    if (leftArrow) leftArrow.onclick = () => wrapper._sliderInstance.goTo('prev');
-                    if (rightArrow) rightArrow.onclick = () => wrapper._sliderInstance.goTo('next');
+                        // 🔢 Nutrition Info
+                        $('#recipeDialogModal .modal-body .nutrition-info').html(`
+                            <span style="color: #a60015">●  <span style="color:rgba(59, 59, 59, 1)">Protein: ${(Number(response.totalProtein) || 0).toFixed(2)} g</span></span>
+                            <span style="color: #3e8e00">●  <span style="color:rgba(59, 59, 59, 1)">Carb: ${(Number(response.totalCarbs) || 0).toFixed(2)} g</span></span>
+                            <span style="color: #0077b6">●  <span style="color:rgba(59, 59, 59, 1)">Fat: ${(Number(response.totalFats) || 0).toFixed(2)} g</span></span>
+                            <span style="color: #967500">●  <span style="color:rgba(59, 59, 59, 1)">Energy: ${(Number(response.totalEnergy) || 0).toFixed(2)} kJ</span></span>
+                        `);
+
+                        // Set data attributes for Smart Swap
+                        $('#recipeDialogModal .modal-body .smart-swap-btn')
+                            .attr('data-meal-id', user_meal_id)
+                            .attr('data-user-plan-id', user_plan_id)
+                            .attr('data-sub-category-id', user_sub_category_id)
+                            .attr('data-category-id', user_category_id)
+                            .attr('data-meal-name', meal.meal.title);
+
+                        // 👁️ Show Bootstrap modal
+                        const modal = new bootstrap.Modal(document.getElementById('recipeDialogModal'));
+                        modal.show();
+                        hideLoader();
+                    },
+                    error: function () {
+                        $('#errormodalmain').modal('show');
+                        hideLoader();
+                    }
+                });
+            });
+       
+            $(document).on('hide.bs.modal', '#recipeDialogModal', function () {
+                // Clear the modal content when it is closed
+                $('#recipeDialogModal .modal-body .dialog-header h2').text('');
+                $('#recipeDialogModal .modal-body .dialog-header p').text('');
+                $('#recipeDialogModal .modal-body .dialog-img').attr('src', '');
+                $('#recipeDialogModal .modal-body ul').empty();
+                $('#recipeDialogModal .modal-body .note').hide();
+                $('#recipeDialogModal .modal-body h3:contains("Instructions")').hide();
+                $('#recipeDialogModal .modal-body .nutrition-info').empty();
+                $('.modal-backdrop').remove();
+            });
+
+            $(document).on('click', '.meal-item-btn', function () {
+                const $btn = $(this);
+
+                const meal_id = $btn.attr('data-meal-id');
+                const meal_name = $btn.attr('data-meal-name');
+                const user_meal_id = $btn.attr('data-meal-id');
+                const userPlanId = $btn.attr('data-user-plan-id');
+                const userSubCategoryId = $btn.attr('data-sub-category-id');
+                const userCategoryId = $btn.attr('data-category-id');
+
+                $('#recipeDialogModal').modal('hide');
+                mealItemModelReload(meal_id, meal_name, user_meal_id, userSubCategoryId, userPlanId, userCategoryId);
+            });
+
+            function mealItemModelReload(meal_id, meal_name, user_meal_id, userSubCategoryId, userPlanId, userCategoryId) {
+                const modalEl = $('#mealItemModel');
+                const modal = new bootstrap.Modal(modalEl[0]);
+                modal.show();
+
+                const $mealItemsModalLabel = $('.swap-title'); // Set meal name here
+                const $mealItemsContainer = $('.swap-list'); // Container for item cards
+                const $mealItemsLoadingSpinner = $('#mealItemsLoadingSpinner'); // Optional: add loading spinner if you want
+
+                if (!user_meal_id || !meal_name) {
+                    console.error('Invalid meal data.');
+                    return;
                 }
+
+                $mealItemsModalLabel.text(meal_name);
+                $mealItemsContainer.empty();
+
+                // Optional: show spinner
+                // $mealItemsLoadingSpinner.show();
+
+                $.ajax({
+                    url: '{{ route('front.meals.items', ':mealId') }}'
+                        .replace(':mealId', meal_id) +
+                        `?user_meal_id=${user_meal_id}&user_plan_id=${userPlanId}&user_sub_category_id=${userSubCategoryId}&user_category_id=${userCategoryId}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.items && data.items.length > 0) {
+                            $.each(data.items, function (index, item) {
+                                let displayQty = '';
+                                let selectedUnits = [];
+
+                                try {
+                                    selectedUnits = typeof item.selected_qty_unit === 'string'
+                                        ? JSON.parse(item.selected_qty_unit)
+                                        : Array.isArray(item.selected_qty_unit)
+                                            ? item.selected_qty_unit
+                                            : [];
+                                } catch (e) {
+                                    console.warn('Failed to parse selected_qty_unit for item:', item.name, e);
+                                }
+
+                                const checkedUnits = selectedUnits.filter(u =>
+                                    u.checked === true || u.checked === "true" || u.checked === 1 || u.checked === "1"
+                                );
+
+                                if (checkedUnits.length > 0) {
+                                    const formattedUnits = checkedUnits.map(u => {
+                                        let qtyText = u.qty?.toString().trim() || '';
+                                        const unitText = (u.unit || '').trim();
+                                        const needsSpace = !["g", "ml", "mL"].includes(unitText.toLowerCase());
+
+                                        const numericQty = Number(qtyText);
+                                        if (!isNaN(numericQty)) {
+                                            qtyText = numericQty % 1 === 0 ? numericQty.toFixed(0) : numericQty.toFixed(1);
+                                        }
+
+                                        return `${qtyText}${needsSpace ? ' ' : ''}${unitText}`;
+                                    });
+
+                                    displayQty = formattedUnits.join(' or ');
+                                }
+
+                                if (!displayQty && item.qty && item.unit) {
+                                    const unit = item.unit.toString();
+                                    const needsSpace = !["g", "ml", "mL"].includes(unit.toLowerCase());
+                                    displayQty = `${item.qty}${needsSpace ? ' ' : ''}${unit}`;
+                                }
+
+                                const itemCard = `
+                                    <div class="swap-item">
+                                        <img src="${item.image}" alt="${item.name}" class="swap-item-img" />
+                                        <div class="flex-wrapper">
+
+                                        <div class="swap-item-info">
+                                            <div class="swap-item-name">${item.name}</div>
+                                            <div class="swap-item-qty"><b>Qty :</b> ${displayQty}</div>
+                                        </div>
+                                        <div class="swap-item-actions">
+                                            ${item.swapItems?.length > 0 ? `
+                                                <button class="smart-swap-btn item-swap-btn"
+                                                    data-item-id="${item.id}"
+                                                    data-item-name="${item.name}"
+                                                    data-user-item-id="${item.user_item_id}"
+                                                    data-user-meal-id="${item.user_meal_id}"
+                                                    data-user-plan-id="${userPlanId}"
+                                                    data-sub-category-id="${userSubCategoryId}"
+                                                    data-user-category-id="${userCategoryId}">
+                                                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; vertical-align: middle; margin-right: 4px;" />
+                                                    <span>Smart swap</span>
+                                                </button>` : ''}
+                                            ${item.description ? `
+                                                <button class="smart-swap-btn" data-bs-toggle="tooltip" title="${item.description}">
+                                                    <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
+                                                </button>` : ''}
+                                        </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                `;
+
+                                $mealItemsContainer.append(itemCard);
+                            });
+                            $('[data-bs-toggle="tooltip"]').tooltip();
+
+                        } else {
+                            $mealItemsContainer.html('<p class="text-center">No foods available in this meal.</p>');
+                        }
+
+                        // Optional: hide spinner
+                        // $mealItemsLoadingSpinner.hide();
+                    },
+                    error: function () {
+                        $mealItemsContainer.html('<p class="text-danger text-center">Failed to load foods.</p>');
+                        // $mealItemsLoadingSpinner.hide();
+                    }
+                });
             }
 
-            imagesLoaded(container, () => {
-                setTimeout(runSlider, 50); // Give DOM a moment to stabilize after resize
+            $(document).on('click', '.meal-item-modal-close', function () {
+                const modalEl = $('#mealItemModel')[0];
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+
+                if (modalInstance) {
+                    modalInstance.hide();
+                } else {
+                    // fallback if instance wasn't created by Bootstrap JS
+                    const newModal = new bootstrap.Modal(modalEl);
+                    newModal.hide();
+                }
             });
-        }
+
+            $(document).on('click', '.item-swap-btn', function () {
+                const itemId = $(this).data('item-id');
+                const itemName = $(this).data('item-name');
+                const userItemId = $(this).data('user-item-id');
+                const userMealId = $(this).data('user-meal-id');
+                const userPlanId = $(this).data('user-plan-id');
+                const userSubCategoryId = $(this).data('sub-category-id');
+                const userCategoryId = $(this).data('user-category-id');
+
+                if (!itemId || !itemName) {
+                    console.error('Invalid item data.');
+                    return;
+                }
+
+                $('.apply-changes-btn').attr('data-user-item-id', userItemId);
+                $('.apply-changes-btn').attr('data-user-meal-id', userMealId);
+                $('.apply-changes-btn').attr('data-user-plan-id', userPlanId);
+                $('.apply-changes-btn').attr('data-user-sub-category-id', userSubCategoryId);
+                $('.apply-changes-btn').attr('data-user-category-id', userCategoryId);
+
+                // Show the modal first
+                const modal = new bootstrap.Modal(document.getElementById('smartSwapModal'));
+                modal.show();
+
+                // Update the title in the modal
+                $('#smartSwapModalLabel').text(`Swap: ${itemName}`);
+
+                // Clear existing items
+                const $swapList = $('#smartSwapModal .swap-list');
+                $swapList.html(`
+                    <div class="py-4 text-center">
+                        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                    </div>
+                `);
+
+                // Perform AJAX request to fetch swap items
+                $.ajax({
+                    url: '{{ route('front.items.swap-items', ':id') }}'.replace(':id', itemId) +
+                        `?user_meal_id=${userMealId}&user_item_id=${userItemId}&user_plan_id=${userPlanId}&sub_category_id=${userSubCategoryId}&user_category_id=${userCategoryId}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (!data || !data.items || !data.items.length) {
+                            $swapList.html('<p class="text-muted text-center">No swap items available.</p>');
+                            return;
+                        }
+
+                        // ✅ Helper: Format Qty Unit String
+                        function formatQtyUnit(unitsArray, fallbackQty, fallbackUnit) {
+                            if (!unitsArray || !unitsArray.length) {
+                                return formatUnitText(fallbackQty, fallbackUnit);
+                            }
+
+                            const checked = unitsArray.find(u => u.checked);
+                            if (checked) {
+                                return formatUnitText(checked.qty, checked.unit);
+                            }
+
+                            return formatUnitText(fallbackQty, fallbackUnit);
+                        }
+
+                        function formatUnitText(qty, unit) {
+                            qty = qty ?? '1';
+                            unit = (unit || '').trim();
+
+                            if (!unit) return qty;
+
+                            const compactUnits = ['g', 'ml', 'mL'];
+                            if (compactUnits.includes(unit)) {
+                                return `${qty}${unit}`;
+                            }
+
+                            return `${qty} ${unit}`;
+                        }
+
+                        // ✅ Build Main Item HTML
+                        const item = data.item;
+                        const mainQtyText = formatQtyUnit(item.selected_qty_unit, item.qty, item.unit);
+                        let mainItem = `
+                            <div class="swap-item" id="mainSwapItem" data-item-id="${item.id}" style="border-bottom: none">
+                                <img src="${data.item_image}" alt="${data.item_name}" class="swap-item-img"/>
+                                <div class="flex-wrapper">
+                                <div class="swap-item-info">
+                                    <div class="swap-item-name">${data.item_name}</div>
+                                    <div class="swap-item-qty"><b>Qty:</b> ${mainQtyText}</div>
+                                </div>
+                                <div class="swap-item-actions">
+                                    ${item.description ? `
+                                        <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${item.description}">
+                                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
+                                        </button>
+                                    ` : ''}
+                                </div>
+                                </div>
+                            </div>
+
+                            <div class="swap-item swap-item-h3"><h3>Swap with</h3></div>
+                        `;
+
+                        // ✅ Build Swap Items HTML
+                        let swapItemsHTML = '';
+                        data.items.forEach(function (swapItem) {
+                            const swapQtyText = formatQtyUnit(swapItem.selected_qty_unit, swapItem.swap_item_qty, swapItem.swap_item_unit);
+
+                            swapItemsHTML += `
+                                <div class="swap-item">
+                                    <img src="${swapItem.swap_item_image}" alt="${swapItem.swap_item_name}" class="swap-item-img"/>
+                                    <div class="flex-wrapper">
+                                    <div class="swap-item-info">
+                                        <div class="swap-item-name">${swapItem.swap_item_name}</div>
+                                        <div class="swap-item-qty"><b>Qty:</b> ${swapQtyText}</div>
+                                    </div>
+                                    <div class="swap-item-actions">
+                                        <button class="smart-swap-btn swap-btn" data-swap-item-id="${swapItem.swap_item_id}">
+                                            <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" /><span>Swap</span>
+                                        </button>
+                                        ${swapItem.swap_item_description ? `
+                                            <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${swapItem.swap_item_description}">
+                                                <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        // ✅ Inject into DOM
+                        $swapList.html(mainItem + swapItemsHTML);
+
+                        // ✅ Enable Bootstrap 5 tooltips
+                        $('[data-bs-toggle="tooltip"]').tooltip();
+                        $('#mealItemModel').modal('hide');
+                    },
+                    error: function (xhr, status, error) {
+                        $swapList.html('<p class="text-danger text-center">Failed to load swap items.</p>');
+                        console.error('Error loading swap items:', error);
+                    }
+                });
+
+            });
+
+            $('#mealItemModel').on('hidden.bs.modal', function () {
+                $('.modal-backdrop').remove();
+                $('#mealItemsContainer').empty();
+                $('#mealItemsLoadingSpinner').hide();
+            });
 
 
-        // Initial load for all sliders
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
-                initResponsiveSlider(wrapper);
+            let currentMainItem = null;
+            let swaps = []; // Array to hold latest swap pair
+
+            $(document).on('click', '.swap-btn', function () {
+                const $clickedSwap = $(this).closest('.swap-item');
+                const swapItemId = $(this).data('swap-item-id');
+
+                const $mainItem = $('#mainSwapItem'); // ✅ SELECTS THE MAIN ITEM CORRECTLY NOW
+                const mainItemId = $mainItem.data('item-id'); // You must set this in HTML: data-item-id="${item.id}"
+
+                // Capture current main item details if not already stored
+                if (!currentMainItem) {
+                    currentMainItem = {
+                        id: mainItemId,
+                        name: $mainItem.find('.swap-item-name').text(),
+                        qty: $mainItem.find('.swap-item-qty').text().replace('Qty:', '').trim(),
+                        description: $mainItem.find('.info-btn').attr('data-bs-original-title') || '',
+                        image: $mainItem.find('img.swap-item-img').attr('src')
+                    };
+                }
+
+                // Get clicked swap item details
+                const swapItem = {
+                    id: swapItemId,
+                    name: $clickedSwap.find('.swap-item-name').text(),
+                    qty: $clickedSwap.find('.swap-item-qty').text().replace('Qty:', '').trim(),
+                    description: $clickedSwap.find('.info-btn').attr('data-bs-original-title') || '',
+                    image: $clickedSwap.find('img.swap-item-img').attr('src')
+                };
+
+                // === Update Main Item UI ===
+                $mainItem.find('.swap-item-name').text(swapItem.name);
+                $mainItem.find('.swap-item-qty').html('<b>Qty:</b> ' + swapItem.qty);
+                $mainItem.find('img.swap-item-img').attr('src', swapItem.image);
+                $mainItem.find('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                $mainItem.find('.info-btn').remove();
+
+                if (swapItem.description) {
+                    $mainItem.find('.swap-item-actions').append(`
+                        <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${swapItem.description}">
+                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
+                        </button>
+                    `);
+                }
+
+                // === Replace clicked swap item with the original main item ===
+                const revertedHTML = `
+                    <img src="${currentMainItem.image}" alt="${currentMainItem.name}" class="swap-item-img"/>
+                    <div class="flex-wrapper">
+                    <div class="swap-item-info">
+                        <div class="swap-item-name">${currentMainItem.name}</div>
+                        <div class="swap-item-qty"><b>Qty:</b> ${currentMainItem.qty}</div>
+                    </div>
+                    <div class="swap-item-actions">
+                        <button class="smart-swap-btn swap-btn" data-swap-item-id="${currentMainItem.id}">
+                            <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; margin-right: 4px;" /><span>Swap</span>
+                        </button>
+                        ${currentMainItem.description ? `
+                            <button class="smart-swap-btn info-btn" data-bs-toggle="tooltip" title="${currentMainItem.description}">
+                                <img src="{{ frontAssets('images/dialog/Info.svg') }}" style="width: 18px" />
+                            </button>` : ''}
+                    </div>
+                    </div>
+                `;
+
+                $clickedSwap.html(revertedHTML);
+
+                // ✅ Update swap tracking (replace last entry if already swapped)
+                swaps = [{
+                    main_id: swapItem.id,
+                    swap_id: currentMainItem.id,
+                    user_item_id: currentMainItem.id // or use some real user_item_id if needed
+                }];
+                console.log("Updated Swap List:", swaps);
+
+                // Update the reference for next potential swap
+                currentMainItem = swapItem;
+
+                // Reinitialize tooltips
+                $('[data-bs-toggle="tooltip"]').tooltip();
+            });
+
+            $('#smartSwapModal').on('hidden.bs.modal', function () {
+                currentMainItem = null;
+                swaps = []; // Reset swaps array
+                $('#smartSwapModalLabel').text(''); // Clear modal title
+                $('#smartSwapModal .swap-list').empty(); // Clear HTML inside modal
+                $('.modal-backdrop').remove();
+            });
+
+            // Apply Swap Changes functionality
+            $(document).on('click', '.apply-changes-btn', function () {
+                // Send all swaps to the server
+                const userItemId = $(this).attr('data-user-item-id');
+                const userMealId = $(this).attr('data-user-meal-id');
+                const userPlanId = $(this).attr('data-user-plan-id');
+                const userSubCategoryId = $(this).attr('data-user-sub-category-id');
+                const userCategoryId = $(this).attr('data-user-category-id');
+
+                $.ajax({
+                    url: "{{ route('front.items.swaps') }}", // Laravel route to handle the request
+                    method: "GET",
+                    data: {
+                        swaps: swaps,
+                        meal_id: userMealId,
+                        user_item_id: userItemId,
+                        user_meal_id: userMealId,
+                        user_category_id: userCategoryId,
+                        user_sub_category_id: userSubCategoryId,
+                        user_plan_id: userPlanId,
+                        user_id: userId,
+                    },
+                    success: function (response) {
+                        // Handle success response
+                        swaps = [];
+
+                        if(response.success){
+                            $('#smartSwapModal').modal('hide');
+                            var meal_id = response.data['meal_id'];
+                            var meal_name = response.data['meal_name'];
+                            var user_meal_id = response.data['user_meal_id'];
+                            mealItemModelReload(meal_id, meal_name, user_meal_id, userSubCategoryId, userPlanId, userCategoryId);
+                        } else {
+                            $('#errormodalmain .modal-body').html(`<h4>Ooops!</h4><p>${response.message}</p>`);
+                            $('#errormodalmain').modal('show');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error response
+                        if (xhr.status === 422) {
+                            // Laravel-style validation error handling
+                            let errors = xhr.responseJSON?.errors;
+                            let messageHtml = '';
+
+                            if (errors) {
+                                // fallback if error messages not formatted
+                                messageHtml = '<h4>Ooops!</h4><p>Invalid swap. Please check and try again.</p>';
+                            }
+
+                            $('#errormodalmain .modal-body').html(messageHtml);
+                        } else {
+                            // Generic fallback for other HTTP errors
+                            $('#errormodalmain .modal-body').html('<h4>Ooops!</h4>	<p>Invalid swap. Please try again later.</p>');
+                        }
+
+                        $('#errormodalmain').modal('show');
+                    }
+                });
             });
         });
 
-        // Debounced re-init on resize
-        let resizeTimeout;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function() {
-                document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
-                    initResponsiveSlider(wrapper);
-                });
-            }, 200);
-        });
-
-        // Meals slider re-init for AJAX or dynamic content
-        function initMealsSlider() {
-            const wrapper = document.querySelector('#meal-cards-wrapper')?.closest('.slider-wrapper');
-            if (wrapper) {
-                // Wait for images to load before initializing slider
-                const container = wrapper.querySelector('.challenge-cards-slider');
-                imagesLoaded(container, function() {
-                    initResponsiveSlider(wrapper);
-                });
-            }
-        }
-        console.log('Destroying slider...');
-        wrapper._sliderInstance.destroy();
-        console.log('Destroyed, reinitializing...');
     </script>
 @endsection

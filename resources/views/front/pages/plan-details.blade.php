@@ -122,7 +122,7 @@
                                             </button>
                                                 <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
                                                     @foreach ($meals as $meal)
-                                                        <div class="challenge-card clickable"
+                                                        <div class="challenge-card clickable quick-view-btn"
                                                             data-title="{{ $meal->meal->title }}"
                                                             data-plan-id="{{ $userPlan->id }}"
                                                             data-meal-id="{{ $meal->id }}"
@@ -136,9 +136,8 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay">
-                                                                <span
-                                                                    style="padding: 12px;
+                                                            <div class="quick-view-overlay ">
+                                                                <span style="padding: 12px;
                                                                     border-radius: 12px;
                                                                     background-color:#709ef1;
                                                                     font-weight: 700;
@@ -870,7 +869,7 @@
 
     $(document).ready(function () {
         // Open Bootstrap modal on meal click
-        $('.clickable').on('click', function () {
+        $('.quick-view-btn').on('click', function () {
             const user_meal_id = $(this).data('meal-id');
             const user_plan_id = $(this).data('user-plan-id');
             const user_sub_category_id = $(this).data('sub-category-id');
@@ -1396,6 +1395,9 @@
                     var meal_name = response.data['meal_name'];
                     var user_meal_id = response.data['user_meal_id'];
                     mealItemModelReload(meal_id, meal_name, user_meal_id, userSubCategoryId, userPlanId, userCategoryId);
+                } else {
+                    $('#errormodalmain .modal-body').html(`<h4>Ooops!</h4><p>${response.message}</p>`);
+                    $('#errormodalmain').modal('show');
                 }
             },
             error: function (xhr, status, error) {
