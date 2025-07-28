@@ -1,7 +1,9 @@
 @extends(frontView('layouts.app'))
 
 @section('title', 'Best Sports Nutritionist & Dietitians Australia | Kerry O’Bryan')
-@section('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')
+@section('meta_description',
+    'Performance Health Support offers expert care from top sports nutritionists, strength
+    coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
 
@@ -320,13 +322,69 @@
                             Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of healing-focused meals, expert tips, and supplement guidance to accelerate recovery, reduce inflammation, and get you back to full strength, faster—all built on a food-first approach.
                         </div>
                         <div class="consult-user-row">
-                            <img
-                                src="{{ $mealImage1 }}"
-                                class="consult-avatar"
+                            <img src="https://booking.biohealthpassport.com.au/public/uploads/hero01.png"
+                                class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
+                            <span style="padding-left:0">Kerry O'Bryan • 60 min</span>
+                        </div>
+                        <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank"
+                            class="text-decoration-none btn-consult">Book consult</a>
+                    </div>
+                </div>
+                @php
+                    $mealCount = isset($userPlan->userMeals) ? $userPlan->userMeals->count() : 0;
+                    $userPlan = $userPlan ?? null;
+
+                    $latestMealImages = isset($userPlan->userMeals)
+                        ? $userPlan
+                            ->userMeals()
+                            ->with('meal')
+                            ->latest()
+                            ->get()
+                            ->map(function ($userMeal) {
+                                return $userMeal->meal?->image ? asset('storage/' . $userMeal->meal->image) : null;
+                            })
+                            ->filter(function ($image) {
+                                return !empty($image); // filters out null and empty strings
+                            })
+                            ->take(2)
+                            ->values()
+                            ->toArray()
+                        : [];
+
+                    $mealImage1 = $latestMealImages[0] ?? frontAssets('images/sports-training/fooditem1.webp');
+                    $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
+                @endphp
+
+                <div class="consults-plans-grid">
+                    <div class="plan-card-custom plan-competition">
+                        <div class="">
+                            <div class="plan-title">Competition Plan</div>
+                            <div class="plan-desc">
+                                Unlock your best performance with a fully customised 24-hour competition day meal
+                                plan—designed to fuel you from the night before through recovery, tailored to your sport,
+                                your preferences, and your game-day goals.
+                            </div>
+                            <div class="consult-user-row">
+                                <img src="{{ $mealImage1 }}" class="consult-avatar"
+                                    alt="Kerry O'Bryan, expert coach avatar" />
+                                <img src="{{ $mealImage2 }}" class="consult-avatar overlap1"
+                                    alt="Kerry O'Bryan, expert coach avatar" />
+                                <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
+                            </div>
+                            <button class="btn-consult">Learn more</button>
+                        </div>
+                    </div>
+                    <div class="plan-card-custom plan-injury">
+                        <div class="plan-title">Injury</div>
+                        <div class="plan-desc">
+                            Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of
+                            healing-focused meals, expert tips, and supplement guidance to accelerate recovery, reduce
+                            inflammation, and get you back to full strength, faster—all built on a food-first approach.
+                        </div>
+                        <div class="consult-user-row">
+                            <img src="{{ $mealImage1 }}" class="consult-avatar"
                                 alt="Kerry O'Bryan, expert coach avatar" />
-                            <img
-                                src="{{ $mealImage2 }}"
-                                class="consult-avatar overlap1"
+                            <img src="{{ $mealImage2 }}" class="consult-avatar overlap1"
                                 alt="Kerry O'Bryan, expert coach avatar" />
                             <span>{{ $mealCount }}  meals • 18 Nutrition tips</span>
                         </div>
@@ -608,4 +666,174 @@
         </div>
     </div>
 
+
+    <script>
+        let sliderInstances = [];
+
+        function enableNativeScroll(container) {
+            if (!container) return;
+            container.classList.add('native-scroll');
+            container.style.overflowX = 'auto';
+            container.style.display = 'flex';
+            container.style.gap = '16px';
+            container.querySelectorAll('.challenge-card').forEach(card => {
+                card.style.minWidth = '80vw';
+                card.style.flex = '0 0 auto';
+                card.style.scrollSnapAlign = 'start';
+            });
+        }
+
+        function disableNativeScroll(container) {
+            if (!container) return;
+            container.classList.remove('native-scroll');
+            container.style.overflowX = '';
+            container.style.display = '';
+            container.style.gap = '';
+            container.querySelectorAll('.challenge-card').forEach(card => {
+                card.style.minWidth = '';
+                card.style.flex = '';
+                card.style.scrollSnapAlign = '';
+            });
+        }
+
+        // Wait for all images in a container to load, then call callback
+        function imagesLoaded(container, callback) {
+            const images = container ? container.querySelectorAll('img') : [];
+            let loaded = 0;
+            if (!images.length) return callback();
+            images.forEach(img => {
+                if (img.complete) {
+                    loaded++;
+                    if (loaded === images.length) callback();
+                } else {
+                    img.addEventListener('load', () => {
+                        loaded++;
+                        if (loaded === images.length) callback();
+                    });
+                    img.addEventListener('error', () => {
+                        loaded++;
+                        if (loaded === images.length) callback();
+                    });
+                }
+            });
+        }
+
+        function initResponsiveSlider(wrapper) {
+            const container = wrapper.querySelector('.challenge-cards-slider');
+            const cards = container ? container.querySelectorAll('.challenge-card') : [];
+            const isMobile = window.innerWidth <= 1024;
+
+            // Completely reset container style added by tns
+            if (wrapper._sliderInstance && typeof wrapper._sliderInstance.destroy === 'function') {
+                wrapper._sliderInstance.destroy();
+                wrapper._sliderInstance = null;
+
+                // Clear Tiny Slider inline styles and classes
+                container.removeAttribute('style');
+                container.className = 'challenge-cards-slider'; // Reset to base class
+                cards.forEach(card => {
+                    card.removeAttribute('style');
+                    card.classList.remove('tns-item');
+                });
+            }
+
+            // Always hide arrows initially
+            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
+
+            // Remove hover listeners
+            wrapper.onmouseenter = null;
+            wrapper.onmouseleave = null;
+
+            function runSlider() {
+                if (isMobile) {
+                    enableNativeScroll(container);
+                } else if (typeof tns === 'function' && container && cards.length > 1) {
+                    disableNativeScroll(container);
+
+                    // Show arrows on hover if more than 4 cards
+                    if (cards.length > 4) {
+                        wrapper.onmouseenter = function() {
+                            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = '');
+                        };
+                        wrapper.onmouseleave = function() {
+                            wrapper.querySelectorAll('.slider-arrow').forEach(btn => btn.style.display = 'none');
+                        };
+                    }
+
+                    wrapper._sliderInstance = tns({
+                        container: container,
+                        items: 4,
+                        slideBy: 1,
+                        gutter: 16,
+                        controls: false,
+                        nav: false,
+                        mouseDrag: true,
+                        loop: false,
+                        edgePadding: 0,
+                        rewind: false,
+                        preventScrollOnTouch: 'force',
+                        speed: 400,
+                        responsive: {
+                            1200: {
+                                items: 4
+                            },
+                            900: {
+                                items: 3
+                            },
+                            600: {
+                                items: 2
+                            },
+                            0: {
+                                items: 1
+                            }
+                        }
+                    });
+
+                    // Arrow control bindings
+                    const leftArrow = wrapper.querySelector('.left-arrow');
+                    const rightArrow = wrapper.querySelector('.right-arrow');
+                    if (leftArrow) leftArrow.onclick = () => wrapper._sliderInstance.goTo('prev');
+                    if (rightArrow) rightArrow.onclick = () => wrapper._sliderInstance.goTo('next');
+                }
+            }
+
+            imagesLoaded(container, () => {
+                setTimeout(runSlider, 50); // Give DOM a moment to stabilize after resize
+            });
+        }
+
+
+        // Initial load for all sliders
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
+                initResponsiveSlider(wrapper);
+            });
+        });
+
+        // Debounced re-init on resize
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                document.querySelectorAll('.slider-wrapper').forEach(function(wrapper) {
+                    initResponsiveSlider(wrapper);
+                });
+            }, 200);
+        });
+
+        // Meals slider re-init for AJAX or dynamic content
+        function initMealsSlider() {
+            const wrapper = document.querySelector('#meal-cards-wrapper')?.closest('.slider-wrapper');
+            if (wrapper) {
+                // Wait for images to load before initializing slider
+                const container = wrapper.querySelector('.challenge-cards-slider');
+                imagesLoaded(container, function() {
+                    initResponsiveSlider(wrapper);
+                });
+            }
+        }
+        console.log('Destroying slider...');
+        wrapper._sliderInstance.destroy();
+        console.log('Destroyed, reinitializing...');
+    </script>
 @endsection
