@@ -13,7 +13,7 @@ $auth = auth()->guard('web')->check();
         class="mobile-menu-toggle"
         aria-label="Toggle mobile menu"
         onclick="toggleMobileMenu()"
-        style="background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;">
+        style="background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;margin: 0 !important;">
         <span id="mobile-menu-icon">
             <!-- This will be replaced by JS -->
             <i class="fas fa-bars" aria-hidden="true" id="hamburger-icon"></i>
@@ -60,9 +60,9 @@ $auth = auth()->guard('web')->check();
             <div class="nav-item dropdown">
                 <span>Resources <i class="fas fa-chevron-down"></i></span>
                 <div class="dropdown-content">
-                    <a href="/articles">Articles</a>
-                    <a href="/videos">Videos</a>
-                    <a href="/tools">Tools</a>
+                    <a href="/articles">Supplement Scanner</a>
+                    <a href="/videos">Level-Up Library</a>
+                    <a href="/tools">BioHealth Passport</a>
                 </div>
             </div>
         </nav>
@@ -73,13 +73,13 @@ $auth = auth()->guard('web')->check();
   <path d="M9 9C10.1935 9 11.3381 8.52589 12.182 7.68198C13.0259 6.83807 13.5 5.69347 13.5 4.5C13.5 3.30653 13.0259 2.16193 12.182 1.31802C11.3381 0.474106 10.1935 0 9 0C7.80653 0 6.66193 0.474106 5.81802 1.31802C4.97411 2.16193 4.5 3.30653 4.5 4.5C4.5 5.69347 4.97411 6.83807 5.81802 7.68198C6.66193 8.52589 7.80653 9 9 9ZM7.39336 10.6875C3.93047 10.6875 1.125 13.493 1.125 16.9559C1.125 17.5324 1.59258 18 2.16914 18H15.8309C16.4074 18 16.875 17.5324 16.875 16.9559C16.875 13.493 14.0695 10.6875 10.6066 10.6875H7.39336Z" fill="white"/>
 </svg><span>My Account <i class="fas fa-chevron-down"></i></span></div>
                 <div class="dropdown-content">
-                    <a href="/billing">Billing</a>
-                    <a href="/subscription">Subscription</a>
+                    
+                    <a href="/subscription">My Profile</a>
                     <form id="logout-form" action="{{ route('front.logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
-                    <a class="p-2 text-danger dropdown-item" style="padding:0.75rem 1rem !important;" href="#" onclick="handleLogout(event)">
-                        Logout
+                    <a class="p-2 dropdown-item" style="padding:0.75rem 1rem !important;" href="#" onclick="handleLogout(event)">
+                        Sign Out
                     </a>
                 </div>
             </div>
