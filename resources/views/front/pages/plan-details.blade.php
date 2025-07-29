@@ -381,7 +381,7 @@
             });
         });
     });
-    
+
     function showLoader() {
         $('#loader').removeClass('d-none');
     }
@@ -965,6 +965,14 @@
                 }
             });
         });
+
+        $(document).on('hide.bs.modal', '#smartSwapModal', function () {
+            currentMainItem = null;
+            swaps = []; // Reset swaps array
+            $('#smartSwapModalLabel').text(''); // Clear modal title
+            $('#smartSwapModal .swap-list').empty(); // Clear HTML inside modal
+            $('.modal-backdrop').remove();
+        });
     });
 
     $(document).on('hide.bs.modal', '#recipeDialogModal', function () {
@@ -1346,21 +1354,12 @@
             swap_id: currentMainItem.id,
             user_item_id: currentMainItem.id // or use some real user_item_id if needed
         }];
-        console.log("Updated Swap List:", swaps);
 
         // Update the reference for next potential swap
         currentMainItem = swapItem;
 
         // Reinitialize tooltips
         $('[data-bs-toggle="tooltip"]').tooltip();
-    });
-
-    $('#smartSwapModal').on('hidden.bs.modal', function () {
-        currentMainItem = null;
-        swaps = []; // Reset swaps array
-        $('#smartSwapModalLabel').text(''); // Clear modal title
-        $('#smartSwapModal .swap-list').empty(); // Clear HTML inside modal
-        $('.modal-backdrop').remove();
     });
 
     // Apply Swap Changes functionality
@@ -1388,6 +1387,7 @@
             success: function (response) {
                 // Handle success response
                 swaps = [];
+                currentMainItem = null;
 
                 if(response.success){
                     $('#smartSwapModal').modal('hide');
