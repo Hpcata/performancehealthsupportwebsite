@@ -58,7 +58,6 @@
             $planIds = [];
         }
     @endphp
-    <?php // dd($page); ?>
     @if(session('error') == 'Plan not purchased.')
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -95,26 +94,17 @@
 
     @if(isset($page->sections))
         @foreach($page->sections as $section)
-            @if($section->type == 'section-1' && $section->enabled == 1)
-                <div class="section nutrition-page-banner pt-md-5" style="background-image: url('{{ frontAssets('images/hero-img-03.webp') }}');">
+            @if($section->order == 1 && $section->enabled == 1)
+                <div class="section nutrition-page-banner pt-md-5" style="background-image: url('{{ webAssets('storage/' . $section->banner_image[0]) }}');">
                     <div class="container">
                         <div class="text-center">
                             <h1 class="text-white mt-md-3">Sports Nutrition Plans</h1>
                         </div>
-                        <div class="text-center banner-text mt-auto pt-5">
-                            {!! $section->content !!}
-                            <a href="#" class="btn btn-primary" id="takeFreeTest">
-                                <span class="me-1">Take Free Quiz</span>
-                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10.2334 2.26696L0.821276 11.8513L10.2334 2.26696Z" fill="white"></path>
-                                    <path d="M11.2203 10.9062L11.3313 1.14895L1.57769 1.43685M10.2334 2.26696L0.821276 11.8513" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </svg>
-                            </a>
-                        </div>
+                        {!! $section->content !!}
                     </div>
                 </div>
             @endif
-            @if($section->type == 'section-2' && $section->enabled == 1)
+            @if($section->order == 2 && $section->enabled == 1)
                 <div class="section power-peak-row bg-white">
                     <div class="container">
                         <div class="row align-items-center g-4">
@@ -223,10 +213,10 @@
                             <div data-aos="fade-up" class="aos-init aos-animate">
                                 @if($isAuthenticated && in_array($plan->id, $planIds))
                                     <?php
-                                        $userPlan = \App\Models\UserPlan::where('user_id', Auth::user()->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
+                                        $userPlan = \App\Models\UserPlan::where('user_id', Auth::gaurd('web')->user()->id)->where('plan_id', $plan->id)->where('status', 'active')->first();
                                         $isPlanCreated = $userPlan ? true : false;
                                     ?>
-                                    <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => Auth::user()->id]) }}" class="btn btn-primary mt-2 w-100 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
+                                    <a href="{{ route('front.plans.details', ['id' => $plan->id, 'user_id' => Auth::gaurd('web')->user()->id]) }}" class="btn btn-primary mt-2 w-100 @if(!$isPlanCreated) disabled @endif" @if(!$isPlanCreated) style="pointer-events: none; opacity: 0.5;" @endif>
                                         <span class="me-1">View Details </span>
                                         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
 
@@ -677,10 +667,6 @@
         </div>
     </div>
 
-    <div class="section section-3 pt-3 pb-0" data-aos="fade-up" data-aos-delay="100">
-       
-    </div>
-
     <section class="section pb-3 pt-4 my-3 testimonial-section-main-div">
         <div class="col-lg-12 text-center mb-5" data-aos="fade-up" style="text-align: center !important;">
             <h2 class="heading mb-5  d-flex align-items-center justify-content-center" data-aos="fade-up" data-aos-delay="100">
@@ -843,7 +829,7 @@
                 <img src="{!! frontAssets('images/contact.webp') !!}" alt="Image" class="img-fluid img-contact">
 
             </div>
-
+            
         </div>
     </div>
 

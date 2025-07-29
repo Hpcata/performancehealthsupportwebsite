@@ -9,7 +9,17 @@ class Section extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'page_id', 'type', 'enabled','content','order','image'];
+    protected $fillable = ['title', 'page_id', 'enabled','content','order','image', 'banner_image'];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'image' => 'array',
+        'banner_image' => 'array',
+    ];
 
     /**
      * Define the relationship with the Page model.

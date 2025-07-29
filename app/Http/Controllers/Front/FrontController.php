@@ -123,23 +123,17 @@ class FrontController extends Controller
     public function subHomePage()
     {
         // Step 1: Get all sub_plan_ids from plan_sub_plans table
-        $subPlanIds = \DB::table('plan_sub_plans')->pluck('sub_plan_id')->toArray();
+        $subPlanIds = DB::table('plan_sub_plans')->pluck('sub_plan_id')->toArray();
 
         // Step 2: Retrieve all plans that are NOT sub-plans
         $plans = Plan::whereNotIn('id', $subPlanIds)->get();
 
-        $page = Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
+        $page = Page::with('sections')->where('slug', 'actionsport_nutrition_plan')->first();
         
-        $requirements = [];
-       
-        $disabledDay = json_encode([]);
-      
-        $organization = [];
-        $testimonials = [];
         $isAuthenticated = Auth::check(); // Returns true if the user is logged in
-        $sportCategories = SportCategory::all();
+        $sportCategories = SportCategory::select('id', 'name')->get();
 
-        return view('front.pages.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated', 'sportCategories'));
+        return view('front.pages.sub-home-page', compact('page', 'plans','isAuthenticated', 'sportCategories'));
     }
 
     public function register(Request $request)
@@ -1660,7 +1654,6 @@ class FrontController extends Controller
         // }
 
         $user = User::findOrFail($id);
-        // dd($user);
         // Set user session
         Auth::guard('web')->login($user);
 
