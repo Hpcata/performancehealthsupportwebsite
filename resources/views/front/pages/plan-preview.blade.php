@@ -178,12 +178,14 @@
                                 ->first();
                         @endphp
                         <div class="meal-block" >
+                        <div class="card-box meal-block-page-break">
                             <h5 class="text-primary mt-20">
                                 {{ $userMealTime->category->title }}
                                 @if ($subCategory)
                                     <span>| {{ $subCategory->subCategory->title ?? 'Subcategory' }}</span>
                                 @endif
                             </h5>
+                    </div>
                             @foreach ($mealsGroup as $userMeal)
                                 @php $mealCount++; 
                                 @endphp

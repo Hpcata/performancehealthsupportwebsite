@@ -757,6 +757,35 @@
             const bottomMargin = 1.0; // ~18mm (footer + buffer)
             const leftRightMargin = 0.3;
 
+            // Inject CSS to control page breaks
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .meal-block {
+                    page-break-before: auto;
+                    page-break-after: avoid;
+                    page-break-inside: avoid;
+                    break-before: auto;
+                    break-after: avoid;
+                    break-inside: avoid;
+                }
+                .meal-block h5 {
+                    page-break-after: avoid;
+                    break-after: avoid;
+                }
+                .meal-block-page-break {
+                    page-break-before: auto;
+                    page-break-after: auto;
+                    page-break-inside: avoid;
+                    break-before: auto;
+                    break-after: auto;
+                    break-inside: avoid;
+                }
+                .card-box {
+                    margin-bottom: 20px;
+                }
+            `;
+            document.head.appendChild(style);
+
             html2pdf()
                 .set({
                     margin: [topMargin, leftRightMargin, bottomMargin, leftRightMargin],
@@ -764,8 +793,11 @@
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { scale: 2, useCORS: true },
                     jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-                            pagebreak: { mode: ['css', 'legacy'] } // <-- Add this line
-
+                    pagebreak: { mode: ['css', 'legacy'] } // <-- Add this line
+                    // pagebreak: { 
+                    //     mode: ['css', 'legacy', 'avoid'], 
+                    //     avoid: ['.meal-block', 'h5', '.meal-block-page-break'] 
+                    // }
                 })
                 .from(element)
                 .toPdf()
