@@ -201,6 +201,7 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		Route::put('items/{item}', [ItemController::class, 'update'])->name('admin.items.update');
 		Route::delete('items/{item}', [ItemController::class, 'destroy'])->name('admin.items.destroy');
 		Route::get('get-food-details', [ItemController::class, 'getFoodDetails'])->name('admin.get-food-details');
+		Route::get('get-food-details-batch', [ItemController::class, 'getFoodDetailsBatch'])->name('admin.get-food-details-batch');
 
 		// Plans
 		Route::get('plans', [PlanController::class, 'index'])->name('admin.plans.index');
@@ -239,7 +240,9 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		Route::post('/update-nutrition-flag', [PurchasePlanController::class, 'updateNutritionFalg'])->name('admin.update-nutrition-flag');
 
 		Route::post('/get-meal-items', [PurchasePlanController::class, 'getMealItems'])->name('admin.get-meal-items');
+		Route::post('/get-meal-items-batch', [PurchasePlanController::class, 'getMealItemsBatch'])->name('admin.get-meal-items-batch');
 		Route::post('/get-meals-by-mealtime', [PurchasePlanController::class, 'getMealsByMealTime'])->name('admin.get-meals-by-mealtime');
+		Route::post('/get-meals-by-mealtime-batch', [PurchasePlanController::class, 'getMealsByMealTimeBatch'])->name('admin.get-meals-by-mealtime-batch');
 		Route::post('/admin/remove-user-meal', [PurchasePlanController::class, 'removeUserMeal'])->name('admin.remove-user-meal');
 
 		Route::get('/get-items', [PurchasePlanController::class, 'getItems'])->name('admin.get-items');

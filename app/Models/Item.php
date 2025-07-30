@@ -73,5 +73,4 @@ class Item extends Model
             $this->flags()->exists()
         );
     }
-
 }

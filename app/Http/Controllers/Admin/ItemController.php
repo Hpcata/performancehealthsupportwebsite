@@ -215,7 +215,6 @@ class ItemController extends Controller
             'dietary_fibre'     => 'nullable',
             'sodium'            => 'nullable',
         ]);
-
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if it exists
@@ -249,7 +248,6 @@ class ItemController extends Controller
         } else {
             $data['is_locked'] = 0;
         }
-
         // Update item
         $item->update($data);
         $item->tags()->sync($request->input('tag_ids'));   // attaches tags via pivot
@@ -322,6 +320,11 @@ class ItemController extends Controller
             Log::warning("Attempt to delete item with ID {$item->id} that is in use.");
             return redirect()->route('admin.items.index')
                 ->with('error', "Unable to delete this food. It is still linked to other records.");
+        }
+
+        // Delete item image if exists
+        if ($item->image) {
+            Storage::delete('public/' . $item->image);
         }
 
         // Delete item image if exists
@@ -402,5 +405,44 @@ class ItemController extends Controller
                 'category' => $item->category, // Only id and name from related flags
             ],
         ]);
+    }
+
+    public function getFoodDetailsBatch(Request $request)
+    {
+        $foodIds = $request->input('food_ids');
+        $foodIds = explode(',', $foodIds);
+        if (!$foodIds) {
+            return response()->json(['error' => 'Food IDs is required'], 400);
+        }
+
+        // Fetch items with related flags and category in one query
+        $items = Item::with([
+            'flags:id,name', // Load only id and name from flags
+            'category:id,name' // Load only id and name from category
+        ])
+            ->select('id', 'title', 'category_id') // Select only needed item fields
+            ->whereIn('id', $foodIds)
+            ->get()
+            ->keyBy('id');
+
+        // Prepare response with items keyed by ID
+        $response = ['items' => []];
+
+        foreach ($foodIds as $foodId) {
+            $item = $items->get($foodId);
+            $response['items'][$foodId] = $item ? [
+                'id' => $item->id,
+                'title' => $item->title,
+                'flags' => $item->flags,
+                'category' => $item->category,
+            ] : null;
+        }
+
+        // If no items found, return error
+        if ($items->isEmpty()) {
+            return response()->json(['error' => 'No items found'], 404);
+        }
+
+        return response()->json($response);
     }
 }
