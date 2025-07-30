@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
 // Make sure to import the Str class
 
 class ProductController extends Controller
@@ -54,6 +55,14 @@ class ProductController extends Controller
                                     $nutrition['serving_size'] = $attribute['Value'] ?? '';
                                 } elseif ($attribute['Name'] === 'Energy kJ Quantity Per Serve - Total - NIP') {
                                     $nutrition['energy'] = $attribute['Value'] ?? '';
+                                } else if ($attribute['Name'] === 'Fat Saturated Quantity Per Serve - Total - NIP') {
+                                    $nutrition['saturated'] = $attribute['Value'] ?? '';
+                                } else if ($attribute['Name'] === 'Sugars Quantity Per Serve - Total - NIP') {
+                                    $nutrition['sugars'] = $attribute['Value'] ?? '';
+                                } else if ($attribute['Name'] === 'Dietary Fibre Quantity Per Serve - Total - NIP') {
+                                    $nutrition['dietary_fibre'] = $attribute['Value'] ?? '';
+                                } else if ($attribute['Name'] === 'Sodium Quantity Per Serve - Total - NIP') {
+                                    $nutrition['sodium'] = $attribute['Value'] ?? '';
                                 }
                             }
                         }
@@ -110,6 +119,10 @@ class ProductController extends Controller
             'fat'              => 'nullable',
             'category'         => 'nullable',
             'energy'           => 'nullable',
+            'saturated'        => 'nullable',
+            'sugars'           => 'nullable',
+            'dietary_fibre'    => 'nullable',
+            'sodium'           => 'nullable',
             'serving_per_pack' => 'nullable',
             'serving_size'     => 'nullable',
         ]);
@@ -127,10 +140,15 @@ class ProductController extends Controller
             Storage::disk('public')->put($imagePath, $imageContent);
 
             // Extract & Clean Values
-            $protein            = isset($validated['protein']) ? rtrim($validated['protein'], 'g') : 0;
-            $carbs              = isset($validated['carbs']) ? rtrim($validated['carbs'], 'g') : 0;
-            $fat                = isset($validated['fat']) ? rtrim($validated['fat'], 'g') : 0;
-            $energy             = isset($validated['energy']) ? $validated['energy'] : 0;
+            $protein       = isset($validated['protein']) ? rtrim($validated['protein'], 'g') : 0;
+            $carbs         = isset($validated['carbs']) ? rtrim($validated['carbs'], 'g') : 0;
+            $fat           = isset($validated['fat']) ? rtrim($validated['fat'], 'g') : 0;
+            $energy        = isset($validated['energy']) ? $validated['energy'] : 0;
+            $saturated     = isset($validated['saturated']) ? $validated['saturated'] : 0;
+            $sugars        = isset($validated['sugars']) ? $validated['sugars'] : 0;
+            $dietary_fibre = isset($validated['dietary_fibre']) ? $validated['dietary_fibre'] : 0;
+            $sodium        = isset($validated['sodium']) ? $validated['sodium'] : 0;
+
             $serving_size_parse = isset($validated['serving_size']) ? $this->parseServingSize($validated['serving_size']) : 0;
             $serving_size       = $serving_size_parse != 0 ? $serving_size_parse['serving_size'] : '0';
             $serving_size_unit  = $serving_size_parse != 0 ? $serving_size_parse['serving_size_unit'] : 'g';
@@ -156,6 +174,18 @@ class ProductController extends Controller
             if ($energy == null) {
                 $missingValues[] = "energy";
             }
+            if ($saturated == null) {
+                $missingValues[] = "saturated";
+            }
+            if ($sugars == null) {
+                $missingValues[] = "sugars";
+            }
+            if ($dietary_fibre == null) {
+                $missingValues[] = "dietary_fibre";
+            }
+            if ($sodium == null) {
+                $missingValues[] = "sodium";
+            }
             if ($serving_size == 0 || $serving_size == null || $serving_size == 0.0) {
                 $missingValues[] = "serving_size";
             }
@@ -173,7 +203,19 @@ class ProductController extends Controller
                     $fat = $openAiData['fat'];
                 }
                 if (isset($openAiData['energy']) && $energy == null) {
-                    $fat = $openAiData['energy'];
+                    $energy = $openAiData['energy'];
+                }
+                if (isset($openAiData['saturated']) && $saturated == null) {
+                    $saturated = $openAiData['saturated'];
+                }
+                if (isset($openAiData['sugars']) && $sugars == null) {
+                    $sugars = $openAiData['sugars'];
+                }
+                if (isset($openAiData['dietary_fibre']) && $dietary_fibre == null) {
+                    $dietary_fibre = $openAiData['dietary_fibre'];
+                }
+                if (isset($openAiData['sodium']) && $sodium == null) {
+                    $sodium = $openAiData['sodium'];
                 }
                 if (isset($openAiData['serving_size']) && $serving_size == 0) {
                     $serving_size = $openAiData['serving_size'];
@@ -209,6 +251,10 @@ class ProductController extends Controller
             $food->carbs             = cleanDecimal($carbs);
             $food->fat               = cleanDecimal($fat);
             $food->energy            = $energy;
+            $food->saturated         = $saturated;
+            $food->sugars            = $sugars;
+            $food->dietary_fibre     = $dietary_fibre;
+            $food->sodium            = $sodium;
             $food->qty               = cleanDecimal($serving_size);
             $food->unit              = $serving_size_unit;
             $food->serving_per_pack  = $validated['serving_per_pack'];

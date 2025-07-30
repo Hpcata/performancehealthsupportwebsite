@@ -66,7 +66,11 @@ class NutritionAIController extends Controller
             'carbs'       => 'nullable|numeric|min:0',
             'protein'     => 'nullable|numeric|min:0',
             'fat'         => 'nullable|numeric|min:0',
-            'energy'      => 'nullable'
+            'energy'      => 'nullable',
+            'saturated'   => 'nullable',
+            'sugars'      => 'nullable',
+            'dietary_fibre' => 'nullable',
+            'sodium'      => 'nullable'
         ]);
 
         $title = $request->input('title');
@@ -87,7 +91,11 @@ class NutritionAIController extends Controller
         $baseCarbs = $item->carbs ?? null;
         $baseProtein = $item->protein ?? null;
         $baseFat = $item->fat ?? null;
-        $baseEnergy = floatval($item->energy ?? null) ?? null;
+        $baseEnergy = $item->energy ?? null;
+        $baseSaturated = $item->saturated ?? null;
+        $baseSugars = $item->sugars ?? null;
+        $baseDietaryFibre = $item->dietary_fibre ?? null;
+        $baseSodium = $item->sodium ?? null;
 
         // Fetch from AI if needed
         if (is_null($baseCarbs) || is_null($baseProtein) || is_null($baseFat) ||
@@ -99,6 +107,10 @@ class NutritionAIController extends Controller
             $baseProtein = $baseProtein > 0 ? $baseProtein : $aiNutrition['protein'];
             $baseFat = $baseFat > 0 ? $baseFat : $aiNutrition['fat'];
             $baseEnergy = $baseEnergy > 0 ? $baseEnergy : $aiNutrition['energy'];
+            $baseSaturated = $baseSaturated > 0 ? $baseSaturated : $aiNutrition['saturated'];
+            $baseSugars = $baseSugars > 0 ? $baseSugars : $aiNutrition['sugars'];
+            $baseDietaryFibre = $baseDietaryFibre > 0 ? $baseDietaryFibre : $aiNutrition['dietary_fibre'];
+            $baseSodium = $baseSodium > 0 ? $baseSodium : $aiNutrition['sodium'];
 
             $serving_size = $serving_size ?: $aiNutrition['serving_size'];
             $serving_size_unit = $serving_size_unit ?: $aiNutrition['serving_size_unit'];
@@ -119,17 +131,25 @@ class NutritionAIController extends Controller
         $num_servings = $qty / $serving_size;
 
         // Nutrition calculation
-        $scaledCarbs = $baseCarbs * $num_servings;
-        $scaledProtein = $baseProtein * $num_servings;
-        $scaledFat = $baseFat * $num_servings;
-        $scaledEnergy = $baseEnergy * $num_servings;
+        $scaledCarbs = scaleNutritionValue($baseCarbs, $num_servings);
+        $scaledProtein = scaleNutritionValue($baseProtein, $num_servings);
+        $scaledFat = scaleNutritionValue($baseFat, $num_servings);
+        $scaledEnergy = scaleNutritionValue($baseEnergy, $num_servings);
+        $scaledSaturated = scaleNutritionValue($baseSaturated, $num_servings);
+        $scaledSugars = scaleNutritionValue($baseSugars, $num_servings);
+        $scaledDietaryFibre = scaleNutritionValue($baseDietaryFibre, $num_servings);
+        $scaledSodium = scaleNutritionValue($baseSodium, $num_servings);
 
         return response()->json([
             'title' => $title,
             'protein' => round($scaledProtein, 2),
             'carbs' => round($scaledCarbs, 2),
             'fat' => round($scaledFat, 2),
-            'energy' => round($scaledEnergy, 2),
+            'energy' => $scaledEnergy,
+            'saturated' => $scaledSaturated,
+            'sugars' => $scaledSugars,
+            'dietary_fibre' => $scaledDietaryFibre,
+            'sodium' => $scaledSodium,
             'converted_qty' => round($num_servings, 2) . " g",
             'measurement' => $measurement,
             'serving_size' => round($serving_size, 2),
