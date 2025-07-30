@@ -409,4 +409,43 @@ class ItemController extends Controller
             ],
         ]);
     }
+
+    public function getFoodDetailsBatch(Request $request)
+    {
+        $foodIds = $request->input('food_ids');
+        $foodIds = explode(',', $foodIds);
+        if (!$foodIds) {
+            return response()->json(['error' => 'Food IDs is required'], 400);
+        }
+
+        // Fetch items with related flags and category in one query
+        $items = Item::with([
+            'flags:id,name', // Load only id and name from flags
+            'category:id,name' // Load only id and name from category
+        ])
+            ->select('id', 'title', 'category_id') // Select only needed item fields
+            ->whereIn('id', $foodIds)
+            ->get()
+            ->keyBy('id');
+
+        // Prepare response with items keyed by ID
+        $response = ['items' => []];
+
+        foreach ($foodIds as $foodId) {
+            $item = $items->get($foodId);
+            $response['items'][$foodId] = $item ? [
+                'id' => $item->id,
+                'title' => $item->title,
+                'flags' => $item->flags,
+                'category' => $item->category,
+            ] : null;
+        }
+
+        // If no items found, return error
+        if ($items->isEmpty()) {
+            return response()->json(['error' => 'No items found'], 404);
+        }
+
+        return response()->json($response);
+    }
 }
