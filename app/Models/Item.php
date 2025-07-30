@@ -56,6 +56,11 @@ class Item extends Model
         return $this->belongsToMany(Flag::class, 'flag_item');
     }
 
+    public function userItems()
+    {
+        return $this->hasMany(UserItem::class, 'id', 'id');
+    }
+
     public function isDeletable(): bool
     {
         return !(
