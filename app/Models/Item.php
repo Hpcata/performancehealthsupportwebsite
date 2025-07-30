@@ -56,4 +56,16 @@ class Item extends Model
         return $this->belongsToMany(Flag::class, 'flag_item');
     }
 
+    public function isDeletable(): bool
+    {
+        return !(
+            $this->userItems()->exists() ||
+            $this->meals()->exists() ||
+            $this->swapItems()->exists() ||
+            $this->items()->exists() ||
+            $this->userItemSwaps()->exists() ||
+            $this->tags()->exists() ||
+            $this->flags()->exists()
+        );
+    }
 }
