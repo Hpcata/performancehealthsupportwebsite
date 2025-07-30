@@ -676,7 +676,6 @@
                     updatedData.push({ qty, unit, checked });
                 }
             });
-            console.log(updatedData);
             // Save back to hidden field
             $('#selected_measurements_hidden').val(JSON.stringify(updatedData));
             hasUnsavedChanges = false;
@@ -866,6 +865,10 @@
         let baseProtein = '';
         let baseFat = '';
         let baseEnergy = '';
+        let baseSaturated = '';
+        let baseSugars = '';
+        let baseDietaryFibre = '';
+        let baseSodium = '';
         let AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
         let selectedQtyUnit = '';
         @if(isset($item))
@@ -875,11 +878,19 @@
             baseProtein = @json($item->protein);
             baseFat = @json($item->fat);
             baseEnergy = @json($item->energy);
+            baseSaturated = @json($item->saturated);
+            baseSugars = @json($item->sugars);
+            baseDietaryFibre = @json($item->dietary_fibre);
+            baseSodium = @json($item->sodium);
         @else
             baseCarb = $('#carbs').val();
             baseProtein = $('#protein').val();
             baseFat = $('#fat').val();
-            baseEnergy = $('#energy').val() || 0;
+            baseEnergy = $('#energy').val();
+            baseSaturated = $('#saturated').val();
+            baseSugars = $('#sugars').val();
+            baseDietaryFibre = $('#dietary_fibre').val();
+            baseSodium = $('#sodium').val();
         @endif
         let selectedUnits = [];
 
@@ -911,7 +922,7 @@
             }
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
             fetchAlternateMeasurements(selectedMeasurement, qty);
-            setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy);
+            setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy, baseSaturated, baseSugars, baseDietaryFibre, baseSodium);
             setupDynamicMeasurementSync();
             updateHiddenField();
             // AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
@@ -928,6 +939,11 @@
                 carbs: $('input[name="carbs"]').val(),
                 protein: $('input[name="protein"]').val(),
                 fat: $('input[name="fat"]').val(),
+                energy: $('input[name="energy"]').val(),
+                saturated: $('input[name="saturated"]').val(),
+                sugars: $('input[name="sugars"]').val(),
+                dietary_fibre: $('input[name="dietary_fibre"]').val(),
+                sodium: $('input[name="sodium"]').val(),
                 qty: qty,
                 measurement: selectedMeasurement,
                 serving_size: $('input[name="serving_size"]').val(),
@@ -948,7 +964,11 @@
                     $('#carbs').val(parseFloat(data.carbs).toFixed(2));
                     $('#protein').val(parseFloat(data.protein).toFixed(2));
                     $('#fat').val(parseFloat(data.fat).toFixed(2));
-                    $('#energy').val(parseFloat(data.energy).toFixed(2) + 'kJ');
+                    $('#energy').val(data.energy);
+                    $('#saturated').val(data.saturated);
+                    $('#sugars').val(data.sugars);
+                    $('#dietary_fibre').val(data.dietary_fibre);
+                    $('#sodium').val(data.sodium);
 
                     // Remove all alt-* rows
                     $('.alt-qty-checkbox, .alt-qty-input, .alt-unit-dropdown')
@@ -958,9 +978,7 @@
                     const mainRow = $('.qty-checkbox').closest('.row.align-items-center');
 
                     if (data.alternate_serving_sizes && Object.keys(data.alternate_serving_sizes).length > 0) {
-
                         const entries = Object.keys(data.alternate_serving_sizes).map(key => [key, data.alternate_serving_sizes[key]]);
-
                         entries.forEach(([unitKey, combined], index) => {
                             const [qtyVal, unitVal] = combined.split(" ");
 
@@ -1010,7 +1028,11 @@
                         parseFloat(parseFloat(data.carbs).toFixed(2)),
                         parseFloat(parseFloat(data.protein).toFixed(2)),
                         parseFloat(parseFloat(data.fat).toFixed(2)),
-                        parseFloat(parseFloat(data.energy).toFixed(2))
+                        data.energy,
+                        data.saturated,
+                        data.sugars,
+                        data.dietary_fibre,
+                        data.sodium
                     );
 
                     setupDynamicMeasurementSync();
@@ -1068,11 +1090,8 @@
                 const isChecked = $checkbox.is(':checked');
 
                 const checkboxId = $checkbox.attr('id');
-                console.log(checkboxId);
                 const $unitDropdown = $(`#${checkboxId}.alt-unit-dropdown`);
                 const unit = $unitDropdown.val() || $checkbox.data('unit');
-                console.log(unit);
-                console.log(rawQty);
                 if (unit && rawQty) {
                     selectedValues.push({
                         qty: rawQty,
@@ -1098,9 +1117,6 @@
                 const rawQty = $qtyInput.val();
                 const isChecked = $checkbox.is(':checked');
                 const unit = $unitInput.val() || $checkbox.data('unit');
-
-                console.log('Unit:', unit);
-                console.log('Qty:', rawQty);
 
                 if (unit && rawQty) {
                     selectedValues.push({
@@ -1172,7 +1188,6 @@
             $('.alt-qty-checkbox').each(function () {
                 let qty = parseFraction($(this).siblings('.alt-qty-input').val()) || 0;
                 let unit = $(this).data('unit')?.toLowerCase();
-                console.log(qty);
                 if (!isNaN(qty) && unit) {
                     map[unit] = qty;
                 }
@@ -1181,7 +1196,7 @@
             return map;
         }
 
-        function setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy) {
+        function setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy, baseSaturated, baseSugars, baseDietaryFibre, baseSodium) {
             function updateNutrition(currentQty, currentUnit) {
                 if (!currentQty || !currentUnit) return;
                 currentUnit = currentUnit.toLowerCase();
@@ -1191,21 +1206,29 @@
                     console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
-                baseEnergy = parseFloat(baseEnergy);
-                console.log(baseEnergy);
                 const ratio = currentQty / baseEquivalent;
 
-                const newCarbs = baseCarb * ratio;
-                const newProtein = baseProtein * ratio;
-                const newFat = baseFat * ratio;
-                const newEnergy = baseEnergy * ratio;
-                console.log(newEnergy);
-                console.log(newEnergy.toFixed(1));
+                // Numeric fields (no units or symbols)
+                const newCarbs = parseFloat(baseCarb) * ratio;
+                const newProtein = parseFloat(baseProtein) * ratio;
+                const newFat = parseFloat(baseFat) * ratio;
 
+                // Unit/symbol fields — handled via helper
+                const newEnergy = scaleNutritionValue(baseEnergy, ratio);
+                const newSaturated = scaleNutritionValue(baseSaturated, ratio);
+                const newSugars = scaleNutritionValue(baseSugars, ratio);
+                const newDietaryFibre = scaleNutritionValue(baseDietaryFibre, ratio);
+                const newSodium = scaleNutritionValue(baseSodium, ratio);
+
+                // Update input values
                 $('#carbs').val(newCarbs.toFixed(2));
                 $('#protein').val(newProtein.toFixed(2));
                 $('#fat').val(newFat.toFixed(2));
-                $('#energy').val(newEnergy.toFixed(2)+'kJ');
+                $('#energy').val(newEnergy);
+                $('#saturated').val(newSaturated);
+                $('#sugars').val(newSugars);
+                $('#dietary_fibre').val(newDietaryFibre);
+                $('#sodium').val(newSodium);
             }
 
             // Listen for changes in alt qty input
@@ -1240,6 +1263,25 @@
 
                 updateNutrition(qty, unitDropdown);
             });
+        }
+
+        function scaleNutritionValue(value, ratio) {
+            if (typeof value !== 'string') return value;
+
+            value = value.trim();
+
+            // Capture optional symbol (e.g., '<', '~'), number, and unit
+            const match = value.match(/^([<~]?)[\s]*([\d.]+)\s*([a-zA-Z]*)$/);
+
+            if (!match) return value; // fallback if doesn't match
+
+            const symbol = match[1];        // '<' or '~' or ''
+            const number = parseFloat(match[2]); // numeric part
+            const unit = match[3];          // 'g', 'mg', 'kJ', etc.
+
+            const scaled = (number * ratio).toFixed(2);
+
+            return `${symbol} ${scaled}${unit}`.trim();
         }
 
         function setupDynamicMeasurementSync() {
@@ -1398,7 +1440,7 @@
         }
 
         // Initialize nutrition sync
-        setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy);
+        setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy, baseSaturated, baseSugars, baseDietaryFibre, baseSodium);
         setupDynamicMeasurementSync();
 
         let unitIndex = $('.alternate-measurement-checkbox').length;
@@ -1503,7 +1545,11 @@
                         $('#carbs').val(parseFloat(data.carbs).toFixed(2));
                         $('#protein').val(parseFloat(data.protein).toFixed(2));
                         $('#fat').val(parseFloat(data.fat).toFixed(2));
-                        $('#energy').val(parseFloat(data.energy).toFixed(2) + 'kJ');
+                        $('#energy').val(data.energy);
+                        $('#saturated').val(data.saturated);
+                        $('#sugars').val(data.sugars);
+                        $('#dietary_fibre').val(data.dietary_fibre);
+                        $('#sodium').val(data.sodium);
 
                     // Remove all alt-* rows
                     $('.alt-qty-checkbox, .alt-qty-input, .alt-unit-dropdown')
@@ -1567,7 +1613,11 @@
                         parseFloat(parseFloat(data.carbs).toFixed(2)),
                         parseFloat(parseFloat(data.protein).toFixed(2)),
                         parseFloat(parseFloat(data.fat).toFixed(2)),
-                        parseFloat(parseFloat(data.energy).toFixed(2))
+                        data.energy,
+                        data.saturated,
+                        data.sugars,
+                        data.dietary_fibre,
+                        data.sodium
                     );
 
                     setupDynamicMeasurementSync();

@@ -130,3 +130,28 @@ function getAdminProfileImage()
     // Default fallback image
     return 'https://booking.biohealthpassport.com.au/public/admin/dist/assets/images/profile_av.svg';
 }
+
+function scaleNutritionValue($value, $num_servings)
+{
+    // Check if value contains '<'
+    $isLessThan = false;
+    if (strpos($value, '<') !== false) {
+        $isLessThan = true;
+        $value      = str_replace('<', '', $value);
+    }
+
+    // Extract numeric part and unit using regex
+    preg_match('/([\d\.]+)\s*([a-zA-Z]*)/', trim($value), $matches);
+
+    $number = isset($matches[1]) ? (float) $matches[1] : 0;
+    $unit   = isset($matches[2]) ? $matches[2] : '';
+
+    $scaled = $number * $num_servings;
+
+    // Format result with the unit and handle '<' again
+    if ($isLessThan) {
+        return '< ' . $scaled . $unit;
+    } else {
+        return $scaled . $unit;
+    }
+}
