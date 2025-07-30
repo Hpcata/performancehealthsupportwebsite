@@ -75,7 +75,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row g-3 mb-3">
             <div class="col-md-12">
                 <div class="card">
@@ -92,6 +92,7 @@
                                         <th>Protein</th>
                                         <th>Carbohydrate</th>
                                         <th>Fat</th>
+                                        <th>Energy</th>
                                         <th>Category</th>
                                         <th>Image</th>
                                         <th>Add Food</th>
@@ -99,7 +100,6 @@
                                 </thead>
                                 <tbody>
                                     @foreach($results as $product)
-                                    @php  //dd($product['category']); @endphp
                                         <tr>
                                             <td>{{ $product['name'] }}</td>
                                             <td>{{ $product['barcode'] }}</td>
@@ -108,16 +108,17 @@
                                             <td>{{ $product['nutrition']['protein'] ?? 'N/A' }}</td>
                                             <td>{{ $product['nutrition']['carbohydrate'] ?? 'N/A' }}</td>
                                             <td>{{ $product['nutrition']['fat'] ?? 'N/A' }}</td>
+                                            <td>{{ $product['nutrition']['energy'] ?? 'N/A' }}</td>
                                             <td>{{ $product['category'] }}</td>
                                             <td>
                                                 <img src="{{ $product['image'] }}" alt="Product Image" width="50" height="50">
                                             </td>
                                             <td>
-                                                <button 
-                                                    class="btn btn-primary add-food-btn" 
-                                                    data-name="{{ $product['name'] }}" 
-                                                    data-image="{{ $product['image'] }}" 
-                                                    data-protein="{{ $product['nutrition']['protein'] ?? '0' }}" 
+                                                <button
+                                                    class="btn btn-primary add-food-btn"
+                                                    data-name="{{ $product['name'] }}"
+                                                    data-image="{{ $product['image'] }}"
+                                                    data-protein="{{ $product['nutrition']['protein'] ?? '0' }}"
                                                     data-carbs="{{ $product['nutrition']['carbohydrate'] ?? '0' }}"
                                                     data-serving-pack="{{ $product['nutrition']['serving_per_pack'] ?? '0' }}"
                                                     data-serving-size="{{ $product['nutrition']['serving_size'] ?? '0' }}"
@@ -186,7 +187,7 @@
             window.addEventListener('load', function () {
                 loader.style.display = 'none'; // Hide loader when the page finishes loading
             });
-            
+
         });
     </script>
     <script>
