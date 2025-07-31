@@ -170,12 +170,14 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		Route::get('pages/{page}/sections', [SectionController::class, 'index'])->name('sections.index');
 
 		// Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
-		Route::get('/sections/create', [SectionController::class, 'create'])->name('sections.create');
+		Route::get('pages/{page}/sections/create', [SectionController::class, 'create'])->name('sections.create');
 		Route::post('/sections/store', [SectionController::class, 'store'])->name('sections.store');
-		Route::get('/sections/{section}', [SectionController::class, 'show'])->name('sections.show');
-		Route::get('/sections/{section}/edit', [SectionController::class, 'edit'])->name('sections.edit');
+		// Route::get('/sections/{section}', [SectionController::class, 'show'])->name('sections.show');
+		Route::get('pages/{page}/sections/{section}/edit', [SectionController::class, 'edit'])->name('sections.edit');
 		Route::put('/sections/{section}', [SectionController::class, 'update'])->name('sections.update');
 		Route::delete('/sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy');
+		Route::post('/sections/reorder', [SectionController::class, 'reorder'])->name('sections.reorder');
+Route::get('/sections/used-types', [SectionController::class, 'getUsedSectionTypes'])->name('sections.used-types');
 
 		// Category
 		Route::get('categories', [CategoryController::class, 'index'])->name('admin.categories.index');
