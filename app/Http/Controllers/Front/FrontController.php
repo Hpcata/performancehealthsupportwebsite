@@ -1716,14 +1716,13 @@ class FrontController extends Controller
             }
 
             $userPlan = UserPlan::with([
-                'plan',
-                'userCategories.userSubCategories.userMeals.userItems'
+                'plan'
+                // 'userCategories.userSubCategories.userMeals.userItems'
             ])
             ->where('user_id', $userId)
             ->first();
 
             return view('front.pages.profile-landing', compact('userPlan'));
-            
         } catch (\Exception $e) {
             // Log the error for debugging
             Log::error('Error fetching user profile: ' . $e->getMessage());

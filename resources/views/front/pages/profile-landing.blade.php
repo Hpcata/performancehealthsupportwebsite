@@ -499,7 +499,6 @@
             // Show arrows only if 4 or more cards exist
             function updateArrowVisibility() {
                 const cards = scrollContainer.querySelectorAll(".challenge-card");
-                console.log("card length", cards.length);
                 const shouldShowArrows = cards.length > 4;
 
                 if (shouldShowArrows) {
@@ -1076,7 +1075,6 @@
                     swap_id: currentMainItem.id,
                     user_item_id: currentMainItem.id // or use some real user_item_id if needed
                 }];
-                console.log("Updated Swap List:", swaps);
 
                 // Update the reference for next potential swap
                 currentMainItem = swapItem;
@@ -1118,6 +1116,7 @@
                     success: function (response) {
                         // Handle success response
                         swaps = [];
+                        currentMainItem = null;
 
                         if(response.success){
                             $('#smartSwapModal').modal('hide');

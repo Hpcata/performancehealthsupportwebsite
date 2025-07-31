@@ -61,15 +61,14 @@
                             <div class="dialog-body">
                                 <div class="heading-wrap">
                                 <h3>Ingredients</h3>
-                                <button class="smart-swap-btn meal-item-btn">
-                                    <img src="{{ frontAssets('images/dialog/swap.svg') }}" alt="Snap"
-                                        style="width: 18px; vertical-align: middle;" />Smart swap
-                                </button>
-</div>
+                                    <button class="smart-swap-btn meal-item-btn">
+                                        <img src="{{ frontAssets('images/dialog/swap.svg') }}" alt="Snap"
+                                            style="width: 18px; vertical-align: middle;" />Smart swap
+                                    </button>
+                                </div>
                                 <ul>
                                     <li></li>
                                 </ul>
-                                
                                 <h3>Instructions</h3>
                                 <p></p>
                                 <p class="note">
