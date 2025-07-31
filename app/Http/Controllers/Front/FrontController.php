@@ -129,7 +129,7 @@ class FrontController extends Controller
         $plans = Plan::whereNotIn('id', $subPlanIds)->get();
 
         $page = Page::with('sections')->where('slug', 'actionsport_nutrition_plan')->first();
-        
+
         $isAuthenticated = Auth::check(); // Returns true if the user is logged in
         $sportCategories = SportCategory::select('id', 'name')->get();
 

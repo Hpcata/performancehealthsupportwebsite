@@ -54,13 +54,16 @@ class SectionController extends Controller
                 }
             }
 
+            $lastOrder = Section::where('page_id', $request->page_id)->max('order');
+            $request->merge(['order' => $lastOrder + 1]);
+
             // Save into DB
             $section = Section::create([
                 'title' => $request->title,
                 'page_id' => $request->page_id,
                 'content' => $content,
                 'enabled' => $request->enabled,
-                'order' => $request->order ?? 0,
+                'order' => $request->order,
                 'image' => $imagePaths,
                 'banner_image' => $bannerPaths,
             ]);
@@ -167,5 +170,4 @@ class SectionController extends Controller
 
         return response()->json(['success' => true]);
     }
-
 }
