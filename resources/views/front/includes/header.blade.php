@@ -94,6 +94,90 @@ $auth = auth()->guard('web')->check();
         @endif
     </div>
 </header>
+@elseif(Route::is('front.sub-home-page'))
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-custom homepage-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <!-- <img src="images/logo.webp" alt="ATHLEAT Fuel Logo" /> -->
+        <img src="{{ frontAssets('images/ah-logo.webp') }}" alt="2LS Logo" class="logo-img" width="190" height="40" />
+      </a>
+      <div class="mob-btn-wrap">
+        <button class="btn btn-login web-hide me-0">Log in</button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          style="border: none">
+          <span style="color: white"><img src="images/bars.svg" alt="ATHLEAT Fuel Logo" /></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="mx-auto navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              Services
+              <svg width="10" height="7" viewBox="0 0 10 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1.5L5 5.5L9 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="#">Training Nutrition Plan</a>
+              </li>
+              <li><a class="dropdown-item" href="#">Competition plan</a></li>
+              <li>
+                <a class="dropdown-item" href="#">Injury & Recovery Plan</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">Pre & Post Surgery Plan </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">Private Consultations </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Resources</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Store</a>
+          </li>
+        </ul>
+
+        <div class="d-flex">
+          @if(Auth::check() && Auth::guard('web')->user()->is_superadmin == 0)
+            <div class="dropdown mob-hide">
+              <button class="btn btn-login dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-user"></i> My Account
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                  <a class="dropdown-item" href="{{ route('front.profile-old', ['id' => Auth::guard('web')->user()->id]) }}">
+                    My Profile
+                  </a>
+                </li>
+                <!-- <li>
+                  <a class="dropdown-item" href="#">View My Plan</a>
+                </li> -->
+                <li>
+                  <a class="dropdown-item" href="{{ route('front.logout') }}">Logout</a>
+                </li>
+              </ul>
+            </div>
+          @else
+            <a href="#" class="btn btn-login mob-hide">Log in</a>
+          @endif
+
+          <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">
+            Sign up for free
+          </button>
+          <a href="#" class="btn btn-login web-hide ms-2">Virtual Kez</a>
+        </div>
+      </div>
+    </div>
+  </nav>
 @else
 <header id="header">
     <div class="container">

@@ -94,7 +94,7 @@
 
     @if(isset($page->sections))
         @foreach($page->sections as $section)
-            @if($section->order == 1 && $section->enabled == 1)
+            @if($section->section_type == \App\Models\Section::TYPE_MAIN_BANNER && $section->enabled == 1) <!-- done -->
                 <div id="heroCarouselDesktop" class="d-md-block carousel slide hero-section d-none" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true"
                 >
                     <div class="carousel-inner">
@@ -102,48 +102,96 @@
                         @if(isset($section->banner_image))
                         @foreach($section->banner_image as $key => $image)
                         <div class="carousel-item @if($key == 0) active @endif"
-                        style="background-image: url('{{ webAssets('storage/' . $image) }}')"
+                        style="background-image: url('{{ asset('storage/' . $image) }}')"
                         ></div>
                         @endforeach
                         @endif
                     </div>
                     <div class="container">
                         <div class="hero-content-fixed">
-                        
                             <h1 class="hero-title">{{ $section->title }}</h1>
-                            <p class="hero-subtitle">
-                                {!! $section->content !!}
-                            </p>
-                            <button class="btn btn-signup" id="takeFreeTest">Start the quiz</button>
+                            {!! $section->content !!}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Carousel -->
+                <div id="heroCarouselMobile" class="carousel slide hero-section d-md-none" data-bs-ride="carousel"
+                    data-bs-interval="3000" data-bs-wrap="true">
+                    <div class="carousel-inner">
+                        @if(isset($section->image) && is_array($section->image) && count($section->image) > 0)
+                            @foreach($section->image as $key => $image)
+                                <div class="carousel-item @if($key == 0) active @endif"
+                                    style="background-image: url('{{ asset('storage/' . $image) }}')">
+                                </div>
+                            @endforeach
+                        @else
+                            <!-- Fallback static images if no dynamic images are set -->
+                            <div class="carousel-item active" style="background-image: url('images/slide-1-mob.webp')"></div>
+                            <div class="carousel-item" style="background-image: url('images/slide-2-mob.webp')"></div>
+                        @endif
+                    </div>
+
+                    <!-- Fixed Text Overlay -->
+                    <div class="container">
+                        <div class="hero-content-fixed">
+                            <h1 class="hero-title">{{ $section->title }}</h1>
+                            {!! $section->content !!}
+
+                            <button class="ms-2 btn btn-white">Sign up for free</button>
                         </div>
                     </div>
                 </div>
             @endif
-            @if($section->order == 2 && $section->enabled == 1)
+            @if($section->section_type == \App\Models\Section::TYPE_ABOUT_US && $section->enabled == 1)
                 <!-- About Section -->
                 <section class="about-section">
                     <div class="container">
-                        <div class="align-items-center row">
-                        <div class="col-lg-6">
-                            {!! $section->content !!}
-                        </div>
+                        <div class="about-content-wrapper">
+                            <div class="about-text-content">
+                                {!! $section->content !!}
+                            </div>
                         </div>
                     </div>
                     <div class="about-image-container">
                         <img
-                        src="{{ webAssets('storage/' . $section->image[0]) }}"
+                        @if(isset($section->image[0]) && !empty($section->image[0]))
+src="{{ asset('storage/' . $section->image[0]) }}"
+@endif
                         alt="Kerry O'Bryan"
                         class="img-fluid about-image"
                         />
                     </div>
                 </section>
             @endif
-            @if($section->order == 3 && $section->enabled == 1)
+            @if($section->section_type == \App\Models\Section::TYPE_EAT_BETTER && $section->enabled == 1)
+                @php
+                    // Fetch the first banner image from section 1
+                    $bannerImage = null;
+                    if(isset($page->sections)) {
+                        foreach($page->sections as $sec) {
+                            if($sec->order == 3 && $sec->enabled == 1 && isset($sec->banner_image) && count($sec->banner_image) > 0) {
+                                $bannerImage = asset('storage/' . $sec->banner_image[0]);
+                                break;
+                            }
+                        }
+                    }
+                @endphp
+                @if($bannerImage)
+                    <style>
+                        .food-section {
+                            background-image: url('{{ $bannerImage }}');
+                            background-size: cover;
+                            background-position: center;
+                            background-repeat: no-repeat;
+                        }
+                    </style>
+                @endif
+
                 <section class="food-section">
                     <div class="food-content">
                         <h2 class="food-title">{{ $section->title }}</h2>
                         {!! $section->content !!}
-                        <button class="btn btn-signup">Sign up</button>
                     </div>
 
                     <!-- Custom Food Carousel -->
@@ -153,7 +201,7 @@
                                 @foreach($section->image as $image)
                                 <div class="food-card">
                                     <img
-                                    src="{{ webAssets('storage/' . $image) }}"
+                                    src="{{ asset('storage/' . $image) }}"
                                     alt="Healthy breakfast bowl with berries and granola"
                                     />
                                 </div>
@@ -179,7 +227,7 @@
                     </div>
                 </section>
             @endif
-            @if($section->order == 4 && $section->enabled == 1)
+            @if($section->section_type == \App\Models\Section::TYPE_WHY_IT_WORKS && $section->enabled == 1)
                  <section class="why-it-works-section">
                     <div class="container">
                         <div class="row">
@@ -555,7 +603,9 @@
                                     <div class="phone-frame">
                                         <div class="phone-screen">
                                             <div class="scrollable-image-wrapper">
-                                                <img src="{{ webAssets('storage/' . $section->image[0]) }}" alt="Phone Screen" class="phone-screen-img" />
+                                                @if(isset($section->banner_image[0]))
+                                                    <img src="{{ asset('storage/' . $section->banner_image[0]) }}" alt="Phone Screen" class="phone-screen-img" />
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -565,11 +615,11 @@
                     </div>
                 </section>
             @endif
-            @if($section->order == 5 && $section->enabled == 1)
+            @if($section->section_type == \App\Models\Section::TYPE_CHOOSE_YOUR_PLAN && $section->enabled == 1)
                 <section class="choose-plan-section">
                     <div class="container">
                         <h2 class="choose-plan-title">{{ $section->title }}</h2>
-                        {!! $section->content !!}
+                        <p class="choose-plan-subtitle">{!! $section->content !!}</p>
                         <label class="choose-plan-label">Nutrition plans</label>
                         <div class="row">
                         <div class="mb-4 col-md-4">
@@ -827,7 +877,7 @@
                     </div>
                 </section>
             @endif
-            @if($section->order == 6 && $section->enabled == 1)
+            @if($section->section_type == \App\Models\Section::TYPE_FIND_YOUR_SPORT && $section->enabled == 1)
                  <!-- sport nutrition Section -->
                 <section class="sport-nutrition-promo">
                     <div class="sport-nutrition-promo__container">
@@ -837,7 +887,7 @@
                         <form action="#" id="sport-form">
                             <div class="sport-nutrition-promo__content">
                                 <h2 class="sport-nutrition-promo__title">{{ $section->title }}</h2>
-                                {!! $section->content !!}
+                                <p class="sport-nutrition-promo__desc">{!! $section->content !!}</p>
                                 <div class="sport-nutrition-promo__form">
                                 <select name="sport" id="sport" required>
                                     <option value="">Select Your Sport</option>
@@ -881,7 +931,9 @@
                             </div>
                         </form>
                         <img
-                            src="{{ webAssets('storage/' . $section->banner_image[0]) }}"
+                            @if(!empty($section->banner_image[0]))
+                                src="{{ asset('storage/' . $section->banner_image[0]) }}"
+                            @endif
                             alt="Find your sport"
                             class="sport-nutrition-promo__bg--left sport-nutrition-promo__bg"
                         />
@@ -902,7 +954,9 @@
                             <button class="btn btn-signup">Start the quiz</button>
                         </div>
                         <img
-                            src="{{ frontAssets('images/eat better.webp') }}"
+                            @if(!empty($section->banner_image[1]))
+                                src="{{ asset('storage/' . $section->banner_image[1]) }}"
+                            @endif
                             alt="Nutrition quiz"
                             class="sport-nutrition-promo__bg--right sport-nutrition-promo__bg"
                         />
@@ -911,187 +965,223 @@
                 </section>
 
             @endif
+            @if($section->section_type == \App\Models\Section::TYPE_REAL_STORIES && $section->enabled == 1)
+                <!-- testimonial slider section -->
+                <section class="testimonial-section">
+                <div class="container">
+                    <h2 class="section-title text-center text-md-start">
+                    REAL STORIES. REAL RESULTS.
+                    </h2>
+
+                    <div
+                    id="testimonialCarousel"
+                    class="carousel slide"
+                    data-bs-ride="carousel"
+                    >
+                    <div class="carousel-inner">
+                        <!-- Testimonial 1 -->
+                        <div class="carousel-item active">
+                        <div
+                            class="testimonial-card d-flex flex-column flex-md-row align-items-center"
+                        >
+                            <div class="testimonial-image-wrapper mb-4 mb-md-0 me-md-5">
+                            <img
+                                src="images/testimonial-slide1.webp"
+                                alt="Cohen Crispin"
+                                class="img-fluid rounded-3"
+                            />
+                            </div>
+                            <div class="testimonial-content text-center text-md-start">
+                            <div class="quote-icon web">
+                                <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="36"
+                                height="36"
+                                viewBox="0 0 36 36"
+                                fill="none"
+                                >
+                                <path
+                                    d="M31.2649 7.26638C31.0583 6.94451 30.7012 6.75 30.319 6.75H22.5C20.6389 6.75 19.125 8.26391 19.125 10.125V18C19.125 19.8611 20.6389 21.375 22.5 21.375H24.7336C23.6888 24.4007 22.7967 25.8497 19.8281 27.0867C19.3327 27.2933 19.0524 27.8206 19.158 28.3469C19.2634 28.8721 19.7248 29.25 20.261 29.25H20.2633C26.4563 29.239 30.0136 26.7561 32.5361 20.6873C33.3413 18.7811 33.75 16.741 33.75 14.625C33.75 11.3708 32.7656 9.59873 31.2649 7.26638ZM13.444 6.75H5.625C3.76391 6.75 2.25 8.26391 2.25 10.125V18C2.25 19.8611 3.76391 21.375 5.625 21.375H7.85858C6.81379 24.4007 5.92166 25.8497 2.95312 27.0867C2.45767 27.2933 2.17744 27.8206 2.28296 28.3469C2.38837 28.8721 2.84985 29.25 3.38602 29.25H3.38828C9.58129 29.239 13.1386 26.7561 15.6611 20.6873C16.4663 18.7811 16.875 16.741 16.875 14.625C16.875 11.3708 15.8906 9.59873 14.3899 7.26638C14.1833 6.94451 13.8263 6.75 13.444 6.75Z"
+                                    fill="#080808"
+                                />
+                                </svg>
+                            </div>
+                            <p class="quote-text">
+                                <span class="quote-icon mobile"
+                                ><svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="36"
+                                    height="36"
+                                    viewBox="0 0 36 36"
+                                    fill="none"
+                                >
+                                    <path
+                                    d="M31.2649 7.26638C31.0583 6.94451 30.7012 6.75 30.319 6.75H22.5C20.6389 6.75 19.125 8.26391 19.125 10.125V18C19.125 19.8611 20.6389 21.375 22.5 21.375H24.7336C23.6888 24.4007 22.7967 25.8497 19.8281 27.0867C19.3327 27.2933 19.0524 27.8206 19.158 28.3469C19.2634 28.8721 19.7248 29.25 20.261 29.25H20.2633C26.4563 29.239 30.0136 26.7561 32.5361 20.6873C33.3413 18.7811 33.75 16.741 33.75 14.625C33.75 11.3708 32.7656 9.59873 31.2649 7.26638ZM13.444 6.75H5.625C3.76391 6.75 2.25 8.26391 2.25 10.125V18C2.25 19.8611 3.76391 21.375 5.625 21.375H7.85858C6.81379 24.4007 5.92166 25.8497 2.95312 27.0867C2.45767 27.2933 2.17744 27.8206 2.28296 28.3469C2.38837 28.8721 2.84985 29.25 3.38602 29.25H3.38828C9.58129 29.239 13.1386 26.7561 15.6611 20.6873C16.4663 18.7811 16.875 16.741 16.875 14.625C16.875 11.3708 15.8906 9.59873 14.3899 7.26638C14.1833 6.94451 13.8263 6.75 13.444 6.75Z"
+                                    fill="#080808"
+                                    /></svg>
+                                </span>
+                                Kerry's expertise and exceptional reasoning have proven
+                                invaluable within our high-performance team. I
+                                enthusiastically recommend his services to anyone seeking to
+                                enhance their health and performance.
+                            </p>
+                            <p class="author-name fw-bold mb-1">Cohen Crispin</p>
+                            <p class="author-title text-muted">
+                                Strength and Conditioning Coach (ASCA EL3) Bachelor of sport
+                                & exercise science
+                            </p>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Carousel Controls for Desktop -->
+                    <button
+                        class="carousel-control-prev d-none d-md-flex"
+                        type="button"
+                        data-bs-target="#testimonialCarousel"
+                        data-bs-slide="prev"
+                    >
+                        <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="9"
+                        height="14"
+                        viewBox="0 0 9 14"
+                        fill="none"
+                        >
+                        <path
+                            d="M0.748587 6.23192C0.323512 6.65699 0.323512 7.34732 0.748587 7.77239L6.18955 13.2134C6.61462 13.6384 7.30495 13.6384 7.73002 13.2134C8.1551 12.7883 8.1551 12.098 7.73002 11.6729L3.0576 7.00046L7.72662 2.32803C8.1517 1.90295 8.1517 1.21263 7.72662 0.787556C7.30155 0.362481 6.61122 0.362481 6.18615 0.787556L0.745186 6.22852L0.748587 6.23192Z"
+                            fill="#3B3B3B"
+                        />
+                        </svg>
+                    </button>
+                    <button
+                        class="carousel-control-next d-none d-md-flex"
+                        type="button"
+                        data-bs-target="#testimonialCarousel"
+                        data-bs-slide="next"
+                    >
+                        <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="9"
+                        height="14"
+                        viewBox="0 0 9 14"
+                        fill="none"
+                        >
+                        <path
+                            d="M8.25141 7.76808C8.67649 7.34301 8.67649 6.65268 8.25141 6.22761L2.81045 0.786644C2.38538 0.361568 1.69505 0.361568 1.26998 0.786644C0.844903 1.21172 0.844903 1.90204 1.26998 2.32712L5.9424 6.99954L1.27338 11.672C0.848303 12.097 0.848303 12.7874 1.27338 13.2124C1.69845 13.6375 2.38878 13.6375 2.81385 13.2124L8.25481 7.77148L8.25141 7.76808Z"
+                            fill="#3B3B3B"
+                        />
+                        </svg>
+                    </button>
+
+                    <!-- Carousel Controls for Mobile -->
+                    <div
+                        class="carousel-controls-mobile d-flex d-md-none justify-content-center mt-4"
+                    >
+                        <button
+                        class="carousel-control-prev-mobile"
+                        type="button"
+                        data-bs-target="#testimonialCarousel"
+                        data-bs-slide="prev"
+                        >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="9"
+                            height="16"
+                            viewBox="0 0 9 16"
+                            fill="none"
+                        >
+                            <path
+                            d="M0.714963 7.13591C0.236753 7.61412 0.236753 8.39073 0.714963 8.86894L6.83605 14.99C7.31426 15.4682 8.09087 15.4682 8.56908 14.99C9.04729 14.5118 9.04729 13.7352 8.56908 13.257L3.3126 8.00051L8.56525 2.74403C9.04346 2.26582 9.04346 1.48921 8.56525 1.011C8.08704 0.532791 7.31043 0.532791 6.83222 1.011L0.711138 7.13208L0.714963 7.13591Z"
+                            fill="#3B3B3B"
+                            />
+                        </svg>
+                        </button>
+                        <button
+                        class="carousel-control-next-mobile ms-3"
+                        type="button"
+                        data-bs-target="#testimonialCarousel"
+                        data-bs-slide="next"
+                        >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="9"
+                            height="16"
+                            viewBox="0 0 9 16"
+                            fill="none"
+                        >
+                            <path
+                            d="M8.28504 8.86409C8.76325 8.38588 8.76325 7.60927 8.28504 7.13106L2.16395 1.00997C1.68574 0.531765 0.909132 0.531765 0.430923 1.00997C-0.0472868 1.48818 -0.0472868 2.2648 0.430923 2.74301L5.6874 7.99949L0.434748 13.256C-0.0434614 13.7342 -0.0434614 14.5108 0.434748 14.989C0.912958 15.4672 1.68957 15.4672 2.16778 14.989L8.28886 8.86792L8.28504 8.86409Z"
+                            fill="#3B3B3B"
+                            />
+                        </svg>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+                </section>
+            @endif
+            @if($section->section_type == \App\Models\Section::TYPE_PARTNERS && $section->enabled == 1)
+                <!-- trusted partners section -->
+                <section class="partners-section py-5">
+                <div class="container">
+                    <h2 class="section-title text-center text-md-start mb-5">
+                    {!! $section->title !!}
+                    </h2>
+                </div>
+
+                
+                <div class="slider-container">
+                    <div class="logo-row slide-left">
+                        <!-- Duplicate content for seamless loop -->
+                        @if(!empty($section->banner_image) && is_array($section->banner_image))
+                            @foreach($section->banner_image as $bannerImage)
+                                <div class="logo-card">
+                                    <img 
+                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}" 
+                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}" 
+                                    />
+                                </div>
+                            @endforeach
+                            @foreach($section->banner_image as $bannerImage)
+                                <div class="logo-card">
+                                    <img 
+                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}" 
+                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}" 
+                                    />
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+
+                    <div class="logo-row slide-right">
+                        <!-- Duplicate content for seamless loop -->
+                        @if(!empty($section->image) && is_array($section->image))
+                            @foreach($section->image as $bannerImage)
+                                <div class="logo-card">
+                                    <img 
+                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}" 
+                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}" 
+                                    />
+                                </div>
+                            @endforeach
+                            @foreach($section->image as $bannerImage)
+                                <div class="logo-card">
+                                    <img 
+                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}" 
+                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}" 
+                                    />
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+
+                </section>
+            @endif
         @endforeach
     @endif
-    
-    <!-- testimonial slider section -->
-    <section class="testimonial-section">
-      <div class="container">
-        <h2 class="section-title text-center text-md-start">
-          REAL STORIES. REAL RESULTS.
-        </h2>
-
-        <div
-          id="testimonialCarousel"
-          class="carousel slide"
-          data-bs-ride="carousel"
-        >
-          <div class="carousel-inner">
-            <!-- Testimonial 1 -->
-            <div class="carousel-item active">
-              <div
-                class="testimonial-card d-flex flex-column flex-md-row align-items-center"
-              >
-                <div class="testimonial-image-wrapper mb-4 mb-md-0 me-md-5">
-                  <img
-                    src="images/testimonial-slide1.webp"
-                    alt="Cohen Crispin"
-                    class="img-fluid rounded-3"
-                  />
-                </div>
-                <div class="testimonial-content text-center text-md-start">
-                  <div class="quote-icon web">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="36"
-                      height="36"
-                      viewBox="0 0 36 36"
-                      fill="none"
-                    >
-                      <path
-                        d="M31.2649 7.26638C31.0583 6.94451 30.7012 6.75 30.319 6.75H22.5C20.6389 6.75 19.125 8.26391 19.125 10.125V18C19.125 19.8611 20.6389 21.375 22.5 21.375H24.7336C23.6888 24.4007 22.7967 25.8497 19.8281 27.0867C19.3327 27.2933 19.0524 27.8206 19.158 28.3469C19.2634 28.8721 19.7248 29.25 20.261 29.25H20.2633C26.4563 29.239 30.0136 26.7561 32.5361 20.6873C33.3413 18.7811 33.75 16.741 33.75 14.625C33.75 11.3708 32.7656 9.59873 31.2649 7.26638ZM13.444 6.75H5.625C3.76391 6.75 2.25 8.26391 2.25 10.125V18C2.25 19.8611 3.76391 21.375 5.625 21.375H7.85858C6.81379 24.4007 5.92166 25.8497 2.95312 27.0867C2.45767 27.2933 2.17744 27.8206 2.28296 28.3469C2.38837 28.8721 2.84985 29.25 3.38602 29.25H3.38828C9.58129 29.239 13.1386 26.7561 15.6611 20.6873C16.4663 18.7811 16.875 16.741 16.875 14.625C16.875 11.3708 15.8906 9.59873 14.3899 7.26638C14.1833 6.94451 13.8263 6.75 13.444 6.75Z"
-                        fill="#080808"
-                      />
-                    </svg>
-                  </div>
-                  <p class="quote-text">
-                    <span class="quote-icon mobile"
-                      ><svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="36"
-                        height="36"
-                        viewBox="0 0 36 36"
-                        fill="none"
-                      >
-                        <path
-                          d="M31.2649 7.26638C31.0583 6.94451 30.7012 6.75 30.319 6.75H22.5C20.6389 6.75 19.125 8.26391 19.125 10.125V18C19.125 19.8611 20.6389 21.375 22.5 21.375H24.7336C23.6888 24.4007 22.7967 25.8497 19.8281 27.0867C19.3327 27.2933 19.0524 27.8206 19.158 28.3469C19.2634 28.8721 19.7248 29.25 20.261 29.25H20.2633C26.4563 29.239 30.0136 26.7561 32.5361 20.6873C33.3413 18.7811 33.75 16.741 33.75 14.625C33.75 11.3708 32.7656 9.59873 31.2649 7.26638ZM13.444 6.75H5.625C3.76391 6.75 2.25 8.26391 2.25 10.125V18C2.25 19.8611 3.76391 21.375 5.625 21.375H7.85858C6.81379 24.4007 5.92166 25.8497 2.95312 27.0867C2.45767 27.2933 2.17744 27.8206 2.28296 28.3469C2.38837 28.8721 2.84985 29.25 3.38602 29.25H3.38828C9.58129 29.239 13.1386 26.7561 15.6611 20.6873C16.4663 18.7811 16.875 16.741 16.875 14.625C16.875 11.3708 15.8906 9.59873 14.3899 7.26638C14.1833 6.94451 13.8263 6.75 13.444 6.75Z"
-                          fill="#080808"
-                        /></svg>
-                      </span>
-                    Kerry's expertise and exceptional reasoning have proven
-                    invaluable within our high-performance team. I
-                    enthusiastically recommend his services to anyone seeking to
-                    enhance their health and performance.
-                  </p>
-                  <p class="author-name fw-bold mb-1">Cohen Crispin</p>
-                  <p class="author-title text-muted">
-                    Strength and Conditioning Coach (ASCA EL3) Bachelor of sport
-                    & exercise science
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Carousel Controls for Desktop -->
-          <button
-            class="carousel-control-prev d-none d-md-flex"
-            type="button"
-            data-bs-target="#testimonialCarousel"
-            data-bs-slide="prev"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="9"
-              height="14"
-              viewBox="0 0 9 14"
-              fill="none"
-            >
-              <path
-                d="M0.748587 6.23192C0.323512 6.65699 0.323512 7.34732 0.748587 7.77239L6.18955 13.2134C6.61462 13.6384 7.30495 13.6384 7.73002 13.2134C8.1551 12.7883 8.1551 12.098 7.73002 11.6729L3.0576 7.00046L7.72662 2.32803C8.1517 1.90295 8.1517 1.21263 7.72662 0.787556C7.30155 0.362481 6.61122 0.362481 6.18615 0.787556L0.745186 6.22852L0.748587 6.23192Z"
-                fill="#3B3B3B"
-              />
-            </svg>
-          </button>
-          <button
-            class="carousel-control-next d-none d-md-flex"
-            type="button"
-            data-bs-target="#testimonialCarousel"
-            data-bs-slide="next"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="9"
-              height="14"
-              viewBox="0 0 9 14"
-              fill="none"
-            >
-              <path
-                d="M8.25141 7.76808C8.67649 7.34301 8.67649 6.65268 8.25141 6.22761L2.81045 0.786644C2.38538 0.361568 1.69505 0.361568 1.26998 0.786644C0.844903 1.21172 0.844903 1.90204 1.26998 2.32712L5.9424 6.99954L1.27338 11.672C0.848303 12.097 0.848303 12.7874 1.27338 13.2124C1.69845 13.6375 2.38878 13.6375 2.81385 13.2124L8.25481 7.77148L8.25141 7.76808Z"
-                fill="#3B3B3B"
-              />
-            </svg>
-          </button>
-
-          <!-- Carousel Controls for Mobile -->
-          <div
-            class="carousel-controls-mobile d-flex d-md-none justify-content-center mt-4"
-          >
-            <button
-              class="carousel-control-prev-mobile"
-              type="button"
-              data-bs-target="#testimonialCarousel"
-              data-bs-slide="prev"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="9"
-                height="16"
-                viewBox="0 0 9 16"
-                fill="none"
-              >
-                <path
-                  d="M0.714963 7.13591C0.236753 7.61412 0.236753 8.39073 0.714963 8.86894L6.83605 14.99C7.31426 15.4682 8.09087 15.4682 8.56908 14.99C9.04729 14.5118 9.04729 13.7352 8.56908 13.257L3.3126 8.00051L8.56525 2.74403C9.04346 2.26582 9.04346 1.48921 8.56525 1.011C8.08704 0.532791 7.31043 0.532791 6.83222 1.011L0.711138 7.13208L0.714963 7.13591Z"
-                  fill="#3B3B3B"
-                />
-              </svg>
-            </button>
-            <button
-              class="carousel-control-next-mobile ms-3"
-              type="button"
-              data-bs-target="#testimonialCarousel"
-              data-bs-slide="next"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="9"
-                height="16"
-                viewBox="0 0 9 16"
-                fill="none"
-              >
-                <path
-                  d="M8.28504 8.86409C8.76325 8.38588 8.76325 7.60927 8.28504 7.13106L2.16395 1.00997C1.68574 0.531765 0.909132 0.531765 0.430923 1.00997C-0.0472868 1.48818 -0.0472868 2.2648 0.430923 2.74301L5.6874 7.99949L0.434748 13.256C-0.0434614 13.7342 -0.0434614 14.5108 0.434748 14.989C0.912958 15.4672 1.68957 15.4672 2.16778 14.989L8.28886 8.86792L8.28504 8.86409Z"
-                  fill="#3B3B3B"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- trusted partners section -->
-    <section class="partners-section py-5">
-      <div class="container">
-        <h2 class="section-title text-center text-md-start mb-5">
-          TRUSTED BY ELITE TEAMS<br />AND ORGANISATIONS
-        </h2>
-      </div>
-
-      <div class="slider-container marquee-main">
-        <div class="logo-row slide-left" id="marquee-top" >
-            <div class="marquee__group"></div>
-            <div aria-hidden="true" class="marquee__group"></div>
-          <!-- Duplicate content for seamless loop -->
-        </div>
-
-        <div class="logo-row slide-right" id="marquee-bottom">
-          <!-- Duplicate content for seamless loop -->
-           <div class="marquee__group"></div>
-            <div aria-hidden="true" class="marquee__group"></div>
-        </div>
-      </div>
-    </section>
 
     <!-- contact sectoin -->
     <section class="contact-section py-5">

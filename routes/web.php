@@ -177,6 +177,7 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		Route::put('/sections/{section}', [SectionController::class, 'update'])->name('sections.update');
 		Route::delete('/sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy');
 		Route::post('/sections/reorder', [SectionController::class, 'reorder'])->name('sections.reorder');
+Route::get('/sections/used-types', [SectionController::class, 'getUsedSectionTypes'])->name('sections.used-types');
 
 		// Category
 		Route::get('categories', [CategoryController::class, 'index'])->name('admin.categories.index');

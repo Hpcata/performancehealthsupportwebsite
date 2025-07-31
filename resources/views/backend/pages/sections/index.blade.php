@@ -43,25 +43,27 @@
 					<table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th class="no-sort" style="width: 40px;"></th>
                                 <th class="no-sort">#</th>
 								<th>Title</th>
+                                <th>Section Type</th>
                                 <th>Content</th>
-                                <th>Order</th>
                                 <th>Enabled</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="sortable-section-list">
+                        <tbody>
                             @foreach ($sections as $section)
                                 <tr data-id="{{ $section->id }}">
-                                    <td class="drag-handle text-center" style="cursor: move;">
-                                        <i class="icofont-expand-alt" style="font-size:30px;"></i>
-                                    </td>
                                     <td>{{ $section->id }}</td>
                                     <td>{{ $section->title }}</td>
+                                    <td>
+                                        @if($section->section_type)
+                                            <span class="badge bg-primary">{{ \App\Models\Section::getSectionTypes()[$section->section_type] ?? $section->section_type }}</span>
+                                        @else
+                                            <span class="badge bg-secondary">Not Set</span>
+                                        @endif
+                                    </td>
                                     <td>{{ Str::limit(strip_tags($section->content), 50) }}</td>
-                                    <td>{{ $section->order }}</td>
                                     <td>{{ $section->enabled ? 'Yes' : 'No' }}</td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic outlined example">
@@ -86,39 +88,5 @@
 </div>
 @endsection
 @push('scripts')
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/smoothness/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-
-    <script>
-        $(function() {
-            $('#sortable-section-list').sortable({
-                update: function(event, ui) {
-                    let sortedIDs = [];
-                    $('#sortable-section-list tr').each(function(index) {
-                        sortedIDs.push($(this).data('id'));
-                    });
-
-                    $.ajax({
-                        url: '{{ route("sections.reorder") }}',
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            order: sortedIDs
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                console.log('Order updated successfully.');
-                            } else {
-                                alert('Order update failed.');
-                            }
-                        },
-                        error: function() {
-                            alert('Something went wrong.');
-                        }
-                    });
-                }
-            });
-        });
-    </script>
+    <!-- No scripts needed for sections list -->
 @endpush

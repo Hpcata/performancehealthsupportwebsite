@@ -75,9 +75,19 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-md-12">
+                                <label for="section_type" class="form-label">Section Type</label>
+                                <select name="section_type" id="section_type" class="form-control" required>
+                                    <option value="">Select Section Type</option>
+                                    @foreach (\App\Models\Section::getSectionTypes() as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                <small class="form-text text-muted">Each section type can only be used once across all sections.</small>
+                            </div>
                             <div class="form-group">
                                 <label for="content" class="form-label">Content</label>
-                                <textarea name="content" id="content" class="form-control ckeditor" rows="5"></textarea>
+                                <textarea name="content" id="content" class="form-control" rows="5"></textarea>
                             </div>
 
                             <div class="form-group">
@@ -123,6 +133,22 @@
                     resize_enabled: false
                 });
             }
+
+            // Load used section types and disable them in dropdown
+            fetch('{{ route("sections.used-types") }}')
+                .then(response => response.json())
+                .then(data => {
+                    const usedTypes = data.used_types;
+                    const sectionTypeSelect = document.getElementById('section_type');
+                    
+                    Array.from(sectionTypeSelect.options).forEach(option => {
+                        if (usedTypes.includes(option.value)) {
+                            option.disabled = true;
+                            option.text += ' (Already Used)';
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading used section types:', error));
         });
     
         Dropzone.autoDiscover = false;
@@ -179,18 +205,22 @@
             })
             .then(response => response.json())
             .then(data => {
-                const pageId = data.section.page_id;
-                const message = encodeURIComponent('Section created successfully!');
+                if (data.success) {
+                    const pageId = data.section.page_id;
+                    const message = encodeURIComponent('Section created successfully!');
 
-                // Laravel route with placeholder we can replace
-                let redirectUrl = "{{ route('sections.index', ['page' => '__ID__']) }}";
+                    // Laravel route with placeholder we can replace
+                    let redirectUrl = "{{ route('sections.index', ['page' => '__ID__']) }}";
 
-                // Replace placeholder with actual page ID
-                redirectUrl = redirectUrl.replace('__ID__', pageId);
+                    // Replace placeholder with actual page ID
+                    redirectUrl = redirectUrl.replace('__ID__', pageId);
 
-                // Add message
-                redirectUrl += `?message=${message}`;
-                window.location.href = redirectUrl;
+                    // Add message
+                    redirectUrl += `?message=${message}`;
+                    window.location.href = redirectUrl;
+                } else {
+                    alert(data.message || 'Something went wrong!');
+                }
             })
             .catch(error => {
                 console.error(error);

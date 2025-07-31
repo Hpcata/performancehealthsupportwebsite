@@ -26,6 +26,7 @@ class SectionController extends Controller
     {
         $request->validate([
             'title' => 'required|string',
+            'section_type' => 'required|string|in:' . implode(',', array_keys(Section::getSectionTypes())) . '|unique:sections,section_type',
             'page_id' => 'required|exists:pages,id',
             'content' => 'nullable|string',
             'enabled' => 'required|boolean',
@@ -60,6 +61,7 @@ class SectionController extends Controller
             // Save into DB
             $section = Section::create([
                 'title' => $request->title,
+                'section_type' => $request->section_type,
                 'page_id' => $request->page_id,
                 'content' => $content,
                 'enabled' => $request->enabled,
@@ -94,6 +96,7 @@ class SectionController extends Controller
     {
         $request->validate([
             'title' => 'required|string',
+            'section_type' => 'required|string|in:' . implode(',', array_keys(Section::getSectionTypes())) . '|unique:sections,section_type,' . $section->id,
             'page_id' => 'required|exists:pages,id',
             'content' => 'nullable|string',
             'enabled' => 'required|boolean',
@@ -104,6 +107,8 @@ class SectionController extends Controller
 
         try {
             $content = $request->has('content') ? html_entity_decode($request->content) : null;
+            $removedImages = $request->has('removed_images') ? $request->removed_images : [];
+            $removedBannerImages = $request->has('removed_banner_images') ? $request->removed_banner_images : [];
 
             // Existing images (from hidden inputs or model)
             $existingImages = $section->image ?? [];
@@ -128,9 +133,20 @@ class SectionController extends Controller
             $allImages = array_merge($existingImages, $newImages);
             $allBannerImages = array_merge($existingBannerImages, $newBannerImages);
 
+            if(!empty($removedImages)) {
+                $allImages = array_diff($allImages, $removedImages);
+                $allImages = array_values($allImages);
+            }
+
+            if(!empty($removedBannerImages)) {
+                $allBannerImages = array_diff($allBannerImages, $removedBannerImages);
+                $allBannerImages = array_values($allBannerImages);
+            }
+
             // Update
             $section->update([
                 'title' => $request->title,
+                'section_type' => $request->section_type,
                 'page_id' => $request->page_id,
                 'content' => $content,
                 'enabled' => $request->enabled,
@@ -169,5 +185,11 @@ class SectionController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    public function getUsedSectionTypes()
+    {
+        $usedTypes = Section::whereNotNull('section_type')->pluck('section_type')->toArray();
+        return response()->json(['used_types' => $usedTypes]);
     }
 }
