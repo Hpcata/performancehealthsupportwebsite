@@ -32,7 +32,7 @@
         .modal-content {
             filter: none !important;
         }
-        
+
         /* Blur the rest of the page when the modal is open */
         .blur-background {
             filter: blur(5px); /* Adjust the blur value */
@@ -46,9 +46,9 @@
 
     </style>
     @php
-        $showHeader = !empty($user->front_logo) && 
-                    !empty($user->front_title) && 
-                    !empty($user->front_description) && 
+        $showHeader = !empty($user->front_logo) &&
+                    !empty($user->front_title) &&
+                    !empty($user->front_description) &&
                     !empty($user->about_us_image);
 
         if($isAuthenticated){
@@ -333,7 +333,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 <div class="feature-icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34"
                                                         viewBox="0 0 34 34" fill="none">
-                                                        <path 
+                                                        <path
                                                         d="M26.2489 2.10156H19.9489C19.7417 2.10155 19.5391 2.16285 19.3666 2.27776C19.1942 2.39268 19.0596 2.55605 18.9798 2.74731L16.7989 7.98156L14.6181 2.74731C14.5383 2.55605 14.4037 2.39268 14.2312 2.27776C14.0588 2.16285 13.8562 2.10155 13.6489 2.10156H7.34892C7.17601 2.10155 7.00578 2.14423 6.85334 2.22582C6.7009 2.30742 6.57096 2.42539 6.47508 2.56927C6.37919 2.71315 6.32032 2.87849 6.30369 3.05059C6.28707 3.22269 6.3132 3.39624 6.37977 3.55581L10.9872 14.6155C9.43509 15.8258 8.29967 17.4906 7.73938 19.3773C7.17909 21.2641 7.2219 23.2787 7.86184 25.14C8.50178 27.0013 9.70691 28.6163 11.309 29.7596C12.9111 30.9029 14.8302 31.5175 16.7984 31.5175C18.7666 31.5175 20.6857 30.9029 22.2878 29.7596C23.8899 28.6163 25.095 27.0013 25.7349 25.14C26.3749 23.2787 26.4177 21.2641 25.8574 19.3773C25.2971 17.4906 24.1617 15.8258 22.6096 14.6155L27.2181 3.55581C27.2846 3.39624 27.3108 3.22269 27.2941 3.05059C27.2775 2.87849 27.2186 2.71315 27.1228 2.56927C27.0269 2.42539 26.8969 2.30742 26.7445 2.22582C26.592 2.14423 26.4218 2.10155 26.2489 2.10156ZM8.92392 4.20156H12.9486L16.4566 12.6194C15.1904 12.6635 13.9463 12.9639 12.7995 13.5025L8.92392 4.20156ZM24.1489 22.0516C24.1489 23.5053 23.7178 24.9263 22.9102 26.135C22.1026 27.3437 20.9547 28.2858 19.6116 28.8421C18.2686 29.3984 16.7908 29.5439 15.365 29.2603C13.9392 28.9767 12.6296 28.2767 11.6017 27.2488C10.5738 26.2209 9.87375 24.9112 9.59014 23.4855C9.30654 22.0597 9.4521 20.5819 10.0084 19.2388C10.5647 17.8958 11.5068 16.7479 12.7155 15.9403C13.9242 15.1326 15.3452 14.7016 16.7989 14.7016C18.7476 14.7038 20.6158 15.4789 21.9937 16.8568C23.3716 18.2347 24.1467 20.1029 24.1489 22.0516ZM20.7994 13.5025C20.1661 13.2028 19.5011 12.9753 18.817 12.8242L17.9361 10.7116L20.6493 4.20156H24.6739L20.7994 13.5025Z"
                                                             fill="#83B1F9" />
                                                         <path d="M21.1543 19.595L18.8065 19.2369L17.746 16.9794C17.6613 16.7988 17.5269 16.6459 17.3585 16.5389C17.1901 16.4319 16.9947 16.375 16.7952 16.375C16.5956 16.375 16.4002 16.4319 16.2319 16.5389C16.0635 16.6459 15.9291 16.7988 15.8444 16.9794L14.7839 19.2369L12.4361 19.595C12.2453 19.6242 12.0663 19.7055 11.9187 19.8299C11.7711 19.9542 11.6606 20.1169 11.5994 20.2999C11.5382 20.483 11.5287 20.6794 11.5718 20.8675C11.6149 21.0556 11.7091 21.2282 11.8439 21.3663L13.5733 23.1398L13.1627 25.6598C13.131 25.8543 13.1546 26.0538 13.231 26.2355C13.3073 26.4172 13.4333 26.5738 13.5944 26.6872C13.7555 26.8007 13.9454 26.8666 14.1422 26.8772C14.339 26.8879 14.5348 26.843 14.7073 26.7476L16.7957 25.5894L18.8831 26.7444C19.0556 26.8398 19.2514 26.8848 19.4482 26.8741C19.645 26.8634 19.8348 26.7976 19.9959 26.6841C20.1571 26.5706 20.283 26.4141 20.3594 26.2324C20.4357 26.0507 20.4594 25.8512 20.4277 25.6566L20.0171 23.1366L21.7465 21.3632C21.8804 21.225 21.9738 21.0526 22.0164 20.8649C22.059 20.6773 22.0492 20.4815 21.9881 20.299C21.927 20.1165 21.8169 19.9543 21.6698 19.8301C21.5228 19.706 21.3444 19.6246 21.1543 19.595ZM18.1439 22.0499C18.0292 22.1675 17.9437 22.3104 17.8943 22.467C17.8449 22.6237 17.8329 22.7897 17.8594 22.9518L18.0074 23.858L17.3039 23.4695C17.1485 23.3836 16.9738 23.3386 16.7962 23.3386C16.6187 23.3386 16.444 23.3836 16.2886 23.4695L15.5851 23.858L15.7331 22.9518C15.7594 22.7896 15.7472 22.6235 15.6976 22.4669C15.648 22.3102 15.5624 22.1674 15.4475 22.0499L14.7745 21.36L15.6565 21.2256C15.8269 21.1995 15.9883 21.1318 16.1264 21.0285C16.2644 20.9253 16.375 20.7896 16.4482 20.6334L16.7957 19.8953L17.1433 20.6355C17.2164 20.7917 17.327 20.9274 17.465 21.0306C17.6031 21.1339 17.7645 21.2016 17.935 21.2277L18.817 21.3621L18.1439 22.0499ZM30.4457 20.9999H28.3457C28.0672 20.9999 27.8002 21.1105 27.6032 21.3074C27.4063 21.5043 27.2957 21.7714 27.2957 22.0499C27.2957 22.3284 27.4063 22.5954 27.6032 22.7923C27.8002 22.9893 28.0672 23.0999 28.3457 23.0999H30.4457C30.7242 23.0999 30.9913 22.9893 31.1882 22.7923C31.3851 22.5954 31.4957 22.3284 31.4957 22.0499C31.4957 21.7714 31.3851 21.5043 31.1882 21.3074C30.9913 21.1105 30.7242 20.9999 30.4457 20.9999ZM28.3457 19.9499C28.6242 19.9498 28.8912 19.8392 29.0881 19.6422L30.1381 18.5922C30.3293 18.3942 30.4352 18.129 30.4328 17.8537C30.4304 17.5784 30.3199 17.315 30.1253 17.1203C29.9306 16.9256 29.6672 16.8152 29.3919 16.8128C29.1166 16.8104 28.8514 16.9163 28.6534 17.1075L27.6034 18.1575C27.4566 18.3044 27.3566 18.4915 27.3161 18.6951C27.2756 18.8988 27.2964 19.1098 27.3758 19.3017C27.4553 19.4935 27.5898 19.6575 27.7625 19.7729C27.9351 19.8882 28.1381 19.9498 28.3457 19.9499ZM29.0881 24.4575C28.89 24.2663 28.6248 24.1604 28.3495 24.1628C28.0742 24.1652 27.8108 24.2756 27.6161 24.4703C27.4215 24.665 27.311 24.9284 27.3086 25.2037C27.3063 25.479 27.4121 25.7442 27.6034 25.9422L28.6534 26.9922C28.8514 27.1835 29.1166 27.2893 29.3919 27.2869C29.6672 27.2846 29.9306 27.1741 30.1253 26.9794C30.3199 26.7848 30.4304 26.5214 30.4328 26.2461C30.4352 25.9708 30.3293 25.7056 30.1381 25.5075L29.0881 24.4575ZM5.2457 20.9999H3.1457C2.86723 20.9999 2.60015 21.1105 2.40324 21.3074C2.20633 21.5043 2.0957 21.7714 2.0957 22.0499C2.0957 22.3284 2.20633 22.5954 2.40324 22.7923C2.60015 22.9893 2.86723 23.0999 3.1457 23.0999H5.2457C5.52418 23.0999 5.79125 22.9893 5.98816 22.7923C6.18508 22.5954 6.2957 22.3284 6.2957 22.0499C6.2957 21.7714 6.18508 21.5043 5.98816 21.3074C5.79125 21.1105 5.52418 20.9999 5.2457 20.9999ZM4.93805 17.1075C4.74002 16.9163 4.47479 16.8104 4.19948 16.8128C3.92418 16.8152 3.66082 16.9256 3.46614 17.1203C3.27147 17.315 3.16104 17.5784 3.15865 17.8537C3.15625 18.129 3.26209 18.3942 3.45335 18.5922L4.50335 19.6422C4.70139 19.8335 4.96662 19.9393 5.24192 19.9369C5.51723 19.9346 5.78058 19.8241 5.97526 19.6294C6.16994 19.4348 6.28037 19.1714 6.28276 18.8961C6.28515 18.6208 6.17932 18.3556 5.98805 18.1575L4.93805 17.1075ZM4.50335 24.4575L3.45335 25.5075C3.35307 25.6044 3.27308 25.7203 3.21805 25.8484C3.16302 25.9765 3.13405 26.1142 3.13284 26.2537C3.13163 26.3931 3.1582 26.5313 3.21099 26.6604C3.26379 26.7894 3.34175 26.9067 3.44034 27.0053C3.53893 27.1038 3.65616 27.1818 3.7852 27.2346C3.91424 27.2874 4.05251 27.314 4.19192 27.3127C4.33134 27.3115 4.46912 27.2826 4.59723 27.2275C4.72533 27.1725 4.84119 27.0925 4.93805 26.9922L5.98805 25.9422C6.17932 25.7442 6.28515 25.479 6.28276 25.2037C6.28037 24.9284 6.16994 24.665 5.97526 24.4703C5.78058 24.2756 5.51723 24.1652 5.24192 24.1628C4.96662 24.1604 4.70139 24.2663 4.50335 24.4575Z"
@@ -514,7 +514,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 <div class="feature-content">
                                                     <h3>Planning Made Easy</h3>
                                                     <p>
-                                                    Get organised with shopping lists, menu plans, comp day nutrition guides. 
+                                                    Get organised with shopping lists, menu plans, comp day nutrition guides.
                                                     </p>
                                                 </div>
                                             </div>
@@ -585,7 +585,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                     <path d="M25.5106 8.85433V1.95312H18.6094" stroke="#83B1F9" stroke-width="2.3004" stroke-linecap="round" stroke-linejoin="round"/>
                                                     <path d="M17.4609 10.0045L25.5123 1.95312" stroke="#83B1F9" stroke-width="2.3004" stroke-linecap="round" stroke-linejoin="round"/>
                                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M24.3636 20.2646V23.7152C24.3649 24.0356 24.2993 24.3526 24.171 24.6461C24.0426 24.9396 23.8544 25.2031 23.6184 25.4197C23.3823 25.6362 23.1036 25.8011 22.8002 25.9037C22.4967 26.0063 22.1752 26.0445 21.8562 26.0156C18.3168 25.631 14.917 24.4216 11.9299 22.4845C9.15085 20.7186 6.79468 18.3624 5.02873 15.5833C3.08487 12.5827 1.87516 9.16633 1.49762 5.61106C1.46887 5.293 1.50667 4.97243 1.60861 4.66977C1.71055 4.36711 1.87439 4.08899 2.0897 3.85312C2.30501 3.61725 2.56708 3.4288 2.85921 3.29976C3.15135 3.17072 3.46715 3.10393 3.78652 3.10363H7.23712C7.79532 3.09813 8.33647 3.2958 8.75971 3.65979C9.18295 4.02377 9.45939 4.52924 9.53752 5.08197C9.6836 6.18616 9.95274 7.2708 10.3427 8.31404C10.4974 8.72572 10.5309 9.17314 10.4392 9.60327C10.3474 10.0334 10.1343 10.4282 9.82507 10.741L8.36432 12.2017C10.0017 15.0813 12.3859 17.4655 15.2655 19.1029L16.7263 17.6422C17.039 17.3329 17.4338 17.1198 17.864 17.0281C18.2941 16.9363 18.7415 16.9698 19.1532 17.1246C20.1964 17.5145 21.2811 17.7836 22.3853 17.9297C22.944 18.0085 23.4543 18.29 23.819 18.7205C24.1838 19.151 24.3776 19.7005 24.3636 20.2646Z" stroke="#83B1F9" stroke-width="2.3004" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    </svg>  
+                                                    </svg>
                                                 </div>
                                                 <div class="feature-content">
                                                     <h3>Kez On Call</h3>
@@ -951,7 +951,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             the quiz to test your nutrition knowledge and discover how to fuel
                             smarter—whether for performance, recovery, or everyday energy.
                             </p>
-                            <button class="btn btn-signup">Start the quiz</button>
+                            <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
                         </div>
                         <img
                             @if(!empty($section->banner_image[1]))
@@ -967,159 +967,91 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             @endif
             @if($section->section_type == \App\Models\Section::TYPE_REAL_STORIES && $section->enabled == 1)
                 <!-- testimonial slider section -->
+                {{-- Make this section dynamic --}}
                 <section class="testimonial-section">
-                <div class="container">
-                    <h2 class="section-title text-center text-md-start">
-                    REAL STORIES. REAL RESULTS.
-                    </h2>
+                    <div class="container">
+                        <h2 class="section-title text-center text-md-start">REAL STORIES. REAL RESULTS.</h2>
 
-                    <div
-                    id="testimonialCarousel"
-                    class="carousel slide"
-                    data-bs-ride="carousel"
-                    >
-                    <div class="carousel-inner">
-                        <!-- Testimonial 1 -->
-                        <div class="carousel-item active">
-                        <div
-                            class="testimonial-card d-flex flex-column flex-md-row align-items-center"
-                        >
-                            <div class="testimonial-image-wrapper mb-4 mb-md-0 me-md-5">
-                            <img
-                                src="images/testimonial-slide1.webp"
-                                alt="Cohen Crispin"
-                                class="img-fluid rounded-3"
-                            />
+                        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" >
+                            <div class="carousel-inner">
+                                @foreach($testimonials as $testimonial)
+                                <!-- Testimonial 1 -->
+                                <div class="carousel-item active">
+                                    <div class="d-flex flex-column flex-md-row align-items-center testimonial-card">
+                                        <div class="me-md-5 mb-4 mb-md-0 testimonial-image-wrapper">
+                                            @php
+                                                $testimonialImage = $testimonial->testimonialImage ? asset('storage' . $testimonial->testimonialImage->path . '/' . $testimonial->testimonialImage->name) : null;
+                                            @endphp
+                                            <img src="{{ $testimonialImage }}" alt="{{ $testimonial->name }}" class="img-fluid rounded-3"/>
+                                        </div>
+                                        <div class="text-md-start text-center testimonial-content">
+                                            <div class="quote-icon web">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                                                    <path
+                                                        d="M31.2649 7.26638C31.0583 6.94451 30.7012 6.75 30.319 6.75H22.5C20.6389 6.75 19.125 8.26391 19.125 10.125V18C19.125 19.8611 20.6389 21.375 22.5 21.375H24.7336C23.6888 24.4007 22.7967 25.8497 19.8281 27.0867C19.3327 27.2933 19.0524 27.8206 19.158 28.3469C19.2634 28.8721 19.7248 29.25 20.261 29.25H20.2633C26.4563 29.239 30.0136 26.7561 32.5361 20.6873C33.3413 18.7811 33.75 16.741 33.75 14.625C33.75 11.3708 32.7656 9.59873 31.2649 7.26638ZM13.444 6.75H5.625C3.76391 6.75 2.25 8.26391 2.25 10.125V18C2.25 19.8611 3.76391 21.375 5.625 21.375H7.85858C6.81379 24.4007 5.92166 25.8497 2.95312 27.0867C2.45767 27.2933 2.17744 27.8206 2.28296 28.3469C2.38837 28.8721 2.84985 29.25 3.38602 29.25H3.38828C9.58129 29.239 13.1386 26.7561 15.6611 20.6873C16.4663 18.7811 16.875 16.741 16.875 14.625C16.875 11.3708 15.8906 9.59873 14.3899 7.26638C14.1833 6.94451 13.8263 6.75 13.444 6.75Z"
+                                                        fill="#080808"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <p class="quote-text">
+                                                <span class="quote-icon mobile">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                                                    <path
+                                                    d="M31.2649 7.26638C31.0583 6.94451 30.7012 6.75 30.319 6.75H22.5C20.6389 6.75 19.125 8.26391 19.125 10.125V18C19.125 19.8611 20.6389 21.375 22.5 21.375H24.7336C23.6888 24.4007 22.7967 25.8497 19.8281 27.0867C19.3327 27.2933 19.0524 27.8206 19.158 28.3469C19.2634 28.8721 19.7248 29.25 20.261 29.25H20.2633C26.4563 29.239 30.0136 26.7561 32.5361 20.6873C33.3413 18.7811 33.75 16.741 33.75 14.625C33.75 11.3708 32.7656 9.59873 31.2649 7.26638ZM13.444 6.75H5.625C3.76391 6.75 2.25 8.26391 2.25 10.125V18C2.25 19.8611 3.76391 21.375 5.625 21.375H7.85858C6.81379 24.4007 5.92166 25.8497 2.95312 27.0867C2.45767 27.2933 2.17744 27.8206 2.28296 28.3469C2.38837 28.8721 2.84985 29.25 3.38602 29.25H3.38828C9.58129 29.239 13.1386 26.7561 15.6611 20.6873C16.4663 18.7811 16.875 16.741 16.875 14.625C16.875 11.3708 15.8906 9.59873 14.3899 7.26638C14.1833 6.94451 13.8263 6.75 13.444 6.75Z"
+                                                    fill="#080808"
+                                                    /></svg>
+                                                </span>
+                                                {!! $testimonial->review !!}
+                                            </p>
+                                            <p class="mb-1 author-name fw-bold">{{ $testimonial->name }}</p>
+                                            <p class="text-muted author-title">
+                                            {{ $testimonial->designation }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
                             </div>
-                            <div class="testimonial-content text-center text-md-start">
-                            <div class="quote-icon web">
-                                <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="36"
-                                height="36"
-                                viewBox="0 0 36 36"
-                                fill="none"
-                                >
+
+                            <!-- Carousel Controls for Desktop -->
+                            <button class="carousel-control-prev d-none d-md-flex" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none">
                                 <path
-                                    d="M31.2649 7.26638C31.0583 6.94451 30.7012 6.75 30.319 6.75H22.5C20.6389 6.75 19.125 8.26391 19.125 10.125V18C19.125 19.8611 20.6389 21.375 22.5 21.375H24.7336C23.6888 24.4007 22.7967 25.8497 19.8281 27.0867C19.3327 27.2933 19.0524 27.8206 19.158 28.3469C19.2634 28.8721 19.7248 29.25 20.261 29.25H20.2633C26.4563 29.239 30.0136 26.7561 32.5361 20.6873C33.3413 18.7811 33.75 16.741 33.75 14.625C33.75 11.3708 32.7656 9.59873 31.2649 7.26638ZM13.444 6.75H5.625C3.76391 6.75 2.25 8.26391 2.25 10.125V18C2.25 19.8611 3.76391 21.375 5.625 21.375H7.85858C6.81379 24.4007 5.92166 25.8497 2.95312 27.0867C2.45767 27.2933 2.17744 27.8206 2.28296 28.3469C2.38837 28.8721 2.84985 29.25 3.38602 29.25H3.38828C9.58129 29.239 13.1386 26.7561 15.6611 20.6873C16.4663 18.7811 16.875 16.741 16.875 14.625C16.875 11.3708 15.8906 9.59873 14.3899 7.26638C14.1833 6.94451 13.8263 6.75 13.444 6.75Z"
-                                    fill="#080808"
+                                    d="M0.748587 6.23192C0.323512 6.65699 0.323512 7.34732 0.748587 7.77239L6.18955 13.2134C6.61462 13.6384 7.30495 13.6384 7.73002 13.2134C8.1551 12.7883 8.1551 12.098 7.73002 11.6729L3.0576 7.00046L7.72662 2.32803C8.1517 1.90295 8.1517 1.21263 7.72662 0.787556C7.30155 0.362481 6.61122 0.362481 6.18615 0.787556L0.745186 6.22852L0.748587 6.23192Z"
+                                    fill="#3B3B3B"
                                 />
                                 </svg>
-                            </div>
-                            <p class="quote-text">
-                                <span class="quote-icon mobile"
-                                ><svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="36"
-                                    height="36"
-                                    viewBox="0 0 36 36"
-                                    fill="none"
-                                >
-                                    <path
-                                    d="M31.2649 7.26638C31.0583 6.94451 30.7012 6.75 30.319 6.75H22.5C20.6389 6.75 19.125 8.26391 19.125 10.125V18C19.125 19.8611 20.6389 21.375 22.5 21.375H24.7336C23.6888 24.4007 22.7967 25.8497 19.8281 27.0867C19.3327 27.2933 19.0524 27.8206 19.158 28.3469C19.2634 28.8721 19.7248 29.25 20.261 29.25H20.2633C26.4563 29.239 30.0136 26.7561 32.5361 20.6873C33.3413 18.7811 33.75 16.741 33.75 14.625C33.75 11.3708 32.7656 9.59873 31.2649 7.26638ZM13.444 6.75H5.625C3.76391 6.75 2.25 8.26391 2.25 10.125V18C2.25 19.8611 3.76391 21.375 5.625 21.375H7.85858C6.81379 24.4007 5.92166 25.8497 2.95312 27.0867C2.45767 27.2933 2.17744 27.8206 2.28296 28.3469C2.38837 28.8721 2.84985 29.25 3.38602 29.25H3.38828C9.58129 29.239 13.1386 26.7561 15.6611 20.6873C16.4663 18.7811 16.875 16.741 16.875 14.625C16.875 11.3708 15.8906 9.59873 14.3899 7.26638C14.1833 6.94451 13.8263 6.75 13.444 6.75Z"
-                                    fill="#080808"
-                                    /></svg>
-                                </span>
-                                Kerry's expertise and exceptional reasoning have proven
-                                invaluable within our high-performance team. I
-                                enthusiastically recommend his services to anyone seeking to
-                                enhance their health and performance.
-                            </p>
-                            <p class="author-name fw-bold mb-1">Cohen Crispin</p>
-                            <p class="author-title text-muted">
-                                Strength and Conditioning Coach (ASCA EL3) Bachelor of sport
-                                & exercise science
-                            </p>
+                            </button>
+                            <button class="carousel-control-next d-none d-md-flex" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none" >
+                                <path
+                                    d="M8.25141 7.76808C8.67649 7.34301 8.67649 6.65268 8.25141 6.22761L2.81045 0.786644C2.38538 0.361568 1.69505 0.361568 1.26998 0.786644C0.844903 1.21172 0.844903 1.90204 1.26998 2.32712L5.9424 6.99954L1.27338 11.672C0.848303 12.097 0.848303 12.7874 1.27338 13.2124C1.69845 13.6375 2.38878 13.6375 2.81385 13.2124L8.25481 7.77148L8.25141 7.76808Z"
+                                    fill="#3B3B3B"
+                                />
+                                </svg>
+                            </button>
+
+                            <!-- Carousel Controls for Mobile -->
+                            <div class="carousel-controls-mobile d-flex d-md-none justify-content-center mt-4">
+                                <button class="carousel-control-prev-mobile" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev" >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="16" viewBox="0 0 9 16" fill="none">
+                                        <path
+                                        d="M0.714963 7.13591C0.236753 7.61412 0.236753 8.39073 0.714963 8.86894L6.83605 14.99C7.31426 15.4682 8.09087 15.4682 8.56908 14.99C9.04729 14.5118 9.04729 13.7352 8.56908 13.257L3.3126 8.00051L8.56525 2.74403C9.04346 2.26582 9.04346 1.48921 8.56525 1.011C8.08704 0.532791 7.31043 0.532791 6.83222 1.011L0.711138 7.13208L0.714963 7.13591Z"
+                                        fill="#3B3B3B"
+                                        />
+                                    </svg>
+                                </button>
+                                <button class="carousel-control-next-mobile ms-3" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="16" viewBox="0 0 9 16" fill="none">
+                                        <path
+                                            d="M8.28504 8.86409C8.76325 8.38588 8.76325 7.60927 8.28504 7.13106L2.16395 1.00997C1.68574 0.531765 0.909132 0.531765 0.430923 1.00997C-0.0472868 1.48818 -0.0472868 2.2648 0.430923 2.74301L5.6874 7.99949L0.434748 13.256C-0.0434614 13.7342 -0.0434614 14.5108 0.434748 14.989C0.912958 15.4672 1.68957 15.4672 2.16778 14.989L8.28886 8.86792L8.28504 8.86409Z"
+                                            fill="#3B3B3B"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
-                        </div>
                     </div>
-
-                    <!-- Carousel Controls for Desktop -->
-                    <button
-                        class="carousel-control-prev d-none d-md-flex"
-                        type="button"
-                        data-bs-target="#testimonialCarousel"
-                        data-bs-slide="prev"
-                    >
-                        <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="9"
-                        height="14"
-                        viewBox="0 0 9 14"
-                        fill="none"
-                        >
-                        <path
-                            d="M0.748587 6.23192C0.323512 6.65699 0.323512 7.34732 0.748587 7.77239L6.18955 13.2134C6.61462 13.6384 7.30495 13.6384 7.73002 13.2134C8.1551 12.7883 8.1551 12.098 7.73002 11.6729L3.0576 7.00046L7.72662 2.32803C8.1517 1.90295 8.1517 1.21263 7.72662 0.787556C7.30155 0.362481 6.61122 0.362481 6.18615 0.787556L0.745186 6.22852L0.748587 6.23192Z"
-                            fill="#3B3B3B"
-                        />
-                        </svg>
-                    </button>
-                    <button
-                        class="carousel-control-next d-none d-md-flex"
-                        type="button"
-                        data-bs-target="#testimonialCarousel"
-                        data-bs-slide="next"
-                    >
-                        <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="9"
-                        height="14"
-                        viewBox="0 0 9 14"
-                        fill="none"
-                        >
-                        <path
-                            d="M8.25141 7.76808C8.67649 7.34301 8.67649 6.65268 8.25141 6.22761L2.81045 0.786644C2.38538 0.361568 1.69505 0.361568 1.26998 0.786644C0.844903 1.21172 0.844903 1.90204 1.26998 2.32712L5.9424 6.99954L1.27338 11.672C0.848303 12.097 0.848303 12.7874 1.27338 13.2124C1.69845 13.6375 2.38878 13.6375 2.81385 13.2124L8.25481 7.77148L8.25141 7.76808Z"
-                            fill="#3B3B3B"
-                        />
-                        </svg>
-                    </button>
-
-                    <!-- Carousel Controls for Mobile -->
-                    <div
-                        class="carousel-controls-mobile d-flex d-md-none justify-content-center mt-4"
-                    >
-                        <button
-                        class="carousel-control-prev-mobile"
-                        type="button"
-                        data-bs-target="#testimonialCarousel"
-                        data-bs-slide="prev"
-                        >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="9"
-                            height="16"
-                            viewBox="0 0 9 16"
-                            fill="none"
-                        >
-                            <path
-                            d="M0.714963 7.13591C0.236753 7.61412 0.236753 8.39073 0.714963 8.86894L6.83605 14.99C7.31426 15.4682 8.09087 15.4682 8.56908 14.99C9.04729 14.5118 9.04729 13.7352 8.56908 13.257L3.3126 8.00051L8.56525 2.74403C9.04346 2.26582 9.04346 1.48921 8.56525 1.011C8.08704 0.532791 7.31043 0.532791 6.83222 1.011L0.711138 7.13208L0.714963 7.13591Z"
-                            fill="#3B3B3B"
-                            />
-                        </svg>
-                        </button>
-                        <button
-                        class="carousel-control-next-mobile ms-3"
-                        type="button"
-                        data-bs-target="#testimonialCarousel"
-                        data-bs-slide="next"
-                        >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="9"
-                            height="16"
-                            viewBox="0 0 9 16"
-                            fill="none"
-                        >
-                            <path
-                            d="M8.28504 8.86409C8.76325 8.38588 8.76325 7.60927 8.28504 7.13106L2.16395 1.00997C1.68574 0.531765 0.909132 0.531765 0.430923 1.00997C-0.0472868 1.48818 -0.0472868 2.2648 0.430923 2.74301L5.6874 7.99949L0.434748 13.256C-0.0434614 13.7342 -0.0434614 14.5108 0.434748 14.989C0.912958 15.4672 1.68957 15.4672 2.16778 14.989L8.28886 8.86792L8.28504 8.86409Z"
-                            fill="#3B3B3B"
-                            />
-                        </svg>
-                        </button>
-                    </div>
-                    </div>
-                </div>
                 </section>
             @endif
             @if($section->section_type == \App\Models\Section::TYPE_PARTNERS && $section->enabled == 1)
@@ -1131,24 +1063,24 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     </h2>
                 </div>
 
-                
+
                 <div class="slider-container">
                     <div class="logo-row slide-left">
                         <!-- Duplicate content for seamless loop -->
                         @if(!empty($section->banner_image) && is_array($section->banner_image))
                             @foreach($section->banner_image as $bannerImage)
                                 <div class="logo-card">
-                                    <img 
-                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}" 
-                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}" 
+                                    <img
+                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}"
+                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}"
                                     />
                                 </div>
                             @endforeach
                             @foreach($section->banner_image as $bannerImage)
                                 <div class="logo-card">
-                                    <img 
-                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}" 
-                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}" 
+                                    <img
+                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}"
+                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}"
                                     />
                                 </div>
                             @endforeach
@@ -1160,17 +1092,17 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         @if(!empty($section->image) && is_array($section->image))
                             @foreach($section->image as $bannerImage)
                                 <div class="logo-card">
-                                    <img 
-                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}" 
-                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}" 
+                                    <img
+                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}"
+                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}"
                                     />
                                 </div>
                             @endforeach
                             @foreach($section->image as $bannerImage)
                                 <div class="logo-card">
-                                    <img 
-                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}" 
-                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}" 
+                                    <img
+                                        src="{{ asset('storage/' . ($bannerImage['image'] ?? $bannerImage)) }}"
+                                        alt="{{ $bannerImage['alt'] ?? 'Partner Logo' }}"
                                     />
                                 </div>
                             @endforeach
@@ -1234,7 +1166,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             />
         </div>
     </div>
-    
+
     <!-- Sign-Up Modal (Purchase Modal) -->
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -1248,7 +1180,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <div class="mb-3" id="already-signed-in">
                         <small>Already have an account? <a href="#" id="show-login-modal">Sign In</a></small>
                     </div>
-                   
+
                     <!-- User info form -->
                     <form id="payment-form">
                         <div id="registration-details">
@@ -1286,7 +1218,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         </div>
 
                         <h6 class="mb-2" style="font-weight: 800;">Payment Details</h6>
-                        
+
                         <div class="mb-3 mt-3">
                             <small>
                                 <a href="#" id="toggle-coupon-link" class="coupon-link">Add a Coupon Code</a>
@@ -1334,7 +1266,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
+
                 <div class="modal-body">
                     <div id="login-error" class="text-danger"></div> <!-- This will display the error message -->
                     <!-- Sign In Form -->
@@ -1370,7 +1302,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
+
                 <div class="modal-body">
                     <div id="login-error" class="text-danger"></div> <!-- This will display the error message -->
                     <!-- Sign In Form -->
@@ -1722,7 +1654,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             <div class="card">
                                 <div class="p-3 card-header bg-white">
                                     <div class="d-flex align-items-center">
-                                        <h5 class="m-0">3. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">fat</strong>? 
+                                        <h5 class="m-0">3. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">fat</strong>?
                                         <span>(Select one answer per food)</span></h5>
                                         <span class="ms-2 general-error-message text-danger"> </span>
                                         <input type="hidden" name="questions[nutrition-Q-3]" value="Do you think these foods are high or low in fat?" />
@@ -2538,7 +2470,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                     <div class="form-check my-2">
                                                         <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="supplements1">
-                                                            All athletes should use supplements to perform at their best 
+                                                            All athletes should use supplements to perform at their best
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
@@ -2550,7 +2482,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                     <div class="form-check my-2">
                                                         <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements3" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="supplements3">
-                                                            Athletes should check with a Sports Dietitian before taking supplements                                                
+                                                            Athletes should check with a Sports Dietitian before taking supplements
                                                         </label>
                                                     </div>
                                                 </div>
@@ -2561,13 +2493,13 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                     <div class="form-check my-2">
                                                         <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements4" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="supplements4">
-                                                            Eating a wide range of foods provides most athletes with the vitamins and minerals they need 
+                                                            Eating a wide range of foods provides most athletes with the vitamins and minerals they need
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
                                                         <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements5" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="supplements5">
-                                                            Most supplements available in Australia are safe for athletes to use 
+                                                            Most supplements available in Australia are safe for athletes to use
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
@@ -2619,7 +2551,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                     <div class="form-check my-2">
                                                         <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes5" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes5">
-                                                            Ask staff at the local supplement store 
+                                                            Ask staff at the local supplement store
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
@@ -2643,7 +2575,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                     <div class="form-check my-2">
                                                         <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="vitamin1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="vitamin1">
-                                                            They are safe for all athletes to use 
+                                                            They are safe for all athletes to use
                                                         </label>
                                                     </div>
                                                     <div class="form-check my-2">
@@ -2755,7 +2687,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 <!-- <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="supplement">
                                                     <svg width="21" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="supplement-lock">
                                                         <path d="M8.16667 12.834V8.16732C8.16667 6.62022 8.78125 5.13649 9.87521 4.04253C10.9692 2.94857 12.4529 2.33398 14 2.33398C15.5471 2.33398 17.0308 2.94857 18.1248 4.04253C19.2188 5.13649 19.8333 6.62022 19.8333 8.16732V12.834M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    </svg> 
+                                                    </svg>
                                                     <svg width="21" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="supplement-unlock d-none">
                                                     <path d="M19.8333 8.16732C19.8333 6.62022 19.2188 5.13649 18.1248 4.04253C17.0308 2.94857 15.5471 2.33398 14 2.33398C12.4529 2.33398 10.9692 2.94857 9.87521 4.04253C8.78125 5.13649 8.16667 6.62022 8.16667 8.16732V10M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                                     </svg>
@@ -2809,7 +2741,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                     </svg>
                                                     <svg width="21" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="sport-unlock d-none">
                                                     <path d="M19.8333 8.16732C19.8333 6.62022 19.2188 5.13649 18.1248 4.04253C17.0308 2.94857 15.5471 2.33398 14 2.33398C12.4529 2.33398 10.9692 2.94857 9.87521 4.04253C8.78125 5.13649 8.16667 6.62022 8.16667 8.16732V10M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>  
+                                                </svg>
                                                     Unlock Results
                                                 </a> -->
                                             </div>
@@ -2830,7 +2762,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                         </div>
                                     </div> -->
-                                </div> 
+                                </div>
                                 <div class="nutrition-login-book">
                                     <div class="card border-0 shadow-none overflow-hidden mt-3 talk-expert-box" style="background:#5e96e8">
                                         <div class="card-body p-4">
@@ -2905,7 +2837,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                         <img src="https://booking.biohealthpassport.com.au/public/uploads/front_logo/1727981512_1727875441_logo.png" class="img-fluid" alt="">
                                                     </figure>
                                                     <h3>Get answers from a real-life expert. Not a chat bot.</h3>
-                                                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-white" target="_blank">Book Now 
+                                                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" class="btn btn-white" target="_blank">Book Now
                                                         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M6.4165 15.5827L15.5832 6.41602M15.5832 6.41602H6.4165M15.5832 6.41602V15.5827" stroke="#124E4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                                         </svg>
@@ -3046,19 +2978,19 @@ src="{{ asset('storage/' . $section->image[0]) }}"
     <script>
         setTimeout(function () {
             document.getElementById("linkedin-feed-1").innerHTML = `
-                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312" 
-                        height="867" 
-                        width="504" 
-                        allowfullscreen="" 
+                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312"
+                        height="867"
+                        width="504"
+                        allowfullscreen=""
                         title="LinkedIn Feed 1">
                 </iframe>
             `;
             document.getElementById("linkedin-feed-2").innerHTML = `
-                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360" 
-                        height="729" 
-                        width="504" 
-                        frameborder="0" 
-                        allowfullscreen="" 
+                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360"
+                        height="729"
+                        width="504"
+                        frameborder="0"
+                        allowfullscreen=""
                         title="Embedded post">
                 </iframe>
             `;
@@ -3097,7 +3029,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             purchaseModal.addEventListener('hidden.bs.modal', function () {
                 // Reset the form inside the modal
                 document.getElementById('payment-form').reset();
-                
+
                 // Reset Stripe card element (if applicable)
                 if (typeof stripe !== "undefined" && typeof card !== "undefined") {
                     card.clear();
@@ -3155,7 +3087,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 });
                             }
                             $('#sport_game').html(options);
-                        },  
+                        },
                         error: function (xhr) {
                             console.error("Error fetching sports games:", xhr.responseText);
                         }
@@ -3186,11 +3118,15 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 // Show the modal
                 $("#confirmationModal").modal("show");
             });
-            
+
             // Handle user details submission
             $("#userDetailsForm").submit(function (e) {
+                // please add loader here
+                $('#submitUserDetails').prop('disabled', true);
+                $('#submitUserDetails').html('<i class="fa fa-spinner fa-spin"></i> Please wait...');
+
                 e.preventDefault();
-                
+
                 $('submitUserDetails').prop('disabled', true);
 
                 var userName = $("#userName").val();
@@ -3217,11 +3153,15 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         _token: "{{ csrf_token() }}"
                     },
                     success: function (response) {
+                        $('#submitUserDetails').prop('disabled', false);
+                        $('#submitUserDetails').html('Submit');
                         alert("Thank you! We will send you relevant nutrition information.");
                         $("#confirmationModal").modal("hide");
                         $("#sport-form")[0].reset();
                     },
                     error: function () {
+                        $('#submitUserDetails').prop('disabled', false);
+                        $('#submitUserDetails').html('Submit');
                         alert("Error saving your details. Please try again.");
                     }
                 });
@@ -3393,7 +3333,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 }
 
                 const questionInputs = form.querySelectorAll("input[type='hidden'][name^='questions']");
-                
+
                 questionInputs.forEach(questionInput => {
                     const questionText = questionInput.value;
                     if (!questionText) return;
@@ -3574,7 +3514,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 return currentStepData;
             }
 
-            const totalAnswerCounts = {}; 
+            const totalAnswerCounts = {};
 
             // Helper function to update totalAnswerCount based on selected answer value (radio or checkbox)
             function updateAnswerCount(formClass, value) {
@@ -3619,7 +3559,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 const degree = 180 / maxTotal;
                 let totalDegree = Math.max(0, totalAnswerCounts['supplement-form'] * degree); // Ensure non-negative
                 const percentage = Math.max(0, (totalAnswerCounts['supplement-form'] / maxTotal) * 100);
-                
+
                 $('.supplement-percentage').text(Math.round(percentage) + "%");
                 $('.score-meter-box-3').removeClass('score-meter-out');
                 $('.meter-arrow.supplement-result').css('transform', 'rotate(' + totalDegree + 'deg)');
@@ -3628,7 +3568,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 const degree2 = 180 / maxTotal2;
                 let totalDegree2 = Math.max(0, totalAnswerCounts['sports-form'] * degree2); // Ensure non-negative
                 const percentage2 = Math.max(0, (totalAnswerCounts['sports-form'] / maxTotal2) * 100);
-                
+
                 $('.sports-percentage').text(Math.round(percentage2) + "%");
                 $('.score-meter-box-2').removeClass('score-meter-out');
                 $('.meter-arrow.sport-result').css('transform', 'rotate(' + totalDegree2 + 'deg)');
@@ -3637,7 +3577,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 let nutritiontotalDegree = Math.max(0, totalAnswerCounts['nutrition-form'] * nutritiondegree); // Ensure non-negative
                 const nutritionmaxTotal = 35;
                 const nutritionpercentage = Math.max(0, (totalAnswerCounts['nutrition-form'] / nutritionmaxTotal) * 100);
-                
+
                 $('.nutrition-percentage').text(Math.round(nutritionpercentage) + "%");
                 $('.meter-arrow.nutrition-result').css('transform', 'rotate(' + nutritiontotalDegree + 'deg)');
             }
@@ -3695,7 +3635,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     setTimeout(() => {
                         const modalBody = $('#TakeTestModel .modal-body');  // Target the modal body specifically
                         modalBody.scrollTop(0); // Scroll to the top of the modal body
-                    }, 100);// Adjust the delay as needed  
+                    }, 100);// Adjust the delay as needed
 
                     $('.supplement-plan .unlock-result').removeClass('d-none');
                     $('.sport-plan .unlock-result').removeClass('d-none');
@@ -3816,7 +3756,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 .then(response => {
                     if (response.success) {
                         console.log("Questionnaire Data Saved Successfully:", response);
-                        
+
                         // Move to the next step after saving data
                         $('#div9').css('display', 'block');
                         $('#div8').css('display', 'none');
@@ -3837,7 +3777,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
             $('#detailsForm').on('submit', function (e) {
                 e.preventDefault(); // Prevent default form submission
-                
+
                 let type = $('#formType').val() // Retrieve stored type (sports or supplement)
                 let email = $('#detailsForm').find('#email').val();
                 let name = $('#detailsForm').find('#name').val();
@@ -3867,7 +3807,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     success: function (data) {
                         if (data.success) {
                             const userId = data.user.id;
-                            
+
                             $.ajax({
                                 url: "{{ route('front.quiz.complete') }}",
                                 method: 'POST',
@@ -3909,7 +3849,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             localStorage.removeItem("totalAnswerCounts");
                             $('#detailsModal').modal('hide'); // Close the register modal
                             $('#TakeTestModel').removeClass('blur-background');
-                              
+
                         } else {
                             alert(data.message);
 
@@ -3942,7 +3882,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     });
                 }
             });
-            
+
             // Login form submit handler
             loginForm.submit(function (event) {
                 event.preventDefault();
@@ -4062,7 +4002,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 const planUrl = "https://performancehealthsupport.com/action-sport-nutrition-plan";
                 // Set the modal message
                 $('#thankYouMessage').text(thankYouMessage);
-                
+
                 // Set the URL for the plan button dynamically
                 $('#planUrlLink').attr('href', planUrl); // Set the plan URL dynamically
                 $('#thankYouModal').modal('show');
@@ -4113,7 +4053,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 });
             });
         });
-    
+
         setTimeout(function () {
             const script = document.createElement('script');
             script.src = "https://js.stripe.com/v3/";
@@ -4180,13 +4120,13 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             promoMessage.textContent = '';
                         }
                     });
-                    
+
                     // Event listener for the 'Purchase Now' button
                     $('body').on('click', '.purchase-now-btn', function () {
 
                         var planId = $(this).data('plan-id');
                         var price = $(this).data('plan-price');
-                        
+
                         $('#purchaseModalLabel').text('Purchase ' + $(this).closest('.spot-plan-box').find('h5').text() + ' ($' + price + ')');
                         const isAuthenticated = @json(Auth::guard('web')->check());
                         var userId = {{ Auth::check() ? Auth::user()->id : 'null' }};
@@ -4206,9 +4146,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 $('#phone').val('{{ Auth::user()->phone ?? "" }}');
                                 $('#signed-in-email').text('{{ Auth::user()->email }}');
                             @endif
-                           
+
                         }
-                       
+
                         $('#purchaseModal').modal('show');
 
                         // Handle the form submission
@@ -4226,7 +4166,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             console.log('Email:', email);
                             console.log('Name:', name);
                             console.log('Phone:', phone);
-                            
+
                             if(discount == 100.00) {
                                 $.ajax({
                                     url: '{{ route("process.payment") }}',
@@ -4330,11 +4270,11 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             },
                                             success: function(response) {
                                                 if (response.success) {
-                                                    
+
                                                     $('#purchaseModal').modal('hide');
                                                     $('#submit').prop('disabled', false);
                                                     if(response.data.submit_questionnaire) {
-                                                        
+
                                                         var user_id = response.data.user_id;
                                                         var payment_id = response.data.payment_id;
 
@@ -4349,7 +4289,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                         $('#thankYouModal').modal('show');
                                                     }
                                                 } else {
-                                                   
+
                                                     if(response.message == 'You have already purchased this plan. Please login to your account to manage your plans.') {
                                                         alert('You have already purchased this plan. Please login to your account to manage your plans.');
                                                         $('#purchaseModal').modal('hide');
@@ -4392,10 +4332,10 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 });
                             }
                         });
-                        
+
                         $('#view-sample-plan').click(function () {
                             // var planId = $(this).data('plan-id');
-                            
+
                             $('#samplePlanModalLabel').text('Loading...');
                             $('#samplePlanModalBody').html('<p>Loading details...</p>');
                             $('#samplePlanModal').modal('show');
@@ -4561,7 +4501,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
                     if (response.message) {
                         if(response.message == 'CSRF token mismatch.') {
-                            $('#login-error').text('Your session has expired. Please reload the page and login again.'); 
+                            $('#login-error').text('Your session has expired. Please reload the page and login again.');
                         }else {
                             $('#login-error').text(response.message);
                         }
@@ -4622,30 +4562,10 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         $(document).ready(function() {
             $('body').on('click', '#forgot-password', function(e) {
                 e.preventDefault();
-                
+
                 $('#forgotPasswordModal').modal('show');
                 $('#forgotPasswordForm').reset();
             });
-
-            // $('#forgotPasswordForm').on('submit', function(e) {
-            //     e.preventDefault();
-
-            //     $.ajax({
-            //         url: "{{ route('front.password.request') }}",
-            //         method: 'POST',
-            //         data: {
-            //             email: $('#email').val(),
-            //             _token: '{{ csrf_token() }}'
-            //         },
-            //         success: function(response) {
-            //             alert('Password reset link has been sent to your email.');
-            //             $('#forgotPasswordModal').modal('hide');
-            //         },
-            //         error: function(xhr) {
-            //             alert('Failed to send reset link. Please check your email address.');
-            //         }
-            //     });
-            // });
         });
 
         // Update the back button click handler
@@ -4670,7 +4590,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         // Next button click handler - only handles navigation
         $('.next-btn').click(function() {
             const targetStep = currentStep + 1;
-            
+
             // Update UI
             updateModalTitle(targetStep);
             stepCircles.forEach((step, index) => {
@@ -4691,7 +4611,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             const targetStep = parseInt($(this).data('step')) - 1;
             const stepData = {};
             const rows = document.querySelectorAll(`#div${currentStep} .row`);
-            
+
             rows.forEach(row => {
                 const selectedRadio = row.querySelector('input[type="radio"]:checked');
                 if (selectedRadio) {
@@ -4700,7 +4620,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     const correct = selectedRadio.getAttribute('data-correct');
                     const value = selectedRadio.getAttribute('data-value');
                     const formSlug = selectedRadio.getAttribute('data-form-slug');
-                    
+
                     stepData[foodName] = {
                         value: value,
                         option: option,
@@ -4709,16 +4629,16 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     };
                 }
             });
-            
+
             console.log('Current step data:', stepData);
-            
+
             // Check if stepData has any answers
             if (Object.keys(stepData).length > 0) {
                 console.log('Saving step data with quiz ID:', currentQuizId);
-                
+
                 // Save to localStorage
                 localStorage.setItem(`step-${currentStep}-data`, JSON.stringify(stepData));
-                
+
                 // Update total answer counts
                 Object.keys(stepData).forEach(key => {
                     const answer = stepData[key];
@@ -4729,7 +4649,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         }
                     }
                 });
-                
+
                 // Save total counts
                 localStorage.setItem("totalAnswerCounts", JSON.stringify(totalAnswerCounts));
 
@@ -4882,7 +4802,6 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             }
 
             init() {
-                console.log("🚀 Initializing Full-Width Food Carousel");
 
                 // Calculate how many cards fit in viewport
                 this.calculateVisibleCards();
@@ -4909,8 +4828,6 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     if (e.key === "ArrowLeft") this.prev();
                     if (e.key === "ArrowRight") this.next();
                 });
-
-                console.log("✅ Full-Width Food Carousel initialized");
             }
 
             calculateVisibleCards() {
@@ -4922,10 +4839,6 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
                 // Ensure at least 2 cards are visible
                 if (this.visibleCards < 2) this.visibleCards = 2;
-
-                console.log(
-                    `📊 Viewport: ${viewportWidth}px, Cards visible: ${this.visibleCards}`
-                );
             }
 
             setupInfiniteLoop() {
@@ -4947,10 +4860,6 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 // Update cards array to include clones
                 this.cards = Array.from(this.track.children);
                 this.originalCardCount = originalCards.length;
-
-                console.log(
-                    `📋 Original cards: ${this.originalCardCount}, Total with clones: ${this.cards.length}`
-                );
             }
 
             updatePosition(noAnimation = false) {
@@ -4974,13 +4883,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 }
 
                 this.track.style.transform = `translateX(${translateX}px)`;
-                console.log(
-                    `🎯 Position: ${translateX}px, Index: ${this.currentIndex}`
-                );
             }
 
             next() {
-                console.log("➡️ Next slide");
                 this.currentIndex++;
 
                 // Check if we need to loop
@@ -4997,7 +4902,6 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             }
 
             prev() {
-                console.log("⬅️ Previous slide");
                 this.currentIndex--;
 
                 // Check if we need to loop
@@ -5014,7 +4918,6 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             }
 
             startAutoSlide() {
-                console.log("⏰ Starting auto-slide (3 seconds)");
                 this.autoSlideInterval = setInterval(() => {
                     this.next();
                 }, 3000);
@@ -5029,10 +4932,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
         // Initialize when DOM is ready
         document.addEventListener("DOMContentLoaded", () => {
-            console.log("🌐 DOM loaded, initializing Full-Width Food Carousel");
             new FoodCarousel();
         });
-  
+
         document.querySelectorAll(".meal-tab").forEach((tab) => {
             tab.addEventListener("click", function() {
                 // Remove active class from all tabs

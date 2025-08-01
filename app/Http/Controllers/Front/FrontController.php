@@ -19,6 +19,7 @@ use App\Models\UserPlan;
 use App\Models\SportGame;
 use App\Models\CouponUsage;
 use App\Models\GoalHistory;
+use App\Models\Testimonial;
 use App\Models\UserPrePlan;
 use App\Mail\QueryGenerated;
 use App\Models\TrackingType;
@@ -133,7 +134,10 @@ class FrontController extends Controller
         $isAuthenticated = Auth::check(); // Returns true if the user is logged in
         $sportCategories = SportCategory::select('id', 'name')->get();
 
-        return view('front.pages.sub-home-page', compact('page', 'plans','isAuthenticated', 'sportCategories'));
+        $userId = User::where('slug', 'age-better')->first()->id;
+        $testimonials = Testimonial::with('testimonialImage')->where('user_id', $userId)->get();
+
+        return view('front.pages.sub-home-page', compact('page', 'plans','isAuthenticated', 'sportCategories', 'testimonials'));
     }
 
     public function register(Request $request)
@@ -1052,8 +1056,7 @@ class FrontController extends Controller
 
         // Send email with sport-specific nutrition info
         Mail::to($request->email)->send(new SportInterestMail($interest));
-        Mail::to(config('constants.admin_email'))->send(new SportInterestMailAdmin($interest));
-        // Mail::to('kartikvadhaiya6656@gmail.com')->send(new SportInterestMailAdmin($interest));
+        Mail::to(config('constant.admin_email'))->send(new SportInterestMailAdmin($interest));
 
         return response()->json(['message' => 'Thank you! We will send you relevant nutrition information.'], 200);
     }
