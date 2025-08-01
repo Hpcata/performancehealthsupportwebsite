@@ -110,7 +110,7 @@ class TestimonialController extends Controller
      */
     private function _update(Testimonial $testimonial)
     {
-        $testimonialImage = $testimonial->testimonialImage ? env('APP_URL') . '/v2/storage/app/public/' . ($testimonial->testimonialImage->path . '/' . $testimonial->testimonialImage->name) : null;
+        $testimonialImage = $testimonial->testimonialImage ? asset('storage' . $testimonial->testimonialImage->path . '/' . $testimonial->testimonialImage->name) : null;
         return view('backend.pages.testimonial.edit', compact('testimonial', 'testimonialImage'));
     }
 
