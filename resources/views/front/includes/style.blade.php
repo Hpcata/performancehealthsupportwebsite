@@ -34,7 +34,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
     />
 </noscript>
-<link rel="preload" as="image" href="{{ frontAssets('images/food1.webp') }}" type="image/webp">
+{{-- <link rel="preload" as="image" href="{{ frontAssets('images/food1.webp') }}" type="image/webp"> --}}
 <link rel="preload" as="image" href="{{ frontAssets('images/logo.webp') }}" type="image/webp">
 <link rel="stylesheet" href="{!! frontAssets('css/tiny-slider.css') !!}">
 @else
