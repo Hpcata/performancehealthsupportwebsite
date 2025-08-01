@@ -84,6 +84,9 @@
 
     @include('front.includes.footer')
 
+    <!-- Includes the script file -->
+    @include('front.includes.script')
+
     @stack('scripts')
 
     <script id="delphi-bubble-script">

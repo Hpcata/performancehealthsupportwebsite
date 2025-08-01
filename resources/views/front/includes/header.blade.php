@@ -176,7 +176,7 @@ $auth = auth()->guard('web')->check();
                 <div class="d-flex">
                     <button class="btn btn-login mob-hide">Log in</button>
 
-                    <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">
+                    <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                         Sign up for free
                     </button>
                     <button class="ms-2 btn btn-login web-hide">Virtual Kez</button>
