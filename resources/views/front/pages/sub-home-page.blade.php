@@ -954,7 +954,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             the quiz to test your nutrition knowledge and discover how to fuel
                             smarter—whether for performance, recovery, or everyday energy.
                             </p>
-                            <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
+                            <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#quizModal">Start the quiz</button>
                         </div>
                         <img
                             @if(!empty($section->banner_image[1]))
@@ -1117,6 +1117,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             @endif
         @endforeach
     @endif
+
+    {{-- Include modal file --}}
+    @include('front.pages.partials.modal')
 
     <!-- contact sectoin -->
     <section class="contact-section py-5">
@@ -1418,7 +1421,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         </div>
     </div> --}}
 
-    {{-- <div class="modal fade" id="TakeTestModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="TakeTestModelLabel" aria-hidden="true">
+    <div class="modal fade" id="TakeTestModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="TakeTestModelLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header flex-column align-items-start pe-5">
@@ -2874,7 +2877,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 
     <!-- Modal -->
     {{-- <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
@@ -3086,27 +3089,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     {{-- TODO: This below is old page script so I have commented and when it required you can uncomment as well --}}
-    {{-- <script>
-        // setTimeout(function () {
-        //     document.getElementById("linkedin-feed-1").innerHTML = `
-        //         <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312"
-        //                 height="867"
-        //                 width="504"
-        //                 allowfullscreen=""
-        //                 title="LinkedIn Feed 1">
-        //         </iframe>
-        //     `;
-        //     document.getElementById("linkedin-feed-2").innerHTML = `
-        //         <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360"
-        //                 height="729"
-        //                 width="504"
-        //                 frameborder="0"
-        //                 allowfullscreen=""
-        //                 title="Embedded post">
-        //         </iframe>
-        //     `;
-        // }, 5000);
-
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const toggleLink = document.getElementById('toggle-coupon-link');
             const couponDetails = document.getElementById('coupon-details');
@@ -3331,13 +3314,8 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 $type = $('#formType').val();
                 $('.sport-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
                 $('.supplement-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-                // if (type === 'sport') {
-                //     $('.sport-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-                // }
-                // if (type === 'supplement') {
-                //     $('.supplement-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-                // }
             })
+
             let totalAnswerCount = 0;  // Initialize totalAnswerCount to 0 globally for the entire script
 
             // Initialize all the necessary variables
@@ -3352,13 +3330,6 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             const loginLink = $(".login-link");
             const registerLink = $(".register-link");
             const currentModal = $("#TakeTestModel");
-
-            // Initialize totalAnswerCounts for each form with default values of 0
-            // let totalAnswerCounts = {
-            //     'nutrition-form': 0,
-            //     'sports-form': 0,
-            //     'supplement-form': 0
-            // };
 
             let currentStep = 0;  // Track the active step index
             const stepsData = {};  // Object to store all steps data
@@ -3705,7 +3676,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     }
                     console.log(currentStep);
                     // Collect data for the current step
-                   // ✅ 1. Collect data from current step
+                    // ✅ 1. Collect data from current step
                     const stepJson = collectStepData(currentStep);
                     const currentStepJson = collectCurrentStepData(currentStep + 1);
                     // console.log(currentStepJson);
@@ -4834,7 +4805,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 modalBody.scrollTop(0);
             }
         });
-    </script> --}}
+    </script>
 
     <script>
         // Initialize carousels with smooth transitions
@@ -5077,3 +5048,18 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         });
     </script>
 @endsection
+
+{{-- push modal.js file --}}
+@push('scripts')
+    <script>
+        window.quizConfig = {
+            startQuizUrl: "{{ route('front.quiz.start') }}",
+            saveStepUrl: "{{ route('front.quiz.save-step') }}",
+            completeUrl: "{{ route('front.quiz.complete') }}",
+            abandonUrl: "{{ route('front.quiz.abandon') }}",
+            csrfToken: "{{ csrf_token() }}"
+        };
+    </script>
+
+    <script src="{!! frontAssets('js/modal.js') !!}"></script>
+@endpush

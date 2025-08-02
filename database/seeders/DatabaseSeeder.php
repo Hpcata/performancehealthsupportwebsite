@@ -21,6 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(FoodCategorySeeder::class);
         $this->call(TrackingTypesSeeder::class);
         $this->call(CouponSourceSeeder::class);
-
+        $this->call(QuizQuestionSeeder::class);
     }
 }
