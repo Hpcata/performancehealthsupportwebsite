@@ -934,6 +934,15 @@ class PlanController extends Controller
             'user_category_id' => 'required|integer',
         ]);
 
+        $isFreeUser = false;
+        $userPlan = UserPlan::where('id', $request->user_plan_id)->first();
+        if($userPlan->user_id) {
+            $user = User::find($userPlan->user_id);
+            if($user->free_user) {
+                $isFreeUser = true;
+            }
+        }
+
         $userMeal = UserMeal::with([
             'meal:id,title,image,description,note',
             'userItems' => function ($query) use ($request) {
@@ -961,6 +970,7 @@ class PlanController extends Controller
             'totalProtein' => $userMeal->meal?->getTotalProteinsAttribute() ?? 0,
             'totalCarbs' => $userMeal->meal?->getTotalCarbsAttribute() ?? 0,
             'totalFats' => $userMeal->meal?->getTotalFatsAttribute() ?? 0,
+            'isFreeUser' => $isFreeUser,
         ]);
     }
 

@@ -60,6 +60,11 @@ class User extends Authenticatable
         'front_title',
         'front_description',
         'qualification_text',
+        'free_user',
+        'user_type',
+        'sport_game_id',
+        'age_group',
+        'phone'
     ];
 
     /**
@@ -152,5 +157,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserPrePlan::class);
     }
-
+    
+    /**
+     * Get the sport game associated with the user
+     */
+    public function sportGame()
+    {
+        return $this->belongsTo(SportGame::class, 'sport_game_id');
+    }
 }
