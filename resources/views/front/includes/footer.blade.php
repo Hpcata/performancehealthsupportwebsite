@@ -58,7 +58,7 @@
                         <li>
                             <a class="dropdown-item" href="#">Pre & Post Surgery Plan</a>
                         </li>
-                        <li><a class="dropdown-item" href="#">Consults</a></li>
+                        <li><a class="dropdown-item" href="#">Private Consultations</a></li>
                     </ul>
                 </div>
                 <a href="#" class="footer-link">Resources</a>
@@ -71,8 +71,8 @@
                 @if (auth()->guard('web')->check())
                     <a href="#" class="btn btn-login mob-hide">My Profile</a>
                 @else
-                    <button class="btn btn-login mob-hide">Log in</button>
-                    <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up for free</button>
+                    <button class=" btn-login mob-hide">Log in</button>
+                    <button class=" btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up for free</button>
                 @endif
             </div>
 
@@ -81,8 +81,8 @@
                 @if (auth()->guard('web')->check())
                     <a href="#" class="btn btn-login rounded-md">My Profile</a>
                 @else
-                    <button type="button" class="rounded-md btn btn-login">Log in</button>
-                    <button type="button" class="rounded-md btn btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up for free</button>
+                    <button type="button" class="rounded-md  btn-login">Log in</button>
+                    <button type="button" class="rounded-md  btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up for free</button>
                 @endif
             </div>
             <p class="copyright-text web-hide">Copyright {{ date('Y') }} Catalysta Pty Ltd</p>

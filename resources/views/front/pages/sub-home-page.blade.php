@@ -142,7 +142,7 @@
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->section_type == \App\Models\Section::TYPE_MAIN_BANNER && $section->enabled == 1) <!-- done -->
-                <div id="heroCarouselDesktop" class="d-md-block carousel slide hero-section d-none" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true"
+                <div id="heroCarouselDesktop" class="d-md-block carousel slide  d-none" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true"
                 >
                     <div class="carousel-inner">
                         <!-- Slide 1 - Fitness/Nutrition Image (Desktop) -->
@@ -154,16 +154,30 @@
                         @endforeach
                         @endif
                     </div>
-                    <div class="container">
+                    <div class="container-homepage">
                         <div class="hero-content-fixed">
                             <h1 class="hero-title">{{ $section->title }}</h1>
                             {!! $section->content !!}
                         </div>
                     </div>
+                        <!-- Chat Widget -->
+                    <div class="chat-widget">
+                        <div class="chat-avatar">
+                            <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
+                        </div>
+                        <div class="chat-bubble">
+                            <span>Hi, I’m Virtual Kez. Try calling me for free!</span>
+                            <img
+                            src="{{ frontAssets('images/bubble-arrow.svg') }}"
+                            alt="Virtual Kez Avatar"
+                            class="bubble-arrow"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Mobile Carousel -->
-                <div id="heroCarouselMobile" class="carousel slide hero-section d-md-none" data-bs-ride="carousel"
+                <div id="heroCarouselMobile" class="carousel slide d-md-none" data-bs-ride="carousel"
                     data-bs-interval="3000" data-bs-wrap="true">
                     <div class="carousel-inner">
                         @if(isset($section->image) && is_array($section->image) && count($section->image) > 0)
@@ -180,12 +194,12 @@
                     </div>
 
                     <!-- Fixed Text Overlay -->
-                    <div class="container">
+                    <div class="container-homepage">
                         <div class="hero-content-fixed">
                             <h1 class="hero-title">{{ $section->title }}</h1>
                             {!! $section->content !!}
 
-                            <button class="ms-2 btn btn-white">Sign up for free</button>
+                            <button class="ms-2 btn-white">Sign up for free</button>
                         </div>
                     </div>
                 </div>
@@ -193,7 +207,7 @@
             @if($section->section_type == \App\Models\Section::TYPE_ABOUT_US && $section->enabled == 1)
                 <!-- About Section -->
                 <section class="about-section">
-                    <div class="container">
+                    <div class="container-homepage">
                         <div class="about-content-wrapper">
                             <div class="about-text-content">
                                 {!! $section->content !!}
@@ -241,7 +255,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         {!! $section->content !!}
 
                         @if(!Auth::check())
-                            <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModalathlete">
+                            <button class="btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModalathlete">
                                 Sign up
                             </button>
                         @endif
@@ -278,11 +292,22 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         <span class="nav-icon">›</span>
                         </button>
                     </div>
+
+                     <!-- Chat Widget -->
+                    <div class="chat-widget mobile-view web-hide">
+                        <div class="chat-avatar">
+                            <img src="images/virtual kez.webp" alt="Virtual Kez Avatar" />
+                        </div>
+                        <div class="chat-bubble">
+                            <span>Hi, I’m Virtual Kez. Got a question? Give me a try!</span>
+                            <img src="images/bubble-arrow.webp" alt="Virtual Kez Avatar" class="bubble-arrow" />
+                        </div>
+                    </div>
                 </section>
             @endif
             @if($section->section_type == \App\Models\Section::TYPE_WHY_IT_WORKS && $section->enabled == 1)
                  <section class="why-it-works-section">
-                    <div class="container">
+                    <div class="container-homepage">
                         <div class="row">
                             <div class="col-12">
                                 <h1>{{ $section->title }}</h1>
@@ -651,7 +676,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-4" style="position: relative;">
                                 <div class="phone-mockup">
                                     <div class="phone-frame">
                                         <div class="phone-screen">
@@ -663,6 +688,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
                                 </div>
+                                <img src="images/verticle-line.svg" alt="Phone Screen" class="phone-vertical-line" />
                             </div>
                         </div>
                     </div>
@@ -670,7 +696,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             @endif
             @if($section->section_type == \App\Models\Section::TYPE_CHOOSE_YOUR_PLAN && $section->enabled == 1)
                 <section class="choose-plan-section">
-                    <div class="container">
+                    <div class="container-homepage">
                         <h2 class="choose-plan-title">{{ $section->title }}</h2>
                         <p class="choose-plan-subtitle">{!! $section->content !!}</p>
                         <label class="choose-plan-label">Nutrition plans</label>
@@ -759,7 +785,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 it’s game time so that nutrition is never your weakness!
                                 </p>
                             </div>
-                            <button class="btn btn-signup">Learn more</button>
+                            <button class=" btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -795,7 +821,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 recovery is the goal & nutrition is too often overlooked!
                                 </p>
                             </div>
-                            <button class="btn btn-signup">Learn more</button>
+                            <button class=" btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4 web-hide">
@@ -824,7 +850,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 gain & get you back in the game!
                                 </p>
                             </div>
-                            <button class="btn btn-signup">Learn more</button>
+                            <button class=" btn-signup">Learn more</button>
                             </div>
                         </div>
                         </div>
@@ -856,7 +882,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 gain & get you back in the game!
                                 </p>
                             </div>
-                            <button class="btn btn-signup">Learn more</button>
+                            <button class=" btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -885,7 +911,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 the questions that matter most.
                                 </p>
                             </div>
-                            <button class="btn btn-signup">Learn more</button>
+                            <button class=" btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -923,7 +949,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 Contact us for club deals and group bookings.
                                 </p>
                             </div>
-                            <button class="btn btn-signup">Learn more</button>
+                            <button class=" btn-signup">Learn more</button>
                             </div>
                         </div>
                         </div>
@@ -965,7 +991,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         <option value="">Select Your Sport Game</option>
                                     </select>
                                 </div>
-                                <button class="btn btn-signup" type="submit">
+                                <button class=" btn-signup" type="submit">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24"
@@ -1004,7 +1030,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             the quiz to test your nutrition knowledge and discover how to fuel
                             smarter—whether for performance, recovery, or everyday energy.
                             </p>
-                            <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
+                            <button class=" btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
                         </div>
                         <img
                             @if(!empty($section->banner_image[1]))
@@ -1022,7 +1048,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 <!-- testimonial slider section -->
                 {{-- Make this section dynamic --}}
                 <section class="testimonial-section">
-                    <div class="container">
+                    <div class="container-homepage">
                         <h2 class="section-title text-center text-md-start">REAL STORIES. REAL RESULTS.</h2>
 
                         <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" >
@@ -1110,7 +1136,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             @if($section->section_type == \App\Models\Section::TYPE_PARTNERS && $section->enabled == 1)
                 <!-- trusted partners section -->
                 <section class="partners-section py-5">
-                <div class="container">
+                <div class="container-homepage">
                     <h2 class="section-title text-center text-md-start mb-5">
                     {!! $section->title !!}
                     </h2>
@@ -1170,9 +1196,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
     <!-- contact sectoin -->
     <section class="contact-section py-5">
-        <div class="container">
+        <div class="container-homepage">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-10">
+            <div class="col-12">
             <div class="contact-card d-flex flex-column flex-md-row align-items-center">
                 <div class="contact-form-wrapper p-4 p-md-5">
                 <h2 class="contact-title mb-3">GET IN TOUCH</h2>
@@ -1194,7 +1220,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
                     <textarea class="form-control" id="query-message" rows="5" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-signup" id="submit-query">Send message</button>
+                    <button type="submit" class=" btn-signup" id="submit-query">Send message</button>
                 </form>
                 </div>
                 <div class="phone-mockup-wrapper d-none d-md-flex justify-content-center align-items-center">
@@ -1205,20 +1231,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         </div>
         </div>
     </section>
-    <!-- Chat Widget -->
-    <div class="chat-widget">
-        <div class="chat-avatar">
-            <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
-        </div>
-        <div class="chat-bubble">
-            <span>Hi, I’m Virtual Kez. Try calling me for free!</span>
-            <img
-            src="{{ frontAssets('images/bubble-arrow.svg') }}"
-            alt="Virtual Kez Avatar"
-            class="bubble-arrow"
-            />
-        </div>
-    </div>
+
 
     {{-- TODO: This below all the model is old page design you can uncomment when required --}}
     <!-- Sign-Up Modal (Purchase Modal) -->
@@ -3078,7 +3091,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 </div>
 
                 <div class="social-buttons">
-                    <button class="social-button" onclick="showComingSoonTooltip(this, 'Google')">
+                    <button class="social-button" onmouseenter="showComingSoonTooltip(this, 'Google')" onmouseleave="hideComingSoonTooltip()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path fill-rule="evenodd" clip-rule="evenodd"
                         d="M11.7643 2.24729C9.71461 2.21578 7.70395 2.80909 5.99975 3.94829C1.9895 6.62804 0.423504 11.7918 2.26925 16.2483C4.11425 20.7048 8.8715 23.2458 13.6025 22.3053C18.3335 21.3641 21.7558 17.194 21.7558 12.3708H21.7513V11.2458H12.7513V14.2458H18.6163C18.2678 15.5505 17.5604 16.7315 16.5745 17.6544C15.5885 18.5772 14.3634 19.2051 13.0385 19.4666C11.3965 19.796 9.69112 19.5445 8.21417 18.755C6.73723 17.9656 5.58059 16.6873 4.94225 15.1391C4.29907 13.593 4.21318 11.8716 4.69928 10.2692C5.18539 8.66681 6.21326 7.28313 7.607 6.35503C8.99776 5.42235 10.6695 5.00212 12.336 5.16631C14.0024 5.33049 15.56 6.06893 16.742 7.25508L18.7895 5.20906C16.9237 3.34331 14.4027 2.28046 11.7643 2.24729Z"
@@ -3096,7 +3109,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     Continue with Google
                     <div>&nbsp;</div>
                     </button>
-                    <button class="social-button" onclick="showComingSoonTooltip(this, 'Facebook')">
+                    <button class="social-button" onmouseenter="showComingSoonTooltip(this, 'Facebook')" onmouseleave="hideComingSoonTooltip()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <g clip-path="url(#clip0_2822_5214)">
                         <path
@@ -3115,7 +3128,8 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     Continue with Facebook
                     <div>&nbsp;</div>
                     </button>
-                    <button class="social-button" onclick="showComingSoonTooltip(this, 'Apple')" style="justify-content: center;">
+                     <button class="social-button" onmouseenter="showComingSoonTooltip(this, 'Apple')" onmouseleave="hideComingSoonTooltip()"
+                                    style="justify-content: center;">
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none" style="margin-right: 6px;">
                         <g clip-path="url(#clip0_2822_5220)">
@@ -5149,17 +5163,21 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         //         });
         // });
 
-        class FoodCarousel {
+               class FoodCarousel {
             constructor() {
                 this.track = document.getElementById("foodCarouselTrack");
                 this.cards = Array.from(this.track.children);
                 this.currentIndex = 0;
-                this.cardWidth = 400; // 380px card + 20px margin
+                this.isMobile = window.innerWidth <= 768;
+                
+                // Set card width based on screen size
+                this.cardWidth = this.isMobile ? 290 : 400; // 280px card + 10px margin on mobile, 380px + 20px on desktop
 
                 this.init();
             }
 
             init() {
+                console.log("🚀 Initializing Full-Width Food Carousel");
 
                 // Calculate how many cards fit in viewport
                 this.calculateVisibleCards();
@@ -5178,7 +5196,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     .getElementById("nextBtn")
                     .addEventListener("click", () => this.next());
 
-                // Auto-slide
+                // Auto-slide with different timing for mobile
                 this.startAutoSlide();
 
                 // Keyboard navigation
@@ -5186,6 +5204,25 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     if (e.key === "ArrowLeft") this.prev();
                     if (e.key === "ArrowRight") this.next();
                 });
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    this.handleResize();
+                });
+
+                console.log("✅ Full-Width Food Carousel initialized");
+            }
+
+            handleResize() {
+                const wasMobile = this.isMobile;
+                this.isMobile = window.innerWidth <= 768;
+                this.cardWidth = this.isMobile ? 290 : 400;
+                
+                // Only recalculate if mobile state changed
+                if (wasMobile !== this.isMobile) {
+                    this.calculateVisibleCards();
+                    this.updatePosition(true);
+                }
             }
 
             calculateVisibleCards() {
@@ -5195,8 +5232,13 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 // Calculate how many full cards fit in viewport
                 this.visibleCards = Math.floor(viewportWidth / cardWidth);
 
-                // Ensure at least 2 cards are visible
-                if (this.visibleCards < 2) this.visibleCards = 2;
+                // Ensure at least 2 cards are visible on mobile, 3 on desktop for better infinite loop
+                const minCards = this.isMobile ? 2 : 3;
+                if (this.visibleCards < minCards) this.visibleCards = minCards;
+
+                console.log(
+                    `📊 Viewport: ${viewportWidth}px, Cards visible: ${this.visibleCards}, Mobile: ${this.isMobile}`
+                );
             }
 
             setupInfiniteLoop() {
@@ -5218,6 +5260,10 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 // Update cards array to include clones
                 this.cards = Array.from(this.track.children);
                 this.originalCardCount = originalCards.length;
+
+                console.log(
+                    `📋 Original cards: ${this.originalCardCount}, Total with clones: ${this.cards.length}`
+                );
             }
 
             updatePosition(noAnimation = false) {
@@ -5237,13 +5283,20 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 if (noAnimation) {
                     this.track.style.transition = "none";
                 } else {
-                    this.track.style.transition = "transform 0.6s ease-in-out";
+                    // Use faster transition for better responsiveness
+                    const transitionDuration = this.isMobile ? "0.3s" : "0.25s";
+                    this.track.style.transition = `transform ${transitionDuration} ease-in-out`;
+                    console.log(`⚡ Setting transition to: ${transitionDuration}`);
                 }
 
                 this.track.style.transform = `translateX(${translateX}px)`;
+                console.log(
+                    `🎯 Position: ${translateX}px, Index: ${this.currentIndex}, Mobile: ${this.isMobile}, Visible Cards: ${this.visibleCards}, Card Width: ${cardWidth}`
+                );
             }
 
             next() {
+                console.log("➡️ Next slide");
                 this.currentIndex++;
 
                 // Check if we need to loop
@@ -5253,13 +5306,14 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         this.track.style.transition = "none";
                         this.currentIndex = 0;
                         this.updatePosition(true);
-                    }, 600);
+                    }, this.isMobile ? 300 : 250);
                 }
 
                 this.updatePosition();
             }
 
             prev() {
+                console.log("⬅️ Previous slide");
                 this.currentIndex--;
 
                 // Check if we need to loop
@@ -5269,16 +5323,19 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         this.track.style.transition = "none";
                         this.currentIndex = this.originalCardCount - 1;
                         this.updatePosition(true);
-                    }, 600);
+                    }, this.isMobile ? 300 : 250);
                 }
 
                 this.updatePosition();
             }
 
             startAutoSlide() {
+                // Use different timing for mobile vs desktop
+                const interval = this.isMobile ? 1500 : 1200; // 1.5 seconds on mobile, 1.2 on desktop
+                console.log(`⏰ Starting auto-slide (${interval/1000} seconds)`);
                 this.autoSlideInterval = setInterval(() => {
                     this.next();
-                }, 3000);
+                }, interval);
             }
 
             stopAutoSlide() {
@@ -5290,7 +5347,14 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
         // Initialize when DOM is ready
         document.addEventListener("DOMContentLoaded", () => {
-            new FoodCarousel();
+            console.log("🌐 DOM loaded, initializing Full-Width Food Carousel");
+            
+            // Force refresh the carousel if it already exists
+            if (window.foodCarousel) {
+                window.foodCarousel.stopAutoSlide();
+            }
+            
+            window.foodCarousel = new FoodCarousel();
         });
 
         document.querySelectorAll(".meal-tab").forEach((tab) => {
@@ -5382,40 +5446,40 @@ src="{{ asset('storage/' . $section->image[0]) }}"
       termsModal.show();
     }
 
-    // Coming soon tooltip functionality
-    function showComingSoonTooltip(button, platform) {
-      // Remove any existing tooltips
-      const existingTooltip = document.querySelector('.coming-soon-tooltip');
-      if (existingTooltip) {
-        existingTooltip.remove();
-      }
+        // Coming soon tooltip functionality
+        function showComingSoonTooltip(button, platform) {
+            // Remove any existing tooltips
+            const existingTooltip = document.querySelector('.coming-soon-tooltip');
+            if (existingTooltip) {
+                existingTooltip.remove();
+            }
 
-      // Create tooltip element
-      const tooltip = document.createElement('div');
-      tooltip.className = 'coming-soon-tooltip';
-      tooltip.textContent = 'Coming Soon!';
+            // Create tooltip element
+            const tooltip = document.createElement('div');
+            tooltip.className = 'coming-soon-tooltip';
+            tooltip.textContent = 'Coming Soon!';
 
-      // Position tooltip above the button
-      const buttonRect = button.getBoundingClientRect();
-      tooltip.style.position = 'fixed';
-      tooltip.style.top = (buttonRect.top - 40) + 'px';
-      tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 50) + 'px';
-      tooltip.style.zIndex = '9999';
+            // Position tooltip above the button
+            const buttonRect = button.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = (buttonRect.top - 40) + 'px';
+            tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 50) + 'px';
+            tooltip.style.zIndex = '9999';
 
-      // Add tooltip to body
-      document.body.appendChild(tooltip);
-
-      // Remove tooltip after 2 seconds
-      setTimeout(() => {
-        if (tooltip.parentNode) {
-          tooltip.remove();
+            // Add tooltip to body
+            document.body.appendChild(tooltip);
         }
-      }, 2000);
-    }
 
-    // Add CSS for tooltip
-    const tooltipStyle = document.createElement('style');
-    tooltipStyle.textContent = `
+        function hideComingSoonTooltip() {
+            const existingTooltip = document.querySelector('.coming-soon-tooltip');
+            if (existingTooltip) {
+                existingTooltip.remove();
+            }
+        }
+
+        // Add CSS for tooltip
+        const tooltipStyle = document.createElement('style');
+        tooltipStyle.textContent = `
       .coming-soon-tooltip {
         background-color: #333;
         color: white;
@@ -5449,7 +5513,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         }
       }
     `;
-    document.head.appendChild(tooltipStyle);
+        document.head.appendChild(tooltipStyle);
 
     // Step navigation functionality
     function showStep(stepNumber) {
