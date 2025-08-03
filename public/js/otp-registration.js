@@ -72,6 +72,9 @@ function sendOtp() {
     const fullMobileNumber = countryCode + mobileInputValue;
     
     
+    // Reset resend attempts counter for new OTP
+    window.resendAttempts = 0;
+    
     // Show loading state
     const button = event.target;
     const originalText = button.textContent;
@@ -79,7 +82,7 @@ function sendOtp() {
     button.disabled = true;
     
     // Make API call
-    fetch('/front/otp/send', {
+    fetch(window.otpRoutes.sendOtp, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -155,7 +158,7 @@ function verifyOtp() {
     button.disabled = true;
     
     // Make API call
-    fetch('/front/otp/verify', {
+    fetch(window.otpRoutes.verifyOtp, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -261,7 +264,7 @@ function completeRegistration() {
     button.disabled = true;
     
     // Make API call
-    fetch('/front/otp/register', {
+    fetch(window.otpRoutes.registerWithOtp, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -280,6 +283,12 @@ function completeRegistration() {
     .then(data => {
         if (data.success) {
             showSuccess('Account created successfully! Redirecting...');
+            
+            // Keep button disabled and change text to indicate success
+            button.textContent = 'Registration Successful!';
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            button.style.cursor = 'not-allowed';
             
             // Redirect to profile landing page using the user ID from response
             setTimeout(() => {
@@ -305,14 +314,17 @@ function completeRegistration() {
                 showError('Registration failed. Please try again.');
             }
             console.error('Registration failed:', data);
+            
+            // Reset button on failure
+            button.textContent = originalText;
+            button.disabled = false;
         }
     })
     .catch(error => {
         console.error('Error:', error);
         showError('Network error. Please check your connection and try again.');
-    })
-    .finally(() => {
-        // Reset button
+        
+        // Reset button on error
         button.textContent = originalText;
         button.disabled = false;
     });
@@ -324,6 +336,19 @@ function show30SecondTimer() {
     let countdown = 30;
     // Show the resend timer and disable the resend button for 30 seconds
     if (resendTimerSpan && resendBtn) {
+        // Check if maximum attempts reached
+        if (window.resendAttempts >= MAX_RESEND_ATTEMPTS) {
+            // Replace "Resend code in" text with limit message
+            const resendTextElement = resendTimerSpan.parentElement;
+            if (resendTextElement) {
+                resendTextElement.innerHTML = 'You have reached resend limit';
+            }
+            
+            // Hide the resend link completely
+            resendBtn.style.display = 'none';
+            return;
+        }
+        
         resendBtn.disabled = true;
         resendBtn.style.display = 'none';
         resendTimerSpan.style.display = 'inline';
@@ -336,8 +361,19 @@ function show30SecondTimer() {
             resendTimerSpan.textContent = ` ${minutes}:${seconds}`;
             if (countdown <= 0) {
                 clearInterval(interval);
-                resendBtn.disabled = false;
-                resendBtn.style.display = 'inline';
+                if (window.resendAttempts >= MAX_RESEND_ATTEMPTS) {
+                    // Replace "Resend code in" text with limit message
+                    const resendTextElement = resendTimerSpan.parentElement;
+                    if (resendTextElement) {
+                        resendTextElement.innerHTML = 'You have reached resend limit';
+                    }
+                    
+                    // Hide the resend link completely
+                    resendBtn.style.display = 'none';
+                } else {
+                    resendBtn.disabled = false;
+                    resendBtn.style.display = 'inline';
+                }
                 resendTimerSpan.textContent = ` 00:30`;
                 resendTimerSpan.style.display = 'none';
             } else {
@@ -350,8 +386,17 @@ function show30SecondTimer() {
 
 // Resend OTP
 function resendOtp() {
+    // Check if maximum resend attempts reached
+    if (window.resendAttempts >= MAX_RESEND_ATTEMPTS) {
+        showError('Maximum resend attempts reached. Please try again later or contact support.');
+        return;
+    }
+    
     // Clear any existing errors first
     clearErrors();
+    
+    // Increment resend attempts counter
+    window.resendAttempts++;
     
     // Show loading state
     const button = event.target;
@@ -360,7 +405,7 @@ function resendOtp() {
     button.disabled = true;
     
     // Make API call
-    fetch('/front/otp/resend', {
+    fetch(window.otpRoutes.resendOtp, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -373,10 +418,22 @@ function resendOtp() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showSuccess('OTP resent successfully!');
+            const remainingAttempts = MAX_RESEND_ATTEMPTS - window.resendAttempts;
+            showSuccess(`OTP resent successfully! ${remainingAttempts > 0 ? `(${remainingAttempts} attempts remaining)` : ''}`);
             show30SecondTimer();
             // Start countdown again
             startResendCountdown();
+            
+            // If maximum attempts reached, disable the resend button permanently
+            if (window.resendAttempts >= MAX_RESEND_ATTEMPTS) {
+                const resendButton = document.querySelector('.resend-otp-btn');
+                if (resendButton) {
+                    resendButton.textContent = 'Max attempts reached';
+                    resendButton.disabled = true;
+                    resendButton.style.opacity = '0.6';
+                    resendButton.style.cursor = 'not-allowed';
+                }
+            }
         } else {
             if (data.message) {
                 showError(data.message);
@@ -471,12 +528,28 @@ function resetForm() {
     // Reset global variables
     window.mobileNumber = '';
     window.isLoginFlow = false;
+    window.resendAttempts = 0;
     
     // Reset button states
     const resendButton = document.querySelector('.resend-otp-btn');
     if (resendButton) {
         resendButton.textContent = 'Resend OTP';
         resendButton.disabled = false;
+        resendButton.style.opacity = '1';
+        resendButton.style.cursor = 'pointer';
+        resendButton.style.display = 'inline';
+    }
+    
+    // Reset resend timer text to original
+    const resendTimerSpan = document.getElementById('resend-timer');
+    if (resendTimerSpan && resendTimerSpan.parentElement) {
+        resendTimerSpan.parentElement.innerHTML = 'Resend code in <span id="resend-timer">00:30</span>';
+    }
+    
+    // Reset resend link
+    const resendLink = document.getElementById('resend-otp-link');
+    if (resendLink) {
+        resendLink.style.display = 'none';
     }
     
     // Show step 1
@@ -604,17 +677,42 @@ function startResendCountdown() {
     const resendButton = document.querySelector('.resend-otp-btn');
     if (!resendButton) return;
     
+    // Check if maximum attempts reached
+    if (window.resendAttempts >= MAX_RESEND_ATTEMPTS) {
+        // Replace "Resend code in" text with limit message
+        const resendTimerSpan = document.getElementById('resend-timer');
+        if (resendTimerSpan && resendTimerSpan.parentElement) {
+            resendTimerSpan.parentElement.innerHTML = 'You have reached resend limit';
+        }
+        
+        // Hide the resend button completely
+        resendButton.style.display = 'none';
+        return;
+    }
+    
     let countdown = 60;
     resendButton.disabled = true;
     
     const countdownInterval = setInterval(() => {
-        resendButton.textContent = `Resend OTP (${countdown}s)`;
+        const remainingAttempts = MAX_RESEND_ATTEMPTS - window.resendAttempts;
+        resendButton.textContent = `Resend OTP (${countdown}s) - ${remainingAttempts} attempts left`;
         countdown--;
         
         if (countdown < 0) {
             clearInterval(countdownInterval);
-            resendButton.textContent = 'Resend OTP';
-            resendButton.disabled = false;
+            if (window.resendAttempts >= MAX_RESEND_ATTEMPTS) {
+                // Replace "Resend code in" text with limit message
+                const resendTimerSpan = document.getElementById('resend-timer');
+                if (resendTimerSpan && resendTimerSpan.parentElement) {
+                    resendTimerSpan.parentElement.innerHTML = 'You have reached resend limit';
+                }
+                
+                // Hide the resend button completely
+                resendButton.style.display = 'none';
+            } else {
+                resendButton.textContent = 'Resend OTP';
+                resendButton.disabled = false;
+            }
         }
     }, 1000);
 }
@@ -624,6 +722,10 @@ window.mobileNumber = '';
 
 // Global variable to track if this is a login or registration flow
 window.isLoginFlow = false;
+
+// Global variable to track resend attempts
+window.resendAttempts = 0;
+const MAX_RESEND_ATTEMPTS = 3;
 
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {

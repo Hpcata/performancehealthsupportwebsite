@@ -3183,7 +3183,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 <div class="" style="width:100%">
                     <div class="user-type-selection" id="user-type-section-id">
                         <label class="user-type-box">
-                            <input type="radio" name="userType" value="athlete" class="sr-only" />
+                            <input type="radio" name="userType" value="athlete" class="sr-only" checked />
                             <div class="custom-radio"></div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="37" viewBox="0 0 36 37" fill="none">
                             <g clip-path="url(#clip0_2822_5270)">
@@ -3256,7 +3256,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <div class="age-selection-box">
                     @foreach($ageGroups as $key => $ageGroup)
                     <label class="user-type-box">
-                        <input type="radio" name="ageGroup" value="{{ $key }}" class="sr-only" />
+                        <input type="radio" name="ageGroup" value="{{ $key }}" class="sr-only" {{ $loop->first ? 'checked' : '' }} />
                         <div class="custom-radio"></div>
                         <!-- SVG for Age Group -->
                         <span class="user-type-text">{{ $ageGroup }}</span>
@@ -3319,6 +3319,16 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        // Define all OTP-related routes for use in otp-registration.js
+        window.otpRoutes = {
+            sendOtp: "{{ route('front.otp.send') }}",
+            verifyOtp: "{{ route('front.otp.verify') }}",
+            resendOtp: "{{ route('front.otp.resend') }}",
+            registerWithOtp: "{{ route('front.otp.register') }}"
+            // Add more OTP-related routes here as needed
+        };
+    </script>
     <script src="{{ asset('js/otp-registration.js') }}"></script>
     {{-- TODO: This below is old page script so I have commented and when it required you can uncomment as well --}}
     {{-- <script>
