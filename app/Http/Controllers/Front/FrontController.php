@@ -1727,9 +1727,9 @@ class FrontController extends Controller
             $user = User::select('id', 'free_user')->find($userId);
             $payment = Payment::where('user_id', $userId)->first();
 
-            if(auth()->user() && !auth()->user()->is_superadmin && auth()->user()?->id != $userId) {
-                return redirect()->route('front.index')->with('error', 'You are not authorized to access this page.');
-            }
+            // if(auth()->user() && !auth()->user()->is_superadmin && auth()->user()?->id != $userId) {
+            //     return redirect()->route('front.index')->with('error', 'You are not authorized to access this page.');
+            // }
 
             if (!$payment && !$user->free_user) {
                 return redirect()->back()->with('error', 'Plan not purchased.');
