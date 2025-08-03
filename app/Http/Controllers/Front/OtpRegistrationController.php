@@ -1,0 +1,438 @@
+<?php
+
+namespace App\Http\Controllers\Front;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\SportGame;
+use App\Services\OtpService;
+use App\Constants\AgeGroups;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
+class OtpRegistrationController extends Controller
+{
+    protected $otpService;
+
+    public function __construct(OtpService $otpService)
+    {
+        $this->otpService = $otpService;
+    }
+
+    /**
+     * Step 1: Send OTP
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendOtp(Request $request)
+    {
+        // Debug logging to see what's being received
+        Log::info('Send OTP Request', [
+            'mobile_number' => $request->input('mobile_number'),
+            'all_data' => $request->all()
+        ]);
+
+        $validator = Validator::make($request->all(), [
+            'mobile_number' => 'required|string|regex:/^\+[1-9]\d{1,14}$/'
+        ], [
+            'mobile_number.required' => 'Mobile number is required.',
+            'mobile_number.string' => 'Mobile number must be a string.',
+            'mobile_number.regex' => 'Please enter a valid mobile number in international format (e.g., +61434708100). The number must start with + followed by country code and number.'
+        ]);
+
+        if ($validator->fails()) {
+            Log::warning('Mobile number validation failed', [
+                'mobile_number' => $request->input('mobile_number'),
+                'errors' => $validator->errors()->toArray()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Please correct the mobile number format.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $mobileNumber = $request->input('mobile_number');
+
+        // Check if user already exists with this mobile number
+        $existingUser = User::where('phone', $mobileNumber)->first();
+        
+        try {
+            $result = $this->otpService->sendOtp($mobileNumber);
+
+            if ($result['success']) {
+                $response = [
+                    'success' => true,
+                    'message' => 'OTP sent successfully to ' . $mobileNumber,
+                    'debug_otp' => $result['debug_otp'] ?? null, // Only in development
+                    'user_exists' => $existingUser ? true : false
+                ];
+                
+                // If user exists, include user info (without sensitive data)
+                if ($existingUser) {
+                    $response['existing_user'] = [
+                        'id' => $existingUser->id,
+                        'name' => $existingUser->name,
+                        'email' => $existingUser->email,
+                        'free_user' => $existingUser->free_user
+                    ];
+                }
+                
+                return response()->json($response);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message'] ?? 'Failed to send OTP. Please try again.',
+                    'errors' => [
+                        'mobile_number' => [$result['message'] ?? 'Failed to send OTP. Please try again.']
+                    ]
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('Send OTP failed', [
+                'mobile' => $mobileNumber,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send OTP. Please try again later.',
+                'errors' => [
+                    'mobile_number' => ['Service temporarily unavailable. Please try again later.']
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Step 2: Verify OTP
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verifyOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'mobile_number' => 'required|string|regex:/^\+[1-9]\d{1,14}$/',
+            'otp' => 'required|string|size:6'
+        ], [
+            'mobile_number.required' => 'Mobile number is required.',
+            'mobile_number.regex' => 'Please enter a valid mobile number in international format.',
+            'otp.required' => 'OTP is required.',
+            'otp.size' => 'OTP must be exactly 6 digits.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please correct the input errors.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $mobileNumber = $request->input('mobile_number');
+        $otp = $request->input('otp');
+
+        try {
+            $result = $this->otpService->verifyOtp($mobileNumber, $otp);
+            
+            if ($result['success']) {
+                // Check if user exists with this mobile number
+                $existingUser = User::where('phone', $mobileNumber)->first();
+                
+                if ($existingUser) {
+                    // User exists - log them in
+                    Auth::login($existingUser);
+                    
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Login successful! Welcome back.',
+                        'action' => 'login',
+                        'user' => [
+                            'id' => $existingUser->id,
+                            'name' => $existingUser->name,
+                            'email' => $existingUser->email,
+                            'free_user' => $existingUser->free_user
+                        ],
+                        'redirectUrl' => route('front.profile', ['id' => $existingUser->id])
+                    ]);
+                } else {
+                    // User doesn't exist - proceed to registration
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'OTP verified successfully! Please complete your registration.',
+                        'action' => 'register'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message'] ?? 'OTP has expired or is invalid. Please request a new one.',
+                    'errors' => [
+                        'otp' => [$result['message'] ?? 'OTP has expired or is invalid. Please request a new one.']
+                    ]
+                ], 422);
+            }
+        } catch (\Exception $e) {
+            Log::error('OTP verification failed', [
+                'mobile' => $mobileNumber,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'OTP verification failed. Please try again.',
+                'errors' => [
+                    'otp' => ['An unexpected error occurred. Please try again.']
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Step 3: Complete registration
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function completeRegistration(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'mobile_number' => 'required|string|regex:/^\+[1-9]\d{1,14}$/',
+            'first_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'userType' => 'nullable|string|in:athlete,coach,other',
+            'sport' => 'nullable|integer|exists:sport_games,id',
+            'ageGroup' => 'nullable|string'
+        ], [
+            'mobile_number.required' => 'Mobile number is required.',
+            'mobile_number.regex' => 'Please enter a valid mobile number in international format.',
+            'first_name.required' => 'First name is required.',
+            'first_name.max' => 'First name cannot exceed 255 characters.',
+            'email.required' => 'Email address is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.max' => 'Email address cannot exceed 255 characters.',
+            'userType.in' => 'Please select a valid user type.',
+            'sport.exists' => 'Please select a valid sport game.',
+            'ageGroup.string' => 'Please select a valid age group.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please correct the input errors.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $mobileNumber = $request->input('mobile_number');
+        $firstName = $request->input('first_name');
+        $email = $request->input('email');
+        $userType = $request->input('userType');
+        $sportGameId = $request->input('sport');
+        $ageGroup = $request->input('ageGroup');
+
+        // Check if OTP is verified
+        if (!$this->otpService->isOtpVerified($mobileNumber)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please verify your mobile number with OTP first.',
+                'errors' => [
+                    'otp' => ['OTP verification required.']
+                ]
+            ], 422);
+        }
+
+        // Check if user already exists with this email
+        $existingUser = User::where('email', $email)->first();
+        if ($existingUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A user with this email already exists.',
+                'errors' => [
+                    'email' => ['This email address is already registered.']
+                ]
+            ], 422);
+        }
+
+        // Check if user already exists with this mobile number (double check)
+        $existingUserByPhone = User::where('phone', $mobileNumber)->first();
+        if ($existingUserByPhone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A user with this mobile number already exists. Please login instead.',
+                'errors' => [
+                    'mobile_number' => ['This mobile number is already registered. Please use the login option.']
+                ]
+            ], 422);
+        }
+
+        // Generate a random password for the user
+        $password = Hash::make(Str::random(16));
+
+        try {
+            // Create new user
+            $userData = [
+                'name' => $firstName,
+                'first_name' => $firstName,
+                'last_name' => '',
+                'email' => $email,
+                'phone' => $mobileNumber,
+                'password' => $password,
+                'free_user' => true, // Mark as free user
+                'user_type' => $userType,
+                'sport_game_id' => $sportGameId,
+                'age_group' => $ageGroup,
+            ];
+
+            $user = User::create($userData);
+
+            // Clear OTP verification
+            $this->otpService->clearOtpVerification($mobileNumber);
+
+            // Log in the user
+            Auth::login($user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Registration completed successfully. You are now logged in.',
+                'user' => $user,
+                'redirectUrl' => route('front.profile', ['id' => $user->id])
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Registration failed', [
+                'mobile' => $mobileNumber,
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Registration failed. Please try again.',
+                'errors' => [
+                    'general' => ['An unexpected error occurred. Please try again.']
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Resend OTP
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function resendOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'mobile_number' => 'required|string'
+        ], [
+            'mobile_number.required' => 'Mobile number is required.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mobile number is required.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $mobileNumber = $request->input('mobile_number');
+
+        try {
+            $result = $this->otpService->sendOtp($mobileNumber);
+            
+            if ($result['success']) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'New OTP sent successfully to ' . $mobileNumber,
+                    'debug_otp' => $result['debug_otp'] ?? null // Only in development
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message'] ?? 'Failed to resend OTP. Please try again.',
+                    'errors' => [
+                        'mobile_number' => [$result['message'] ?? 'Failed to resend OTP. Please try again.']
+                    ]
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('Resend OTP failed', [
+                'mobile' => $mobileNumber,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to resend OTP. Please try again later.',
+                'errors' => [
+                    'mobile_number' => ['Service temporarily unavailable. Please try again later.']
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Get sport games and age groups for registration form
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSportGamesAndAgeGroups()
+    {
+        try {
+            $sportGames = SportGame::select('id', 'name')->orderBy('name')->get();
+            $ageGroups = AgeGroups::getAll();
+            
+            return response()->json([
+                'success' => true,
+                'sport_games' => $sportGames,
+                'age_groups' => $ageGroups
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to get sport games and age groups', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load sport games and age groups.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Debug OTP cache
+     *
+     * @param string $mobile
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function debugCache(string $mobile)
+    {
+        $mobileNumber = '+' . $mobile; // Add + prefix if not present
+        
+        $otpInfo = $this->otpService->getOtpInfo($mobileNumber);
+        
+        return response()->json([
+            'mobile_number' => $mobileNumber,
+            'otp_info' => $otpInfo,
+            'database_info' => [
+                'connection' => config('database.default'),
+                'driver' => config('database.connections.' . config('database.default') . '.driver')
+            ]
+        ]);
+    }
+}

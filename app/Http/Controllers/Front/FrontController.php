@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use Hash;
 use Exception;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Blog;
 use App\Models\Flag;
@@ -137,7 +138,12 @@ class FrontController extends Controller
         $userId = User::where('slug', 'age-better')->first()->id;
         $testimonials = Testimonial::with('testimonialImage')->where('user_id', $userId)->get();
 
-        return view('front.pages.sub-home-page', compact('page', 'plans','isAuthenticated', 'sportCategories', 'testimonials'));
+        // Get age groups from constants
+        $ageGroups = \App\Constants\AgeGroups::getAll();
+
+        $sports = SportGame::all();
+
+        return view('front.pages.sub-home-page', compact('page', 'plans','isAuthenticated', 'sportCategories', 'testimonials', 'ageGroups', 'sports'));
     }
 
     public function register(Request $request)
@@ -1038,6 +1044,8 @@ class FrontController extends Controller
             'sport' => 'required|string',
             'state' => 'required|string',
             'sport_game' => 'nullable|string',
+            'userType' => 'required|string',
+            'ageGroup' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -1048,7 +1056,7 @@ class FrontController extends Controller
         $interest = new SportTracking();
         $interest->name = $request->name;
         $interest->email = $request->email;
-        $interest->sport = ucwords(str_replace('_', ' ', $request->sport));;
+        $interest->sport = ucwords(str_replace('_', ' ', $request->sport));
         $interest->state = $request->state;
         $interest->sport_game = $request->sport_game;
         $interest->ip_address = $request->ip(); // Track user IP
@@ -1058,7 +1066,11 @@ class FrontController extends Controller
         Mail::to($request->email)->send(new SportInterestMail($interest));
         Mail::to(config('constant.admin_email'))->send(new SportInterestMailAdmin($interest));
 
-        return response()->json(['message' => 'Thank you! We will send you relevant nutrition information.'], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Thank you! We will send you relevant nutrition information.',
+            'user_created' => !$existingUser
+        ], 200);
     }
 
     public function samplePlan(Request $request)
@@ -1712,18 +1724,33 @@ class FrontController extends Controller
     public function getProfile(Request $request, $userId)
     {
         try {
+            $user = User::select('id', 'free_user')->find($userId);
             $payment = Payment::where('user_id', $userId)->first();
 
-            if (!$payment) {
+            if(auth()->user() && !auth()->user()->is_superadmin && auth()->user()?->id != $userId) {
+                return redirect()->route('front.index')->with('error', 'You are not authorized to access this page.');
+            }
+
+            if (!$payment && !$user->free_user) {
                 return redirect()->back()->with('error', 'Plan not purchased.');
             }
 
             $userPlan = UserPlan::with([
-                'plan'
-                // 'userCategories.userSubCategories.userMeals.userItems'
+                'plan',
             ])
             ->where('user_id', $userId)
             ->first();
+
+            // Also fetch the free_user column from the user table
+            if(!$userPlan && $user->free_user) {
+                $userPlan = new UserPlan();
+                $plans = Plan::all();
+                $userPlan->free_user_plan = $plans;
+            }
+
+            if ($userPlan) {
+                $userPlan->free_user = $user->free_user ?? null;
+            }
 
             return view('front.pages.profile-landing', compact('userPlan'));
         } catch (\Exception $e) {
@@ -1738,6 +1765,17 @@ class FrontController extends Controller
 
     public function getMeals($planId, $categoryId)
     {
+        // fetch user id from plan id
+        $userPlan = UserPlan::where('id', $planId)->first();
+        $userId = $userPlan->user_id;
+        $isFreeUser  = false;
+        if($userId) {
+            $user = User::find($userId);
+            if($user->free_user) {
+                $isFreeUser = true;
+            }
+        }
+
         $userCategory = UserCategory::where([
             ['user_plan_id', '=', $planId],
             ['id', '=', $categoryId],
@@ -1765,7 +1803,7 @@ class FrontController extends Controller
             ];
         });
 
-        return view('front.pages.partials.meal-cards', compact('meals'))->render();
+        return view('front.pages.partials.meal-cards', compact('meals','isFreeUser'))->render();
     }
 
 }
