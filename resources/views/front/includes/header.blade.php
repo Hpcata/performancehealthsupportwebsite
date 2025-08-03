@@ -174,11 +174,16 @@ $auth = auth()->guard('web')->check();
                 </ul>
 
                 <div class="d-flex">
-                    <button class="btn btn-login mob-hide">Log in</button>
-
-                    <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
-                        Sign up for free
-                    </button>
+                    @if(Auth::check())
+                        <a href="{{ route('front.profile', ['id' => Auth::guard('web')?->user()?->id]) }}" class="btn btn-signup mob-hide">
+                            My Account
+                        </a>
+                    @else
+                        <button class="btn btn-login mob-hide d-none">Log in</button>
+                        <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
+                            Sign up for free
+                        </button>
+                    @endif
                     <button class="ms-2 btn btn-login web-hide">Virtual Kez</button>
                 </div>
             </div>

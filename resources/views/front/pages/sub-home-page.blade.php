@@ -239,9 +239,12 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <div class="food-content">
                         <h2 class="food-title">{{ $section->title }}</h2>
                         {!! $section->content !!}
-                        <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModalathlete">
-                            Sign up
-                        </button>
+
+                        @if(!Auth::check())
+                            <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModalathlete">
+                                Sign up
+                            </button>
+                        @endif
                     </div>
 
                     <!-- Custom Food Carousel -->
