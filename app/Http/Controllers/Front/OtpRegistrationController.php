@@ -210,8 +210,30 @@ class OtpRegistrationController extends Controller
             'first_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'userType' => 'nullable|string|in:athlete,parent,club',
-            'sport' => 'nullable|integer|exists:sport_games,id',
-            'ageGroup' => 'nullable|string'
+            'sport' => [
+                'nullable',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->input('userType') === 'athlete') {
+                        if (empty($value)) {
+                            $fail('The sport field is required when user type is athlete.');
+                        } elseif (!\DB::table('sport_games')->where('id', $value)->exists()) {
+                            $fail('Please select a valid sport game.');
+                        }
+                    }
+                }
+            ],
+            'ageGroup' => [
+                'nullable',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->input('userType') === 'athlete') {
+                        if (empty($value)) {
+                            $fail('The age group field is required when user type is athlete.');
+                        } elseif (!is_string($value)) {
+                            $fail('Please select a valid age group.');
+                        }
+                    }
+                }
+            ],
         ], [
             'mobile_number.required' => 'Mobile number is required.',
             'mobile_number.regex' => 'Please enter a valid mobile number in international format.',
@@ -289,7 +311,7 @@ class OtpRegistrationController extends Controller
                 'password' => $password,
                 'free_user' => true, // Mark as free user
                 'user_type' => $userType,
-                'sport_game_id' => $sportGameId,
+                'sport_game_id' => (int)$sportGameId == 0 ? null : (int)$sportGameId,
                 'age_group' => $ageGroup,
             ];
 
