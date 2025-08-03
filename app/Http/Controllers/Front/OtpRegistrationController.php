@@ -209,7 +209,7 @@ class OtpRegistrationController extends Controller
             'mobile_number' => 'required|string|regex:/^\+[1-9]\d{1,14}$/',
             'first_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'userType' => 'nullable|string|in:athlete,coach,other',
+            'userType' => 'nullable|string|in:athlete,parent,club',
             'sport' => 'nullable|integer|exists:sport_games,id',
             'ageGroup' => 'nullable|string'
         ], [

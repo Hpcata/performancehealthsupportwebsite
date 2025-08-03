@@ -4,10 +4,10 @@ namespace App\Constants;
 
 class AgeGroups
 {
-    const UNDER_15 = '< 15';
-    const AGE_16_20 = '16 - 20';
-    const AGE_21_25 = '21 - 25';
-    const AGE_26_30 = '26 - 30';
+    const AGE_15_18 = '15-18';
+    const AGE_18_22 = '18-22';
+    const AGE_22_30 = '22-30';
+    const OVER_30 = 'Over-30';
     
     /**
      * Get all age groups
@@ -17,10 +17,10 @@ class AgeGroups
     public static function getAll(): array
     {
         return [
-            'under_15' => self::UNDER_15,
-            '16_20' => self::AGE_16_20,
-            '21_25' => self::AGE_21_25,
-            '26_30' => self::AGE_26_30,
+            '15_18' => self::AGE_15_18,
+            '18_22' => self::AGE_18_22,
+            '22_30' => self::AGE_22_30,
+            'over_30' => self::OVER_30,
         ];
     }
     
