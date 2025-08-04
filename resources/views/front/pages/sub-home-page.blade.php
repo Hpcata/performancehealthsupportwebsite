@@ -156,12 +156,12 @@
                     </div>
                     <div class="container-homepage">
                         <div class="hero-content-fixed">
-                            <h1 class="hero-title">{{ $section->title }}</h1>
+                            <h1 class="hero-title-homepage">{{ $section->title }}</h1>
                             {!! $section->content !!}
                         </div>
                     </div>
                         <!-- Chat Widget -->
-                    <div class="chat-widget">
+                    <div class="chat-widget desktop-view mob-hide ">
                         <div class="chat-avatar">
                             <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
                         </div>
@@ -196,7 +196,7 @@
                     <!-- Fixed Text Overlay -->
                     <div class="container-homepage">
                         <div class="hero-content-fixed">
-                            <h1 class="hero-title">{{ $section->title }}</h1>
+                            <h1 class="hero-title-homepage">{{ $section->title }}</h1>
                             {!! $section->content !!}
 
                             <button class="ms-2 btn-white">Sign up for free</button>
@@ -296,11 +296,15 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                      <!-- Chat Widget -->
                     <div class="chat-widget mobile-view web-hide">
                         <div class="chat-avatar">
-                            <img src="images/virtual kez.webp" alt="Virtual Kez Avatar" />
+                            <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
                         </div>
                         <div class="chat-bubble">
-                            <span>Hi, I’m Virtual Kez. Got a question? Give me a try!</span>
-                            <img src="images/bubble-arrow.webp" alt="Virtual Kez Avatar" class="bubble-arrow" />
+                            <span>Hi, I’m Virtual Kez. Try calling me for free!</span>
+                            <img
+                            src="{{ frontAssets('images/bubble-arrow.svg') }}"
+                            alt="Virtual Kez Avatar"
+                            class="bubble-arrow"
+                            />
                         </div>
                     </div>
                 </section>
@@ -726,7 +730,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 O'Bryan.
                                 </p>
                             </div>
-                            <button class="btn btn-signup">Learn more</button>
+                            <button class=" btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -3083,7 +3087,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 <label class="terms-label">By continuing, you agree to our <span class="terms-link"
                     onclick="openTermsModal()">Terms.</span></label>
 
-                <button class="btn btn-signup" style="margin-top:30px;" onclick="sendOtp()">Continue</button>
+                <button class=" btn-signup" style="margin-top:30px;" onclick="sendOtp()">Continue</button>
                 <div class="or-divider">
                     <div class="divider-line"></div>
                     <span class="or-text">OR</span>

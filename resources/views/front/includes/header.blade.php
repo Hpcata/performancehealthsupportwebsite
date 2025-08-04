@@ -124,7 +124,7 @@ $auth = auth()->guard('web')->check();
 @elseif(Route::is('front.sub-home-page'))
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-custom homepage-navbar">
-        <div class="container">
+        <div class="container-homepage">
             <a class="navbar-brand" href="#">
                 <img src="{{ frontAssets('images/logo.svg') }}" alt="ATHLEAT Fuel Logo" />
             </a>
@@ -134,7 +134,7 @@ $auth = auth()->guard('web')->check();
                     style="border: none">
                     <span  class="menu-icon" style="color: white">
                         <img src="{{ frontAssets('images/bars.svg') }}" alt="ATHLEAT Fuel Logo" class="bars-icon"/>
-                         <img src="images/cross.svg" alt="Menu" class="cross-icon" />
+                          <img src="{{ frontAssets('images/cross.svg') }}" alt="Menu" class="cross-icon" />
                     </span>
                 </button>
             </div>
@@ -182,7 +182,7 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class="btn btn-login mob-hide d-none">Log in</button>
+                        <button class=" btn-login mob-hide">Log in</button>
                         <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                             Sign up for free
                         </button>
@@ -303,7 +303,7 @@ $auth = auth()->guard('web')->check();
                         </div>
 
                         <!-- Sign In Button -->
-                        <button type="submit" id="login-submit" class="btn btn-primary w-100 mt-3">
+                           <button type="submit" id="login-submit" class="btn-primary w-100 mt-3">
                             Sign In
                         </button>
                     </form>
