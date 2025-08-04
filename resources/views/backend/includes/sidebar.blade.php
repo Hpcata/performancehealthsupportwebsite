@@ -112,12 +112,6 @@
 				</a>
 			</li>
 			<li>
-				<a class="m-link {{request()->routeIs('organizations.*') ? 'active' : '' }}" href="{!! route('organizations') !!}">
-					<i class="icofont-ui-rating fs-5"></i>
-					<span class="sidebar-mini-text">Associations</span>
-				</a>
-			</li>
-			<li>
 				<a class="m-link {{ request()->routeIs('site-settings', ['slug' => 'general']) ? 'active' : '' }}" href="{{ route('site-settings', ['slug' => 'general']) }}">
 					<i class="icofont-ui-settings fs-5"></i>
 					<span class="sidebar-mini-text">Site Settings</span>
