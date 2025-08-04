@@ -87,6 +87,12 @@
     <!-- Includes the script file -->
     @include('front.includes.script')
 
+    <style>
+        #delphi-bubble-trigger {
+            display: none !important;
+        }
+    </style>
+
     @stack('scripts')
 
     <script id="delphi-bubble-script">

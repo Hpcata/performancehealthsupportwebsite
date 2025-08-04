@@ -47,11 +47,6 @@
         color: #333 !important;
         font-weight: 500 !important;
     }
-
-    /* Hide Delphi's default bubble */
-    #delphi-bubble-trigger {
-        display: none !important;
-    }
 </style>
 
 @section('content')

@@ -6,13 +6,6 @@
     coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-    <style>
-        /* Hide Delphi's default bubble */
-        #delphi-bubble-trigger {
-            display: none !important;
-        }
-    </style>
-
     <!-- Main Content -->
     <main class="main">
         <div class="container">
