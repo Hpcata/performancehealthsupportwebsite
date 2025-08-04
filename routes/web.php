@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\ProductController;
 use GuzzleHttp\Client;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Front\ForgotPasswordController;
+use App\Http\Controllers\Front\OtpRegistrationController;
 use App\Http\Controllers\Admin\NutritionAIController;
 use App\Http\Controllers\Admin\ImageController;
 use Illuminate\Support\Facades\Artisan;
@@ -297,6 +298,16 @@ Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEm
 Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('front.password.reset');
 Route::post('password/reset', [ForgotPasswordController::class, 'reset'])->name('front.password.update');
 Route::post('front/logout', [FrontController::class, 'logout'])->name('front.logout');
+
+// OTP Registration Flow
+Route::post('front/otp/send', [OtpRegistrationController::class, 'sendOtp'])->name('front.otp.send');
+Route::post('front/otp/verify', [OtpRegistrationController::class, 'verifyOtp'])->name('front.otp.verify');
+Route::post('front/otp/register', [OtpRegistrationController::class, 'completeRegistration'])->name('front.otp.register');
+Route::post('front/otp/resend', [OtpRegistrationController::class, 'resendOtp'])->name('front.otp.resend');
+Route::get('front/otp/sport-games-age-groups', [OtpRegistrationController::class, 'getSportGamesAndAgeGroups'])->name('front.otp.sport-games-age-groups');
+// Debug route for OTP testing (remove in production)
+Route::get('front/otp/debug/{mobile}', [OtpRegistrationController::class, 'debugCache'])->name('front.otp.debug');
+
 // GET route fallback for expired session
 Route::get('front/logout-guest', function () {
     return redirect()->route('front.index')->with('info', 'Your session has expired. Please log in again.');

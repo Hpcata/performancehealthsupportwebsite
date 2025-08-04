@@ -126,13 +126,16 @@ $auth = auth()->guard('web')->check();
     <nav class="navbar navbar-expand-lg navbar-custom homepage-navbar">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="{{ frontAssets('images/logo.webp') }}" alt="ATHLEAT Fuel Logo" />
+                <img src="{{ frontAssets('images/logo.svg') }}" alt="ATHLEAT Fuel Logo" />
             </a>
             <div class="mob-btn-wrap">
                 <button class="me-0 btn btn-login web-hide">Log in</button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     style="border: none">
-                    <span style="color: white"><img src="{{ frontAssets('images/bars.svg') }}" alt="ATHLEAT Fuel Logo" /></span>
+                    <span  class="menu-icon" style="color: white">
+                        <img src="{{ frontAssets('images/bars.svg') }}" alt="ATHLEAT Fuel Logo" class="bars-icon"/>
+                         <img src="images/cross.svg" alt="Menu" class="cross-icon" />
+                    </span>
                 </button>
             </div>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -174,11 +177,16 @@ $auth = auth()->guard('web')->check();
                 </ul>
 
                 <div class="d-flex">
-                    <button class="btn btn-login mob-hide">Log in</button>
-
-                    <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
-                        Sign up for free
-                    </button>
+                    @if(Auth::check())
+                        <a href="{{ route('front.profile', ['id' => Auth::guard('web')?->user()?->id]) }}" class="btn btn-signup mob-hide">
+                            My Account
+                        </a>
+                    @else
+                        <button class="btn btn-login mob-hide d-none">Log in</button>
+                        <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
+                            Sign up for free
+                        </button>
+                    @endif
                     <button class="ms-2 btn btn-login web-hide">Virtual Kez</button>
                 </div>
             </div>
@@ -429,4 +437,54 @@ $auth = auth()->guard('web')->check();
             document.body.style.overflow = 'hidden';
         }
     }
+      // Mobile menu toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            const navbar = document.querySelector('.homepage-navbar');
+            const barsIcon = document.querySelector('.bars-icon');
+            const crossIcon = document.querySelector('.cross-icon');
+
+            if (navbarToggler && navbarCollapse) {
+                // Custom click handler to control timing
+                navbarToggler.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Check if menu is currently open
+                    const isMenuOpen = navbarCollapse.classList.contains('show');
+                    
+                    if (!isMenuOpen) {
+                        // Menu is closed, opening it
+                        // 1. Immediately change background color
+                        if (navbar) navbar.classList.add('menu-open');
+                        
+                        // 2. Change icon immediately
+                        if (barsIcon) barsIcon.style.display = 'none';
+                        if (crossIcon) crossIcon.style.display = 'block';
+                        
+                        // 3. Open menu after 0.1s delay
+                        setTimeout(() => {
+                            navbarCollapse.classList.add('show');
+                        }, 100);
+                    } else {
+                        // Menu is open, closing it
+                        // 1. Immediately remove background color
+                        if (navbar) navbar.classList.remove('menu-open');
+                        
+                        // 2. Change icon immediately
+                        if (barsIcon) barsIcon.style.display = 'block';
+                        if (crossIcon) crossIcon.style.display = 'none';
+                        
+                        // 3. Close menu after 0.1s delay
+                        setTimeout(() => {
+                            navbarCollapse.classList.remove('show');
+                        }, 100);
+                    }
+                });
+
+                // Remove Bootstrap's default toggle behavior
+                navbarToggler.removeAttribute('data-bs-toggle');
+                navbarToggler.removeAttribute('data-bs-target');
+            }
+        });
 </script>
