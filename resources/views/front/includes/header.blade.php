@@ -124,17 +124,17 @@ $auth = auth()->guard('web')->check();
 @elseif(Route::is('front.sub-home-page'))
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-custom homepage-navbar">
-        <div class="container">
+        <div class="container-homepage">
             <a class="navbar-brand" href="#">
                 <img src="{{ frontAssets('images/logo.svg') }}" alt="ATHLEAT Fuel Logo" />
             </a>
             <div class="mob-btn-wrap">
-                <button class="me-0 btn btn-login web-hide">Log in</button>
+                <button class="me-0 btn-login web-hide">Log in</button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     style="border: none">
                     <span  class="menu-icon" style="color: white">
                         <img src="{{ frontAssets('images/bars.svg') }}" alt="ATHLEAT Fuel Logo" class="bars-icon"/>
-                         <img src="images/cross.svg" alt="Menu" class="cross-icon" />
+                          <img src="{{ frontAssets('images/cross.svg') }}" alt="Menu" class="cross-icon" />
                     </span>
                 </button>
             </div>
@@ -182,12 +182,12 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class="btn btn-login mob-hide d-none">Log in</button>
-                        <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
+                        <button class=" btn-login mob-hide">Log in</button>
+                        <button class=" btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                             Sign up for free
                         </button>
                     @endif
-                    <button class="ms-2 btn btn-login web-hide">Virtual Kez</button>
+                    <button class="ms-2  btn-login web-hide">Virtual Kez</button>
                 </div>
             </div>
         </div>
@@ -303,7 +303,7 @@ $auth = auth()->guard('web')->check();
                         </div>
 
                         <!-- Sign In Button -->
-                        <button type="submit" id="login-submit" class="btn btn-primary w-100 mt-3">
+                           <button type="submit" id="login-submit" class="btn-primary w-100 mt-3">
                             Sign In
                         </button>
                     </form>
