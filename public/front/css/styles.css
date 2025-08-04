@@ -344,10 +344,11 @@ body {
     box-shadow: 0 2.4px 9.6px 0 rgba(0, 0, 0, 0.15);
     border-radius: 67.2px;
 }
-.chat-widget.desktop-view.mob-hide .chat-avatar {
 
+.chat-widget.desktop-view.mob-hide .chat-avatar {
     right: 0px;
 }
+
 .chat-widget .chat-bubble {
     background-color: #fff;
     position: relative;
@@ -2828,6 +2829,11 @@ svg.user-type-icon path {
     align-items: start;
 }
 
+.homepage-navbar .dropdown-menu.show {
+    margin-top: 0 !important;
+    padding-left: 10px !important;
+}
+
 /* ===== MEDIA QUERIES ===== */
 @media (min-width: 1200px) {
     .testimonial-section .container {
@@ -3002,7 +3008,7 @@ svg.user-type-icon path {
         margin-top: 0 !important;
     }
 
-        .homepage-navbar .dropdown-menu.show {
+    .homepage-navbar .dropdown-menu.show {
         margin-top: 0 !important;
         padding-left: 10px !important;
     }
@@ -3732,9 +3738,10 @@ svg.user-type-icon path {
 }
 
 @media (max-width: 400px) {
-    .carousel{
+    .carousel {
         margin-top: -60px;
     }
+
     .quiz-step .food-grid {
         grid-template-columns: repeat(1, 1fr);
         gap: 12px;

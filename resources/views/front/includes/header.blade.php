@@ -129,7 +129,7 @@ $auth = auth()->guard('web')->check();
                 <img src="{{ frontAssets('images/logo.svg') }}" alt="ATHLEAT Fuel Logo" />
             </a>
             <div class="mob-btn-wrap">
-                <button class="me-0 btn btn-login web-hide">Log in</button>
+                <button class="me-0 btn-login web-hide">Log in</button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     style="border: none">
                     <span  class="menu-icon" style="color: white">
@@ -183,11 +183,11 @@ $auth = auth()->guard('web')->check();
                         </a>
                     @else
                         <button class=" btn-login mob-hide">Log in</button>
-                        <button class="btn btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
+                        <button class=" btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                             Sign up for free
                         </button>
                     @endif
-                    <button class="ms-2 btn btn-login web-hide">Virtual Kez</button>
+                    <button class="ms-2  btn-login web-hide">Virtual Kez</button>
                 </div>
             </div>
         </div>
