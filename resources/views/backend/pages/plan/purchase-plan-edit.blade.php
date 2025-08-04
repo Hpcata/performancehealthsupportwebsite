@@ -75,24 +75,34 @@
         /* display: inline-block; */
         max-width: 100%;
     }
-   
+
     .food-label{
         font-weight:normal !important;
     }
-         .form-control-multiple {
-    background-color: white;
-    border: 1px solid #f0f0f0;
-    border-radius: 4px;
-    cursor: text;
-    padding-bottom: 5px;
-    padding-right: 5px;
-    height: 38px;
-}
+    .form-control-multiple {
+        background-color: white;
+        border: 1px solid #f0f0f0;
+        border-radius: 4px;
+        cursor: text;
+        padding-bottom: 5px;
+        padding-right: 5px;
+        height: 38px;
+    }
+    /* .selected-meals .list-group {
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    } */
+    .panel-body {
+        max-height: 600px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 </style>
 <div class="container-xxl">
     <div class="row align-items-center">
         <div class="border-0 mb-4">
-            <div class="card-header pb-3 no-bg bg-transparent d-flex  px-0 justify-content-between border-bottom flex-md-row flex-column align-items-md-center align-items-start ps-md-0 ps-3">
+            <div class="card-header pb-3 no-bg bg-transparent d-flex  px-0 justify-content-between border-bottom flex-md-row flex-column align-items-md-center align-items-center ps-md-0 ps-3">
                 <!-- Left Section: Title -->
                 <div class="d-flex align-items-center flex-wrap">
                     <h3 class="fw-bold mb-0 me-3">Edit Plan</h3>
@@ -124,7 +134,7 @@
                         <div class="row">
                             <div class="panel-group col-md-8" id="accordion">
                                 @foreach ($userPlans as $userPlan)
-                                <?php 
+                                <?php
                                 $plan = $userPlan->plan; ?>
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
@@ -203,7 +213,7 @@
                                     <span class="">
                                         <strong>Key: </strong>
                                         <p class="mb-0" style="color: black; font-size:15px;">Athlete Preferences</p>
-                                        <p class="mb-0" style="color: #7258db; font-size:15px;">Included Preferences </p> 
+                                        <p class="mb-0" style="color: #7258db; font-size:15px;">Included Preferences </p>
                                         <p class="mb-0" style="color: #198754; font-size:15px;">Recommendations</p>
                                     </span>
                                     <div class="category-section mb-3" id="category-section">
@@ -333,7 +343,7 @@
                             <a href="{{ route('front.profile', ['id' => $payment->user_id, 'admin_view' => 1]) }}"
                             target="_blank" class="btn btn-success">
                                 View User Profile
-                            </a>                            
+                            </a>
                             <button
                                 type="button"
                                 name="action"
@@ -822,7 +832,7 @@
         $(document).on('click', '.view-user-profile', function(event) {
             event.preventDefault();
             event.stopPropagation();
-            
+
             if (hasUnsavedChanges) {
                 intendedProfileAction = this;
                 const modalInstance = new bootstrap.Modal(document.getElementById('savePlanModal'));
@@ -832,7 +842,7 @@
                 // If no unsaved changes, proceed with normal profile view
                 const userId = $(this).data('user-id');
                 const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-                
+
                 $.ajax({
                     url: sessionUrl,
                     method: 'GET',
@@ -899,7 +909,7 @@
             if (intendedProfileAction) {
                 const userId = intendedProfileAction.getAttribute('data-user-id');
                 const sessionUrl = "{{ route('front.set-user-session', ':id') }}".replace(':id', userId);
-                
+
                 $.ajax({
                     url: sessionUrl,
                     method: 'GET',
@@ -968,7 +978,7 @@
             hasUnsavedChanges = false;
         });
     });
-    
+
     $(document).on('blur', '.modalQtyInput', function () {
         let value = parseFloat($(this).val());
 
@@ -983,15 +993,12 @@
         $(document).on('click', '.user-pre-plan-details', function() {
             const paymentId = $(this).data('payment-id');
 
-            console.log('Clicked on user-pre-plan-details button with paymentId:', paymentId);
-
             $.ajax({
                 url: '{{ route('admin.pre-plan-details', ':id') }}'.replace(':id', paymentId),
                 method: 'GET',
 
                 success: function(response) {
                     if (response.success) {
-                        console.log(response.data);
 
                         let modalContent = '';
 
@@ -1161,35 +1168,6 @@
             });
         });
 
-        // $('button[name="action"][value="view"]').on('click', function(e) {
-        //     e.preventDefault();
-
-        //     var user_id = $(this).data('user-id');  // Assume you set a data attribute with the user's ID on the button
-        //     var payment_id = $(this).data('payment-id');  // Assume you set a data attribute with the user's ID on the button
-
-        //     $.ajax({
-        //         url: '{{ route("admin.handle-plan-action") }}',  // URL to your controller method for storing the form
-        //         method: 'POST',
-        //         data: {
-        //             action: 'view',
-        //             user_id: user_id,
-        //             payment_id : payment_id,
-        //             _token: '{{ csrf_token() }}'
-        //         },
-        //         success: function(response) {
-        //             if (response.status === 'success') {
-        //                 window.open(response.redirect_url, '_blank');
-        //                 // window.location.href = response.redirect_url;  // Redirect to user profile page
-        //             } else {
-        //                 alert('Error: ' + response.message);
-        //             }
-        //         },
-        //         error: function(xhr) {
-        //             alert('Something went wrong!');
-        //         }
-        //     });
-        // });
-
         // Handle the "Send" button click (Send meal plan)
         $('button[name="action"][value="send"]').on('click', function(e) {
             e.preventDefault();
@@ -1251,14 +1229,6 @@
                 }
             });
         });
-
-
-        // $(document).on('click', '.view-info', function () {
-        //     // alert('22');
-        //     var description = $(this).data('description') || 'N/A';
-        //     $('#modalDescription').text(description);
-        //     $('#itemInfoModal').modal('show');
-        // });
     });
     // $('#swapFoods').val(null).trigger('change');
 
@@ -1277,6 +1247,29 @@
     });
 
     $(document).ready(function() {
+        function getPercentageChange(id) {
+            var data = window.mesureofnewaddedfood && window.mesureofnewaddedfood[id] ? window.mesureofnewaddedfood[id] : null;
+            if (data && typeof data[0] !== 'undefined' && typeof data[0].old !== 'undefined' &&
+                typeof data[1] !== 'undefined' && typeof data[1].new !== 'undefined') {
+                var oldData = data[0].old;
+                var newData = data[1].new;
+
+                for (var i = 0; i < oldData.length; i++) {
+                    if (oldData[i].checked) {
+                        var newItem = newData.find(item => item.unit === oldData[i].unit && item.checked);
+                        if (newItem && oldData[i].qty !== newItem.qty) {
+                            var oldQty = oldData[i].qty;
+                            var newQty = newItem.qty;
+                            var ratio = newQty / oldQty;
+                            return ratio.toFixed(2); // Return ratio with 2 decimal places
+                        }
+                    }
+                }
+                return 1; // Return 1 if no change is found (ratio of 1 means no change)
+            }
+            return null; // Return null if data is unavailable
+        }
+
         const previouslySelectedMeals = {};
         const preSelectedMeals = @json($selectedMeals);
         const preSelectedItems = @json($selectedItems); // Pre-selected user items
@@ -1284,116 +1277,233 @@
         const payment = @json($payment);
         const userId = payment.user_id;
         const loader = $('#loader');
+        const isNewFlow = true;
 
-        console.log(preSelectedMeals);
+        if(isNewFlow) {
+            const mealTimeData = [];
+            $('.meal-time-checkbox').each(function() {
+                const checkbox = $(this);
+                const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
+                const mealTimeId = checkbox.data('mealtime-id');
+                const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
 
-        $('.meal-time-checkbox').each(function() {
-            const checkbox = $(this);
-            const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
-            const mealTimeId = checkbox.data('mealtime-id');
-            console.log(`Checkbox for Plan ID: ${planId}, Meal Time ID: ${mealTimeId} initialized.`);
-            const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
-            const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
-            const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
-            const mealSelect = $(dropdownId).find('select');
-            const mealTimeDetailsDiv = checkbox.closest('li').find('.mealTimeDetailsDiv');
+                mealTimeData.push({
+                    planId,
+                    mealTimeId,
+                    userId,
+                    dropdownId: `#addMealDropdown${planId}_${mealTimeId}`,
+                    selectedMealsId: `#selectedMeals${planId}_${mealTimeId}`,
+                    mealTimeDetailsDiv: checkbox.closest('li').find('.mealTimeDetailsDiv'),
+                    selectedMealsArray: preSelectedMeals[planId]?.[mealTimeId] || []
+                });
+            });
 
-            const selectedMealsArray = preSelectedMeals[planId]?.[mealTimeId] || [];
-
-            if (selectedMealsArray.length > 0) {
-                $(dropdownId).show();
-                $(selectedMealsId).show();
-                mealTimeDetailsDiv.css('display', 'none');
-                console.log(`Showing dropdown for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
-                initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
-
+            // Single AJAX call to fetch meals for all meal times
+            if (mealTimeData.length > 0) {
                 $.ajax({
-                    url: '{{ route("admin.get-meals-by-mealtime") }}',
+                    url: '{{ route("admin.get-meals-by-mealtime-batch") }}',
                     method: 'POST',
                     data: {
-                        plan_id: planId,
-                        meal_time_id: mealTimeId,
-                        user_id: userId,
+                        meal_times: mealTimeData.map(data => ({
+                            plan_id: data.planId,
+                            meal_time_id: data.mealTimeId,
+                            user_id: data.userId
+                        })),
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        if (response.success) {
-                            mealSelect.empty(); // Clear previous options
-
-                            const orderedMealIds = selectedMealsArray.map(id => parseInt(id));
-
-                            // Create a map for quick lookup
-                            const mealMap = {};
-                            response.meals.forEach(meal => {
-                                mealMap[meal.id] = meal;
-                            });
-
-                            // Add selected meals in the order from preSelectedMeals
-                            orderedMealIds.forEach(mealId => {
-                                const meal = mealMap[mealId];
-                                if (meal) {
-                                    mealSelect.append(new Option(meal.name, meal.id, true, true));
+                        if (response.success && response.meal_data) {
+                            mealTimeData.forEach(data => {
+                                const { planId, mealTimeId, dropdownId, selectedMealsId, mealTimeDetailsDiv, selectedMealsArray } = data;
+                                const mealSelect = $(dropdownId).find('select');
+    
+                                if (selectedMealsArray.length > 0) {
+                                    $(dropdownId).show();
+                                    $(selectedMealsId).show();
+                                    mealTimeDetailsDiv.css('display', 'none');
+                                    initializeSelect2(mealSelect, mealTimeId);
+    
+                                    const meals = response.meal_data[`${planId}_${mealTimeId}`] || [];
+                                    mealSelect.empty();
+    
+                                    const orderedMealIds = selectedMealsArray.map(id => parseInt(id));
+                                    const mealMap = {};
+                                    meals.forEach(meal => {
+                                        mealMap[meal.id] = meal;
+                                    });
+    
+                                    orderedMealIds.forEach(mealId => {
+                                        const meal = mealMap[mealId];
+                                        if (meal) {
+                                            mealSelect.append(new Option(meal.name, meal.id, true, true));
+                                        }
+                                    });
+    
+                                    meals.forEach(meal => {
+                                        if (!orderedMealIds.includes(meal.id)) {
+                                            mealSelect.append(new Option(meal.name, meal.id, false, false));
+                                        }
+                                    });
+    
+                                    const stringIds = orderedMealIds.map(String);
+                                    mealSelect.val(stringIds).trigger('change'); // update here
+                                    // previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
+                                } else {
+                                    $(dropdownId).find('input[type="checkbox"]').prop('checked', false);
+                                    $(dropdownId).hide();
+                                    $(selectedMealsId).hide();
+                                    mealTimeDetailsDiv.css('display', 'block');
                                 }
+    
+                                // Handle meal removal
+                                mealSelect.on('select2:unselect', function(e) {
+                                    const mealId = parseInt(e.params.data.id);
+                                    const planId = data.planId;
+                                    const mealTimeId = data.mealTimeId;
+                                    const userId = data.userId;
+    
+                                    if (Array.isArray(preSelectedMeals[planId]?.[mealTimeId])) {
+                                        const index = preSelectedMeals[planId][mealTimeId].indexOf(mealId);
+                                        if (index !== -1) {
+                                            preSelectedMeals[planId][mealTimeId].splice(index, 1);
+                                        }
+                                    }
+    
+                                    // Batch meal removals can be implemented here if needed
+                                    $.ajax({
+                                        url: '{{ route("admin.remove-user-meal") }}',
+                                        method: 'POST',
+                                        data: {
+                                            user_id: userId,
+                                            meal_id: mealId,
+                                            plan_id: planId,
+                                            _token: '{{ csrf_token() }}'
+                                        },
+                                        success: function(response) {
+                                            console.log(response.message || 'Meal removed successfully');
+                                        },
+                                        error: function(xhr) {
+                                            alert('Failed to remove meal. Please try again.');
+                                        }
+                                    });
+    
+                                    $(this).find(`option[value="${mealId}"]`).remove();
+                                    // $(this).trigger('change');
+                                });
                             });
-
-                            // Add remaining unselected meals
-                            response.meals.forEach(meal => {
-                                if (!orderedMealIds.includes(meal.id)) {
-                                    mealSelect.append(new Option(meal.name, meal.id, false, false));
-                                }
-                            });
-
-                            const stringIds = orderedMealIds.map(String);
-                            mealSelect.val(stringIds).trigger('change');
-                            previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
                         }
                     },
                     error: function() {
                         alert('Error occurred while loading meals.');
                     }
                 });
-
-            } else {
-                console.log(`Hiding dropdown for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
-                checkbox.prop('checked', false);
-                $(dropdownId).hide();
-                $(selectedMealsId).hide();
-                mealTimeDetailsDiv.css('display', 'block');
             }
-
-            // Handle meal removal when "X" is clicked in select2
-            mealSelect.on('select2:unselect', function(e) {
-                let mealId = parseInt(e.params.data.id);
-
-                if (Array.isArray(preSelectedMeals[planId]?.[mealTimeId])) {
-                    const index = preSelectedMeals[planId][mealTimeId].indexOf(mealId);
-                    if (index !== -1) {
-                        preSelectedMeals[planId][mealTimeId].splice(index, 1);
-                    }
+        } else {
+            $('.meal-time-checkbox').each(function() {
+                const checkbox = $(this);
+                const planId = checkbox.closest('.panel').find('input[name="plan_id[]"]').val();
+                const mealTimeId = checkbox.data('mealtime-id');
+                const userId = checkbox.closest('.panel').find('input[name="user_id"]').val();
+                const dropdownId = `#addMealDropdown${planId}_${mealTimeId}`;
+                const selectedMealsId = `#selectedMeals${planId}_${mealTimeId}`;
+                const mealSelect = $(dropdownId).find('select');
+                const mealTimeDetailsDiv = checkbox.closest('li').find('.mealTimeDetailsDiv');
+    
+                const selectedMealsArray = preSelectedMeals[planId]?.[mealTimeId] || [];
+    
+                if (selectedMealsArray.length > 0) {
+                    $(dropdownId).show();
+                    $(selectedMealsId).show();
+                    mealTimeDetailsDiv.css('display', 'none');
+                    initializeSelect2(mealSelect, mealTimeId); // Initialize Select2 with AJAX
+    
+                    $.ajax({
+                        url: '{{ route("admin.get-meals-by-mealtime") }}',
+                        method: 'POST',
+                        data: {
+                            plan_id: planId,
+                            meal_time_id: mealTimeId,
+                            user_id: userId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                mealSelect.empty(); // Clear previous options
+    
+                                const orderedMealIds = selectedMealsArray.map(id => parseInt(id));
+    
+                                // Create a map for quick lookup
+                                const mealMap = {};
+                                response.meals.forEach(meal => {
+                                    mealMap[meal.id] = meal;
+                                });
+    
+                                // Add selected meals in the order from preSelectedMeals
+                                orderedMealIds.forEach(mealId => {
+                                    const meal = mealMap[mealId];
+                                    if (meal) {
+                                        mealSelect.append(new Option(meal.name, meal.id, true, true));
+                                    }
+                                });
+    
+                                // Add remaining unselected meals
+                                response.meals.forEach(meal => {
+                                    if (!orderedMealIds.includes(meal.id)) {
+                                        mealSelect.append(new Option(meal.name, meal.id, false, false));
+                                    }
+                                });
+    
+                                const stringIds = orderedMealIds.map(String);
+                                mealSelect.val(stringIds).trigger('change');
+                                previouslySelectedMeals[`${planId}_${mealTimeId}`] = stringIds;
+                            }
+                        },
+                        error: function() {
+                            alert('Error occurred while loading meals.');
+                        }
+                    });
+    
+                } else {
+                    checkbox.prop('checked', false);
+                    $(dropdownId).hide();
+                    $(selectedMealsId).hide();
+                    mealTimeDetailsDiv.css('display', 'block');
                 }
-
-                // Send AJAX to remove meal
-                $.ajax({
-                    url: '{{ route("admin.remove-user-meal") }}',
-                    method: 'POST',
-                    data: {
-                        user_id: userId,
-                        meal_id: mealId,
-                        plan_id: planId,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        console.log(response.message || 'Meal removed successfully');
-                    },
-                    error: function(xhr) {
-                        alert('Failed to remove meal. Please try again.');
+    
+                // Handle meal removal when "X" is clicked in select2
+                mealSelect.on('select2:unselect', function(e) {
+                    let mealId = parseInt(e.params.data.id);
+    
+                    if (Array.isArray(preSelectedMeals[planId]?.[mealTimeId])) {
+                        const index = preSelectedMeals[planId][mealTimeId].indexOf(mealId);
+                        if (index !== -1) {
+                            preSelectedMeals[planId][mealTimeId].splice(index, 1);
+                        }
                     }
+    
+                    // Send AJAX to remove meal
+                    $.ajax({
+                        url: '{{ route("admin.remove-user-meal") }}',
+                        method: 'POST',
+                        data: {
+                            user_id: userId,
+                            meal_id: mealId,
+                            plan_id: planId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            console.log(response.message || 'Meal removed successfully');
+                        },
+                        error: function(xhr) {
+                            alert('Failed to remove meal. Please try again.');
+                        }
+                    });
+    
+                    $(this).find(`option[value="${mealId}"]`).remove(); // Remove option
+                    $(this).trigger('change'); // Refresh Select2
                 });
-
-                $(this).find(`option[value="${mealId}"]`).remove(); // Remove option
-                $(this).trigger('change'); // Refresh Select2
             });
-        });
+        }
 
         let planID = 0;
         let mealtimeID = 0;
@@ -1417,11 +1527,11 @@
                 mealTimeDetailsDiv.css('display', 'block');
                 $(dropdownId).show();
                 $(selectedMealsId).show();
-                
+
                 // Only initialize Select2 and load meals if they haven't been loaded before
                 if (!mealSelect.data('select2')) {
                     initializeSelect2(mealSelect, mealTimeId);
-                    
+
                     // Load meals only if they haven't been loaded before
                     if (!previouslySelectedMeals[`${planId}_${mealTimeId}`]) {
                         $.ajax({
@@ -1437,7 +1547,7 @@
                                 if (response.success) {
                                     mealSelect.empty();
                                     const sortedMeals = response.meals.sort((a, b) => a.id - b.id);
-                                    
+
                                     sortedMeals.forEach(meal => {
                                         let selectedMeal = null;
                                         if (preSelectedMeals[planId]?.[mealTimeId]?.[meal.id]) {
@@ -1451,7 +1561,7 @@
 
                                         const userMealId = isSelected ? selectedMeal : null;
                                         mealSelect.append(`
-                                            <option value="${meal.id}" ${isSelected ? 'selected' : ''} 
+                                            <option value="${meal.id}" ${isSelected ? 'selected' : ''}
                                                     id="${userMealId ? userMealId : ''}">
                                                 ${meal.name}
                                             </option>
@@ -1473,7 +1583,7 @@
                 $(dropdownId).hide();
                 $(selectedMealsId).hide();
             }
-            
+
             calculateMealNutrition();
         });
 
@@ -1542,7 +1652,6 @@
             `;
         }
 
-       
         // Function to calculate nutrition
         function calculateMealNutrition() {
             let grandTotalCarbs = 0;
@@ -1577,30 +1686,19 @@
                 grandTotalProtein += totalProtein;
                 grandTotalFat += totalFat;
                 grandTotalEnergy += totalEnergy;
-
-                // console.log(`Meal Details:
-                // - Total Carb: ${totalCarbs.toFixed(2)}g
-                // - Total Protein: ${totalProtein.toFixed(2)}g
-                // - Total Fat: ${totalFat.toFixed(2)}g`);
             });
 
             $('#allCarbsTotal').text(`${Math.round(grandTotalCarbs)}g`);
             $('#allProteinTotal').text(`${Math.round(grandTotalProtein)}g`);
             $('#allFatTotal').text(`${Math.round(grandTotalFat)}g`);
             $('#allEnergyTotal').text(`${Math.round(grandTotalEnergy)}kJ`);
-
-            // console.log(`Total Nutrition Values:
-            // - Total Carb: ${grandTotalCarbs.toFixed(2)}g
-            // - Total Protein: ${grandTotalProtein.toFixed(2)}g
-            // - Total Fat: ${grandTotalFat.toFixed(2)}g`);
         }
 
         $('.meal-items-select').on('change', function() {
             const ids = $(this).attr('id').replace('mealItems', '').split('_');
             const planId = ids[0];
             const mealTimeId = ids[1];
-            console.log(`Meal items select changed for Plan ID: ${planId}, Meal Time ID: ${mealTimeId}`);
-            console.log('Selected values:', $(this).val());
+
             planID = planId;
             mealtimeID = mealTimeId;
 
@@ -1612,10 +1710,11 @@
             const unselectedMeals = oldMeals.filter(mealId => !currentSelectedMeals.includes(mealId));
             previouslySelectedMeals[`${planId}_${mealTimeId}`] = currentSelectedMeals;
 
+
             // Handle unselected meals first
             unselectedMeals.forEach(mealId => {
                 const removedMealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
-                
+
                 if (removedMealContainer.length) {
                     // Decrement item and swap item counts
                     removedMealContainer.find('input[name^="items"]').each(function() {
@@ -1623,11 +1722,7 @@
                         updateFoodCount(itemId, -1, null); // Decrease item count
                     });
 
-                    // removedMealContainer.find('input[name^="swap_items"]').each(function() {
-                    //     const swapItemId = $(this).val();
-                    //     updateFoodCount(swapItemId, -1, null); // Decrease swap item count
-                    // });
-                    
+
                     // Send AJAX to remove meal and its items
                     $.ajax({
                         url: '{{ route("admin.remove-user-meal") }}',
@@ -1645,11 +1740,11 @@
                             alert('Failed to remove meal. Please try again.');
                         }
                     });
-                    
+
                     // Remove the meal container
                     removedMealContainer.remove();
                     // Trigger meal count update
-                    $(document).trigger('mealRemoved', [planId, mealTimeId]);
+                    // $(document).trigger('mealRemoved', [planId, mealTimeId]);
                     calculateMealNutrition();
                 }
             });
@@ -1657,6 +1752,7 @@
             const orderedMealIds = currentSelectedMeals.map(id => parseInt(id));
             const mealContainers = {}; // Store containers by mealId
 
+            const foodIdsForDetailsBatch = [];
             // For each mealId, fetch and create the container as you already do:
             const mealCreationPromises = orderedMealIds.map((mealId, index) => {
                 return new Promise((resolve, reject) => {
@@ -1689,6 +1785,13 @@
                                     response.total_energy
                                 );
                                 mealContainers[mealId] = mealContainer;
+                                if (newMeals.includes(String(mealId)) || newMeals.includes(mealId)) {
+                                    if (Array.isArray(response.data)) {
+                                        response.data.forEach(item => {
+                                            foodIdsForDetailsBatch.push(item.id);
+                                        });
+                                    }
+                                }
                                 resolve();
                             } else {
                                 reject('Failed to fetch meal details');
@@ -1699,6 +1802,17 @@
                         }
                     });
                 });
+            });
+            $(document).off('mealAdded');
+            $(document).off('mealRemoved');
+
+            // Call your function after all promises resolve
+            Promise.all(mealCreationPromises)
+            .then(() => {
+                getFoodDetailsForGivenIds(foodIdsForDetailsBatch);
+            })
+            .catch(error => {
+                console.error('Error in promise chain:', error);
             });
 
             Promise.all(mealCreationPromises).then(() => {
@@ -1711,6 +1825,8 @@
                     }
                 });
                 calculateMealNutrition();
+                updateMealCount(planId, mealTimeId);
+
             });
         });
             // Helper to format and round qty based on unit
@@ -1725,7 +1841,6 @@
         }
 
         function createMealContainer(planId, mealTimeId, mealId, mealName, mealNote, items, userId, preSelectedItems, preSelectedSwapItems, totalCarbs, totalFat, totalProtein, totalEnergy) {
-            console.log('Creating meal container with items:', items);
             let mealContainer = $(`
                 <div id="mealContainer_${planId}_${mealTimeId}_${mealId}" class="meal-container mt-3">
                     <input type="hidden" name="meals[${planId}][${mealTimeId}][]" value="${mealId}">
@@ -1741,9 +1856,9 @@
                             style="font-weight: bold; font-size: 14px; color: #6610f2; width: 100%;" />
                     </div>
                     <p class="mb-2" style="font-size: 14px; color:grey;"><strong>
-                        Meal Total: Energy: <span class="totalEnergy">${(totalEnergy)}kJ</span> | 
-                        Protein: <span class="totalProtein">${Math.round(totalProtein)}g</span> | 
-                        Carb: <span class="totalCarbs">${Math.round(totalCarbs)}g</span> | 
+                        Meal Total: Energy: <span class="totalEnergy">${(totalEnergy)}kJ</span> |
+                        Protein: <span class="totalProtein">${Math.round(totalProtein)}g</span> |
+                        Carb: <span class="totalCarbs">${Math.round(totalCarbs)}g</span> |
                         Fat: <span class="totalFat">${Math.round(totalFat)}g</span>
                         </strong>
                     </p>
@@ -1759,7 +1874,7 @@
                                 Add More Food
                             </button>
                         </div>
-                        
+
                     </div>
                 </div>
             `);
@@ -1803,7 +1918,6 @@
                         })();
 
                     let swapItemsHTML = '';
-                    console.log('swapsFoods:', swapsFoods);
                     if (swapsFoods.length > 0) {
                         swapItemsHTML = swapsFoods.map(swapItem => {
                             const isSelectedSwapItem = preSelectedSwapItems?.[mealTimeId]?.[mealId]?.[item.id]?.includes(swapItem.id);
@@ -1833,14 +1947,13 @@
                                 return `(${display})`;
                                 })();
 
-                                console.log('swapItemQtyUnitDisplay:', swapItemQtyUnitDisplay);
                             return `
                                 <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
                                     <div class="d-flex justify-content-between align-items-start mb-0">
                                         <div class="col-9">
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked
                                                     data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy ?? 0)}">
                                                 <label class="form-check-label">${swapItem.name}</label>
                                             </div>
@@ -1879,7 +1992,7 @@
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                         title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
@@ -1892,7 +2005,7 @@
                             <div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                     title="Add"><i class="icofont-plus"></i>
                                 </button>
                             </div>
@@ -1924,12 +2037,12 @@
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}" 
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}"
                                             data-selected-qty-unit='${JSON.stringify(item.selected_qty_unit)}'
                                             title="Edit"><i class="icofont-edit"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"  
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"
                                             title="Delete"><i class="icofont-ui-delete"></i></button>
                                     </div>
                                 </div>
@@ -1977,7 +2090,6 @@
                         })();
 
                     let swapItemsHTML = '';
-                    console.log('swapsFoods:', swapsFoods);
                     if (swapsFoods.length > 0) {
                         swapItemsHTML = swapsFoods.map(swapItem => {
                             const isSelectedSwapItem = preSelectedSwapItems?.[mealTimeId]?.[mealId]?.[item.id]?.includes(swapItem.id);
@@ -2007,14 +2119,13 @@
                                 return `(${display})`;
                                 })();
 
-                                console.log('swapItemQtyUnitDisplay:', swapItemQtyUnitDisplay);
                             return `
                                 <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
                                     <div class="d-flex justify-content-between align-items-start mb-0">
                                         <div class="col-9">
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked
                                                     data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${parseFloat(swapItem.energy ?? 0)}">
                                                 <label class="form-check-label">${swapItem.name}</label>
                                             </div>
@@ -2053,7 +2164,7 @@
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                         title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
@@ -2066,7 +2177,7 @@
                             <div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                     data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                     title="Add"><i class="icofont-plus"></i>
                                 </button>
                             </div>
@@ -2098,12 +2209,12 @@
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}" 
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${item.qty}" data-item-unit="${item.unit}"
                                             data-selected-qty-unit='${JSON.stringify(item.selected_qty_unit)}'
                                             title="Edit"><i class="icofont-edit"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"  
+                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-swapfood-id="${swapsFoods[0]?.swap_item_id || ''}"
                                             title="Delete"><i class="icofont-ui-delete"></i></button>
                                     </div>
                                 </div>
@@ -2140,9 +2251,7 @@
                     $(tableBodyEl).find('tr').each(function () {
                         newOrder.push($(this).data('item-id'));
                     });
-                    // Store newOrder as needed (e.g., in a hidden input or JS variable)
-                    // Example: window.currentItemOrder = newOrder;
-                    console.log('New order:', newOrder);
+
                 }
             });
 
@@ -2180,8 +2289,7 @@
         $(document).on('change','.food-checkbox', function () {
             const foodId = $(this).data('food-id');
             const foodName = $(this).data('food-name');
-            // const uniqueMealTimeIds = mealTimeIds.filter((value, index, self) => self.indexOf(value) === index);
-            // console.log(uniqueMealTimeIds);
+
             if (!$(this).is(':checked')) return;
 
             // Update modal title & hidden inputs
@@ -2206,8 +2314,7 @@
                         const protein = Math.round(foodItem.protein * 10) / 10;
                         const fat = Math.round(foodItem.fat * 10) / 10;
                         const energy = parseFloat(foodItem.energy) ? parseFloat(foodItem.energy) : 0;
-                        console.log(energy);
-                    let selectedQtyUnits = [];
+                        let selectedQtyUnits = [];
 
                         try {
                             const rawJson = foodItem.selected_qty_unit;
@@ -2218,7 +2325,7 @@
                                     selectedQtyUnits = rawJson; // Already parsed
                                 }
                             }
-                    } catch (e) {
+                        } catch (e) {
                             console.warn('Invalid selected_qty_unit JSON:', e);
                         }
 
@@ -2279,7 +2386,7 @@
 
         $('#saveMealFood').on('click', function () {
             const modal = $('#mealFoodAddModal');
-            
+
             const anyChecked = $('#mealFoodAddModal .qty-unit-row').find('.qtyCheckboxSelector:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
@@ -2330,7 +2437,7 @@
                     }
                 }
             });
-          
+
             $.ajax({
                 url: '{{ route("admin.add-food") }}',
                 type: 'POST',
@@ -2355,16 +2462,15 @@
                     const item = response.item;
                     const swapFoods = item.swap_items || [];
                     let swapItemsHTML = '';
-                    
+
                     // Get unique meal time IDs from the selected meals
                     const uniqueMealTimeIds = [...new Set(mealTimeIds)];
-                    console.log('uniqueMealTimeIds:', uniqueMealTimeIds);
 
                     uniqueMealTimeIds.forEach(mealTimeId => {
                         meals.forEach(mealId => {
                             const mealContainerId = `#mealContainer_${planID}_${mealTimeId}_${mealId}`;
                             const mealContainer = $(mealContainerId);
-                            
+
                             const tableBody = $(mealContainerId).find('.items-table-body');
 
                             if (swapFoods.length > 0) {
@@ -2377,7 +2483,7 @@
 
                                     return `
                                         <li class="list-unstyled mb-3" data-swap-item-id="${swapItem.id}">
-                                            <div class="d-flex justify-content-between align-items-start mb-0"> 
+                                            <div class="d-flex justify-content-between align-items-start mb-0">
                                                 <div class="col-9">
                                                     <div class="d-flex align-items-start">
                                                         <input type="checkbox" name="swap_items[${planID}][${mealTimeId}][${mealId}][${item.id}][]"
@@ -2420,14 +2526,10 @@
                                         <div>
                                             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                                 data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planID}"
-                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                                 title="Add More"><i class="icofont-plus"></i></button>
                                         </div>
                                     </li>`;
-
-                                // swapFoods.map(swapItem =>
-                                //     updateFoodCount(swapItem.id, 1, 'green')
-                                // );
                             } else {
                                 swapItemsHTML = `
                                     <li class="d-flex justify-content-between align-items-start mb-2">
@@ -2529,7 +2631,7 @@
             $('#mealFoodAddModal').find('input').val('');
             $('#mealFoodAddModal').find('select').val('').trigger('change');
         });
-        
+
          $('#addMoreFoodModal').on('hide.bs.modal', function() {
             $('#addMoreFoodModal').find('input').val('');
             $('#addMoreFoodModal').find('select').val('').trigger('change');
@@ -2637,6 +2739,41 @@
             });
         }
 
+        function getFoodDetailsForGivenIds(ids) {
+            var foodIds = ids.join(',');
+            if(!foodIds) {
+                return false;
+            }
+            $.ajax({
+                url: '{{ route("admin.get-food-details-batch") }}?food_ids=' + foodIds,
+                method: 'GET',
+                success: function(response) {
+                    if(response.items) {
+                        $.each(response.items, function(key, value) {
+                            if(value) {
+                                const foodData = value;
+    
+                                // Check if food has flags
+                                const hasFlags = foodData.flags && foodData.flags.length > 0;
+                                const categoryName = hasFlags
+                                    ? foodData.flags[0].name
+                                    : (foodData.category && foodData.category.name) ? foodData.category.name : 'Uncategorized';
+    
+                                const targetSection = hasFlags ? '#category-section' : '#recommendations-food-section';
+    
+                                processFoodUpdate(key, 1, foodData.title, categoryName, targetSection);
+                            }
+                        });
+                    } else {
+                        console.error('Invalid response format');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('AJAX error:', xhr.responseText);
+                }
+            });
+        }
+
         function processFoodUpdate(foodId, change, foodTitle, categoryName, parentSelector) {
             let textColor = preSelectedFoods.includes(Number(foodId)) ? 'text-primary' : 'text-success';
 
@@ -2720,16 +2857,17 @@
                             categoryWrapper.addClass('d-none');
                         }
                     } else {
-                        countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+                        countLabel.text(countText.replace(/\s*\(\d+\)$/, ''))
+                            .removeClass('text-primary text-success text-purple text-dark')
+                            .addClass('text-dark');
                     }
                 }
                 return;
             }
-
             if (newCount > 0) {
                 countLabel.text(countText.replace(/\(\d+\)$/, '').trim() + ` (${newCount})`).addClass(textColor);
             } else {
-                countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark');
+                countLabel.text(countText.replace(/\s*\(\d+\)$/, '')).addClass('text-dark'); // <-- Reset to default color
             }
         }
 
@@ -2767,7 +2905,7 @@
                 } else {
                     if (!preSelectedFoods.includes(Number(foodId))) {
                         foodWrapper.remove();
-                        
+
                         // Check if category has no more visible food items
                         const remainingFoods = categoryWrapper.find('.form-check:visible');
                         if (remainingFoods.length === 0) {
@@ -2785,9 +2923,8 @@
         }
 
         function setupNutritionSync(baseCarbs, baseProtein, baseFat, baseEnergy, modal) {
-           
+
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap(modal);
-            console.log(AU_UNIT_EQUIVALENTS);
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
             if ($rows.length === 0) return;
@@ -2805,9 +2942,6 @@
                 const currentQty = parseFraction(currentQtyRaw);
                 if (!currentQty || !currentUnit) return;
 
-                console.log(currentQty, currentUnit);
-                console.log(AU_UNIT_EQUIVALENTS);
-
                 const normalizedUnitEquivalents = {};
                 Object.keys(AU_UNIT_EQUIVALENTS).forEach(key => {
                     normalizedUnitEquivalents[key.trim().toLowerCase()] = AU_UNIT_EQUIVALENTS[key];
@@ -2815,15 +2949,12 @@
 
                 // Later in your function
                 const baseEquivalent = normalizedUnitEquivalents[currentUnit.trim().toLowerCase()];
-                console.log(baseEquivalent);
                 if (!baseEquivalent) {
                     console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
                 const ratio = currentQty / baseEquivalent;
-                console.log(ratio);
-                console.log(modal);
-                console.log(baseCarbs * ratio);
+
                 $(`${modal} #modalCarbs`).text((Math.round(baseCarbs * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalProtein`).text((Math.round(baseProtein * ratio * 10) / 10) + 'g');
                 $(`${modal} #modalFat`).text((Math.round(baseFat * ratio * 10) / 10) + 'g');
@@ -2864,7 +2995,7 @@
                 return result || null;
             }
         }
-        
+
         function setupDynamicMeasurementSync(modal) {
             const $container = $(`${modal} #dynamicQtyMeasurementContainer`);
             const $rows = $container.find('.qty-unit-row');
@@ -2916,7 +3047,6 @@
             });
         }
 
-       
         function parseFraction(input) {
             if (input === undefined || input === null) return null;
 
@@ -2984,8 +3114,7 @@
             if (!Array.isArray(selectedQtyUnits) || selectedQtyUnits.length === 0) {
                 selectedQtyUnits = [{ qty: fallbackQty, unit: fallbackUnit, checked: false }];
             }
-            console.log(selectedQtyUnits);
-            const $container = $('#dynamicQtyMeasurementContainer').empty();
+            const $container = $('#editItemModal #dynamicQtyMeasurementContainer').empty();
 
             selectedQtyUnits.forEach(({ qty, unit, checked }, index) => {
                 const isChecked = checked === true || checked === 'true'; // ✅ Normalize boolean
@@ -3026,7 +3155,7 @@
 
                 if (isNaN(newQty) || isNaN(originalQty) || !originalUnit || !newUnit) return;
 
-                let ratio = originalQty / newQty;
+                ratio = newQty / originalQty;
 
                 // if (originalUnit !== newUnit && unitRatios?.[originalUnit] && unitRatios?.[newUnit]) {
                 //     const unitRatio = unitRatios[newUnit] / unitRatios[originalUnit];
@@ -3034,7 +3163,6 @@
                 // }
 
                 $('#editItemModal #ratio').val(ratio);
-                console.log(`Ratio compared to original row: ${ratio}`);
                 // Optionally: update nutrition or UI here
             });
 
@@ -3047,7 +3175,7 @@
         $('#saveItemChanges').on('click', function () {
             // Validate: Prevent save if any checked qty is 0, blank, or invalid
             let invalidQty = false;
-            $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+            $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
                 const $row = $(this);
                 const isChecked = $row.find('.qtyUnitSelector').is(':checked');
                 if (isChecked) {
@@ -3075,22 +3203,19 @@
             let qty = 0;
             let unit = '';
 
-            const anyChecked = $('#dynamicQtyMeasurementContainer .qty-unit-row').find('.qtyUnitSelector:checked').length > 0;
+            const anyChecked = $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').find('.qtyUnitSelector:checked').length > 0;
             if (!anyChecked) {
                 alert('Please select at least one quantity/measurement option.');
                 return;
             }
             let foundChecked = false;
 
-            $('#dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
+            $('#editItemModal #dynamicQtyMeasurementContainer .qty-unit-row').each(function () {
                 const $row = $(this);
                 const rawQtyInput = $row.find('.modalQtyInput').val().trim();
                 const parsedQty = parseFraction(rawQtyInput);
                 let unit = $row.find('.modalMeasurementInput').val().trim();
                 const isChecked = $row.find('.qtyUnitSelector').is(':checked');
-
-                console.log('rawQtyInput:', rawQtyInput);
-                console.log('unit:', unit);
 
                 if (!isNaN(parsedQty) && unit) {
                     let qtyToUse;
@@ -3123,11 +3248,11 @@
                     }
                 }
             });
-           
-            const carbs = parseFloat($('#modalCarbs').text()) || 0;
-            const protein = parseFloat($('#modalProtein').text()) || 0;
-            const fat = parseFloat($('#modalFat').text()) || 0;
-            const energy = parseFloat($('#modalEnergy').text()) || 0;
+
+            const carbs = parseFloat($('#editItemModal #modalCarbs').text()) || 0;
+            const protein = parseFloat($('#editItemModal #modalProtein').text()) || 0;
+            const fat = parseFloat($('#editItemModal #modalFat').text()) || 0;
+            const energy = parseFloat($('#editItemModal #modalEnergy').text()) || 0;
             const updatedHTML = `
                 <div class="d-flex justify-content-between align-items-start mb-0">
                     <div class="col-9">
@@ -3145,13 +3270,13 @@
                         </button>
                         <button type="button" class="btn btn-sm btn-outline-success edit-item"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                            data-meal-time-id="${mealTimeId}" data-user-id=""
+                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                             data-item-qty="" data-item-unit=""
                             data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
                             title="Edit"><i class="icofont-edit"></i></button>
                         <button type="button" class="btn btn-sm btn-outline-danger delete-item"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                            data-meal-time-id="${mealTimeId}" data-user-id="" title="Delete">
+                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" title="Delete">
                             <i class="icofont-ui-delete"></i></button>
                     </div>
                 </div>
@@ -3199,102 +3324,101 @@
                         const $swapListItems = $updatedRow.find('td').eq(2).find('li[data-swap-item-id]');
                         const ratio = parseFloat($('#editItemModal #ratio').val());
 
-                        if(ratio != 0 && !isNaN(ratio)) {
+                        if (ratio !== 0 && !isNaN(ratio)) {
                             $swapListItems.each(function () {
                                 const $swapLi = $(this);
-                                const swapItemId = $swapLi.data('swap-item-id');
-
-                                // Get the first <p> that has "(100g or 1 cup)" style text
+                                const $checkbox = $swapLi.find('input[type="checkbox"]');
+                                const $editBtn = $swapLi.find('.edit-swap-item');
                                 const $quantityP = $swapLi.find('p').first();
-                                let originalText = $quantityP.text().trim();
+                                const $nutritionP = $swapLi.find('p').last();
 
-                                // Remove surrounding parentheses and split by 'or'
-                                if (originalText.startsWith('(') && originalText.endsWith(')')) {
-                                    originalText = originalText.slice(1, -1);
+                                // Step 1: Nutrition update
+                                const origEnergy = parseFloat($checkbox.attr('data-energy')) || 0;
+                                const origProtein = parseFloat($checkbox.attr('data-protein')) || 0;
+                                const origCarbs = parseFloat($checkbox.attr('data-carbs')) || 0;
+                                const origFat = parseFloat($checkbox.attr('data-fat')) || 0;
+
+                                const newEnergy = (origEnergy * ratio).toFixed(2);
+                                const newProtein = (origProtein * ratio).toFixed(2);
+                                const newCarbs = (origCarbs * ratio).toFixed(2);
+                                const newFat = (origFat * ratio).toFixed(2);
+
+                                $nutritionP.text(
+                                    `Energy: ${Math.round(newEnergy)}kJ | Protein: ${Math.round(newProtein)}g | Carb: ${Math.round(newCarbs)}g | Fat: ${Math.round(newFat)}g`
+                                );
+
+                                $checkbox.attr('data-energy', newEnergy);
+                                $checkbox.attr('data-protein', newProtein);
+                                $checkbox.attr('data-carbs', newCarbs);
+                                $checkbox.attr('data-fat', newFat);
+
+                                // Step 2: Update Units (use only updatedUnits now)
+                                let selectedUnits;
+                                try {
+                                    selectedUnits = JSON.parse($editBtn.attr('data-selected-qty-unit') || '[]');
+                                } catch (e) {
+                                    console.warn('Invalid JSON:', e);
+                                    selectedUnits = [];
                                 }
 
-                                const parts = originalText.split('or').map(part => part.trim());
-                                const updatedParts = parts.map(part => {
-                                    const match = part.match(/^([\d./]+)\s*(\w+)$/);  // e.g. "100g" or "1 cup"
-                                    if (!match) return part;
-
-                                    let [_, qty, unit] = match;
-
-                                    // Convert fractions like 1/2
-                                    if (qty.includes('/')) {
-                                        const [num, denom] = qty.split('/');
-                                        qty = parseFloat(num) / parseFloat(denom);
-                                    } else {
-                                        qty = parseFloat(qty);
-                                    }
-
-                                    if (isNaN(qty)) return part;
-
-                                    const newQty = (qty / ratio).toFixed(2).replace(/\.00$/, '');
-
-                                    // Units that should not have space
-                                    const noSpaceUnits = ['g', 'ml', 'mL'];
-
-                                    return noSpaceUnits.includes(unit) ? `${newQty}${unit}` : `${newQty} ${unit}`;
+                                const updatedUnits = selectedUnits.map(unit => {
+                                    const baseQty = parseFloat(unit.qty);
+                                    if (isNaN(baseQty)) return unit;
+                                    return {
+                                        ...unit,
+                                        qty: (baseQty * ratio).toFixed(2).replace(/\.00$/, '')
+                                    };
                                 });
 
-                                // Set updated text back with parentheses
-                                $quantityP.text(`(${updatedParts.join(' or ')})`);
+                                // Step 3: Build qty string for display
+                                const noSpaceUnits = ['g', 'ml', 'mL'];
 
-                                const swapInput = $swapLi.find('input[type="checkbox"]');
-                                const swapEnergy = parseFloat(swapInput.data('energy')) || 0;
-                                const swapProtein = parseFloat(swapInput.data('protein')) || 0;
-                                const swapCarbs = parseFloat(swapInput.data('carbs')) || 0;
-                                const swapFat = parseFloat(swapInput.data('fat')) || 0;
+                                const checkedUnits = updatedUnits.filter(u => u.checked);
+                                const qtyDisplayParts = checkedUnits.map(u => {
+                                    return noSpaceUnits.includes(u.unit)
+                                        ? `${u.qty}${u.unit}`
+                                        : `${u.qty} ${u.unit}`;
+                                });
 
-                                // Get ratio (you may calculate based on qty/unit or use directly)
+                                $quantityP.text(`(${qtyDisplayParts.join(' or ')})`);
 
-                                // Adjust values
-                                const adjustedEnergy = (swapEnergy / ratio).toFixed(2);
-                                const adjustedProtein = Math.round(swapProtein / ratio);
-                                const adjustedCarbs = Math.round(swapCarbs / ratio);
-                                const adjustedFat = Math.round(swapFat / ratio);
+                                // Step 4: Update button attributes
+                                const updatedJSON = JSON.stringify(updatedUnits);
+                                $editBtn.attr('data-selected-qty-unit', updatedJSON);
 
-                                // Prepare data for backend
-                                const swapData = {
-                                    swap_item_id: swapItemId,
-                                    item_id: itemId,
-                                    plan_id: planId,
-                                    meal_id: mealId,
-                                    meal_time_id: mealTimeId,
-                                    user_id: userId,
-                                    food_energy: adjustedEnergy,
-                                    food_protein: adjustedProtein,
-                                    food_carbs: adjustedCarbs,
-                                    food_fat: adjustedFat,
-                                    ratio: ratio,
-                                    _token: '{{ csrf_token() }}'
-                                };
-
-                                // AJAX call to update swap item in DB
+                                // Optional: Ajax DB update
+                                const swapItemId = $swapLi.data('swap-item-id');
                                 $.ajax({
                                     url: '{{ route("admin.update-swap-item") }}',
                                     method: 'POST',
-                                    data: swapData,
+                                    data: {
+                                        swap_item_id: swapItemId,
+                                        item_id: itemId,
+                                        plan_id: planId,
+                                        meal_id: mealId,
+                                        meal_time_id: mealTimeId,
+                                        user_id: userId,
+                                        food_energy: newEnergy,
+                                        food_protein: newProtein,
+                                        food_carbs: newCarbs,
+                                        food_fat: newFat,
+                                        ratio: ratio,
+                                        _token: '{{ csrf_token() }}'
+                                    },
                                     success: function (resp) {
-                                        if (resp.success) {
-                                            // Update nutrition info in HTML
-                                            const $nutritionP = $swapLi.find('p').last();
-                                            $nutritionP.html(
-                                                `Energy: ${adjustedEnergy}kJ | Protein: ${adjustedProtein}g | Carb: ${adjustedCarbs}g | Fat: ${adjustedFat}g`
-                                            );
-                                            $('#editItemModal #ratio').val(0);
-                                        } else {
-                                            console.warn(`Swap item ${swapItemId} failed to update in DB`);
+                                        if (!resp.success) {
+                                            console.warn(`Swap item ${swapItemId} update failed.`);
                                         }
                                     },
                                     error: function () {
-                                        console.error(`Error updating swap item ${swapItemId}`);
+                                        console.warn(`Error updating swap item ${swapItemId}`);
                                     }
                                 });
                             });
+
+                            $('#editItemModal #ratio').val(0); // reset ratio
                         }
-                        console.log('Main food and swap items updated successfully.');
+
                     } else {
                         alert('Failed to update food.');
                     }
@@ -3322,36 +3446,74 @@
 
             mainDeleteParams = {
                 $row, $tableBody, remainingRows,
-                itemId, mealId, mealTimeId, planId, allSwapLis
+                itemId, mealId, mealTimeId, planId, allSwapLis, userId
             };
 
             new bootstrap.Modal(document.getElementById('deleteMainItemModal')).show();
+        });
+
+        $('#confirmDeleteMainItem').on('click', function () {
+            const {
+                $row, $tableBody, remainingRows,
+                itemId, mealId, mealTimeId,
+                planId, allSwapLis, userId
+            } = mainDeleteParams;
+
+            $.ajax({
+                url: '{{ route("admin.delete-user-meal-food") }}',
+                type: 'POST',
+                data: {
+                    item_id: itemId,
+                    meal_id: mealId,
+                    meal_time_id: mealTimeId,
+                    plan_id: planId,
+                    user_id: userId,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // ✅ Safe to remove from DOM now
+                        $row.find('input[type="checkbox"]').prop('checked', false);
+                        $row.remove();
+
+                        if (remainingRows === 1) {
+                            $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+                            const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
+                            $select.find(`option[value="${mealId}"]`).remove();
+                            $select.trigger('change');
+                        }
+
+                        updateFoodCount(itemId, -1, null);
+
+                        calculateTotals(planId, mealTimeId, mealId);
+                        calculateMealNutrition();
+
+                        mainDeleteParams = null;
+                        $('#deleteMainItemModal').modal('hide');
+                    } else {
+                        $row.find('input[type="checkbox"]').prop('checked', false);
+                        $row.remove();
+
+                        if (remainingRows === 1) {
+                            $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
+                            const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
+                            $select.find(`option[value="${mealId}"]`).remove();
+                            $select.trigger('change');
+                        }
+
+                        updateFoodCount(itemId, -1, null);
+
+                        calculateTotals(planId, mealTimeId, mealId);
+                        calculateMealNutrition();
+
+                        mainDeleteParams = null;
+                        $('#deleteMainItemModal').modal('hide');
+                    }
+                },
+                error: function() {
+                    alert('Failed to delete food item.');
+                }
             });
-
-            $('#confirmDeleteMainItem').on('click', function () {
-            const { $row, $tableBody, remainingRows, itemId, mealId, mealTimeId, planId, allSwapLis } = mainDeleteParams;
-
-            $row.find('input[type="checkbox"]').prop('checked', false);
-            $row.remove();
-
-            if (remainingRows === 1) {
-                $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
-                const $select = $(`#addMealDropdown${planId}_${mealTimeId} select`);
-                $select.find(`option[value="${mealId}"]`).remove();
-                $select.trigger('change');
-            }
-
-            updateFoodCount(itemId, -1, null);
-            allSwapLis.each(function () {
-                const swapItemId = $(this).data('swap-item-id');
-                updateFoodCount(swapItemId, -1, null);
-            });
-
-            calculateTotals(planId, mealTimeId, mealId);
-            calculateMealNutrition();
-
-            mainDeleteParams = null;
-            bootstrap.Modal.getInstance(document.getElementById('deleteMainItemModal')).hide();
         });
 
         $(document).on('click', '.edit-swap-item', function () {
@@ -3404,7 +3566,6 @@
             if (!Array.isArray(selectedQtyUnits) || selectedQtyUnits.length === 0) {
                 selectedQtyUnits = [{ qty: swapQty, unit: swapUnit, checked: false }];
             }
-            console.log(selectedQtyUnits);
             const buildQtyUnitRows = (units) => {
                 const $container = $(`${modalId} #dynamicQtyMeasurementContainer`).empty();
                 units.forEach(({ qty, unit, checked }, index) => {
@@ -3495,7 +3656,7 @@
                     }
                 }
             });
-            
+
             if (invalidQty) {
                 alert('Please enter a quantity greater than 0 for all selected options.');
                 return;
@@ -3596,15 +3757,6 @@
                 </li>
             `;
 
-            const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            const liToReplace = currentItemRow.find(`td:nth-child(3) li[data-swap-item-id="${previousSwapItemId}"]`);
-            liToReplace.replaceWith(updatedLI);
-            $('[data-bs-toggle="tooltip"]').tooltip();
-            // if (previousSwapItemId !== swapItemId) {
-            //     updateFoodCount(previousSwapItemId, -1, null);
-            //     updateFoodCount(swapItemId, 1, 'green');
-            // }
-
             const modalEl = document.getElementById('editSwapItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
 
@@ -3631,7 +3783,10 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        console.log('Swap food updated successfully');
+                        const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+                        const liToReplace = currentItemRow.find(`td:nth-child(3) li[data-swap-item-id="${previousSwapItemId}"]`);
+                        liToReplace.replaceWith(updatedLI);
+                        $('[data-bs-toggle="tooltip"]').tooltip();
                         modal.hide();
                     } else {
                         alert('Failed to update swap items.');
@@ -3645,45 +3800,6 @@
             });
         });
 
-        // $(document).on('click', '.delete-swap-item', function () {
-        //     const button = $(this);
-
-        //     const swapItemId = button.data('swap-item-id');
-        //     const itemId = button.data('item-id');
-        //     const mealId = button.data('meal-id');
-        //     const planId = button.data('plan-id');
-        //     const mealTimeId = button.data('meal-time-id');
-        //     const userId = button.data('user-id');
-
-        //     if (!confirm('Are you sure you want to delete this swap item?')) return;
-
-        //     const $li = button.closest('li');
-        //     const $ul = $li.closest('ul');
-
-        //     // Remove the swap item
-        //     $li.remove();
-        //     // updateFoodCount(swapItemId, -1, null);
-
-        //     // Check if there are any <li> left in the list
-        //     if ($ul.children('li').length === 0) {
-        //         // Add "No swap items available" message
-        //         $ul.append(`
-        //             <li class="d-flex justify-content-between align-items-start mb-2">
-        //                 <div class="col-9">
-        //                     <span class="text-muted">No swap items available</span>
-        //                 </div>
-        //                 <div>
-        //                     <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
-        //                         data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-        //                         data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
-        //                         title="Add"><i class="icofont-plus"></i>
-        //                     </button>
-        //                 </div>
-        //             </li>
-        //         `);
-        //     }
-        // });
-
         let swapDeleteParams = null;
 
         $(document).on('click', '.delete-swap-item', function () {
@@ -3694,36 +3810,79 @@
             swapDeleteParams = {
                 $li, $ul,
                 itemId: $btn.data('item-id'),
-                planId: $btn.data('plan-id'),
                 mealId: $btn.data('meal-id'),
                 mealTimeId: $btn.data('meal-time-id'),
-                userId: $btn.data('user-id')
+                planId: $btn.data('plan-id'),
+                userId: $btn.data('user-id'),
+                swapItemId: $btn.data('swap-item-id')
             };
 
             new bootstrap.Modal(document.getElementById('deleteSwapItemModal')).show();
         });
 
         $('#confirmDeleteSwapItem').on('click', function () {
-            const { $li, $ul, swapItemId } = swapDeleteParams;
+            const {
+                $li, $ul,
+                itemId, mealId, mealTimeId,
+                planId, userId, swapItemId
+            } = swapDeleteParams;
 
-            // Remove the deleted swap item
-            $li.remove();
-            updateFoodCount(swapItemId, -1, null);
+            $.ajax({
+                url: '{{ route("admin.delete-user-meal-swap-food") }}',
+                type: 'POST',
+                data: {
+                    item_id: itemId,
+                    meal_id: mealId,
+                    meal_time_id: mealTimeId,
+                    plan_id: planId,
+                    user_id: userId,
+                    swap_item_id: swapItemId,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // ✅ Remove the deleted swap item from DOM
+                        $li.remove();
 
-            // Check if only one <li> remains (which is the 'Add More' button container)
-            const $remainingItems = $ul.find('li').not($li);
-            if ($remainingItems.length === 1 && $remainingItems.find('.add-more-swap-item').length) {
-                const $messageLi = $remainingItems.first(); // Get that existing LI
-                const $col9 = $messageLi.find('.col-9');
+                        // Check if only one <li> remains and it's the 'Add More' button
+                        const $remainingItems = $ul.find('li');
+                        const onlyAddMoreBtnLeft = $remainingItems.length === 1 &&
+                            $remainingItems.find('.add-more-swap-item').length;
 
-                // Inject the message into the .col-9 div
-                $col9.html('<span class="text-muted">No swap items available</span>');
-            }
+                        if (onlyAddMoreBtnLeft) {
+                            const $messageLi = $remainingItems.first();
+                            const $col9 = $messageLi.find('.col-9');
+                            $col9.html('<span class="text-muted">No swap items available</span>');
+                        }
 
-            swapDeleteParams = null;
+                        // Hide the modal
+                        bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
+                        swapDeleteParams = null;
 
-            // Hide the modal
-            bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
+                    } else {
+                        // ✅ Remove the deleted swap item from DOM
+                        $li.remove();
+
+                        // Check if only one <li> remains and it's the 'Add More' button
+                        const $remainingItems = $ul.find('li');
+                        const onlyAddMoreBtnLeft = $remainingItems.length === 1 &&
+                            $remainingItems.find('.add-more-swap-item').length;
+
+                        if (onlyAddMoreBtnLeft) {
+                            const $messageLi = $remainingItems.first();
+                            const $col9 = $messageLi.find('.col-9');
+                            $col9.html('<span class="text-muted">No swap items available</span>');
+                        }
+
+                        // Hide the modal
+                        bootstrap.Modal.getInstance(document.getElementById('deleteSwapItemModal')).hide();
+                        swapDeleteParams = null;
+                    }
+                },
+                error: function () {
+                    alert('Failed to delete swap food item.');
+                }
+            });
         });
 
         $(document).ready(function () {
@@ -3834,7 +3993,7 @@
                 $('#editSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#editSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#editSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#editSwapItemModal');
                 setupDynamicMeasurementSync('#editSwapItemModal');
             });
@@ -3992,7 +4151,7 @@
                 $('#addSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#addSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#addSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#addSwapItemModal');
                 setupDynamicMeasurementSync('#addSwapItemModal');
             });
@@ -4103,19 +4262,12 @@
                     <div>
                         <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                             data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                             title="Add More"><i class="icofont-plus"></i></button>
                     </div>
                 </li>
             `;
-
-            const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
-            // Find and replace only the current <li> using swapItemId
-            const liToReplace = currentItemRow.find(`td:nth-child(3) ul`);
-            liToReplace.replaceWith(updatedLI);
-            $('[data-bs-toggle="tooltip"]').tooltip();
-            // updateFoodCount(swapItemId, 1, 'green');
-
+            
             const modalEl = document.getElementById('addSwapItemModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
 
@@ -4136,15 +4288,20 @@
                     swap_food_fat: fat,
                     swap_food_energy: energy,
                     swap_selected_qty_unit: selectedQtyUnits,
-                    type: 'swap-food-update',
+                    type: 'add-swap-food',
                     _token: '{{ csrf_token() }}'
                 },
                 success: function (response) {
                     if (response.success) {
-                        console.log('swap food added successfully');
+                        const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+                        // Find and replace only the current <li> using swapItemId
+                        const liToReplace = currentItemRow.find(`td:nth-child(3) ul`);
+                        liToReplace.replaceWith(updatedLI);
+                        $('[data-bs-toggle="tooltip"]').tooltip();
+
                         modal.hide();
                     } else {
-                        alert('Failed to update swap items.');
+                        alert(response.message || 'Failed to update swap items.');
                         modal.hide();
                     }
                 },
@@ -4153,7 +4310,7 @@
                     modal.hide();
                 }
             });
-            
+
             // calculateTotals(planId, mealTimeId, mealId);
             // calculateMealNutrition();
         });
@@ -4309,7 +4466,7 @@
                 $('#addMoreSwapItemModal #modalFat').text((parseFloat(data.fat) || 0).toFixed(1) + 'g');
                 $('#addMoreSwapItemModal #modalEnergy').text((parseFloat(data.energy) || 0).toFixed(1) + 'kJ');
                 $('#addMoreSwapItemModal #description').val(data.description);
-                
+
                 setupNutritionSync(parseFloat(data.carbs) || 0, parseFloat(data.protein) || 0, parseFloat(data.fat) || 0, parseFloat(data.energy) || 0, '#addMoreSwapItemModal');
                 setupDynamicMeasurementSync('#addMoreSwapItemModal');
             });
@@ -4415,7 +4572,7 @@
 
             // Check if there are any existing swap items
             const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
-            
+
             if (existingItems.length > 0) {
                 // If there are existing items, append the new item after them
                 existingItems.last().after(updatedLI);
@@ -4423,7 +4580,7 @@
                 // If no existing items, replace the entire content
                 swapItemsContainer.html(updatedLI);
             }
-            
+
             // // Add the + icon button at the end
             // const addButton = `
             //     <li class="d-flex justify-content-between align-items-start mb-2">
@@ -4433,14 +4590,14 @@
             //         <div>
             //             <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
             //                 data-item-id="${itemId}" data-meal-id="${mealId}" data-plan-id="${planId}"
-            //                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+            //                 data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
             //                 title="Add"><i class="icofont-plus"></i>
             //             </button>
             //         </div>
             //     </li>
             // `;
             // swapItemsContainer.append(addButton);
-            
+
             $('[data-bs-toggle="tooltip"]').tooltip();
             // updateFoodCount(swapItemId, 1, 'green');
 
@@ -4464,16 +4621,30 @@
                     swap_food_fat: fat,
                     swap_food_energy: energy,
                     swap_selected_qty_unit: selectedQtyUnits,
-                    type: 'swap-food-update',
+                    type: 'add-swap-food',
                     _token: '{{ csrf_token() }}'
                 },
                 success: function (response) {
                     if (response.success) {
-                        console.log('swap food added successfully');
+                        const currentItemRow = $(`#itemRow_${planId}_${mealTimeId}_${mealId}_${itemId}`);
+                        const swapItemsContainer = currentItemRow.find(`td:nth-child(3)`);
+
+                        // Check if there are any existing swap items
+                        const existingItems = swapItemsContainer.find('li[data-swap-item-id]');
+                        
+                        if (existingItems.length > 0) {
+                            // If there are existing items, append the new item after them
+                            existingItems.last().after(updatedLI);
+                        } else {
+                            // If no existing items, replace the entire content
+                            swapItemsContainer.html(updatedLI);
+                        }
+                    
+                        $('[data-bs-toggle="tooltip"]').tooltip();
                         modal.hide();
                     } else {
-                        alert('Failed to update swap items.');
                         modal.hide();
+                        alert(response.message || 'Failed to update swap items.');
                     }
                 },
                 error: function () {
@@ -4484,7 +4655,6 @@
         });
 
         $('#addMoreSwapItemModal').on('hidden.bs.modal', function () {
-            console.log('Add More Swap Item Modal hidden');
 
             // Reset all inputs inside the modal
             $(this).find('input').val('');
@@ -4580,6 +4750,20 @@
 
             $('#foodDropdown').on('select2:select', function (e) {
                 const data = e.params.data;
+
+                // Initialize window.mesureofnewaddedfood if it doesn’t exist
+                if (typeof window.mesureofnewaddedfood === 'undefined') {
+                    window.mesureofnewaddedfood = {};
+                }
+
+                // Check if the property for data.id is an array; if not, make it one
+                if (!Array.isArray(window.mesureofnewaddedfood[data.id])) {
+                    window.mesureofnewaddedfood[data.id] = [];
+                }
+
+                // Safely push the selected quantity unit
+                window.mesureofnewaddedfood[data.id].push({"old":data.selected_qty_unit});
+
                 let selectedQtyUnits = [];
 
                 try {
@@ -4673,7 +4857,6 @@
             const protein = parseFloat($('#addMoreFoodModal #modalProtein').text()) || 0;
             const fat = parseFloat($('#addMoreFoodModal #modalFat').text()) || 0;
             const energy = parseFloat($('#addMoreFoodModal #modalEnergy').text()) || 0;
-
             const selectedQtyUnits = [];
             const checkedQtyUnits = [];
             let qty = 0;
@@ -4709,10 +4892,23 @@
                 }
             });
 
+            // Initialize window.mesureofnewaddedfood if it doesn’t exist
+            if (typeof window.mesureofnewaddedfood === 'undefined') {
+                window.mesureofnewaddedfood = {};
+            }
+
+            // Check if the property for foodId is an array; if not, make it one
+            if (!Array.isArray(window.mesureofnewaddedfood[foodId])) {
+                window.mesureofnewaddedfood[foodId] = [];
+            }
+
+            // Safely push the selected quantity unit
+            window.mesureofnewaddedfood[foodId].push({"new":selectedQtyUnits});
+
+            var percentage = getPercentageChange(foodId);
             const $mealContainer = $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`);
-           
+
             const $tableBody = $mealContainer.find('.items-table-body');
-            console.log($tableBody);
             $.ajax({
                 url: '{{ route("admin.add-food") }}',
                 type: 'POST',
@@ -4753,7 +4949,7 @@
                                         <div class="col-9">
                                             <div class="d-flex align-items-start">
                                                 <input type="checkbox" name="swap_items[${planId}][${mealTimeId}][${mealId}][${item.id}][]"
-                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked 
+                                                    value="${swapItem.id}" class="form-check-input me-2 d-none" checked
                                                     data-carbs="${swapItem.carbs}" data-protein="${swapItem.protein}" data-fat="${swapItem.fat}" data-energy="${swapItem.energy}">
                                                 <label class="form-check-label">${swapItem.title}</label>
                                             </div>
@@ -4796,7 +4992,7 @@
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                         data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                         title="Add More"><i class="icofont-plus"></i></button>
                                 </div>
                             </li>`;
@@ -4813,6 +5009,7 @@
                                 </div>
                             </li>`;
                     }
+
                     const rowHTML = `
                         <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${item.id}" data-item-id="${item.id}">
                             <td width="30" class="align-middle text-center">
@@ -4827,7 +5024,7 @@
                                                 data-carbs="${carbs}" data-protein="${protein}" data-fat="${fat}" data-energy="${energy}">
                                             <label class="form-check-label flex-grow-1">${item.title}</label>
                                         </div>
-                                        
+
                                     </div>
                                     <div>
                                         <button type="button" class="btn btn-sm btn-outline-primary"
@@ -4835,7 +5032,7 @@
                                             title="${item.description}">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success edit-item"
+                                        <button type="button" class="btn btn-sm btn-outline-success edit-item main-food-edit-link"
                                             data-item-id="${item.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
                                             data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${qty}" data-item-unit="${unit}"
                                             data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
@@ -4860,6 +5057,13 @@
                     `;
 
                     $tableBody.append(rowHTML);
+
+                    $tableBody.find('button.main-food-edit-link').click();
+                    $('#editItemModal #ratio').val(parseFloat(percentage));
+                    $('#editItemModal').modal('hide');
+                    $('#editItemModal #saveItemChanges').click();
+
+                    // open edit popup and save
 
                     updateFoodCount(item.id, 1, 'green')
 
@@ -4909,6 +5113,33 @@
             $(`${mealContainerId} .totalFat`).text(Math.round(totalFat)+'g');
             $(`${mealContainerId} .totalEnergy`).text(Math.round((totalEnergy))+'kJ');
         }
+
+        function updateMealCount(planId, mealTimeId) {
+            const selectedMeals = $(`#selectedMeals${planId}_${mealTimeId} .meal-container`).length;
+            $(`#mealCount${planId}_${mealTimeId}`).text(`${selectedMeals}`);
+        }
+
+        // Update meal count when meals are added or removed
+        $(document).on('mealAdded mealRemoved', function(e, planId, mealTimeId) {
+            updateMealCount(planId, mealTimeId);
+        });
+
+        // Initialize meal counts for all meal times
+        $('.meal-time-checkbox').each(function() {
+            const planId = $(this).closest('.panel').find('input[name="plan_id[]"]').val();
+            const mealTimeId = $(this).data('mealtime-id');
+            updateMealCount(planId, mealTimeId);
+        });
+
+        // Update meal count when meal is added
+        $(document).on('mealAdded', function(e, planId, mealTimeId) {
+            updateMealCount(planId, mealTimeId);
+        });
+
+        // Update meal count when meal is removed
+        $(document).on('mealRemoved', function(e, planId, mealTimeId) {
+            updateMealCount(planId, mealTimeId);
+        });
     });
 
     $(document).on('change', '.editable-meal-name', function() {
@@ -4933,8 +5164,6 @@
             },
             success: function(response) {
                 if (response.success) {
-                    console.log(response.message);
-                    alert('Meal name updated successfully!');
 
                     // ✅ Find the correct dropdown using plan_id & meal_time_id
                     const mealDropdown = $(`#mealItems${planId}_${mealTimeId}`);
@@ -4967,18 +5196,18 @@
         function initializeTooltips() {
             // First dispose all existing tooltips
             $('[data-bs-toggle="tooltip"]').tooltip('dispose');
-            
+
             // Initialize new tooltips
             $('[data-bs-toggle="tooltip"]').each(function() {
                 const $this = $(this);
                 const description = $this.data('description');
-                
+
                 // Set both title attributes for consistency
                 $this.attr({
                     'title': description,
                     'data-bs-original-title': description
                 });
-                
+
                 // Initialize Bootstrap tooltip
                 new bootstrap.Tooltip(this, {
                     trigger: 'hover',
@@ -5079,7 +5308,6 @@
             const query = $('#searchFoodQuery').val().trim();
             const searchType = $('#searchFoodType').val();
 
-            console.log(query, searchType, mealId, mealTimeId, userId, planId);
             // If query is empty, show alert
             if (query === '') {
                 alert('Please enter a search term.');
@@ -5117,11 +5345,11 @@
                                         <td>${item.fat ?? 'N/A'}</td>
                                         <td><img src="${imagePath}" alt="Food Image" width="50" height="50"></td>
                                         <td>
-                                            <button class="btn btn-success add-food-btn" 
-                                                    data-food-id="${item.id}" 
-                                                    data-meal-id="${mealId}" 
-                                                    data-mealtime-id="${mealTimeId}" 
-                                                    data-user-id="${userId}" 
+                                            <button class="btn btn-success add-food-btn"
+                                                    data-food-id="${item.id}"
+                                                    data-meal-id="${mealId}"
+                                                    data-mealtime-id="${mealTimeId}"
+                                                    data-user-id="${userId}"
                                                     data-plan-id="${planId}">
                                                 Add Food
                                             </button>
@@ -5164,15 +5392,15 @@
                                         <td>${product.nutrition.fat || 'N/A'}</td>
                                         <td><img src="${product.image}" width="50" height="50"></td>
                                         <td>
-                                            <button class="btn btn-success add-woolworths-food" 
-                                                    data-name="${product.name}" 
-                                                    data-image="${product.image}" 
-                                                    data-protein="${product.nutrition.protein || 0}" 
+                                            <button class="btn btn-success add-woolworths-food"
+                                                    data-name="${product.name}"
+                                                    data-image="${product.image}"
+                                                    data-protein="${product.nutrition.protein || 0}"
                                                     data-carbs="${product.nutrition.carbohydrate || 0}"
                                                     data-fat="${product.nutrition.fat || 0}"
                                                     data-energy="${product.nutrition.energy || 0}"
-                                                    data-serving-size="${product.nutrition.serving_size || 0}" 
-                                                    data-serving-per-pack="${product.nutrition.serving_per_pack || 0}" 
+                                                    data-serving-size="${product.nutrition.serving_size || 0}"
+                                                    data-serving-per-pack="${product.nutrition.serving_per_pack || 0}"
                                                     data-category="${product.category || '' }"
                                                     data-meal-id="${mealId}" data-mealtime-id="${mealTimeId}" data-plan-id="${planId}" data-user-id="${userId}">
                                                 Add Woolworths Food
@@ -5243,8 +5471,8 @@
                                 <tr data-food-id="${food.id}" data-item-id="${food.id}" data-item-id="${food.id}">
                                     <td width="45%">
                                         <div class="d-flex align-items-start">
-                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]" 
-                                                value="${food.id}" 
+                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
+                                                value="${food.id}"
                                                 class="form-check-input me-2 d-none" data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}" checked>
                                             <label class="form-check-label flex-grow-1">${food.title} (${food.qty}${food.unit})</label>
                                         </div>
@@ -5257,7 +5485,7 @@
                                                 <div>
                                                     <button type="button" class="btn btn-sm btn-outline-primary add-more-swap-item ms-2"
                                                         data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                                        data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                                         title="Add More"><i class="icofont-plus"></i></button>
                                                 </div>
                                             </li>
@@ -5269,19 +5497,19 @@
                                             title="${food.description}">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
-                                        <button class="btn btn-sm edit-food btn-outline-success" 
-                                                data-food-id="${food.id}" 
-                                                data-meal-id="${mealId}" 
+                                        <button class="btn btn-sm edit-food btn-outline-success"
+                                                data-food-id="${food.id}"
+                                                data-meal-id="${mealId}"
                                                 data-swap-foods='${JSON.stringify(swapFoods)}'
-                                                data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}" 
-                                                data-swapfood-qty="${swapFoods[0]?.qty || ''}" 
-                                                data-swapfood-unit="${swapFoods[0]?.unit || ''}" 
+                                                data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}"
+                                                data-swapfood-qty="${swapFoods[0]?.qty || ''}"
+                                                data-swapfood-unit="${swapFoods[0]?.unit || ''}"
                                                 data-food-qty="${food.qty}"
                                                 data-food-unit="${food.unit}">
                                             <i class="icofont-edit"></i>
                                         </button>
-                                        <button class="btn  btn-sm delete-food btn-outline-danger" 
-                                                data-food-id="${food.id}" 
+                                        <button class="btn  btn-sm delete-food btn-outline-danger"
+                                                data-food-id="${food.id}"
                                                 data-meal-id="${mealId}"
                                                 data-swapfood-id="${swapFoods[0]?.swap_item_id || ''}">
                                             <i class="icofont-ui-delete"></i>
@@ -5352,7 +5580,7 @@
                         const food = response.data;
                         const mealContainerId = `#mealContainer_${planId}_${mealTimeId}_${mealId}`;
                         const tableBody = $(mealContainerId).find('.items-table-body');
-                        
+
                         const selectedQtyUnits = {
                             qty: food.qty,
                             unit: food.unit
@@ -5360,71 +5588,71 @@
                         // Check if the food item already exists in the table
                         // if (tableBody.find(`tr[data-food-id="${food.id}"]`).length === 0) {
 
-                            // Since swap items are not available, show the message
-                            const swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
+                         // Since swap items are not available, show the message
+                        const swapItemsHTML = `<li class="d-flex justify-content-between align-items-start mb-2">
                             <div class="col-9">
                                 <span class="text-muted">No swap items available</span>
                             </div>
                             <div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-swap-item ms-2"
                                                             data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}" 
+                                    data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
                                     title="Add"><i class="icofont-plus"></i>
                                 </button>
                             </div>
                         </li>`;
 
-                            // Append the single food item row to the table
-                    tableBody.append(`
-                        <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${food.id}" data-item-id="${item.id}">
-                            <td class="text-wrap" width="50%">
-                                <div class="d-flex justify-content-between align-items-start mb-0">
-                                    <div class="col-9">
-                                        <div class="d-flex align-items-start">
-                                            <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
-                                                value="${food.id}" class="form-check-input me-2 d-none" checked
-                                                data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}">
-                                            <label class="form-check-label flex-grow-1">${food.title}</label>
+                        // Append the single food item row to the table
+                        tableBody.append(`
+                            <tr id="itemRow_${planId}_${mealTimeId}_${mealId}_${food.id}" data-item-id="${item.id}">
+                                <td class="text-wrap" width="50%">
+                                    <div class="d-flex justify-content-between align-items-start mb-0">
+                                        <div class="col-9">
+                                            <div class="d-flex align-items-start">
+                                                <input type="checkbox" name="items[${planId}][${mealTimeId}][${mealId}][]"
+                                                    value="${food.id}" class="form-check-input me-2 d-none" checked
+                                                    data-carbs="${food.carbs}" data-protein="${food.protein}" data-fat="${food.fat}" data-energy="${food.energy}">
+                                                <label class="form-check-label flex-grow-1">${food.title}</label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="${food.description}">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-success edit-item"
+                                                data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${food.qty}" data-item-unit="${food.unit}"
+                                                data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
+                                                title="Edit"><i class="icofont-edit"></i></button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-item"
+                                                data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
+                                                data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
+                                            title="Delete"><i class="icofont-ui-delete"></i></button>
                                         </div>
                                     </div>
-                                    <div>
-                                        <button type="button" class="btn btn-sm btn-outline-primary"
-                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="${food.description}">
-                                            <i class="fas fa-info-circle"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success edit-item"
-                                            data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}" data-item-qty="${food.qty}" data-item-unit="${food.unit}"
-                                            data-selected-qty-unit='${JSON.stringify(selectedQtyUnits)}'
-                                            title="Edit"><i class="icofont-edit"></i></button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger delete-item"
-                                            data-item-id="${food.id}" data-meal-id="${mealId}" data-plan-id="${planId}"
-                                            data-meal-time-id="${mealTimeId}" data-user-id="${userId}"
-                                        title="Delete"><i class="icofont-ui-delete"></i></button>
+                                    <div class="row">
+                                        <div class="col">
+                                                    <p class="px-2 mb-2 fw-bold">(${
+                                                        typeof food.qty === 'string' && food.qty.includes('/')
+                                                            ? food.qty
+                                                            : (
+                                                                ["g", "ml", "mL"].includes(food.unit)
+                                                                    ? Math.round(parseFloat(food.qty))
+                                                                    : food.qty
+                                                            )
+                                                    }${["g", "ml", "mL"].includes(food.unit) ? food.unit : ' ' + food.unit})
+                                                    </p>
+                                                    <p class="mb-0 px-2">Energy: ${parseFloat(food.protein)}kJ | Protein: ${Math.round(food.protein)}g | Carb: ${Math.round(food.carbs)}g | Fat: ${Math.round(food.fat)}g</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                                <p class="px-2 mb-2 fw-bold">(${
-                                                    typeof food.qty === 'string' && food.qty.includes('/')
-                                                        ? food.qty
-                                                        : (
-                                                            ["g", "ml", "mL"].includes(food.unit)
-                                                                ? Math.round(parseFloat(food.qty))
-                                                                : food.qty
-                                                        )
-                                                }${["g", "ml", "mL"].includes(food.unit) ? food.unit : ' ' + food.unit})
-                                                </p>
-                                                <p class="mb-0 px-2">Energy: ${parseFloat(food.protein)}kJ | Protein: ${Math.round(food.protein)}g | Carb: ${Math.round(food.carbs)}g | Fat: ${Math.round(food.fat)}g</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td width="50%">
-                                <ul class="list-unstyled">${swapItemsHTML}</ul>
-                            </td>
-                        </tr>
-                    `);
+                                </td>
+                                <td width="50%">
+                                    <ul class="list-unstyled">${swapItemsHTML}</ul>
+                                </td>
+                            </tr>
+                        `);
                         // }
                         updateFoodCount(food.id, 1, 'green');
                         calculateTotals(planId, mealTimeId, mealId);
@@ -5448,43 +5676,11 @@
         });
     });
 
-    $(document).ready(function() {
-        // ... existing code ...
-        
-        // Function to update meal count
-        function updateMealCount(planId, mealTimeId) {
-            const selectedMeals = $(`#selectedMeals${planId}_${mealTimeId} .meal-container`).length;
-            $(`#mealCount${planId}_${mealTimeId}`).text(`${selectedMeals}`);
-        }
-
-        // Update meal count when meals are added or removed
-        $(document).on('mealAdded mealRemoved', function(e, planId, mealTimeId) {
-            updateMealCount(planId, mealTimeId);
-        });
-
-        // Initialize meal counts for all meal times
-        $('.meal-time-checkbox').each(function() {
-            const planId = $(this).closest('.panel').find('input[name="plan_id[]"]').val();
-            const mealTimeId = $(this).data('mealtime-id');
-            updateMealCount(planId, mealTimeId);
-        });
-
-        // Update meal count when meal is added
-        $(document).on('mealAdded', function(e, planId, mealTimeId) {
-            updateMealCount(planId, mealTimeId);
-        });
-
-        // Update meal count when meal is removed
-        $(document).on('mealRemoved', function(e, planId, mealTimeId) {
-            updateMealCount(planId, mealTimeId);
-        });
-    });
-
     $(document).on('click', '.delete-meal', function() {
         const planId = $(this).data('plan-id');
         const mealTimeId = $(this).data('meal-time-id');
         const mealId = $(this).data('meal-id');
-        
+
         if (confirm('Are you sure you want to remove this meal?')) {
             $(`#mealContainer_${planId}_${mealTimeId}_${mealId}`).remove();
             // Trigger the mealRemoved event
@@ -5496,7 +5692,6 @@
         $('#nutritionToggle').on('change', function () {
             var isChecked = $(this).is(':checked') ? 1 : 0;
             var paymentId = $(this).data('payment-id');
-            console.log('Nutrition Info flag:', isChecked, 'Payment ID:', paymentId);
             $.ajax({
                 url: '{{ route("admin.update-nutrition-flag") }}', // Your Laravel route
                 method: 'POST',

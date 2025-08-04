@@ -13,20 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('item_tag', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('item_id');
-            $table->unsignedBigInteger('tag_id');
-            $table->timestamps(); // Adds created_at and updated_at
+        if (! Schema::hasTable('item_tag')) {
+            Schema::create('item_tag', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('item_id');
+                $table->unsignedBigInteger('tag_id');
+                $table->timestamps(); // Adds created_at and updated_at
 
-            // Foreign keys
-            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
-            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+                // Foreign keys
+                $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+                $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
 
-            // Composite primary key
-            // $table->primary(['item_id', 'tag_id']);
-
-        });
+                // Composite primary key (optional, if needed)
+                // $table->primary(['item_id', 'tag_id']);
+            });
+        }
     }
 
     /**
@@ -36,7 +37,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('item_tag');
-
+        if (Schema::hasTable('item_tag')) {
+            Schema::dropIfExists('item_tag');
+        }
     }
 };

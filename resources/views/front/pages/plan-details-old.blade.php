@@ -658,7 +658,7 @@
                                     </div>
                                     <div class="me-3 ingredient-img">
                                         <figure>
-                                            <img src="{{ webAssets('storage') }}/${item.image || ''}" alt="">
+                                            <img src="{{ asset('private/public/storage') }}/${item.image || ''}" alt="">
                                         </figure>
                                     </div>
                                     <div class="flex-grow-1">

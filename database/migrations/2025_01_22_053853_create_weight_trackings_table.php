@@ -13,16 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('weight_trackings', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->float('weight');
-            $table->float('weight_goal')->nullable();
-            $table->date('date');
-            $table->timestamps();
+        if (! Schema::hasTable('weight_trackings')) {
+            Schema::create('weight_trackings', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('user_id');
+                $table->float('weight');
+                $table->float('weight_goal')->nullable();
+                $table->date('date');
+                $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+                // Foreign key constraint
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -32,6 +35,13 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('weight_trackings');
+        if (Schema::hasTable('weight_trackings')) {
+            Schema::table('weight_trackings', function (Blueprint $table) {
+                // Drop foreign key constraint before dropping table
+                $table->dropForeign(['user_id']);
+            });
+
+            Schema::dropIfExists('weight_trackings');
+        }
     }
 };

@@ -13,16 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('pre_plan_question_files', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_pre_plan_id');
-            $table->string('form_slug')->nullable();
-            $table->string('question');
-            $table->string('file_path')->nullable();
-            $table->timestamps();
+        if (! Schema::hasTable('pre_plan_question_files')) {
+            Schema::create('pre_plan_question_files', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('user_pre_plan_id');
+                $table->string('form_slug')->nullable();
+                $table->string('question');
+                $table->string('file_path')->nullable();
+                $table->timestamps();
 
-            $table->foreign('user_pre_plan_id')->references('id')->on('user_pre_plans')->onDelete('cascade');
-        });
+                $table->foreign('user_pre_plan_id')->references('id')->on('user_pre_plans')->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -32,6 +34,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pre_plan_question_files');
+        if (Schema::hasTable('pre_plan_question_files')) {
+            Schema::dropIfExists('pre_plan_question_files');
+        }
     }
 };

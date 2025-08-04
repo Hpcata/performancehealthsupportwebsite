@@ -13,20 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_clicks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('section_element_id')->constrained('section_elements')->onDelete('cascade');
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->string('ip', 45)->nullable(); // IPv4 and IPv6 support
-            $table->timestamp('clicked_at')->useCurrent();
-            $table->timestamps();
+        if (! Schema::hasTable('user_clicks')) {
+            Schema::create('user_clicks', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('section_element_id')->constrained('section_elements')->onDelete('cascade');
+                $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+                $table->string('ip', 45)->nullable(); // IPv4 and IPv6 support
+                $table->timestamp('clicked_at')->useCurrent();
+                $table->timestamps();
 
-            $table->index(['section_element_id', 'clicked_at'], 'user_clicks_section_element_clicked_at_index');
-            $table->index(['user_id'], 'user_clicks_user_index');
-            $table->index(['ip_address'], 'user_clicks_ip_index');
-            $table->index(['clicked_at'], 'user_clicks_clicked_at_index');
-            $table->index(['section_element_id'], 'user_clicks_section_element_index');
-        });
+                $table->index(['section_element_id', 'clicked_at'], 'user_clicks_section_element_clicked_at_index');
+                $table->index(['user_id'], 'user_clicks_user_index');
+                $table->index(['ip'], 'user_clicks_ip_index');
+                $table->index(['clicked_at'], 'user_clicks_clicked_at_index');
+                $table->index(['section_element_id'], 'user_clicks_section_element_index');
+            });
+        }
     }
 
     /**
@@ -36,6 +38,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_clicks');
+        if (Schema::hasTable('user_clicks')) {
+            Schema::dropIfExists('user_clicks');
+        }
     }
 };

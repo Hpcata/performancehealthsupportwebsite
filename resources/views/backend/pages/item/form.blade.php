@@ -47,9 +47,8 @@
         <div class="border-0 mb-4">
             <div class="card-header pb-3 no-bg bg-transparent d-flex align-items-md-center align-items-start px-0 justify-content-between border-bottom flex-md-row flex-column">
                 <h3 class="fw-bold mb-0">{{ isset($item) ? 'Edit Food' : 'Create Food' }}</h3>
-                
-                    @if (isset($item)) 
-                    <a href="javascript:void(0)" class="btn btn-primary btn-set-task woolworth-json mx-3" data-json='@json($item->woolworth_json)'> Woolworths Json</a>
+                    @if (isset($item))
+                        <a href="javascript:void(0)" class="btn btn-primary btn-set-task woolworth-json mx-3" data-json='@json($item->woolworth_json)'> Woolworths Json</a>
                     @endif
                     <div class="col-auto d-flex">
                     <a href="{{ route('woolworths-product-search') }}" class="btn btn-primary btn-set-task">Search Woolworths Shop</a>
@@ -58,7 +57,8 @@
             </div>
         </div>
     </div>
-   <div id="form-error-message" style="color: red; display: none;" class="mb-3"></div>
+
+    <div id="form-error-message" style="color: red; display: none;" class="mb-3"></div>
 
     <div class="row align-item-center">
         <div class="col-md-12">
@@ -66,8 +66,8 @@
                 <div class="card-body">
                     <form id="foodForm" action="{{ isset($item) ? route('admin.items.update', $item) : route('admin.items.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @if (isset($item)) 
-                            @method('PUT') 
+                        @if (isset($item))
+                            @method('PUT')
                         @endif
                         <input type="hidden" name="id" class="form-control" id="id" value="{{ $item->id ?? '' }}" >
 
@@ -83,12 +83,6 @@
                                 @enderror
                             </div>
 
-                            <!-- Short Description Field -->
-                        {{--<div class="col-md-12">
-                                <label for="short_description" class="form-label">Short Description</label>
-                                <textarea name="short_description" class="form-control" rows="2">{{ $item->short_description ?? '' }}</textarea>
-                            </div>
-                        --}}
                             <!-- Full Description Field -->
                             <div class="col-md-12">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -109,7 +103,7 @@
                                 <label for="tag_ids" class="form-label">Select Tags</label>
                                 <select name="tag_ids[]" class="form-select" id="tag_ids" multiple>
                                     @foreach ($tags as $tag)
-                                        <option value="{{ $tag->id }}" 
+                                        <option value="{{ $tag->id }}"
                                                 {{ isset($item) && $item->tags->contains($tag->id) ? 'selected' : '' }}>
                                             {{ $tag->name }}
                                         </option>
@@ -121,7 +115,7 @@
                                 <label for="flag_ids" class="form-label">Select Preferences</label>
                                 <select name="flag_ids[]" class="form-select" id="flag_ids" multiple>
                                     @foreach ($flags as $flag)
-                                        <option value="{{ $flag->id }}" 
+                                        <option value="{{ $flag->id }}"
                                                 {{ isset($item) && $item->flags->contains($flag->id) ? 'selected' : '' }}>
                                             {{ $flag->name }}
                                         </option>
@@ -132,28 +126,15 @@
                                 @enderror
                             </div>
 
-                            <!-- category Field -->
-                        {{--<div class="col-md-12">
-                                <label for="category" class="form-label">Food Category</label>
-                                <select name="category_id" class="form-control">
-                                    <option value="">Select Food Category</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ isset($item) && $item->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        --}}
                             <div class="mb-3 d-flex align-items-start align-items-md-center flex-md-row flex-column gap-2 justify-content-between">
                                 <div class="d-flex align-items-md-center align-items-start gap-2">
-                                    <input type="checkbox" 
-                                        id="lockCheckbox" 
-                                        name="is_locked" 
-                                        value="{{ $item->is_locked ?? 0 }}" 
-                                        class="form-check-input" 
-                                        {{ isset($item) ? ($item->is_locked == 1 ? 'checked' : '') : '' }} />
+                                    <input type="checkbox"
+                                        id="lockCheckbox"
+                                        name="is_locked"
+                                        value="{{ $item->is_locked ?? 0 }}"
+                                        class="form-check-input"
+                                        {{ isset($item) ? ($item->is_locked == 1 ? 'checked' : '') : '' }}
+                                    />
 
                                     <label for="lockCheckbox" id="lockLabel" class="form-label mb-0">
                                         {{ isset($item) ? ($item->is_locked == 1 ? 'Unlock' : 'Lock') : 'Lock' }}
@@ -169,18 +150,18 @@
                             </div>
 
                             <!-- Quantity Field -->
-                            @php 
-                            $selectedUnits = [];
-                            $mainQty = "";
-                            $mainUnit = "";
-                            if(isset($item)){
-                                $selectedUnits = is_string($item->selected_qty_unit) ? json_decode($item->selected_qty_unit, true): $item->selected_qty_unit;                                
+                            @php
+                                $selectedUnits = [];
+                                $mainQty = "";
+                                $mainUnit = "";
+                                if(isset($item)) {
+                                    $selectedUnits = is_string($item->selected_qty_unit) ? json_decode($item->selected_qty_unit, true): $item->selected_qty_unit;
                                     $mainQty = $selectedUnits[0]['qty'] ?? ($item->qty ?? '');
                                     $mainUnit = $selectedUnits[0]['unit'] ?? ($item->unit ?? '');
-                            }
+                                }
                             @endphp
                             <!-- Quantity Field -->
-                            <div class="lock-div position-relative" id="lockableBox"> 
+                            <div class="lock-div position-relative" id="lockableBox">
                                 <div class="row">
                                     <div class="col-md-12 add-more-container">
                                         <label class="form-label">Quantity & Measurement<small class="text-danger">*</small></label>
@@ -196,20 +177,20 @@
                                                     {{-- Quantity Column --}}
                                                     <div class="col-md-4">
                                                         <div class="d-flex align-items-center">
-                                                            <input 
-                                                                type="checkbox" 
-                                                                class="{{ $index === 0 ? 'qty-checkbox' : 'alt-qty-checkbox' }} me-2 {{ $index > 0 ? 'alternate-measurement-checkbox' : '' }}" 
+                                                            <input
+                                                                type="checkbox"
+                                                                class="{{ $index === 0 ? 'qty-checkbox' : 'alt-qty-checkbox' }} me-2 {{ $index > 0 ? 'alternate-measurement-checkbox' : '' }}"
                                                                 id="{{ $unitData['unit'] ?? 'main' }}"
-                                                                data-qty="{{ $unitData['qty'] }}" 
+                                                                data-qty="{{ $unitData['qty'] }}"
                                                                 data-unit="{{ $unitData['unit'] }}"
                                                                 {{ !empty($unitData['checked']) && $unitData['checked'] ? 'checked' : '' }}
                                                             >
-                                                            <input 
-                                                                type="text" 
-                                                                name="{{ $index === 0 ? 'qty' : '' }}" 
-                                                                id="{{ $index === 0 ? 'qty' : '' }}" 
-                                                                class="form-control {{ $index === 0 ? 'qty-input' : 'alt-qty-input alternate-qty-input' }}" 
-                                                                value="{{ $unitData['qty'] }}" 
+                                                            <input
+                                                                type="text"
+                                                                name="{{ $index === 0 ? 'qty' : '' }}"
+                                                                id="{{ $index === 0 ? 'qty' : '' }}"
+                                                                class="form-control {{ $index === 0 ? 'qty-input' : 'alt-qty-input alternate-qty-input' }}"
+                                                                value="{{ $unitData['qty'] }}"
                                                                 placeholder="Enter quantity"
                                                             >
                                                         </div>
@@ -248,18 +229,17 @@
                                                 {{-- Quantity Column --}}
                                                 <div class="col-md-4">
                                                     <div class="d-flex align-items-center">
-                                                        <input 
-                                                            type="checkbox" 
-                                                            class="qty-checkbox me-2" 
+                                                        <input
+                                                            type="checkbox"
+                                                            class="qty-checkbox me-2"
                                                             id="main"
-
                                                         >
-                                                        <input 
-                                                            type="text" 
-                                                            name="qty" 
-                                                            id="qty" 
-                                                            class="form-control qty-input" 
-                                                            value="" 
+                                                        <input
+                                                            type="text"
+                                                            name="qty"
+                                                            id="qty"
+                                                            class="form-control qty-input"
+                                                            value="{{ $item->qty ?? '' }}"
                                                             placeholder="Enter quantity"
                                                         >
                                                     </div>
@@ -274,12 +254,6 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-
-                                                {{-- Add More --}}
-                                                <!-- <div class="col-md-4">
-                                                    <button type="button" id="add-more" class="btn btn-primary">Add More</button>
-                                                    <small class="text-danger">*This will not adjust other measurements</small>
-                                                </div> -->
                                             </div>
                                         @endif
                                         @error('qty')
@@ -299,7 +273,7 @@
                                         <!-- Protein Field -->
                                         <div class="col-md-6">
                                             <label for="protein" class="form-label">Protein</label>
-                                            <input type="number" name="protein" class="form-control" id="protein" value="{{ number_format($item->protein ?? '0' ,1)}}" 
+                                            <input type="number" name="protein" class="form-control" id="protein" value="{{ number_format($item->protein ?? '0' ,1)}}"
                                                 step="0.01" min="0" placeholder="Enter Protein">
                                             <small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
                                         </div>
@@ -312,7 +286,7 @@
                                             @error('serving_size')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
-                                        
+
                                         </div>
                                         <div class="col-md-2 mt-3">
                                             <label for="serving_size" class="form-label">Serving Size Unit</label>
@@ -324,12 +298,11 @@
                                             @error('serving_size_unit')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
-                                            <!-- <input type="text" name="serving_size_unit" class="form-control d-inline-block d-flex" id="serving_size_unit" value="{{ $item->serving_size_unit ?? 'gm' }}" placeholder="Enter Serving Size"> -->
                                         </div>
                                         <!-- Carbohydrate Field -->
                                         <div class="col-md-6 mt-3">
                                             <label for="carbs" class="form-label">Carbohydrate</label>
-                                            <input type="number" name="carbs" class="form-control" id="carbs" value="{{ number_format($item->carbs ?? '0', 1) }}" 
+                                            <input type="number" name="carbs" class="form-control" id="carbs" value="{{ number_format($item->carbs ?? '0', 1) }}"
                                                 step="0.01" min="0" placeholder="Enter Carbohydrate">
                                             <small class="text-muted">Please enter the value in grams (e.g., 5, 10.5).</small>
                                         </div>
@@ -400,12 +373,11 @@
                                 </div>
                             </div>
 
-                            <?php //dd($item->itemSwaps); ?>
                             <!-- Swap Items Selection (Visible only if 'Is Swapped' is Yes) -->
                             <div class="col-md-12" id="swapItemsContainer" style="display: none;">
                                 <label for="swap_item_ids" class="form-label">Swap Items</label>
                                 <select name="swap_item_ids[]" class="form-control" id="swap_item_ids" multiple>
-                                   
+
                                 </select>
                             </div>
 
@@ -426,12 +398,12 @@
                         </div>
                         <button type="submit" class="btn btn-primary mt-4">{{ isset($item) ? 'Update' : 'Create' }}</button>
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Save Food Modal -->
 <div class="modal" style="display:none;" id="saveFoodModal" tabindex="-1" aria-labelledby="saveFoodModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -450,20 +422,6 @@
         </div>
     </div>
 </div>
-
-<!-- Confirmation Modal -->
-<!-- <div class="modal" id="confirmSaveModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title">Confirm Save</h5></div>
-            <div class="modal-body">Are you sure you want to save these changes?</div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" id="cancel-confirm">Cancel</button>
-                <button type="button" class="btn btn-success" id="confirm-save">Update, Locked</button>
-            </div>
-        </div>
-    </div>
-</div> -->
 
 <div class="modal" id="editFoodModal" tabindex="-1" aria-labelledby="editFoodModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -484,8 +442,9 @@
         </form>
     </div>
 </div>
+
 <div class="modal fade" id="woolworthJsonModal" tabindex="-1" aria-labelledby="jsonModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="jsonModalLabel">Woolworths JSON</h5>
@@ -499,9 +458,11 @@
         </div>
     </div>
 </div>
+
 <div id="loader-2" style="display: none;">
     <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" width="100px" height="100px" alt="Loading..." />
 </div>
+
 @push('styles')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
@@ -511,6 +472,7 @@
 @endpush
 
 @push('custom_scripts')
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         let hasUnsavedChanges = false;
@@ -625,7 +587,7 @@
                 $('#swapItemsContainer').hide();
             }
         });
-   
+
         if ($('input[name="is_locked"]:checked').val() == '1') {
             $('#lockIcon').show();
             $('#lockableBox').addClass('locked');
@@ -714,7 +676,6 @@
                     updatedData.push({ qty, unit, checked });
                 }
             });
-            console.log(updatedData);
             // Save back to hidden field
             $('#selected_measurements_hidden').val(JSON.stringify(updatedData));
             hasUnsavedChanges = false;
@@ -896,7 +857,7 @@
         @endif
 
     });
-    
+
     $(document).ready(function () {
         const savedMeasurement = $('select[name="unit"]').val();
         const savedQty = $('input[name="qty"]').val();
@@ -904,6 +865,10 @@
         let baseProtein = '';
         let baseFat = '';
         let baseEnergy = '';
+        let baseSaturated = '';
+        let baseSugars = '';
+        let baseDietaryFibre = '';
+        let baseSodium = '';
         let AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
         let selectedQtyUnit = '';
         @if(isset($item))
@@ -913,11 +878,19 @@
             baseProtein = @json($item->protein);
             baseFat = @json($item->fat);
             baseEnergy = @json($item->energy);
+            baseSaturated = @json($item->saturated);
+            baseSugars = @json($item->sugars);
+            baseDietaryFibre = @json($item->dietary_fibre);
+            baseSodium = @json($item->sodium);
         @else
             baseCarb = $('#carbs').val();
             baseProtein = $('#protein').val();
             baseFat = $('#fat').val();
-            baseEnergy = $('#energy').val() || 0;
+            baseEnergy = $('#energy').val();
+            baseSaturated = $('#saturated').val();
+            baseSugars = $('#sugars').val();
+            baseDietaryFibre = $('#dietary_fibre').val();
+            baseSodium = $('#sodium').val();
         @endif
         let selectedUnits = [];
 
@@ -931,7 +904,7 @@
 
         // Call fetchAlternateMeasurements only if no preselected OR checkbox unchecked
         if ((!selectedUnits || selectedUnits.length === 0) || !isMainChecked) {
-           
+
             // Trigger with current values if available
             let selectedMeasurement = $('#measurement').val();
             let qty = $('#qty').val();
@@ -949,7 +922,7 @@
             }
             AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
             fetchAlternateMeasurements(selectedMeasurement, qty);
-            setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy);
+            setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy, baseSaturated, baseSugars, baseDietaryFibre, baseSodium);
             setupDynamicMeasurementSync();
             updateHiddenField();
             // AU_UNIT_EQUIVALENTS = buildUnitQtyMap();
@@ -966,6 +939,11 @@
                 carbs: $('input[name="carbs"]').val(),
                 protein: $('input[name="protein"]').val(),
                 fat: $('input[name="fat"]').val(),
+                energy: $('input[name="energy"]').val(),
+                saturated: $('input[name="saturated"]').val(),
+                sugars: $('input[name="sugars"]').val(),
+                dietary_fibre: $('input[name="dietary_fibre"]').val(),
+                sodium: $('input[name="sodium"]').val(),
                 qty: qty,
                 measurement: selectedMeasurement,
                 serving_size: $('input[name="serving_size"]').val(),
@@ -986,7 +964,11 @@
                     $('#carbs').val(parseFloat(data.carbs).toFixed(2));
                     $('#protein').val(parseFloat(data.protein).toFixed(2));
                     $('#fat').val(parseFloat(data.fat).toFixed(2));
-                    $('#energy').val(parseFloat(data.energy).toFixed(2) + 'kJ');
+                    $('#energy').val(data.energy);
+                    $('#saturated').val(data.saturated);
+                    $('#sugars').val(data.sugars);
+                    $('#dietary_fibre').val(data.dietary_fibre);
+                    $('#sodium').val(data.sodium);
 
                     // Remove all alt-* rows
                     $('.alt-qty-checkbox, .alt-qty-input, .alt-unit-dropdown')
@@ -996,9 +978,7 @@
                     const mainRow = $('.qty-checkbox').closest('.row.align-items-center');
 
                     if (data.alternate_serving_sizes && Object.keys(data.alternate_serving_sizes).length > 0) {
-                        
                         const entries = Object.keys(data.alternate_serving_sizes).map(key => [key, data.alternate_serving_sizes[key]]);
-
                         entries.forEach(([unitKey, combined], index) => {
                             const [qtyVal, unitVal] = combined.split(" ");
 
@@ -1010,17 +990,17 @@
                                 <div class="row align-items-center mb-2">
                                     <div class="col-md-4">
                                         <div class="d-flex align-items-center">
-                                            <input 
-                                                type="checkbox" 
-                                                class="alt-qty-checkbox me-2 alternate-measurement-checkbox" 
-                                                data-qty="${qtyVal}" 
-                                                data-unit="${unitVal}" 
-                                                id="${unitKey}" 
+                                            <input
+                                                type="checkbox"
+                                                class="alt-qty-checkbox me-2 alternate-measurement-checkbox"
+                                                data-qty="${qtyVal}"
+                                                data-unit="${unitVal}"
+                                                id="${unitKey}"
                                                 >
-                                            <input 
-                                                type="text" 
-                                                class="form-control alt-qty-input alternate-qty-input" 
-                                                value="${qtyVal}" 
+                                            <input
+                                                type="text"
+                                                class="form-control alt-qty-input alternate-qty-input"
+                                                value="${qtyVal}"
                                                 placeholder="Enter quantity">
                                         </div>
                                     </div>
@@ -1048,7 +1028,11 @@
                         parseFloat(parseFloat(data.carbs).toFixed(2)),
                         parseFloat(parseFloat(data.protein).toFixed(2)),
                         parseFloat(parseFloat(data.fat).toFixed(2)),
-                        parseFloat(parseFloat(data.energy).toFixed(2))
+                        data.energy,
+                        data.saturated,
+                        data.sugars,
+                        data.dietary_fibre,
+                        data.sodium
                     );
 
                     setupDynamicMeasurementSync();
@@ -1106,11 +1090,8 @@
                 const isChecked = $checkbox.is(':checked');
 
                 const checkboxId = $checkbox.attr('id');
-                console.log(checkboxId);
                 const $unitDropdown = $(`#${checkboxId}.alt-unit-dropdown`);
                 const unit = $unitDropdown.val() || $checkbox.data('unit');
-                console.log(unit);
-                console.log(rawQty);
                 if (unit && rawQty) {
                     selectedValues.push({
                         qty: rawQty,
@@ -1137,9 +1118,6 @@
                 const isChecked = $checkbox.is(':checked');
                 const unit = $unitInput.val() || $checkbox.data('unit');
 
-                console.log('Unit:', unit);
-                console.log('Qty:', rawQty);
-
                 if (unit && rawQty) {
                     selectedValues.push({
                         qty: rawQty,
@@ -1162,7 +1140,7 @@
             let fat = parseFloat($('#fat').val()) || 0;
 
             $('.nutrition-info').text(`Energy: ${energy.toFixed(2)}kJ, Protein: ${protein.toFixed(2)}g, Carb: ${carbs.toFixed(2)}g, Fat: ${fat.toFixed(2)}g`);
-            
+
             // 🔄 Store as JSON string in hidden input
             $('#selected_measurements_hidden').val(JSON.stringify(selectedValues));
             const subtitle = subtitleParts.join(' or ');
@@ -1172,7 +1150,7 @@
         $(document).on('change', '.alt-qty-checkbox', function () {
             updateHiddenField();
         });
-        
+
         $(document).on('change', '.qty-checkbox', function () {
             let isChecked = $(this).is(':checked');
             let container = $(this).closest('.col-md-4');
@@ -1185,10 +1163,10 @@
             if (isChecked) {
                 qtyInput.prop('disabled', false);
                 unitDropdown.prop('disabled', false);
-                
+
             }else {
                 let selectedMeasurement = $(this).val();
-                let qty = $('input[name="qty"]').val(); 
+                let qty = $('input[name="qty"]').val();
 
                 qtyInput.prop('disabled', false);
                 unitDropdown.prop('disabled', false);
@@ -1210,7 +1188,6 @@
             $('.alt-qty-checkbox').each(function () {
                 let qty = parseFraction($(this).siblings('.alt-qty-input').val()) || 0;
                 let unit = $(this).data('unit')?.toLowerCase();
-                console.log(qty);
                 if (!isNaN(qty) && unit) {
                     map[unit] = qty;
                 }
@@ -1218,8 +1195,8 @@
 
             return map;
         }
-        
-        function setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy) {
+
+        function setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy, baseSaturated, baseSugars, baseDietaryFibre, baseSodium) {
             function updateNutrition(currentQty, currentUnit) {
                 if (!currentQty || !currentUnit) return;
                 currentUnit = currentUnit.toLowerCase();
@@ -1229,21 +1206,29 @@
                     console.warn('Unknown unit used in conversion:', currentUnit);
                     return;
                 }
-                baseEnergy = parseFloat(baseEnergy);
-                console.log(baseEnergy);
                 const ratio = currentQty / baseEquivalent;
 
-                const newCarbs = baseCarb * ratio;
-                const newProtein = baseProtein * ratio;
-                const newFat = baseFat * ratio;
-                const newEnergy = baseEnergy * ratio;
-                console.log(newEnergy);
-                console.log(newEnergy.toFixed(1));
+                // Numeric fields (no units or symbols)
+                const newCarbs = parseFloat(baseCarb) * ratio;
+                const newProtein = parseFloat(baseProtein) * ratio;
+                const newFat = parseFloat(baseFat) * ratio;
 
+                // Unit/symbol fields — handled via helper
+                const newEnergy = scaleNutritionValue(baseEnergy, ratio);
+                const newSaturated = scaleNutritionValue(baseSaturated, ratio);
+                const newSugars = scaleNutritionValue(baseSugars, ratio);
+                const newDietaryFibre = scaleNutritionValue(baseDietaryFibre, ratio);
+                const newSodium = scaleNutritionValue(baseSodium, ratio);
+
+                // Update input values
                 $('#carbs').val(newCarbs.toFixed(2));
                 $('#protein').val(newProtein.toFixed(2));
                 $('#fat').val(newFat.toFixed(2));
-                $('#energy').val(newEnergy.toFixed(2)+'kJ');
+                $('#energy').val(newEnergy);
+                $('#saturated').val(newSaturated);
+                $('#sugars').val(newSugars);
+                $('#dietary_fibre').val(newDietaryFibre);
+                $('#sodium').val(newSodium);
             }
 
             // Listen for changes in alt qty input
@@ -1278,6 +1263,25 @@
 
                 updateNutrition(qty, unitDropdown);
             });
+        }
+
+        function scaleNutritionValue(value, ratio) {
+            if (typeof value !== 'string') return value;
+
+            value = value.trim();
+
+            // Capture optional symbol (e.g., '<', '~'), number, and unit
+            const match = value.match(/^([<~]?)[\s]*([\d.]+)\s*([a-zA-Z]*)$/);
+
+            if (!match) return value; // fallback if doesn't match
+
+            const symbol = match[1];        // '<' or '~' or ''
+            const number = parseFloat(match[2]); // numeric part
+            const unit = match[3];          // 'g', 'mg', 'kJ', etc.
+
+            const scaled = (number * ratio).toFixed(2);
+
+            return `${symbol} ${scaled}${unit}`.trim();
         }
 
         function setupDynamicMeasurementSync() {
@@ -1436,7 +1440,7 @@
         }
 
         // Initialize nutrition sync
-        setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy);
+        setupNutritionSync(baseCarb, baseProtein, baseFat, baseEnergy, baseSaturated, baseSugars, baseDietaryFibre, baseSodium);
         setupDynamicMeasurementSync();
 
         let unitIndex = $('.alternate-measurement-checkbox').length;
@@ -1511,7 +1515,7 @@
             const title = $(this).data('title');
 
             // Set hidden or visible fields if necessary
-           
+
             // Update the checkbox dataset
             $('.qty-checkbox').data('qty', selectedQty).data('unit', selectedUnit);
 
@@ -1541,7 +1545,11 @@
                         $('#carbs').val(parseFloat(data.carbs).toFixed(2));
                         $('#protein').val(parseFloat(data.protein).toFixed(2));
                         $('#fat').val(parseFloat(data.fat).toFixed(2));
-                        $('#energy').val(parseFloat(data.energy).toFixed(2) + 'kJ');
+                        $('#energy').val(data.energy);
+                        $('#saturated').val(data.saturated);
+                        $('#sugars').val(data.sugars);
+                        $('#dietary_fibre').val(data.dietary_fibre);
+                        $('#sodium').val(data.sodium);
 
                     // Remove all alt-* rows
                     $('.alt-qty-checkbox, .alt-qty-input, .alt-unit-dropdown')
@@ -1551,7 +1559,7 @@
                     const mainRow = $('.qty-checkbox').closest('.row.align-items-center');
 
                     if (data.alternate_serving_sizes && Object.keys(data.alternate_serving_sizes).length > 0) {
-                        
+
                         const entries = Object.keys(data.alternate_serving_sizes).map(key => [key, data.alternate_serving_sizes[key]]);
 
                         entries.forEach(([unitKey, combined], index) => {
@@ -1565,17 +1573,17 @@
                                 <div class="row align-items-center mb-2">
                                     <div class="col-md-4">
                                         <div class="d-flex align-items-center">
-                                            <input 
-                                                type="checkbox" 
-                                                class="alt-qty-checkbox me-2 alternate-measurement-checkbox" 
-                                                data-qty="${qtyVal}" 
-                                                data-unit="${unitVal}" 
-                                                id="${unitKey}" 
+                                            <input
+                                                type="checkbox"
+                                                class="alt-qty-checkbox me-2 alternate-measurement-checkbox"
+                                                data-qty="${qtyVal}"
+                                                data-unit="${unitVal}"
+                                                id="${unitKey}"
                                                 >
-                                            <input 
-                                                type="text" 
-                                                class="form-control alt-qty-input alternate-qty-input" 
-                                                value="${qtyVal}" 
+                                            <input
+                                                type="text"
+                                                class="form-control alt-qty-input alternate-qty-input"
+                                                value="${qtyVal}"
                                                 placeholder="Enter quantity">
                                         </div>
                                     </div>
@@ -1605,7 +1613,11 @@
                         parseFloat(parseFloat(data.carbs).toFixed(2)),
                         parseFloat(parseFloat(data.protein).toFixed(2)),
                         parseFloat(parseFloat(data.fat).toFixed(2)),
-                        parseFloat(parseFloat(data.energy).toFixed(2))
+                        data.energy,
+                        data.saturated,
+                        data.sugars,
+                        data.dietary_fibre,
+                        data.sodium
                     );
 
                     setupDynamicMeasurementSync();
@@ -1699,7 +1711,7 @@
             }
         });
     });
-   
+
 </script>
 @endpush
 @endsection

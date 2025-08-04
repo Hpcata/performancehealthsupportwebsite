@@ -10,9 +10,11 @@ class SportTracking extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
+        'email',
         'sport',
         'state',
         'sport_game',
-        'ip',
+        'ip_address',
     ];
 }

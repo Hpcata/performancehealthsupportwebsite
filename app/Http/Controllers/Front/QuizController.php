@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Log;
 use App\Services\ActivityTracker;
 use App\Models\TrackingType;
 use App\Models\Tracking;
+use App\Models\QuizQuestion;
+use App\Mail\QuizSubmittedMail;
+use App\Mail\FreeTestResultMail;
 
 class QuizController extends Controller
 {
@@ -81,7 +84,7 @@ class QuizController extends Controller
             // ③ find quiz
             $quiz = Quiz::findOrFail($request->quiz_id);
 
-            if($request->step == 1) {
+            if ($request->step == 1) {
                 $click = ActivityTracker::click('quiz_started', null);
 
                 // Log in trackings with click reference
@@ -94,40 +97,35 @@ class QuizController extends Controller
 
             DB::transaction(function () use ($stepData, $quiz, $request) {
                 foreach ($stepData as $formSlug => $questions) {
-                    $index = 1;
                     foreach ($questions as $questionText => $answers) {
-                        $form_slug = null;
-                        if($formSlug == 'nutrition-form') {
-                            $form_slug = 'nutrition';
-                        }else if($formSlug == 'sports-form') {
-                            $form_slug = 'sports';
-                        }else if($formSlug == 'supplement-form') {
-                            $form_slug = 'supplements';
-                        }
-                        // Fetch the QuizQuestion for this form_slug and question_text
-                        $quizQuestion = \App\Models\QuizQuestion::where('form_slug', $form_slug)
+                        $form_slug = match($formSlug) {
+                            'nutrition-form' => 'nutrition',
+                            'sports-form' => 'sports',
+                            'supplement-form' => 'supplements',
+                            default => null
+                        };
+
+                        $quizQuestion = QuizQuestion::where('form_slug', $form_slug)
                             ->where('question_text', $questionText)
                             ->first();
                         $isCorrect = false;
                         $isUnsure = false;
                         $selectedValue = null;
+
                         if ($quizQuestion) {
-                            // Assume $answers is an array or value, get the selected value
                             if (is_array($answers)) {
                                 $selectedValue = $answers['value'] ?? (array_values($answers)[0] ?? null);
                             } else {
                                 $selectedValue = $answers;
                             }
-                            // Check for 'unsure' (string or value)
+
                             if (is_string($selectedValue) && strtolower($selectedValue) === 'unsure') {
                                 $isUnsure = true;
                             } elseif ($selectedValue === 'unsure') {
                                 $isUnsure = true;
                             } else {
-                                // correct_answer is an array, value 1 is correct
                                 $correctAnswers = $quizQuestion->correct_answer;
                                 if (is_array($correctAnswers)) {
-                                    // If the selected value matches a key with value 1, it's correct
                                     foreach ($correctAnswers as $optionKey => $isCorrectVal) {
                                         if ($selectedValue == $optionKey && $isCorrectVal == 1) {
                                             $isCorrect = true;
@@ -137,67 +135,75 @@ class QuizController extends Controller
                                 }
                             }
                         }
-                    
+
                         QuizAnswer::create([
                             'quiz_id'        => $quiz->id,
                             'form_slug'      => $formSlug,
                             'question'       => $questionText,
-                            'question_index' => $quizQuestion ? $quizQuestion->question_index : null,
+                            'question_index' => $quizQuestion?->question_index,
                             'step'           => $request->step,
                             'answer'         => json_encode($answers)
                         ]);
-                        // Enhanced: Calculate percentage correct for multi-option answers using QuizQuestion->options
+
                         $optionCorrectCount = 0;
                         $optionTotalCount = 0;
                         $optionUnsureCount = 0;
-                        $questionOptions = $quizQuestion ? $quizQuestion->options : [];
+                        $questionOptions = $quizQuestion?->options ?? [];
+
                         if (is_array($answers)) {
                             foreach ($answers as $optionKey => $optionData) {
                                 $optionTotalCount++;
                                 $isCorrect = false;
-                                // 1. Check for 'correct' key in answer structure
+
                                 if (isset($optionData['correct']) && $optionData['correct'] == 1) {
                                     $isCorrect = true;
                                 }
-                                // 2. Check against QuizQuestion->options structure
-                                $selectedLabel = isset($optionData['option']) ? $optionData['option'] : null;
-                                $correctForOption = isset($questionOptions[$optionKey]) ? $questionOptions[$optionKey] : null;
+
+                                $selectedLabel = $optionData['option'] ?? null;
+                                $correctForOption = $questionOptions[$optionKey] ?? null;
+
                                 if (is_array($correctForOption) && $selectedLabel !== null) {
                                     if (isset($correctForOption[$selectedLabel]) && $correctForOption[$selectedLabel] == 1) {
                                         $isCorrect = true;
                                     }
                                 }
+
                                 if ($isCorrect) {
                                     $optionCorrectCount++;
                                 }
-                                // Count unsure
+
                                 if ($selectedLabel !== null && strtolower($selectedLabel) === 'unsure') {
                                     $optionUnsureCount++;
                                 }
                             }
                         }
+
                         $questionPercentCorrect = $optionTotalCount > 0 ? round(($optionCorrectCount / $optionTotalCount) * 100, 2) : 0;
                         $questionPercentCorrect = number_format($questionPercentCorrect, 2, '.', '');
-                        // Determine if any option is unsure for this question
+
+                        $unsureAnswerPercent = $optionTotalCount > 0 ? round(($optionUnsureCount / $optionTotalCount) * 100, 2) : 0;
+                        $unsureAnswerPercent = number_format($unsureAnswerPercent, 2, '.', '');
+
                         $correctAnswerUnsure = 0;
                         if ($optionUnsureCount > 0) {
                             $correctAnswerUnsure = 'unsure';
                         } elseif ($optionTotalCount > 0 && $optionUnsureCount === 0) {
                             $correctAnswerUnsure = 0;
                         }
-                        // Log tracking for each question with percentage correct
+
                         $click = ActivityTracker::click('quiz_question_answer', null);
 
-                        ActivityTracker::log(\App\Models\TrackingType::QUIZ_QUESTION_ANSWER, null, [
+                        ActivityTracker::log(TrackingType::QUIZ_QUESTION_ANSWER, null, [
                             'user_click_id' => $click->id,
                             'section_element_id' => $click->section_element_id,
                             'quiz_id' => $quiz->id,
                             'step' => $request->step,
-                            'question_id' => $quizQuestion ? $quizQuestion->question_index : null,
+                            'question_id' => $quizQuestion?->question_index,
                             'question_text' => $questionText,
                             'form_slug' => $formSlug,
                             'selected' => $selectedValue,
                             'correct_answer_percent' => $questionPercentCorrect,
+                            'unsure_answer_percent' => $unsureAnswerPercent, // ✅ NEW FIELD
                             'option_total' => $optionTotalCount,
                             'option_correct' => $optionCorrectCount,
                             'option_unsure' => $optionUnsureCount,
@@ -278,9 +284,9 @@ class QuizController extends Controller
                 $user = User::find($request->user_id);
                 $adminEmail = config('constants.admin_email'); // Set admin email address
                 // $adminEmail = 'kartikvadhaiya6656@gmail.com'; // Set admin email address
-                Mail::to($adminEmail)->send(new \App\Mail\QuizSubmittedMail($user, $quiz));
+                Mail::to($adminEmail)->send(new QuizSubmittedMail($user, $quiz));
 
-                Mail::to($user->email)->send(new \App\Mail\FreeTestResultMail($user, $quiz));
+                Mail::to($user->email)->send(new FreeTestResultMail($user, $quiz));
 
             } catch (\Exception $e) {
                 Log::error('Quiz completed mail send error. ' .$e->getMessage());

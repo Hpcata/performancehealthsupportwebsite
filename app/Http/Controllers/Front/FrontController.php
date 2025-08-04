@@ -2,51 +2,54 @@
 
 namespace App\Http\Controllers\Front;
 
+use Hash;
+use Exception;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use App\Models\Blog;
+use App\Models\Flag;
+use App\Models\Page;
 use App\Models\Plan;
 use App\Models\User;
+use App\Models\Query;
+use App\Models\Coupon;
+use App\Models\Payment;
+use App\Models\UserItem;
+use App\Models\UserMeal;
+use App\Models\UserPlan;
+use App\Models\SportGame;
+use App\Models\CouponUsage;
+use App\Models\GoalHistory;
+use App\Models\Testimonial;
+use App\Models\UserPrePlan;
+use App\Mail\QueryGenerated;
+use App\Models\TrackingType;
+use App\Models\UserCategory;
+use App\Models\UserItemMeal;
 use App\Services\UrlService;
 use Illuminate\Http\Request;
+use App\Models\PrePlanDetail;
+use App\Models\Questionnaire;
+use App\Models\SportCategory;
+use App\Models\SportTracking;
 use App\Services\JsonService;
+use App\Models\WeightTracking;
+use App\Mail\SportInterestMail;
 use App\Services\StripeService;
+use App\Services\ActivityTracker;
+use App\Models\PrePlanQuesionFile;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\QueryRequest;
-use App\Mail\QueryGenerated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Query;
-use App\Models\Blog;
-use Exception;
-use Hash;
-use App\Models\UserPlan;
-use Illuminate\Support\Facades\File;
-use App\Models\Questionnaire;
-use App\Models\WeightTracking;
-use App\Models\Payment;
-use App\Models\SportTracking;
-use App\Models\UserPrePlan;
-use App\Models\PrePlanDetail;
-use App\Models\GoalHistory;
-use App\Mail\SportInterestMail;
-use Carbon\Carbon;
-use GrahamCampbell\ResultType\Success;
 use App\Mail\SportInterestMailAdmin;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use GrahamCampbell\ResultType\Success;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use App\Services\ActivityTracker;
-use App\Models\TrackingType;
-use App\Models\SportCategory;
-use App\Models\UserItem;
-use App\Models\UserItemMeal;
-use App\Models\UserMeal;
-use App\Models\Page;
-use App\Models\Coupon;
-use App\Models\UserCategory;
-use App\Models\PrePlanQuesionFile;
-use App\Models\Flag;
-use App\Models\CouponUsage;
 
 class FrontController extends Controller
 {
@@ -99,7 +102,7 @@ class FrontController extends Controller
     public function blog()
     {
         $blogs = Blog::where('is_published', 1)->get();
-        return view('front.pages.blog', compact('blogs'));
+        return view('front.pages.blog.blog', compact('blogs'));
     }
 
     public function blogDetails($id)
@@ -116,35 +119,35 @@ class FrontController extends Controller
             $query->whereIn('tags.id', $blog->tags->pluck('id'));
         })->where('id', '!=', $blog->id)->limit(5)->get();
 
-        return view('front.pages.blog-details', compact('blog', 'relatedBlogs'));
+        return view('front.pages.blog.blog-details', compact('blog', 'relatedBlogs'));
     }
 
     public function subHomePage()
     {
         // Step 1: Get all sub_plan_ids from plan_sub_plans table
-        $subPlanIds = \DB::table('plan_sub_plans')->pluck('sub_plan_id')->toArray();
+        $subPlanIds = DB::table('plan_sub_plans')->pluck('sub_plan_id')->toArray();
 
         // Step 2: Retrieve all plans that are NOT sub-plans
         $plans = Plan::whereNotIn('id', $subPlanIds)->get();
 
-        // dd($plans);
-        $page = Page::with('sections')->where('slug', 'actionsport-nutrition-plan')->first();
-        
-        $requirements = [];
-       
-        $disabledDay = json_encode([]);
-      
-        $organization = [];
-        $testimonials = [];
-        $isAuthenticated = Auth::check(); // Returns true if the user is logged in
-        $sportCategories = SportCategory::all();
+        $page = Page::with('sections')->where('slug', 'actionsport_nutrition_plan')->first();
 
-        return view('front.pages.sub-home-page', compact('requirements','page', 'plans','disabledDay','organization','testimonials','isAuthenticated', 'sportCategories'));
+        $isAuthenticated = Auth::check(); // Returns true if the user is logged in
+        $sportCategories = SportCategory::select('id', 'name')->get();
+
+        $userId = User::where('slug', 'age-better')->first()->id;
+        $testimonials = Testimonial::with('testimonialImage')->where('user_id', $userId)->get();
+
+        // Get age groups from constants
+        $ageGroups = \App\Constants\AgeGroups::getAll();
+
+        $sports = SportGame::all();
+
+        return view('front.pages.sub-home-page', compact('page', 'plans','isAuthenticated', 'sportCategories', 'testimonials', 'ageGroups', 'sports'));
     }
 
     public function register(Request $request)
     {
-        // dd($request->all());
         $firstName = explode(' ', $request->input('name'))[0]; // First name from full name
         $lastName = explode(' ', $request->input('name'))[1] ?? ''; // Last name from full name
 
@@ -213,11 +216,6 @@ class FrontController extends Controller
                 if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])) {
                     if (!Auth::guard('web')->user()->isSuperAdmin()) {
                         $redirectUrl = route('front.profile', ['id' => $user->id]); // Change this to the page you want
-                        // $freeTest = Questionnaire::where('email', $validated['email'])->first();
-
-                        // if($freeTest) {
-                        //     \Mail::to($validated['email'])->send(new \App\Mail\FreeTestResultMail($user));
-                        // }
                         $click = ActivityTracker::click('user_logged_in', $user->id);
 
                         // Log in trackings with click reference
@@ -236,12 +234,11 @@ class FrontController extends Controller
                     }
             
                     Auth::guard('web')->logout();
-                    // return back()->withErrors(['Unauthorized access for this role.']);
                     return response()->json([
                         'success' => false,
                         'message' => 'Unauthorized access for this role.',
-                    ], 401);
-                } // Auth::login($user);
+                    ], 500);
+                }
     
             } else {
                 $redirectUrl = route('front.profile', ['id' => $user->id]);
@@ -253,12 +250,11 @@ class FrontController extends Controller
                 ]);
             }
         }
-
         // If user doesn't exist or password doesn't match
         return response()->json([
             'success' => false,
             'message' => 'Oops! Your email or password is incorrect. Please try again.',
-        ], 401);
+        ], 500);
     }
 
     // Logout for admin users
@@ -437,7 +433,7 @@ class FrontController extends Controller
             $profileSetUp = 0 ;
             if($userPrePlan) {
                 $completedSteps = DB::table('pre_plan_details')
-                ->where('user_pre_plan_id', $prePlan->id ?? null)
+                ->where('user_pre_plan_id', $userPrePlan->id ?? null)
                 ->max('step');
                 
                 if($completedSteps == 9) {
@@ -455,7 +451,6 @@ class FrontController extends Controller
     {
         $user = User::find($request->user_id);
         $rules = []; // Initialize the $rules array
-        // dd($request->all());
         if ($request->has('name')) {
             $rules['name'] = 'string|max:255';
         }
@@ -500,13 +495,11 @@ class FrontController extends Controller
                 unlink(public_path($user->profile_image));
             }
         
-            // Save the new profile image path in the database
             $user->profile_image = $filePath;
 
             $sectionElement = 'update_profile_image';
         }
 
-        // Save the user
         $user->save();
 
         $click = ActivityTracker::click($sectionElement, $user->id);
@@ -810,16 +803,16 @@ class FrontController extends Controller
                 $userId = $user->id;
             }
 
-            $click = ActivityTracker::click($sectionElement, $userId);
+            // $click = ActivityTracker::click($sectionElement, $userId);
 
-            ActivityTracker::log($couponType, $userId, [
-                'user_click_id' => $click->id,
-                'section_element_id' => $click->section_element_id,
-                'coupon_code' => $promoCode,
-                'coupon_id' => $coupon->id,
-                'discount' => $discount,
-                'plan_id' => $planId,
-            ]);
+            // ActivityTracker::log($couponType, $userId, [
+            //     'user_click_id' => $click->id,
+            //     'section_element_id' => $click->section_element_id,
+            //     'coupon_code' => $promoCode,
+            //     'coupon_id' => $coupon->id,
+            //     'discount' => $discount,
+            //     'plan_id' => $planId,
+            // ]);
 
             return response()->json([
                 'valid' => true,
@@ -924,14 +917,13 @@ class FrontController extends Controller
         $startDate = now(); // Current date as the end of the range
         $endDate = null;    // To calculate the starting point of the range
 
-        // Set the timezone to ensure consistency (you can replace 'UTC' with your local timezone if needed)
         $timezone = 'UTC'; // Change this to your desired timezone if necessary
-        $startDate = $startDate->setTimezone($timezone)->startOfDay(); // Set timezone and strip time
+        $startDate = $startDate->setTimezone($timezone)->startOfDay();
 
         // Determine the date range based on the filter
         switch ($filter) {
             case '1W':
-                $endDate = now()->subWeek();  // 1 week ago from today
+                $endDate = now()->subWeek();
                 break;
             case '2W':
                 $endDate = now()->subWeeks(2);
@@ -950,57 +942,67 @@ class FrontController extends Controller
                 break;
             case 'ALL':
                 $endDate = WeightTracking::where('user_id', $userId)->orderBy('date', 'asc')->value('date');
-                $endDate = Carbon::parse($endDate)->setTimezone($timezone)->startOfDay(); // Ensure endDate has the correct timezone
+                $endDate = $endDate ? Carbon::parse($endDate)->setTimezone($timezone)->startOfDay() : now()->startOfDay();
                 break;
             default:
                 return response()->json(['error' => 'Invalid filter'], 400);
         }
 
-        // Set the timezone for the endDate to ensure proper comparison
-        $currentDate = $endDate->copy()->setTimezone($timezone)->startOfDay(); // Ensure $currentDate is in the same timezone and start of the day
+        // Generate full date list
+        $currentDate = $endDate->copy()->setTimezone($timezone)->startOfDay();
         $allDates = collect();
 
-        // Generate a complete list of dates between $endDate and $startDate
         while ($currentDate <= $startDate) {
-            $allDates->push($currentDate->format('Y-m-d')); // Add date in 'Y-m-d' format
-            $currentDate = $currentDate->addDay(); // Move to the next day
+            $allDates->push($currentDate->format('Y-m-d'));
+            $currentDate = $currentDate->addDay();
         }
 
-        // Fetch weights from the database
+        // Fetch weight data
         $weightsData = WeightTracking::where('user_id', $userId)
             ->when($endDate, function ($query) use ($startDate, $endDate) {
                 return $query->whereBetween('date', [$endDate, $startDate]);
             })
             ->orderBy('date', 'asc')
             ->get(['date', 'weight', 'weight_goal'])
-            ->keyBy('date'); // Key by date for easy lookup
+            ->keyBy('date');
+
         // Map weights to the complete list of dates
         $allWeights = $allDates->map(function ($date) use ($weightsData) {
             return [
-                'date' => \Carbon\Carbon::parse($date)->format('d/m/Y'), // Format for response
-                'weight' => $weightsData->has($date) ? $weightsData[$date]->weight : null // Use null if no weight exists for the date
+                'date' => \Carbon\Carbon::parse($date)->format('d/m/Y'),
+                'weight' => $weightsData->has($date) ? $weightsData[$date]->weight : null
             ];
         });
-        
+
+        // Group by Month-Year
         $groupedWeights = $allWeights->groupBy(function ($item) {
-            return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F Y'); // Group by "Month Year"
+            return \Carbon\Carbon::createFromFormat('d/m/Y', $item['date'])->format('F Y');
         })->map(function ($items, $monthYear) {
             return [
-                'month' => $monthYear, // Now includes both month and year
+                'month' => $monthYear,
                 'weights' => $items
             ];
         })->values();
-        // Calculate start and goal weights
-        $startWeight = $weightsData->first() ? $weightsData->first()->weight : null;
-        $goalWeight = $weightsData->last() ? $weightsData->last()->weight_goal : null;
-    
-        // Calculate weight difference
+
+        // Get start & goal weights with fallback
+        if ($weightsData->isEmpty()) {
+            $latest = WeightTracking::where('user_id', $userId)
+                ->orderBy('date', 'desc')
+                ->first();
+
+            $startWeight = $latest ? $latest->weight : null;
+            $goalWeight = $latest ? $latest->weight_goal : null;
+        } else {
+            $startWeight = $weightsData->first()->weight;
+            $goalWeight = $weightsData->last()->weight_goal;
+        }
+
+        // Calculate difference
         $weightDiff = null;
         if ($startWeight !== null && $goalWeight !== null) {
             $weightDiff = abs($startWeight - $goalWeight);
         }
-    
-        // Return all the necessary data for the chart and modal
+
         return response()->json([
             'success' => true,
             'filter' => $filter,
@@ -1042,6 +1044,8 @@ class FrontController extends Controller
             'sport' => 'required|string',
             'state' => 'required|string',
             'sport_game' => 'nullable|string',
+            'userType' => 'required|string',
+            'ageGroup' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -1052,7 +1056,7 @@ class FrontController extends Controller
         $interest = new SportTracking();
         $interest->name = $request->name;
         $interest->email = $request->email;
-        $interest->sport = ucwords(str_replace('_', ' ', $request->sport));;
+        $interest->sport = ucwords(str_replace('_', ' ', $request->sport));
         $interest->state = $request->state;
         $interest->sport_game = $request->sport_game;
         $interest->ip_address = $request->ip(); // Track user IP
@@ -1060,10 +1064,13 @@ class FrontController extends Controller
 
         // Send email with sport-specific nutrition info
         Mail::to($request->email)->send(new SportInterestMail($interest));
-        Mail::to(config('constants.admin_email'))->send(new SportInterestMailAdmin($interest));
-        // Mail::to('kartikvadhaiya6656@gmail.com')->send(new SportInterestMailAdmin($interest));
+        Mail::to(config('constant.admin_email'))->send(new SportInterestMailAdmin($interest));
 
-        return response()->json(['message' => 'Thank you! We will send you relevant nutrition information.'], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Thank you! We will send you relevant nutrition information.',
+            'user_created' => !$existingUser
+        ], 200);
     }
 
     public function samplePlan(Request $request)
@@ -1090,59 +1097,85 @@ class FrontController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
         $mainAns = $request->main_ans;
+
         $payment = Payment::where('user_id', $userId)->first();
         $prePlan = UserPrePlan::where('payment_id', $payment->id)
-        ->where('user_id', $userId)
-        ->first();
-       
-        $prePlanDetail =  PrePlanDetail::where('form_slug', $formName)
-                ->where('question', $question)
-                ->where('user_pre_plan_id', $prePlan->id)
-                ->first(); 
-        
-        if($prePlanDetail){
+            ->where('user_id', $userId)
+            ->first();
+
+        $prePlanDetail = PrePlanDetail::where('form_slug', $formName)
+            ->where('question', $question)
+            ->where('user_pre_plan_id', $prePlan->id)
+            ->first();
+
+        if ($prePlanDetail) {
             if ($type == 'supplement-edit' || $type == 'medication-edit') {
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
                 $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
                 $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
+
+                // Remove "nil" values with empty/null dates
+                foreach ($preplanAnswers as $i => $ans) {
+                    $normalized = strtolower(trim($ans));
+                    $sd = trim($startDates[$i] ?? '');
+                    $ed = trim($endDates[$i] ?? '');
+                    if ($normalized === 'nil' && (empty($sd) || strtolower($sd) === 'null') && (empty($ed) || strtolower($ed) === 'null')) {
+                        unset($preplanAnswers[$i], $startDates[$i], $endDates[$i]);
+                    }
+                }
+
+                $preplanAnswers = array_values($preplanAnswers);
+                $startDates = array_values($startDates);
+                $endDates = array_values($endDates);
+
                 $count = count($preplanAnswers);
-            
-                // If startDates are empty or contain all nulls, set all to created_at
-                if (empty($prePlanDetail->start_date) || collect($startDates)->every(fn($date) => empty($date) || strtolower($date) === 'null')) {
+                if (empty($prePlanDetail->start_date) || collect($startDates)->every(fn($d) => empty($d) || strtolower($d) === 'null')) {
                     $createdDate = $prePlanDetail->created_at->format('Y-m-d');
                     $startDates = array_fill(0, $count, $createdDate);
                 } else {
                     $startDates = array_pad($startDates, $count, null);
                 }
-            
+
                 $endDates = array_pad($endDates, $count, null);
-                // Find index of the edited answer
+
                 $index = array_search($answer, $preplanAnswers);
-            
                 if ($index !== false) {
                     if (!empty($startDate)) {
                         $startDates[$index] = $startDate;
                     }
-            
                     if (!empty($endDate)) {
                         $endDates[$index] = $endDate;
                     }
+
+                    $updatedStartDate = $startDates[$index] ?? $prePlanDetail->created_at->format('Y-m-d');
+                    $updatedEndDate = $endDates[$index] ?? null;
+                    $currentDate = now()->format('Y-m-d');
+
+                    if (!empty($updatedEndDate) && $updatedEndDate < $currentDate) {
+                        GoalHistory::create([
+                            'user_id' => $userId,
+                            'payment_id' => $payment->id,
+                            'type' => $type == 'supplement-edit' ? 'supplement' : 'medication',
+                            'question' => $question,
+                            'answer' => $answer,
+                            'start_date' => $updatedStartDate,
+                            'end_date' => $updatedEndDate
+                        ]);
+
+                        unset($preplanAnswers[$index], $startDates[$index], $endDates[$index]);
+                    }
                 }
-                
+
                 $prePlanDetail->update([
-                    'answer' => json_encode(implode(', ', $preplanAnswers)),
-                    'start_date' => implode(', ', $startDates),
-                    'end_date' => implode(', ', $endDates)
+                    'answer' => json_encode(implode(', ', array_values($preplanAnswers))),
+                    'start_date' => implode(', ', array_values($startDates)),
+                    'end_date' => implode(', ', array_values($endDates))
                 ]);
 
-                if($type == 'supplement-edit') {
-                    $sectionElement = 'button_update_supplement';
-                } elseif($type == 'medication-edit') {
-                    $sectionElement = 'button_update_medications';
-                }
-                $click = ActivityTracker::click($sectionElement, $request->user_id);
+                $sectionElement = $type == 'supplement-edit' ? 'button_update_supplement' : 'button_update_medications';
+                $click = ActivityTracker::click($sectionElement, $userId);
 
-                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $userId, [
                     'user_click_id' => $click->id,
                     'section_element_id' => $click->section_element_id,
                     'type' => $type,
@@ -1153,26 +1186,36 @@ class FrontController extends Controller
                     'form_name' => $formName,
                     'payment_id' => $payment->id,
                     'user_pre_plan_id' => $prePlan->id,
-                    'user_id' => $request->user_id,
+                    'user_id' => $userId,
                 ]);
-                
-            }elseif ($type == 'supplement' || $type == 'medication') {
-               
+
+            } elseif ($type == 'supplement' || $type == 'medication') {
                 $preplanAnswers = array_map('trim', explode(',', json_decode($prePlanDetail->answer)));
                 $startDates = array_map('trim', explode(',', $prePlanDetail->start_date));
                 $endDates = array_map('trim', explode(',', $prePlanDetail->end_date));
-            
-                $answer = trim($request->answer);
-                $startDate = $request->start_date;
-                $endDate = $request->end_date;
-            
+
+                // Remove "nil" values with empty/null dates
+                foreach ($preplanAnswers as $i => $ans) {
+                    $normalized = strtolower(trim($ans));
+                    $sd = trim($startDates[$i] ?? '');
+                    $ed = trim($endDates[$i] ?? '');
+                    if ($normalized === 'nil' && (empty($sd) || strtolower($sd) === 'null') && (empty($ed) || strtolower($ed) === 'null')) {
+                        unset($preplanAnswers[$i], $startDates[$i], $endDates[$i]);
+                    }
+                }
+
+                $preplanAnswers = array_values($preplanAnswers);
+                $startDates = array_values($startDates);
+                $endDates = array_values($endDates);
+
+                $answer = trim($answer);
                 $currentDate = now()->format('Y-m-d');
-                
+
+                // Archive expired existing items
                 foreach ($preplanAnswers as $index => $item) {
                     $itemEndDate = $endDates[$index] ?? null;
-                   
-                    if ($itemEndDate && $itemEndDate < $currentDate) {
-                        // Archive expired item in GoalHistory
+
+                    if (!empty($itemEndDate) && $itemEndDate < $currentDate) {
                         GoalHistory::create([
                             'user_id' => $userId,
                             'payment_id' => $payment->id,
@@ -1182,38 +1225,45 @@ class FrontController extends Controller
                             'start_date' => $startDates[$index] ?? $prePlanDetail->created_at,
                             'end_date' => $itemEndDate
                         ]);
-            
-                        // Remove from arrays
-                        unset($preplanAnswers[$index]);
-                        unset($startDates[$index]);
-                        unset($endDates[$index]);
+
+                        unset($preplanAnswers[$index], $startDates[$index], $endDates[$index]);
                     }
                 }
-            
-                // Reindex arrays
+
                 $preplanAnswers = array_values($preplanAnswers);
                 $startDates = array_values($startDates);
                 $endDates = array_values($endDates);
-            
-                // Add new entry
-                $preplanAnswers[] = $answer;
-                $startDates[] = $startDate ?? $prePlanDetail->created_at;
-                $endDates[] = $endDate ?? null;
-            
-                $prePlanDetail->update([
-                    'answer' => json_encode(implode(', ', $preplanAnswers)),
-                    'start_date' => implode(', ', $startDates),
-                    'end_date' => implode(', ', $endDates)
-                ]);
 
-                if($type == 'supplement') {
-                    $sectionElement = 'button_save_supplement';
-                } elseif($type == 'medication') {
-                    $sectionElement = 'button_save_medications';
+                $newStart = $startDate ?? $prePlanDetail->created_at->format('Y-m-d');
+                $newEnd = $endDate ?? null;
+
+                if (!empty($newEnd) && $newEnd < $currentDate) {
+                    // Move directly to GoalHistory
+                    GoalHistory::create([
+                        'user_id' => $userId,
+                        'payment_id' => $payment->id,
+                        'type' => $type,
+                        'question' => $question,
+                        'answer' => $answer,
+                        'start_date' => $newStart,
+                        'end_date' => $newEnd
+                    ]);
+                } else {
+                    $preplanAnswers[] = $answer;
+                    $startDates[] = $newStart;
+                    $endDates[] = $newEnd;
+
+                    $prePlanDetail->update([
+                        'answer' => json_encode(implode(', ', $preplanAnswers)),
+                        'start_date' => implode(', ', $startDates),
+                        'end_date' => implode(', ', $endDates)
+                    ]);
                 }
-                $click = ActivityTracker::click($sectionElement, $request->user_id);
 
-                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                $sectionElement = $type == 'supplement' ? 'button_save_supplement' : 'button_save_medications';
+                $click = ActivityTracker::click($sectionElement, $userId);
+
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $userId, [
                     'user_click_id' => $click->id,
                     'section_element_id' => $click->section_element_id,
                     'type' => $type,
@@ -1224,18 +1274,19 @@ class FrontController extends Controller
                     'form_name' => $formName,
                     'payment_id' => $payment->id,
                     'user_pre_plan_id' => $prePlan->id,
-                    'user_id' => $request->user_id,
+                    'user_id' => $userId,
                 ]);
-            }elseif ($type == 'height') {
-                
+
+            } elseif ($type == 'height') {
                 $prePlanDetail->update([
                     'answer' => json_encode($answer),
                     'start_date' => $startDate,
                     'end_date' => $endDate
                 ]);
-                $click = ActivityTracker::click('button_update_height', $request->user_id);
 
-                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+                $click = ActivityTracker::click('button_update_height', $userId);
+
+                ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $userId, [
                     'user_click_id' => $click->id,
                     'section_element_id' => $click->section_element_id,
                     'type' => $type,
@@ -1244,13 +1295,14 @@ class FrontController extends Controller
                     'form_name' => $formName,
                     'payment_id' => $payment->id,
                     'user_pre_plan_id' => $prePlan->id,
-                    'user_id' => $request->user_id,
+                    'user_id' => $userId,
                     'start_date' => $startDate,
                     'end_date' => $endDate
                 ]);
             }
+
         } else {
-            // Create a new record if none exists
+            // Create a new PrePlanDetail
             $userPrePlan = UserPrePlan::firstOrCreate([
                 'user_id' => $userId,
                 'payment_id' => $payment->id,
@@ -1262,12 +1314,12 @@ class FrontController extends Controller
                 'question' => $question,
                 'answer' => json_encode($answer),
                 'start_date' => $startDate,
-                'end_date' => $endDate   
+                'end_date' => $endDate
             ]);
 
-            $click = ActivityTracker::click('button_save_nutrition_goal', $request->user_id);
+            $click = ActivityTracker::click('button_save_nutrition_goal', $userId);
 
-            ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $request->user_id, [
+            ActivityTracker::log(TrackingType::PROFILE_DETAILS_EDIT, $userId, [
                 'user_click_id' => $click->id,
                 'section_element_id' => $click->section_element_id,
                 'type' => $type,
@@ -1276,14 +1328,15 @@ class FrontController extends Controller
                 'form_name' => 'nutrition_goals',
                 'payment_id' => $payment->id,
                 'user_pre_plan_id' => $userPrePlan->id,
-                'user_id' => $request->user_id,
+                'user_id' => $userId,
                 'start_date' => $startDate,
                 'end_date' => $endDate
             ]);
         }
-       
+
         return response()->json(['success' => true, 'message' => 'Answer updated successfully']);
     }
+
 
     public function updateGoals(Request $request)
     {
@@ -1616,7 +1669,6 @@ class FrontController extends Controller
         // }
 
         $user = User::findOrFail($id);
-        // dd($user);
         // Set user session
         Auth::guard('web')->login($user);
 
@@ -1672,21 +1724,35 @@ class FrontController extends Controller
     public function getProfile(Request $request, $userId)
     {
         try {
+            $user = User::select('id', 'free_user')->find($userId);
             $payment = Payment::where('user_id', $userId)->first();
 
-            if (!$payment) {
+            // if(auth()->user() && !auth()->user()->is_superadmin && auth()->user()?->id != $userId) {
+            //     return redirect()->route('front.index')->with('error', 'You are not authorized to access this page.');
+            // }
+
+            if (!$payment && !$user->free_user) {
                 return redirect()->back()->with('error', 'Plan not purchased.');
             }
 
             $userPlan = UserPlan::with([
                 'plan',
-                'userCategories.userSubCategories.userMeals.userItems'
             ])
             ->where('user_id', $userId)
             ->first();
 
+            // Also fetch the free_user column from the user table
+            if(!$userPlan && $user->free_user) {
+                $userPlan = new UserPlan();
+                $plans = Plan::all();
+                $userPlan->free_user_plan = $plans;
+            }
+
+            if ($userPlan) {
+                $userPlan->free_user = $user->free_user ?? null;
+            }
+
             return view('front.pages.profile-landing', compact('userPlan'));
-            
         } catch (\Exception $e) {
             // Log the error for debugging
             Log::error('Error fetching user profile: ' . $e->getMessage());
@@ -1699,28 +1765,45 @@ class FrontController extends Controller
 
     public function getMeals($planId, $categoryId)
     {
-        $userCategory = UserCategory::where('user_plan_id', $planId)
-            ->where('id', $categoryId)
-            ->first();
+        // fetch user id from plan id
+        $userPlan = UserPlan::where('id', $planId)->first();
+        $userId = $userPlan->user_id;
+        $isFreeUser  = false;
+        if($userId) {
+            $user = User::find($userId);
+            if($user->free_user) {
+                $isFreeUser = true;
+            }
+        }
+
+        $userCategory = UserCategory::where([
+            ['user_plan_id', '=', $planId],
+            ['id', '=', $categoryId],
+        ])->first();
 
         if (!$userCategory) {
             return '<p>No meals found.</p>';
         }
 
-        $meals = [];
+        $userMeals = UserMeal::with('meal:id,title,image,description')
+            ->where('user_plan_id', $planId)
+            ->where('user_category_id', $userCategory->id)
+            ->get();
 
-        foreach ($userCategory->userSubCategories->where('user_plan_id', $planId) as $subCategory) {
-            foreach ($subCategory->userMeals->where('user_plan_id', $planId)
-                        ->where('user_category_id', $userCategory->id)
-                        ->where('user_sub_category_id', $subCategory->id) as $meal) {
-                if (count($meals) < 3) {
-                    $meals[] = $meal;
-                }
-            }
-            if (count($meals) >= 3) break;
-        }
+        $meals = $userMeals->map(function ($userMeal) {
+            $meal = $userMeal->meal;
+            return [
+                'id' => $meal->id,
+                'name' => $meal->title,
+                'image' => webAssets('storage/' . $meal->image),
+                'description' => $meal->description,
+                'user_category_id' => $userMeal->user_category_id,
+                'user_sub_category_id' => $userMeal->user_sub_category_id,
+                'user_plan_id' => $userMeal->user_plan_id,
+            ];
+        });
 
-        return view('front.pages.partials.meal-cards', compact('meals'))->render();
+        return view('front.pages.partials.meal-cards', compact('meals','isFreeUser'))->render();
     }
 
 }

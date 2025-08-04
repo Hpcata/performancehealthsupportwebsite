@@ -28,6 +28,20 @@
         filter: blur(5px); /* Adjust the blur value */
         transition: filter 0.3s ease-in-out;
     }
+    .coupon-link           { text-decoration:none; cursor:pointer; color:#000; text-decoration:underline;}
+    .coupon-link.active    { color:#000; text-decoration:underline; }
+
+    /* Simple fix to prevent page scroll on link click */
+    #weight-tracking {
+        cursor: pointer;
+    }
+    /* Let Bootstrap handle modal positioning naturally */
+    .modal {
+        z-index: 1055;
+    }
+    .modal-backdrop {
+        z-index: 1050;
+    }
 </style>
     <div class="nutrition-plan-hero bg-white py-4">
         <div class="container">
@@ -180,22 +194,10 @@
 
                                         <ul class="mb-3">
                                             <li>Sport: {{ $profileDetails['Sport'] }}
-                                                <button type="button" 
-                                                    class="btn btn-light edit-icon" 
-                                                    id="edit-sport-button"
-                                                    data-sport="{{ $profileDetails['Sport'] ?? '' }}"
-                                                    data-name="{{ $profileDetails['Name'] ?? '' }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
                                             </li>
                                         </ul>
 
-                                        <!-- Toggle button -->
-                                        <!-- <button class="btn-outline-primary btn-sm mb-2 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#profileDetailsCollapse" aria-expanded="false" aria-controls="profileDetailsCollapse">
-                                            Health Data
-                                        </button> -->
                                         <a data-bs-toggle="collapse" href="#profileDetailsCollapse" role="button" aria-expanded="false" aria-controls="profileDetailsCollapse" class="text-decoration-none mt-3"> Health Data : 
-                                            <!-- <i class="fas fa-chevron-down pull-right"></i> -->
                                         </a>
                                         <!-- Collapsible section -->
                                         <div class="collapse" id="profileDetailsCollapse">
@@ -236,12 +238,15 @@
                                        
                                         <li><strong>Nutrition Goals:</strong> {{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}
                                         <div class="btn-list">
-                                            <button class="btn btn-light edit-icon add-goal " title="Add Goal" data-type="goal"
-                                                data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}">
+                                            <button class="btn btn-light edit-icon add-goal" title="Add Goal" data-type="goal"
+                                                data-form-name="nutrition_goals" data-question="Which of the following nutrition related goals are you interested in working on?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}"
+                                                onclick="openAddGoalModal('goal')">
                                                 <i class="fas fa-plus"></i>
                                             </button>
+
                                             <button class="btn btn-light edit-icon view-past-goals" title="View Past Goals" data-type="goal"
-                                                data-form-name="nutrition_goals" data-question="Which of these do you want help with?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="Which of these do you want help with?" data-answer="{{ $nutritionGoalsDetails['Which of these do you want help with?'] ?? 'Nill' }}"
+                                                onclick="openViewPastGoalsModal('goal')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             </div>
@@ -250,11 +255,13 @@
                                         <li><strong>Nutrition Challenge:</strong> {{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}
                                         <div class="btn-list">
                                             <button class="btn btn-light edit-icon add-goal" title="Add Challenge" data-type="challenge"
-                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}"
+                                                onclick="openAddGoalModal('challenge')">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                             <button class="btn btn-light edit-icon view-past-goals" title="View Past Challenges" data-type="challenge"
-                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}">
+                                                data-form-name="nutrition_goals" data-question="What's your biggest nutrition challenge?" data-answer="{{ $nutritionGoalsDetails["What's your biggest nutrition challenge?"] ?? 'Nill' }}"
+                                                onclick="openViewPastGoalsModal('challenge')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
@@ -301,6 +308,52 @@
                                                     $vitaminEndDates = array_fill(0, $supplementCount, $vitaminEndDates[0]);
                                                 }
 
+                                                // Separate current and past supplements
+                                                $currentSupplements = $pastSupplements = $currentSupplementDates = $pastSupplementDates = [];
+                                                
+                                                foreach ($supplements as $index => $item) {
+                                                    $endDate = $vitaminEndDates[$index] ?? null;
+                                                    $startDate = $vitaminStartDates[$index] ?? null;
+                                                    
+                                                    // Only check for past if end date exists and is not null
+                                                    if ($endDate && strtolower($endDate) !== 'null' && !empty(trim($endDate))) {
+                                                        try {
+                                                            $endDateCarbon = \Carbon\Carbon::parse($endDate);
+                                                            $today = \Carbon\Carbon::today();
+                                                            
+                                                            if ($endDateCarbon->lt($today)) {
+                                                                // Past supplement - end date is less than today
+                                                                $pastSupplements[] = $item;
+                                                                $pastSupplementDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            } else {
+                                                                // Current supplement - end date is in future
+                                                                $currentSupplements[] = $item;
+                                                                $currentSupplementDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            }
+                                                        } catch (\Exception $e) {
+                                                            // If date parsing fails, treat as current
+                                                            $currentSupplements[] = $item;
+                                                            $currentSupplementDates[] = [
+                                                                'start' => $startDate,
+                                                                'end' => $endDate
+                                                            ];
+                                                        }
+                                                    } else {
+                                                        // No end date or empty/null - always keep as current
+                                                        $currentSupplements[] = $item;
+                                                        $currentSupplementDates[] = [
+                                                            'start' => $startDate,
+                                                            'end' => $endDate
+                                                        ];
+                                                    }
+                                                }
+
                                                 $medicationDetails = $intakeDetails['Provide details of any prescription medications (if taking any):'] ?? null;
                                                 $medicationAnswer = $medicationDetails['answer'] ?? null;
                                                 $medicationStartDateRaw = $medicationDetails['start_date'] ?? '';
@@ -323,22 +376,68 @@
                                                 if (count($medicationEndDates) === 1 && $medicationCount > 1) {
                                                     $medicationEndDates = array_fill(0, $medicationCount, $medicationEndDates[0]);
                                                 }
+
+                                                // Separate current and past medications
+                                                $currentMedications = $pastMedications = $currentMedicationDates = $pastMedicationDates = [];
+                                                
+                                                foreach ($medications as $index => $item) {
+                                                    $endDate = $medicationEndDates[$index] ?? null;
+                                                    $startDate = $medicationStartDates[$index] ?? null;
+                                                    
+                                                    // Only check for past if end date exists and is not null
+                                                    if ($endDate && strtolower($endDate) !== 'null' && !empty(trim($endDate))) {
+                                                        try {
+                                                            $endDateCarbon = \Carbon\Carbon::parse($endDate);
+                                                            $today = \Carbon\Carbon::today();
+                                                            
+                                                            if ($endDateCarbon->lt($today)) {
+                                                                // Past medication - end date is less than today
+                                                                $pastMedications[] = $item;
+                                                                $pastMedicationDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            } else {
+                                                                // Current medication - end date is in future
+                                                                $currentMedications[] = $item;
+                                                                $currentMedicationDates[] = [
+                                                                    'start' => $startDate,
+                                                                    'end' => $endDate
+                                                                ];
+                                                            }
+                                                        } catch (\Exception $e) {
+                                                            // If date parsing fails, treat as current
+                                                            $currentMedications[] = $item;
+                                                            $currentMedicationDates[] = [
+                                                                'start' => $startDate,
+                                                                'end' => $endDate
+                                                            ];
+                                                        }
+                                                    } else {
+                                                        // No end date or empty/null - always keep as current
+                                                        $currentMedications[] = $item;
+                                                        $currentMedicationDates[] = [
+                                                            'start' => $startDate,
+                                                            'end' => $endDate
+                                                        ];
+                                                    }
+                                                }
                                             @endphp
 
                                             <strong>Supplements:</strong>
 
-                                            @if (!empty($supplements))
+                                            @if (!empty($currentSupplements))
                                                 <ul class="ps-3 mt-3">
-                                                    @foreach ($supplements as $index => $item)
+                                                    @foreach ($currentSupplements as $index => $item)
                                                         @php
-                                                            $startDate = $vitaminStartDates[$index] ?? null;
-                                                            $endDate = $vitaminEndDates[$index] ?? null;
+                                                            $startDate = $currentSupplementDates[$index]['start'] ?? null;
+                                                            $endDate = $currentSupplementDates[$index]['end'] ?? null;
 
                                                             $formattedStart = $formatDate($startDate, null);
                                                             $formattedEnd = $formatDate($endDate, null);
                                                             $item = trim($item);
                                                         @endphp
-                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                        <li class="d-flex justify-content-between align-items-start @if ($formattedStart) mb-1 @else mb-3 @endif">
                                                             <span>{{ $item }}</span>
                                                             <div class="btn-list ms-2 mt-1">
                                                                 <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
@@ -380,7 +479,8 @@
                                                     data-form-name="medical_history"
                                                     data-question="List any dietary vitamins or supplements you are currently taking (if any):"
                                                     data-answer="{{ $vitaminAnswer ?? 'Nill' }}"
-                                                    data-type="supplement">
+                                                    data-type="supplement"
+                                                    onclick="openViewPastHistoryModal('supplement')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -389,18 +489,18 @@
                                     <div class="px-4 py-3 border-bottom">
                                         <div class="position-relative">
                                         <strong>Medications:</strong>
-                                            @if (!empty($medications))
+                                            @if (!empty($currentMedications))
                                                 <ul class="ps-3 mt-3">
-                                                    @foreach ($medications as $index => $item)
+                                                    @foreach ($currentMedications as $index => $item)
                                                         @php
-                                                            $startDate = $medicationStartDates[$index] ?? null;
-                                                            $endDate = $medicationEndDates[$index] ?? null;
+                                                            $startDate = $currentMedicationDates[$index]['start'] ?? null;
+                                                            $endDate = $currentMedicationDates[$index]['end'] ?? null;
 
                                                             $formattedStart = $formatDate($startDate, null);
                                                             $formattedEnd = $formatDate($endDate, null);
                                                             $item = trim($item);
                                                         @endphp
-                                                        <li class="d-flex justify-content-between align-items-start mb-1">
+                                                        <li class="d-flex justify-content-between align-items-start @if ($formattedStart) mb-1 @else mb-3 @endif">
                                                             <span>{{ $item }}</span>
                                                             <div class="btn-list ms-2 mt-1">
                                                                 <button class="btn btn-sm btn-light edit-icon edit-supliment-details" data-bs-toggle="modal" data-bs-target="#supplementEditModal"
@@ -435,33 +535,14 @@
                                                     <i class="fas fa-plus"></i>
                                                 </button>
                                                 <button class="btn btn-light edit-icon view-past-history" title="View Past Medications" 
-                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medicationAnswer }}" data-type="medication">
+                                                data-form-name="medical_history" data-question="Provide details of any prescription medications (if taking any):" data-answer="{{ $medicationAnswer }}" data-type="medication"
+                                                onclick="openViewPastHistoryModal('medication')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
                                            
                                         </div>
                                     </div>
-                                    
-                            {{--    <div class="px-4 py-3 border-bottom">
-                                        <strong>Favourite Food:</strong>
-                                        <p>{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="List your favourite foods?" data-answer="{{ $intakeDetails['List your favourite foods?'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                    <div class="px-4 py-3 border-bottom">
-                                        <strong>Foods | Dislike:</strong>
-                                        <p>{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}
-                                            <button class="btn btn-light edit-icon edit-details" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-form-name="dietary_information" data-question="Do you avoid/dislike any foods? List below" data-answer="{{ $intakeDetails['Do you avoid/dislike any foods? List below'] ?? 'Nill' }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </p>
-                                    </div>
-                                --}}
                                 </div>
                             </div>
                         </div>
@@ -567,51 +648,7 @@
                                                     >
                                                     View Plan
                                                     </a>
-
-                                                    <!-- <a href="javascript:void(0);"
-                                                    class="btn btn-primary m-2 print-plan-btn "
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-plan-id="{{ $plan->id }}"
-                                                    data-bs-toggle="tooltip"
-                                                    >
-                                                        Print Plan
-                                                    </a>
-
-                                                    <a href="#"
-                                                    class="btn btn-primary m-2 "
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ShoppingModal"
-                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
-                                                    id="fetchAllMeals"
-                                                    >
-                                                        Shopping List
-                                                    </a> -->
                                                 @endif
-
-                                                    <!-- <a href="javascript:void(0);"
-                                                    class="btn btn-primary m-2 print-plan-btn @if(!$isMailSend) disabled @endif"
-                                                    data-user-id="{{ $user->id }}"
-                                                    data-plan-id="{{ $plan->id }}"
-                                                    style="color:#fff; background-color:#6c757d;"
-                                                    data-bs-toggle="tooltip"
-                                                    @if(!$isMailSend)
-                                                        title="Working on your plan :-) Email you when ready."
-                                                    @endif>
-                                                        Print Plan
-                                                    </a>
-
-                                                    <a href="#"
-                                                    class="btn btn-primary m-2 @if(!$isMailSend) disabled @endif"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ShoppingModal"
-                                                    data-user-plan-id="{{ $userPlan->id ?? '' }}"
-                                                    id="fetchAllMeals"
-                                                    style="color:#fff; background-color:#6c757d;"
-                                                    @if(!$isMailSend)
-                                                        title="Working on your plan :-) Email you when ready."
-                                                    @endif>
-                                                        Shopping List
-                                                    </a> -->
                                             </div>
                                         </div>
                                     </div>
@@ -861,66 +898,11 @@
         </div>
     </div>
 
-    {{-- <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- User info form -->
-                    <form id="payment-form">
-                        <div id="registration-details">
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="name" value="{{ $user->name }}">
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="email" value="{{ $user->email }}" >
-                            </div>
-                            <div class="mb-3">
-                                <input type="hidden" class="form-control" id="phone" value="">
-                            </div>
-                        </div>
-                        <!-- Promo Code Section -->
-                        <div id="coupon-details">
-                            <div class="mb-3">
-                                <label for="promo-code" class="form-label">Enter Coupon Code</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="promo-code" placeholder="Enter coupon code">
-                                    <input type="hidden" class="form-control" id="discount">
-                                    <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
-                                </div>
-                                <small id="promo-message" class=""></small>
-                            </div>
-                        </div>
-                        <div id="payment-details">
-                            
-                            <!-- Stripe Payment Card Section -->
-                            <h6 class="mb-3">Payment Details</h6>
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
-                            Buy Now
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
     <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-3">
                 <div class="modal-header bg-light border-0">
-                    <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase Plan</h5>
+                    <h5 class="modal-title fw-semibold" id="purchaseModalLabel">Purchase </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -940,9 +922,13 @@
                         </div>
                         <!-- Heading -->
                         <h6 class="fw-bold text-dark mb-3">Payment Details</h6>
-
+                        <div class="mb-3 mt-3">
+                            <small>
+                                <a href="#" id="toggle-coupon-link" class="coupon-link">Add a Coupon Code</a>
+                            </small>
+                        </div>
                         <!-- Coupon Code -->
-                        <div class="mb-3" id="coupon-details">
+                        <div class="mb-3 d-none" id="coupon-details">
                             <label for="promo-code" class="form-label">Coupon Code</label>
                             <div class="d-flex gap-2">
                                 <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
@@ -1014,19 +1000,19 @@
     </div>
 
     <!-- Add Goal / Challenge Modal -->
-    <div class="modal" id="addGoalModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="addGoalModal" tabindex="-1" aria-labelledby="editItemTitle" aria-hidden="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editItemTitle">Add Nutrition</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editItemForm">
                         <input type="hidden" id="itemType">
-                        <label id="itemLabel">New Value</label>
+                        <label id="itemLabel" class="form-label">New Value</label>
                         <input type="text" class="form-control" id="itemInput">
-                        <button type="button" class="btn btn-primary mt-3" id="saveGoal">Save</button>
+                        <button type="button" class="btn btn-primary mt-3" id="saveGoal" onclick="saveGoalData()">Save</button>
                     </form>
                 </div>
             </div>
@@ -1161,64 +1147,24 @@
         <div class="modal-dialog modal-dialog-top">
             <div class="modal-content" style="z-index: 1100;">
             <div class="modal-header">
-                <h5 class="modal-title" id="errorModalLabel">Validation Errors</h5>
+                <h5 class="modal-title" id="errorModalLabel">Validation Error</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="errorModalBody">
+            <div class="modal-body py-3" id="errorModalBody">
                 <!-- Error messages will be injected here -->
             </div>
-            <div class="modal-footer justify-content-center">
+            <div class="modal-footer mt-0 py-1">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             </div>
         </div>
     </div>
-
-    <!-- Edit Sport Modal -->
-    <div class="modal" id="editSportModal" tabindex="-1" aria-labelledby="editSportModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="#" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Sport Info</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="sport_name" class="form-label">Sport Name</label>
-                            <input type="text" name="sport" class="form-control" id="sport_name" value="{{ $userPrePlan->occupation ?? '' }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="sport_image" class="form-label">Sport Image</label>
-                            <input type="file" name="sport_image" class="form-control" id="sport_image" style="height: auto; border-radius: 5px;">
-                        </div>
-                        <!-- Existing Sport Image Preview -->
-                        @if(!empty($userPrePlan->sport_image))
-                            <div class="mb-3">
-                                <label class="form-label">Current Image:</label><br>
-                                <img src="{{ asset($userPrePlan->sport_image) }}" alt="Sport Image" width="120" height="120" class="rounded">
-                            </div>
-                        @endif
-
-                        <input type="hidden" name="user_id" id="sport_user_id" value="{{ auth()->id() }}">
-                        <input type="hidden" name="payment_id" id="payment_id" value="{{ $payment->id }}">
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" id="saveSportBtn" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    
     @php
         $trainingIntensityValue = isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null;
     @endphp
+<script src="{!! frontAssets('js/jquery-3.6.min.js') !!}"></script>
+<script src="{!! frontAssets('js/bootstrap.bundle.min.js') !!}"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1282,7 +1228,7 @@
                 let message = '';
 
                 if (response.status === 422 && errorData.errors) {
-                    message += '<ul>';
+                    message += '<ul class="mb-1">';
                     Object.values(errorData.errors).forEach(err => {
                         message += `<li style="color: red;">${err[0]}</li>`;
                     });
@@ -1683,10 +1629,8 @@
             fetch("{{ route('plans.preview', ':id') }}".replace(':id', planId) + "?user_id=" + userId)
             .then(res => res.text())
                 .then(html => {
-                    console.log(html);
                     $("#plan-preview-body").html(html);
                     $("#planPreviewModal").modal("show"); // ✅ show modal
-                    console.log('modal show');
                 })
                 .catch(err => {
                     $("#plan-preview-body").html('<div class="text-danger">Error loading preview</div>');
@@ -1695,6 +1639,7 @@
     });
 
     $(document).ready(function () {
+       
         let chartInstance = null; // To hold the chart instance
         // Open Weight Modal and Prefill Data
         $('#weight-tracking').on('click', function(e) {
@@ -1761,7 +1706,7 @@
                     if (xhr.status === 422) {
                         // Laravel validation error
                         const errors = xhr.responseJSON.errors;
-                        message += '<ul>';
+                        message += '<ul class="mb-1">';
                         $.each(errors, function(key, value) {
                             message += `<li style="color: red;">${value[0]}</li>`;
                         });
@@ -1846,7 +1791,6 @@
                             x: weightEntry.date, // Use the actual date for x-axis (Date dataset)
                             y: weightEntry.weight // Weight as the y value for the Date dataset
                         });
-                        // console.log('weightEntry.date:', weightEntry.date);
 
                         dataPointsWeight.push({
                             x: weightEntry.date, // Use the same date for the weight dataset
@@ -1888,7 +1832,7 @@
                             data: dataPointsWeight.map(dp => dp.x), // X values for the Weight dataset (dates)
                             borderColor: '#649ef7', // Red color for the line
                             backgroundColor: '#fff', // Light red fill
-                            fill: true,
+                            fill: false,
                             // tension: 0.4, // Smooth curves
                             pointRadius: 3, // Highlight points
                             pointBackgroundColor: '#fff'
@@ -1898,7 +1842,7 @@
                             data: dataPointsWeight.map(dp => dp.y), // Y values for the Weight dataset
                             borderColor: '#649ef7', // Red color for the line
                             backgroundColor: '#fff', // Light red fill
-                            fill: true,
+                            fill: false,
                             // tension: 0.4, // Smooth curves
                             pointRadius: 3, // Highlight points
                             pointBackgroundColor: '#fff'
@@ -1918,7 +1862,6 @@
                                 title: function(tooltipItem) {
                                     const tooltipData = tooltipItem[0]; // Ensure tooltipItem[0] exists
                                     if (tooltipData && tooltipData.parsed) {
-                                        console.log(dataPointsDate[tooltipData.parsed.x]);
                                         const date = dataPointsDate[tooltipData.parsed.x] ? dataPointsDate[tooltipData.parsed.x].x : 'Unknown Date'; // 
                                         // Get the date using the index from dataPointsDate
                                         return `Date: ${date}`; 
@@ -1926,7 +1869,6 @@
                                     // return 'No Date';  // Fallback if no data is found
                                 },
                                 label: function(tooltipItem) {
-                                    console.log(tooltipItem);
                                     // const tooltipData = tooltipItem[0]; // Ensure tooltipItem[0] exists
                                     if (tooltipItem && tooltipItem.parsed) {
                                         return `Weight: ${tooltipItem.parsed.y} kg`; // Accessing the parsed y value (weight)
@@ -1988,8 +1930,36 @@
     });
 
     $(document).ready(function() {
-        var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
-        // var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
+
+        const $toggleLink = $('#toggle-coupon-link');
+        const $couponDetails = $('#coupon-details');
+        const $promoInput = $('#promo-code');
+        const $promoMessage = $('#promo-message');
+        const $paymentDetails = $('#payment-details');
+
+        if ($toggleLink.length) {
+            $toggleLink.on('click', function (e) {
+                e.preventDefault();
+
+                const isHidden = $couponDetails.hasClass('d-none');
+
+                $couponDetails.toggleClass('d-none');
+
+                $toggleLink.text(isHidden ? 'Remove a Coupon Code' : 'Add a Coupon Code');
+
+                if (!isHidden) {
+                    $promoInput.val('');
+                    if ($promoMessage.length) {
+                        $promoMessage.text('');
+                    }
+                    $paymentDetails.css('display', '');
+                }
+            });
+        }
+
+        // Stripe Payment
+        // var stripe = Stripe('pk_test_51QI09cHWqn47bqTGYhGZIsiPSerWujjQgoHf4g0JwygrNt1OMC3RtEnMIjiEWbc8hiaN4umn4TD5zB8sBQEqcjzY0071a4RbUv');
+        var stripe = Stripe('pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3x6BDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt');
         var elements = stripe.elements();
         var style = {
             base: {
@@ -2025,13 +1995,15 @@
 
         // Event listener for the 'Purchase Now' button
         $('body').on('click', '.buy-plan-btn', function () {
-            // alert('Payment button clicked');
             // e.preventDefault();
 
             var planId = $(this).data('plan-id');  // Get the plan ID
             var price = $(this).data('plan-price');     // Get the plan price (if needed)
             var description = $(this).data('plan-description');     // Get the plan price (if needed)
-            
+            let name = $('#purchaseModal #name').val();
+            let email = $('#purchaseModal #email').val();
+            let phone = $('#purchaseModal #phone').val();
+
             // Update modal title with plan name (optional)
             $('#purchaseModalLabel').text('Purchase ' + $(this).data('plan-name')+ '($' + price+')');
             $('#plan-description').text(description);
@@ -2056,9 +2028,9 @@
                         data: {
                             plan_id: planId,
                             price: price,
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                             coupon_code: discountCode,
                             _token: '{{ csrf_token() }}'
                         },
@@ -2094,9 +2066,9 @@
                         type: 'card',
                         card: card,
                         billing_details: {
-                            name: $('#name').val(),
-                            email: $('#email').val(),
-                            phone: $('#phone').val(),
+                            name: name,
+                            email: email,
+                            phone: phone,
                         },
                     }).then(function(result) {
                         if (result.error) {
@@ -2112,16 +2084,15 @@
                                     payment_method_id: result.paymentMethod.id,
                                     plan_id: planId,
                                     price: price,
-                                    name: $('#name').val(),
-                                    email: $('#email').val(),
-                                    phone: $('#phone').val(),
-                                    coupon_code: dicountCode,
+                                    name: name,
+                                    email: email,
+                                    phone: phone,
+                                    coupon_code: discountCode,
                                     _token: '{{ csrf_token() }}'
                                 },
                                 success: function(response) {
                                     if (response.success) {
                                         // Handle successful payment
-                                        // alert('Payment successful!');
                                         $('#purchaseModal').modal('hide');
                                         // $('#thankYouModal').modal('show');
 
@@ -2210,7 +2181,6 @@
         });
 
         $('body').on('click', '.buy-plan', function () {
-            // alert('Payment button clicked');
             // e.preventDefault();
 
             var planId = $(this).data('plan-id');  // Get the plan ID
@@ -2265,7 +2235,6 @@
                             success: function(response) {
                                 if (response.success) {
                                     // Handle successful payment
-                                    // alert('Payment successful!');
                                     $('#purchaseModal').modal('hide');
 
                                     showThankYouModal();
@@ -2306,6 +2275,32 @@
         $('#thankYouModal').on('hidden.bs.modal', function () {
             location.reload(); // Reloads the page when modal is closed
         });
+
+        $('#purchaseModal').on('hidden.bs.modal', function () {
+            $('#payment-form')[0].reset();
+            $('#card-errors').text('');
+            // Reset coupon UI
+            const toggleLink = document.getElementById('toggle-coupon-link');
+            const couponDetails = document.getElementById('coupon-details');
+            const promoInput = document.getElementById('promo-code');
+            const promoMessage = document.getElementById('promo-message');
+
+            if (couponDetails && !couponDetails.classList.contains('d-none')) {
+                couponDetails.classList.add('d-none');
+            }
+
+            if (toggleLink) {
+                toggleLink.textContent = 'Add a Coupon Code';
+            }
+
+            if (promoInput) {
+                promoInput.value = '';
+            }
+
+            if (promoMessage) {
+                promoMessage.textContent = '';
+            }
+        });
     });
 
     $(document).ready(function() {
@@ -2332,7 +2327,6 @@
         // Handle form submission with AJAX
         $('#editForm').on('submit', function(event) {
             event.preventDefault();
-            console.log(userId);
             let formData = {
                 form_name: $('#formName').val(),
                 question: $('#question').val(),
@@ -2344,7 +2338,6 @@
                 main_ans: $('#mainAns').val(),
                 _token: '{{ csrf_token() }}' // CSRF protection
             };
-            console.log(formData);
             $.ajax({
                 url: "{{ route('front.sample-plan-details-update') }}", // Laravel route to handle updates
                 type: "POST",
@@ -2398,7 +2391,6 @@
 
         $('#suplimentEditForm').on('submit', function(event) {
             event.preventDefault();
-            console.log(userId);
             let formData = {
                 form_name: $('#suplimentEditForm #formName').val(),
                 question: $('#suplimentEditForm #formQuestion').val(),
@@ -2410,7 +2402,6 @@
                 main_ans: $('#suplimentEditForm #mainAns').val(),
                 _token: '{{ csrf_token() }}' // CSRF protection
             };
-            console.log(formData);
             $.ajax({
                 url: "{{ route('front.sample-plan-details-update') }}", // Laravel route to handle updates
                 type: "POST",
@@ -2438,10 +2429,6 @@
             return `${parts[2]}-${parts[1]}-${parts[0]}`; // "2025-04-24"
         }
         
-        $('#edit-sport-button').on('click', function() {
-            $('#editSportModal').modal('show');
-        });
-
         document.getElementById('sportImageInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
@@ -2453,16 +2440,23 @@
             }
         });
 
-        $(".add-goal").click(function () {
+        // Multiple ways to bind the click event
+        $(document).on('click', '.add-goal', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             let type = $(this).attr("data-type");
+            
             $("#itemType").val(type);
             $("#editItemTitle").text(type === "goal" ? "Add Goal" : "Add Challenge");
             $("#itemLabel").text(type === "goal" ? "New Goal" : "New Challenge");
+            
+            // Use the same method that works for test button
             $("#addGoalModal").modal("show");
         });
 
         // Update Goal or Challenge via AJAX
-        $("#saveGoal").click(function () {
+        $("#saveGoal").on('click', function () {
             let type = $("#itemType").val();
             let answer = $("#itemInput").val();
 
@@ -2488,7 +2482,7 @@
         });
 
         // View Past Goals or Challenges via AJAX
-        $(".view-past-goals").click(function () {
+        $(".view-past-goals").on('click', function () {
             let type = $(this).attr("data-type");
             $.ajax({
                 url: "{{ route('front.past.goals') }}",
@@ -2521,9 +2515,8 @@
             });
         });
 
-        $(".view-past-history").click(function () {
+        $(".view-past-history").on('click', function () {
             let type = $(this).attr("data-type");
-            console.log(type);
 
             $.ajax({
                 url: "{{ route('front.past.goals') }}",
@@ -2565,203 +2558,6 @@
             });
         });
     });
-
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     const ctx = document.getElementById('trainingChart').getContext('2d');
-//     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-
-//     const frequencyMap = {
-//         "1-2": 2,
-//         "3-4": 4,
-//         "5+": 7
-//     };
-
-//     const colors = {
-//         "Low intensity": "rgba(47, 202, 98, 0.6)",
-//         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-//         "High intensity": "rgba(232, 62, 53, 0.6)"
-//     };
-
-//     const borderColors = {
-//         "Low intensity": "rgba(47, 202, 98, 1)",
-//         "Moderate intensity": "rgba(255, 159, 64, 1)",
-//         "High intensity": "rgba(232, 62, 53, 1)"
-//     };
-
-//     const allBars = [];
-
-//     if (response) {
-//         Object.keys(response).forEach(frequency => {
-//             const intensities = response[frequency];
-//             intensities.forEach(intensity => {
-//                 allBars.push({
-//                     label: `${intensity} (${frequency})`,
-//                     intensity: intensity,
-//                     value: frequencyMap[frequency] || 0,
-//                     tooltip: frequency
-//                 });
-//             });
-//         });
-//     }
-
-//     const chart = new Chart(ctx, {
-//         type: 'bar',
-//         data: {
-//             labels: allBars.map(bar => bar.label),
-//             datasets: [{
-//                 label: '# of Days',
-//                 data: allBars.map(bar => bar.value),
-//                 backgroundColor: allBars.map(bar => colors[bar.intensity]),
-//                 borderColor: allBars.map(bar => borderColors[bar.intensity]),
-//                 borderWidth: 1
-//             }]
-//         },
-//         options: {
-//             responsive: true,
-//             plugins: {
-//                 tooltip: {
-//                     callbacks: {
-//                         label: function (context) {
-//                             const bar = allBars[context.dataIndex];
-//                             return `${bar.intensity}: ${bar.tooltip} days`;
-//                         }
-//                     }
-//                 },
-//                 legend: { display: false }
-//             },
-//             scales: {
-//                 y: {
-//                     title: {
-//                         display: true,
-//                         text: '# of Days'
-//                     },
-//                     min: 0,
-//                     max: 7,
-//                     stepSize: 1,
-//                     ticks: {
-//                         callback: function(value) {
-//                             return value.toString();
-//                         }
-//                     }
-//                 },
-//                 x: {
-//                     title: {
-//                         display: true,
-//                         text: 'Training Intensity (by Frequency)'
-//                     }
-//                 }
-//             }
-//         }
-//     });
-// });
-
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     const ctx = document.getElementById('trainingChart').getContext('2d');
-    //     let response = @json(isset($trainingIntencity[0]) && !empty($trainingIntencity[0]) ? $trainingIntencity[0] : null);
-    //     console.log(response);
-    //     const frequencyMap = { "1-2": 2, "3-4": 4, "5+": 7 };
-    //     const intensityLabels = ["Low intensity", "Moderate intensity", "High intensity"];
-    //     const displayLabels = ["Low", "Moderate", "High"];
-
-    //     const colors = {
-    //         "Low intensity": "rgba(47, 202, 98, 0.6)",
-    //         "Moderate intensity": "rgba(255, 159, 64, 0.6)",
-    //         "High intensity": "rgba(232, 62, 53, 0.6)"
-    //     };
-
-    //     const borderColors = {
-    //         "Low intensity": "rgba(47, 202, 98, 1)",
-    //         "Moderate intensity": "rgba(255, 159, 64, 1)",
-    //         "High intensity": "rgba(232, 62, 53, 1)"
-    //     };
-
-    //     const datasets = [];
-
-    //     for (const intensity of intensityLabels) {
-    //         for (const [freqLabel, intensityArray] of Object.entries(response)) {
-    //             if (intensityArray.includes(intensity)) {
-    //                 const data = [null, null, null];  // index: 0=Low, 1=Moderate, 2=High
-    //                 const index = intensityLabels.indexOf(intensity);
-    //                 data[index] = frequencyMap[freqLabel] || 0;
-
-    //                 datasets.push({
-    //                     label: `${intensity} (${freqLabel})`,
-    //                     data: data,
-    //                     backgroundColor: colors[intensity],
-    //                     borderColor: borderColors[intensity],
-    //                     borderWidth: 1,
-    //                     intensity: intensity // for custom legend filtering
-    //                 });
-    //             }
-    //         }
-    //     }
-
-    //     new Chart(ctx, {
-    //         type: 'bar',
-    //         data: {
-    //             labels: displayLabels,
-    //             datasets: datasets
-    //         },
-    //         options: {
-    //             responsive: true,
-    //             plugins: {
-    //                 tooltip: {
-    //                     callbacks: {
-    //                         label: function (context) {
-    //                             const value = context.raw;
-    //                             const label = context.dataset.label.match(/\((.*?)\)/);
-    //                             return `${context.dataset.label.split(' (')[0]}: ${label ? label[1] : ''}`;
-    //                         }
-    //                     }
-    //                 },
-    //                 legend: {
-    //                     position: 'bottom',
-    //                     labels: {
-    //                         generateLabels: function (chart) {
-    //                             const seen = new Set();
-    //                             return chart.data.datasets
-    //                                 .filter(ds => {
-    //                                     if (!seen.has(ds.intensity)) {
-    //                                         seen.add(ds.intensity);
-    //                                         return true;
-    //                                     }
-    //                                     return false;
-    //                                 })
-    //                                 .map(ds => ({
-    //                                     text: ds.intensity.replace(' intensity', ''),
-    //                                     fillStyle: ds.backgroundColor,
-    //                                     strokeStyle: ds.borderColor,
-    //                                     lineWidth: 1,
-    //                                     hidden: false,
-    //                                     index: chart.data.datasets.indexOf(ds)
-    //                                 }));
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             scales: {
-    //                 y: {
-    //                     min: 0,
-    //                     max: 7,
-    //                     ticks: {
-    //                         stepSize: 1
-    //                     },
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Days per week'
-    //                     }
-    //                 },
-    //                 x: {
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Training Intensity'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     });
-    // });
 
     document.addEventListener("DOMContentLoaded", function () {
         const ctx = document.getElementById('trainingChart').getContext('2d');
@@ -2833,7 +2629,6 @@
         });
     });
 
-    var reportsData = @json($reports);
     // Define the previewImage function
     function previewImage(fileUrl) {
         window.open(fileUrl, '_blank');
@@ -2926,7 +2721,6 @@
             var formData = new FormData();
             var reportType = $('#report_type').val();
             var reportName = $('#file_name').val();
-            console.log(reportType);
             if (files.length === 0) {
                 alert("Please select at least one file to upload.");
                 return;
@@ -2989,5 +2783,150 @@
             });
         }
     }
+
+        // Test function to check if modal works
+    function testModal() {
+        try {
+            $("#addGoalModal").modal("show");
+        } catch (error) {
+            console.error('Test modal error:', error);
+            // Fallback
+            $("#addGoalModal").addClass('show').css('display', 'block');
+            $('body').addClass('modal-open');
+            $('<div class="modal-backdrop fade show"></div>').appendTo('body');
+        }
+    }
+
+    // Function to open add goal modal (called by onclick attribute)
+    function openAddGoalModal(type) {
+        
+        $("#itemType").val(type);
+        $("#editItemTitle").text(type === "goal" ? "Add Goal" : "Add Challenge");
+        $("#itemLabel").text(type === "goal" ? "New Goal" : "New Challenge");
+        
+        $("#addGoalModal").modal("show");
+    }
+
+    // Function to open view past goals modal (called by onclick attribute)
+    function openViewPastGoalsModal(type) {
+        
+        $.ajax({
+            url: "{{ route('front.past.goals') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                type: type,
+                user_id: userId
+            },
+            success: function (data) {
+                let modalTitle = type === "goal" ? "Past Goals" : "Past Challenges";
+                $("#viewPastItemsModalLabel").text(modalTitle);
+
+                let pastList = $("#pastItemsList");
+                pastList.html(""); // Clear existing list
+
+                if (data.length > 0) {
+                    $.each(data, function (index, item) {
+                        pastList.append("<li>" + item.answer + " <small>(Added on: " + new Date(item.created_at).toLocaleDateString() + ")</small></li>");
+                    });
+                } else {
+                    pastList.append("<li>No past records found.</li>");
+                }
+
+                $("#viewPastItemsModal").modal("show"); // Show modal with past data
+            },
+            error: function () {
+                alert("Error fetching past " + type + "s!");
+            }
+        });
+    }
+
+    // Function to open view past history modal (called by onclick attribute)
+    function openViewPastHistoryModal(type) {
+        $.ajax({
+            url: "{{ route('front.past.goals') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                type: type,
+                user_id: userId
+            },
+            success: function (data) {
+                let modalTitle = type === "supplement" ? "Past Supplements" : "Past Medications";
+                $("#viewPastItemsModalLabel").text(modalTitle);
+
+                let pastList = $("#pastItemsList");
+                pastList.html(""); // Clear existing list
+
+                if (data.length > 0) {
+                    $.each(data, function (index, item) {
+                        let displayText = item.answer;
+
+                        if (item.start_date && item.end_date) {
+                            displayText += ` <small>(Start: ${new Date(item.start_date).toLocaleDateString()} to End: ${new Date(item.end_date).toLocaleDateString()})</small>`;
+                        } else {
+                            displayText += ` <small>(Added on: ${new Date(item.created_at).toLocaleDateString()})</small>`;
+                        }
+
+                        pastList.append("<li>" + displayText + "</li>");
+                    });
+
+                } else {
+                    pastList.append("<li>No past records found.</li>");
+                }
+
+                $("#viewPastItemsModal").modal("show"); // Show modal with past data
+            },
+            error: function () {
+                alert("Error fetching past " + type + "s!");
+            }
+        });
+    }
+
+    // Function to save goal data (called by onclick attribute)
+    function saveGoalData() {
+        let type = $("#itemType").val();
+        let answer = $("#itemInput").val();
+
+        if (!answer || answer.trim() === '') {
+            alert('Please enter a value before saving.');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('front.update.goal') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                type: type,
+                answer: answer,
+                user_id: userId
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(type.charAt(0).toUpperCase() + type.slice(1) + " updated successfully!");
+                    $("#addGoalModal").modal("hide");
+                    location.reload();
+                } else {
+                    alert("Error: " + (response.message || "Something went wrong!"));
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Something went wrong! Please try again.");
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simple solution: just prevent default behavior on weight tracking link
+        const weightTrackingLink = document.getElementById('weight-tracking');
+        if (weightTrackingLink) {
+            weightTrackingLink.addEventListener('click', function(e) {
+                e.preventDefault(); // Only prevent default link behavior
+                e.stopPropagation(); // Stop event bubbling
+                // Let Bootstrap handle the modal normally
+            });
+        }
+    });
 </script>
 @endsection
