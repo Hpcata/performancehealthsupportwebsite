@@ -21,7 +21,7 @@
     </footer>
 @elseif(Route::is('front.sub-home-page'))
     <footer class="footer-bg">
-        <div class="footer-grid container">
+        <div class="footer-grid container-homepage">
             <!-- Left Section: Logo, Tagline, Social, Copyright -->
             <div class="navbar-brand">
                 <img src="{!! frontAssets('images/logo.webp') !!}" alt="ATHLEAT Fuel Logo" />

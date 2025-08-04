@@ -13,19 +13,21 @@
             <!-- Welcome Section -->
             <section class="welcome-section">
                 <div class="welcome-card hover-card">
-                    <div class="welcome-message">
+                    <div class="welcome-message" style="position: relative;">
                         <h2>Welcome back legend! How's your week going?</h2>
                         <div class="welcome-row">
                             <a href="#" class="start-chat" id="start-chat-link">Start chat</a>
                             <span class="assistant-name">Kerry O'Bryan Virtual</span>
                         </div>
-                    </div>
-                    <img
+                        <img
                         src="{{ frontAssets('images/profile.svg') }}"
                         alt="Profile"
                         class="profile-avatar-overlap" />
+                        <div class="welcome-arrow"></div>
+                    </div>
+                    
                 </div>
-                <div class="welcome-arrow"></div>
+                
             </section>
             @if(isset($userPlan->plan))
                 <!-- Sports Training Plan -->

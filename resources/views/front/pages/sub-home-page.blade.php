@@ -156,12 +156,12 @@
                     </div>
                     <div class="container-homepage">
                         <div class="hero-content-fixed">
-                            <h1 class="hero-title">{{ $section->title }}</h1>
+                            <h1 class="hero-title-homepage">{{ $section->title }}</h1>
                             {!! $section->content !!}
                         </div>
                     </div>
                         <!-- Chat Widget -->
-                    <div class="chat-widget">
+                    <div class="chat-widget desktop-view mob-hide ">
                         <div class="chat-avatar">
                             <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
                         </div>
@@ -196,7 +196,7 @@
                     <!-- Fixed Text Overlay -->
                     <div class="container-homepage">
                         <div class="hero-content-fixed">
-                            <h1 class="hero-title">{{ $section->title }}</h1>
+                            <h1 class="hero-title-homepage">{{ $section->title }}</h1>
                             {!! $section->content !!}
 
                             <button class="ms-2 btn-white">Sign up for free</button>
@@ -296,11 +296,15 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                      <!-- Chat Widget -->
                     <div class="chat-widget mobile-view web-hide">
                         <div class="chat-avatar">
-                            <img src="images/virtual kez.webp" alt="Virtual Kez Avatar" />
+                            <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
                         </div>
                         <div class="chat-bubble">
-                            <span>Hi, I’m Virtual Kez. Got a question? Give me a try!</span>
-                            <img src="images/bubble-arrow.webp" alt="Virtual Kez Avatar" class="bubble-arrow" />
+                            <span>Hi, I’m Virtual Kez. Try calling me for free!</span>
+                            <img
+                            src="{{ frontAssets('images/bubble-arrow.svg') }}"
+                            alt="Virtual Kez Avatar"
+                            class="bubble-arrow"
+                            />
                         </div>
                     </div>
                 </section>
@@ -343,18 +347,14 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         <div class="feature-grid">
                                             <div class="feature-item">
                                                 <div class="feature-icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="34"
-                                                        viewBox="0 0 26 34" fill="none">
-                                                        <path
-                                                            d="M12.5757 0C5.64229 0 0 5.64229 0 12.5757C0 16.6292 1.97019 20.4564 5.2734 22.8144C5.32371 22.85 5.37611 22.8836 5.42851 22.915C6.19562 23.3656 6.27108 24.8181 6.25431 25.0843C6.2519 25.1276 6.2505 25.1709 6.25012 25.2142V29.3433C6.25012 30.1313 6.69027 30.8503 7.39241 31.2087L11.622 33.3696C11.9157 33.52 12.2408 33.5989 12.5707 33.6C12.9007 33.6011 13.2263 33.5243 13.521 33.3759L17.8009 31.2149C18.1473 31.0402 18.4383 30.7726 18.6414 30.4422C18.8446 30.1117 18.952 29.7312 18.9516 29.3433V25.2394C18.9516 23.1707 20.2154 22.4874 20.228 22.4811C20.3957 22.4036 20.5508 22.303 20.6912 22.1835C22.0895 21.0035 23.2131 19.5322 23.9835 17.8727C24.7539 16.2131 25.1525 14.4053 25.1514 12.5757C25.1514 5.64229 19.5091 0 12.5757 0ZM8.34606 25.2163C8.34606 25.2163 8.34606 25.1744 8.34816 25.1514H16.8619C16.8619 25.1828 16.8535 25.2059 16.8535 25.2394V27.2473H8.34606V25.2163ZM12.5757 31.5042L8.34816 29.3433H16.8556L12.5757 31.5042ZM19.3372 20.5822C19.3372 20.5822 17.9329 21.2424 17.2371 23.0554H8.01071C7.75082 22.3302 7.30019 21.5841 6.49115 21.1083C5.13097 20.1398 4.02228 18.86 3.25766 17.3756C2.49305 15.8912 2.09472 14.2454 2.09595 12.5757C2.09595 6.78877 6.78878 2.09595 12.5757 2.09595C18.3626 2.09595 23.0554 6.78877 23.0554 12.5757C23.057 14.1006 22.7251 15.6075 22.0827 16.9906C21.4404 18.3737 20.5034 19.5995 19.3372 20.5822ZM13.6237 4.1919C13.3457 4.1919 13.0792 4.30231 12.8826 4.49884C12.6861 4.69537 12.5757 4.96193 12.5757 5.23987C12.5757 5.51781 12.6861 5.78436 12.8826 5.9809C13.0792 6.17743 13.3457 6.28784 13.6237 6.28784C15.9816 6.28784 18.8635 8.432 18.8635 11.6262C18.8635 11.9042 18.9739 12.1707 19.1705 12.3672C19.367 12.5638 19.6336 12.6742 19.9115 12.6742C20.1894 12.6742 20.456 12.5638 20.6525 12.3672C20.8491 12.1707 20.9595 11.9042 20.9595 11.6262C20.9595 6.84536 17.2266 4.1919 13.6237 4.1919Z"
-                                                            fill="#83B1F9" />
-                                                    </svg>
+                                                      <img src="images/why-section/bulb.svg" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Know What to Eat – and Why</h3>
+                                                    <h3>Know what to Eat, When and Why</h3>
                                                     <p>
-                                                        Understand how your choices impact energy, recovery, and
-                                                        long-term gains.
+                                                        Custom plans for your training phase,
+                                                        Comp prep, or recovery
+                                                        All built for maximum results
                                                     </p>
                                                 </div>
                                             </div>
@@ -688,7 +688,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
                                 </div>
-                                <img src="images/verticle-line.svg" alt="Phone Screen" class="phone-vertical-line" />
+                                <img src="{{ frontAssets('images/verticle-line.svg') }}" alt="Phone Screen" class="phone-vertical-line" />
                             </div>
                         </div>
                     </div>
@@ -726,7 +726,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 O'Bryan.
                                 </p>
                             </div>
-                            <button class="btn btn-signup">Learn more</button>
+                            <button class="btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -1030,7 +1030,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             the quiz to test your nutrition knowledge and discover how to fuel
                             smarter—whether for performance, recovery, or everyday energy.
                             </p>
-                            <button class=" btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
+                            <button class="btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
                         </div>
                         <img
                             @if(!empty($section->banner_image[1]))
@@ -3083,7 +3083,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 <label class="terms-label">By continuing, you agree to our <span class="terms-link"
                     onclick="openTermsModal()">Terms.</span></label>
 
-                <button class="btn btn-signup" style="margin-top:30px;" onclick="sendOtp()">Continue</button>
+                <button class="btn-signup" style="margin-top:30px;" onclick="sendOtp()">Continue</button>
                 <div class="or-divider">
                     <div class="divider-line"></div>
                     <span class="or-text">OR</span>
@@ -3171,7 +3171,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" />
                     </div>
                 </div>
-                <button class="btn btn-signup" style="margin-top:20px;margin-bottom: 10px;"
+                <button class="btn-signup" style="margin-top:20px;margin-bottom: 10px;"
                     onclick="verifyOtp()">Verify</button>
                 <p class="otp-resend-text">
                     <label>
@@ -3279,7 +3279,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     </div>
                 </div>
 
-                <button class="btn btn-signup" onclick="completeRegistration()">Get Started</button>
+                <button class="btn-signup" onclick="completeRegistration()">Get Started</button>
                 </div>
 
                 <!-- Step 4: Final Step (can be customized as needed) -->
@@ -3288,7 +3288,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 <p class="welcome-text">
                     Your account has been created successfully. You're all set to start your journey!
                 </p>
-                <button class="btn btn-signup" onclick="closeModal()">Get Started</button>
+                <button class="btn-signup" onclick="closeModal()">Get Started</button>
                 </div>
 
                 <div class="image-section">
@@ -5163,7 +5163,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         //         });
         // });
 
-               class FoodCarousel {
+        class FoodCarousel {
             constructor() {
                 this.track = document.getElementById("foodCarouselTrack");
                 this.cards = Array.from(this.track.children);
