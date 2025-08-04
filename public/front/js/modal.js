@@ -709,6 +709,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Reset to first step
         const allSteps = document.querySelectorAll('.quiz-step');
         allSteps.forEach((step, index) => {
+            if (step.getAttribute('data-step') === '1') {
+                return;
+            }
             if (index === 0) {
                 step.style.display = 'block';
             } else {
