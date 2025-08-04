@@ -18,7 +18,7 @@ function validateCountryCode() {
         }
     }
     
-    console.log('Selected country code:', selectedValue);
+    
     
     // Check if a valid country code is selected
     return selectedValue && selectedValue !== '' && 
@@ -557,7 +557,7 @@ function resetForm() {
 }
 
 function showError(message, elementId = null) {
-    console.log('showError called with:', message, elementId);
+    
     
     // Remove any existing error messages
     const existingErrors = document.querySelectorAll('.error-message');
@@ -594,7 +594,7 @@ function showError(message, elementId = null) {
     // Insert directly into body for guaranteed visibility
     document.body.appendChild(errorDiv);
     
-    console.log('Error message element created and added to body:', errorDiv);
+    
     
     // Auto-remove after 5 seconds
     setTimeout(() => {
@@ -605,7 +605,7 @@ function showError(message, elementId = null) {
 }
 
 function showSuccess(message) {
-    console.log('showSuccess called with:', message);
+    
     
     // Remove any existing success messages
     const existingSuccess = document.querySelectorAll('.success-message');
@@ -637,7 +637,7 @@ function showSuccess(message) {
     // Insert directly into body for guaranteed visibility
     document.body.appendChild(successDiv);
     
-    console.log('Success message element created and added to body:', successDiv);
+    
     
     // Auto-remove after 5 seconds
     setTimeout(() => {

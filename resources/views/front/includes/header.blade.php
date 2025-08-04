@@ -73,7 +73,7 @@ $auth = auth()->guard('web')->check();
                     height="40" />
             </div>
             <nav class="nav-center">
-                <span class="nav-item">My Plans</span>
+                <a class="nav-item text-decoration-none" href="{{ route('front.my-plans') }}">My Plans</a>
                 <span class="nav-item">Challenges and Rewards</span>
                 <div class="nav-item dropdown">
                     <span>Resources <i class="fas fa-chevron-down"></i></span>
@@ -182,7 +182,7 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class=" btn-login mob-hide">Log in</button>
+                        <button class=" btn-login mob-hide" id="login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Log in</button>
                         <button class=" btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                             Sign up for free
                         </button>
@@ -192,6 +192,48 @@ $auth = auth()->guard('web')->check();
             </div>
         </div>
     </nav>
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="login-error" class="text-danger"></div> <!-- This will display the error message -->
+                    <!-- Sign In Form -->
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="login-email" class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" id="login-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" id="login-password"
+                                required>
+                        </div>
+
+                        <!-- Sign In Button -->
+                        <button type="submit" id="login-submit" class="btn-primary w-100 mt-3">
+                            Sign In
+                        </button>
+
+                        OR
+
+                        <button type="button" id="login-with-otp" class="btn-primary w-100 mt-3" onclick="openSingupFreePopup()">
+                            Login With OTP
+                        </button>
+                    </form>
+
+                    <!-- Sign Up Link -->
+                    <div class="mt-3 text-center">
+                        <small>Don't have an account? <a href="#" id="show-signup-modal">Sign Up</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @else
     <header id="header">
         <div class="container">
@@ -437,6 +479,11 @@ $auth = auth()->guard('web')->check();
             document.body.style.overflow = 'hidden';
         }
     }
+
+    function openSingupFreePopup() {
+        $('#signupModalathlete').modal('show');
+    }
+
       // Mobile menu toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const navbarToggler = document.querySelector('.navbar-toggler');

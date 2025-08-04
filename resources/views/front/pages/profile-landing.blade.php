@@ -38,7 +38,7 @@
                     @else
                     <div class="section-header">
                         <h2></h2>
-                        <a href="#" class="see-all">See Plan</a>
+                        <a href="" class="see-all">See Plan</a>
                     </div>
                     @endif
                     {{-- Tabs --}}
@@ -91,7 +91,7 @@
                 <section class="challenges">
                     <div class="section-header">
                         <h2>My Nutrition Plan</h2>
-                        <a href="#" class="see-all">Purchase Plan</a>
+                        <a href="{{ route('front.my-plans') }}" class="see-all">Purchase Plan</a>
                     </div>
 
                     <div class="slider-container">
@@ -608,8 +608,8 @@
     
     <script>
         const user = @json($userPlan);
-        const userId = user.user_id;
-        const isFreeUser = user.free_user;
+        const userId = user ? user.user_id : 0;
+        const isFreeUser = user ? user.free_user : 0;
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('.tab');
             const contentWrapper = document.getElementById('meal-cards-wrapper');
