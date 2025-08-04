@@ -101,6 +101,40 @@
         },
     };
 
+    $(document).ready(function() {
+        let isOpen = false;
+
+        function loadCustomDelphi() {
+            // alert('1');
+            $(document).find('#delphi-bubble-trigger').trigger("click");
+            isOpen = true;
+        }
+        // Handle click event to open Delphi chat
+        $(document).on('click', '.chat-widget, #chat-to-virtual-kez-btn, .start-chat', function() {
+            // alert('2');
+            loadCustomDelphi();
+        });
+        
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.chat-widget')) {
+                return;
+            }
+
+            if (event.target.closest('.start-chat')) {
+                return;
+            }
+
+            if (event.target.closest('#chat-to-virtual-kez-btn')) {
+                return;
+            }
+
+            if (isOpen) {
+                $(document).find('#delphi-bubble-trigger').trigger("click");
+                isOpen = false;
+            }
+        });
+    });
+    
     </script>
 
     <script id="delphi-bubble-bootstrap" src="https://embed.delphi.ai/loader.js"></script>

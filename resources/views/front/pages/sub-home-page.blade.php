@@ -47,6 +47,11 @@
         color: #333 !important;
         font-weight: 500 !important;
     }
+
+    /* Hide Delphi's default bubble */
+    #delphi-bubble-trigger {
+        display: none !important;
+    }
 </style>
 
 @section('content')
@@ -161,7 +166,7 @@
                         </div>
                     </div>
                         <!-- Chat Widget -->
-                    <div class="chat-widget desktop-view mob-hide ">
+                    <div class="chat-widget desktop-view mob-hide">
                         <div class="chat-avatar">
                             <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
                         </div>
@@ -5011,11 +5016,11 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         });
 
         // Chat widget interaction
-        document
-            .querySelector(".chat-widget")
-            .addEventListener("click", function() {
-                alert("Chat feature would open here!");
-            });
+        // document
+        //     .querySelector(".chat-widget")
+        //     .addEventListener("click", function() {
+        //         alert("Chat feature would open here!");
+        //     });
 
         // Quiz button interaction
         // document.addEventListener("DOMContentLoaded", function() {
