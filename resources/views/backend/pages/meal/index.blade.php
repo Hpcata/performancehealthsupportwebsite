@@ -101,28 +101,28 @@
                 {
                     data: "items",
                     render: function (data) {
-                        let totalEnergy = data.reduce((sum, item) => sum + parseFloat(item.energy || 0), 0);
+                        let totalEnergy = data.reduce((sum, item) => sum + parseFloat(item.pivot.energy || 0), 0);
                         return totalEnergy.toFixed(2) + " kJ";
                     }
                 },
                 {
                     data: "items",
                     render: function (data) {
-                        let totalProtein = data.reduce((sum, item) => sum + parseFloat(item.protein || 0), 0);
+                        let totalProtein = data.reduce((sum, item) => sum + parseFloat(item.pivot.protein || 0), 0);
                         return totalProtein.toFixed(2) + " g";
                     }
                 },
                 {
                     data: "items",
                     render: function (data) {
-                        let totalCarbs = data.reduce((sum, item) => sum + parseFloat(item.carbs || 0), 0);
+                        let totalCarbs = data.reduce((sum, item) => sum + parseFloat(item.pivot.carbs || 0), 0);
                         return totalCarbs.toFixed(2) + " g";
                     }
                 },
                 {
                     data: "items",
                     render: function (data) {
-                        let totalfats = data.reduce((sum, item) => sum + parseFloat(item.fat || 0), 0);
+                        let totalfats = data.reduce((sum, item) => sum + parseFloat(item.pivot.fat || 0), 0);
                         return totalfats.toFixed(2) + " g";
                     }
                 },
@@ -154,7 +154,7 @@
                                 <a href="${editUrl}" class="btn btn-outline-secondary">
                                     <i class="icofont-edit text-success"></i>
                                 </a>
-                                <form action="${deleteUrl}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?')">
+                                <form action="${deleteUrl}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this meal?')">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="btn btn-outline-secondary">

@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('user_pre_plans', function (Blueprint $table) {
-            $table->string('sport_image', 510)->nullable()->after('other');
-        });
+        if (Schema::hasTable('user_pre_plans') && ! Schema::hasColumn('user_pre_plans', 'sport_image')) {
+            Schema::table('user_pre_plans', function (Blueprint $table) {
+                $table->string('sport_image', 510)->nullable()->after('other');
+            });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('user_pre_plans', function (Blueprint $table) {
-            $table->string('sport_image')->nullable()->after('other');
-        });
+        if (Schema::hasTable('user_pre_plans') && Schema::hasColumn('user_pre_plans', 'sport_image')) {
+            Schema::table('user_pre_plans', function (Blueprint $table) {
+                $table->dropColumn('sport_image');
+            });
+        }
     }
 };

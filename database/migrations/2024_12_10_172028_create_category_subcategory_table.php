@@ -13,18 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('category_subcategory', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('sub_category_id');
-            $table->timestamps();   
+        if (! Schema::hasTable('category_subcategory')) {
+            Schema::create('category_subcategory', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('category_id');
+                $table->unsignedBigInteger('sub_category_id');
+                $table->timestamps();
 
-            // Define the foreign key constraints
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->foreign('sub_category_id')->references('id')->on('subcategories')->onDelete('cascade');
+                // Foreign key constraints
+                $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+                $table->foreign('sub_category_id')->references('id')->on('subcategories')->onDelete('cascade');
 
-            // $table->primary(['category_id', 'sub_category_id']);
-        });
+                // Optional composite unique constraint
+                // $table->unique(['category_id', 'sub_category_id']);
+            });
+        }
     }
 
     /**
@@ -34,6 +37,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('category_subcategory');
+        if (Schema::hasTable('category_subcategory')) {
+            Schema::dropIfExists('category_subcategory');
+        }
     }
 };

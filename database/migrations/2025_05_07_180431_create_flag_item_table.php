@@ -13,17 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('flag_item', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('item_id');
-            $table->unsignedBigInteger('flag_id');
-            $table->timestamps(); // Adds created_at and updated_at
+        if (! Schema::hasTable('flag_item')) {
+            Schema::create('flag_item', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('item_id');
+                $table->unsignedBigInteger('flag_id');
+                $table->timestamps(); // Adds created_at and updated_at
 
-            // Foreign keys
-            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
-            $table->foreign('flag_id')->references('id')->on('flags')->onDelete('cascade');
-
-        });
+                // Foreign keys
+                $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+                $table->foreign('flag_id')->references('id')->on('flags')->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -33,7 +34,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('flag_item');
-
+        if (Schema::hasTable('flag_item')) {
+            Schema::dropIfExists('flag_item');
+        }
     }
 };

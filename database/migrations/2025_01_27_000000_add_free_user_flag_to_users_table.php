@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class AddFreeUserFlagToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('flags', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            // $table->string('icon')->nullable(); // Path to uploaded icon file
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('free_user')->default(false)->after('is_superadmin');
         });
     }
 
@@ -28,7 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('flags');
-
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('free_user');
+        });
     }
-};
+} 

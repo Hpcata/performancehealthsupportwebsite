@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('section_elements', function (Blueprint $table) {
-            $table->id();
-            $table->string('section_element_name', 100)->unique();
-            $table->text('description')->nullable();
-            $table->timestamps();
-
-        });
+        if (! Schema::hasTable('section_elements')) {
+            Schema::create('section_elements', function (Blueprint $table) {
+                $table->id();
+                $table->string('section_element_name', 100)->unique();
+                $table->text('description')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -29,6 +30,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('section_elements');
+        if (Schema::hasTable('section_elements')) {
+            Schema::dropIfExists('section_elements');
+        }
     }
 };

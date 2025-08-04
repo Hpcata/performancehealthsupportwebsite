@@ -11,10 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('front_title')->nullable()->after('front_logo');
-            $table->longText('front_description')->nullable()->after('front_title');
-        });
+        if (Schema::hasTable('users')) {
+            Schema::table('users', function (Blueprint $table) {
+                if (! Schema::hasColumn('users', 'front_title')) {
+                    $table->string('front_title')->nullable()->after('front_logo');
+                }
+                if (! Schema::hasColumn('users', 'front_description')) {
+                    $table->longText('front_description')->nullable()->after('front_title');
+                }
+            });
+        }
     }
 
     /**
@@ -22,9 +28,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('front_title');
-            $table->dropColumn('front_description');
-        });
+        if (Schema::hasTable('users')) {
+            Schema::table('users', function (Blueprint $table) {
+                if (Schema::hasColumn('users', 'front_title')) {
+                    $table->dropColumn('front_title');
+                }
+                if (Schema::hasColumn('users', 'front_description')) {
+                    $table->dropColumn('front_description');
+                }
+            });
+        }
     }
 };
