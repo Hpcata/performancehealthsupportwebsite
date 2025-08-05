@@ -91,6 +91,7 @@
         .coupon-link.active    { color:#000; text-decoration:underline; }
 
     </style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css">
     <link rel="stylesheet" href="{{ asset('front/css/signup.css') }}">
     @php
         $showHeader = !empty($user->front_logo) &&
@@ -2923,7 +2924,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
                 <!-- Step 1: Phone Number Input -->
                 <div class="form-section" id="step1">
-                <h2 class="welcome-title">Welcome to Athleats Fuel</h2>
+                <h2 class="welcome-title">Welcome to Athleat</h2>
                 <p class="welcome-text" style="margin-bottom: 30px;">
                     Fast, safe access. Just pop in your number and we'll text you a code. No passwords, no fuss.
                 </p>
@@ -2933,7 +2934,11 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <div class="dropdown-wrapper" onclick="toggleDropdown()">
                         <span id="selected-flag" class="fi fi-us"></span>
                         <span id="selected-code">+61</span>
-                        <span class="arrow">&#9662;</span>
+                        <svg class="arrow" width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                     </div>
                                                     <input type="tel" id="mobile_number" class="phone-input" placeholder="Enter mobile number" inputmode="numeric" pattern="[0-9]*" maxlength="15">
 

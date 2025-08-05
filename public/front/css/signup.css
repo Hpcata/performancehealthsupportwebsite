@@ -529,7 +529,9 @@ svg.user-type-icon path {
     border-bottom: 1px solid #eee;
     outline: none;
 }
-
+#signupModalathlete .phone-input-container #country-list{
+    padding-left: 0;
+}
 #signupModalathlete .phone-input-container #country-list li {
     padding: 8px;
     display: flex;
