@@ -23,6 +23,10 @@ class Section extends Model
     const TYPE_ABOUT_KERRY_INTRO = 'about_kerry_intro';
     const TYPE_ABOUT_BOOKING = 'about_booking';
     const TYPE_ATHLETES_WE_WORK_WITH = 'athletes_we_work_with';
+    const TYPE_TRAINING_PLAN_MAIN_BANNER = 'training_plan_main_banner';
+    const TYPE_BUILT_FOR_REAL_RESULT = 'built_for_real_result';
+    const PLAN_INCLUSIONS = 'plan_inclusions';
+    const PLAN_INTERESTS = 'plan_interests';
 
     // Get all available section types
     public static function getSectionTypes()
@@ -41,6 +45,10 @@ class Section extends Model
             self::TYPE_ABOUT_KERRY_INTRO => 'About Kerry Intro',
             self::TYPE_ABOUT_BOOKING => 'About Booking',
             self::TYPE_ATHLETES_WE_WORK_WITH => 'Athletes We Work With',
+            self::TYPE_TRAINING_PLAN_MAIN_BANNER => 'Training Plan Main Banner',
+            self::TYPE_BUILT_FOR_REAL_RESULT => 'Built For Real Result',
+            self::PLAN_INCLUSIONS => 'Plan Inclusions',
+            self::PLAN_INTERESTS => 'Plan Interests',
 
         ];
     }

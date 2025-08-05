@@ -1762,7 +1762,6 @@ class FrontController extends Controller
         }
     }
 
-
     public function getMeals($planId, $categoryId)
     {
         // fetch user id from plan id
@@ -1806,10 +1805,15 @@ class FrontController extends Controller
         return view('front.pages.partials.meal-cards', compact('meals','isFreeUser'))->render();
     }
 
+    public function trainingNutritionPlan(Request $request)
+    {
+        $page = Page::with('sections')->where('slug', 'trining_nutrition_plan')->first();
+        return view('front.pages.training_nutrition_plan', compact('page'));
+    }
+
     public function aboutUs(Request $request)
     {
         $page = Page::with('sections')->where('slug', 'about_us')->first();
         return view('front.pages.about-us', compact('page'));
     }
-
 }
