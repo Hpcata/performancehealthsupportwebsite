@@ -136,7 +136,7 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay ">
+                                                            <div class="quick-view-overlay">
                                                                 <span style="padding: 12px;
                                                                     border-radius: 12px;
                                                                     background-color:#709ef1;
@@ -186,7 +186,7 @@
             </p>
             <div class="dropdown dropdown-container">
                 <label class="dropdown-label">Training load</label>
-                <button class="btn custom-dropdown-button dropdown-toggle" type="button" id="trainingLoadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn custom-dropdown-button" type="button" id="trainingLoadDropdown">
                     <div class="custom-dropdown-content">
                         <div class="custom-dropdown-content-inner">
                             <div class="custom-dropdown-title">Low</div>
@@ -197,7 +197,7 @@
                         </svg>
                     </div>
                 </button>
-                <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="trainingLoadDropdown">
+                <ul class="dropdown-menu custom-dropdown-menu plan-detail" style="display: none; opacity: 0; visibility: hidden;">
                     <li>
                         <div class="custom-dropdown-option selected" data-value="low" data-image="{{ webAssets('front/images/low-load.png') }}">
                             <div class="option-title">Low</div>
@@ -1478,6 +1478,69 @@
                 $wrapper.find('.slider-arrow').hide();
             } else {
                 $wrapper.find('.slider-arrow').show();
+            }
+        });
+
+        // Training Load Dropdown functionality
+        const trainingLoadDropdown = document.getElementById('trainingLoadDropdown');
+        const trainingLoadMenu = document.querySelector('.custom-dropdown-menu');
+        const trainingLoadOptions = document.querySelectorAll('.custom-dropdown-option');
+        const trainingLoadButton = document.querySelector('.custom-dropdown-button');
+        const trainingLoadTitle = document.querySelector('.custom-dropdown-title');
+        const trainingLoadSubtitle = document.querySelector('.custom-dropdown-subtitle');
+
+        // Ensure dropdown is closed by default
+        if (trainingLoadMenu) {
+            trainingLoadMenu.classList.remove('show', 'open');
+            trainingLoadMenu.style.display = 'none';
+        }
+
+        // Toggle dropdown on button click
+        if (trainingLoadButton) {
+            trainingLoadButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isOpen = trainingLoadMenu.classList.contains('show');
+                
+                if (isOpen) {
+                    trainingLoadMenu.classList.remove('show', 'open');
+                    trainingLoadMenu.style.display = 'none';
+                } else {
+                    trainingLoadMenu.classList.add('show', 'open');
+                    trainingLoadMenu.style.display = 'block';
+                }
+            });
+        }
+
+        // Handle option selection
+        trainingLoadOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                const title = this.querySelector('.option-title').textContent;
+                const subtitle = this.querySelector('.option-subtitle').textContent;
+                const image = this.getAttribute('data-image');
+
+                // Update button content
+                if (trainingLoadTitle) trainingLoadTitle.textContent = title;
+                if (trainingLoadSubtitle) trainingLoadSubtitle.textContent = subtitle;
+
+                // Remove selected class from all options
+                trainingLoadOptions.forEach(opt => opt.classList.remove('selected'));
+                // Add selected class to clicked option
+                this.classList.add('selected');
+
+                // Close dropdown
+                trainingLoadMenu.classList.remove('show', 'open');
+                trainingLoadMenu.style.display = 'none';
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!trainingLoadButton.contains(e.target) && !trainingLoadMenu.contains(e.target)) {
+                trainingLoadMenu.classList.remove('show', 'open');
+                trainingLoadMenu.style.display = 'none';
             }
         });
     });

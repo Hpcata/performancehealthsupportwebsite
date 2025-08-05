@@ -2952,6 +2952,9 @@ svg.user-type-icon path {
 }
 
 @media (max-width: 1024px) {
+    body{
+        padding-top: 0 !important;
+    }
     .sport-nutrition-promo__container {
         flex-direction: column;
         min-height: 0;
@@ -3727,7 +3730,7 @@ svg.user-type-icon path {
     }
 
     .food-section .food-carousel-track {
-        padding: 0 5px;
+        padding: 0 120px;
     }
 
     .carousel-item {

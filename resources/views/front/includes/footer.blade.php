@@ -2,7 +2,7 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="logo">
-                <img src="{!! frontAssets('images/logo (1) 1.svg') !!}" alt="2LS Logo" class="logo-img" />
+                <img src="{!! frontAssets('images/logo.svg') !!}" alt="athleat Logo" class="logo-img" />
             </div>
             <nav class="footer-nav">
                 @if ($userId = optional(auth()->guard('web')->user())->id)
