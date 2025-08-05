@@ -182,7 +182,7 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class=" btn-login mob-hide">Log in</button>
+                        <button class=" btn-login mob-hide" id="show-new-signin-modal" data-bs-toggle="modal"    data-bs-target="#signinModal">Log in</button>
                         <button class=" btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                             Sign up for free
                         </button>
@@ -449,19 +449,19 @@ $auth = auth()->guard('web')->check();
                 // Custom click handler to control timing
                 navbarToggler.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     // Check if menu is currently open
                     const isMenuOpen = navbarCollapse.classList.contains('show');
-                    
+
                     if (!isMenuOpen) {
                         // Menu is closed, opening it
                         // 1. Immediately change background color
                         if (navbar) navbar.classList.add('menu-open');
-                        
+
                         // 2. Change icon immediately
                         if (barsIcon) barsIcon.style.display = 'none';
                         if (crossIcon) crossIcon.style.display = 'block';
-                        
+
                         // 3. Open menu after 0.1s delay
                         setTimeout(() => {
                             navbarCollapse.classList.add('show');
@@ -470,11 +470,11 @@ $auth = auth()->guard('web')->check();
                         // Menu is open, closing it
                         // 1. Immediately remove background color
                         if (navbar) navbar.classList.remove('menu-open');
-                        
+
                         // 2. Change icon immediately
                         if (barsIcon) barsIcon.style.display = 'block';
                         if (crossIcon) crossIcon.style.display = 'none';
-                        
+
                         // 3. Close menu after 0.1s delay
                         setTimeout(() => {
                             navbarCollapse.classList.remove('show');
@@ -487,13 +487,13 @@ $auth = auth()->guard('web')->check();
                 navbarToggler.removeAttribute('data-bs-target');
             }
             // Smooth navbar background change on scroll
-        window.addEventListener("scroll", function() {
-            const navbar = document.querySelector(".navbar-custom");
-            if (window.scrollY > 50) {
-                navbar.style.background = "rgba(59, 59, 59, 1)";
-            } else {
-                navbar.style.background = "transparent";
-            }
-        });
+            window.addEventListener("scroll", function() {
+                const navbar = document.querySelector(".navbar-custom");
+                if (window.scrollY > 50) {
+                    navbar.style.background = "rgba(59, 59, 59, 1)";
+                } else {
+                    navbar.style.background = "transparent";
+                }
+            });
         });
 </script>

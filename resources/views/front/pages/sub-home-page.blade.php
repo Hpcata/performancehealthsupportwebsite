@@ -3194,6 +3194,65 @@
         </div>
     </div>
 
+    <!--Login Modal -->
+    <div class="modal fade" id="signinModalathlete" tabindex="-1" aria-labelledby="signinModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="signup-container text-center">
+                    <div class="signup-modal row g-0"> <!-- Bootstrap row -->
+
+                    <!-- Left Column: Login Form -->
+                    <div class="col-md-6 p-5">
+                        <!-- Close Button -->
+                        <button type="button" class="close-button mb-4" data-bs-dismiss="modal" aria-label="Close" style="float: right;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x">
+                            <path d="M18 6 6 18"></path>
+                            <path d="m6 6 12 12"></path>
+                        </svg>
+                        </button>
+
+                        <div class="form-section">
+                        <h2 class="welcome-title">Login to Athleats Fuel</h2>
+                        <p class="welcome-text mb-4">
+                            Please enter your email and password to access your account.
+                        </p>
+
+                        <!-- Login Form -->
+                        <form id="loginForm" method="POST" action="/login" style="width: 100%;">
+                            <!-- Email -->
+                            <div class="form-group mb-3">
+                                <input type="email" id="email" name="email" class="form-control" required placeholder="Enter your email">
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-group mb-2">
+                            <input type="password" id="password" name="password" class="form-control" required placeholder="Enter your password">
+                            </div>
+
+                            <!-- Forgot Password -->
+                            <div class="text-end mb-4">
+                            <a href="/forgot-password" class="forgot-password-link">Forgot Password?</a>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn-signup btn-primary w-100">Login</button>
+                        </form>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Image -->
+                    <div class="col-md-6 image-section">
+                        <img src="https://test.performancehealthsupport.com/private/public/front/images/signup-otp/signup-bg.png"
+                            alt="Bowl of healthy food"
+                            class="img-fluid h-100 w-100" style="object-fit: cover;">
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
@@ -5240,6 +5299,13 @@
                 $('#signupModalathlete').modal('hide');
             }
             $('#signupModalathlete').modal('show');
+        });
+         $('#show-new-signin-modal').click(function(e) {
+            e.preventDefault(); // remove alert for now
+            if ($('#signinModalathlete').length) {
+                $('#signinModalathlete').modal('hide');
+            }
+            $('#signinModalathlete').modal('show');
         });
     </script>
 
