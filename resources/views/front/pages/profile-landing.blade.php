@@ -373,7 +373,7 @@
                     <div class="consultation-card-custom">
                         <div class="consult-title"></div>
                         <div class="consult-desc">
-                            Get answers from a real-life expert coaching Elite Athletes and
+                            Get answers from a real-life expert coaching Elite Athlete and
                             Olympians.
                         </div>
                         <div class="consult-user-row">
@@ -419,7 +419,7 @@
                             <div class="plan-title">Competition Plan</div>
                             <div class="plan-desc">
                                 Unlock your best performance with a fully customised 24-hour competition day meal
-                                plan—designed to fuel you from the night before through recovery, tailored to your sport,
+                                plan—designed to you from the night before through recovery, tailored to your sport,
                                 your preferences, and your game-day goals.
                             </div>
                             <div class="consult-user-row">

@@ -148,20 +148,27 @@ class OtpRegistrationController extends Controller
                 $existingUser = User::where('phone', $mobileNumber)->first();
                 
                 if ($existingUser) {
+                    // return scccess
+
                     // User exists - log them in
-                    Auth::login($existingUser);
+                    // Auth::login($existingUser);
                     
+                    // return response()->json([
+                    //     'success' => true,
+                    //     'message' => 'Login successful! Welcome back.',
+                    //     'action' => 'login',
+                    //     'user' => [
+                    //         'id' => $existingUser->id,
+                    //         'name' => $existingUser->name,
+                    //         'email' => $existingUser->email,
+                    //         'free_user' => $existingUser->free_user
+                    //     ],
+                    //     'redirectUrl' => route('front.profile', ['id' => $existingUser->id])
+                    // ]);
                     return response()->json([
                         'success' => true,
-                        'message' => 'Login successful! Welcome back.',
-                        'action' => 'login',
-                        'user' => [
-                            'id' => $existingUser->id,
-                            'name' => $existingUser->name,
-                            'email' => $existingUser->email,
-                            'free_user' => $existingUser->free_user
-                        ],
-                        'redirectUrl' => route('front.profile', ['id' => $existingUser->id])
+                        'message' => 'OTP verified successfully! Please complete your registration.',
+                        'action' => 'register'
                     ]);
                 } else {
                     // User doesn't exist - proceed to registration
@@ -275,26 +282,76 @@ class OtpRegistrationController extends Controller
 
         // Check if user already exists with this email
         $existingUser = User::where('email', $email)->first();
-        if ($existingUser) {
+        $existingUserByPhone = User::where('phone', $mobileNumber)->first();
+
+        if($existingUser?->is_superadmin == 1 || $existingUserByPhone?->is_superadmin == 1) {
             return response()->json([
                 'success' => false,
-                'message' => 'A user with this email already exists.',
+                'message' => 'Invalid access with others account.',
                 'errors' => [
-                    'email' => ['This email address is already registered.']
+                    'general' => ['Invalid access with others account.']
                 ]
-            ], 422);
+            ], 500);
+        }
+
+        if ($existingUser) {
+            if($existingUserByPhone) {
+                Auth::login($existingUserByPhone);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful! Welcome back.',
+                    'user' => $existingUserByPhone,
+                    'redirectUrl' => route('front.profile', ['id' => $existingUserByPhone->id]),
+                    'action' => 'login'
+                ]);
+            } else {
+                // Clear OTP verification
+                $this->otpService->clearOtpVerification($mobileNumber);
+
+                $existingUser->phone = $mobileNumber;
+                $existingUser->save();
+
+                // Log in the user
+                Auth::login($existingUser);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful! Welcome back.',
+                    'user' => $existingUser,
+                    'redirectUrl' => route('front.profile', ['id' => $existingUser->id]),
+                    'action' => 'login'
+                ]);
+            }
+
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'A user with this email already exists.',
+            //     'errors' => [
+            //         'email' => ['This email address is already registered.']
+            //     ]
+            // ], 422);
         }
 
         // Check if user already exists with this mobile number (double check)
-        $existingUserByPhone = User::where('phone', $mobileNumber)->first();
         if ($existingUserByPhone) {
+            Auth::login($existingUserByPhone);
+
             return response()->json([
-                'success' => false,
-                'message' => 'A user with this mobile number already exists. Please login instead.',
-                'errors' => [
-                    'mobile_number' => ['This mobile number is already registered. Please use the login option.']
-                ]
-            ], 422);
+                'success' => true,
+                'message' => 'Login successful! Welcome back.',
+                'user' => $existingUserByPhone,
+                'redirectUrl' => route('front.profile', ['id' => $existingUserByPhone->id]),
+                'action' => 'login'
+            ]);
+
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'A user with this mobile number already exists. Please login instead.',
+            //     'errors' => [
+            //         'mobile_number' => ['This mobile number is already registered. Please use the login option.']
+            //     ]
+            // ], 422);
         }
 
         // Generate a random password for the user

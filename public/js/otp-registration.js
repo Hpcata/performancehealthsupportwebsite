@@ -174,21 +174,22 @@ function verifyOtp() {
         if (data.success) {
             if (data.action === 'login') {
                 // User exists - login successful
-                showSuccess('Login successful! Redirecting to your profile...');
-                
-                // Redirect to profile landing page
-                setTimeout(() => {
-                    if (data.redirectUrl) {
-                        window.location.href = data.redirectUrl;
-                    } else {
-                        window.location.href = '/404';
-                    }
-                }, 10);
-            } else {
-                // User doesn't exist - proceed to registration
-                showSuccess('OTP verified successfully! Please complete your registration.');
-                showStep(3);
+                // showSuccess('Login successful! Redirecting to your profile...');
+
+                // // Redirect to profile landing page
+                // setTimeout(() => {
+                //     if (data.redirectUrl) {
+                //         window.location.href = data.redirectUrl;
+                //     } else {
+                //         window.location.href = '/404';
+                //     }
+                // }, 10);
             }
+            // else {
+            //     // User doesn't exist - proceed to registration
+            // }
+            showSuccess('OTP verified successfully! Please complete your registration.');
+            showStep(3);
         } else {
             // Handle specific error cases
             if (data.errors && data.errors.otp) {
@@ -282,14 +283,14 @@ function completeRegistration() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showSuccess('Account created successfully! Redirecting...');
-            
+            showSuccess(data.message);
+
             // Keep button disabled and change text to indicate success
-            button.textContent = 'Registration Successful!';
+            button.textContent = data.action === 'login' ? 'Login Successful!' : 'Registration Successful!';
             button.disabled = true;
             button.style.opacity = '0.6';
             button.style.cursor = 'not-allowed';
-            
+
             // Redirect to profile landing page using the user ID from response
             setTimeout(() => {
                 if (data.user && data.user.id) {
@@ -299,7 +300,7 @@ function completeRegistration() {
                     // Fallback to dashboard if user ID is not available
                     window.location.href = '/404';
                 }
-            }, 2000);
+            }, 1000);
         } else {
             // Handle validation errors
             if (data.errors) {
