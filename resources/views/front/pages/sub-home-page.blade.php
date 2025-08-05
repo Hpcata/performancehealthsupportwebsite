@@ -4,7 +4,7 @@
 @section('meta_description', 'Get a personalised athlete meal plan with Performance Health Support. Expert sports nutrition plans and diet strategies tailored to fuel performance and recovery.')
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css">
 <style>
     .error-message {
         color: #dc3545 !important;
@@ -2923,7 +2923,7 @@
 
                 <!-- Step 1: Phone Number Input -->
                 <div class="form-section" id="step1">
-                <h2 class="welcome-title">Welcome to Athleats Fuel</h2>
+                <h2 class="welcome-title">Welcome to Athleat</h2>
                 <p class="welcome-text" style="margin-bottom: 30px;">
                     Fast, safe access. Just pop in your number and we'll text you a code. No passwords, no fuss.
                 </p>
