@@ -182,12 +182,12 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class=" btn-login mob-hide">Log in</button>
-                        <button class=" btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
+                        <button class="btn-login mob-hide">Log in</button>
+                        <button class="btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                             Sign up for free
                         </button>
                     @endif
-                    <button class="ms-2  btn-login web-hide">Virtual Kez</button>
+                    <button class="ms-2 btn-login web-hide">Virtual Kez</button>
                 </div>
             </div>
         </div>
@@ -303,7 +303,7 @@ $auth = auth()->guard('web')->check();
                         </div>
 
                         <!-- Sign In Button -->
-                           <button type="submit" id="login-submit" class="btn-primary w-100 mt-3">
+                           <button type="submit" id="login-submit" class="mt-3 w-100 btn-primary">
                             Sign In
                         </button>
                     </form>
@@ -426,15 +426,28 @@ $auth = auth()->guard('web')->check();
         console.log('toggleMobileMenu called');
         var menu = document.getElementById('mobile-menu');
         var overlay = document.getElementById('mobile-menu-overlay');
+        var hamburgerIcon = document.getElementById('hamburger-icon');
+        var closeIcon = document.getElementById('close-icon');
         var isOpen = menu.classList.contains('open');
+        
         if (isOpen) {
+            // Close menu
             menu.classList.remove('open');
             overlay.classList.remove('open');
             document.body.style.overflow = '';
+            
+            // Switch back to hamburger icon
+            if (hamburgerIcon) hamburgerIcon.style.display = 'inline';
+            if (closeIcon) closeIcon.style.display = 'none';
         } else {
+            // Open menu
             menu.classList.add('open');
             overlay.classList.add('open');
             document.body.style.overflow = 'hidden';
+            
+            // Switch to close icon
+            if (hamburgerIcon) hamburgerIcon.style.display = 'none';
+            if (closeIcon) closeIcon.style.display = 'inline';
         }
     }
       // Mobile menu toggle functionality

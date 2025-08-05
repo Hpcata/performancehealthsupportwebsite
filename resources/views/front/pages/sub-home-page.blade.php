@@ -127,12 +127,12 @@
                     <h5 class="modal-title">Plan Required</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
+                <div class="text-center modal-body">
                     <p>You have not purchased any plans.<br>Please purchase a plan.</p>
 
-                    <div class="d-grid justify-content-center gap-3 mt-5">
-                        <a href="{{ route('front.sub-home-page') }}#sport-plans" class="btn btn-primary btn-sm px-4" style="width: 300px;">View Plans</a>
-                        <a href="{{ route('front.index') }}#bookingtypecontainer" class="btn btn-secondary px-4" style="width: 300px;">Book Consultation</a>
+                    <div class="justify-content-center gap-3 d-grid mt-5">
+                        <a href="{{ route('front.sub-home-page') }}#sport-plans" class="px-4 btn btn-primary btn-sm" style="width: 300px;">View Plans</a>
+                        <a href="{{ route('front.index') }}#bookingtypecontainer" class="px-4 btn btn-secondary" style="width: 300px;">Book Consultation</a>
                     </div>
                 </div>
             </div>
@@ -142,7 +142,7 @@
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->section_type == \App\Models\Section::TYPE_MAIN_BANNER && $section->enabled == 1) <!-- done -->
-                <div id="heroCarouselDesktop" class="d-md-block carousel slide  d-none" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true"
+                <div id="heroCarouselDesktop" class="d-md-block carousel slide d-none" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true"
                 >
                     <div class="carousel-inner">
                         <!-- Slide 1 - Fitness/Nutrition Image (Desktop) -->
@@ -161,7 +161,7 @@
                         </div>
                     </div>
                         <!-- Chat Widget -->
-                    <div class="chat-widget desktop-view mob-hide ">
+                    <div class="chat-widget desktop-view mob-hide">
                         <div class="chat-avatar">
                             <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
                         </div>
@@ -589,7 +589,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 O'Bryan.
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class="btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -648,7 +648,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 it’s game time so that nutrition is never your weakness!
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class="btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -684,7 +684,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 recovery is the goal & nutrition is too often overlooked!
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class="btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4 web-hide">
@@ -713,7 +713,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 gain & get you back in the game!
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class="btn-signup">Learn more</button>
                             </div>
                         </div>
                         </div>
@@ -745,7 +745,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 gain & get you back in the game!
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class="btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -774,7 +774,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 the questions that matter most.
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class="btn-signup">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -812,7 +812,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 Contact us for club deals and group bookings.
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class="btn-signup">Learn more</button>
                             </div>
                         </div>
                         </div>
@@ -854,7 +854,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         <option value="">Select Your Sport Game</option>
                                     </select>
                                 </div>
-                                <button class=" btn-signup" type="submit">
+                                <button class="btn-signup" type="submit">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24"
@@ -893,7 +893,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             the quiz to test your nutrition knowledge and discover how to fuel
                             smarter—whether for performance, recovery, or everyday energy.
                             </p>
-                            <button class=" btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
+                            <button class="btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
                         </div>
                         <img
                             @if(!empty($section->banner_image[1]))
@@ -912,7 +912,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 {{-- Make this section dynamic --}}
                 <section class="testimonial-section">
                     <div class="container-homepage">
-                        <h2 class="section-title text-center text-md-start">REAL STORIES. REAL RESULTS.</h2>
+                        <h2 class="text-md-start text-center section-title">REAL STORIES. REAL RESULTS.</h2>
 
                         <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" >
                             <div class="carousel-inner">
@@ -924,7 +924,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             @php
                                                 $testimonialImage = $testimonial->testimonialImage ? asset('storage' . $testimonial->testimonialImage->path . '/' . $testimonial->testimonialImage->name) : null;
                                             @endphp
-                                            <img src="{{ $testimonialImage }}" alt="{{ $testimonial->name }}" class="img-fluid rounded-3"/>
+                                            <img src="{{ $testimonialImage }}" alt="{{ $testimonial->name }}" class="rounded-3 img-fluid"/>
                                         </div>
                                         <div class="text-md-start text-center testimonial-content">
                                             <div class="quote-icon web">
@@ -956,7 +956,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             </div>
 
                             <!-- Carousel Controls for Desktop -->
-                            <button class="carousel-control-prev d-none d-md-flex" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                            <button class="d-md-flex carousel-control-prev d-none" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none">
                                 <path
                                     d="M0.748587 6.23192C0.323512 6.65699 0.323512 7.34732 0.748587 7.77239L6.18955 13.2134C6.61462 13.6384 7.30495 13.6384 7.73002 13.2134C8.1551 12.7883 8.1551 12.098 7.73002 11.6729L3.0576 7.00046L7.72662 2.32803C8.1517 1.90295 8.1517 1.21263 7.72662 0.787556C7.30155 0.362481 6.61122 0.362481 6.18615 0.787556L0.745186 6.22852L0.748587 6.23192Z"
@@ -964,7 +964,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                 />
                                 </svg>
                             </button>
-                            <button class="carousel-control-next d-none d-md-flex" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                            <button class="d-md-flex carousel-control-next d-none" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none" >
                                 <path
                                     d="M8.25141 7.76808C8.67649 7.34301 8.67649 6.65268 8.25141 6.22761L2.81045 0.786644C2.38538 0.361568 1.69505 0.361568 1.26998 0.786644C0.844903 1.21172 0.844903 1.90204 1.26998 2.32712L5.9424 6.99954L1.27338 11.672C0.848303 12.097 0.848303 12.7874 1.27338 13.2124C1.69845 13.6375 2.38878 13.6375 2.81385 13.2124L8.25481 7.77148L8.25141 7.76808Z"
@@ -974,7 +974,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             </button>
 
                             <!-- Carousel Controls for Mobile -->
-                            <div class="carousel-controls-mobile d-flex d-md-none justify-content-center mt-4">
+                            <div class="d-flex justify-content-center mt-4 carousel-controls-mobile d-md-none">
                                 <button class="carousel-control-prev-mobile" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev" >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="9" height="16" viewBox="0 0 9 16" fill="none">
                                         <path
@@ -983,7 +983,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         />
                                     </svg>
                                 </button>
-                                <button class="carousel-control-next-mobile ms-3" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                                <button class="ms-3 carousel-control-next-mobile" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="9" height="16" viewBox="0 0 9 16" fill="none">
                                         <path
                                             d="M8.28504 8.86409C8.76325 8.38588 8.76325 7.60927 8.28504 7.13106L2.16395 1.00997C1.68574 0.531765 0.909132 0.531765 0.430923 1.00997C-0.0472868 1.48818 -0.0472868 2.2648 0.430923 2.74301L5.6874 7.99949L0.434748 13.256C-0.0434614 13.7342 -0.0434614 14.5108 0.434748 14.989C0.912958 15.4672 1.68957 15.4672 2.16778 14.989L8.28886 8.86792L8.28504 8.86409Z"
@@ -998,16 +998,16 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             @endif
             @if($section->section_type == \App\Models\Section::TYPE_PARTNERS && $section->enabled == 1)
                 <!-- trusted partners section -->
-                <section class="partners-section py-5">
+                <section class="py-5 partners-section">
                 <div class="container-homepage">
-                    <h2 class="section-title text-center text-md-start mb-5">
+                    <h2 class="mb-5 text-md-start text-center section-title">
                     {!! $section->title !!}
                     </h2>
                 </div>
 
 
                 <div class="slider-container">
-                    <div class="logo-row slide-left">
+                    <div class="slide-left logo-row">
                         <!-- Duplicate content for seamless loop -->
                         @if(!empty($section->banner_image) && is_array($section->banner_image))
                             @foreach($section->banner_image as $bannerImage)
@@ -1029,7 +1029,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         @endif
                     </div>
 
-                    <div class="logo-row slide-right">
+                    <div class="slide-right logo-row">
                         <!-- Duplicate content for seamless loop -->
                         @if(!empty($section->image) && is_array($section->image))
                             @foreach($section->image as $bannerImage)
@@ -1058,14 +1058,14 @@ src="{{ asset('storage/' . $section->image[0]) }}"
     @endif
 
     <!-- contact sectoin -->
-    <section class="contact-section py-5">
+    <section class="py-5 contact-section">
         <div class="container-homepage">
-        <div class="row justify-content-center">
+        <div class="justify-content-center row">
             <div class="col-12">
-            <div class="contact-card d-flex flex-column flex-md-row align-items-center">
-                <div class="contact-form-wrapper p-4 p-md-5">
-                <h2 class="contact-title mb-3">GET IN TOUCH</h2>
-                <p class="contact-description mb-4">Not sure where to start? Reach out - we're here to help and will get back to you as soon as we can.</p>
+            <div class="d-flex flex-column flex-md-row align-items-center contact-card">
+                <div class="p-4 p-md-5 contact-form-wrapper">
+                <h2 class="mb-3 contact-title">GET IN TOUCH</h2>
+                <p class="mb-4 contact-description">Not sure where to start? Reach out - we're here to help and will get back to you as soon as we can.</p>
                 <form id="query-form" >
                     <div class="mb-3">
                     <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
@@ -1083,10 +1083,10 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
                     <textarea class="form-control" id="query-message" rows="5" required></textarea>
                     </div>
-                    <button type="submit" class=" btn-signup" id="submit-query">Send message</button>
+                    <button type="submit" class="btn-signup" id="submit-query">Send message</button>
                 </form>
                 </div>
-                <div class="phone-mockup-wrapper d-none d-md-flex justify-content-center align-items-center">
+                <div class="d-md-flex align-items-center justify-content-center phone-mockup-wrapper d-none">
                 <img src="{{ frontAssets('images/mockup.webp') }}" alt="Mobile App Interface" class="img-fluid">
                 </div>
             </div>
@@ -1132,7 +1132,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" >
-                                <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+                                <small class="text-muted form-text">Password must be at least 8 characters long.</small>
                             </div>
 
                             <!-- Divider -->
@@ -1149,7 +1149,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
                         <h6 class="mb-2" style="font-weight: 800;">Payment Details</h6>
 
-                        <div class="mb-3 mt-3">
+                        <div class="mt-3 mb-3">
                             <small>
                                 <a href="#" id="toggle-coupon-link" class="coupon-link">Add a Coupon Code</a>
                             </small>
@@ -1158,7 +1158,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         <div class="mb-3 d-none" id="coupon-details">
                             <label for="promo-code" class="form-label">Coupon Code</label>
                             <div class="d-flex gap-2">
-                                <input type="text" class="form-control h-auto" id="promo-code" placeholder="Enter coupon code">
+                                <input type="text" class="h-auto form-control" id="promo-code" placeholder="Enter coupon code">
                                 <input type="hidden" class="form-control" id="discount">
                                 <button type="button" class="btn btn-primary" id="apply-promo-code">Apply</button>
                             </div>
@@ -1168,18 +1168,18 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             <!-- Stripe Payment Card Section -->
                             <div class="mb-3">
                                 <label for="card-element" class="form-label">Credit or Debit Card</label>
-                                <div id="card-element" class="border rounded p-3" style="background-color: #f9f9f9;">
+                                <div id="card-element" class="p-3 border rounded" style="background-color: #f9f9f9;">
                                     <!-- A Stripe Element will be inserted here. -->
                                 </div>
-                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
+                                <div id="card-errors" role="alert" class="mt-2 text-danger"></div>
                             </div>
                         </div>
 
                         <!-- Submit Button -->
-                        <!-- <button type="button" id="view-sample-plan" class="btn btn-primary w-100 mt-3">
+                        <!-- <button type="button" id="view-sample-plan" class="mt-3 w-100 btn btn-primary">
                             View Sample Plan
                         </button> -->
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
+                        <button type="submit" id="submit" class="mt-3 w-100 btn btn-primary">
                             Purchase
                         </button>
                     </form>
@@ -1211,7 +1211,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         </div>
 
                         <!-- Sign In Button -->
-                        <button type="submit" id="login-submit" class="btn btn-primary w-100 mt-3">
+                        <button type="submit" id="login-submit" class="mt-3 w-100 btn btn-primary">
                             Sign In
                         </button>
                     </form>
@@ -1247,7 +1247,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         </div>
 
                         <!-- Sign In Button -->
-                        <button type="submit" id="login-submit" class="btn btn-primary w-100 mt-3">
+                        <button type="submit" id="login-submit" class="mt-3 w-100 btn btn-primary">
                             Sign In
                         </button>
                     </form>
@@ -1288,10 +1288,10 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control" name="password" id="register-password" required>
-                            <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+                            <small class="text-muted form-text">Password must be at least 8 characters long.</small>
                         </div>
 
-                        <button type="submit" id="submit" class="btn btn-primary w-100 mt-3">
+                        <button type="submit" id="submit" class="mt-3 w-100 btn btn-primary">
                             Sign Up
                         </button>
                     </form>
@@ -1308,20 +1308,20 @@ src="{{ asset('storage/' . $section->image[0]) }}"
     <!-- Thank You Modal -->
     {{-- <div class="modal" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center">
-                <div class="modal-header border-0">
+            <div class="text-center modal-content">
+                <div class="border-0 modal-header">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body pt-0">
-                    <div class="icon-container mb-3">
-                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                <div class="pt-0 modal-body">
+                    <div class="mb-3 icon-container">
+                        <i class="text-success bi bi-check-circle-fill" style="font-size: 4rem;"></i>
                     </div>
-                    <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
+                    <h2 class="mb-2 modal-title" id="thankYouModalLabel">Thank You!</h2>
                     <p class="mb-2" id="thankYouMessage">Your payment was successful.</p>
                     <p class="mb-2">Your plan will be created by Kez and sent via email in the coming days.</p>
-                    <!-- <a href="#" id="planUrlLink" class="btn btn-primary mt-2">Order Your Personalised Plan</a> -->
+                    <!-- <a href="#" id="planUrlLink" class="mt-2 btn btn-primary">Order Your Personalised Plan</a> -->
 
-                    <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="w-50 btn btn-primary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -1347,13 +1347,13 @@ src="{{ asset('storage/' . $section->image[0]) }}"
     {{-- <div class="modal fade" id="TakeTestModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="TakeTestModelLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header flex-column align-items-start pe-5">
-                    <h4 class="modal-title mb-1" id="testModalLabel">Nutrition Knowledge Questions</h4>
+                <div class="flex-column align-items-start pe-5 modal-header">
+                    <h4 class="mb-1 modal-title" id="testModalLabel">Nutrition Knowledge Questions</h4>
                     <!-- <p>Answers to the 4 questions below will assist in providing targeted information. </p> -->
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="top-0 position-absolute m-3 btn-close end-0" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="steps-list mb-4">
+                    <div class="mb-4 steps-list">
                         <div class="wizard-inner">
                             <a class="tab-steps active" href="#"><span class="round-tab">1</span> <i>Step 1</i></a>
                             <a class="tab-steps" href="#"><span class="round-tab">2</span> <i>Step 2</i></a>
@@ -1370,14 +1370,14 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <div class="tab-main-box">
                         <div class="step-tab-box nutrition-form" id="div1" style="display: block;">
                             <div class="card">
-                                <div class="p-3 card-header bg-white">
+                                <div class="bg-white p-3 card-header">
                                 <div class="d-flex align-items-center">
                                     <h5 class="m-0">1. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">carbohydrate</strong>? <span>(Select one answer per food)</span></h5>
-                                    <span class="ms-2 general-error-message text-danger"> </span>
+                                    <span class="ms-2 text-danger general-error-message"> </span>
                                 </div>
                                     <input type="hidden" name="questions[nutrition-Q-1]" value="Do you think these foods are high or low in carbohydrate?" />
                                 </div>
-                                <div class="card-body p-0">
+                                <div class="p-0 card-body">
                                     <div class="table-responsive">
                                         <table class="table m-0">
                                             <thead>
@@ -1489,22 +1489,22 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </table>
                                     </div>
                                 </div>
-                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="2">Next</button>
+                                <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                    <button id="next" type="button" class="ms-auto btn btn-primary showStepTab" target="2">Next</button>
                                 </div>
                             </div>
                         </div>
                         <div class="step-tab-box nutrition-form" id="div2" style="display: block;">
                             <div class="card">
-                                <div class="p-3 card-header bg-white">
+                                <div class="bg-white p-3 card-header">
                                     <div class="d-flex align-items-center">
                                         <h5 class="m-0">2. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">protein</strong>?
                                         <span>(Select one answer per food)</span></h5>
-                                        <span class="ms-2 general-error-message text-danger"> </span>
+                                        <span class="ms-2 text-danger general-error-message"> </span>
                                     </div>
                                     <input type="hidden" name="questions[nutrition-Q-2]" value="Do you think these foods are high or low in protein?" />
                                 </div>
-                                <div class="card-body p-0">
+                                <div class="p-0 card-body">
                                     <div class="table-responsive">
                                         <table class="table">
                                             <thead>
@@ -1575,23 +1575,23 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </table>
                                     </div>
                                 </div>
-                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="1" >Back</button>
-                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="3">Next</button>
+                                <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                    <button id="prev" type="button" class="me-auto btn btn-secondary showStepTab" target="1" >Back</button>
+                                    <button id="next" type="button" class="ms-auto btn btn-primary showStepTab" target="3">Next</button>
                                 </div>
                             </div>
                         </div>
                         <div class="step-tab-box nutrition-form" id="div3" style="display: block;">
                             <div class="card">
-                                <div class="p-3 card-header bg-white">
+                                <div class="bg-white p-3 card-header">
                                     <div class="d-flex align-items-center">
                                         <h5 class="m-0">3. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">fat</strong>?
                                         <span>(Select one answer per food)</span></h5>
-                                        <span class="ms-2 general-error-message text-danger"> </span>
+                                        <span class="ms-2 text-danger general-error-message"> </span>
                                         <input type="hidden" name="questions[nutrition-Q-3]" value="Do you think these foods are high or low in fat?" />
                                     </div>
                                 </div>
-                                <div class="card-body p-0">
+                                <div class="p-0 card-body">
                                     <div class="table-responsive">
                                         <table class="table">
                                         <thead>
@@ -1721,22 +1721,22 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </table>
                                     </div>
                                 </div>
-                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="2" >Back</button>
-                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="4">Next</button>
+                                <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                    <button id="prev" type="button" class="me-auto btn btn-secondary showStepTab" target="2" >Back</button>
+                                    <button id="next" type="button" class="ms-auto btn btn-primary showStepTab" target="4">Next</button>
                                 </div>
                             </div>
                         </div>
                         <div class="step-tab-box nutrition-form" id="div4" style="display: none;">
                             <div class="card">
-                                <div class="p-3 card-header bg-white">
+                                <div class="bg-white p-3 card-header">
                                 <div class="d-flex align-items-center">
                                     <h5 class="m-0">4. Do you think these foods are <strong class="text-primary">high</strong> or <strong class="text-primary">low</strong> in <strong class="text-primary">healthy fats</strong>? <span>(Select one answer per food)</span></h5>
-                                    <span class="ms-2 general-error-message text-danger"> </span>
+                                    <span class="ms-2 text-danger general-error-message"> </span>
                                 </div>
                                     <input type="hidden" name="questions[nutrition-Q-4]" value="Do you think these foods are high or low in healthy fat?" />
                                 </div>
-                                <div class="card-body p-0">
+                                <div class="p-0 card-body">
                                     <div class="table-responsive">
                                         <table class="table">
                                             <thead>
@@ -1795,27 +1795,27 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </table>
                                     </div>
                                 </div>
-                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="3" >Back</button>
-                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="5" >Next</button>
+                                <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                    <button id="prev" type="button" class="me-auto btn btn-secondary showStepTab" target="3" >Back</button>
+                                    <button id="next" type="button" class="ms-auto btn btn-primary showStepTab" target="5" >Next</button>
                                 </div>
                             </div>
                         </div>
                         <div class="step-tab-box nutrition-form" id="div5" style="display: none;">
                             <div class="card">
                                 <div class="card">
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                     <div class="d-flex align-items-center">
                                         <h5 class="m-0">5. Which of these foods has the most iron?</h5>
-                                        <span class="ms-2 general-error-message text-danger"> </span>
+                                        <span class="ms-2 text-danger general-error-message"> </span>
                                         </div>
                                         <input type="hidden" name="questions[nutrition-Q-5]" value="Which of these foods has the most iron?" />
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="row px-2">
+                                    <div class="p-0 card-body">
+                                        <div class="px-2 row">
                                             <!-- First Row -->
                                             <div class="col-md-4">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="food1">
                                                     <label class="form-check-label" for="food1">
                                                         Spinach, cooked, 1/2 cup
@@ -1823,7 +1823,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="food2">
                                                     <label class="form-check-label" for="food2">
                                                         Brown rice, cooked, 1 cup
@@ -1831,7 +1831,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="1" id="food3">
                                                     <label class="form-check-label" for="food3">
                                                         Grilled steak, 130g
@@ -1839,10 +1839,10 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row px-2">
+                                        <div class="px-2 row">
                                             <!-- Second Row -->
                                             <div class="col-md-4">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="food4">
                                                     <label class="form-check-label" for="food4">
                                                         Tuna, small tin, 90g
@@ -1850,7 +1850,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="food5">
                                                     <label class="form-check-label" for="food5">
                                                         Almonds/cashews, ~30 nuts
@@ -1858,7 +1858,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[nutrition-Q-5][food_most_iron]" value="0" id="food6">
                                                     <label class="form-check-label" for="food6">
                                                         Unsure
@@ -1868,12 +1868,12 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
                                     <!-- Question 6 -->
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                         <h5 class="m-0">6. Approximately how many decisions do we make every day about what we eat? </h5>
                                         <input type="hidden" name="questions[nutrition-Q-6]" value="Approximately how many decisions do we make every day about what we eat?" />
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="row px-2 align-items-center">
+                                    <div class="p-0 card-body">
+                                        <div class="align-items-center px-2 row">
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="decision1" name="ans[nutrition-Q-6][every_day_decisions_eat]">
@@ -1908,12 +1908,12 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                     </div>
 
                                     <!-- Question 7 -->
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                         <h5 class="m-0">7. Which of the following is NOT a 'Macronutrient'? </h5>
                                         <input type="hidden" name="questions[nutrition-Q-7]" value="Which of the following is NOT a 'Macronutrient'?" />
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="row px-2 align-items-center">
+                                    <div class="p-0 card-body">
+                                        <div class="align-items-center px-2 row">
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" value="1" data-option="Correct" data-correct="1" id="Macronutrien1" name="ans[nutrition-Q-7][macronutrient]">
@@ -1953,12 +1953,12 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
                                     <!-- Question 8 -->
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                         <h5 class="m-0">8. Which of these foods has the most calcium? </h5>
                                         <input type="hidden" name="questions[nutrition-Q-8]" value="Which of these foods has the most calcium?" />
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="row px-2 align-items-center">
+                                    <div class="p-0 card-body">
+                                        <div class="align-items-center px-2 row">
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="calciu1" name="ans[nutrition-Q-8][most_calcium]">
@@ -1993,12 +1993,12 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                     </div>
 
                                     <!-- Question 9 -->
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                         <h5 class="m-0">9. Which of these foods has the most fibre? </h5>
                                         <input type="hidden" name="questions[nutrition-Q-9]" value="Which of these foods has the most fibre?" />
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="row px-2 align-items-center">
+                                    <div class="p-0 card-body">
+                                        <div class="align-items-center px-2 row">
                                             <div class="form-floating my-3 col">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" value="0" data-option="Wrong" data-correct="0" id="fibre1" name="ans[nutrition-Q-9][most_fibre]">
@@ -2032,40 +2032,40 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
 
-                                    <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                        <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="4">Back</button>
-                                        <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="6">Next</button>
+                                    <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                        <button id="prev" type="button" class="me-auto btn btn-secondary showStepTab" target="4">Back</button>
+                                        <button id="next" type="button" class="ms-auto btn btn-primary showStepTab" target="6">Next</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="step-tab-box sports-form" id="div6" style="display: none;">
                             <div class="card">
-                                <div class="p-3 card-header bg-white">
+                                <div class="bg-white p-3 card-header">
                                     <div class="d-flex align-items-center">
                                         <h5 class="m-0">1. Compared to a non-athlete, how much total protein (per day) can an athlete need?</h5>
                                         <span class="text-danger general-error-message"></span>
                                     </div>
                                     <input type="hidden" name="questions[sports-nutrition-Q-1]" value="Compared to a non-athlete, how much total protein (per day) can an athlete need?" />
                                 </div>
-                                <div class="card-body p-0">
-                                    <div class="row px-2">
+                                <div class="p-0 card-body">
+                                    <div class="px-2 row">
                                         <div class="col-md-6">
                                             <!-- Left Column -->
                                             <div class="form-floating my-3">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein1" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="protein1">
                                                         A very similar amount
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="1" id="protein2" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="protein2">
                                                         Up to 2 times (2x) more
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein3" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="protein3">
                                                         3-4 times (3-4x) more
@@ -2076,13 +2076,13 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         <div class="col-md-6">
                                             <!-- Right Column -->
                                             <div class="form-floating my-3">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein4" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="protein4">
                                                         5 times (5x) more
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-1]" value="0" id="protein5" data-option="Unsure" data-correct="0">
                                                     <label class="form-check-label" for="protein5">
                                                         Unsure
@@ -2091,27 +2091,27 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                         <h5 class="m-0">2. Which of the following are signs that you are not eating enough to meet your training needs? </h5>
                                         <input type="hidden" name="questions[sports-nutrition-Q-2]" value="Which of the following are signs that you are not eating enough to meet your training needs?" />
                                     </div>
-                                    <div class="row px-2">
+                                    <div class="px-2 row">
                                         <!-- Left Column -->
                                         <div class="col-md-6">
                                             <div class="form-floating my-3">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed1" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed1">
                                                         Loss of appetite
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed2" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed2">
                                                         More injuries and/or illness
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed3" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed3">
                                                         Poor performance or recovery
@@ -2122,19 +2122,19 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         <!-- Right Column -->
                                         <div class="col-md-6">
                                             <div class="form-floating my-3">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed4" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed4">
                                                         Weight loss
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="checkbox" value="1" name="ans[sports-nutrition-Q-2][]" id="diagnosed5" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="diagnosed5">
                                                         Menstrual cycle changes (if not on the pill)
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="checkbox" value="0" name="ans[sports-nutrition-Q-2][]" id="diagnosed6" data-option="Unsure" data-correct="0">
                                                     <label class="form-check-label" for="diagnosed6">
                                                         Unsure
@@ -2143,27 +2143,27 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                         <h5 class="m-0">3. On a heavy training day (training twice a day or high-intensity workouts) which foods should be increased? </h5>
                                         <input type="hidden" name="questions[sports-nutrition-Q-3]" value="On a heavy training day (training twice a day or high-intensity workouts) which foods should be increased?" />
                                     </div>
-                                    <div class="row px-2">
+                                    <div class="px-2 row">
                                         <!-- Left Column -->
                                         <div class="col-md-6">
                                             <div class="form-floating my-3">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest1" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest1">
                                                         Protein-based foods like dairy, eggs, meat, tofu
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest2" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest2">
                                                         Take away foods
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest3" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest3">
                                                         Lollies, chips and chocolate bars
@@ -2174,19 +2174,19 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         <!-- Right Column -->
                                         <div class="col-md-6">
                                             <div class="form-floating my-3">
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="1" id="bloodTest4" data-option="Correct" data-correct="1">
                                                     <label class="form-check-label" for="bloodTest4">
                                                         Carbohydrate-based foods like rice, pasta, bread
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest5" data-option="Wrong" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest5">
                                                         Fat-containing foods like avocado, nuts
                                                     </label>
                                                 </div>
-                                                <div class="form-check my-2">
+                                                <div class="my-2 form-check">
                                                     <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-3]" value="0" id="bloodTest6" data-option="Unsure" data-correct="0">
                                                     <label class="form-check-label" for="bloodTest6">
                                                         Unsure
@@ -2196,40 +2196,40 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
                                 </div>
-                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="5" >Back</button>
-                                    <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="7" >Next</button>
+                                <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                    <button id="prev" type="button" class="me-auto btn btn-secondary showStepTab" target="5" >Back</button>
+                                    <button id="next" type="button" class="ms-auto btn btn-primary showStepTab" target="7" >Next</button>
                                 </div>
                             </div>
                         </div>
                         <div class="step-tab-box sports-form" id="div7" style="display: none;">
                             <div class="card">
                                 <div class="card">
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                         <div class="d-flex align-items-center">
                                             <h5 class="m-0">4. What is the most important role for 'Protein' in the body?</h5>
                                             <span class="text-danger general-error-message"></span>
                                         </div>
                                         <input type="hidden" name="questions[sports-nutrition-Q-4]" value="What is the most important role for 'Protein' in the body?" />
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="row px-2">
+                                    <div class="p-0 card-body">
+                                        <div class="px-2 row">
                                             <!-- Question 4 -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="bodyTest1">Fuel for low to moderate intensity exercise</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest2" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="bodyTest2">Fuel for moderate to high intensity exercise</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest3" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="bodyTest3">Delivery of oxygen to muscles</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="1" id="bodyTest4" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="bodyTest4">Muscle growth and repair</label>
                                                     </div>
@@ -2237,19 +2237,19 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest5" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="bodyTest5">A healthy digestive system</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest6" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="bodyTest6">Strong bones</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest7" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="bodyTest7">Hydration</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[sports-nutrition-Q-4]" value="0" id="bodyTest8" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="bodyTest8">Unsure</label>
                                                     </div>
@@ -2258,22 +2258,22 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
 
                                         <!-- Question 5 -->
-                                        <div class="p-3 card-header bg-white">
+                                        <div class="bg-white p-3 card-header">
                                             <h5 class="m-0">5. Which of the following statements about the role of carbohydrates is NOT correct?</h5>
                                             <input type="hidden" name="questions[sports-nutrition-Q-5]" value="Which of the following statements about the role of carbohydrates is NOT correct?" />
                                         </div>
-                                        <div class="row px-2">
+                                        <div class="px-2 row">
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="carbTest1">Support decision making</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest2" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="carbTest2">Helping maintain competition performance levels</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="-1" id="carbTest3" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="carbTest3">Assists fuelling and recovery from training sessions</label>
                                                     </div>
@@ -2281,15 +2281,15 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="1" id="carbTest4" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="carbTest4">Major factor for gaining body fat</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="1" id="carbTest5" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="carbTest5">Increases inflammation in the body</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-5][]" value="0" id="carbTest6" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="carbTest6">Unsure</label>
                                                     </div>
@@ -2298,22 +2298,22 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
 
                                         <!-- Question 6 -->
-                                        <div class="p-3 card-header bg-white">
+                                        <div class="bg-white p-3 card-header">
                                             <h5 class="m-0">6. What main fuels do muscles use during training?</h5>
                                             <input type="hidden" name="questions[sports-nutrition-Q-6]" value="What main fuels do muscles use during training?" />
                                         </div>
-                                        <div class="row px-2">
+                                        <div class="px-2 row">
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="training1">Protein</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="1" id="training2" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="training2">Carbs</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="1" id="training3" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="training3">Fat</label>
                                                     </div>
@@ -2321,15 +2321,15 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training4" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="training4">Iron</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="-1" id="training5" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="training5">Water</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-6][]" value="0" id="training6" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="training6">Unsure</label>
                                                     </div>
@@ -2338,22 +2338,22 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
 
                                         <!-- Question 7 -->
-                                        <div class="p-3 card-header bg-white">
+                                        <div class="bg-white p-3 card-header">
                                             <h5 class="m-0">7. Which statements about iron are correct?</h5>
                                             <input type="hidden" name="questions[sports-nutrition-Q-7]" value="Which statements about iron are correct?" />
                                         </div>
-                                        <div class="row px-2">
+                                        <div class="px-2 row">
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement1" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="statement1">Females need over twice the amount of iron per day as men</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement2" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="statement2">Vegetarian athletes are higher risk of low iron as plants less iron in the food and it's harder to absorb</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="1" id="statement3" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="statement3">Female athletes are higher risk of low iron due to losing extra iron through periods</label>
                                                     </div>
@@ -2361,11 +2361,11 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="-1" id="statement4" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="statement4">Iron deficiency improves over time as the athlete matures</label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[sports-nutrition-Q-7][]" value="0" id="statement5" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="statement5">Unsure</label>
                                                     </div>
@@ -2374,9 +2374,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
 
-                                    <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                        <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="6">Back</button>
-                                        <button id="next" type="button" class="btn btn-primary ms-auto showStepTab" target="8">Next</button>
+                                    <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                        <button id="prev" type="button" class="me-auto btn btn-secondary showStepTab" target="6">Back</button>
+                                        <button id="next" type="button" class="ms-auto btn btn-primary showStepTab" target="8">Next</button>
                                     </div>
                                 </div>
                             </div>
@@ -2386,31 +2386,31 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                         <div class="step-tab-box supplement-form" id="div8" style="display: none;">
                             <div class="card">
                                 <div class="card">
-                                    <div class="p-3 card-header bg-white">
+                                    <div class="bg-white p-3 card-header">
                                         <div class="d-flex align-items-center">
                                             <h5 class="m-0">1. Which of the following statements about 'supplements' are true?</h5>
                                             <span class="text-danger general-error-message"></span>
                                         </div>
                                         <input type="hidden" name="questions[supplements-Q-1]" value="Which of the following statements about 'supplements' are true?" />
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="row px-2">
+                                    <div class="p-0 card-body">
+                                        <div class="px-2 row">
                                             <!-- Left Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="supplements1">
                                                             All athletes should use supplements to perform at their best
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements2" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="supplements2">
                                                             It is not possible to consume enough nutrients through eating food alone (without supplements)
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements3" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="supplements3">
                                                             Athletes should check with a Sports Dietitian before taking supplements
@@ -2421,19 +2421,19 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             <!-- Right Column -->
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" value="1" name="ans[supplements-Q-1][]" id="supplements4" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="supplements4">
                                                             Eating a wide range of foods provides most athletes with the vitamins and minerals they need
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" value="-1" name="ans[supplements-Q-1][]" id="supplements5" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="supplements5">
                                                             Most supplements available in Australia are safe for athletes to use
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" value="0" name="ans[supplements-Q-1][]" id="supplements6" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="supplements6">
                                                             Unsure
@@ -2444,26 +2444,26 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
 
                                         <!-- Question 2 -->
-                                        <div class="p-3 card-header bg-white">
+                                        <div class="bg-white p-3 card-header">
                                             <h5 class="m-0">2. When choosing a supplement, you should?</h5>
                                             <input type="hidden" name="questions[supplements-Q-2]" value="When choosing a supplement, you should?" />
                                         </div>
-                                        <div class="row px-2">
+                                        <div class="px-2 row">
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes1">
                                                             Use supplements used by professional athletes
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes2" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes2">
                                                             Check with a mate for their opinion
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="1" id="athletes3" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="athletes3">
                                                             Choose a product that has had third party batch testing
@@ -2473,19 +2473,19 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes4" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes4">
                                                             Check with a naturopath
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="-1" id="athletes5" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="athletes5">
                                                             Ask staff at the local supplement store
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="radio" name="ans[supplements-Q-2]" value="0" id="athletes6" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="athletes6">
                                                             Unsure
@@ -2496,26 +2496,26 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
 
                                         <!-- Question 3 -->
-                                        <div class="p-3 card-header bg-white">
+                                        <div class="bg-white p-3 card-header">
                                             <h5 class="m-0">3. Regarding vitamin and minerals supplements, which statements are true?</h5>
                                             <input type="hidden" name="questions[supplements-Q-3]" value="Regarding vitamin and minerals supplements, which statements are true?" />
                                         </div>
-                                        <div class="row px-2">
+                                        <div class="px-2 row">
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="vitamin1" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="vitamin1">
                                                             They are safe for all athletes to use
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="1" id="vitamin2" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="vitamin2">
                                                             Can assist athletes to correct a deficiency diagnosed by a Medical professional
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="-1" id="vitamin3" data-option="Wrong" data-correct="0">
                                                         <label class="form-check-label" for="vitamin3">
                                                             Vegetarians and vegans are not at risk of vitamin and mineral deficiences
@@ -2525,13 +2525,13 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating my-3">
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="1" id="vitamin4" data-option="Correct" data-correct="1">
                                                         <label class="form-check-label" for="vitamin4">
                                                             May be recommended for international competition where food variety is limited
                                                         </label>
                                                     </div>
-                                                    <div class="form-check my-2">
+                                                    <div class="my-2 form-check">
                                                         <input class="form-check-input" type="checkbox" name="ans[supplements-Q-3][]" value="0" id="vitamin5" data-option="Unsure" data-correct="0">
                                                         <label class="form-check-label" for="vitamin5">
                                                             Unsure
@@ -2542,9 +2542,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
 
-                                    <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                        <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="7">Back</button>
-                                        <button id="next" type="button" class="btn btn-primary ms-auto submit-free-test">Next</button>
+                                    <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                        <button id="prev" type="button" class="me-auto btn btn-secondary showStepTab" target="7">Back</button>
+                                        <button id="next" type="button" class="ms-auto btn btn-primary submit-free-test">Next</button>
                                     </div>
                                 </div>
                             </div>
@@ -2552,7 +2552,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
                         <div class="step-tab-box" id="div9" style="display: none;">
                             <div class="">
-                                <div class="align-items-center flex-column mb-4 row">
+                                <div class="flex-column align-items-center mb-4 row">
                                     <div class="col-lg-6">
                                         <div class="score-meter-box">
                                             <div class="score-meter-text">
@@ -2573,8 +2573,8 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 </svg>
                                             </span>
                                         </div>
-                                        <h4 class="text-center mt-4">General Nutrition <br>Knowledge</h4>
-                                        <h3 class="text-center mt-1 text-black nutrition-percentage">40%</h3>
+                                        <h4 class="mt-4 text-center">General Nutrition <br>Knowledge</h4>
+                                        <h3 class="mt-1 text-black text-center nutrition-percentage">40%</h3>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="score-meter-main score-meter-locked supplement-plan">
@@ -2611,10 +2611,10 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 </g>
                                                 </svg>
                                             </span>
-                                            <h4 class="text-center mt-4">Supplement Nutrition Knowledge</h4>
-                                            <h3 class="text-center mt-1 text-black supplement-percentage d-none"></h3>
+                                            <h4 class="mt-4 text-center">Supplement Nutrition Knowledge</h4>
+                                            <h3 class="mt-1 text-black text-center supplement-percentage d-none"></h3>
 
-                                            <div class="text-center mt-4">
+                                            <div class="mt-4 text-center">
                                                 <!-- <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="supplement">
                                                     <svg width="21" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="supplement-lock">
                                                         <path d="M8.16667 12.834V8.16732C8.16667 6.62022 8.78125 5.13649 9.87521 4.04253C10.9692 2.94857 12.4529 2.33398 14 2.33398C15.5471 2.33398 17.0308 2.94857 18.1248 4.04253C19.2188 5.13649 19.8333 6.62022 19.8333 8.16732V12.834M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2662,10 +2662,10 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                                 </g>
                                                 </svg>
                                             </span>
-                                            <h4 class="text-center mt-4">Sports Nutrition Knowledge</h4>
-                                            <h3 class="text-center mt-1 text-black sports-percentage d-none"></h3>
+                                            <h4 class="mt-4 text-center">Sports Nutrition Knowledge</h4>
+                                            <h3 class="mt-1 text-black text-center sports-percentage d-none"></h3>
 
-                                            <div class="text-center mt-4">
+                                            <div class="mt-4 text-center">
                                                 <!-- <a href="javascript:void(0);" class="btn btn-dark unlock-result" data-type="sport">
                                                     <svg width="21" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="sport-lock">
                                                         <path d="M8.16667 12.834V8.16732C8.16667 6.62022 8.78125 5.13649 9.87521 4.04253C10.9692 2.94857 12.4529 2.33398 14 2.33398C15.5471 2.33398 17.0308 2.94857 18.1248 4.04253C19.2188 5.13649 19.8333 6.62022 19.8333 8.16732V12.834M5.83333 12.834H22.1667C23.4553 12.834 24.5 13.8787 24.5 15.1673V23.334C24.5 24.6226 23.4553 25.6673 22.1667 25.6673H5.83333C4.54467 25.6673 3.5 24.6226 3.5 23.334V15.1673C3.5 13.8787 4.54467 12.834 5.83333 12.834Z" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2678,16 +2678,16 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-lg-6 align-items-center d-flex flex-column justify-content-center mt-4 mt-lg-0">
+                                    <!-- <div class="d-flex flex-column align-items-center justify-content-center mt-4 mt-lg-0 col-lg-6">
                                         <div>
                                             <div class="d-lg-block text-center">
-                                                <a href="{{ route('front.sub-home-page') }}#sport-plans" class="btn btn-primary d-block">
+                                                <a href="{{ route('front.sub-home-page') }}#sport-plans" class="d-block btn btn-primary">
                                                     Purchase Plan
                                                 </a>
                                             </div>
-                                            <span class="d-block text-center my-2 my-lg-3">OR</span>
+                                            <span class="d-block my-2 my-lg-3 text-center">OR</span>
                                             <div class="d-lg-block text-center">
-                                                <a href="{{ route('front.sample-plan') }}" class="btn btn-primary d-block">
+                                                <a href="{{ route('front.sample-plan') }}" class="d-block btn btn-primary">
                                                     View Sample Plan
                                                 </a>
                                             </div>
@@ -2695,9 +2695,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                     </div> -->
                                 </div>
                                 <div class="nutrition-login-book">
-                                    <div class="card border-0 shadow-none overflow-hidden mt-3 talk-expert-box" style="background:#5e96e8">
-                                        <div class="card-body p-4">
-                                            <div class="p-md-3 row align-items-center">
+                                    <div class="shadow-none mt-3 border-0 overflow-hidden card talk-expert-box" style="background:#5e96e8">
+                                        <div class="p-4 card-body">
+                                            <div class="align-items-center p-md-3 row">
                                                 <div class="col-lg-7">
                                                     <h3>Sports Nutrition Plans</h3>
                                                     <!-- <figure>
@@ -2727,9 +2727,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                     </div>
                                 </div>
                                 <div class="nutrition-login-book">
-                                    <div class="card border-0 shadow-none overflow-hidden mt-3 talk-expert-box" style="background:#6c757d">
-                                        <div class="card-body p-4">
-                                            <div class="p-md-3 row align-items-center">
+                                    <div class="shadow-none mt-3 border-0 overflow-hidden card talk-expert-box" style="background:#6c757d">
+                                        <div class="p-4 card-body">
+                                            <div class="align-items-center p-md-3 row">
                                                 <div class="col-lg-7">
                                                     <h3>Optimise Your Health & Performance</h3>
                                                     <!-- <figure>
@@ -2758,9 +2758,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
                                 </div>
-                                <div class="nutrition-login-book card-body p-0">
-                                    <div class="card border-0 shadow-none overflow-hidden mt-3 talk-expert-box">
-                                        <div class="card-body p-4">
+                                <div class="p-0 nutrition-login-book card-body">
+                                    <div class="shadow-none mt-3 border-0 overflow-hidden card talk-expert-box">
+                                        <div class="p-4 card-body">
                                             <div class="p-md-3 row">
                                                 <div class="col-lg-6">
                                                     <h6>Powered by BioHealth<span>Passport</span></h6>
@@ -2790,9 +2790,9 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                                         </div>
                                     </div>
                                 </div>
-                                <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                    <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab" target="8">Back</button>
-                                    <!-- <button id="next" type="button" class="btn btn-primary ms-auto last-step">Next</button> -->
+                                <div class="d-flex bg-white px-4 py-3 text-end card-footer">
+                                    <button id="prev" type="button" class="me-auto btn btn-secondary showStepTab" target="8">Back</button>
+                                    <!-- <button id="next" type="button" class="ms-auto btn btn-primary last-step">Next</button> -->
                                 </div>
                             </div>
                         </div>
@@ -2861,7 +2861,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                             <label for="userEmail"><strong>Email:</strong></label>
                             <input type="email" id="userEmail" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-3" id="submitUserDetails">Submit</button>
+                        <button type="submit" class="mt-3 btn btn-primary" id="submitUserDetails">Submit</button>
                     </form>
                 </div>
             </div>
@@ -2882,7 +2882,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     <label for="email" class="form-label">Enter your email address</label>
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
+                <button type="submit" class="w-100 btn btn-primary">Send Reset Link</button>
                 </form>
             </div>
             </div>
@@ -2890,16 +2890,16 @@ src="{{ asset('storage/' . $section->image[0]) }}"
     </div> --}}
 
     {{-- <div class="modal" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-top">
+        <div class="modal-dialog-top modal-dialog">
             <div class="modal-content" style="z-index: 1100;">
             <div class="modal-header">
                 <h5 class="modal-title" id="errorModalLabel">Validation Error</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body py-3" id="errorModalBody">
+            <div class="py-3 modal-body" id="errorModalBody">
                 <!-- Error messages will be injected here -->
             </div>
-            <div class="modal-footer mt-0 py-1">
+            <div class="mt-0 py-1 modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             </div>
@@ -2946,7 +2946,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 <label class="terms-label">By continuing, you agree to our <span class="terms-link"
                     onclick="openTermsModal()">Terms.</span></label>
 
-                <button class=" btn-signup" style="margin-top:30px;" onclick="sendOtp()">Continue</button>
+                <button class="btn-signup" style="margin-top:30px;" onclick="sendOtp()">Continue</button>
                 <div class="or-divider">
                     <div class="divider-line"></div>
                     <span class="or-text">OR</span>
@@ -3115,7 +3115,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
                         </label>
                     </div>
-                    <div class="form-group " id="select-sports-id">
+                    <div class="form-group" id="select-sports-id">
                         <div class="input-group">
                             <select name="sportstype" id="sportstype">
                                 <option>Select Sports</option>
@@ -5079,7 +5079,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             handleResize() {
                 const wasMobile = this.isMobile;
                 this.isMobile = window.innerWidth <= 768;
-                this.cardWidth = this.isMobile ? 290 : 400;
+                this.cardWidth = this.isMobile ? 280 : 400;
                 
                 // Only recalculate if mobile state changed
                 if (wasMobile !== this.isMobile) {

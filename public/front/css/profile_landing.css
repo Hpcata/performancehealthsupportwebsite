@@ -303,6 +303,9 @@ body {
     grid-template-columns: repeat(auto-fit, 252px);
     gap: 24px;
 } */
+ .surfing-videos .video-grid{
+    padding-bottom: 5px;
+ }
 .challenges .challenge-cards,
 .surfing-videos .video-grid,
 .training-plan .meal-cards .meals .meal-cards,
@@ -1043,7 +1046,7 @@ body {
 }
 .consult-avatar.overlap1 {
     position: absolute;
-    left: 10%;
+    left: 20px;
 }
 .btn-consult {
     background: #3b82f6;
@@ -2186,6 +2189,9 @@ button:focus,
 }
 .custom-dropdown-menu.show {
     margin-top: 90px !important;
+}
+.custom-dropdown-menu.plan-detail.show {
+    margin-top: 0px !important;
 }
 .custom-dropdown-button:hover {
     border-color: #9ca3af;
