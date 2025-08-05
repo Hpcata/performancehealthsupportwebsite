@@ -217,8 +217,8 @@
                     <div class="about-image-container">
                         <img
                         @if(isset($section->image[0]) && !empty($section->image[0]))
-src="{{ asset('storage/' . $section->image[0]) }}"
-@endif
+                        src="{{ asset('storage/' . $section->image[0]) }}"
+                        @endif
                         alt="Kerry O'Bryan"
                         class="img-fluid about-image"
                         />
