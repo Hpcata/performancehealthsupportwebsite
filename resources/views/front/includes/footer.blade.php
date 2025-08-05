@@ -21,10 +21,10 @@
     </footer>
 @elseif(Route::is('front.sub-home-page'))
     <footer class="footer-bg">
-        <div class="footer-grid container">
+        <div class="footer-grid container-homepage">
             <!-- Left Section: Logo, Tagline, Social, Copyright -->
             <div class="navbar-brand">
-                <img src="{!! frontAssets('images/logo.webp') !!}" alt="ATHLEAT Fuel Logo" />
+                <img src="{!! frontAssets('images/logo.svg') !!}" alt="ATHLEAT Fuel Logo" width="142" height="30"/>
                 <p class="tagline">Be elite - Get Athleat</p>
                 <a href="#" class="mb-auto social-icon">
                     <!-- LinkedIn Icon (using a simple text placeholder for demonstration) -->

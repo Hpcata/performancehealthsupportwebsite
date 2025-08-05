@@ -63,6 +63,7 @@ body {
     flex-wrap: inherit;
     align-items: center;
     justify-content: space-between;
+    padding: 0 !important;
 }
 
 #signupModalathlete .modal-content,
@@ -229,7 +230,7 @@ body {
     pointer-events: all;
 }
 
-.hero-title {
+.hero-title-homepage {
     font-family: "Poppins", sans-serif;
     font-weight: 800;
     font-style: italic;
@@ -248,7 +249,7 @@ body {
     margin-bottom: 12px;
 }
 
-.hero-subtitle {
+.hero-subtitle-homepage {
     color: var(--White, #fff);
     font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -345,6 +346,10 @@ body {
     border-radius: 67.2px;
 }
 
+.chat-widget.desktop-view.mob-hide .chat-avatar {
+    right: 0px;
+}
+
 .chat-widget .chat-bubble {
     background-color: #fff;
     position: relative;
@@ -360,7 +365,7 @@ body {
 
 .chat-widget .bubble-arrow {
     position: absolute;
-    bottom: -16px;
+    bottom: -13px;
     width: 26.5px;
     height: 16.5px;
     right: 10px;
@@ -748,7 +753,7 @@ body {
 .why-it-works-section .feature-icon {
     color: #4a9eff;
     font-size: 2rem;
-    margin-top: -5px;
+    margin-top: 0;
     flex-shrink: 0;
 }
 
@@ -1079,6 +1084,10 @@ body {
     display: none;
 }
 
+.chat-widget.mobile-view.web-hide {
+    display: none;
+}
+
 .sport-nutrition-promo {
     width: 100vw;
     max-width: 100%;
@@ -1185,9 +1194,11 @@ body {
     width: 100%;
     cursor: pointer;
 }
-.sport-nutrition-promo__form select:focus-visible{
-outline: none;  
+
+.sport-nutrition-promo__form select:focus-visible {
+    outline: none;
 }
+
 .sport-nutrition-promo__form select:last-of-type,
 .sport-nutrition-promo__form button:last-of-type {
     border: none;
@@ -2280,12 +2291,14 @@ svg.user-type-icon path {
 }
 
 .quiz-step .food-label {
-    font-family: "Noto Sans";
-    font-size: 12px;
-    font-weight: 500;
+    font-family: "Poppins";
+    font-size: 14px;
+    font-weight: 600;
     color: #374151;
+    font-style: italic;
     display: block;
     margin-top: 4px;
+    margin-bottom: 6px;
     line-height: 1.2;
 }
 
@@ -2407,7 +2420,7 @@ svg.user-type-icon path {
     padding: 12px 16px;
     margin-bottom: 22px;
     color: var(--Blue-700, #1751aa);
-    font-family: Poppins;
+    font-family: "Poppins";
     font-size: 18px;
     font-style: italic;
     font-weight: 600;
@@ -2524,15 +2537,16 @@ svg.user-type-icon path {
 
 .quiz-step .radio-options {
     display: flex;
-    gap: 32px;
-    justify-content: space-between;
+    gap: 6px;
+    justify-content: flex-start;
     flex-wrap: wrap;
+    margin-bottom: 10px;
 }
 
 .quiz-step .radio-option {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 4px;
     padding: 0;
 }
 
@@ -2561,6 +2575,7 @@ svg.user-type-icon path {
 
 .quiz-step .radio-option input[type="radio"]:checked::after {
     content: '';
+    display: none;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -2574,13 +2589,14 @@ svg.user-type-icon path {
 .quiz-step .radio-option label {
     color: #000;
     font-family: Poppins;
-    font-size: 15px;
+    font-size: 12px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
 }
 
 /* phone input*/
+#quizModal .phone-input-container,
 #signupModalathlete .phone-input-container {
     display: flex;
     align-items: center;
@@ -2591,6 +2607,7 @@ svg.user-type-icon path {
     position: relative;
 }
 
+#quizModal .phone-input-container .dropdown-wrapper,
 #signupModalathlete .phone-input-container .dropdown-wrapper {
     display: flex;
     align-items: center;
@@ -2599,6 +2616,7 @@ svg.user-type-icon path {
     position: relative;
 }
 
+#quizModal .phone-input-container .arrow,
 #signupModalathlete .phone-input-container .arrow {
     color: #666;
     transition: transform 0.3s ease;
@@ -2608,15 +2626,18 @@ svg.user-type-icon path {
     height: 8px;
 }
 
+#quizModal .phone-input-container .dropdown-wrapper:hover .arrow,
 #signupModalathlete .phone-input-container .dropdown-wrapper:hover .arrow {
     color: #1751AA;
 }
 
+#quizModal .phone-input-container .dropdown-wrapper.active .arrow,
 #signupModalathlete .phone-input-container .dropdown-wrapper.active .arrow {
     transform: rotate(180deg);
     color: #1751AA;
 }
 
+#quizModal .phone-input-container .phone-input,
 #signupModalathlete .phone-input-container .phone-input {
     border: none;
     outline: none;
@@ -2624,6 +2645,7 @@ svg.user-type-icon path {
     margin-left: 10px;
 }
 
+#quizModal .phone-input-container .dropdown,
 #signupModalathlete .phone-input-container .dropdown {
     position: absolute;
     top: 38px;
@@ -2637,10 +2659,12 @@ svg.user-type-icon path {
     z-index: 1000;
 }
 
+#quizModal .phone-input-container .hidden,
 #signupModalathlete .phone-input-container .hidden {
     display: none;
 }
 
+#quizModal .phone-input-container .dropdown input,
 #signupModalathlete .phone-input-container .dropdown input {
     width: 100%;
     padding: 6px 10px;
@@ -2649,6 +2673,7 @@ svg.user-type-icon path {
     outline: none;
 }
 
+#quizModal .phone-input-container #country-list li,
 #signupModalathlete .phone-input-container #country-list li {
     padding: 8px;
     display: flex;
@@ -2657,6 +2682,7 @@ svg.user-type-icon path {
     cursor: pointer;
 }
 
+#quizModal .phone-input-container #country-list li:hover,
 #signupModalathlete .phone-input-container #country-list li:hover {
     background: #f5f5f5;
 }
@@ -2765,22 +2791,22 @@ svg.user-type-icon path {
 
 #signupModalathlete .age-selection-box .user-type-box {
     border-radius: 6px;
-border: 1px solid var(--Kerry-grey-200, #D8D8D8);
-background: var(--White, #FFF);
-box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
-color: var(--Kerry-grey-500, #626262);
-font-family: "Noto Sans";
-font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: 24px; /* 171.429% */
+    border: 1px solid var(--Kerry-grey-200, #D8D8D8);
+    background: var(--White, #FFF);
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
+    color: var(--Kerry-grey-500, #626262);
+    font-family: "Noto Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    /* 171.429% */
     position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     padding: 10px;
-  
     cursor: pointer;
     transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     flex: 1;
@@ -2789,7 +2815,7 @@ line-height: 24px; /* 171.429% */
 }
 
 #signupModalathlete .age-selection-box .user-type-box.selected {
-border: 2px solid #649EF7;
+    border: 2px solid #649EF7;
 }
 
 #signupModalathlete .age-selection-box .user-type-text.selected {
@@ -2802,6 +2828,100 @@ border: 2px solid #649EF7;
 
 #signupModalathlete #step2 {
     align-items: start;
+}
+
+.homepage-navbar .dropdown-menu.show {
+    margin-top: 0 !important;
+    padding-left: 10px !important;
+}
+
+/* Custom Select Styles */
+.sports-select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.sports-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+    color: #333;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.sports-select:focus {
+    outline: none;
+    border-color: #1751AA;
+}
+
+.sports-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+    width: 12px;
+    height: 8px;
+}
+
+/*add in landing page css file */
+.purchase-plan-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 3;
+}
+
+.purchase-plan-btn {
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 100px;
+    background: linear-gradient(89deg, #4A84DD 1.02%, #83B1F9 99.64%);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease;
+    max-width: 180px;
+    text-align: left;
+}
+
+.fade-full {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: #fff;
+    z-index: 2;
+    opacity: 0.5;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+/*add in landing page css file end*/
+.phone-vertical-line {
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translate(-50%, -63%);
 }
 
 /* ===== MEDIA QUERIES ===== */
@@ -2946,12 +3066,12 @@ border: 2px solid #649EF7;
         max-width: calc(100% - 40px);
     }
 
-    .hero-title {
+    .hero-title-homepage {
         font-size: 48px;
         line-height: 46px;
     }
 
-    .hero-subtitle {
+    .hero-subtitle-homepage {
         font-size: 1rem;
     }
 
@@ -2960,7 +3080,7 @@ border: 2px solid #649EF7;
         margin: 20px 0;
         min-height: 280px;
         overflow: auto;
-        max-height: 420px;
+        max-height: 430px;
     }
 
     .homepage-navbar .navbar-nav .nav-link {
@@ -2970,10 +3090,17 @@ border: 2px solid #649EF7;
     }
 
     .homepage-navbar .dropdown-menu {
-        background: transparent;
-        border: none;
-        border-radius: 8px;
-        padding: 0;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        margin-top: 0 !important;
+    }
+
+    .homepage-navbar .dropdown-menu.show {
+        margin-top: 0 !important;
+        padding-left: 10px !important;
     }
 
     .homepage-navbar .dropdown-item {
@@ -2981,6 +3108,7 @@ border: 2px solid #649EF7;
         font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         padding: 8px 0;
         font-size: 16px;
+        text-align: left;
     }
 
     .navbar-collapse {
@@ -2993,7 +3121,7 @@ border: 2px solid #649EF7;
     }
 
     .homepage-navbar.navbar-custom {
-        background-color: rgba(59, 59, 59, 1);
+        background-color: transparent;
         padding: 16px;
         transition: background-color 0.3s ease;
     }
@@ -3116,7 +3244,6 @@ border: 2px solid #649EF7;
     }
 
     /* Removed conflicting carousel-track rule */
-
     .why-it-works-section .feature-grid {
         grid-template-columns: 1fr;
         gap: 16px;
@@ -3190,6 +3317,10 @@ border: 2px solid #649EF7;
     }
 
     .web-hide {
+        display: block;
+    }
+
+    .chat-widget.mobile-view.web-hide {
         display: block;
     }
 
@@ -3351,12 +3482,12 @@ border: 2px solid #649EF7;
     }
 
     .partners-section .slide-left {
-        animation-duration: 40s;
+        animation-duration: 30s;
         /* Faster on mobile */
     }
 
     .partners-section .slide-right {
-        animation-duration: 40s;
+        animation-duration: 30s;
         /* Faster on mobile */
     }
 
@@ -3553,6 +3684,12 @@ border: 2px solid #649EF7;
 
 /* Mobile (480px and below) */
 @media (max-width: 480px) {
+    .phone-vertical-line {
+        position: absolute;
+        top: 61%;
+        right: 20px;
+        transform: translate(-50%, -63%);
+    }
 
     .btn-signup,
     .btn-white {
@@ -3578,7 +3715,7 @@ border: 2px solid #649EF7;
         padding-bottom: 120px;
     }
 
-    .hero-title {
+    .hero-title-homepage {
         font-size: 36px;
         line-height: 34px;
     }
@@ -3691,6 +3828,10 @@ border: 2px solid #649EF7;
 }
 
 @media (max-width: 400px) {
+    #heroCarouselMobile.carousel {
+        margin-top: -60px;
+    }
+
     .quiz-step .food-grid {
         grid-template-columns: repeat(1, 1fr);
         gap: 12px;
@@ -3739,93 +3880,3 @@ border: 2px solid #649EF7;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: all 0.2s ease;
 }
-
-/* Custom Select Styles */
-.sports-select-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-.sports-select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: white;
-    font-size: 14px;
-    color: #333;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    cursor: pointer;
-}
-
-.sports-select:focus {
-    outline: none;
-    border-color: #1751AA;
-}
-
-.sports-arrow {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-    transition: transform 0.3s ease;
-    pointer-events: none;
-    width: 12px;
-    height: 8px;
-}
-
-/*add in landing page css file */
-
-.purchase-plan-overlay {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 3;
-  }
-  .purchase-plan-btn {
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border-radius: 100px;
-    background: linear-gradient(89deg, #4A84DD 1.02%, #83B1F9 99.64%);
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
-    transition: all 0.2s ease;
-    max-width: 180px;
-    text-align: left;
-  }
-  .fade-full {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    background: #fff;
-    z-index: 2;
-    opacity: 0.5;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
-    transition: all 0.2s ease;
-    text-align: left;
-  }
-  /*add in landing page css file end*/
-
-
-
-  .phone-vertical-line{
-    position: absolute;
-    top: 50%;
-    right: 40px;
-    transform: translate(-50%, -63%);
-  }
