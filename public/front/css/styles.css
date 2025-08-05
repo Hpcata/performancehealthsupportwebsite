@@ -63,6 +63,7 @@ body {
     flex-wrap: inherit;
     align-items: center;
     justify-content: space-between;
+    padding: 0 !important;
 }
 
 #signupModalathlete .modal-content,
@@ -2834,6 +2835,95 @@ svg.user-type-icon path {
     padding-left: 10px !important;
 }
 
+/* Custom Select Styles */
+.sports-select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.sports-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+    color: #333;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.sports-select:focus {
+    outline: none;
+    border-color: #1751AA;
+}
+
+.sports-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+    width: 12px;
+    height: 8px;
+}
+
+/*add in landing page css file */
+.purchase-plan-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 3;
+}
+
+.purchase-plan-btn {
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 100px;
+    background: linear-gradient(89deg, #4A84DD 1.02%, #83B1F9 99.64%);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease;
+    max-width: 180px;
+    text-align: left;
+}
+
+.fade-full {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: #fff;
+    z-index: 2;
+    opacity: 0.5;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+/*add in landing page css file end*/
+.phone-vertical-line {
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translate(-50%, -63%);
+}
+
 /* ===== MEDIA QUERIES ===== */
 @media (min-width: 1200px) {
     .testimonial-section .container {
@@ -3031,7 +3121,7 @@ svg.user-type-icon path {
     }
 
     .homepage-navbar.navbar-custom {
-        background-color: rgba(59, 59, 59, 1);
+        background-color: transparent;
         padding: 16px;
         transition: background-color 0.3s ease;
     }
@@ -3738,7 +3828,7 @@ svg.user-type-icon path {
 }
 
 @media (max-width: 400px) {
-    .carousel {
+    #heroCarouselMobile.carousel {
         margin-top: -60px;
     }
 
@@ -3789,93 +3879,4 @@ svg.user-type-icon path {
     gap: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: all 0.2s ease;
-}
-
-/* Custom Select Styles */
-.sports-select-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-.sports-select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: white;
-    font-size: 14px;
-    color: #333;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    cursor: pointer;
-}
-
-.sports-select:focus {
-    outline: none;
-    border-color: #1751AA;
-}
-
-.sports-arrow {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-    transition: transform 0.3s ease;
-    pointer-events: none;
-    width: 12px;
-    height: 8px;
-}
-
-/*add in landing page css file */
-.purchase-plan-overlay {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 3;
-}
-
-.purchase-plan-btn {
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border-radius: 100px;
-    background: linear-gradient(89deg, #4A84DD 1.02%, #83B1F9 99.64%);
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
-    transition: all 0.2s ease;
-    max-width: 180px;
-    text-align: left;
-}
-
-.fade-full {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    background: #fff;
-    z-index: 2;
-    opacity: 0.5;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
-    transition: all 0.2s ease;
-    text-align: left;
-}
-
-/*add in landing page css file end*/
-.phone-vertical-line {
-    position: absolute;
-    top: 50%;
-    right: 40px;
-    transform: translate(-50%, -63%);
 }

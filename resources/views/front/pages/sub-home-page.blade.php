@@ -417,7 +417,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
                                             <div class="feature-item">
                                                 <div class="feature-icon">
-                                                      <img src="{{ frontAssets('images/gift.svg') }}" width="28" height="28" alt="gift" />
+                                                      <img src="{{ frontAssets('images/Gift.svg') }}" width="28" height="28" alt="gift" />
                                                 </div>
                                                 <div class="feature-content">
                                                     <h3>Challenges and Rewards</h3>
@@ -514,7 +514,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
                                             <div class="feature-item">
                                                 <div class="feature-icon">
-                                                <img src="{{ frontAssets('images/gift.svg') }}" width="25" height="33" alt="bulb" />
+                                                <img src="{{ frontAssets('images/Gift.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
                                                     <h3>Rewards That Motivate</h3>
@@ -5001,14 +5001,14 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
         // Remove the old carousel slide event listener and replace with:
         // Smooth navbar background change on scroll
-        window.addEventListener("scroll", function() {
-            const navbar = document.querySelector(".navbar-custom");
-            if (window.scrollY > 50) {
-                navbar.style.background = "rgba(59, 59, 59, 1)";
-            } else {
-                navbar.style.background = "transparent";
-            }
-        });
+        // window.addEventListener("scroll", function() {
+        //     const navbar = document.querySelector(".navbar-custom");
+        //     if (window.scrollY > 50) {
+        //         navbar.style.background = "rgba(59, 59, 59, 1)";
+        //     } else {
+        //         navbar.style.background = "transparent";
+        //     }
+        // });
 
         // Chat widget interaction
         document
@@ -5040,7 +5040,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             }
 
             init() {
-                console.log("🚀 Initializing Full-Width Food Carousel");
+               
 
                 // Calculate how many cards fit in viewport
                 this.calculateVisibleCards();
@@ -5073,7 +5073,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     this.handleResize();
                 });
 
-                console.log("✅ Full-Width Food Carousel initialized");
+               
             }
 
             handleResize() {
@@ -5099,9 +5099,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 const minCards = this.isMobile ? 2 : 3;
                 if (this.visibleCards < minCards) this.visibleCards = minCards;
 
-                console.log(
-                    `📊 Viewport: ${viewportWidth}px, Cards visible: ${this.visibleCards}, Mobile: ${this.isMobile}`
-                );
+                
             }
 
             setupInfiniteLoop() {
@@ -5124,9 +5122,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                 this.cards = Array.from(this.track.children);
                 this.originalCardCount = originalCards.length;
 
-                console.log(
-                    `📋 Original cards: ${this.originalCardCount}, Total with clones: ${this.cards.length}`
-                );
+               
             }
 
             updatePosition(noAnimation = false) {
@@ -5149,17 +5145,15 @@ src="{{ asset('storage/' . $section->image[0]) }}"
                     // Use faster transition for better responsiveness
                     const transitionDuration = this.isMobile ? "0.3s" : "0.25s";
                     this.track.style.transition = `transform ${transitionDuration} ease-in-out`;
-                    console.log(`⚡ Setting transition to: ${transitionDuration}`);
+                   
                 }
 
                 this.track.style.transform = `translateX(${translateX}px)`;
-                console.log(
-                    `🎯 Position: ${translateX}px, Index: ${this.currentIndex}, Mobile: ${this.isMobile}, Visible Cards: ${this.visibleCards}, Card Width: ${cardWidth}`
-                );
+               
             }
 
             next() {
-                console.log("➡️ Next slide");
+              
                 this.currentIndex++;
 
                 // Check if we need to loop
@@ -5176,7 +5170,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             }
 
             prev() {
-                console.log("⬅️ Previous slide");
+             
                 this.currentIndex--;
 
                 // Check if we need to loop
@@ -5195,7 +5189,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
             startAutoSlide() {
                 // Use different timing for mobile vs desktop
                 const interval = this.isMobile ? 1500 : 1200; // 1.5 seconds on mobile, 1.2 on desktop
-                console.log(`⏰ Starting auto-slide (${interval/1000} seconds)`);
+            
                 this.autoSlideInterval = setInterval(() => {
                     this.next();
                 }, interval);
@@ -5210,7 +5204,7 @@ src="{{ asset('storage/' . $section->image[0]) }}"
 
         // Initialize when DOM is ready
         document.addEventListener("DOMContentLoaded", () => {
-            console.log("🌐 DOM loaded, initializing Full-Width Food Carousel");
+           
             
             // Force refresh the carousel if it already exists
             if (window.foodCarousel) {

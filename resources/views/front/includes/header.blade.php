@@ -10,7 +10,7 @@ $auth = auth()->guard('web')->check();
         style=" position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:1999;">
     </div>
     <header class="mobile-header">
-        <img src="{{ frontAssets('images/logo.svg') }}" alt="2LS Logo" class="mobile-logo-img" width="140"
+        <img src="{{ frontAssets('images/logo.svg') }}" alt="athleat logo" class="mobile-logo-img" width="140"
             height="30" />
         <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" onclick="toggleMobileMenu()"
             style="background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;margin: 0 !important;">
@@ -69,8 +69,8 @@ $auth = auth()->guard('web')->check();
     <header class="header">
         <div class="header-content">
             <div class="logo">
-                <img src="{{ frontAssets('images/logo.svg') }}" alt="2LS Logo" class="logo-img" width="190"
-                    height="40" />
+                <img src="{{ frontAssets('images/logo.svg') }}" alt="Athleat Logo" class="logo-img" width="142"
+                    height="30" />
             </div>
             <nav class="nav-center">
                 <span class="nav-item">My Plans</span>
@@ -486,5 +486,14 @@ $auth = auth()->guard('web')->check();
                 navbarToggler.removeAttribute('data-bs-toggle');
                 navbarToggler.removeAttribute('data-bs-target');
             }
+            // Smooth navbar background change on scroll
+        window.addEventListener("scroll", function() {
+            const navbar = document.querySelector(".navbar-custom");
+            if (window.scrollY > 50) {
+                navbar.style.background = "rgba(59, 59, 59, 1)";
+            } else {
+                navbar.style.background = "transparent";
+            }
+        });
         });
 </script>
