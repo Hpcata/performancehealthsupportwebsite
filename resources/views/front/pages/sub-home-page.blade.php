@@ -217,8 +217,8 @@
                     <div class="about-image-container">
                         <img
                         @if(isset($section->image[0]) && !empty($section->image[0]))
-src="{{ asset('storage/' . $section->image[0]) }}"
-@endif
+                            src="{{ asset('storage/' . $section->image[0]) }}"
+                        @endif
                         alt="Kerry O'Bryan"
                         class="img-fluid about-image"
                         />
@@ -3300,36 +3300,36 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         </div>
     </div>
 
-  <!-- Terms Modal -->
-  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="termsModalLabel">Mobile Terms</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Terms Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="termsModalLabel">Mobile Terms</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <div class="terms-content">
+                <p>When you give us your mobile number, you're helping us make sign-in quick, secure, and password-free.</p>
+                <p>We'll never sell your number to anyone, and we won't share it with third-party marketers.</p>
+                <p><strong>We may use your number to:</strong></p>
+                <ul>
+                <li>Send one-time PINs for secure login</li>
+                <li>Text you important reminders, updates, or new features</li>
+                <li>Occasionally share helpful tips or offers (you can opt out anytime)</li>
+                <li>Invite you to optional chat groups (like Virtual Kerry on WhatsApp) to get support, submit meal pics,
+                    or learn more</li>
+                </ul>
+                You're always in control — opt out any time via your privacy settings. We're here to support your
+                performance, not spam your phone.💪
+            </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body">
-          <div class="terms-content">
-            <p>When you give us your mobile number, you're helping us make sign-in quick, secure, and password-free.</p>
-            <p>We'll never sell your number to anyone, and we won't share it with third-party marketers.</p>
-            <p><strong>We may use your number to:</strong></p>
-            <ul>
-              <li>Send one-time PINs for secure login</li>
-              <li>Text you important reminders, updates, or new features</li>
-              <li>Occasionally share helpful tips or offers (you can opt out anytime)</li>
-              <li>Invite you to optional chat groups (like Virtual Kerry on WhatsApp) to get support, submit meal pics,
-                or learn more</li>
-            </ul>
-            You're always in control — opt out any time via your privacy settings. We're here to support your
-            performance, not spam your phone.💪
-          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
-  </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -5386,65 +5386,65 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         });
     </script>
 
-<script>
-    // Countries data
-    const countries = [
-      { name: "Australia", code: "au", dial_code: "+61" },
-      { name: "India", code: "in", dial_code: "+91" },
-      // Add more countries as needed
-    ];
+    <script>
+        // Countries data
+        const countries = [
+        { name: "Australia", code: "au", dial_code: "+61" },
+        { name: "India", code: "in", dial_code: "+91" },
+        // Add more countries as needed
+        ];
 
-    const listElement = document.getElementById("country-list");
-    const dropdown = document.getElementById("dropdown");
-    const searchInput = document.getElementById("search-input");
-    const selectedFlag = document.getElementById("selected-flag");
-    const selectedCode = document.getElementById("selected-code");
+        const listElement = document.getElementById("country-list");
+        const dropdown = document.getElementById("dropdown");
+        const searchInput = document.getElementById("search-input");
+        const selectedFlag = document.getElementById("selected-flag");
+        const selectedCode = document.getElementById("selected-code");
 
-    function createCountryItem(country) {
-      const li = document.createElement("li");
-      li.innerHTML = `<span class="fi fi-${country.code}"></span> ${country.name} (${country.dial_code})`;
-      li.onclick = () => selectCountry(country);
-      return li;
-    }
+        function createCountryItem(country) {
+            const li = document.createElement("li");
+            li.innerHTML = `<span class="fi fi-${country.code}"></span> ${country.name} (${country.dial_code})`;
+            li.onclick = () => selectCountry(country);
+            return li;
+        }
 
-    function populateCountries(list = countries) {
-      listElement.innerHTML = "";
-      list.forEach(c => listElement.appendChild(createCountryItem(c)));
-    }
+        function populateCountries(list = countries) {
+            listElement.innerHTML = "";
+            list.forEach(c => listElement.appendChild(createCountryItem(c)));
+        }
 
-    function toggleDropdown() {
-      dropdown.classList.toggle("hidden");
-      const dropdownWrapper = document.querySelector('.dropdown-wrapper');
-      dropdownWrapper.classList.toggle("active");
-    }
+        function toggleDropdown() {
+            dropdown.classList.toggle("hidden");
+            const dropdownWrapper = document.querySelector('.dropdown-wrapper');
+            dropdownWrapper.classList.toggle("active");
+        }
 
-    function selectCountry(country) {
-      selectedFlag.className = `fi fi-${country.code}`;
-      selectedCode.textContent = country.dial_code;
-      dropdown.classList.add("hidden");
-      const dropdownWrapper = document.querySelector('.dropdown-wrapper');
-      dropdownWrapper.classList.remove("active");
-    }
+        function selectCountry(country) {
+            selectedFlag.className = `fi fi-${country.code}`;
+            selectedCode.textContent = country.dial_code;
+            dropdown.classList.add("hidden");
+            const dropdownWrapper = document.querySelector('.dropdown-wrapper');
+            dropdownWrapper.classList.remove("active");
+        }
 
-    function filterCountries(query) {
-      const filtered = countries.filter(c =>
-        c.name.toLowerCase().includes(query.toLowerCase()) ||
-        c.dial_code.includes(query)
-      );
-      populateCountries(filtered);
-    }
+        function filterCountries(query) {
+            const filtered = countries.filter(c =>
+                c.name.toLowerCase().includes(query.toLowerCase()) ||
+                c.dial_code.includes(query)
+            );
+            populateCountries(filtered);
+        }
 
-    // Initialize
-    populateCountries();
+        // Initialize
+        populateCountries();
 
-    // Live search
-    searchInput.addEventListener("input", e => filterCountries(e.target.value));
+        // Live search
+        searchInput.addEventListener("input", e => filterCountries(e.target.value));
 
-    // Terms modal functionality
-    function openTermsModal() {
-      const termsModal = new bootstrap.Modal(document.getElementById('termsModal'));
-      termsModal.show();
-    }
+        // Terms modal functionality
+        function openTermsModal() {
+            const termsModal = new bootstrap.Modal(document.getElementById('termsModal'));
+            termsModal.show();
+        }
 
         // Coming soon tooltip functionality
         function showComingSoonTooltip(button, platform) {
@@ -5480,119 +5480,119 @@ src="{{ asset('storage/' . $section->image[0]) }}"
         // Add CSS for tooltip
         const tooltipStyle = document.createElement('style');
         tooltipStyle.textContent = `
-      .coming-soon-tooltip {
-        background-color: #333;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        animation: tooltipFadeIn 0.3s ease-out;
-        white-space: nowrap;
-      }
-      
-      .coming-soon-tooltip::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 6px solid transparent;
-        border-top-color: #333;
-      }
-      
-      @keyframes tooltipFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
+        .coming-soon-tooltip {
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: tooltipFadeIn 0.3s ease-out;
+            white-space: nowrap;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        
+        .coming-soon-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #333;
         }
-      }
-    `;
+        
+        @keyframes tooltipFadeIn {
+            from {
+            opacity: 0;
+            transform: translateY(10px);
+            }
+            to {
+            opacity: 1;
+            transform: translateY(0);
+            }
+        }
+        `;
         document.head.appendChild(tooltipStyle);
 
-    // Step navigation functionality
-    function showStep(stepNumber) {
-      // Hide all steps
-      for (let i = 1; i <= 4; i++) {
-        const step = document.getElementById(`step${i}`);
-        if (step) {
-          step.style.display = 'none';
-        }
-      }
-
-      // Show the requested step
-      const currentStep = document.getElementById(`step${stepNumber}`);
-      if (currentStep) {
-        currentStep.style.display = 'flex';
-      }
-    }
-
-    function closeModal() {
-      const modal = bootstrap.Modal.getInstance(document.getElementById('signupModalathlete'));
-      if (modal) {
-        modal.hide();
-      }
-      // Reset to step 1 when modal is closed
-      setTimeout(() => {
-        showStep(1);
-      }, 300);
-    }
-
-    // Radio button functionality using event delegation
-    document.addEventListener('change', function (event) {
-      // Handle user type radio buttons
-      if (event.target.name === 'userType') {
-        // Remove selected class from all user type boxes
-        document.querySelectorAll('#user-type-section-id .user-type-box').forEach(box => {
-          box.classList.remove('selected');
-        });
-        // Add selected class to the parent of the checked radio
-        if (event.target.checked) {
-          event.target.closest('#user-type-section-id .user-type-box').classList.add('selected');
-        }
-      }
-
-      // Handle age range radio buttons
-      if (event.target.name === 'ageRange') {
-        // Remove selected class from all age boxes
-        document.querySelectorAll('#age-groups-id .age-box').forEach(box => {
-          box.classList.remove('selected');
-        });
-        // Add selected class to the parent of the checked radio
-        if (event.target.checked) {
-          event.target.closest('#age-groups-id .age-box').classList.add('selected');
-        }
-      }
-    });
-
-    // Debug: Add click handlers to age boxes as backup
-    document.addEventListener('click', function (event) {
-      if (event.target.closest('.age-box')) {
-        const ageBox = event.target.closest('.age-box');
-        const radio = ageBox.querySelector('input[type="radio"]');
-        if (radio) {
-          radio.checked = true;
-          // Trigger change event
-          radio.dispatchEvent(new Event('change'));
-        }
-      }
-    });
-
-    $(document).ready(function() {
-        $('#user-type-section-id .user-type-box').click(function() {
-            if($(this).find('input[type="radio"]').val() == 'athlete') {
-                $('#age-groups-id').show();
-                $('#select-sports-id').show();
-            } else {
-                $('#age-groups-id').hide();
-                $('#select-sports-id').hide();
+        // Step navigation functionality
+        function showStep(stepNumber) {
+            // Hide all steps
+            for (let i = 1; i <= 4; i++) {
+                const step = document.getElementById(`step${i}`);
+                if (step) {
+                step.style.display = 'none';
+                }
             }
+
+            // Show the requested step
+            const currentStep = document.getElementById(`step${stepNumber}`);
+            if (currentStep) {
+                currentStep.style.display = 'flex';
+            }
+        }
+
+        function closeModal() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('signupModalathlete'));
+            if (modal) {
+                modal.hide();
+            }
+            // Reset to step 1 when modal is closed
+            setTimeout(() => {
+                showStep(1);
+            }, 300);
+        }
+
+        // Radio button functionality using event delegation
+        document.addEventListener('change', function (event) {
+        // Handle user type radio buttons
+        if (event.target.name === 'userType') {
+            // Remove selected class from all user type boxes
+            document.querySelectorAll('#user-type-section-id .user-type-box').forEach(box => {
+            box.classList.remove('selected');
+            });
+            // Add selected class to the parent of the checked radio
+            if (event.target.checked) {
+            event.target.closest('#user-type-section-id .user-type-box').classList.add('selected');
+            }
+        }
+
+        // Handle age range radio buttons
+        if (event.target.name === 'ageRange') {
+            // Remove selected class from all age boxes
+            document.querySelectorAll('#age-groups-id .age-box').forEach(box => {
+            box.classList.remove('selected');
+            });
+            // Add selected class to the parent of the checked radio
+            if (event.target.checked) {
+            event.target.closest('#age-groups-id .age-box').classList.add('selected');
+            }
+        }
         });
-    });
-  </script>
+
+        // Debug: Add click handlers to age boxes as backup
+        document.addEventListener('click', function (event) {
+        if (event.target.closest('.age-box')) {
+            const ageBox = event.target.closest('.age-box');
+            const radio = ageBox.querySelector('input[type="radio"]');
+            if (radio) {
+            radio.checked = true;
+            // Trigger change event
+            radio.dispatchEvent(new Event('change'));
+            }
+        }
+        });
+
+        $(document).ready(function() {
+            $('#user-type-section-id .user-type-box').click(function() {
+                if($(this).find('input[type="radio"]').val() == 'athlete') {
+                    $('#age-groups-id').show();
+                    $('#select-sports-id').show();
+                } else {
+                    $('#age-groups-id').hide();
+                    $('#select-sports-id').hide();
+                }
+            });
+        });
+    </script>
 @endsection
