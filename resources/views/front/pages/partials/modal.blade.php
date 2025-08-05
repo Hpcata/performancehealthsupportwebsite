@@ -1,4 +1,67 @@
 <!-- Nutrition Quiz Modal -->
+<style>
+    /* Radio button container positioning */
+    .radio-button-container {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+    }
+
+    /* Hide default radio button */
+    .radio-button-container input[type="radio"] {
+        display: none;
+    }
+
+    /* Custom radio button styling */
+    .radio-label {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 2px solid #ddd;
+        border-radius: 50%;
+        background-color: white;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    /* Radio button hover effect */
+    .radio-label:hover {
+        border-color: #007bff;
+        transform: scale(1.1);
+    }
+
+    /* Radio button selected state */
+    .radio-button-container input[type="radio"]:checked + .radio-label {
+        border-color: #007bff;
+        background-color: #007bff;
+    }
+
+    /* Radio button selected state inner circle */
+    .radio-button-container input[type="radio"]:checked + .radio-label::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: white;
+    }
+
+    /* Food image container positioning */
+    .food-image-container {
+        position: relative;
+    }
+
+    /* Ensure food items have proper spacing */
+    .food-item {
+        position: relative;
+    }
+</style>
+
 <div class="modal fade" id="quizModal" tabindex="-1" aria-labelledby="quizModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
@@ -32,8 +95,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <button class="btn btn-signup next-step-btn" id="start-quiz-btn" data-next="2"
+                                    <button class="btn-signup" id="start-quiz-btn" data-next="2"
                                         style="width:100%;">Let's go!</button>
+                                    <button class="btn btn-outline-secondary" id="start-over-btn"
+                                        style="width:100%; margin-top: 10px; display: none;">Start Over</button>
                                 </div>
                             </div>
                         </div>
@@ -41,83 +106,205 @@
                         <!-- Step 1: Carbohydrate Selection -->
                         <div class="quiz-step" id="step-2" data-step="2" style="display: none;">
                             <div class="quiz-step-header">
-                                <h3 class="step-title">STEP 1/6</h3>
-                                <div class="step-instruction">Select the foods that are high in
-                                    <strong>carbohydrate.</strong>
+                                <h3 class="step-title">STEP 1/8</h3>
+                                <div class="step-instruction">Do you think these foods are high or low in
+                                    carbohydrate? (Select one answer per food)
                                 </div>
                             </div>
 
                             <div class="food-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/1.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="carb-chicken">
-                                        <label for="carb-chicken" class="food-label">Chicken</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/1.webp') }}"
+                                                alt="Chicken" class="" /></div>
+                                        <div class="food-label">Chicken</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-chicken-high" name="carb-chicken"
+                                                    value="high">
+                                                <label for="carb-chicken-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-chicken-low" name="carb-chicken"
+                                                    value="low">
+                                                <label for="carb-chicken-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-chicken-unsure" name="carb-chicken"
+                                                    value="unsure">
+                                                <label for="carb-chicken-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/2.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="carb-beans">
-                                        <label for="carb-beans" class="food-label">Baked beans</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/2.webp') }}"
+                                                alt="Baked beans" class="" /></div>
+                                        <div class="food-label">Baked beans</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-bakedbeans-high" name="carb-bakedbeans"
+                                                    value="high">
+                                                <label for="carb-bakedbeans-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-bakedbeans-low" name="carb-bakedbeans"
+                                                    value="low">
+                                                <label for="carb-bakedbeans-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-bakedbeans-unsure"
+                                                    name="carb-bakedbeans" value="unsure">
+                                                <label for="carb-bakedbeans-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/3.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="carb-bread">
-                                        <label for="carb-bread" class="food-label">Grain bread</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/3.webp') }}"
+                                                alt="Grain bread" class="" /></div>
+                                        <div class="food-label">Grain bread</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-grainbread-high" name="carb-grainbread"
+                                                    value="high">
+                                                <label for="carb-grainbread-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-grainbread-low" name="carb-grainbread"
+                                                    value="low">
+                                                <label for="carb-grainbread-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-grainbread-unsure"
+                                                    name="carb-grainbread" value="unsure">
+                                                <label for="carb-grainbread-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/4.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="carb-avocado">
-                                        <label for="carb-avocado" class="food-label">Avocado</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/4.webp') }}"
+                                                alt="Avocado" class="" /></div>
+                                        <div class="food-label">Avocado</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-avocado-high" name="carb-avocado"
+                                                    value="high">
+                                                <label for="carb-avocado-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-avocado-low" name="carb-avocado"
+                                                    value="low">
+                                                <label for="carb-avocado-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-avocado-unsure" name="carb-avocado"
+                                                    value="unsure">
+                                                <label for="carb-avocado-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/5.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="carb-weetbix">
-                                        <label for="carb-weetbix" class="food-label">Weet-bix</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/5.webp') }}"
+                                                alt="Weet-bix" class="" /></div>
+                                        <div class="food-label">Weet-bix</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-weetbix-high" name="carb-weetbix"
+                                                    value="high">
+                                                <label for="carb-weetbix-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-weetbix-low" name="carb-weetbix"
+                                                    value="low">
+                                                <label for="carb-weetbix-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-weetbix-unsure" name="carb-weetbix"
+                                                    value="unsure">
+                                                <label for="carb-weetbix-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/6.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="carb-yogurt">
-                                        <label for="carb-yogurt" class="food-label">Fruit yogurt</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/6.webp') }}"
+                                                alt="Fruit yogurt" class="" /></div>
+                                        <div class="food-label">Fruit yogurt</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-fruityogurt-high"
+                                                    name="carb-fruityogurt" value="high">
+                                                <label for="carb-fruityogurt-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-fruityogurt-low"
+                                                    name="carb-fruityogurt" value="low">
+                                                <label for="carb-fruityogurt-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-fruityogurt-unsure"
+                                                    name="carb-fruityogurt" value="unsure">
+                                                <label for="carb-fruityogurt-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/7.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="carb-crumpets">
-                                        <label for="carb-crumpets" class="food-label">Crumpets</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/7.webp') }}"
+                                                alt="Crumpets" class="" /></div>
+                                        <div class="food-label">Crumpets</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-crumpets-high" name="carb-crumpets"
+                                                    value="high">
+                                                <label for="carb-crumpets-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-crumpets-low" name="carb-crumpets"
+                                                    value="low">
+                                                <label for="carb-crumpets-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-crumpets-unsure" name="carb-crumpets"
+                                                    value="unsure">
+                                                <label for="carb-crumpets-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/8.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="carb-cream">
-                                        <label for="carb-cream" class="food-label">Cream</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/8.webp') }}"
+                                                alt="Cream" class="" /></div>
+                                        <div class="food-label">Cream</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-cream-high" name="carb-cream"
+                                                    value="high">
+                                                <label for="carb-cream-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-cream-low" name="carb-cream"
+                                                    value="low">
+                                                <label for="carb-cream-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="carb-cream-unsure" name="carb-cream"
+                                                    value="unsure">
+                                                <label for="carb-cream-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="unsure-option">
-                                <label for="carb-unsure" class="unsure-label">Unsure?</label>
-                                <input type="radio" class="unsure-radio" id="carb-unsure" name="carb-unsure">
                             </div>
 
                             <div class="quiz-navigation">
@@ -129,90 +316,229 @@
                         <!-- Step 2: Protein Selection -->
                         <div class="quiz-step" id="step-3" data-step="3" style="display: none;">
                             <div class="quiz-step-header">
-                                <h3 class="step-title">STEP 2/6</h3>
-                                <div class="step-instruction">Select the foods that are high in <strong>protein.</strong></div>
+                                <h3 class="step-title">STEP 2/8</h3>
+                                <div class="step-instruction">Do you think these foods are high or low in protein?
+                                    (Select one answer per food)</div>
                             </div>
 
                             <div class="five-grid food-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/9.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-salmon">
-                                        <label for="protein-salmon" class="food-label">Salmon</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/9.webp') }}"
+                                                alt="Salmon" class="" /></div>
+                                        <div class="food-label">Salmon</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-salmon-high" name="protein-salmon"
+                                                    value="high">
+                                                <label for="protein-salmon-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-salmon-low" name="protein-salmon"
+                                                    value="low">
+                                                <label for="protein-salmon-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-salmon-unsure" name="protein-salmon"
+                                                    value="unsure">
+                                                <label for="protein-salmon-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/2.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-beans">
-                                        <label for="protein-beans" class="food-label">Baked beans</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/2.webp') }}"
+                                                alt="Baked beans" class="" /></div>
+                                        <div class="food-label">Baked beans</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-baked-beans-high"
+                                                    name="protein-baked-beans" value="high">
+                                                <label for="protein-baked-beans-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-baked-beans-low"
+                                                    name="protein-baked-beans" value="low">
+                                                <label for="protein-baked-beans-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-baked-beans-unsure"
+                                                    name="protein-baked-beans" value="unsure">
+                                                <label for="protein-baked-beans-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/10.png') }} "
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-fruit">
-                                        <label for="protein-fruit" class="food-label">Fruit</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/10.webp') }}"
+                                                alt="Grapes" class="" /></div>
+                                        <div class="food-label">Grapes</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-grapes-high" name="protein-grapes"
+                                                    value="high">
+                                                <label for="protein-grapes-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-grapes-low" name="protein-grapes"
+                                                    value="low">
+                                                <label for="protein-grapes-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-grapes-unsure" name="protein-grapes"
+                                                    value="unsure">
+                                                <label for="protein-grapes-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/11.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-hummus">
-                                        <label for="protein-hummus" class="food-label">Hummus</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/11.webp') }}"
+                                                alt="Hummus" class="" /></div>
+                                        <div class="food-label">Hummus</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-hummus-high" name="protein-hummus"
+                                                    value="high">
+                                                <label for="protein-hummus-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-hummus-low" name="protein-hummus"
+                                                    value="low">
+                                                <label for="protein-hummus-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-hummus-unsure" name="protein-hummus"
+                                                    value="unsure">
+                                                <label for="protein-hummus-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/12.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-cornflakes">
-                                        <label for="protein-cornflakes" class="food-label">Cornflakes cereal</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/12.webp') }}"
+                                                alt="Cornflakes cereal" class="" /></div>
+                                        <div class="food-label">Cornflakes cereal</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-cornflakes-cereal-high"
+                                                    name="protein-cornflakes-cereal" value="high">
+                                                <label for="protein-cornflakes-cereal-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-cornflakes-cereal-low"
+                                                    name="protein-cornflakes-cereal" value="low">
+                                                <label for="protein-cornflakes-cereal-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-cornflakes-cereal-unsure"
+                                                    name="protein-cornflakes-cereal" value="unsure">
+                                                <label for="protein-cornflakes-cereal-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="food-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/13.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-almonds">
-                                        <label for="protein-almonds" class="food-label">Almonds</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/13.webp') }}"
+                                                alt="Almonds" class="" /></div>
+                                        <div class="food-label">Almonds</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-almonds-high" name="protein-almonds"
+                                                    value="high">
+                                                <label for="protein-almonds-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-almonds-low" name="protein-almonds"
+                                                    value="low">
+                                                <label for="protein-almonds-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-almonds-unsure"
+                                                    name="protein-almonds" value="unsure">
+                                                <label for="protein-almonds-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/14.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-milk">
-                                        <label for="protein-milk" class="food-label">Flavoured milk</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/14.webp') }}"
+                                                alt="Flavoured milk" class="" /></div>
+                                        <div class="food-label">Flavoured milk</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-flavoured-milk-high"
+                                                    name="protein-flavoured-milk" value="high">
+                                                <label for="protein-flavoured-milk-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-flavoured-milk-low"
+                                                    name="protein-flavoured-milk" value="low">
+                                                <label for="protein-flavoured-milk-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-flavoured-milk-unsure"
+                                                    name="protein-flavoured-milk" value="unsure">
+                                                <label for="protein-flavoured-milk-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/15.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-almonds">
-                                        <label for="protein-almonds" class="food-label">Ice cream</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/15.webp') }}"
+                                                alt="Ice cream" class="" /></div>
+                                        <div class="food-label">Ice cream</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="ice-cream-high" name="ice-cream"
+                                                    value="high">
+                                                <label for="ice-cream-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="ice-cream-low" name="ice-cream" value="low">
+                                                <label for="ice-cream-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="ice-cream-unsure" name="ice-cream"
+                                                    value="unsure">
+                                                <label for="ice-cream-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/16.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="protein-milk">
-                                        <label for="protein-milk" class="food-label">Almond/oat milk</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/16.webp') }}"
+                                                alt="Oat milk" class="" /></div>
+                                        <div class="food-label">Oat milk</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-oat-milk-high" name="protein-oat-milk"
+                                                    value="high">
+                                                <label for="protein-oat-milk-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-oat-milk-low" name="protein-oat-milk"
+                                                    value="low">
+                                                <label for="protein-oat-milk-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="protein-oat-milk-unsure" name="protein-oat-milk"
+                                                    value="unsure">
+                                                <label for="protein-oat-milk-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="unsure-option">
-                                <input type="radio" class="unsure-radio" id="protein-unsure" name="protein-unsure">
-                                <label for="protein-unsure" class="unsure-label">Unsure?</label>
                             </div>
 
                             <div class="quiz-navigation">
@@ -224,74 +550,153 @@
                         <!-- Step 3: Fat Selection -->
                         <div class="quiz-step" id="step-4" data-step="4" style="display: none;">
                             <div class="quiz-step-header">
-                                <h3 class="step-title">STEP 3/6</h3>
-                                <div class="step-instruction">Select the foods that are high in <strong>fat.</strong></div>
+                                <h3 class="step-title">STEP 3/8</h3>
+                                <div class="step-instruction">Do you think these foods are high or low in fat?
+                                    (Select one answer per food)</div>
                             </div>
 
                             <div class="food-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/4.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="fat-avocado">
-                                        <label for="fat-avocado" class="food-label">Avocado</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/4.webp') }}"
+                                                alt="Avocado" class="" /></div>
+                                        <div class="food-label">Avocado</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-avocado-high" name="fat-avocado" value="high">
+                                                <label for="fat-avocado-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-avocado-low" name="fat-avocado" value="low">
+                                                <label for="fat-avocado-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-avocado-unsure" name="fat-avocado"
+                                                    value="unsure">
+                                                <label for="fat-avocado-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/2.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="fat-beans">
-                                        <label for="fat-beans" class="food-label">Baked beans</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/2.webp') }}"
+                                                alt="Baked beans" class="" /></div>
+                                        <div class="food-label">Baked beans</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-baked-beans-high" name="fat-baked-beans"
+                                                    value="high">
+                                                <label for="fat-baked-beans-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-baked-beans-low" name="fat-baked-beans"
+                                                    value="low">
+                                                <label for="fat-baked-beans-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-baked-beans-unsure" name="fat-baked-beans"
+                                                    value="unsure">
+                                                <label for="fat-baked-beans-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/17.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="fat-cottagecheese">
-                                        <label for="fat-cottagecheese" class="food-label">Cottage cheese</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/17.webp') }}"
+                                                alt="Cottage cheese" class="" /></div>
+                                        <div class="food-label">Cottage cheese</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-cottage-cheese-high" name="fat-cottage-cheese"
+                                                    value="high">
+                                                <label for="fat-cottage-cheese-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-cottage-cheese-low" name="fat-cottage-cheese"
+                                                    value="low">
+                                                <label for="fat-cottage-cheese-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-cottage-cheese-unsure" name="fat-cottage-cheese"
+                                                    value="unsure">
+                                                <label for="fat-cottage-cheese-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/18.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="fat-peanutbutter">
-                                        <label for="fat-peanutbutter" class="food-label">Peanut butter</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/18.webp') }}"
+                                                alt="Peanut butter" class="" /></div>
+                                        <div class="food-label">Peanut butter</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-peanut-butter-high" name="fat-peanut-butter"
+                                                    value="high">
+                                                <label for="fat-peanut-butter-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-peanut-butter-low" name="fat-peanut-butter"
+                                                    value="low">
+                                                <label for="fat-peanut-butter-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-peanut-butter-unsure" name="fat-peanut-butter"
+                                                    value="unsure">
+                                                <label for="fat-peanut-butter-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="food-grid three-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/19.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="fat-crumpets">
-                                        <label for="fat-crumpets" class="food-label">Crumpets</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/19.webp') }}"
+                                                alt="Crumpets" class="" /></div>
+                                        <div class="food-label">Crumpets</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-crumpets-high" name="fat-crumpets" value="high">
+                                                <label for="fat-crumpets-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-crumpets-low" name="fat-crumpets" value="low">
+                                                <label for="fat-crumpets-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-crumpets-unsure" name="fat-crumpets" value="unsure">
+                                                <label for="fat-crumpets-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/20.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="fat-cheddar">
-                                        <label for="fat-cheddar" class="food-label">Cheddar/Tasty cheese</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/20.webp') }}"
+                                                alt="Cheddar/Tasty cheese" class="" /></div>
+                                        <div class="food-label">Cheddar/Tasty cheese</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-tasty-cheese-high" name="fat-tasty-cheese"
+                                                    value="high">
+                                                <label for="fat-tasty-cheese-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-tasty-cheese-low" name="fat-tasty-cheese"
+                                                    value="low">
+                                                <label for="fat-tasty-cheese-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="fat-tasty-cheese-unsure" name="fat-tasty-cheese"
+                                                    value="unsure">
+                                                <label for="fat-tasty-cheese-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="food-item">
-                                    <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/21.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="fat-cheddar">
-                                        <label for="fat-cheddar" class="food-label">Cheddar/Tasty cheese</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="unsure-option">
-                                <input type="radio" class="unsure-radio" id="fat-unsure" name="fat-unsure">
-                                <label for="fat-unsure" class="unsure-label">Unsure?</label>
                             </div>
 
                             <div class="quiz-navigation">
@@ -303,74 +708,179 @@
                         <!-- Step 4: Healthy Fat Selection -->
                         <div class="quiz-step" id="step-5" data-step="5" style="display: none;">
                             <div class="quiz-step-header">
-                                <h3 class="step-title">STEP 4/6</h3>
-                                <div class="step-instruction">Select the foods that are high in <strong>healthy fats.</strong></div>
+                                <h3 class="step-title">STEP 4/8</h3>
+                                <div class="step-instruction">Do you think these foods are high or low in healthy
+                                    fats? (Select one answer per food)</div>
                             </div>
 
                             <div class="food-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/22.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="healthy-fat-butter">
-                                        <label for="healthy-fat-butter" class="food-label">Butter</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/22.webp') }}"
+                                                alt="Butter" class="" /></div>
+                                        <div class="food-label">Butter</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-butter-high" name="healthy-fat-butter"
+                                                    value="high">
+                                                <label for="healthy-fat-butter-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-butter-low" name="healthy-fat-butter"
+                                                    value="low">
+                                                <label for="healthy-fat-butter-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-butter-unsure" name="healthy-fat-butter"
+                                                    value="unsure">
+                                                <label for="healthy-fat-butter-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/23.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="healthy-fat-extra-virgin-olive-oil">
-                                        <label for="healthy-fat-extra-virgin-olive-oil" class="food-label">Extra virgin olive oil</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/23.webp') }}"
+                                                alt="Extra Virgin Olive Oil" class="" /></div>
+                                        <div class="food-label">Extra Virgin Olive Oil</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-oliveoil-high" name="healthy-fat-oliveoil"
+                                                    value="high">
+                                                <label for="healthy-fat-oliveoil-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-oliveoil-low" name="healthy-fat-oliveoil"
+                                                    value="low">
+                                                <label for="healthy-fat-oliveoil-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-oliveoil-unsure" name="healthy-fat-oliveoil"
+                                                    value="unsure">
+                                                <label for="healthy-fat-oliveoil-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/24.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="healthy-fat-whole-milk">
-                                        <label for="healthy-fat-whole-milk" class="food-label">Whole milk</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/24.webp') }}"
+                                                alt="Full cream milk" class="" /></div>
+                                        <div class="food-label">Full cream milk</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-milk-high" name="healthy-fat-milk" value="high">
+                                                <label for="healthy-fat-milk-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-milk-low" name="healthy-fat-milk" value="low">
+                                                <label for="healthy-fat-milk-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-milk-unsure" name="healthy-fat-milk"
+                                                    value="unsure">
+                                                <label for="healthy-fat-milk-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/25.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="healthy-fat-potato-chips">
-                                        <label for="healthy-fat-potato-chips" class="food-label">Potato chips</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/25.webp') }}"
+                                                alt="Potato chips" class="" /></div>
+                                        <div class="food-label">Potato chips</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-chips-high" name="healthy-fat-chips"
+                                                    value="high">
+                                                <label for="healthy-fat-chips-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-chips-low" name="healthy-fat-chips" value="low">
+                                                <label for="healthy-fat-chips-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-chips-unsure" name="healthy-fat-chips"
+                                                    value="unsure">
+                                                <label for="healthy-fat-chips-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="food-grid three-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/26.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="healthy-fat-salmon">
-                                        <label for="healthy-fat-salmon" class="food-label">Salmon</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/26.webp') }}"
+                                                alt="Salmon" class="" /></div>
+                                        <div class="food-label">Salmon</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-salmon-high" name="healthy-fat-salmon"
+                                                    value="high">
+                                                <label for="healthy-fat-salmon-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-salmon-low" name="healthy-fat-salmon"
+                                                    value="low">
+                                                <label for="healthy-fat-salmon-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-salmon-unsure" name="healthy-fat-salmon"
+                                                    value="unsure">
+                                                <label for="healthy-fat-salmon-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/27.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="healthy-fat-dark-chocolate">
-                                        <label for="healthy-fat-dark-chocolate" class="food-label">Dark chocolate</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/27.webp') }}"
+                                                alt="Dark chocolate" class="" /></div>
+                                        <div class="food-label">Dark chocolate</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-chocolate-high" name="healthy-fat-chocolate"
+                                                    value="high">
+                                                <label for="healthy-fat-chocolate-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-chocolate-low" name="healthy-fat-chocolate"
+                                                    value="low">
+                                                <label for="healthy-fat-chocolate-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-chocolate-unsure" name="healthy-fat-chocolate"
+                                                    value="unsure">
+                                                <label for="healthy-fat-chocolate-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/28.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="healthy-fat-macadamia-nuts">
-                                        <label for="healthy-fat-macadamia-nuts" class="food-label">Macadamia nuts</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/28.webp') }}"
+                                                alt="Macadamia Nuts" class="" /></div>
+                                        <div class="food-label">Macadamia Nuts</div>
+                                        <div class="radio-options">
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-macadamia-high" name="healthy-fat-macadamia"
+                                                    value="high">
+                                                <label for="healthy-fat-macadamia-high">High</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-macadamia-low" name="healthy-fat-macadamia"
+                                                    value="low">
+                                                <label for="healthy-fat-macadamia-low">Low</label>
+                                            </div>
+                                            <div class="radio-option">
+                                                <input type="radio" id="healthy-fat-macadamia-unsure" name="healthy-fat-macadamia"
+                                                    value="unsure">
+                                                <label for="healthy-fat-macadamia-unsure">Unsure</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="unsure-option">
-                                <input type="radio" class="unsure-radio" id="healthy-fat-unsure" name="healthy-fat-unsure">
-                                <label for="healthy-fat-unsure" class="unsure-label">Unsure?</label>
                             </div>
 
                             <div class="quiz-navigation">
@@ -382,61 +892,77 @@
                         <!-- Step 5: Iron Selection -->
                         <div class="quiz-step" id="step-6" data-step="6" style="display: none;">
                             <div class="quiz-step-header">
-                                <h3 class="step-title">STEP 5/6</h3>
-                                <div class="step-instruction">Which one of these foods has the most <strong>iron.</strong></div>
+                                <h3 class="step-title">STEP 5/8</h3>
+                                <div class="step-instruction">Which of these foods has the most iron?(Select one
+                                    answer)</div>
                             </div>
 
                             <div class="food-grid three-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/29.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="iron-spinach">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/34.svg') }}" alt="Spinach" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="iron-selection" id="iron-spinach" value="Spinach, cooked, 1/2 cup">
+                                            <label for="iron-spinach" class="radio-label"></label>
+                                        </div>
                                         <label for="iron-spinach" class="food-label">Spinach, cooked, 1/2 cup</label>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/30.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="iron-brown-rice">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/35.svg') }}" alt="Brown rice" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="iron-selection" id="iron-brown-rice" value="Brown rice, cooked, 1 cup">
+                                            <label for="iron-brown-rice" class="radio-label"></label>
+                                        </div>
                                         <label for="iron-brown-rice" class="food-label">Brown rice, cooked, 1 cup</label>
                                     </div>
                                 </div>
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/31.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="iron-grilled-steak">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/36.svg') }}" alt="Grilled steak" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="iron-selection" id="iron-grilled-steak" value="Grilled steak, 130g">
+                                            <label for="iron-grilled-steak" class="radio-label"></label>
+                                        </div>
                                         <label for="iron-grilled-steak" class="food-label">Grilled steak, 130g</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="food-grid two-grid">
+                            <div class="food-grid three-grid">
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/32.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="iron-tuna">
-                                        <label for="iron-tuna" class="food-label">Tuna, small tin, 125g</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/37.svg') }}"
+                                                alt="Tuna" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="iron-selection" id="iron-tuna" value="Tuna, small tin, 90g">
+                                            <label for="iron-tuna" class="radio-label"></label>
+                                        </div>
+                                        <label for="iron-tuna" class="food-label">Tuna, small tin, 90g</label>
                                     </div>
                                 </div>
-
-
                                 <div class="food-item">
                                     <div class="food-image-container">
-                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/33.png') }}"
-                                                alt="Bowl of healthy food" class="" /></div>
-                                        <input type="checkbox" class="food-checkbox" id="iron-almonds-cashews">
-                                        <label for="iron-almonds-cashews" class="food-label">Almonds/cashews, 30 nuts</label>
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/38.svg') }}"
+                                                alt="Almonds/cashews" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="iron-selection" id="iron-almonds-cashews" value="Almonds/cashews, ~30 nuts">
+                                            <label for="iron-almonds-cashews" class="radio-label"></label>
+                                        </div>
+                                        <label for="iron-almonds-cashews" class="food-label">Almonds/cashews, ~30 nuts</label>
                                     </div>
                                 </div>
-
-                            </div>
-
-                            <div class="unsure-option">
-                                <input type="radio" class="unsure-radio" id="iron-unsure" name="iron-unsure">
-                                <label for="iron-unsure" class="unsure-label">Unsure?</label>
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/unsure.svg') }}"
+                                                alt="Unsure" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="iron-selection" id="iron-unsure" value="Unsure">
+                                            <label for="iron-unsure" class="radio-label"></label>
+                                        </div>
+                                        <label for="iron-unsure" class="food-label">Unsure</label>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="quiz-navigation">
@@ -445,243 +971,285 @@
                             </div>
                         </div>
 
-                        <!-- Step 6: Multiple Choice Questions -->
+                        <!-- Step 6: Calcium Selection -->
                         <div class="quiz-step" id="step-7" data-step="7" style="display: none;">
                             <div class="quiz-step-header">
-                                <h3 class="step-title">STEP 6/6</h3>
+                                <h3 class="step-title">STEP 6/8</h3>
+                                <div class="step-instruction">Which of these foods has the most calcium?(Select one
+                                    answer)</div>
                             </div>
 
-                            <!-- Question 1 -->
-                            <div class="question-container">
-                                <div class="question-header">Approximately how many decisions do we make every day
-                                    about what we eat?</div>
-                                <div class="radio-options">
-                                    <div class="radio-option">
-                                        <input type="radio" id="q1-50-100" name="q1" value="50-100">
-                                        <label for="q1-50-100">50-100</label>
+                            <div class="food-grid three-grid">
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/39.svg') }}"
+                                                alt="Baby spinach" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="calcium-selection" id="calcium-baby-spinach" value="Baby spinach, 1 cup">
+                                            <label for="calcium-baby-spinach" class="radio-label"></label>
+                                        </div>
+                                        <label for="calcium-baby-spinach" class="food-label">Baby spinach, 1
+                                            cup</label>
                                     </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q1-100-200" name="q1" value="100-200">
-                                        <label for="q1-100-200">100-200</label>
+                                </div>
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/40.svg') }}"
+                                                alt="Firm tofu" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="calcium-selection" id="calcium-firm-tofu" value="Firm tofu, 100g">
+                                            <label for="calcium-firm-tofu" class="radio-label"></label>
+                                        </div>
+                                        <label for="calcium-firm-tofu" class="food-label">Firm tofu, 100g</label>
                                     </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q1-200-300" name="q1" value="200-300">
-                                        <label for="q1-200-300">200-300</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q1-300-400" name="q1" value="300-400">
-                                        <label for="q1-300-400">300-400</label>
+                                </div>
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/41.svg') }}"
+                                                alt="Tuna" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="calcium-selection" id="calcium-tuna" value="Tuna, small tin, 90g">
+                                            <label for="calcium-tuna" class="radio-label"></label>
+                                        </div>
+                                        <label for="calcium-tuna" class="food-label">Tuna, small tin, 90
+                                            g</label>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Question 2 -->
-                            <div class="question-container">
-                                <div class="question-header">What percentage of people struggle with making healthy
-                                    food choices?</div>
-                                <div class="radio-options">
-                                    <div class="radio-option">
-                                        <input type="radio" id="q2-60" name="q2" value="60%">
-                                        <label for="q2-60">60%</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q2-70" name="q2" value="70%">
-                                        <label for="q2-70">70%</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q2-80" name="q2" value="80%">
-                                        <label for="q2-80">80%</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q2-90" name="q2" value="90%">
-                                        <label for="q2-90">90%</label>
+                            <div class="food-grid three-grid">
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/42.svg') }}"
+                                                alt="Almonds" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="calcium-selection" id="calcium-almonds" value="Almonds, 1/2 cup">
+                                            <label for="calcium-almonds" class="radio-label"></label>
+                                        </div>
+                                        <label for="calcium-almonds" class="food-label">Almonds, 1/2 cup</label>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Question 3 -->
-                            <div class="question-container">
-                                <div class="question-header">How many calories does the average person consume in a
-                                    day?</div>
-                                <div class="radio-options">
-                                    <div class="radio-option">
-                                        <input type="radio" id="q3-1500-2000" name="q3" value="1500-2000">
-                                        <label for="q3-1500-2000">1500-2000</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q3-2000-2500" name="q3" value="2000-2500">
-                                        <label for="q3-2000-2500">2000-2500</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q3-2500-3000" name="q3" value="2500-3000">
-                                        <label for="q3-2500-3000">2500-3000</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q3-3000-3500" name="q3" value="3000-3500">
-                                        <label for="q3-3000-3500">3000-3500</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Question 4 -->
-                            <div class="question-container">
-                                <div class="question-header">What is the most common reason people give up on their
-                                    nutrition goals?</div>
-                                <div class="radio-options">
-                                    <div class="radio-option">
-                                        <input type="radio" id="q4-lack-time" name="q4" value="Lack of time">
-                                        <label for="q4-lack-time">Lack of time</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q4-lack-knowledge" name="q4"
-                                            value="Lack of knowledge">
-                                        <label for="q4-lack-knowledge">Lack of knowledge</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q4-lack-motivation" name="q4"
-                                            value="Lack of motivation">
-                                        <label for="q4-lack-motivation">Lack of motivation</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q4-lack-support" name="q4" value="Lack of support">
-                                        <label for="q4-lack-support">Lack of support</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Question 5 -->
-                            <div class="question-container">
-                                <div class="question-header">How many different nutrients does the human body need
-                                    to function properly?</div>
-                                <div class="radio-options">
-                                    <div class="radio-option">
-                                        <input type="radio" id="q5-20-30" name="q5" value="20-30">
-                                        <label for="q5-20-30">20-30</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q5-30-40" name="q5" value="30-40">
-                                        <label for="q5-30-40">30-40</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q5-40-50" name="q5" value="40-50">
-                                        <label for="q5-40-50">40-50</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="q5-50-60" name="q5" value="50-60">
-                                        <label for="q5-50-60">50-60</label>
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/unsure.svg') }}"
+                                                alt="Unsure" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="calcium-selection" id="calcium-unsure" value="Unsure">
+                                            <label for="calcium-unsure" class="radio-label"></label>
+                                        </div>
+                                        <label for="calcium-unsure" class="food-label">Unsure</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="quiz-navigation">
                                 <button class="btn btn-back back-step-btn" data-prev="6">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="8">Submit</button>
+                                <button class="btn btn-signup next-step-btn" data-next="8">Next</button>
                             </div>
                         </div>
 
-                        <!-- Step 7: Results/Completion -->
-                        <div class="quiz-step completed" id="step-8" data-step="8" style="display: none;">
-                            <div class="quiz-final-container" style="display: flex; min-height: 600px;">
-                                <!-- Left: Text and form -->
-                                <div class="quiz-final-left"
-                                    style="flex: 1; padding: 40px 32px 32px 0px; display: flex; flex-direction: column; justify-content: center;">
-                                    <h2 style="color: var(--Blue-700, #1751AA);
-                                        font-family: Poppins;
-                                        font-size: 28px;
-                                        font-style: italic;
-                                        font-weight: 800;
-                                        line-height: 36px; /* 128.571% */
-                                        text-transform: uppercase;"
-                                        >
-                                        WELL DONE LEGEND! YOU SCORED 11% BETTER THAN THE AVERAGE.
-                                    </h2>
-                                    <div style="color: var(--kerry-grey-600-main, #3B3B3B);
-                                        font-size: 16px;
-                                        font-style: normal;
-                                        font-weight: 400;
-                                        line-height: normal;
-                                        margin-bottom:36px;"
-                                        >
-                                        Keen to find out more? Sign up for free to unlock your results and get
-                                        access to useful tools to help you take control of your nutrition.
-                                    </div>
-                                    <input type="email" placeholder="Enter email address" class="form-control"
-                                        style="margin-bottom: 16px;">
-                                    <div class="or-divider" style="margin-left:0;margin-right:0;">
-                                        <div class="divider-line"></div>
-                                        <span class="or-text">OR</span>
-                                        <div class="divider-line"></div>
-                                    </div>
-                                    <div class="social-buttons">
-                                        <button class="social-button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none">
-                                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                                    d="M11.7643 2.24729C9.71461 2.21578 7.70395 2.80909 5.99975 3.94829C1.9895 6.62804 0.423504 11.7918 2.26925 16.2483C4.11425 20.7048 8.8715 23.2458 13.6025 22.3053C18.3335 21.3641 21.7558 17.194 21.7558 12.3708H21.7513V11.2458H12.7513V14.2458H18.6163C18.2678 15.5505 17.5604 16.7315 16.5745 17.6544C15.5885 18.5772 14.3634 19.2051 13.0385 19.4666C11.3965 19.796 9.69112 19.5445 8.21417 18.755C6.73723 17.9656 5.58059 16.6873 4.94225 15.1391C4.29907 13.593 4.21318 11.8716 4.69928 10.2692C5.18539 8.66681 6.21326 7.28313 7.607 6.35503C8.99776 5.42235 10.6695 5.00212 12.336 5.16631C14.0024 5.33049 15.56 6.06893 16.742 7.25508L18.7895 5.20906C16.9237 3.34331 14.4027 2.28046 11.7643 2.24729Z"
-                                                    fill="#EA4335" />
-                                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                                    d="M4.72797 14.5527L2.32422 16.3662C4.20522 20.7477 8.91372 23.2385 13.602 22.3062C15.7059 21.8854 17.621 20.8051 19.0695 19.2222L16.8045 17.4102C15.9341 18.3091 14.8451 18.9665 13.6441 19.3179C12.4432 19.6692 11.1716 19.7024 9.95395 19.4143C8.73631 19.1262 7.61443 18.5266 6.69829 17.6743C5.78215 16.8221 5.10319 15.7464 4.72797 14.5527Z"
-                                                    fill="#34A853" />
-                                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                                    d="M3.37198 6.50391C1.40398 9.28116 0.905983 12.9576 2.26948 16.2479C2.30023 16.3229 2.36548 16.4721 2.36548 16.4721C3.38098 15.8856 4.13098 15.3711 4.84498 14.8851C4.44106 13.8024 4.30299 12.6384 4.44237 11.4912C4.58176 10.344 4.99453 9.24708 5.64598 8.29257C4.13098 7.12107 4.13098 7.12116 3.37198 6.50391Z"
-                                                    fill="#FBBC05" />
-                                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                                    d="M12.752 11.2461V14.2461H18.617C18.2941 15.4385 17.6701 16.5277 16.805 17.4095L19.0715 19.2215C20.7951 17.3563 21.7536 14.9108 21.7565 12.3711H21.752V11.2461H12.752Z"
-                                                    fill="#4788F4" />
-                                            </svg>
-                                            Continue with Google
-                                            <div>&nbsp;</div>
-                                        </button>
-                                        <button class="social-button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none">
-                                                <g clip-path="url(#clip0_2763_5867)">
-                                                    <path
-                                                        d="M24 12C24 5.37264 18.6274 0 12 0C5.37264 0 0 5.37264 0 12C0 17.6275 3.87456 22.3498 9.10128 23.6467V15.6672H6.62688V12H9.10128V10.4198C9.10128 6.33552 10.9498 4.4424 14.9597 4.4424C15.72 4.4424 17.0318 4.59168 17.5685 4.74048V8.06448C17.2853 8.03472 16.7933 8.01984 16.1822 8.01984C14.2147 8.01984 13.4544 8.76528 13.4544 10.703V12H17.3741L16.7006 15.6672H13.4544V23.9122C19.3963 23.1946 24.0005 18.1354 24.0005 12H24Z"
-                                                        fill="#0866FF" />
-                                                    <path
-                                                        d="M16.7007 15.6662L17.3742 11.999H13.4545V10.702C13.4545 8.76429 14.2148 8.01885 16.1823 8.01885C16.7934 8.01885 17.2854 8.03373 17.5686 8.06349V4.73949C17.0319 4.59021 15.7201 4.44141 14.9598 4.44141C10.9498 4.44141 9.10135 6.33453 9.10135 10.4188V11.999H6.62695V15.6662H9.10135V23.6457C10.0297 23.8761 11.0007 23.999 12.0001 23.999C12.4921 23.999 12.9774 23.9688 13.454 23.9112V15.6662H16.7002H16.7007Z"
-                                                        fill="white" />
-                                                </g>
-                                                <defs>
-                                                    <clipPath id="clip0_2763_5867">
-                                                        <rect width="24" height="24" fill="white" />
-                                                    </clipPath>
-                                                </defs>
-                                            </svg>
-                                            Continue with Facebook
-                                            <div>&nbsp;</div>
-                                        </button>
-                                        <button class="social-button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20"
-                                                viewBox="0 0 21 20" fill="none" style="margin-right: 18px">
-                                                <g clip-path="url(#clip0_2763_5873)">
-                                                    <path
-                                                        d="M18.6593 15.5861C18.3569 16.2848 17.9988 16.928 17.584 17.5194C17.0186 18.3255 16.5557 18.8835 16.1989 19.1934C15.6458 19.702 15.0533 19.9625 14.4187 19.9773C13.9632 19.9773 13.4138 19.8477 12.7743 19.5847C12.1327 19.323 11.5431 19.1934 11.004 19.1934C10.4386 19.1934 9.83219 19.323 9.18357 19.5847C8.53396 19.8477 8.01064 19.9847 7.61053 19.9983C7.00203 20.0242 6.39551 19.7563 5.7901 19.1934C5.40369 18.8563 4.92037 18.2786 4.34138 17.4601C3.72016 16.586 3.20944 15.5725 2.80933 14.417C2.38082 13.1689 2.16602 11.9603 2.16602 10.7902C2.16602 9.44984 2.45564 8.29383 3.03574 7.32509C3.49165 6.54697 4.09818 5.93316 4.85729 5.48255C5.6164 5.03195 6.43662 4.80233 7.31992 4.78764C7.80324 4.78764 8.43705 4.93714 9.22468 5.23096C10.0101 5.52576 10.5144 5.67526 10.7355 5.67526C10.9008 5.67526 11.461 5.50045 12.4107 5.15195C13.3089 4.82875 14.0669 4.69492 14.6878 4.74764C16.3705 4.88344 17.6347 5.54675 18.4754 6.74177C16.9705 7.6536 16.2261 8.93072 16.2409 10.5691C16.2545 11.8452 16.7174 12.9071 17.6272 13.7503C18.0396 14.1417 18.5001 14.4441 19.0124 14.6589C18.9013 14.9812 18.784 15.2898 18.6593 15.5861V15.5861ZM14.8002 0.400114C14.8002 1.40034 14.4348 2.33425 13.7064 3.19867C12.8274 4.22629 11.7642 4.8201 10.6113 4.7264C10.5966 4.60641 10.5881 4.48011 10.5881 4.3474C10.5881 3.38718 11.0061 2.35956 11.7484 1.51934C12.119 1.09392 12.5904 0.74019 13.162 0.458013C13.7323 0.180046 14.2718 0.0263242 14.7792 0C14.794 0.133715 14.8002 0.267438 14.8002 0.400101V0.400114Z"
-                                                        fill="black" />
-                                                </g>
-                                                <defs>
-                                                    <clipPath id="clip0_2763_5873">
-                                                        <rect width="20" height="20" fill="white"
-                                                            transform="translate(0.5)" />
-                                                    </clipPath>
-                                                </defs>
-                                            </svg>
-                                            Sign in with Apple
-                                            <div>&nbsp;</div>
-                                        </button>
-                                    </div>
-                                    <div style="margin-top: 24px; color: #6b7280; font-size: 0.95rem;">
-                                        Already have an account? <a href="#" class="login-link"
-                                            style="color: #2563eb;">Log in</a>
+                        <!-- Step 7: Fibre Selection -->
+                        <div class="quiz-step" id="step-8" data-step="8" style="display: none;">
+                            <div class="quiz-step-header">
+                                <h3 class="step-title">STEP 7/8</h3>
+                                <div class="step-instruction">Which of these foods has the most fibre?(Select one
+                                    answer)</div>
+                            </div>
+
+                            <div class="food-grid three-grid">
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/43.svg') }}"
+                                                alt="Banana" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="fibre-selection" id="fibre-banana" value="Banana, 1 large">
+                                            <label for="fibre-banana" class="radio-label"></label>
+                                        </div>
+                                        <label for="fibre-banana" class="food-label">Banana, 1 large</label>
                                     </div>
                                 </div>
-                                <!-- Right: Image -->
-                                <div class="quiz-final-right"
-                                    style="flex: 1; display: flex; align-items: center; justify-content: end; ">
-                                    <div style="">
-                                        <img src="{{ frontAssets('images/quiz/vector.png') }}" alt="Quiz Result"
-                                            style="max-width: 100%; max-height: 100%; object-fit: cover;">
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/44.svg') }}"
+                                                alt="Raw oats" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="fibre-selection" id="fibre-raw-oats" value="Raw oats, 1/2 cup">
+                                            <label for="fibre-raw-oats" class="radio-label"></label>
+                                        </div>
+                                        <label for="fibre-raw-oats" class="food-label">Raw oats, 1/2 cup</label>
+                                    </div>
+                                </div>
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/45.svg') }}"
+                                                alt="Cashews" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="fibre-selection" id="fibre-cashews" value="Cashews, 1 handful">
+                                            <label for="fibre-cashews" class="radio-label"></label>
+                                        </div>
+                                        <label for="fibre-cashews" class="food-label">Cashews, 1 handful</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="food-grid three-grid">
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/46.svg') }}"
+                                                alt="Broccoli" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="fibre-selection" id="fibre-broccoli" value="Broccoli, 1/2 cup">
+                                            <label for="fibre-broccoli" class="radio-label"></label>
+                                        </div>
+                                        <label for="fibre-broccoli" class="food-label">Broccoli, 1/2 cup</label>
+                                    </div>
+                                </div>
+                                <div class="food-item">
+                                    <div class="food-image-container">
+                                        <div class="food-placeholder"><img src="{{ frontAssets('images/quiz/unsure.svg') }}"
+                                                alt="Unsure" class="" /></div>
+                                        <div class="radio-button-container">
+                                            <input type="radio" name="fibre-selection" id="fibre-unsure" value="Unsure">
+                                            <label for="fibre-unsure" class="radio-label"></label>
+                                        </div>
+                                        <label for="fibre-unsure" class="food-label">Unsure</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="quiz-navigation">
+                                <button class="btn btn-back back-step-btn" data-prev="7">Back</button>
+                                <button class="btn btn-signup next-step-btn" data-next="9">Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 8: Multiple Choice Questions -->
+                        <div class="quiz-step" id="step-9" data-step="9" style="display: none;">
+                            <div class="quiz-step-header">
+                                <h3 class="step-title">STEP 8/8</h3>
+                            </div>
+
+                            <div class=""
+                                style="display: flex!important;flex-direction: column; justify-content: space-between;">
+                                <!-- Question 1 -->
+                                <div class="question-container">
+                                    <div class="question-header">Approximately how many decisions do we make every
+                                        day about what we eat?</div>
+                                    <div class="radio-options">
+                                        <div class="radio-option">
+                                            <input type="radio" id="q1-option1" name="q1" value="50-100">
+                                            <label for="q1-option1">50-100</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q1-option2" name="q1" value="100-150">
+                                            <label for="q1-option2">100-150</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q1-option3" name="q1" value="150-200">
+                                            <label for="q1-option3">150-200</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q1-option4" name="q1" value="Over 200">
+                                            <label for="q1-option4">Over 200</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q1-unsure" name="q1" value="Unsure">
+                                            <label for="q1-unsure">Unsure</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Question 2 -->
+                                <div class="question-container">
+                                    <div class="question-header">Which of the following is NOT a 'Macronutrient'?
+                                    </div>
+                                    <div class="radio-options">
+                                        <div class="radio-option">
+                                            <input type="radio" id="q2-iron" name="q2" value="Iron">
+                                            <label for="q2-iron">Iron</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q2-carbohydrate" name="q2" value="Carbohydrate">
+                                            <label for="q2-carbohydrate">Carbohydrate</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q2-protein" name="q2" value="Protein">
+                                            <label for="q2-protein">Protein</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q2-alcohol" name="q2" value="Alcohol">
+                                            <label for="q2-alcohol">Alcohol</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q2-fat" name="q2" value="Fat">
+                                            <label for="q2-fat">Fat</label>
+                                        </div>
+                                        <div class="radio-option">
+                                            <input type="radio" id="q2-unsure" name="q2" value="Unsure">
+                                            <label for="q2-unsure">Unsure</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="quiz-navigation" style="margin-top: auto;">
+                                <button class="btn btn-back back-step-btn" data-prev="8">Back</button>
+                                <button class="btn btn-signup next-step-btn" data-next="10">Submit</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 9: Results/Completion -->
+                        <div class="quiz-step completed" id="step-10" data-step="10" style="display: none;">
+                            <div class="quiz-final-container" style="display: flex; min-height: 600px;">
+                                <div class="signup-container">
+                                    <div class="signup-modal">
+                                        <!-- Phone Number Input -->
+                                        <div class="form-section">
+                                            <h2 class="welcome-title">See How you stack up.</h2>
+                                            <p class="welcome-text" style="margin-bottom: 30px;">
+                                                Get your personalised quiz results and discover where you stand.
+                                            </p>
+                                            <p class="welcome-text" style="margin-bottom: 30px;">
+                                                Sign up for free to unlock your performance dashboard and find out
+                                                how you did. We'll send your full results to your inbox-plus tools
+                                                and tips to help you level up your nutrition.
+                                            </p>
+                                            <div class="input-group">
+                                                <h2 class="welcome-title">Welcome to Athleat</h2>
+                                                <div class="phone-input-container">
+                                                    <div class="dropdown-wrapper" onclick="toggleDropdown()">
+                                                        <span id="selected-flag" class="fi fi-us"></span>
+                                                        <span id="selected-code">+61</span>
+                                                        <svg class="arrow" width="12" height="8" viewBox="0 0 12 8"
+                                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor"
+                                                                stroke-width="2" stroke-linecap="round"
+                                                                stroke-linejoin="round" />
+                                                        </svg>
+                                                    </div>
+                                                    <input type="tel" class="phone-input"
+                                                        placeholder="Enter Phone Number">
+
+                                                    <div id="dropdown" class="hidden dropdown">
+                                                        <input id="search-input" type="text"
+                                                            placeholder="Search country..." />
+                                                        <ul id="country-list"></ul>
+                                                    </div>
+                                                </div>
+                                                <p class="welcome-text"
+                                                    style="margin-top: 10px; margin-bottom: 20px;">Fast, safe
+                                                    access. Just pop in your number and we'll text you a code. No
+                                                    passwords, no fuss.</p>
+                                            </div>
+                                            <label class="terms-label">By continuing, you agree to our <span
+                                                    class="terms-link"
+                                                    onclick="openTermsModal()">Terms.</span></label>
+
+                                            <button class="btn-signup" style="margin-top:30px;">Continue</button>
+                                        </div>
+
+                                        <div class="image-section last-step" style="padding:0;">
+                                            <img src="{{ frontAssets('images/quiz/last-step-login-bg.svg') }}" alt="Bowl of healthy food"
+                                                class="food-image" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -689,10 +1257,10 @@
                     </div>
 
                     <div class="image-section" id="quiz-image-section">
-                        <img src="{{ frontAssets('images/quiz/quiz-bg.png') }}" alt="Bowl of healthy food" class="food-image"
+                        <img src="{{ frontAssets('images/quiz-bg.webp') }}" alt="Bowl of healthy food" class="food-image"
                             id="quiz-main-image" />
-                        <img src="{{ frontAssets('images/quiz/signup-bg.png') }}" alt="Signup background" class="food-image signup-image"
-                            id="quiz-signup-image" style="display: none;" />
+                        <img src="{{ frontAssets('images/quiz/signup-bg.webp') }}" alt="Signup background"
+                            class="food-image signup-image" id="quiz-signup-image" style="display: none;" />
                     </div>
                 </div>
             </div>

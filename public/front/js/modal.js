@@ -83,14 +83,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 currentStep = state.currentStep || 1;
 
-                // Show the current step
-                showStep(currentStep);
-
-                // Show continue quiz indicator if we're on step 1
-                if (currentStep === 1) {
+                // Show continue quiz indicator if we have an unfinished quiz
+                if (currentStep > 1) {
                     const indicator = document.getElementById('continue-quiz-indicator');
                     if (indicator) {
                         indicator.style.display = 'block';
+                    }
+
+                    // Show start over button
+                    const startOverBtn = document.getElementById('start-over-btn');
+                    if (startOverBtn) {
+                        startOverBtn.style.display = 'block';
                     }
                 }
 
@@ -103,14 +106,204 @@ document.addEventListener('DOMContentLoaded', function () {
         return false;
     }
 
+    // Restore quiz answers from session storage
+    function restoreQuizAnswers() {
+        const savedState = sessionStorage.getItem(QUIZ_STORAGE_KEY);
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                const savedAnswers = state.answers || {};
+
+                // Restore answers for each step
+                Object.keys(savedAnswers).forEach(stepNumber => {
+                    const stepAnswers = savedAnswers[stepNumber];
+                    restoreStepAnswers(parseInt(stepNumber), stepAnswers);
+                });
+            } catch (e) {
+                console.error('Error restoring quiz answers:', e);
+            }
+        } else {
+            console.log('No saved quiz state found');
+        }
+    }
+
+    // Restore answers for a specific step
+    function restoreStepAnswers(stepNumber, stepAnswers) {
+        const currentStepElement = document.querySelector(`#step-${stepNumber + 1}`);
+        if (!currentStepElement) return;
+
+        // Extract the actual answers from the nested structure
+        let answers = {};
+        if (stepAnswers && stepAnswers['nutrition-form']) {
+            if (stepNumber === 9) {
+                // For step 9 (multiple choice), the data is stored directly
+                answers = stepAnswers['nutrition-form'];
+            } else {
+                // For food selection, extract from the question key
+                const questionKey = Object.keys(stepAnswers['nutrition-form'])[0];
+                answers = stepAnswers['nutrition-form'][questionKey];
+            }
+        }
+
+        // Restore radio button selections for steps 2-5
+        if (stepNumber >= 2 && stepNumber <= 5) {
+            Object.keys(answers).forEach(foodName => {
+                const answer = answers[foodName];
+                if (answer && answer.value === 1) {
+                    const option = answer.option.toLowerCase();
+                    const prefix = getPrefixForStep(stepNumber);
+
+                    // Try different ID patterns for radio buttons
+                    const possibleIds = [
+                        `${prefix}-${foodName.toLowerCase().replace(/\s+/g, '')}-${option}`,
+                        `${prefix}-${foodName.toLowerCase().replace(/\s+/g, '')}-${option}`,
+                        `${prefix}-${foodName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${option}`
+                    ];
+
+                    let radio = null;
+                    for (const id of possibleIds) {
+                        radio = document.getElementById(id);
+                        if (radio) break;
+                    }
+
+                    // If not found by ID, try to find by name and value
+                    if (!radio) {
+                        const radioName = `${prefix}-${foodName.toLowerCase().replace(/\s+/g, '')}`;
+                        const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+                        for (const r of radios) {
+                            if (r.value === option) {
+                                radio = r;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                }
+            });
+        }
+
+        // Restore radio button selections for step 6 (Iron selection)
+        if (stepNumber === 6) {
+            Object.keys(answers).forEach(optionName => {
+                const answer = answers[optionName];
+                if (answer && answer.value === 1) {
+                    // Find radio button by value
+                    const radio = document.querySelector(`input[name="iron-selection"][value="${optionName}"]`);
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                }
+            });
+        }
+
+        // Restore radio button selections for step 7 (Calcium selection)
+        if (stepNumber === 7) {
+            Object.keys(answers).forEach(optionName => {
+                const answer = answers[optionName];
+                if (answer && answer.value === 1) {
+                    // Find radio button by value
+                    const radio = document.querySelector(`input[name="calcium-selection"][value="${optionName}"]`);
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                }
+            });
+        }
+
+        // Restore radio button selections for step 8 (Fiber selection)
+        if (stepNumber === 8) {
+            Object.keys(answers).forEach(optionName => {
+                const answer = answers[optionName];
+                if (answer && answer.value === 1) {
+                    // Find radio button by value
+                    const radio = document.querySelector(`input[name="fibre-selection"][value="${optionName}"]`);
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                }
+            });
+        }
+
+        // Restore multiple choice selections for step 9
+        if (stepNumber === 9) {
+            Object.keys(answers).forEach(questionText => {
+                const answer = answers[questionText];
+                if (answer && answer.value === 1) {
+                    const option = answer.option;
+                    // Find the question container that contains this question text
+                    const questionContainers = currentStepElement.querySelectorAll('.question-container');
+                    questionContainers.forEach(container => {
+                        const questionHeader = container.querySelector('.question-header');
+                        if (questionHeader && questionHeader.textContent.trim() === questionText) {
+                            const radio = container.querySelector(`input[value="${option}"]`);
+                            if (radio) {
+                                radio.checked = true;
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    // Get prefix for step
+    function getPrefixForStep(stepNumber) {
+        switch(stepNumber) {
+            case 2: return 'carb';
+            case 3: return 'protein';
+            case 4: return 'fat';
+            case 5: return 'healthy-fat';
+            case 6: return 'iron';
+            case 7: return 'calcium';
+            case 8: return 'fibre';
+            default: return '';
+        }
+    }
+
     // Save quiz state to session storage
     function saveQuizState() {
+        // Get existing state to preserve answers
+        const existingState = sessionStorage.getItem(QUIZ_STORAGE_KEY);
+        let existingAnswers = {};
+
+        if (existingState) {
+            try {
+                const parsedState = JSON.parse(existingState);
+                existingAnswers = parsedState.answers || {};
+            } catch (e) {
+                console.error('Error parsing existing state:', e);
+            }
+        }
+
         const state = {
             quizId: getCurrentQuizId(),
             currentStep: currentStep,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            answers: existingAnswers // Preserve existing answers
         };
         sessionStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(state));
+    }
+
+    // Save step answers to session storage
+    function saveStepAnswers(stepNumber, stepData) {
+        const savedState = sessionStorage.getItem(QUIZ_STORAGE_KEY);
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                if (!state.answers) {
+                    state.answers = {};
+                }
+                state.answers[stepNumber] = stepData;
+                sessionStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.error('Error saving step answers:', e);
+            }
+        } else {
+            console.error('No saved state found when trying to save step answers');
+        }
     }
 
     // Clear quiz state from session storage
@@ -124,7 +317,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const imageSection = document.getElementById('quiz-image-section');
 
         allSteps.forEach((step, index) => {
-            if (parseInt(step.getAttribute('data-step')) === stepNumber) {
+            const stepDataStep = parseInt(step.getAttribute('data-step'));
+            if (stepDataStep === stepNumber) {
                 step.style.display = 'block';
             } else {
                 step.style.display = 'none';
@@ -145,7 +339,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Quiz step navigation functionality
     const nextButtons = document.querySelectorAll('.next-step-btn');
     const backButtons = document.querySelectorAll('.back-step-btn');
-    const foodCheckboxes = document.querySelectorAll('.food-checkbox');
     const foodContainers = document.querySelectorAll('.food-image-container');
     const startQuizBtn = document.getElementById('start-quiz-btn');
 
@@ -154,14 +347,58 @@ document.addEventListener('DOMContentLoaded', function () {
         startQuizBtn.addEventListener('click', function (e) {
             e.preventDefault();
 
-            // Check if there's an existing quiz in progress
-            const currentQuizId = getCurrentQuizId();
+            // Check if we have an existing quiz state
+            const savedState = sessionStorage.getItem(QUIZ_STORAGE_KEY);
+            if (savedState) {
+                try {
+                    const state = JSON.parse(savedState);
+                    const savedAnswers = state.answers || {};
 
-            if (currentQuizId) {
-                // Continue existing quiz
-                showStep(2);
-                return;
+                    // Find the highest step number that has answers
+                    const answeredSteps = Object.keys(savedAnswers).map(Number).filter(step => step > 0);
+                    let resumeStep = 1;
+
+                    if (answeredSteps.length > 0) {
+                        // Resume from the step after the highest answered step
+                        const highestAnsweredStep = Math.max(...answeredSteps);
+                        resumeStep = highestAnsweredStep + 1;
+
+                        // If we have completed all steps (step 9), show the results screen
+                        if (resumeStep > 9) {
+                            // Quiz is completed, show results/completion screen
+                            showStep(10); // Assuming step 10 is the results screen
+                            return;
+                        }
+
+                    } else {
+                        // No answers found, start from step 2
+                        resumeStep = 2;
+                    }
+
+                    // If we have a step to resume from, continue from there
+                    if (resumeStep > 1) {
+                        showStep(resumeStep);
+                        // Restore all previous answers after a short delay to ensure DOM is ready
+                        setTimeout(() => {
+                            restoreQuizAnswers();
+                        }, 100);
+                        return;
+                    }
+                } catch (e) {
+                    // If there's an error parsing the state, start fresh
+                    console.warn('Error parsing saved quiz state, starting fresh');
+                }
+            } else {
+                // Check if there's an existing quiz in progress
+                const currentQuizId = getCurrentQuizId();
+
+                if (currentQuizId) {
+                    // Continue existing quiz
+                    showStep(2);
+                    return;
+                }
             }
+
 
             $.ajax({
                 url: window.quizConfig.startQuizUrl,
@@ -172,6 +409,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 success: function(response) {
                     if (response.success) {
                         setCurrentQuizId(response.quiz_id);
+
+                        // Clear all form selections for fresh quiz
+                        clearAllFormSelections();
 
                         // Navigate to the next step (step 2)
                         showStep(2);
@@ -186,161 +426,215 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+        // Start over button functionality
+    const startOverBtn = document.getElementById('start-over-btn');
+    if (startOverBtn) {
+        startOverBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Get current quiz ID before clearing
+            const currentQuizId = getCurrentQuizId();
+
+            // First, abandon the current quiz if it exists
+            if (currentQuizId) {
+                $.ajax({
+                    url: window.quizConfig.abandonUrl,
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': window.quizConfig.csrfToken
+                    },
+                    data: {
+                        quiz_id: currentQuizId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            console.log('Previous quiz abandoned successfully');
+                        } else {
+                            console.warn('Failed to abandon previous quiz:', response.message);
+                        }
+                        // Continue with starting fresh quiz regardless of abandon result
+                        startFreshQuiz();
+                    },
+                    error: function(xhr) {
+                        console.warn('Error abandoning previous quiz, continuing with fresh start');
+                        // Continue with starting fresh quiz even if abandon fails
+                        startFreshQuiz();
+                    }
+                });
+            } else {
+                // No current quiz to abandon, start fresh directly
+                startFreshQuiz();
+            }
+
+            function startFreshQuiz() {
+                // Clear all saved state
+                clearQuizState();
+                clearCurrentQuizId();
+                clearCompletedQuizId();
+
+                // Hide continue indicator and start over button
+                const indicator = document.getElementById('continue-quiz-indicator');
+                if (indicator) {
+                    indicator.style.display = 'none';
+                }
+                startOverBtn.style.display = 'none';
+
+                // Start fresh quiz
+                $.ajax({
+                    url: window.quizConfig.startQuizUrl,
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': window.quizConfig.csrfToken
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            setCurrentQuizId(response.quiz_id);
+
+                            // Clear all form selections for fresh quiz
+                            clearAllFormSelections();
+
+                            showStep(2);
+                        } else {
+                            alert('Error starting quiz: ' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error starting quiz. Please try again.');
+                    }
+                });
+            }
+        });
+    }
+
     // Collect step data based on step type
     function collectStepData(stepNumber) {
         const stepData = {};
 
         switch(stepNumber) {
             case 2: // Carbohydrate selection
+                const carbData = collectRadioData('carb-');
                 stepData['nutrition-form'] = {
-                    'Select the foods that are high in carbohydrate.': collectCheckboxData('carb-')
+                    'Do you think these foods are high or low in carbohydrate? (Select one answer per food)': carbData
                 };
                 break;
             case 3: // Protein selection
+                const proteinData = collectRadioData('protein-');
                 stepData['nutrition-form'] = {
-                    'Select the foods that are high in protein.': collectCheckboxData('protein-')
+                    'Do you think these foods are high or low in protein? (Select one answer per food)': proteinData
                 };
                 break;
             case 4: // Fat selection
+                const fatData = collectRadioData('fat-');
                 stepData['nutrition-form'] = {
-                    'Select the foods that are high in fat.': collectCheckboxData('fat-')
+                    'Do you think these foods are high or low in fat? (Select one answer per food)': fatData
                 };
                 break;
-            case 5: // healthy fat selection (step 4)
+            case 5: // Healthy fat selection
+                const healthyFatData = collectRadioData('healthy-fat-');
                 stepData['nutrition-form'] = {
-                    'Select the foods that are high in healthy fats.': collectCheckboxData('healthy-fat-')
+                    'Do you think these foods are high or low in healthy fats? (Select one answer per food)': healthyFatData
                 };
                 break;
-            case 6: // iron selection (step 5)
+            case 6: // Iron selection
+                const ironData = collectSingleChoiceData('iron-selection');
                 stepData['nutrition-form'] = {
-                    'Which one of these foods has the most iron?': collectCheckboxData('iron-')
+                    'Which of these foods has the most iron?(Select one answer)': ironData
                 };
                 break;
-            case 7: // Multiple choice questions
+            case 7: // Calcium selection
+                const calciumData = collectSingleChoiceData('calcium-selection');
+                stepData['nutrition-form'] = {
+                    'Which of these foods has the most calcium?(Select one answer)': calciumData
+                };
+                break;
+            case 8: // Fiber selection
+                const fibreData = collectSingleChoiceData('fibre-selection');
+                stepData['nutrition-form'] = {
+                    'Which of these foods has the most fibre?(Select one answer)': fibreData
+                };
+                break;
+            case 9: // Multiple choice questions
                 const multipleChoiceData = collectMultipleChoiceData();
-                // Convert to proper format for step 7
-                stepData['nutrition-form'] = {};
-                Object.keys(multipleChoiceData).forEach((questionText, index) => {
-                    stepData['nutrition-form'][questionText] = multipleChoiceData[questionText];
-                });
+                // For step 9, store the multiple choice data directly
+                stepData['nutrition-form'] = multipleChoiceData;
                 break;
             default:
+                console.log('No case matched for step:', stepNumber);
                 return null;
         }
 
         return stepData;
     }
 
-    // Collect checkbox data for food selection steps
-    function collectCheckboxData(prefix) {
+    // Collect radio button data for food selection steps
+    function collectRadioData(prefix) {
         const answers = {};
 
         try {
-            const checkboxes = document.querySelectorAll(`input[id^="${prefix}"]`);
-            const unsureRadio = document.querySelector(`input[id="${prefix}unsure"]`);
+            // Get all radio buttons for this prefix
+            const radioButtons = document.querySelectorAll(`input[name^="${prefix}"]`);
 
-            // Check if unsure is selected
-            const isUnsureSelected = unsureRadio && unsureRadio.checked;
+            // Group radio buttons by food item
+            const foodGroups = {};
+            radioButtons.forEach(radio => {
+                const name = radio.name;
+                // Remove the prefix and the option suffix to get the food name
+                const foodName = name.replace(`${prefix}`, '').replace('-high', '').replace('-low', '').replace('-unsure', '');
 
-            if (isUnsureSelected) {
-                // If unsure is selected, mark all foods as unselected with "Unsure" option
-                checkboxes.forEach(checkbox => {
-                    const label = getLabelText(checkbox);
-                    if (label) {
-                        answers[label] = {
-                            value: 0,
-                            option: "Unsure",
-                            correct: 0
-                        };
-                    }
-                });
+                if (!foodGroups[foodName]) {
+                    foodGroups[foodName] = [];
+                }
+                foodGroups[foodName].push(radio);
+            });
 
-                // Add unsure option
-                answers['unsure'] = {
-                    value: 1,
-                    option: 'unsure',
-                    correct: 0
-                };
-            } else {
-                // If unsure is not selected, process food selections
-                checkboxes.forEach(checkbox => {
-                    const label = getLabelText(checkbox);
-                    if (label) {
-                        const isChecked = checkbox.checked;
+            // Process each food group
+            Object.keys(foodGroups).forEach(foodName => {
+                const radios = foodGroups[foodName];
+                const selectedRadio = radios.find(radio => radio.checked);
 
-                        // Use the food name as the key instead of checkbox ID
-                        answers[label] = {
-                            value: isChecked ? 1 : 0,
-                            option: isChecked ? "High" : "Unsure",
-                            correct: 0 // Will be determined by backend
-                        };
-                    }
-                });
-
-                // Add unsure option as unselected
-                answers['unsure'] = {
-                    value: 0,
-                    option: 'unsure',
-                    correct: 0
-                };
-            }
-
-            // Additional validation check
-            const selectedFoods = Object.keys(answers).filter(key => key !== 'unsure' && answers[key].value === 1);
-            const unsureSelected = answers['unsure'] && answers['unsure'].value === 1;
+                if (selectedRadio) {
+                    const value = selectedRadio.value; // 'high', 'low', or 'unsure'
+                    answers[foodName] = {
+                        value: 1,
+                        option: value.charAt(0).toUpperCase() + value.slice(1), // Capitalize first letter
+                        correct: 0 // Will be determined by backend
+                    };
+                }
+                // If no selection made, don't store anything for this food
+            });
 
         } catch (error) {
-            // Return empty answers object if there's an error
-            return {};
+            console.error('Error collecting radio data:', error);
         }
 
         return answers;
     }
 
-    // Helper function to safely get label text
-    function getLabelText(checkbox) {
+    // Collect single choice data for radio button questions
+    function collectSingleChoiceData(radioName) {
+        const answers = {};
+
         try {
-            // Method 1: Try to find label by for attribute
-            const label = document.querySelector(`label[for="${checkbox.id}"]`);
-            if (label && label.textContent) {
-                return label.textContent.trim();
-            }
+            // Get the selected radio button
+            const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
 
-            // Method 2: Try next sibling
-            if (checkbox.nextElementSibling && checkbox.nextElementSibling.textContent) {
-                return checkbox.nextElementSibling.textContent.trim();
-            }
+            if (selectedRadio) {
+                const selectedValue = selectedRadio.value;
 
-            // Method 3: Try to find label within parent container
-            const parentContainer = checkbox.closest('.food-image-container');
-            if (parentContainer) {
-                const labelElement = parentContainer.querySelector('.food-label');
-                if (labelElement && labelElement.textContent) {
-                    return labelElement.textContent.trim();
-                }
+                // Store only the selected option
+                answers[selectedValue] = {
+                    value: 1,
+                    option: null,
+                    correct: 0
+                };
             }
+            // If no selection, return empty object
 
-            // Method 4: Try to find any label in the same container
-            const container = checkbox.parentElement;
-            if (container) {
-                const labelElement = container.querySelector('label');
-                if (labelElement && labelElement.textContent) {
-                    return labelElement.textContent.trim();
-                }
-            }
-
-            // Fallback: use checkbox ID as label (remove common prefixes)
-            console.warn(`Could not find label for checkbox ${checkbox.id}, using ID as fallback`);
-            const fallbackLabel = checkbox.id
-                .replace(/^(carb|protein|fat)-/, '') // Remove common prefixes
-                .replace(/-/g, ' ') // Replace hyphens with spaces
-                .replace(/\b\w/g, l => l.toUpperCase()); // Capitalize first letter of each word
-            return fallbackLabel;
         } catch (error) {
-            console.error('Error getting label text for checkbox:', checkbox.id, error);
-            // Return a safe fallback
-            return checkbox.id || 'Unknown';
+            console.error('Error collecting single choice data:', error);
         }
+
+        return answers;
     }
 
     // Collect multiple choice data
@@ -358,14 +652,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     option: selectedRadio.value,
                     correct: 0
                 };
-            } else {
-                // If no answer selected, mark as unsure
-                answers[questionText] = {
-                    value: 1,
-                    option: 'unsure',
-                    correct: 0
-                };
             }
+            // If no answer selected, don't store anything for this question
         });
 
         return answers;
@@ -381,8 +669,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Extract the actual answers from the nested structure
         let answers = {};
         if (stepData && stepData['nutrition-form']) {
-            if (stepNumber === 7) {
-                // For multiple choice, the data is flat
+            if (stepNumber === 9) {
+                // For step 9 (multiple choice), the data is stored directly
                 answers = stepData['nutrition-form'];
             } else {
                 // For food selection, extract from the question key
@@ -394,27 +682,74 @@ document.addEventListener('DOMContentLoaded', function () {
             return false;
         }
 
-        // For food selection steps (2-6), check if any food is selected or unsure is selected
-        if (stepNumber >= 2 && stepNumber <= 6) {
-            // Check if any food item has value === 1 (selected)
-            const foodItems = Object.keys(answers).filter(key => key !== 'unsure');
+        // For food selection steps (2-5), check if all foods have radio button selections
+        if (stepNumber >= 2 && stepNumber <= 5) {
+            // For radio button steps, check if all food items have a selection
+            const foodItems = Object.keys(answers);
             const selectedFoodItems = foodItems.filter(food => answers[food] && answers[food].value === 1);
-            const hasSelectedFood = selectedFoodItems.length > 0;
-            const hasUnsureSelected = answers['unsure'] && answers['unsure'].value === 1;
 
-            if (!hasSelectedFood && !hasUnsureSelected) {
+            // Require ALL food items to have a selection (High, Low, or Unsure)
+            if (selectedFoodItems.length !== foodItems.length) {
+                // Find which food items don't have selections
+                const unselectedFoods = foodItems.filter(food => !answers[food] || answers[food].value !== 1);
+
+                // Add error styling to unselected food items
+                unselectedFoods.forEach(foodName => {
+                    addErrorStylingToFoodItem(foodName, stepNumber);
+                });
+
                 return false;
             }
+
+            // Remove error styling from all food items if validation passes
+            foodItems.forEach(foodName => {
+                removeErrorStylingFromFoodItem(foodName, stepNumber);
+            });
         }
 
-        // For multiple choice questions (step 7), check if all questions are answered
-        if (stepNumber === 7) {
-            const questionCount = Object.keys(answers).length;
-            const answeredCount = Object.values(answers).filter(answer =>
-                answer.value === 1 && answer.option !== 'unsure'
-            ).length;
+        // For single selection steps (6-8), check if exactly one item is selected
+        if (stepNumber >= 6 && stepNumber <= 8) {
+            const selectedOptions = Object.keys(answers);
+            const hasSelection = selectedOptions.length === 1;
 
-            if (answeredCount < questionCount) {
+            // User must select exactly one option
+            if (!hasSelection) {
+                // Show error styling on all food items if none selected
+                // Get all radio buttons for this step to show error on all options
+                let radioName = '';
+                if (stepNumber === 6) radioName = 'iron-selection';
+                else if (stepNumber === 7) radioName = 'calcium-selection';
+                else if (stepNumber === 8) radioName = 'fibre-selection';
+
+                const allRadios = document.querySelectorAll(`input[name="${radioName}"]`);
+                allRadios.forEach(radio => {
+                    const optionName = radio.value;
+                    addErrorStylingToFoodItem(optionName, stepNumber);
+                });
+                return false;
+            }
+
+            // Remove error styling from all food items if validation passes
+            // Get all radio buttons for this step to remove error styling
+            let radioName = '';
+            if (stepNumber === 6) radioName = 'iron-selection';
+            else if (stepNumber === 7) radioName = 'calcium-selection';
+            else if (stepNumber === 8) radioName = 'fibre-selection';
+
+            const allRadios = document.querySelectorAll(`input[name="${radioName}"]`);
+            allRadios.forEach(radio => {
+                const optionName = radio.value;
+                removeErrorStylingFromFoodItem(optionName, stepNumber);
+            });
+        }
+
+        // For multiple choice questions (step 9), check if all questions are answered
+        if (stepNumber === 9) {
+            // Since we now only store answered questions, we need to check against all questions in the DOM
+            const allQuestions = document.querySelectorAll('.question-container');
+            const answeredQuestions = Object.keys(answers);
+
+            if (answeredQuestions.length < allQuestions.length) {
                 return false;
             }
         }
@@ -489,8 +824,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Store completed quiz ID for signup/login process
                         storeCompletedQuizId(currentQuizId);
 
-                        // Clear current quiz state but keep completed quiz ID
-                        clearQuizState();
+                        // Don't clear quiz state - keep answers for results screen
+                        // clearQuizState(); // REMOVED - keep answers in quiz_state
 
                         resolve(response);
                     } else {
@@ -499,38 +834,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 error: function(xhr) {
                     reject('Error completing quiz. Please try again.');
-                }
-            });
-        });
-    }
-
-    // Abandon quiz function
-    function abandonQuiz() {
-        return new Promise((resolve, reject) => {
-            const currentQuizId = getCurrentQuizId();
-            if (!currentQuizId) {
-                reject('No quiz ID available');
-                return;
-            }
-
-            $.ajax({
-                url: window.quizConfig.abandonUrl,
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': window.quizConfig.csrfToken
-                },
-                data: {
-                    quiz_id: currentQuizId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        resolve(response);
-                    } else {
-                        reject(response.message || 'Failed to abandon quiz');
-                    }
-                },
-                error: function(xhr) {
-                    reject('Error abandoning quiz. Please try again.');
                 }
             });
         });
@@ -554,9 +857,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     let errorMessage = 'Please select at least one option before proceeding.';
 
                     // Customize error message based on step type
-                    if (currentStepNumber >= 2 && currentStepNumber <= 6) {
-                        errorMessage = 'Please select any food items or choose "Unsure" before proceeding.';
-                    } else if (currentStepNumber === 7) {
+                    if (currentStepNumber >= 2 && currentStepNumber <= 4) {
+                        // Steps 2-4: High/Low/Unsure radio buttons for each food
+                        errorMessage = 'Please select High, Low, or Unsure for each food item before proceeding.';
+                    } else if (currentStepNumber >= 5 && currentStepNumber <= 8) {
+                        // Steps 5-8: Single choice questions (select one food or Unsure)
+                        errorMessage = 'Please select one food item or choose "Unsure" before proceeding.';
+                    } else if (currentStepNumber === 9) {
+                        // Step 9: Multiple choice questions
                         errorMessage = 'Please answer all questions before proceeding.';
                     }
 
@@ -568,27 +876,55 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Save step data
                 try {
                     await saveStepData(currentStepNumber, stepData);
+                    // Also save answers to session storage for restoration
+                    // Extract the actual answers from the nested structure
+                    let answers;
+                    if (currentStepNumber === 9) {
+                        // For step 9 (multiple choice), the data is stored directly
+                        answers = stepData['nutrition-form'];
+                    } else {
+                        // For other steps, extract from the question key
+                        answers = stepData['nutrition-form'] ?
+                            Object.values(stepData['nutrition-form'])[0] :
+                            stepData['nutrition-form'];
+                    }
+                    saveStepAnswers(currentStepNumber, answers);
                 } catch (error) {
                     alert(error);
                     return;
                 }
 
-                // If this is the final step (step 7), complete the quiz
-                if (currentStepNumber === 7) {
+                // If this is the final step (step 9), complete the quiz
+                if (currentStepNumber === 9) {
                     try {
                         // You can pass user ID here if available, or use null for anonymous users
                         await completeQuiz(null);
                         // clearQuizState(); // Clear state on completion - REMOVED
                         // clearCurrentQuizId(); // Clear quiz ID on completion - REMOVED
+
+                        // Show results/completion screen instead of next step
+                        setTimeout(() => {
+                            showStep(10); // Assuming step 10 is the results screen
+                            removeErrorStyling(); // Remove error styling after successful navigation
+                        }, 100);
+                        return; // Don't continue to the next step logic
                     } catch (error) {
                         // Continue to results page even if completion fails
+                        setTimeout(() => {
+                            showStep(10); // Show results screen even if completion fails
+                            removeErrorStyling();
+                        }, 100);
+                        return;
                     }
                 }
             }
 
-            // Navigate to next step
-            showStep(nextStepNumber);
-            removeErrorStyling(); // Remove error styling after successful navigation
+            // Navigate to next step (only if not completing the quiz)
+            // Add a small delay to ensure saveStepAnswers completes
+            setTimeout(() => {
+                showStep(nextStepNumber);
+                removeErrorStyling(); // Remove error styling after successful navigation
+            }, 100);
         });
     });
 
@@ -601,28 +937,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Handle food item selection
-    foodCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            const container = this.closest('.food-image-container');
-            if (this.checked) {
-                container.classList.add('selected');
-            } else {
-                container.classList.remove('selected');
-            }
-        });
-    });
-
     // Handle food container clicks (for better UX)
     foodContainers.forEach(container => {
         container.addEventListener('click', function (e) {
-            // Don't trigger if clicking directly on the checkbox
-            if (e.target.type === 'checkbox') return;
+            // Don't trigger if clicking directly on the radio button
+            if (e.target.type === 'radio') return;
 
-            const checkbox = this.querySelector('.food-checkbox');
-            if (checkbox) {
-                checkbox.checked = !checkbox.checked;
-                checkbox.dispatchEvent(new Event('change'));
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
             }
         });
     });
@@ -631,21 +955,19 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.unsure-radio').forEach(radio => {
         radio.addEventListener('change', function () {
             if (this.checked) {
-                // Uncheck all food checkboxes in the same step
+                // Uncheck all food radio buttons in the same step
                 const currentStep = this.closest('.quiz-step');
-                const checkboxes = currentStep.querySelectorAll('.food-checkbox');
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                    const container = checkbox.closest('.food-image-container');
-                    container.classList.remove('selected');
+                const foodRadios = currentStep.querySelectorAll('input[type="radio"]:not(.unsure-radio)');
+                foodRadios.forEach(foodRadio => {
+                    foodRadio.checked = false;
                 });
             }
         });
     });
 
-    // Handle food checkbox clicks to uncheck unsure radio
-    foodCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
+    // Handle food radio button clicks to uncheck unsure radio
+    document.querySelectorAll('input[type="radio"]:not(.unsure-radio)').forEach(radio => {
+        radio.addEventListener('change', function () {
             if (this.checked) {
                 // Uncheck unsure radio in the same step
                 const currentStep = this.closest('.quiz-step');
@@ -658,10 +980,33 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Add event listeners to remove error styling when user starts selecting
-    foodCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
             removeErrorStyling();
             hideErrorMessage();
+
+            // Save current step answers whenever user makes a selection
+            const currentStep = this.closest('.quiz-step');
+            if (currentStep) {
+                const currentStepNumber = parseInt(currentStep.getAttribute('data-step'));
+                if (currentStepNumber >= 2 && currentStepNumber <= 9) {
+                    const stepData = collectStepData(currentStepNumber);
+                    if (stepData) {
+                        // Extract the actual answers from the nested structure
+                        let answers;
+                        if (currentStepNumber === 9) {
+                            // For step 9 (multiple choice), the data is stored directly
+                            answers = stepData['nutrition-form'];
+                        } else {
+                            // For other steps, extract from the question key
+                            answers = stepData['nutrition-form'] ?
+                                Object.values(stepData['nutrition-form'])[0] :
+                                stepData['nutrition-form'];
+                        }
+                        saveStepAnswers(currentStepNumber, answers);
+                    }
+                }
+            }
         });
     });
 
@@ -671,6 +1016,29 @@ document.addEventListener('DOMContentLoaded', function () {
         radio.addEventListener('change', function() {
             removeErrorStyling();
             hideErrorMessage();
+
+            // Save current step answers whenever user makes a selection
+            const currentStep = this.closest('.quiz-step');
+            if (currentStep) {
+                const currentStepNumber = parseInt(currentStep.getAttribute('data-step'));
+                if (currentStepNumber >= 2 && currentStepNumber <= 9) {
+                    const stepData = collectStepData(currentStepNumber);
+                    if (stepData) {
+                        // Extract the actual answers from the nested structure
+                        let answers;
+                        if (currentStepNumber === 9) {
+                            // For step 9 (multiple choice), the data is stored directly
+                            answers = stepData['nutrition-form'];
+                        } else {
+                            // For other steps, extract from the question key
+                            answers = stepData['nutrition-form'] ?
+                                Object.values(stepData['nutrition-form'])[0] :
+                                stepData['nutrition-form'];
+                        }
+                        saveStepAnswers(currentStepNumber, answers);
+                    }
+                }
+            }
         });
     });
 
@@ -680,6 +1048,43 @@ document.addEventListener('DOMContentLoaded', function () {
         radio.addEventListener('change', function() {
             removeErrorStyling();
             hideErrorMessage();
+
+            // Handle radio button changes for food selection steps (2-5)
+            const currentStep = this.closest('.quiz-step');
+            if (currentStep) {
+                const currentStepNumber = parseInt(currentStep.getAttribute('data-step'));
+
+                // Only handle radio button changes for steps 2-5 (food selection steps)
+                if (currentStepNumber >= 2 && currentStepNumber <= 5) {
+                    // Find the food name from the radio button name
+                    const radioName = this.name;
+                    const foodName = radioName.replace(/^(carb|protein|fat)-/, '').replace(/-high$|-low$|-unsure$/, '');
+
+                    // Remove error styling from this food item
+                    removeErrorStylingFromFoodItem(foodName, currentStepNumber - 1);
+                }
+
+                // Save current step answers whenever user makes a selection
+                if (currentStepNumber >= 2 && currentStepNumber <= 9) {
+                    const stepData = collectStepData(currentStepNumber);
+                    if (stepData) {
+                        // Extract the actual answers from the nested structure
+                        let answers;
+                        if (currentStepNumber === 9) {
+                            // For step 9 (multiple choice), the data is stored directly
+                            answers = stepData['nutrition-form'];
+                        } else {
+                            // For other steps, extract from the question key
+                            answers = stepData['nutrition-form'] ?
+                                Object.values(stepData['nutrition-form'])[0] :
+                                stepData['nutrition-form'];
+                        }
+                        saveStepAnswers(currentStepNumber, answers);
+                    } else {
+                        console.warn(`No step data collected for step ${currentStepNumber}`);
+                    }
+                }
+            }
         });
     });
 
@@ -694,6 +1099,44 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!hasExistingState) {
                 // No existing state, reset to first step
                 resetQuizToFirstStep();
+            } else {
+                // We have existing state, check if quiz is completed
+                const savedState = sessionStorage.getItem(QUIZ_STORAGE_KEY);
+                if (savedState) {
+                    try {
+                        const state = JSON.parse(savedState);
+                        const savedAnswers = state.answers || {};
+                        const answeredSteps = Object.keys(savedAnswers).map(Number).filter(step => step > 0);
+
+                        // Check if quiz is completed (has step 9 answers)
+                        if (answeredSteps.includes(9)) {
+                            // Quiz is completed, show results screen
+                            showStep(10);
+                            // Restore all answers for the results screen
+                            setTimeout(() => {
+                                restoreQuizAnswers();
+                            }, 100);
+                        } else {
+                            // Quiz is not completed, show step 1 with continue indicator
+                            showStep(1);
+                            // Only restore answers if we actually have saved answers
+                            const hasAnswers = Object.keys(savedAnswers).length > 0;
+                            if (hasAnswers) {
+                                // Restore all previous answers after a short delay to ensure DOM is ready
+                                setTimeout(() => {
+                                    restoreQuizAnswers();
+                                }, 100);
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error checking for saved answers:', e);
+                        // Fallback to step 1
+                        showStep(1);
+                    }
+                } else {
+                    // No saved state, show step 1
+                    showStep(1);
+                }
             }
         });
 
@@ -728,6 +1171,28 @@ document.addEventListener('DOMContentLoaded', function () {
         if (mainImage) mainImage.style.display = 'block';
         if (signupImage) signupImage.style.display = 'none';
 
+        // Clear all form selections
+        clearAllFormSelections();
+
+        // Reset global variables
+        currentStep = 1;
+        clearQuizState(); // Clear session storage on reset
+        clearCurrentQuizId(); // Clear quiz ID on reset
+        clearCompletedQuizId(); // Clear completed quiz ID on reset
+
+        // Hide the continue quiz indicator
+        const indicator = document.getElementById('continue-quiz-indicator');
+        if (indicator) {
+            indicator.style.display = 'none';
+        }
+
+        // Clear error styling
+        hideErrorMessage();
+        removeErrorStyling();
+    }
+
+    // Function to clear all form selections
+    function clearAllFormSelections() {
         // Uncheck all checkboxes
         foodCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
@@ -738,17 +1203,11 @@ document.addEventListener('DOMContentLoaded', function () {
             container.classList.remove('selected');
         });
 
-        // Uncheck all radio buttons
-        const unsureRadios = document.querySelectorAll('.unsure-radio');
-        unsureRadios.forEach(radio => {
+        // Uncheck all radio buttons (including unsure radios)
+        const allRadios = document.querySelectorAll('input[type="radio"]');
+        allRadios.forEach(radio => {
             radio.checked = false;
         });
-
-        // Reset global variables
-        currentStep = 1;
-        clearQuizState(); // Clear session storage on reset
-        clearCurrentQuizId(); // Clear quiz ID on reset
-        clearCompletedQuizId(); // Clear completed quiz ID on reset
     }
 
     // Load quiz state on page load
@@ -836,6 +1295,84 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Add error styling to a specific food item
+    function addErrorStylingToFoodItem(foodName, stepNumber) {
+        const currentStep = document.querySelector(`#step-${stepNumber + 1}`);
+        if (!currentStep) return;
+
+        // Find the food item container by looking for the food label text
+        const foodLabels = currentStep.querySelectorAll('.food-label');
+        let targetFoodContainer = null;
+
+        foodLabels.forEach(label => {
+            if (label.textContent.trim().toLowerCase() === foodName.toLowerCase()) {
+                targetFoodContainer = label.closest('.food-item');
+            }
+        });
+
+        if (targetFoodContainer) {
+            // Add error class to the food item container
+            targetFoodContainer.classList.add('error');
+
+            // Add visual error styling
+            targetFoodContainer.style.border = '2px solid #dc3545';
+            targetFoodContainer.style.borderRadius = '8px';
+            targetFoodContainer.style.boxShadow = '0 0 5px rgba(220, 53, 69, 0.3)';
+            targetFoodContainer.style.backgroundColor = 'rgba(220, 53, 69, 0.05)';
+
+            // Add error message if it doesn't exist
+            if (!targetFoodContainer.querySelector('.food-error-message')) {
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'food-error-message';
+
+                // Customize error message based on step type
+                if (stepNumber >= 2 && stepNumber <= 4) {
+                    errorMessage.textContent = 'Please select High, Low, or Unsure';
+                } else if (stepNumber >= 5 && stepNumber <= 8) {
+                    errorMessage.textContent = 'Please select this food or choose Unsure';
+                } else {
+                    errorMessage.textContent = 'Please select an option';
+                }
+
+                errorMessage.style.cssText = 'color: #dc3545; font-size: 12px; margin-top: 5px; text-align: center; font-weight: 500;';
+                targetFoodContainer.appendChild(errorMessage);
+            }
+        }
+    }
+
+    // Remove error styling from a specific food item
+    function removeErrorStylingFromFoodItem(foodName, stepNumber) {
+        const currentStep = document.querySelector(`#step-${stepNumber + 1}`);
+        if (!currentStep) return;
+
+        // Find the food item container by looking for the food label text
+        const foodLabels = currentStep.querySelectorAll('.food-label');
+        let targetFoodContainer = null;
+
+        foodLabels.forEach(label => {
+            if (label.textContent.trim().toLowerCase() === foodName.toLowerCase()) {
+                targetFoodContainer = label.closest('.food-item');
+            }
+        });
+
+        if (targetFoodContainer) {
+            // Remove error class from the food item container
+            targetFoodContainer.classList.remove('error');
+
+            // Remove visual error styling
+            targetFoodContainer.style.border = '';
+            targetFoodContainer.style.borderRadius = '';
+            targetFoodContainer.style.boxShadow = '';
+            targetFoodContainer.style.backgroundColor = '';
+
+            // Remove error message if it exists
+            const errorMessage = targetFoodContainer.querySelector('.food-error-message');
+            if (errorMessage) {
+                errorMessage.remove();
+            }
+        }
+    }
+
     // Remove error styling from food items
     function removeErrorStyling() {
         const allFoodContainers = document.querySelectorAll('.food-image-container');
@@ -860,6 +1397,16 @@ document.addEventListener('DOMContentLoaded', function () {
             container.style.borderRadius = '';
             container.style.padding = '';
             container.style.backgroundColor = '';
+        });
+
+        // Remove individual food item error styling
+        const allFoodItems = document.querySelectorAll('.food-item');
+        allFoodItems.forEach(item => {
+            item.classList.remove('error');
+            const errorMessage = item.querySelector('.food-error-message');
+            if (errorMessage) {
+                errorMessage.remove();
+            }
         });
     }
 
