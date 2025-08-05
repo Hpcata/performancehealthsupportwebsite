@@ -18,6 +18,10 @@ class Section extends Model
     const TYPE_FIND_YOUR_SPORT = 'find_your_sport';
     const TYPE_REAL_STORIES = 'real_stories';
     const TYPE_PARTNERS = 'partners';
+    const TYPE_TRAINING_PLAN_MAIN_BANNER = 'training_plan_main_banner';
+    const TYPE_BUILT_FOR_REAL_RESULT = 'built_for_real_result';
+    const PLAN_INCLUSIONS = 'plan_inclusions';
+    const PLAN_INTERESTS = 'plan_interests';
 
     // Get all available section types
     public static function getSectionTypes()
@@ -31,6 +35,11 @@ class Section extends Model
             self::TYPE_FIND_YOUR_SPORT => 'Find Your Sport',
             self::TYPE_REAL_STORIES => 'Real Stories',
             self::TYPE_PARTNERS => 'Partners',
+            self::TYPE_TRAINING_PLAN_MAIN_BANNER => 'Training Plan Main Banner',
+            self::TYPE_BUILT_FOR_REAL_RESULT => 'Built For Real Result',
+            self::PLAN_INCLUSIONS => 'Plan Inclusions',
+            self::PLAN_INTERESTS => 'Plan Interests',
+
         ];
     }
 

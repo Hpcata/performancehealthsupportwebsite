@@ -1766,7 +1766,6 @@ class FrontController extends Controller
         }
     }
 
-
     public function getMeals($planId, $categoryId)
     {
         // fetch user id from plan id
@@ -1832,4 +1831,10 @@ class FrontController extends Controller
         }
     }
 
+    public function trainingNutritionPlan(Request $request)
+    {
+        $page = Page::with('sections')->where('slug', 'trining_nutrition_plan')->first();
+
+        return view('front.pages.training_nutrition_plan', compact('page'));
+    }
 }
