@@ -166,7 +166,9 @@ function verifyOtp() {
         },
         body: JSON.stringify({
             mobile_number: window.mobileNumber,
-            otp: otp
+            otp: otp,
+            isFromQuizPopup: $('#isFromQuizPopup').val(),
+            completed_quiz_id: sessionStorage.getItem('completed_quiz_id')
         })
     })
     .then(response => response.json())
@@ -175,7 +177,7 @@ function verifyOtp() {
             if (data.action === 'login') {
                 // User exists - login successful
                 showSuccess('Login successful! Redirecting to your profile...');
-
+                sessionStorage.removeItem('quiz_state');
                 // Redirect to profile landing page
                 setTimeout(() => {
                     if (data.redirectUrl) {
@@ -277,7 +279,9 @@ function completeRegistration() {
             email: email,
             userType: userType,
             ageGroup: ageGroup,
-            sport: sport
+            sport: sport,
+            isFromQuizPopup: $('#isFromQuizPopup').val(),
+            completed_quiz_id: sessionStorage.getItem('completed_quiz_id')
         })
     })
     .then(response => response.json())
@@ -290,6 +294,8 @@ function completeRegistration() {
             button.disabled = true;
             button.style.opacity = '0.6';
             button.style.cursor = 'not-allowed';
+
+            sessionStorage.removeItem('quiz_state');
 
             // Redirect to profile landing page using the user ID from response
             setTimeout(() => {

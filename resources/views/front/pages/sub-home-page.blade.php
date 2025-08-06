@@ -3229,6 +3229,8 @@
                 </div>
             </div>
             </div>
+
+            <input type="hidden" name="isFromQuizPopup" id="isFromQuizPopup" value="0">
         </div>
         </div>
     </div>

@@ -442,6 +442,7 @@ $auth = auth()->guard('web')->check();
         if(isQuiz) {
             $('#signupModalathlete .signup-login-h2-title').addClass('d-none');
             $('#signupModalathlete .quiz-h2-title').removeClass('d-none');
+            $('#isFromQuizPopup').val(1);
         } else {
             $('#signupModalathlete .signup-login-h2-title').removeClass('d-none');
             $('#signupModalathlete .quiz-h2-title').addClass('d-none');
