@@ -340,7 +340,7 @@
                                 <div class="tab-content" id="whyTabsContent">
                                     <div class="tab-pane fade show active" id="athletes" role="tabpanel">
                                         <p class="tab-description">
-                                            Train like a Pro? Time to eat like one too. ATHLEAT makes performance nutrition simple, practical, and personalised to you. It’s your blueprint. 
+                                            Train like a Pro? Time to eat like one too. ATHLEAT makes performance nutrition simple, practical, and personalised to you. It’s your blueprint.
                                         </p>
 
                                         <div class="feature-grid">
@@ -351,8 +351,8 @@
                                                 <div class="feature-content">
                                                     <h3>Know what to Eat, When and Why</h3>
                                                         <p>
-                                                            Custom plans for your training phase, 
-                                                            Comp prep, or recovery 
+                                                            Custom plans for your training phase,
+                                                            Comp prep, or recovery
                                                              - All built for maximum results
                                                         </p>
                                                 </div>
@@ -366,7 +366,7 @@
                                                 <div class="feature-content">
                                                     <h3>Builds Kitchen Confidence with Skills + Tools</h3>
                                                     <p>
-                                                        Food made easy with fast, real food prep tips, 
+                                                        Food made easy with fast, real food prep tips,
                                                         Short-cuts and practical know-how.
                                                     </p>
                                                 </div>
@@ -380,9 +380,9 @@
                                                 <div class="feature-content">
                                                     <h3>Fuel Up Right</h3>
                                                     <p>
-                                                        Understand how your choices impact 
-                                                        Energy, strength, power, muscle, recovery, immunity 
-                                                        And long-term gains. 
+                                                        Understand how your choices impact
+                                                        Energy, strength, power, muscle, recovery, immunity
+                                                        And long-term gains.
                                                         …and get direct progress feedback in one platform.
                                                     </p>
                                                 </div>
@@ -396,7 +396,7 @@
                                                 <div class="feature-content">
                                                     <h3>Built by a Pro</h3>
                                                     <p>
-                                                        Performance Coach to NRL, Surfing, Skate…  
+                                                        Performance Coach to NRL, Surfing, Skate…
                                                     </p>
                                                 </div>
                                             </div>
@@ -443,14 +443,14 @@
 
                                             <div class="feature-item">
                                                 <div class="feature-icon">
-                                                    
+
                                                     <img src="{{ frontAssets('images/search.svg') }}" width="33" height="33" alt="search" />
                                                 </div>
                                                 <div class="feature-content">
                                                     <h3>Supplement Smart</h3>
                                                     <p>
-                                                        Our Supplement Scanner ensures you are 
-                                                        safe and strategic about supplement use 
+                                                        Our Supplement Scanner ensures you are
+                                                        safe and strategic about supplement use
                                                         and getting the best bang for buck!
                                                     </p>
                                                 </div>
@@ -893,7 +893,7 @@
                             the quiz to test your nutrition knowledge and discover how to fuel
                             smarter—whether for performance, recovery, or everyday energy.
                             </p>
-                            <button class=" btn-signup" data-bs-toggle="modal" data-bs-target="#TakeTestModel">Start the quiz</button>
+                            <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#quizModal">Start the quiz</button>
                         </div>
                         <img
                             @if(!empty($section->banner_image[1]))
@@ -1056,6 +1056,9 @@
             @endif
         @endforeach
     @endif
+
+    {{-- Include modal file --}}
+    @include('front.pages.partials.modal')
 
     <!-- contact sectoin -->
     <section class="contact-section py-5">
@@ -1344,7 +1347,7 @@
         </div>
     </div> --}}
 
-    {{-- <div class="modal fade" id="TakeTestModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="TakeTestModelLabel" aria-hidden="true">
+    <div class="modal fade" id="TakeTestModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="TakeTestModelLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header flex-column align-items-start pe-5">
@@ -2800,7 +2803,7 @@
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 
     <!-- Modal -->
     {{-- <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
@@ -3208,27 +3211,7 @@
     </script>
     <script src="{{ asset('js/otp-registration.js') }}"></script>
     {{-- TODO: This below is old page script so I have commented and when it required you can uncomment as well --}}
-    {{-- <script>
-        // setTimeout(function () {
-        //     document.getElementById("linkedin-feed-1").innerHTML = `
-        //         <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143854792111501312"
-        //                 height="867"
-        //                 width="504"
-        //                 allowfullscreen=""
-        //                 title="LinkedIn Feed 1">
-        //         </iframe>
-        //     `;
-        //     document.getElementById("linkedin-feed-2").innerHTML = `
-        //         <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7143431925322383360"
-        //                 height="729"
-        //                 width="504"
-        //                 frameborder="0"
-        //                 allowfullscreen=""
-        //                 title="Embedded post">
-        //         </iframe>
-        //     `;
-        // }, 5000);
-
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const toggleLink = document.getElementById('toggle-coupon-link');
             const couponDetails = document.getElementById('coupon-details');
@@ -3453,13 +3436,8 @@
                 $type = $('#formType').val();
                 $('.sport-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
                 $('.supplement-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-                // if (type === 'sport') {
-                //     $('.sport-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-                // }
-                // if (type === 'supplement') {
-                //     $('.supplement-plan .unlock-result').removeClass('btn-primary').addClass('btn-dark');
-                // }
             })
+
             let totalAnswerCount = 0;  // Initialize totalAnswerCount to 0 globally for the entire script
 
             // Initialize all the necessary variables
@@ -3474,13 +3452,6 @@
             const loginLink = $(".login-link");
             const registerLink = $(".register-link");
             const currentModal = $("#TakeTestModel");
-
-            // Initialize totalAnswerCounts for each form with default values of 0
-            // let totalAnswerCounts = {
-            //     'nutrition-form': 0,
-            //     'sports-form': 0,
-            //     'supplement-form': 0
-            // };
 
             let currentStep = 0;  // Track the active step index
             const stepsData = {};  // Object to store all steps data
@@ -3827,7 +3798,7 @@
                     }
                     console.log(currentStep);
                     // Collect data for the current step
-                   // ✅ 1. Collect data from current step
+                    // ✅ 1. Collect data from current step
                     const stepJson = collectStepData(currentStep);
                     const currentStepJson = collectCurrentStepData(currentStep + 1);
                     // console.log(currentStepJson);
@@ -4956,7 +4927,7 @@
                 modalBody.scrollTop(0);
             }
         });
-    </script> --}}
+    </script>
 
     <script>
         // Initialize carousels with smooth transitions
@@ -5032,7 +5003,7 @@
                 this.cards = Array.from(this.track.children);
                 this.currentIndex = 0;
                 this.isMobile = window.innerWidth <= 768;
-                
+
                 // Set card width based on screen size
                 this.cardWidth = this.isMobile ? 290 : 400; // 280px card + 10px margin on mobile, 380px + 20px on desktop
 
@@ -5040,7 +5011,7 @@
             }
 
             init() {
-               
+
 
                 // Calculate how many cards fit in viewport
                 this.calculateVisibleCards();
@@ -5073,14 +5044,14 @@
                     this.handleResize();
                 });
 
-               
+
             }
 
             handleResize() {
                 const wasMobile = this.isMobile;
                 this.isMobile = window.innerWidth <= 768;
                 this.cardWidth = this.isMobile ? 290 : 400;
-                
+
                 // Only recalculate if mobile state changed
                 if (wasMobile !== this.isMobile) {
                     this.calculateVisibleCards();
@@ -5099,7 +5070,7 @@
                 const minCards = this.isMobile ? 2 : 3;
                 if (this.visibleCards < minCards) this.visibleCards = minCards;
 
-                
+
             }
 
             setupInfiniteLoop() {
@@ -5122,7 +5093,7 @@
                 this.cards = Array.from(this.track.children);
                 this.originalCardCount = originalCards.length;
 
-               
+
             }
 
             updatePosition(noAnimation = false) {
@@ -5145,15 +5116,15 @@
                     // Use faster transition for better responsiveness
                     const transitionDuration = this.isMobile ? "0.3s" : "0.25s";
                     this.track.style.transition = `transform ${transitionDuration} ease-in-out`;
-                   
+
                 }
 
                 this.track.style.transform = `translateX(${translateX}px)`;
-               
+
             }
 
             next() {
-              
+
                 this.currentIndex++;
 
                 // Check if we need to loop
@@ -5170,7 +5141,7 @@
             }
 
             prev() {
-             
+
                 this.currentIndex--;
 
                 // Check if we need to loop
@@ -5189,7 +5160,7 @@
             startAutoSlide() {
                 // Use different timing for mobile vs desktop
                 const interval = this.isMobile ? 1500 : 1200; // 1.5 seconds on mobile, 1.2 on desktop
-            
+
                 this.autoSlideInterval = setInterval(() => {
                     this.next();
                 }, interval);
@@ -5204,13 +5175,11 @@
 
         // Initialize when DOM is ready
         document.addEventListener("DOMContentLoaded", () => {
-           
-            
             // Force refresh the carousel if it already exists
             if (window.foodCarousel) {
                 window.foodCarousel.stopAutoSlide();
             }
-            
+
             window.foodCarousel = new FoodCarousel();
         });
 
@@ -5348,7 +5317,7 @@
             animation: tooltipFadeIn 0.3s ease-out;
             white-space: nowrap;
         }
-        
+
         .coming-soon-tooltip::after {
             content: '';
             position: absolute;
@@ -5358,7 +5327,7 @@
             border: 6px solid transparent;
             border-top-color: #333;
         }
-        
+
         @keyframes tooltipFadeIn {
             from {
             opacity: 0;
@@ -5453,3 +5422,18 @@
         });
     </script>
 @endsection
+
+{{-- push modal.js file --}}
+@push('scripts')
+    <script>
+        window.quizConfig = {
+            startQuizUrl: "{{ route('front.quiz.start') }}",
+            saveStepUrl: "{{ route('front.quiz.save-step') }}",
+            completeUrl: "{{ route('front.quiz.complete') }}",
+            abandonUrl: "{{ route('front.quiz.abandon') }}",
+            csrfToken: "{{ csrf_token() }}"
+        };
+    </script>
+
+    <script src="{!! frontAssets('js/modal.js') !!}"></script>
+@endpush
