@@ -3221,10 +3221,10 @@
                 <button class="btn-signup" onclick="closeModal()">Get Started</button>
                 </div>
 
-                <div class="image-section signup-login-h2-title d-none">
+                <div class="image-section signup-login-h2-title d-none signup-login-h2-img">
                     <img src="{{ asset('front/images/signup/login-bg.svg') }}" alt="Bowl of healthy food" class="food-image" />
                 </div>
-                <div class="image-section quiz-h2-title d-none p-4">
+                <div class="image-section quiz-h2-title d-none p-4 quiz-h2-img">
                     <img src="{{ asset('front/images/quiz/last-step-login-bg.svg') }}" alt="Bowl of healthy food" class="food-image" />
                 </div>
             </div>
@@ -5567,7 +5567,7 @@
             const loginSelectedFlag = document.getElementById('selected-flag');
             const loginSelectedCode = document.getElementById('selected-code');
             const loginDropdown = document.getElementById('login-dropdown');
-            const loginDropdownWrapper = document.querySelector('#loginModalathlete .dropdown-wrapper');
+            const loginDropdownWrapper = document.querySelector('#signupModalathlete .dropdown-wrapper');
             
             loginSelectedFlag.className = `fi fi-${country.code}`;
             loginSelectedCode.textContent = country.dial_code;
