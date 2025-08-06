@@ -199,7 +199,7 @@
                             <h1 class="hero-title-homepage">{{ $section->title }}</h1>
                             {!! $section->content !!}
 
-                            <button class="ms-2 btn-white">Sign up for free</button>
+                            <button class="ms-2 btn-white" onclick="openSingupFreePopup()">Sign up for free</button>
                         </div>
                     </div>
                 </div>
@@ -255,7 +255,7 @@
                         {!! $section->content !!}
 
                         @if(!Auth::check())
-                            <button class="btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModalathlete">
+                            <button class="btn-signup" id="show-new-signup-modal" onclick="openSingupFreePopup()">
                                 Sign up
                             </button>
                         @endif
