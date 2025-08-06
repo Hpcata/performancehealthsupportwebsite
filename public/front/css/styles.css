@@ -101,7 +101,7 @@ body {
     #signupModalathlete .modal-content,
     #loginModalathlete .modal-content,
     #quizModal .modal-content {
-        max-height: 81vh;
+        max-height: 83vh;
         border-radius: 12px;
     }
 
@@ -4123,7 +4123,7 @@ svg.user-type-icon path {
     }
 
     .quiz-step .food-image-container {
-        height: 250px;
+height: 240px;
         padding: 8px;
         justify-content: flex-end;
     }
@@ -4214,9 +4214,9 @@ svg.user-type-icon path {
         display: none;
     }
     .quiz-step .radio-options {
-        display: flex;
-        gap: 10px 6px;
-        justify-content: space-between;
+          display: flex;
+        gap: 10px 12px;
+        justify-content: start;
         flex-wrap: wrap;
         margin-bottom: 10px;
         margin-top: 5px;
@@ -4567,3 +4567,8 @@ ul#quiz-phone-country-list {
           transform: translateY(0);
         }
       }
+      .modal-backdrop
+ {
+    backdrop-filter: none !important;
+    background-color: black !important;
+}
