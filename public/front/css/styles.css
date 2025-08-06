@@ -2455,7 +2455,8 @@ svg.user-type-icon path {
     border-color: #2563eb;
 }
 
-.quiz-step .food-checkbox:checked::after {
+.quiz-step .food-checkbox:checked::after,
+.quiz-step .radio-option input:checked::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -2864,8 +2865,52 @@ svg.user-type-icon path {
 
 #quizModal .phone-input-container #country-list li:hover,
 #signupModalathlete .phone-input-container #country-list li:hover,
-#loginModalathlete .phone-input-container #country-list li:hover {
+#loginModalathlete .phone-input-container #country-list li:hover,
+#quizModal .phone-input-container #quiz-phone-country-list li:hover,
+#loginModalathlete .phone-input-container #login-country-list li:hover {
     background: #f5f5f5;
+}
+
+/* Selected country item styling - same as quiz checkbox */
+#quizModal .phone-input-container #country-list li.selected,
+#signupModalathlete .phone-input-container #country-list li.selected,
+#loginModalathlete .phone-input-container #login-country-list li.selected,
+#quizModal .phone-input-container #quiz-phone-country-list li.selected {
+    background: #f0f8ff;
+    border: 2px solid #2563eb;
+    position: relative;
+}
+
+#quizModal .phone-input-container #country-list li.selected::after,
+#signupModalathlete .phone-input-container #country-list li.selected::after,
+#loginModalathlete .phone-input-container #login-country-list li.selected::after,
+#quizModal .phone-input-container #quiz-phone-country-list li.selected::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translate(0, -50%);
+    width: 18px;
+    height: 18px;
+    background: #2563eb;
+    border-radius: 50%;
+    border: 2px solid #2563eb;
+}
+
+#quizModal .phone-input-container #country-list li.selected::before,
+#signupModalathlete .phone-input-container #country-list li.selected::before,
+#loginModalathlete .phone-input-container #login-country-list li.selected::before,
+#quizModal .phone-input-container #quiz-phone-country-list li.selected::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 19px;
+    transform: translate(0, -50%);
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    z-index: 1;
 }
 
 /* terms */
@@ -4054,10 +4099,13 @@ svg.user-type-icon path {
     .signup-container .image-section img {
         max-height: 300px;
     }
-
+.otp-input-group {
+    gap: 12px;
+}
     .signup-container .otp-input {
-        width: 52px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
+                padding: 12px;
     }
 
     .welcome-title {
@@ -4162,6 +4210,9 @@ svg.user-type-icon path {
 
 /* Mobile (480px and below) */
 @media (max-width: 480px) {
+    .otp-input-group svg{
+        display: none;
+    }
     .quiz-step .radio-options {
         display: flex;
         gap: 10px 6px;
@@ -4481,3 +4532,38 @@ ul#login-country-list,
 ul#quiz-phone-country-list {
     padding-left: 0px;
 }
+.signup-login-h2-title{
+    width: 100%;
+}
+ .coming-soon-tooltip {
+        background-color: #333;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: tooltipFadeIn 0.3s ease-out;
+        white-space: nowrap;
+      }
+      
+      .coming-soon-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 6px solid transparent;
+        border-top-color: #333;
+      }
+      
+      @keyframes tooltipFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
