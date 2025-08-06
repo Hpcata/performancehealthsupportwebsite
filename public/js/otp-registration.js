@@ -80,8 +80,8 @@ function sendOtp() {
     const originalText = button.textContent;
     button.textContent = 'Sending OTP...';
     button.disabled = true;
-    
-    // Make API call
+        
+// Make API call
     fetch(window.otpRoutes.sendOtp, {
         method: 'POST',
         headers: {
@@ -100,6 +100,9 @@ function sendOtp() {
                 showSuccess('OTP sent successfully! Please verify to login.');
                 show30SecondTimer();
                 window.mobileNumber = fullMobileNumber; // Store for later use
+                // change image
+                $('#signupModalathlete .quiz-h2-img').addClass('d-none');
+                $('#signupModalathlete .signup-login-h2-img').removeClass('d-none');
                 showStep(2);
                 window.isLoginFlow = true; // Set to login flow
                 document.getElementById('phone-number').textContent = fullMobileNumber;
@@ -107,11 +110,14 @@ function sendOtp() {
                 // New user - this will be a registration flow
                 showSuccess('OTP sent successfully to ' + fullMobileNumber);
                 window.mobileNumber = fullMobileNumber; // Store for later use
+                // change image
+                $('#signupModalathlete .quiz-h2-img').addClass('d-none');
+                $('#signupModalathlete .signup-login-h2-img').removeClass('d-none');
                 showStep(2);
                 window.isLoginFlow = false; // Set to registration flow
                 document.getElementById('phone-number').textContent = fullMobileNumber;
             }
-            
+
             // Start countdown for resend
             startResendCountdown();
         } else {
@@ -463,6 +469,7 @@ function resendOtp() {
 
 // Utility functions
 function showStep(stepIndex) {
+    console.log('showStep', stepIndex);
     // Hide all steps
     document.querySelectorAll('.step').forEach(step => {
         step.style.display = 'none';
