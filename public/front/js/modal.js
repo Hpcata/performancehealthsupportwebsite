@@ -1193,11 +1193,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to clear all form selections
     function clearAllFormSelections() {
-        // Uncheck all checkboxes
-        foodCheckboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
-
         // Remove selected styling
         foodContainers.forEach(container => {
             container.classList.remove('selected');
