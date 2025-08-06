@@ -97,8 +97,8 @@
                                 <div class="form-group">
                                     <button class="btn-signup" id="start-quiz-btn" data-next="2"
                                         style="width:100%;">Let's go!</button>
-                                    <button class="btn btn-outline-secondary" id="start-over-btn"
-                                        style="width:100%; margin-top: 10px; display: none;">Start Over</button>
+                                    <button class="btn-signup" id="start-over-btn"
+                                        style="margin-top: 10px; display: none;">Start Over</button>
                                 </div>
                             </div>
                         </div>
@@ -308,8 +308,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="1">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="3">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="1">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="3">Next</button>
                             </div>
                         </div>
 
@@ -542,8 +542,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="2">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="4">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="2">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="4">Next</button>
                             </div>
                         </div>
 
@@ -700,8 +700,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="3">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="5">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="3">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="5">Next</button>
                             </div>
                         </div>
 
@@ -884,8 +884,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="4">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="6">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="4">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="6">Next</button>
                             </div>
                         </div>
 
@@ -966,8 +966,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="5">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="7">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="5">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="7">Next</button>
                             </div>
                         </div>
 
@@ -1042,8 +1042,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="6">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="8">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="6">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="8">Next</button>
                             </div>
                         </div>
 
@@ -1116,8 +1116,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="7">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="9">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="7">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="9">Next</button>
                             </div>
                         </div>
 
@@ -1191,67 +1191,8 @@
                             </div>
 
                             <div class="quiz-navigation" style="margin-top: auto;">
-                                <button class="btn btn-back back-step-btn" data-prev="8">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="10">Submit</button>
-                            </div>
-                        </div>
-
-                        <!-- Step 9: Results/Completion -->
-                        <div class="quiz-step completed" id="step-10" data-step="10" style="display: none;">
-                            <div class="quiz-final-container" style="display: flex; min-height: 600px;">
-                                <div class="signup-container">
-                                    <div class="signup-modal">
-                                        <!-- Phone Number Input -->
-                                        <div class="form-section">
-                                            <h2 class="welcome-title">See How you stack up.</h2>
-                                            <p class="welcome-text" style="margin-bottom: 30px;">
-                                                Get your personalised quiz results and discover where you stand.
-                                            </p>
-                                            <p class="welcome-text" style="margin-bottom: 30px;">
-                                                Sign up for free to unlock your performance dashboard and find out
-                                                how you did. We'll send your full results to your inbox-plus tools
-                                                and tips to help you level up your nutrition.
-                                            </p>
-                                            <div class="input-group">
-                                                <h2 class="welcome-title">Welcome to Athleat</h2>
-                                                <div class="phone-input-container">
-                                                    <div class="dropdown-wrapper" onclick="toggleDropdown()">
-                                                        <span id="selected-flag" class="fi fi-us"></span>
-                                                        <span id="selected-code">+61</span>
-                                                        <svg class="arrow" width="12" height="8" viewBox="0 0 12 8"
-                                                            fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor"
-                                                                stroke-width="2" stroke-linecap="round"
-                                                                stroke-linejoin="round" />
-                                                        </svg>
-                                                    </div>
-                                                    <input type="tel" class="phone-input"
-                                                        placeholder="Enter Phone Number">
-
-                                                    <div id="dropdown" class="hidden dropdown">
-                                                        <input id="search-input" type="text"
-                                                            placeholder="Search country..." />
-                                                        <ul id="country-list"></ul>
-                                                    </div>
-                                                </div>
-                                                <p class="welcome-text"
-                                                    style="margin-top: 10px; margin-bottom: 20px;">Fast, safe
-                                                    access. Just pop in your number and we'll text you a code. No
-                                                    passwords, no fuss.</p>
-                                            </div>
-                                            <label class="terms-label">By continuing, you agree to our <span
-                                                    class="terms-link"
-                                                    onclick="openTermsModal()">Terms.</span></label>
-
-                                            <button class="btn-signup" style="margin-top:30px;">Continue</button>
-                                        </div>
-
-                                        <div class="image-section last-step" style="padding:0;">
-                                            <img src="{{ frontAssets('images/quiz/last-step-login-bg.svg') }}" alt="Bowl of healthy food"
-                                                class="food-image" />
-                                        </div>
-                                    </div>
-                                </div>
+                                <button class=" btn-back back-step-btn" data-prev="8">Back</button>
+                                <button class=" btn-signup next-step-btn">Submit</button>
                             </div>
                         </div>
                     </div>
