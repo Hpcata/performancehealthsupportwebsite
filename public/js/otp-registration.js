@@ -174,22 +174,22 @@ function verifyOtp() {
         if (data.success) {
             if (data.action === 'login') {
                 // User exists - login successful
-                // showSuccess('Login successful! Redirecting to your profile...');
+                showSuccess('Login successful! Redirecting to your profile...');
 
-                // // Redirect to profile landing page
-                // setTimeout(() => {
-                //     if (data.redirectUrl) {
-                //         window.location.href = data.redirectUrl;
-                //     } else {
-                //         window.location.href = '/404';
-                //     }
-                // }, 10);
+                // Redirect to profile landing page
+                setTimeout(() => {
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        window.location.href = '/404';
+                    }
+                }, 10);
             }
-            // else {
-            //     // User doesn't exist - proceed to registration
-            // }
-            showSuccess('OTP verified successfully! Please complete your registration.');
-            showStep(3);
+            else {
+                // User doesn't exist - proceed to registration
+                showSuccess('OTP verified successfully! Please complete your registration.');
+                showStep(3);
+            }
         } else {
             // Handle specific error cases
             if (data.errors && data.errors.otp) {

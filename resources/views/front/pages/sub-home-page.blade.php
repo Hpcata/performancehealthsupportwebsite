@@ -2969,8 +2969,8 @@
                         <span class="arrow">&#9662;</span>
                     </div> -->
                     <div class="dropdown-wrapper" onclick="toggleLoginDropdown()">
-                        <span id="login-selected-flag" class="fi fi-au"></span>
-                        <span id="login-selected-code">+61</span>
+                        <span id="selected-flag" class="fi fi-au"></span>
+                        <span id="selected-code">+61</span>
                         <svg class="arrow" width="12" height="8" viewBox="0 0 12 8" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2"
@@ -3082,7 +3082,7 @@
 
                 <!-- Step 2: OTP Verification -->
                 <div class="form-section" id="step2" style="display: none;">
-                <img src="{{ frontAssets('images/athleat_logo_full colour.svg') }}" alt="ATHLEAT Fuel Logo" width="168"
+                <img src="{{ frontAssets('images/athleat_logo_full_colour.svg') }}" alt="ATHLEAT Fuel Logo" width="168"
                 height="19" style="margin-bottom: 47px;" />
                 <h2 class="welcome-title">Create your account</h2>
                 <p class="welcome-text">
@@ -3113,7 +3113,7 @@
 
                 <!-- Step 3: User Type Selection -->
                 <div class="form-section" id="step3" style="display: none;">
-                <img src="{{ frontAssets('images/athleat_logo_full colour.svg') }}" alt="ATHLEAT Fuel Logo" width="168"
+                <img src="{{ frontAssets('images/athleat_logo_full_colour.svg') }}" alt="ATHLEAT Fuel Logo" width="168"
                 height="19" style="margin-bottom: 47px;" />
                 <h2 class="welcome-title">Sign-up</h2>
                 <p>Join for free and get easy, effective nutrition tips that truly work.</p>
@@ -3128,7 +3128,7 @@
                 <div class="" style="width:100%">
                     <div class="user-type-selection" id="user-type-section-id">
                         <label class="user-type-box">
-                            <input type="radio" name="userType" value="athlete" class="sr-only" checked />
+                            <input type="radio" name="userType" value="athlete" class="sr-only" />
                             <div class="custom-radio"></div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="37" viewBox="0 0 36 37" fill="none">
                             <g clip-path="url(#clip0_2822_5270)">
@@ -3183,7 +3183,7 @@
 
                         </label>
                     </div>
-                    <div class="form-group " id="select-sports-id">
+                    <div class="form-group d-none" id="select-sports-id">
                         <div class="input-group">
                             <select name="sportstype" id="sportstype">
                                 <option>Select Sports</option>
@@ -3196,12 +3196,12 @@
                 </div>
 
                 <!-- Age Range Section -->
-                <div class="user-type-section" style="margin-top: 30px;width: 100%;" id="age-groups-id">
+                <div class="user-type-section d-none" style="margin-top: 30px;width: 100%;" id="age-groups-id">
                     <h3 style="font-size: 14px; font-weight: 400; color: #333; margin-bottom: 20px;">Age Range</h3>
                     <div class="age-selection-box">
                     @foreach($ageGroups as $key => $ageGroup)
                     <label class="user-type-box">
-                        <input type="radio" name="ageGroup" value="{{ $key }}" class="sr-only" {{ $loop->first ? 'checked' : '' }} />
+                        <input type="radio" name="ageGroup" value="{{ $key }}" class="sr-only"/>
                         <div class="custom-radio"></div>
                         <!-- SVG for Age Group -->
                         <span class="user-type-text">{{ $ageGroup }}</span>
@@ -3215,7 +3215,7 @@
 
                 <!-- Step 4: Final Step (can be customized as needed) -->
                 <div class="form-section" id="step4" style="display: none;">
-                <img src="{{ frontAssets('images/athleat_logo_full colour.svg') }}" alt="ATHLEAT Fuel Logo" width="168"
+                <img src="{{ frontAssets('images/athleat_logo_full_colour.svg') }}" alt="ATHLEAT Fuel Logo" width="168"
                 height="19" style="margin-bottom: 47px;" />
                 <h2 class="welcome-title">Welcome!</h2>
                 <p class="welcome-text">
@@ -5287,9 +5287,9 @@
         // Add more countries as needed
         ];
 
-        const listElement = document.getElementById("country-list");
-        const dropdown = document.getElementById("dropdown");
-        const searchInput = document.getElementById("search-input");
+        const listElement = document.getElementById("login-country-list");
+        const dropdown = document.getElementById("login-dropdown");
+        const searchInput = document.getElementById("login-search-input");
         const selectedFlag = document.getElementById("selected-flag");
         const selectedCode = document.getElementById("selected-code");
 
@@ -5477,13 +5477,18 @@
         });
 
         $(document).ready(function() {
+            console.log(1);
             $('#user-type-section-id .user-type-box').click(function() {
+                console.log(2);
                 if($(this).find('input[type="radio"]').val() == 'athlete') {
-                    $('#age-groups-id').show();
-                    $('#select-sports-id').show();
+                    console.log('athlete');
+                    $('#age-groups-id').removeClass('d-none');
+                    console.log($('#age-groups-id'));
+                    $('#select-sports-id').removeClass('d-none');
                 } else {
-                    $('#age-groups-id').hide();
-                    $('#select-sports-id').hide();
+                    console.log(3);
+                    $('#age-groups-id').addClass('d-none');
+                    $('#select-sports-id').addClass('d-none');
                 }
             });
         });
@@ -5500,8 +5505,8 @@
             const loginDropdown = document.getElementById('login-dropdown');
             const loginSearchInput = document.getElementById('login-search-input');
             const loginCountryList = document.getElementById('login-country-list');
-            const loginSelectedFlag = document.getElementById('login-selected-flag');
-            const loginSelectedCode = document.getElementById('login-selected-code');
+            const loginSelectedFlag = document.getElementById('selected-flag');
+            const loginSelectedCode = document.getElementById('selected-code');
 
             if (loginDropdown && loginSearchInput && loginCountryList) {
                 // Create country item for login modal
@@ -5545,6 +5550,76 @@
                 loginSearchInput.addEventListener("input", e => filterLoginCountries(e.target.value));
             }
             });
+
+
+            function selectCountry(country) {
+            selectedFlag.className = `fi fi-${country.code}`;
+            selectedCode.textContent = country.dial_code;
+            dropdown.classList.add("hidden");
+            const dropdownWrapper = document.querySelector('.dropdown-wrapper');
+            dropdownWrapper.classList.remove("active");
+        }
+
+        // Function for login modal country selection
+        function selectLoginCountry(country) {
+            const loginSelectedFlag = document.getElementById('selected-flag');
+            const loginSelectedCode = document.getElementById('selected-code');
+            const loginDropdown = document.getElementById('login-dropdown');
+            const loginDropdownWrapper = document.querySelector('#loginModalathlete .dropdown-wrapper');
+            
+            loginSelectedFlag.className = `fi fi-${country.code}`;
+            loginSelectedCode.textContent = country.dial_code;
+            loginDropdown.classList.add("hidden");
+            loginDropdownWrapper.classList.remove("active");
+        }
+
+        // Function for quiz modal country selection
+        function selectQuizCountry(country) {
+            const quizSelectedFlag = document.getElementById('quiz-selected-flag');
+            const quizSelectedCode = document.getElementById('quiz-selected-code');
+            const quizDropdown = document.getElementById('quiz-phone-dropdown');
+            const quizDropdownWrapper = document.querySelector('#quizModal .dropdown-wrapper');
+            
+            quizSelectedFlag.className = `fi fi-${country.code}`;
+            quizSelectedCode.textContent = country.dial_code;
+            quizDropdown.classList.add("hidden");
+            quizDropdownWrapper.classList.remove("active");
+        }
+
+        function filterCountries(query) {
+            const filtered = countries.filter(c =>
+                c.name.toLowerCase().includes(query.toLowerCase()) ||
+                c.dial_code.includes(query)
+            );
+            populateCountries(filtered);
+        }
+
+        // Initialize
+        populateCountries();
+
+        // Initialize login dropdown
+        const loginCountryList = document.getElementById('login-country-list');
+        if (loginCountryList) {
+            loginCountryList.innerHTML = "";
+            countries.forEach(c => loginCountryList.appendChild(createCountryItem(c)));
+        }
+
+        // Live search
+        searchInput.addEventListener("input", e => filterCountries(e.target.value));
+
+        // Live search for login dropdown
+        const loginSearchInput = document.getElementById('login-search-input');
+        if (loginSearchInput) {
+            loginSearchInput.addEventListener("input", e => {
+                const query = e.target.value;
+                const filtered = countries.filter(c =>
+                    c.name.toLowerCase().includes(query.toLowerCase()) ||
+                    c.dial_code.includes(query)
+                );
+                loginCountryList.innerHTML = "";
+                filtered.forEach(c => loginCountryList.appendChild(createCountryItem(c)));
+            });
+        }
     </script>
 @endsection
 

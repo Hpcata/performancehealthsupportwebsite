@@ -971,7 +971,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Handle food radio button clicks to uncheck unsure radio
-    document.querySelectorAll('input[type="radio"]:not(.unsure-radio)').forEach(radio => {
+    document.querySelectorAll('#quizModal input[type="radio"]:not(.unsure-radio)').forEach(radio => {
         radio.addEventListener('change', function () {
             if (this.checked) {
                 // Uncheck unsure radio in the same step
@@ -1117,8 +1117,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (answeredSteps.includes(9)) {
                             // Quiz is completed, show results screen
                             //showStep(10);
-                            $('#quizModal').modal('hide');
-                            openSingupFreePopup(false, true);
+                            // $('#quizModal').modal('hide');
+                            // openSingupFreePopup(false, true);
                             // Restore all answers for the results screen
                             setTimeout(() => {
                                 restoreQuizAnswers();

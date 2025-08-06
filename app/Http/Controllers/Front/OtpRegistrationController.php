@@ -142,33 +142,26 @@ class OtpRegistrationController extends Controller
 
         try {
             $result = $this->otpService->verifyOtp($mobileNumber, $otp);
-            
+
             if ($result['success']) {
                 // Check if user exists with this mobile number
                 $existingUser = User::where('phone', $mobileNumber)->first();
-                
-                if ($existingUser) {
-                    // return scccess
+
+                if ($existingUser && $existingUser->email) {
 
                     // User exists - log them in
-                    // Auth::login($existingUser);
-                    
-                    // return response()->json([
-                    //     'success' => true,
-                    //     'message' => 'Login successful! Welcome back.',
-                    //     'action' => 'login',
-                    //     'user' => [
-                    //         'id' => $existingUser->id,
-                    //         'name' => $existingUser->name,
-                    //         'email' => $existingUser->email,
-                    //         'free_user' => $existingUser->free_user
-                    //     ],
-                    //     'redirectUrl' => route('front.profile', ['id' => $existingUser->id])
-                    // ]);
+                    Auth::login($existingUser);
                     return response()->json([
                         'success' => true,
-                        'message' => 'OTP verified successfully! Please complete your registration.',
-                        'action' => 'register'
+                        'message' => 'Login successful! Welcome back.',
+                        'action' => 'login',
+                        'user' => [
+                            'id' => $existingUser->id,
+                            'name' => $existingUser->name,
+                            'email' => $existingUser->email,
+                            'free_user' => $existingUser->free_user
+                        ],
+                        'redirectUrl' => route('front.profile', ['id' => $existingUser->id])
                     ]);
                 } else {
                     // User doesn't exist - proceed to registration
@@ -295,16 +288,14 @@ class OtpRegistrationController extends Controller
         }
 
         if ($existingUser) {
-            if($existingUserByPhone) {
-                Auth::login($existingUserByPhone);
-
+            if($existingUserByPhone && $existingUserByPhone->id != $existingUser->id) {
                 return response()->json([
-                    'success' => true,
-                    'message' => 'Login successful! Welcome back.',
-                    'user' => $existingUserByPhone,
-                    'redirectUrl' => route('front.profile', ['id' => $existingUserByPhone->id]),
-                    'action' => 'login'
-                ]);
+                    'success' => false,
+                    'message' => 'Phone number and email belongs to different users.',
+                    'errors' => [
+                        'email' => ['Phone number and email belongs to different users.']
+                    ]
+                ], 422);
             } else {
                 // Clear OTP verification
                 $this->otpService->clearOtpVerification($mobileNumber);
@@ -323,35 +314,6 @@ class OtpRegistrationController extends Controller
                     'action' => 'login'
                 ]);
             }
-
-            // return response()->json([
-            //     'success' => false,
-            //     'message' => 'A user with this email already exists.',
-            //     'errors' => [
-            //         'email' => ['This email address is already registered.']
-            //     ]
-            // ], 422);
-        }
-
-        // Check if user already exists with this mobile number (double check)
-        if ($existingUserByPhone) {
-            Auth::login($existingUserByPhone);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Login successful! Welcome back.',
-                'user' => $existingUserByPhone,
-                'redirectUrl' => route('front.profile', ['id' => $existingUserByPhone->id]),
-                'action' => 'login'
-            ]);
-
-            // return response()->json([
-            //     'success' => false,
-            //     'message' => 'A user with this mobile number already exists. Please login instead.',
-            //     'errors' => [
-            //         'mobile_number' => ['This mobile number is already registered. Please use the login option.']
-            //     ]
-            // ], 422);
         }
 
         // Generate a random password for the user
