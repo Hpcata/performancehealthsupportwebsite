@@ -4567,3 +4567,8 @@ ul#quiz-phone-country-list {
           transform: translateY(0);
         }
       }
+      .modal-backdrop
+ {
+    backdrop-filter: none !important;
+    background-color: black !important;
+}
