@@ -73,7 +73,7 @@ $auth = auth()->guard('web')->check();
                     height="30" />
             </div>
             <nav class="nav-center">
-                <span class="nav-item">My Plans</span>
+                <a class="nav-item text-decoration-none" href="{{ route('front.my-plans') }}">My Plans</a>
                 <span class="nav-item">Challenges and Rewards</span>
                 <div class="nav-item dropdown">
                     <span>Resources <i class="fas fa-chevron-down"></i></span>
@@ -182,8 +182,8 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class=" btn-login mob-hide">Log in</button>
-                        <button class=" btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
+                        <button class=" btn-login mob-hide" id="login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Log in</button>
+                        <button class=" btn-signup" id="show-new-signup-modal" onclick="openSingupFreePopup()">
                             Sign up for free
                         </button>
                     @endif
@@ -192,6 +192,65 @@ $auth = auth()->guard('web')->check();
             </div>
         </div>
     </nav>
+
+    <!-- static new login modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="signup-container">
+                    <div class="signup-modal">
+                        <button type="button" class="close-button" data-bs-dismiss="modal" aria-label="Close">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-x">
+                                <path d="M18 6 6 18" />
+                                <path d="m6 6 12 12" />
+                            </svg>
+                        </button>
+
+                        <div class="form-section">
+                            <img src="{{ frontAssets('images/athleat_logo_full_colour.svg') }}" alt="Logo" class="mobile-logo-img" width="140" height="30" style="margin-bottom:47px;"/>
+                            <h2 class="welcome-title">Welcome to Athleat</h2>
+                            <p class="welcome-text" style="margin-bottom: 30px;">
+                                Fast, safe access. Just pop in your number and we'll text you a code. No passwords, no fuss.
+                            </p>
+                            <div id="login-error" class="text-danger"></div> 
+                            <form id="login-form" style="width: 100%;">
+                                <div class="mb-3">
+                                    <label for="login-email" class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control" id="login-email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="login-password" class="form-label">Password</label>
+                                    <input type="password" name="password" class="form-control" id="login-password"
+                                        required>
+                                </div>
+
+                                <!-- Sign In Button -->
+                                <button type="submit" id="login-submit" class="btn-signup">
+                                    Sign In
+                                </button>
+
+                                OR
+
+                                <button type="button" id="login-with-otp" class="btn-signup" onclick="openSingupFreePopup(true)">
+                                    Login With OTP
+                                </button>
+                            </form>
+
+                            <!-- Sign Up Link -->
+                            <div class="mt-3 text-center">
+                                <small>Don't have an account? <a href="#" id="show-signup-modal" onclick="openSingupFreePopup()">Sign Up</a></small>
+                            </div>
+                        </div>
+                        <div class="image-section">
+                            <img src="{{ asset('front/images/signup-otp/login-bg.webp') }}" alt="Bowl of healthy food" class="food-image" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @else
     <header id="header">
         <div class="container">
@@ -437,6 +496,12 @@ $auth = auth()->guard('web')->check();
             document.body.style.overflow = 'hidden';
         }
     }
+
+    function openSingupFreePopup(isLogin = false) {
+        $('#signupModalathlete .welcome-title').html(isLogin ? 'Welcome Back!' : 'Welcome to Athleat');
+        $('#signupModalathlete').modal('show');
+    }
+
       // Mobile menu toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const navbarToggler = document.querySelector('.navbar-toggler');

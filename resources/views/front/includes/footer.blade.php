@@ -1,4 +1,4 @@
-@if (Route::is('front.profile') || Route::is('front.plans.details'))
+@if (Route::is('front.profile') || Route::is('front.plans.details') || Route::is('front.my-plans'))
     <footer class="footer">
         <div class="footer-content">
             <div class="logo">
