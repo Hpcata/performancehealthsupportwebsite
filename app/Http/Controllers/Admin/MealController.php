@@ -70,20 +70,22 @@ class MealController extends Controller
 
     public function store(Request $request)
     {
+
+        $data = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'food_ids'    => 'nullable|array',
+            'food_ids.*'  => 'integer|exists:items,id',
+            'note'        => 'nullable',
+        ], [
+            'title.required' => 'The meal title is required.',
+            'image.image'    => 'The file must be an image.',
+            'image.mimes'    => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
+            'image.max'      => 'The image may not be larger than 2MB.',
+        ]);
+
         try {
-            $data = $request->validate([
-                'title'       => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-                'food_ids'    => 'nullable|array',
-                'food_ids.*'  => 'integer|exists:items,id',
-                'note'        => 'nullable',
-            ], [
-                'title.required' => 'The meal title is required.',
-                'image.image'    => 'The file must be an image.',
-                'image.mimes'    => 'The image must be a file of type: jpeg, png, jpg, gif, webp.',
-                'image.max'      => 'The image may not be larger than 2MB.',
-            ]);
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('meals', 'public');
             } elseif ($request->filled('generated_image')) {
