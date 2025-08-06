@@ -129,7 +129,7 @@ $auth = auth()->guard('web')->check();
                 <img src="{{ frontAssets('images/logo.svg') }}" alt="ATHLEAT Fuel Logo" />
             </a>
             <div class="mob-btn-wrap">
-                <button class="me-0 btn-login web-hide">Log in</button>
+                <button class="me-0 btn-login web-hide" onclick="openSingupFreePopup(true)">Log in</button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     style="border: none">
                     <span  class="menu-icon" style="color: white">
