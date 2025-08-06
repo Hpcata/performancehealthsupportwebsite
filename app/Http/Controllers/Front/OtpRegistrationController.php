@@ -77,12 +77,12 @@ class OtpRegistrationController extends Controller
                 
                 // If user exists, include user info (without sensitive data)
                 if ($existingUser) {
-                    $response['existing_user'] = [
-                        'id' => $existingUser->id,
-                        'name' => $existingUser->name,
-                        'email' => $existingUser->email,
-                        'free_user' => $existingUser->free_user
-                    ];
+                    // $response['existing_user'] = [
+                    //     'id' => $existingUser->id,
+                    //     'name' => $existingUser->name,
+                    //     'email' => $existingUser->email,
+                    //     'free_user' => $existingUser->free_user
+                    // ];
                 }
                 
                 return response()->json($response);

@@ -110,6 +110,7 @@ function sendOtp() {
                 // New user - this will be a registration flow
                 showSuccess('OTP sent successfully to ' + fullMobileNumber);
                 window.mobileNumber = fullMobileNumber; // Store for later use
+                show30SecondTimer();
                 // change image
                 $('#signupModalathlete .quiz-h2-img').addClass('d-none');
                 $('#signupModalathlete .signup-login-h2-img').removeClass('d-none');
