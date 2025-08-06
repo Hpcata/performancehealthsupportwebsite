@@ -5622,6 +5622,20 @@
                 filtered.forEach(c => loginCountryList.appendChild(createCountryItem(c)));
             });
         }
+
+        // Add 'selected' class to the label of the selected ageGroup radio button
+        document.querySelectorAll('input[name="ageGroup"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                // Remove 'selected' class from all labels
+                document.querySelectorAll('input[name="ageGroup"]').forEach(function(r) {
+                    const label = r.closest('label');
+                    if (label) label.classList.remove('selected');
+                });
+                // Add 'selected' class to the label of the checked radio
+                const selectedLabel = this.closest('label');
+                if (selectedLabel) selectedLabel.classList.add('selected');
+            });
+        });
     </script>
 @endsection
 
