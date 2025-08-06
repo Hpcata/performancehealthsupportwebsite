@@ -1190,7 +1190,7 @@
                                 </div>
                             </div>
 
-                            <div class="quiz-navigation" style="margin-top: auto;">
+                            <div class="quiz-navigation" style="margin-top: 201px;">
                                 <button class=" btn-back back-step-btn" data-prev="8">Back</button>
                                 <button class=" btn-signup next-step-btn">Submit</button>
                             </div>
