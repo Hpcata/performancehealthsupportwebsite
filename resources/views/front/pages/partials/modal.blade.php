@@ -97,7 +97,7 @@
                                 <div class="form-group">
                                     <button class="btn-signup" id="start-quiz-btn" data-next="2"
                                         style="width:100%;">Let's go!</button>
-                                    <button class="btn-login" id="start-over-btn"
+                                    <button class="btn-signup" id="start-over-btn"
                                         style="margin-top: 10px; display: none;">Start Over</button>
                                 </div>
                             </div>
