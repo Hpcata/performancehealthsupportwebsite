@@ -3221,8 +3221,11 @@
                 <button class="btn-signup" onclick="closeModal()">Get Started</button>
                 </div>
 
-                <div class="image-section">
-                <img src="{{ asset('front/images/signup/login-bg.svg') }}" alt="Bowl of healthy food" class="food-image" />
+                <div class="image-section signup-login-h2-title d-none">
+                    <img src="{{ asset('front/images/signup/login-bg.svg') }}" alt="Bowl of healthy food" class="food-image" />
+                </div>
+                <div class="image-section quiz-h2-title d-none p-4">
+                    <img src="{{ asset('front/images/quiz/last-step-login-bg.svg') }}" alt="Bowl of healthy food" class="food-image" />
                 </div>
             </div>
             </div>
