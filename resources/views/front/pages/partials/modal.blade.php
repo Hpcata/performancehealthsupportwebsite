@@ -97,8 +97,8 @@
                                 <div class="form-group">
                                     <button class="btn-signup" id="start-quiz-btn" data-next="2"
                                         style="width:100%;">Let's go!</button>
-                                    <button class="btn btn-outline-secondary" id="start-over-btn"
-                                        style="width:100%; margin-top: 10px; display: none;">Start Over</button>
+                                    <button class="btn-login" id="start-over-btn"
+                                        style="margin-top: 10px; display: none;">Start Over</button>
                                 </div>
                             </div>
                         </div>
@@ -308,8 +308,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="1">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="3">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="1">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="3">Next</button>
                             </div>
                         </div>
 
@@ -542,8 +542,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="2">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="4">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="2">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="4">Next</button>
                             </div>
                         </div>
 
@@ -700,8 +700,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="3">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="5">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="3">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="5">Next</button>
                             </div>
                         </div>
 
@@ -884,8 +884,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="4">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="6">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="4">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="6">Next</button>
                             </div>
                         </div>
 
@@ -966,8 +966,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="5">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="7">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="5">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="7">Next</button>
                             </div>
                         </div>
 
@@ -1042,8 +1042,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="6">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="8">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="6">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="8">Next</button>
                             </div>
                         </div>
 
@@ -1116,8 +1116,8 @@
                             </div>
 
                             <div class="quiz-navigation">
-                                <button class="btn btn-back back-step-btn" data-prev="7">Back</button>
-                                <button class="btn btn-signup next-step-btn" data-next="9">Next</button>
+                                <button class=" btn-back back-step-btn" data-prev="7">Back</button>
+                                <button class=" btn-signup next-step-btn" data-next="9">Next</button>
                             </div>
                         </div>
 
@@ -1191,8 +1191,8 @@
                             </div>
 
                             <div class="quiz-navigation" style="margin-top: auto;">
-                                <button class="btn btn-back back-step-btn" data-prev="8">Back</button>
-                                <button class="btn btn-signup next-step-btn">Submit</button>
+                                <button class=" btn-back back-step-btn" data-prev="8">Back</button>
+                                <button class=" btn-signup next-step-btn">Submit</button>
                             </div>
                         </div>
                     </div>
