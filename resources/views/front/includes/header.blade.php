@@ -182,7 +182,7 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class=" btn-login mob-hide" id="login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Log in</button>
+                        <button class=" btn-login mob-hide" id="login" href="#" onclick="openSingupFreePopup(true)">Log in</button>
                         <button class=" btn-signup" id="show-new-signup-modal" onclick="openSingupFreePopup()">
                             Sign up for free
                         </button>
@@ -322,7 +322,7 @@ $auth = auth()->guard('web')->check();
                                     @elseif($title == 'Login')
                                         <li class="nav-item">
                                             <a class="nav-link restriction-page" id="login" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#loginModal"><i
+                                                onclick="openSingupFreePopup(true)"><i
                                                     class="fa-solid fa-user"></i> Login</a>
                                         </li>
                                     @else
@@ -399,7 +399,7 @@ $auth = auth()->guard('web')->check();
 
     $(document).ready(function() {
         $('#login').on('click', function() {
-            $('#loginModal').modal('show');
+            // $('#loginModal').modal('show');
         })
         $('#login-form').submit(function(event) {
             event.preventDefault(); // Prevent the form from submitting the normal way
