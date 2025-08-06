@@ -2931,7 +2931,7 @@
                 <div class="input-group">
                     <div class="phone-input-container">
                     <div class="dropdown-wrapper" onclick="toggleDropdown()">
-                        <span id="selected-flag" class="fi fi-us"></span>
+                        <span id="selected-flag" class="fi fi-au"></span>
                         <span id="selected-code">+61</span>
                         <span class="arrow">&#9662;</span>
                     </div>
