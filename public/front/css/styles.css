@@ -2853,7 +2853,7 @@ svg.user-type-icon path {
 }
 
 #quizModal .phone-input-container #country-list li,
-#signupModalathlete .phone-input-container #country-list li,
+#signupModalathlete .phone-input-container #login-country-list li,
 #loginModalathlete .phone-input-container #login-country-list li, 
 #quizModal .phone-input-container #quiz-phone-country-list li{
     padding: 8px;
@@ -2864,7 +2864,7 @@ svg.user-type-icon path {
 }
 
 #quizModal .phone-input-container #country-list li:hover,
-#signupModalathlete .phone-input-container #country-list li:hover,
+#signupModalathlete .phone-input-container #login-country-list li:hover,
 #loginModalathlete .phone-input-container #country-list li:hover,
 #quizModal .phone-input-container #quiz-phone-country-list li:hover,
 #loginModalathlete .phone-input-container #login-country-list li:hover {
@@ -2873,7 +2873,7 @@ svg.user-type-icon path {
 
 /* Selected country item styling - same as quiz checkbox */
 #quizModal .phone-input-container #country-list li.selected,
-#signupModalathlete .phone-input-container #country-list li.selected,
+#signupModalathlete .phone-input-container #login-country-list li.selected,
 #loginModalathlete .phone-input-container #login-country-list li.selected,
 #quizModal .phone-input-container #quiz-phone-country-list li.selected {
     background: #f0f8ff;
@@ -2882,7 +2882,7 @@ svg.user-type-icon path {
 }
 
 #quizModal .phone-input-container #country-list li.selected::after,
-#signupModalathlete .phone-input-container #country-list li.selected::after,
+#signupModalathlete .phone-input-container #login-country-list li.selected::after,
 #loginModalathlete .phone-input-container #login-country-list li.selected::after,
 #quizModal .phone-input-container #quiz-phone-country-list li.selected::after {
     content: "";
@@ -2898,7 +2898,7 @@ svg.user-type-icon path {
 }
 
 #quizModal .phone-input-container #country-list li.selected::before,
-#signupModalathlete .phone-input-container #country-list li.selected::before,
+#signupModalathlete .phone-input-container #login-country-list li.selected::before,
 #loginModalathlete .phone-input-container #login-country-list li.selected::before,
 #quizModal .phone-input-container #quiz-phone-country-list li.selected::before {
     content: "";
