@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
         allSteps.forEach((step, index) => {
             const stepDataStep = parseInt(step.getAttribute('data-step'));
             if (stepDataStep === stepNumber) {
-                step.style.display = 'block';
+                step.style.display = 'flex';
             } else {
                 step.style.display = 'none';
             }
