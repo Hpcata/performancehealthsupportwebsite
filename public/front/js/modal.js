@@ -540,19 +540,19 @@ document.addEventListener('DOMContentLoaded', function () {
             case 6: // Iron selection
                 const ironData = collectSingleChoiceData('iron-selection');
                 stepData['nutrition-form'] = {
-                    'Which of these foods has the most iron?(Select one answer)': ironData
+                    'Which of these foods has the most iron? (Select one answer)': ironData
                 };
                 break;
             case 7: // Calcium selection
                 const calciumData = collectSingleChoiceData('calcium-selection');
                 stepData['nutrition-form'] = {
-                    'Which of these foods has the most calcium?(Select one answer)': calciumData
+                    'Which of these foods has the most calcium? (Select one answer)': calciumData
                 };
                 break;
             case 8: // Fiber selection
                 const fibreData = collectSingleChoiceData('fibre-selection');
                 stepData['nutrition-form'] = {
-                    'Which of these foods has the most fibre?(Select one answer)': fibreData
+                    'Which of these foods has the most fibre? (Select one answer)': fibreData
                 };
                 break;
             case 9: // Multiple choice questions
