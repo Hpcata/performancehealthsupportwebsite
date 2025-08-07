@@ -959,16 +959,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Handle food container clicks (for better UX)
+    // Handle food container clicks (for better UX) - only for steps 6-8 (iron, calcium, fibre selection)
     foodContainers.forEach(container => {
         container.addEventListener('click', function (e) {
             // Don't trigger if clicking directly on the radio button
             if (e.target.type === 'radio') return;
 
-            const radio = this.querySelector('input[type="radio"]');
-            if (radio) {
-                radio.checked = true;
-                radio.dispatchEvent(new Event('change'));
+            // Only apply this behavior for steps 6-8 (iron, calcium, fibre selection)
+            const currentStep = this.closest('.quiz-step');
+            if (currentStep) {
+                const currentStepNumber = parseInt(currentStep.getAttribute('data-step'));
+                // Only allow container clicks for steps 6, 7, 8 (iron, calcium, fibre selection)
+                if (currentStepNumber >= 6 && currentStepNumber <= 8) {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.checked = true;
+                        radio.dispatchEvent(new Event('change'));
+                    }
+                }
             }
         });
     });

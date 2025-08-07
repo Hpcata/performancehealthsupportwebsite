@@ -340,7 +340,8 @@
                                 <div class="tab-content" id="whyTabsContent">
                                     <div class="tab-pane fade show active" id="athletes" role="tabpanel">
                                         <p class="tab-description">
-                                            Train like a Pro? Time to eat like one too. ATHLEAT makes performance nutrition simple, practical, and personalised to you. It’s your blueprint.
+                                            Train like a Pro? Time to eat like one too. ATHLEAT makes performance nutrition simple,
+                                practical, and personalised to you. It’s your blueprint.
                                         </p>
 
                                         <div class="feature-grid">
@@ -349,11 +350,9 @@
                                                    <img src="{{ frontAssets('images/bulb.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Know what to Eat, When and Why</h3>
+                                                    <h3>Know What to Eat - and Why</h3>
                                                         <p>
-                                                            Custom plans for your training phase,
-                                                            Comp prep, or recovery
-                                                             - All built for maximum results
+                                                            Understand how your choices impact energy, recovery, and long-term gains.
                                                         </p>
                                                 </div>
                                             </div>
@@ -364,10 +363,9 @@
                                             alt="Gear Six" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Builds Kitchen Confidence with Skills + Tools</h3>
+                                                    <h3>Food Made Easy with Tools + Skills + Confidence</h3>
                                                     <p>
-                                                        Food made easy with fast, real food prep tips,
-                                                        Short-cuts and practical know-how.
+                                                        Fast, real food prep with tips, shortcuts, and practical know-how.
                                                     </p>
                                                 </div>
                                             </div>
@@ -380,10 +378,8 @@
                                                 <div class="feature-content">
                                                     <h3>Fuel Up Right</h3>
                                                     <p>
-                                                        Understand how your choices impact
-                                                        Energy, strength, power, muscle, recovery, immunity
-                                                        And long-term gains.
-                                                        …and get direct progress feedback in one platform.
+                                                         Custom plans for your training phase, comp prep, or recovery
+                                            - all built to get results.
                                                     </p>
                                                 </div>
                                             </div>
@@ -396,34 +392,8 @@
                                                 <div class="feature-content">
                                                     <h3>Built by a Pro</h3>
                                                     <p>
-                                                        Performance Coach to NRL, Surfing, Skate…
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div class="feature-item">
-                                                <div class="feature-icon">
-                                                    <img src="{{ frontAssets('images/Analytics.svg') }}" width="35" height="35"
-                                            alt="Balanced meal with lean protein and vegetables" />
-                                                </div>
-                                                <div class="feature-content">
-                                                    <h3>Accountability with Feedback</h3>
-                                                    <p>
-                                                        Track meals, upload pics, and get progress feedback in
-                                                        our platform.
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div class="feature-item">
-                                                <div class="feature-icon">
-                                                      <img src="{{ frontAssets('images/Gift.svg') }}" width="28" height="28" alt="gift" />
-                                                </div>
-                                                <div class="feature-content">
-                                                    <h3>Challenges and Rewards</h3>
-                                                    <p>
-                                                        Earn points, climb leaderboards, and get real prizes for
-                                                        showing up and learning like a boss.
+                                                        Created by Kerry O'Bryan - Olympic Dietitian and coach to NRL, Surfing,
+                                            Skate, and BMX champions.
                                                     </p>
                                                 </div>
                                             </div>
@@ -433,10 +403,22 @@
                                                     <img src="{{ frontAssets('images/Phone.svg') }}" width="24" height="24" alt="Phone" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>A24/7 Support with Kez Calls</h3>
+                                                    <h3>Always Supported with 24/7 Kez Calls</h3>
                                                     <p>
-                                                        Got questions? Kez is on call—your Health & Performance
-                                                        Co-pilot.
+                                                        Got questions? Kez is on call-your Health & Performance Co-pilot.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                             <div class="feature-item">
+                                                <div class="feature-icon">
+                                                      <img src="{{ frontAssets('images/Gift.svg') }}" width="28" height="28" alt="gift" />
+                                                </div>
+                                                <div class="feature-content">
+                                                    <h3>Challenge for Rewards</h3>
+                                                    <p>
+                                                        Earn points, climb leaderboards, and get real prizes for showing up and
+                                            learning like a boss.
                                                     </p>
                                                 </div>
                                             </div>
@@ -447,12 +429,27 @@
                                                     <img src="{{ frontAssets('images/search.svg') }}" width="33" height="33" alt="search" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Supplement Smart</h3>
+                                                    <h3>Supplement smart</h3>
                                                     <p>
-                                                        Our Supplement Scanner ensures you are
-                                                        safe and strategic about supplement use
-                                                        and getting the best bang for buck!
+                                                       Use the scanner to check batch testing, safety, and learn if it's actually
+                                            worth your money.
                                                     </p>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="feature-item">
+                                                <div class="feature-icon">
+                                                    <img src="{{ frontAssets('images/Analytics.svg') }}" width="35" height="35"
+                                            alt="Balanced meal with lean protein and vegetables" />
+                                                </div>
+                                                <div class="feature-content">
+                                                     <h3>Accountability That Works<br />
+                                            *Coming soon</h3>
+                                        <p>
+                                            Built-in tracking, meal photo uploads, and progress checks through our
+                                            secure platform.
+                                        </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -460,7 +457,9 @@
 
                                     <div class="tab-pane fade" id="parents" role="tabpanel">
                                         <p class="tab-description">
-                                       Give your child the tools to thrive – in sport and in life. Athleat Fuel drives athlete growth, performance, and wellbeing with expert sports dietitian guidance and practical systems for lifelong success.
+                                        Give your child the tools to thrive – in sport and in life. ATHLEAT drives athlete
+                                growth, performance, and well-being with expert Sports Dietitian guidance and practical
+                                systems for lifelong success.
                                         </p>
 
                                         <div class="feature-grid">
@@ -469,10 +468,11 @@
                                                <img src="{{ frontAssets('images/bulb.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Knowledge, Skills & Tools </h3>
-                                                    <p>
-                                                    We teach what to eat, why it matters, how to prepare it, and give athletes the tools to make it happen.
-                                                    </p>
+                                                    <h3>Knowledge, Skills & Tools</h3>
+                                        <p>
+                                            We teach what to eat, why it matters, how to prepare it, and give athletes
+                                            the tools to make it happen.
+                                        </p>
                                                 </div>
                                             </div>
 
@@ -481,34 +481,38 @@
                                                    <img src="{{ frontAssets('images/Calendar.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Planning Made Easy</h3>
+                                                  <h3>Planning Made Easy</h3>
                                                     <p>
-                                                    Get organised with shopping lists, menu plans, comp day nutrition guides.
+                                                        Get organised with shopping lists, menu plans, Comp day nutrition guides,
+                                                        Injury recovery and Pre/Post Surgery support.
                                                     </p>
                                                 </div>
                                             </div>
+                                            
 
-                                            <div class="feature-item">
+                                             <div class="feature-item">
                                                 <div class="feature-icon">
-                                                   <img src="{{ frontAssets('images/dart.svg') }}" width="25" height="33" alt="bulb" />
+                                               <img src="{{ frontAssets('images/Phone.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Accountability That Works</h3>
+                                                   <h3>Kez On Call</h3>
                                                     <p>
-                                                    Built-in tracking, meal photo uploads, and progress checks through our secure platform.
+                                                        Get 24/7 support with Virtual Kez Calls – from food to
+                                                        recovery advice.
                                                     </p>
                                                 </div>
                                             </div>
 
-                                            <div class="feature-item">
+
+                                             <div class="feature-item">
                                                 <div class="feature-icon">
                                                    <img src="{{ frontAssets('images/information.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Avoid Misinformation</h3>
-                                                    <p>
-                                                        Cut through TikTok trends and unqualified advice. Scan supplements and get real guidance.
-                                                    </p>
+                                                      <h3>Avoid Misinformation</h3>
+                                                        <p>
+                                                            Cut through TikTok trends and unqualified advice.
+                                                        </p>
                                                 </div>
                                             </div>
 
@@ -517,24 +521,33 @@
                                                 <img src="{{ frontAssets('images/Gift.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Rewards That Motivate</h3>
+                                                   <h3>Rewards That Motivate</h3>
                                                     <p>
-                                                Quizzes and challenges with real prizes – delivered to your door.
+                                                        Quizzes and challenges with real prizes – delivered to your door.
                                                     </p>
                                                 </div>
                                             </div>
 
+
                                             <div class="feature-item">
                                                 <div class="feature-icon">
-                                               <img src="{{ frontAssets('images/Phone.svg') }}" width="25" height="33" alt="bulb" />
+                                                   <img src="{{ frontAssets('images/dart.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Kez On Call</h3>
+                                                    <h3>Accountability That Works<br />
+                                                        *Coming soon</h3>
                                                     <p>
-                                                Get 24/7 support with Virtual Kez Calls – from food to recovery advice.
+                                                        Built-in tracking, meal photo uploads, and progress checks through our
+                                                        secure platform.
                                                     </p>
                                                 </div>
                                             </div>
+
+                                           
+
+                                           
+
+                                           
                                         </div>
                                     </div>
                                 </div>
@@ -648,7 +661,7 @@
                                 it’s game time so that nutrition is never your weakness!
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class=" btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -684,7 +697,7 @@
                                 recovery is the goal & nutrition is too often overlooked!
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class=" btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4 web-hide">
@@ -713,7 +726,7 @@
                                 gain & get you back in the game!
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class=" btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                             </div>
                         </div>
                         </div>
@@ -1061,7 +1074,7 @@
     @include('front.pages.partials.modal')
 
     <!-- contact sectoin -->
-    <section class="contact-section py-5">
+    <section class="contact-section py-5" id="contact-section">
         <div class="container-homepage">
         <div class="row justify-content-center">
             <div class="col-12">
@@ -5376,39 +5389,94 @@
         const tooltipStyle = document.createElement('style');
         tooltipStyle.textContent = `
         .coming-soon-tooltip {
-            background-color: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: tooltipFadeIn 0.3s ease-out;
-            white-space: nowrap;
-        }
+        background-color: #333;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: tooltipFadeIn 0.3s ease-out;
+        white-space: nowrap;
+      }
+      
+      .coming-soon-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 6px solid transparent;
+        border-top-color: #333;
+      }
 
-        .coming-soon-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #333;
+      .learn-more-tooltip {
+         background-color: #333;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: tooltipFadeIn 0.3s ease-out;
+        white-space: nowrap;
+      }
+      
+      .learn-more-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 6px solid transparent;
+        border-top-color: #333;
+      }
+      
+      @keyframes tooltipFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-
-        @keyframes tooltipFadeIn {
-            from {
-            opacity: 0;
-            transform: translateY(10px);
-            }
-            to {
-            opacity: 1;
-            transform: translateY(0);
-            }
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
         `;
         document.head.appendChild(tooltipStyle);
+
+        // Learn more tooltip functionality
+        function showLearnMoreTooltip(button, planType) {
+            // Remove any existing learn more tooltips
+            const existingTooltip = document.querySelector('.learn-more-tooltip');
+            if (existingTooltip) {
+                existingTooltip.remove();
+            }
+
+            // Create tooltip element
+            const tooltip = document.createElement('div');
+            tooltip.className = 'learn-more-tooltip';
+            tooltip.textContent = `${planType} `;
+
+            // Position tooltip above the button
+            const buttonRect = button.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = (buttonRect.top - 40) + 'px';
+            tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
+            tooltip.style.zIndex = '9999';
+
+            // Add tooltip to body
+            document.body.appendChild(tooltip);
+
+            // Auto-hide tooltip after 3 seconds
+            setTimeout(() => {
+                const tooltipToRemove = document.querySelector('.learn-more-tooltip');
+                if (tooltipToRemove) {
+                    tooltipToRemove.remove();
+                }
+            }, 3000);
+        }
+
 
         // Step navigation functionality
         function showStep(stepNumber) {

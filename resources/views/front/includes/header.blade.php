@@ -168,12 +168,7 @@ $auth = auth()->guard('web')->check();
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Resources</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Store</a>
-                    </li>
+                   
                 </ul>
 
                 <div class="d-flex">
