@@ -1833,7 +1833,7 @@ class FrontController extends Controller
 
     public function trainingNutritionPlan(Request $request)
     {
-        $page = Page::with('sections')->where('slug', 'trining_nutrition_plan')->first();
+        $page = Page::with('sections')->where('slug', 'training_nutrition_plan')->first();
 
         return view('front.pages.training_nutrition_plan', compact('page'));
     }

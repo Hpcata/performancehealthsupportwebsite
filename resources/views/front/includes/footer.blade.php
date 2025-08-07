@@ -19,7 +19,7 @@
             <p>Copyright © 2025 Kerry O'Bryan.</p>
         </div>
     </footer>
-@elseif(Route::is('front.sub-home-page'))
+@elseif(Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan'))
     <footer class="footer-bg">
         <div class="footer-grid container-homepage">
             <!-- Left Section: Logo, Tagline, Social, Copyright -->
