@@ -686,25 +686,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // For food selection steps (2-5), check if all foods have radio button selections
         if (stepNumber >= 2 && stepNumber <= 5) {
-            // For radio button steps, check if all food items have a selection
-            const foodItems = Object.keys(answers);
-            const selectedFoodItems = foodItems.filter(food => answers[food] && answers[food].value === 1);
+            // Get all food items from the DOM to validate against
+            let prefix = '';
+            if (stepNumber === 2) prefix = 'carb-';
+            else if (stepNumber === 3) prefix = 'protein-';
+            else if (stepNumber === 4) prefix = 'fat-';
+            else if (stepNumber === 5) prefix = 'healthy-fat-';
 
-            // Require ALL food items to have a selection (High, Low, or Unsure)
-            if (selectedFoodItems.length !== foodItems.length) {
-                // Find which food items don't have selections
-                const unselectedFoods = foodItems.filter(food => !answers[food] || answers[food].value !== 1);
+            // Get all radio buttons for this prefix to find all food items
+            const radioButtons = document.querySelectorAll(`input[name^="${prefix}"]`);
+            const allFoodNames = new Set();
 
+            radioButtons.forEach(radio => {
+                const name = radio.name;
+                // Remove the prefix and the option suffix to get the food name
+                const foodName = name.replace(prefix, '').replace('-high', '').replace('-low', '').replace('-unsure', '');
+                allFoodNames.add(foodName);
+            });
+
+            // Check if all food items have selections
+            const unselectedFoods = [];
+            allFoodNames.forEach(foodName => {
+                if (!answers[foodName]) {
+                    unselectedFoods.push(foodName);
+                }
+            });
+
+            if (unselectedFoods.length > 0) {
                 // Add error styling to unselected food items
                 unselectedFoods.forEach(foodName => {
                     addErrorStylingToFoodItem(foodName, stepNumber);
                 });
-
                 return false;
             }
 
             // Remove error styling from all food items if validation passes
-            foodItems.forEach(foodName => {
+            allFoodNames.forEach(foodName => {
                 removeErrorStylingFromFoodItem(foodName, stepNumber);
             });
         }
@@ -859,11 +876,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     let errorMessage = 'Please select at least one option before proceeding.';
 
                     // Customize error message based on step type
-                    if (currentStepNumber >= 2 && currentStepNumber <= 4) {
-                        // Steps 2-4: High/Low/Unsure radio buttons for each food
+                    if (currentStepNumber >= 2 && currentStepNumber <= 5) {
+                        // Steps 2-5: High/Low/Unsure radio buttons for each food
                         errorMessage = 'Please select High, Low, or Unsure for each food item before proceeding.';
-                    } else if (currentStepNumber >= 5 && currentStepNumber <= 8) {
-                        // Steps 5-8: Single choice questions (select one food or Unsure)
+                    } else if (currentStepNumber >= 6 && currentStepNumber <= 8) {
+                        // Steps 6-8: Single choice questions (select one food or Unsure)
                         errorMessage = 'Please select one food item or choose "Unsure" before proceeding.';
                     } else if (currentStepNumber === 9) {
                         // Step 9: Multiple choice questions
