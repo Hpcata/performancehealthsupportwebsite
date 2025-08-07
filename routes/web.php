@@ -365,6 +365,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/meal-details', [FrontPlanController::class, 'getMealDetails'])->name('front.meal.details');
 	Route::post('/meal-smart-swaps', [FrontPlanController::class, 'getMealSmartSwaps'])->name('front.meal.smart.swaps');
 
+	// My Plans page - accessible only to authenticated users
+	Route::get('/my-plans', [FrontController::class, 'myPlans'])->name('front.my-plans');
+
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');
 

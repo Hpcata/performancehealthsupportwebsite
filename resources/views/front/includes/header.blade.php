@@ -73,7 +73,7 @@ $auth = auth()->guard('web')->check();
                     height="30" />
             </div>
             <nav class="nav-center">
-                <span class="nav-item">My Plans</span>
+                <a class="nav-item text-decoration-none" href="{{ route('front.my-plans') }}">My Plans</a>
                 <span class="nav-item">Challenges and Rewards</span>
                 <div class="nav-item dropdown">
                     <span>Resources <i class="fas fa-chevron-down"></i></span>
@@ -129,7 +129,7 @@ $auth = auth()->guard('web')->check();
                 <img src="{{ frontAssets('images/logo.svg') }}" alt="ATHLEAT Fuel Logo" />
             </a>
             <div class="mob-btn-wrap">
-                <button class="me-0 btn-login web-hide">Log in</button>
+                <button class="me-0 btn-login web-hide" onclick="openSingupFreePopup(true)">Log in</button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     style="border: none">
                     <span  class="menu-icon" style="color: white">
@@ -182,8 +182,8 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class=" btn-login mob-hide">Log in</button>
-                        <button class=" btn-signup" id="show-new-signup-modal" data-bs-toggle="modal" data-bs-target="#signupModal">
+                        <button class=" btn-login mob-hide" id="login" href="#" onclick="openSingupFreePopup(true)">Log in</button>
+                        <button class=" btn-signup" id="show-new-signup-modal" onclick="openSingupFreePopup()">
                             Sign up for free
                         </button>
                     @endif
@@ -263,7 +263,7 @@ $auth = auth()->guard('web')->check();
                                     @elseif($title == 'Login')
                                         <li class="nav-item">
                                             <a class="nav-link restriction-page" id="login" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#loginModal"><i
+                                                onclick="openSingupFreePopup(true)"><i
                                                     class="fa-solid fa-user"></i> Login</a>
                                         </li>
                                     @else
@@ -340,7 +340,7 @@ $auth = auth()->guard('web')->check();
 
     $(document).ready(function() {
         $('#login').on('click', function() {
-            $('#loginModal').modal('show');
+            // $('#loginModal').modal('show');
         })
         $('#login-form').submit(function(event) {
             event.preventDefault(); // Prevent the form from submitting the normal way
@@ -437,6 +437,42 @@ $auth = auth()->guard('web')->check();
             document.body.style.overflow = 'hidden';
         }
     }
+
+    function openSingupFreePopup(isLogin = false, isQuiz = false) {
+        if(isQuiz) {
+            $('#signupModalathlete .signup-login-h2-title').addClass('d-none');
+            $('#signupModalathlete .quiz-h2-title').removeClass('d-none');
+            $('#isFromQuizPopup').val(1);
+        } else {
+            $('#signupModalathlete .signup-login-h2-title').removeClass('d-none');
+            $('#signupModalathlete .quiz-h2-title').addClass('d-none');
+
+            // manage this
+            $('#signupModalathlete .signup-login-h2-title .welcome-title').html(isLogin ? 'Welcome Back' : 'Welcome');
+
+            if(isLogin) {
+                $('#signupModalathlete #new-user-singup').removeClass('d-none');
+                $('#signupModalathlete #existing-user-login').addClass('d-none');
+            } else {
+                $('#signupModalathlete #new-user-singup').addClass('d-none');
+                $('#signupModalathlete #existing-user-login').removeClass('d-none');
+            }
+        }
+
+
+        $('#signupModalathlete').modal('show');
+    }
+
+    $(document).ready(function() {
+        $(document).on('click','#existing-user-login', function(){
+            openSingupFreePopup(true);
+        });
+
+        $(document).on('click','#new-user-singup', function(){
+            openSingupFreePopup();
+        });
+    });
+
       // Mobile menu toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const navbarToggler = document.querySelector('.navbar-toggler');

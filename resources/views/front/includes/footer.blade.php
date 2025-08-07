@@ -1,4 +1,4 @@
-@if (Route::is('front.profile') || Route::is('front.plans.details'))
+@if (Route::is('front.profile') || Route::is('front.plans.details') || Route::is('front.my-plans'))
     <footer class="footer">
         <div class="footer-content">
             <div class="logo">
@@ -71,8 +71,8 @@
                 @if (auth()->guard('web')->check())
                     <a href="#" class="btn btn-login mob-hide">My Profile</a>
                 @else
-                    <button class=" btn-login mob-hide">Log in</button>
-                    <button class=" btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up for free</button>
+                    <button class=" btn-login mob-hide" onclick="openSingupFreePopup(true)">Log in</button>
+                    <button class=" btn-signup" onclick="openSingupFreePopup()">Sign up for free</button>
                 @endif
             </div>
 
@@ -81,8 +81,8 @@
                 @if (auth()->guard('web')->check())
                     <a href="#" class="btn btn-login rounded-md">My Profile</a>
                 @else
-                    <button type="button" class="rounded-md  btn-login">Log in</button>
-                    <button type="button" class="rounded-md  btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up for free</button>
+                    <button type="button" class="rounded-md  btn-login" onclick="openSingupFreePopup(true)">Log in</button>
+                    <button type="button" class="rounded-md  btn-signup" onclick="openSingupFreePopup()">Sign up for free</button>
                 @endif
             </div>
             <p class="copyright-text web-hide">Copyright {{ date('Y') }} Catalysta Pty Ltd</p>

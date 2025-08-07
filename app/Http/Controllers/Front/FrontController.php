@@ -55,7 +55,7 @@ class FrontController extends Controller
 {
 
     protected $requirement, $plan, $urlService, $jsonService, $stripeService;
-    
+
     public function __construct()
     {
         // $this->requirement = new Requirement;
@@ -66,11 +66,11 @@ class FrontController extends Controller
     }
 
     public function index()
-    { 
+    {
         $requirements = [];
-    
+
         $disabledDay = json_encode([]);
-       
+
         $organization = [];
         $testimonials = [];
         return view('front.pages.index', compact('requirements','disabledDay','organization','testimonials'));
@@ -1727,9 +1727,13 @@ class FrontController extends Controller
             $user = User::select('id', 'free_user')->find($userId);
             $payment = Payment::where('user_id', $userId)->first();
 
-            // if(auth()->user() && !auth()->user()->is_superadmin && auth()->user()?->id != $userId) {
-            //     return redirect()->route('front.index')->with('error', 'You are not authorized to access this page.');
-            // }
+            // echo '<pre>';
+            // print_r(auth()->user()->toArray());
+            // die;
+
+            if(auth()->user() && !auth()->user()->is_superadmin && auth()->user()?->id != $userId) {
+                return redirect()->route('front.index')->with('error', 'You are not authorized to access this page.');
+            }
 
             if (!$payment && !$user->free_user) {
                 return redirect()->back()->with('error', 'Plan not purchased.');
@@ -1803,6 +1807,28 @@ class FrontController extends Controller
         });
 
         return view('front.pages.partials.meal-cards', compact('meals','isFreeUser'))->render();
+    }
+
+    /**
+     * Display the My Plans page for authenticated users
+     *
+     * @return \Illuminate\View\View
+     */
+    public function myPlans()
+    {
+        try {
+            // Get the authenticated user
+            $user = auth()->user();
+
+            if (!$user) {
+                return redirect()->route('front.index')->with('error', 'Please login to access your plans.');
+            }
+
+            return view('front.pages.profile-my-plans');
+        } catch (\Exception $e) {
+            Log::error('Error fetching user plans: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
+        }
     }
 
     public function trainingNutritionPlan(Request $request)

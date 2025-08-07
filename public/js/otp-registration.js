@@ -18,7 +18,7 @@ function validateCountryCode() {
         }
     }
     
-    console.log('Selected country code:', selectedValue);
+    
     
     // Check if a valid country code is selected
     return selectedValue && selectedValue !== '' && 
@@ -80,8 +80,8 @@ function sendOtp() {
     const originalText = button.textContent;
     button.textContent = 'Sending OTP...';
     button.disabled = true;
-    
-    // Make API call
+        
+// Make API call
     fetch(window.otpRoutes.sendOtp, {
         method: 'POST',
         headers: {
@@ -100,6 +100,9 @@ function sendOtp() {
                 showSuccess('OTP sent successfully! Please verify to login.');
                 show30SecondTimer();
                 window.mobileNumber = fullMobileNumber; // Store for later use
+                // change image
+                $('#signupModalathlete .quiz-h2-img').addClass('d-none');
+                $('#signupModalathlete .signup-login-h2-img').removeClass('d-none');
                 showStep(2);
                 window.isLoginFlow = true; // Set to login flow
                 document.getElementById('phone-number').textContent = fullMobileNumber;
@@ -107,11 +110,15 @@ function sendOtp() {
                 // New user - this will be a registration flow
                 showSuccess('OTP sent successfully to ' + fullMobileNumber);
                 window.mobileNumber = fullMobileNumber; // Store for later use
+                show30SecondTimer();
+                // change image
+                $('#signupModalathlete .quiz-h2-img').addClass('d-none');
+                $('#signupModalathlete .signup-login-h2-img').removeClass('d-none');
                 showStep(2);
                 window.isLoginFlow = false; // Set to registration flow
                 document.getElementById('phone-number').textContent = fullMobileNumber;
             }
-            
+
             // Start countdown for resend
             startResendCountdown();
         } else {
@@ -166,7 +173,9 @@ function verifyOtp() {
         },
         body: JSON.stringify({
             mobile_number: window.mobileNumber,
-            otp: otp
+            otp: otp,
+            isFromQuizPopup: $('#isFromQuizPopup').val(),
+            completed_quiz_id: sessionStorage.getItem('completed_quiz_id')
         })
     })
     .then(response => response.json())
@@ -175,7 +184,7 @@ function verifyOtp() {
             if (data.action === 'login') {
                 // User exists - login successful
                 showSuccess('Login successful! Redirecting to your profile...');
-                
+                sessionStorage.removeItem('quiz_state');
                 // Redirect to profile landing page
                 setTimeout(() => {
                     if (data.redirectUrl) {
@@ -184,7 +193,8 @@ function verifyOtp() {
                         window.location.href = '/404';
                     }
                 }, 10);
-            } else {
+            }
+            else {
                 // User doesn't exist - proceed to registration
                 showSuccess('OTP verified successfully! Please complete your registration.');
                 showStep(3);
@@ -276,20 +286,24 @@ function completeRegistration() {
             email: email,
             userType: userType,
             ageGroup: ageGroup,
-            sport: sport
+            sport: sport,
+            isFromQuizPopup: $('#isFromQuizPopup').val(),
+            completed_quiz_id: sessionStorage.getItem('completed_quiz_id')
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showSuccess('Account created successfully! Redirecting...');
-            
+            showSuccess(data.message);
+
             // Keep button disabled and change text to indicate success
-            button.textContent = 'Registration Successful!';
+            button.textContent = data.action === 'login' ? 'Login Successful!' : 'Registration Successful!';
             button.disabled = true;
             button.style.opacity = '0.6';
             button.style.cursor = 'not-allowed';
-            
+
+            sessionStorage.removeItem('quiz_state');
+
             // Redirect to profile landing page using the user ID from response
             setTimeout(() => {
                 if (data.user && data.user.id) {
@@ -299,7 +313,7 @@ function completeRegistration() {
                     // Fallback to dashboard if user ID is not available
                     window.location.href = '/404';
                 }
-            }, 2000);
+            }, 1000);
         } else {
             // Handle validation errors
             if (data.errors) {
@@ -456,6 +470,7 @@ function resendOtp() {
 
 // Utility functions
 function showStep(stepIndex) {
+    console.log('showStep', stepIndex);
     // Hide all steps
     document.querySelectorAll('.step').forEach(step => {
         step.style.display = 'none';
@@ -557,7 +572,7 @@ function resetForm() {
 }
 
 function showError(message, elementId = null) {
-    console.log('showError called with:', message, elementId);
+    
     
     // Remove any existing error messages
     const existingErrors = document.querySelectorAll('.error-message');
@@ -594,7 +609,7 @@ function showError(message, elementId = null) {
     // Insert directly into body for guaranteed visibility
     document.body.appendChild(errorDiv);
     
-    console.log('Error message element created and added to body:', errorDiv);
+    
     
     // Auto-remove after 5 seconds
     setTimeout(() => {
@@ -605,7 +620,7 @@ function showError(message, elementId = null) {
 }
 
 function showSuccess(message) {
-    console.log('showSuccess called with:', message);
+    
     
     // Remove any existing success messages
     const existingSuccess = document.querySelectorAll('.success-message');
@@ -637,7 +652,7 @@ function showSuccess(message) {
     // Insert directly into body for guaranteed visibility
     document.body.appendChild(successDiv);
     
-    console.log('Success message element created and added to body:', successDiv);
+    
     
     // Auto-remove after 5 seconds
     setTimeout(() => {
