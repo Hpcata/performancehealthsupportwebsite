@@ -80,8 +80,8 @@ function sendOtp() {
     const originalText = button.textContent;
     button.textContent = 'Sending OTP...';
     button.disabled = true;
-    
-    // Make API call
+        
+// Make API call
     fetch(window.otpRoutes.sendOtp, {
         method: 'POST',
         headers: {
@@ -100,6 +100,9 @@ function sendOtp() {
                 showSuccess('OTP sent successfully! Please verify to login.');
                 show30SecondTimer();
                 window.mobileNumber = fullMobileNumber; // Store for later use
+                // change image
+                $('#signupModalathlete .quiz-h2-img').addClass('d-none');
+                $('#signupModalathlete .signup-login-h2-img').removeClass('d-none');
                 showStep(2);
                 window.isLoginFlow = true; // Set to login flow
                 document.getElementById('phone-number').textContent = fullMobileNumber;
@@ -107,11 +110,15 @@ function sendOtp() {
                 // New user - this will be a registration flow
                 showSuccess('OTP sent successfully to ' + fullMobileNumber);
                 window.mobileNumber = fullMobileNumber; // Store for later use
+                show30SecondTimer();
+                // change image
+                $('#signupModalathlete .quiz-h2-img').addClass('d-none');
+                $('#signupModalathlete .signup-login-h2-img').removeClass('d-none');
                 showStep(2);
                 window.isLoginFlow = false; // Set to registration flow
                 document.getElementById('phone-number').textContent = fullMobileNumber;
             }
-            
+
             // Start countdown for resend
             startResendCountdown();
         } else {
@@ -166,7 +173,9 @@ function verifyOtp() {
         },
         body: JSON.stringify({
             mobile_number: window.mobileNumber,
-            otp: otp
+            otp: otp,
+            isFromQuizPopup: $('#isFromQuizPopup').val(),
+            completed_quiz_id: sessionStorage.getItem('completed_quiz_id')
         })
     })
     .then(response => response.json())
@@ -174,22 +183,22 @@ function verifyOtp() {
         if (data.success) {
             if (data.action === 'login') {
                 // User exists - login successful
-                // showSuccess('Login successful! Redirecting to your profile...');
-
-                // // Redirect to profile landing page
-                // setTimeout(() => {
-                //     if (data.redirectUrl) {
-                //         window.location.href = data.redirectUrl;
-                //     } else {
-                //         window.location.href = '/404';
-                //     }
-                // }, 10);
+                showSuccess('Login successful! Redirecting to your profile...');
+                sessionStorage.removeItem('quiz_state');
+                // Redirect to profile landing page
+                setTimeout(() => {
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        window.location.href = '/404';
+                    }
+                }, 10);
             }
-            // else {
-            //     // User doesn't exist - proceed to registration
-            // }
-            showSuccess('OTP verified successfully! Please complete your registration.');
-            showStep(3);
+            else {
+                // User doesn't exist - proceed to registration
+                showSuccess('OTP verified successfully! Please complete your registration.');
+                showStep(3);
+            }
         } else {
             // Handle specific error cases
             if (data.errors && data.errors.otp) {
@@ -277,7 +286,9 @@ function completeRegistration() {
             email: email,
             userType: userType,
             ageGroup: ageGroup,
-            sport: sport
+            sport: sport,
+            isFromQuizPopup: $('#isFromQuizPopup').val(),
+            completed_quiz_id: sessionStorage.getItem('completed_quiz_id')
         })
     })
     .then(response => response.json())
@@ -290,6 +301,8 @@ function completeRegistration() {
             button.disabled = true;
             button.style.opacity = '0.6';
             button.style.cursor = 'not-allowed';
+
+            sessionStorage.removeItem('quiz_state');
 
             // Redirect to profile landing page using the user ID from response
             setTimeout(() => {
@@ -457,6 +470,7 @@ function resendOtp() {
 
 // Utility functions
 function showStep(stepIndex) {
+    console.log('showStep', stepIndex);
     // Hide all steps
     document.querySelectorAll('.step').forEach(step => {
         step.style.display = 'none';

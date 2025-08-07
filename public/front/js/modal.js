@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
         allSteps.forEach((step, index) => {
             const stepDataStep = parseInt(step.getAttribute('data-step'));
             if (stepDataStep === stepNumber) {
-                step.style.display = 'block';
+                step.style.display = 'flex';
             } else {
                 step.style.display = 'none';
             }
@@ -366,7 +366,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         // If we have completed all steps (step 9), show the results screen
                         if (resumeStep > 9) {
                             // Quiz is completed, show results/completion screen
-                            showStep(10); // Assuming step 10 is the results screen
+                            // showStep(10); // Assuming step 10 is the results screen
+                            $('#quizModal').modal('hide');
+                            openSingupFreePopup(false, true);
                             return;
                         }
 
@@ -921,14 +923,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         // Show results/completion screen instead of next step
                         setTimeout(() => {
-                            showStep(10); // Assuming step 10 is the results screen
+                            // showStep(10); // Assuming step 10 is the results screen
+                            $('#quizModal').modal('hide');
+                            openSingupFreePopup(false, true);
                             removeErrorStyling(); // Remove error styling after successful navigation
                         }, 100);
                         return; // Don't continue to the next step logic
                     } catch (error) {
                         // Continue to results page even if completion fails
                         setTimeout(() => {
-                            showStep(10); // Show results screen even if completion fails
+                            //showStep(10); // Show results screen even if completion fails
+                            // show error msg
                             removeErrorStyling();
                         }, 100);
                         return;
@@ -983,7 +988,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Handle food radio button clicks to uncheck unsure radio
-    document.querySelectorAll('input[type="radio"]:not(.unsure-radio)').forEach(radio => {
+    document.querySelectorAll('#quizModal input[type="radio"]:not(.unsure-radio)').forEach(radio => {
         radio.addEventListener('change', function () {
             if (this.checked) {
                 // Uncheck unsure radio in the same step
@@ -1128,7 +1133,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Check if quiz is completed (has step 9 answers)
                         if (answeredSteps.includes(9)) {
                             // Quiz is completed, show results screen
-                            showStep(10);
+                            //showStep(10);
+                            // $('#quizModal').modal('hide');
+                            // openSingupFreePopup(false, true);
                             // Restore all answers for the results screen
                             setTimeout(() => {
                                 restoreQuizAnswers();
