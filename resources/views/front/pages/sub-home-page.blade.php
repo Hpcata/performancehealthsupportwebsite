@@ -758,7 +758,7 @@
                                 gain & get you back in the game!
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class=" btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                             </div>
                         </div>
                         <div class="mb-4 col-md-4">
@@ -5384,7 +5384,38 @@
                 existingTooltip.remove();
             }
         }
+// Learn more tooltip functionality
+        function showLearnMoreTooltip(button, planType) {
+            // Remove any existing learn more tooltips
+            const existingTooltip = document.querySelector('.learn-more-tooltip');
+            if (existingTooltip) {
+                existingTooltip.remove();
+            }
 
+            // Create tooltip element
+            const tooltip = document.createElement('div');
+            tooltip.className = 'learn-more-tooltip';
+            tooltip.textContent = `${planType} `;
+
+            // Position tooltip above the button
+            const buttonRect = button.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = (buttonRect.top - 45) + 'px';
+            tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
+            tooltip.style.zIndex = '9999';
+
+            // Add tooltip to body
+            document.body.appendChild(tooltip);
+
+            // Auto-hide tooltip after 3 seconds
+            setTimeout(() => {
+                const tooltipToRemove = document.querySelector('.learn-more-tooltip');
+                if (tooltipToRemove) {
+                    tooltipToRemove.remove();
+                }
+            }, 3000);
+        }
+        
         // Add CSS for tooltip
         const tooltipStyle = document.createElement('style');
         tooltipStyle.textContent = `
@@ -5445,37 +5476,7 @@
         `;
         document.head.appendChild(tooltipStyle);
 
-        // Learn more tooltip functionality
-        function showLearnMoreTooltip(button, planType) {
-            // Remove any existing learn more tooltips
-            const existingTooltip = document.querySelector('.learn-more-tooltip');
-            if (existingTooltip) {
-                existingTooltip.remove();
-            }
-
-            // Create tooltip element
-            const tooltip = document.createElement('div');
-            tooltip.className = 'learn-more-tooltip';
-            tooltip.textContent = `${planType} `;
-
-            // Position tooltip above the button
-            const buttonRect = button.getBoundingClientRect();
-            tooltip.style.position = 'fixed';
-            tooltip.style.top = (buttonRect.top - 40) + 'px';
-            tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
-            tooltip.style.zIndex = '9999';
-
-            // Add tooltip to body
-            document.body.appendChild(tooltip);
-
-            // Auto-hide tooltip after 3 seconds
-            setTimeout(() => {
-                const tooltipToRemove = document.querySelector('.learn-more-tooltip');
-                if (tooltipToRemove) {
-                    tooltipToRemove.remove();
-                }
-            }, 3000);
-        }
+        
 
 
         // Step navigation functionality

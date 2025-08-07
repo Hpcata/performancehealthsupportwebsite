@@ -206,7 +206,7 @@ body {
     background: white;
     color: #333;
     border-color: white;
-    transform: translateY(-2px);
+    
 }
 
 .btn-signup {
@@ -237,7 +237,7 @@ body {
     background: rgba(23, 81, 170, 1);
     border-color: rgba(23, 81, 170, 1);
     color: white;
-    transform: translateY(-2px);
+    
 }
 
 .btn-white {
@@ -636,7 +636,7 @@ body {
 }
 
 .food-section .food-card:hover {
-    transform: translateY(-5px);
+    
     box-shadow: 0 8px 25px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -1077,7 +1077,7 @@ body {
 }
 
 .choose-plan-section .plan-card:hover {
-    transform: translateY(-5px);
+    
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
@@ -2409,7 +2409,7 @@ svg.user-type-icon path {
 }
 
 .quiz-step .food-image-container:hover {
-    /* transform: translateY(-2px); */
+    /*  */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -2601,7 +2601,6 @@ svg.user-type-icon path {
 }
 
 .quiz-step .radio-option:hover {
-    background-color: #f9fafb;
     border-color: #4a84dd;
 }
 
