@@ -80,11 +80,11 @@
                         <!-- Step 0: Welcome Screen -->
                         <div class="quiz-step" id="step-1" data-step="1" style="padding-bottom:0; width: 100%;">
                             <div>
-                                <h2 class="welcome-title quiz-popup-title" style="margin-bottom:12px;">Nutrition
+                                <h2 class="welcome-title quiz-popup-title" style="margin-bottom:12px;">Nutrition<br />
                                     knowledge quiz</h2>
-                                <p class="quiz-popup-subtitle" style="margin-bottom:36px;">Take our 5-minute food
-                                    quiz to learn how well you're fuelling your performance, and where you can level
-                                    up.</p>
+                                <p class="quiz-popup-subtitle" style="margin-bottom:36px;">Take our 2 minute food
+                                        quiz to learn how well you're fuelling your performance, and where you can level
+                                        up.</p>
 
                                 <!-- Continue Quiz Indicator -->
                                 <div id="continue-quiz-indicator" style="display: none; background: #e3f2fd;
@@ -97,7 +97,7 @@
                                 <div class="form-group">
                                     <button class="btn-signup" id="start-quiz-btn" data-next="2"
                                         style="width:100%;">Let's go!</button>
-                                    <button class="btn-signup" id="start-over-btn"
+                                    <button class="btn-back" id="start-over-btn"
                                         style="margin-top: 10px; display: none;">Start Over</button>
                                 </div>
                             </div>
@@ -1198,8 +1198,8 @@
                     </div>
 
                     <div class="image-section" id="quiz-image-section">
-                        <img src="{{ frontAssets('images/quiz-bg.webp') }}" alt="Bowl of healthy food" class="food-image"
-                            id="quiz-main-image" />
+                        <img src="{{ frontAssets('images/quiz-bg.webp') }}" alt="quiz-bg" class="food-image"
+                            id="quiz-main-image" style="max-height:700px;"/>
                         <img src="{{ frontAssets('images/quiz/signup-bg.webp') }}" alt="Signup background"
                             class="food-image signup-image" id="quiz-signup-image" style="display: none;" />
                     </div>

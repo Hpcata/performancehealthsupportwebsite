@@ -812,7 +812,7 @@
                                 Contact us for club deals and group bookings.
                                 </p>
                             </div>
-                            <button class=" btn-signup">Learn more</button>
+                            <button class=" btn-signup"  onclick="scrollToContact()">Learn more</button>
                             </div>
                         </div>
                         </div>
@@ -5636,6 +5636,23 @@
                 if (selectedLabel) selectedLabel.classList.add('selected');
             });
         });
+
+
+
+         // Scroll to contact section functionality
+        function scrollToContact() {
+            const contactSection = document.querySelector('#contact-section');
+            if (contactSection) {
+                const offset = 80; // Offset in pixels from the top
+                const elementPosition = contactSection.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
     </script>
 @endsection
 
