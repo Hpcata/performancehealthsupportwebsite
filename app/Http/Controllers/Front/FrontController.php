@@ -1837,4 +1837,18 @@ class FrontController extends Controller
 
         return view('front.pages.training_nutrition_plan', compact('page'));
     }
+
+    public function competitionPlan(Request $request)
+    {
+        $page = Page::with('sections')->where('slug', 'competition_plan')->first();
+
+        return view('front.pages.competition_plan', compact('page'));
+    }
+
+    public function injuryRecoveryPlan(Request $request)
+    {
+        $page = Page::with('sections')->where('slug', 'injury_recovery_nutrition_plan')->first();
+
+        return view('front.pages.injury_recovery_plan', compact('page'));
+    }
 }

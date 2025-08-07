@@ -232,7 +232,7 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		// Route::get('meal-times/{id}/edit', [MealTimeController::class, 'edit'])->name('admin.meal-times.edit');
 		// Route::put('meal-times/{id}', [MealTimeController::class, 'update'])->name('admin.meal-times.update');
 		// Route::delete('meal-times/{id}', [MealTimeController::class, 'destroy'])->name('admin.meal-times.destroy');
-		
+
 		Route::get('/purchase-plans', [PurchasePlanController::class, 'index'])->name('admin.purchase-plans.index');
 		Route::get('/purchase-plans/{id}/create', [PurchasePlanController::class, 'create'])->name('admin.purchase-plans.create');
 		Route::post('/purchase-plans', [PurchasePlanController::class, 'store'])->name('admin.purchase-plans.store');
@@ -291,6 +291,8 @@ Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPla
 Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
 Route::get('/get-default-plan-details/{id}', [FrontPlanController::class, 'getDefaultPlanDetails'])->name('front.get-default-plan-details');
 Route::get('/training-nutrition-plan', [FrontController::class, 'trainingNutritionPlan'])->name('front.training.nutrition.plan');
+Route::get('/competition-plan', [FrontController::class, 'competitionPlan'])->name('front.competition.plan');
+Route::get('/injury-recovery-plan', [FrontController::class, 'injuryRecoveryPlan'])->name('front.injury.recovery.plan');
 
 // Front auth
 Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
