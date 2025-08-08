@@ -14,6 +14,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AfterQuizMail;
 
 class OtpRegistrationController extends Controller
 {
@@ -521,7 +523,21 @@ class OtpRegistrationController extends Controller
 
     public function sendAfterQuizEmail($email) {
         try {
-            mail($email, "After Quiz", "Thank you for completing the quiz.");
+            // Generate an image from the Blade view and send it as an email attachment
+
+            $email = 'meetpatel5393@gmail.com';
+            $headers = [
+                'MIME-Version' => '1.0',
+                'Content-Type' => 'multipart/related; charset=UTF-8',
+                'X-Mailer' => 'PHP/' . phpversion(),
+            ];
+            Mail::to($email)->send(
+                (new AfterQuizMail())->withSwiftMessage(function ($message) use ($headers) {
+                    foreach ($headers as $key => $value) {
+                        $message->getHeaders()->addTextHeader($key, $value);
+                    }
+                })
+            );
             return true;
         } catch (\Exception $e) {
             Log::error('Failed to send after quiz email', [
