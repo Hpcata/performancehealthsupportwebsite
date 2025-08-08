@@ -3758,7 +3758,12 @@ button:focus,
     color: #222;
     margin: 0 0 16px 0;
 }
-
+.custom-popup-text h4 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    margin: 16px 0;
+}
 .custom-popup-text p {
     font-size: 1rem;
     color: #666;
@@ -4004,6 +4009,10 @@ button:focus,
         color: #222;
         margin: 0 0 16px 0;
     }
+    .custom-popup-text h4 {
+    font-size: 18px;
+
+}
     #customCongratsModal .dialog-main-view {
         padding: 24px 16px 16px 16px;
     }

@@ -633,6 +633,7 @@
                                 <div class="custom-popup-text">
                                     <h3>Congrats, you're in!</h3>
                                     <p>You've just taken the first step toward smarter fuel, stronger performance, and better results. We're stoked to have you - let's get started. 🚀</p>
+                                    <h4>Your quiz score as promised </h4>
                                 </div>
                             </div>
                             <div class="custom-popup-gauge-section">
