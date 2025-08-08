@@ -64,7 +64,7 @@ class User extends Authenticatable
         'user_type',
         'sport_game_id',
         'age_group',
-        'phone'
+        'phone',
         'questionnaire_token',
     ];
 
@@ -133,7 +133,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserPrePlan::class);
     }
-    
+
     /**
      * Get the sport game associated with the user
      */
