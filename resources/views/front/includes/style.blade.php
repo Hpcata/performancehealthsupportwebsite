@@ -1,4 +1,4 @@
-@if(Route::is('front.profile') || Route::is('front.plans.details') || Route::is('front.sub-home-page'))
+@if(Route::is('front.profile') || Route::is('front.plans.details') || Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan') || Route::is('front.competition.plan') || Route::is('front.injury.recovery.plan'))
 
 <link rel="stylesheet" href="{{ frontAssets('css/bootstrap/bootstrap-5.3.min.css') }}" />
 <link rel="stylesheet" href="{{ frontAssets('css/styles.css') }}" />

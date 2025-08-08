@@ -1,13 +1,13 @@
 @extends(frontView('layouts.app'))
 
-@section('title', 'Training Nutrition Plan & Diet for Athletes | Performance Health')
+@section('title', 'Competition Plan & Diet for Athletes | Performance Health')
 @section('meta_description', 'Get a personalised athlete meal plan with Performance Health Support. Expert sports nutrition plans and diet strategies tailored to fuel performance and recovery.')
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @section('content')
     @if(isset($page->sections))
         @foreach($page->sections as $section)
-            @if($section->section_type == \App\Models\Section::TYPE_TRAINING_PLAN_MAIN_BANNER && $section->enabled == 1) <!-- done -->
+            @if($section->section_type == \App\Models\Section::TYPE_COMPETITION_MAIN_BANNER && $section->enabled == 1) <!-- done -->
                 @php
                     $bannerImage = '';
                     if(isset($section->banner_image[0])) {
@@ -18,14 +18,14 @@
                     style="background-image: url('{{ webAssets('storage/' . $bannerImage) }}')">
                     <div class="container-homepage">
                         <div class="hero-content-fixed">
-                            <h1 class="hero-title-landing">{{ $section->title }}</h1>
+                            <h1 class="hero-title-landing">Competition </br>Plan</h1>
                             <button class="btn-signup">Purchase plan</button>
                         </div>
                     </div>
                 </div>
             @endif
 
-            @if($section->section_type == \App\Models\Section::TYPE_BUILT_FOR_REAL_RESULT && $section->enabled == 1) <!-- done -->
+            @if($section->section_type == \App\Models\Section::TYPE_COMPETE_AT_YOUR_PEAK && $section->enabled == 1) <!-- done -->
                 <section class="about-section training-nutrition-landing">
                     <div class="container-homepage">
                         <div class="about-content-wrapper">
@@ -40,7 +40,7 @@
                 </section>
             @endif
 
-            @if($section->section_type == \App\Models\Section::TYPE_PLAN_INCLUSIONS && $section->enabled == 1) <!-- done -->
+            @if($section->section_type == \App\Models\Section::TYPE_COMPETITION_PLAN_INCLUSIONS && $section->enabled == 1) <!-- done -->
                 @php
                     $backgroundImage = '';
                     if (isset($section->banner_image[0])) {
@@ -56,8 +56,7 @@
                     </div>
                 </section>
             @endif
-
-            @if($section->section_type == \App\Models\Section::TYPE_PLAN_INTERESTS && $section->enabled == 1) <!-- done -->
+            @if($section->section_type == \App\Models\Section::TYPE_COMPETITION_PLAN_INTERESTS && $section->enabled == 1) <!-- done -->
                 <section class="recommended-plans-section">
                     <div class="container">
                         <h2 class="section-title">{{ $section->title }}</h2>
@@ -67,9 +66,8 @@
                             <div class="card">
                                 <img src="{{ frontAssets('images/training-nutrition-plan/trophy.svg') }}" alt="trophy" class="web-hide card-logo"
                                     width="36" height="36" />
-                                <h3 class="card-title">Competition Plan</h3>
-                                <p class="card-description">A personalised 24-hour competition plan designed to fuel peak
-                                    performance when it matters most.</p>
+                                <h3 class="card-title">Training Nutrition Plan</h3>
+                                <p class="card-description">Train to perform at your peak with a personalised meal plan tailored to your sport and lifestyle - designed by Extreme Sports Dietitian Kerry O'Bryan.</p>
                                 <button class="btn-signup">Learn more</button>
                                 <img src="{{ frontAssets('images/training-nutrition-plan/card-1.webp') }}" alt="Competition Plan"
                                     class="left-card-image card-image">
@@ -91,5 +89,4 @@
             @endif
         @endforeach
     @endif
-
 @endsection

@@ -20,8 +20,16 @@ class Section extends Model
     const TYPE_PARTNERS = 'partners';
     const TYPE_TRAINING_PLAN_MAIN_BANNER = 'training_plan_main_banner';
     const TYPE_BUILT_FOR_REAL_RESULT = 'built_for_real_result';
-    const PLAN_INCLUSIONS = 'plan_inclusions';
-    const PLAN_INTERESTS = 'plan_interests';
+    const TYPE_PLAN_INCLUSIONS = 'plan_inclusions';
+    const TYPE_PLAN_INTERESTS = 'plan_interests';
+    const TYPE_COMPETITION_MAIN_BANNER = 'competition_main_banner';
+    const TYPE_COMPETE_AT_YOUR_PEAK = 'compete_at_your_peak';
+    const TYPE_COMPETITION_PLAN_INCLUSIONS = 'comepetition_plan_inclusions';
+    const TYPE_COMPETITION_PLAN_INTERESTS = 'comepetition_plan_interests';
+    const TYPE_INJURY_PLAN_MAIN_BANNER = 'injury_plan_banner';
+    const TYPE_RECOVER_QUICKER = 'recover_quicker';
+    const TYPE_INJURY_PLAN_INCLUSIONS = 'injury_plan_inclusions';
+    const TYPE_INJURY_PLAN_INTERESTS = 'injury_plan_interests';
 
     // Get all available section types
     public static function getSectionTypes()
@@ -37,9 +45,16 @@ class Section extends Model
             self::TYPE_PARTNERS => 'Partners',
             self::TYPE_TRAINING_PLAN_MAIN_BANNER => 'Training Plan Main Banner',
             self::TYPE_BUILT_FOR_REAL_RESULT => 'Built For Real Result',
-            self::PLAN_INCLUSIONS => 'Plan Inclusions',
-            self::PLAN_INTERESTS => 'Plan Interests',
-
+            self::TYPE_PLAN_INCLUSIONS => 'Plan Inclusions',
+            self::TYPE_PLAN_INTERESTS => 'Plan Interests',
+            self::TYPE_COMPETITION_MAIN_BANNER => 'Competition Main Banner',
+            self::TYPE_COMPETE_AT_YOUR_PEAK => 'Compete At Your Peak',
+            self::TYPE_COMPETITION_PLAN_INCLUSIONS => 'Competition Plan Inclusions',
+            self::TYPE_COMPETITION_PLAN_INTERESTS => 'Competition Plan Interests',
+            self::TYPE_INJURY_PLAN_MAIN_BANNER => 'Injury Plan Banner',
+            self::TYPE_RECOVER_QUICKER => 'Recover Quicker',
+            self::TYPE_INJURY_PLAN_INCLUSIONS => 'Injury Plan Inclusions',
+            self::TYPE_INJURY_PLAN_INTERESTS => 'Injury Plan Interests',
         ];
     }
 
