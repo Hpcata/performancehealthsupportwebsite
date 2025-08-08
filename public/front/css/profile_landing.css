@@ -62,7 +62,7 @@ body {
 
 .footer .footer-content .footer-logo .logo-text,
 .header .logo .logo-text {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, #4a84dd, #1d4ed8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: #fff0;
     font-size: 1.5rem;
@@ -139,7 +139,7 @@ body {
 
 .dropdown .dropdown-content a:hover {
     background: #f8fafc;
-    color: #3b82f6;
+    color: #4a84dd;
 }
 
 .dropdown .dropdown-content a:last-child {
@@ -153,7 +153,7 @@ body {
 }
 
 .main {
-    padding: 0 0 2rem 0;
+    padding: 0;
 }
 
 .btn-blue {
@@ -214,7 +214,7 @@ body {
 }
 
 .welcome-section .welcome-actions .start-chat {
-    color: #3b82f6;
+    color: #4a84dd;
     font-weight: 500;
     cursor: pointer;
     text-decoration: underline;
@@ -290,7 +290,7 @@ body {
 }
 
 .section-header .see-all {
-    color: #3b82f6;
+    color: #4a84dd;
     font-size: 1rem;
     font-weight: 600;
 }
@@ -321,11 +321,11 @@ body {
 
 .training-plan .tabs .tab {
     background: 0 0;
-    border: 1px solid #4a84dd;
+    border: 1px solid rgba(74, 132, 221, 1);
     padding: 10px 14px;
     border-radius: 50px;
     cursor: pointer;
-    color: #4a84dd;
+    color: rgba(74, 132, 221, 1);
     transition: 0.3s;
     font-weight: 400;
     box-sizing: border-box;
@@ -334,13 +334,13 @@ body {
 
 .training-plan .tabs .tab.active {
     background-color: #e0ecfd;
-    color: #3b82f6;
+    color: rgba(23, 81, 170, 1);
     border-width: 2px;
     font-weight: 600;
 }
 
 .training-plan .tabs .tab:hover {
-    color: #3b82f6;
+    color: #4a84dd;
 }
 
 /* .challenges .challenge-cards,
@@ -672,7 +672,7 @@ body {
 }
 
 .plans-section .plan-card.nutrition-plan {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, #4a84dd, #1d4ed8);
 }
 
 .plans-section .plan-card.competition-plan {
@@ -745,14 +745,13 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgb(0 0 0 / 0.7);
-    color: #fff;
     border: none;
     border-radius: 50%;
     width: 50px;
     height: 50px;
     cursor: pointer;
     transition: 0.3s;
+    background: transparent;
 }
 
 .surfing-videos .video-grid .video-card .video-thumbnail .insta-text {
@@ -770,7 +769,7 @@ body {
 }
 
 .surfing-videos .video-grid .video-card .video-thumbnail .play-btn:hover {
-    background: rgb(0 0 0 / 0.9);
+
     transform: translate(-50%, -50%) scale(1.1);
 }
 
@@ -821,7 +820,6 @@ body {
 
 .surfing-videos .video-grid .video-card .video-info .top .channel-name label {
     font-size: 14px;
-    color: #626262;
     font-weight: 400;
 }
 
@@ -1042,7 +1040,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 18px;
+    padding: 18px 16px 18px 18px;
     position: relative;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.18);
 }
@@ -1111,7 +1109,7 @@ body {
 }
 
 .resource-video .video-icon {
-    background: #3b82f6;
+    background: #4a84dd;
     color: #fff;
     border-radius: 50%;
     width: 36px;
@@ -1154,7 +1152,11 @@ body {
     font-weight: 600;
     font-size: 1rem;
 }
-
+.plan-subtitle-mob{
+    font-size: 14px;
+    font-weight: 700;   
+    margin-bottom: 8px;
+}
 .consults-plans-grid,
 .consults-plans-grid.grid-1 {
     display: grid;
@@ -1164,9 +1166,10 @@ body {
 }
 
 .consultation-card-custom {
-    background: linear-gradient(217deg, #fff6e542 0, #ffe3c3 100%);
-    border-radius: 16px;
-    padding: 24px 24px 20px;
+border-radius: 12px;
+background: linear-gradient(232deg, #FFF -2.09%, var(--Orange-300, #F9CC99) 95.9%);
+box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1182,45 +1185,46 @@ body {
 
 .consult-desc {
     color: #3b3b3b;
-    font-size: 14px;
-    margin-bottom: 16px;
+    font-size: 16px;
+    margin-bottom: 12px;
 }
 
 .consult-user-row {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
     position: relative;
 }
 
 .consult-user-row span {
     color: #3b3b3b;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     padding-left: 18px;
 }
 
 .consult-avatar {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     object-fit: cover;
+        border: 1px solid #fff;
 }
 
 .consult-avatar.overlap1 {
     position: absolute;
-    left: 10%;
+    left: 22px;
 }
 
 .btn-consult {
-    background: #3b82f6;
+    background: #4a84dd;
     color: #fff;
     border: none;
     height: 46px;
     border-radius: 8px;
-    padding: 8px 20px;
-    font-size: 18px;
+    padding: 10px 20px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 1px 4px rgb(59 130 246 / 0.1);
@@ -1231,19 +1235,19 @@ body {
 }
 
 .plan-card-custom {
-    background: linear-gradient(217deg, #e0edff42 0, #b6d0f7 100%);
-    border-radius: 16px;
-    box-shadow: 0 2px 16px 0 rgb(30 41 59 / 0.1);
-    padding: 24px 24px 20px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
     min-width: 0;
+    border-radius: 12px;
+    background: linear-gradient(231deg, var(--Kerry-grey---ultra-light, #E5EAF4) 9.49%, #B4D1FF 72.32%);
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
 }
 
 .plan-title {
-    margin-bottom: 0;
+    margin-bottom: 8px;
 }
 
 .plan-desc {
@@ -1262,8 +1266,8 @@ body {
 
 .btn-plan {
     background: #fff;
-    color: #3b82f6;
-    border: 1px solid #3b82f6;
+    color: #4a84dd;
+    border: 1px solid #4a84dd;
     border-radius: 8px;
     padding: 8px 20px;
     font-size: 1rem;
@@ -1274,7 +1278,7 @@ body {
 }
 
 .btn-plan:hover {
-    background: #3b82f6;
+    background: #4a84dd;
     color: #fff;
 }
 
@@ -1322,10 +1326,9 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 3rem;
-    height: 3rem;
+   
     transform: translate(-50%, -50%);
-    background: #fff;
+  
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1360,7 +1363,7 @@ body {
 
 .clock-img {
     width: 16px;
-    margin-bottom: -4px;
+    margin-bottom: 2px;
     margin-right: 5px;
 }
 
@@ -1650,6 +1653,7 @@ body {
 }
 
 .insta-handle-name {
+    color: rgba(8, 8, 8, 1);
     font-size: 14px !important;
     font-weight: 600 !important;
 }
@@ -1695,7 +1699,7 @@ body {
 
 .dropdown-button:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: #4a84dd;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -1937,7 +1941,7 @@ body {
 
 .dropdown-button:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: #4a84dd;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -2427,7 +2431,7 @@ button:focus,
 
 .custom-dropdown-button:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: #4a84dd;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -2877,7 +2881,9 @@ button:focus,
     opacity: 1;
     pointer-events: auto;
 }
-
+.surfing-videos .video-grid{
+    padding-bottom: 5px;
+}
 @media (max-width: 1800px) {
     .downloadplan-inner-content {
         max-height: 510px;
@@ -3084,7 +3090,7 @@ button:focus,
     .container {
         max-width: max-content;
         margin: 0 auto;
-        padding: 0 20px;
+        padding: 0 16px;
     }
 
     .resource-chat,
@@ -3096,7 +3102,7 @@ button:focus,
 
     .welcome-section {
         margin-bottom: 119px;
-        margin-top: 28px;
+        margin-top: 89px;
     }
 
     .welcome-message {
@@ -3247,6 +3253,44 @@ button:focus,
 }
 
 @media (max-width: 600px) {
+    .welcome-section {
+        margin-bottom: 114px;
+        margin-top: 88px;
+    }
+    .section-header {
+    margin-bottom: 16px;
+}
+    .section-header h2 {
+    font-size: 18px;
+    margin-bottom: 0;
+}
+.training-plan .tabs .tab {
+font-size: 11px;
+}
+    .training-plan .tabs {
+    gap: 6px;
+    margin-bottom: 1.5rem;
+    overflow: auto;
+    padding-bottom: 1px;
+}
+.challenges h3, .training-plan .meal-cards .meal-card h3 {
+    padding: 0;
+    margin-top: 8px;
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    color: #080808;
+}
+.challenges .challenge-cards .challenge-card .rating {
+    padding-top: 8px;
+}
+.challenges, .optimize-performance, .plans-section, .resources, .surfing-videos {
+    margin-bottom: 36px;
+}
+.training-plan {
+    margin-bottom: 36px;
+}
     .hero-content {
         position: absolute;
         bottom: 21px;
@@ -3318,11 +3362,14 @@ button:focus,
 
     .surfing-videos .video-grid .video-card {
         flex-direction: row;
+            background: transparent;
+    box-shadow: none;
     }
 
     .video-card .video-player {
         width: 156px;
         height: 145px;
+        border-radius: 8px;
     }
 
     .surfing-videos .video-grid .video-card .video-thumbnail img {
@@ -3348,8 +3395,12 @@ button:focus,
         text-overflow: ellipsis;
         width: 170px;
         display: block;
+        font-size: 12px !important;
+        font-weight: 400;
     }
-
+.surfing-videos .video-grid .video-card .video-info .top {
+    gap: 8px;
+}
     .surfing-videos
         .video-grid
         .video-card
@@ -3358,10 +3409,12 @@ button:focus,
         .channel-name
         label {
         font-size: 9px;
-        color: #626262;
         font-weight: 400;
     }
-
+.insta-handle-name {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
     .footer .footer-content .footer-nav a {
         font-size: 13px;
         font-weight: 400;
@@ -3427,8 +3480,67 @@ button:focus,
     .resources-custom-grid {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
+        gap:12px;
+        margin-bottom: 12px;
     }
+.resource-card-custom.resource-chat .icon-bg, .resource-card-custom.resource-chat .resource-title, .resource-card-custom.resource-supplement .icon-bg, .resource-card-custom.resource-supplement .resource-title {
+    font-size: 14px;
+}
+.resource-card-custom.resource-supplement,
+.resource-card-custom.resource-chat{
+            padding: 12px 9.5px 12px 12px;
+    min-height: 138px;
+}
+.icon-bg {
+    width: 48px;
+    height: 48px;
+}
+.resource-tip .tip-title {
+    font-size: 12px;
+    font-weight: 400;
+}
+.resource-tip .tip-text {
+    font-weight: 500;
+    font-size: 14px;
+}
+.video-thumb-container {
+    position: relative;
+    width: 100px;
+    min-width: 100px;
+    height: 109px;
+}
+.resource-article .video-title, .resource-video .video-title {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+.video-info {
+    padding: 12px;
+}
+.resource-article .video-meta, .resource-video .video-meta {
+    font-size: 12px;
+    color: rgba(59, 59, 59, 1);
+}
+.clock-img {
+    width: 16px;
+    margin-bottom: 2px;
+    margin-right: 5px;
+}
+.resource-card-custom.resource-video {
+max-height: 109px;
+    min-height: 109px;
 
+}
+.consult-title, .plan-title {
+    font-size: 16px;
+}
+.consult-desc {
+    font-size: 12px;
+}
+.surfing-videos .video-grid{
+            grid-template-columns: 1fr;
+            display: grid !important;
+}
     .consults-plans-grid.grid-1 {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
@@ -3441,6 +3553,7 @@ button:focus,
 
     .resource-tip {
         grid-column: span 2;
+        padding: 16px;
     }
 
     .welcome-card {

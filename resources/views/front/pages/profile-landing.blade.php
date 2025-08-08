@@ -12,9 +12,9 @@
         <div class="container">
 
                     <!-- Button to open the custom popup -->
-                    <button type="button" class="btn btn-primary" onclick="openCustomCongratsModal()" style="border-radius: 6px; height: 46px;">
+                    <!-- <button type="button" class="btn btn-primary" onclick="openCustomCongratsModal()" style="border-radius: 6px; height: 46px;">
                         Open Congrats Modal
-                    </button>
+                    </button> -->
 
             <!-- Welcome Section -->
             <section class="welcome-section">
@@ -325,7 +325,10 @@
                                 class="video-thumb"
                                 alt="Video thumbnail for whey protein post-training" />
                             <div class="video-icon-overlay">
-                                <i class="fa-solid fa-play"></i>
+                                 <img
+                                src="{{ frontAssets('images/play.svg') }}"
+                                class="video-thumb"
+                                alt="play icon" />
                             </div>
                         </div>
                         <div class="video-info">
@@ -377,9 +380,10 @@
                     <h2>Optimise your performance</h2>
                     <a href="#" class="see-all">All Plans</a>
                 </div>
+                <label class="plan-subtitle-mob">Consults</label>
                 <div class="consults-plans-grid grid-1">
                     <div class="consultation-card-custom">
-                        <div class="consult-title"></div>
+                        <div class="consult-title">Private consult</div>
                         <div class="consult-desc">
                             Get answers from a real-life expert coaching Elite Athlete and
                             Olympians.
@@ -421,6 +425,7 @@
                     $mealImage2 = $latestMealImages[1] ?? frontAssets('images/sports-training/fooditem6.webp');
                 @endphp
 
+                 <label class="plan-subtitle-mob">Nutrition plans</label>
                 <div class="consults-plans-grid">
                     <div class="plan-card-custom plan-competition">
                         <div class="">
@@ -437,10 +442,12 @@
                                     alt="Kerry O'Bryan, expert coach avatar" />
                                 <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                             </div>
+                             </div>
                             <button class="btn-consult">Learn more</button>
-                        </div>
+                       
                     </div>
                     <div class="plan-card-custom plan-injury">
+                        <div class="">
                         <div class="plan-title">Injury</div>
                         <div class="plan-desc">
                             Add the Injury Recovery Upgrade to your Sports Training Plan—a targeted selection of
@@ -453,6 +460,7 @@
                             <img src="{{ $mealImage2 }}" class="consult-avatar overlap1"
                                 alt="Kerry O'Bryan, expert coach avatar" />
                             <span>{{ $mealCount }}  meals • 18 Nutrition tips</span>
+                        </div>
                         </div>
                         <button class="btn-consult">Learn more</button>
                     </div>
@@ -481,7 +489,10 @@
                                         type="video/mp4" />
                                 </video>
                                 <button class="play-btn" aria-label="Play video" onclick="playVideoInCard(1)">
-                                    <i class="fas fa-play"></i>
+                                   <img
+                                src="{{ frontAssets('images/play.svg') }}"
+                                class="video-thumb"
+                                alt="play icon" style="width:38px; height:38px;"/>
                                 </button>
                                 <label class="insta-text">Watch on Instagram</label>
                             </div>
@@ -495,7 +506,7 @@
                                 <div class="channel-name">
                                     <div class="channel-name-main">
                                         <label class="insta-handle-name">surfboard_co</label>
-                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
+                                        <img src="{{ frontAssets('images/verified.svg') }}" alt="Verified badge" width="16" height="16" />
                                     </div>
                                     <label>Turnstile . LIGHT DESIGN</label>
                                 </div>
@@ -527,7 +538,10 @@
                                         type="video/mp4" />
                                 </video>
                                 <button class="play-btn" aria-label="Play video" onclick="playVideoInCard(2)">
-                                    <i class="fas fa-play"></i>
+                                    <img
+                                src="{{ frontAssets('images/play.svg') }}"
+                                class="video-thumb"
+                                alt="play icon" style="width:38px; height:38px;"/>
                                 </button>
                                 <label class="insta-text">Watch on Instagram</label>
                             </div>
@@ -541,7 +555,7 @@
                                 <div class="channel-name">
                                     <div class="channel-name-main">
                                         <label class="insta-handle-name">surfboard_co</label>
-                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
+                                        <img src="{{ frontAssets('images/verified.svg') }}" alt="Verified badge" width="16" height="16" />
                                     </div>
                                     <label>Turnstile . LIGHT DESIGN</label>
                                 </div>
@@ -573,7 +587,10 @@
                                         type="video/mp4" />
                                 </video>
                                 <button class="play-btn" aria-label="Play video" onclick="playVideoInCard(3)">
-                                    <i class="fas fa-play"></i>
+                                    <img
+                                src="{{ frontAssets('images/play.svg') }}"
+                                class="video-thumb"
+                                alt="play icon" style="width:38px; height:38px;"/>
                                 </button>
                                 <label class="insta-text">Watch on Instagram</label>
                             </div>
@@ -587,7 +604,7 @@
                                 <div class="channel-name">
                                     <div class="channel-name-main">
                                         <label class="insta-handle-name">surfboard_co</label>
-                                        <img src="{{ frontAssets('images/verified.webp') }}" alt="Verified badge" width="16" height="16" />
+                                        <img src="{{ frontAssets('images/verified.svg') }}" alt="Verified badge" width="16" height="16" />
                                     </div>
                                     <label>Turnstile . LIGHT DESIGN</label>
                                 </div>
