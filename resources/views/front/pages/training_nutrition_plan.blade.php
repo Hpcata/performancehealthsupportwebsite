@@ -59,7 +59,7 @@
 
             @if($section->section_type == \App\Models\Section::TYPE_PLAN_INTERESTS && $section->enabled == 1) <!-- done -->
                 <section class="recommended-plans-section">
-                    <div class="container">
+                    <div class="container-homepage">
                         <h2 class="section-title">{{ $section->title }}</h2>
                         {!! $section->content !!}
 

@@ -5,7 +5,7 @@
 			<span class="logo-icon">
 				<i class="bi bi-bag-check-fill fs-4"></i>
 			</span>
-			<span class="logo-text">Performance Health</span>
+			<span class="logo-text">ATHLEAT</span>
 		</a>
 		<!-- Menu: main ul -->
 		<ul class="flex-grow-1 mt-3 menu-list" style="overflow:auto;">
