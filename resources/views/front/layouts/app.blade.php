@@ -103,7 +103,7 @@
     </script>
 
     <script id="delphi-bubble-bootstrap" src="https://embed.delphi.ai/loader.js"></script>
-    <div id="loader">
+    <div id="loader" style="display: none;">
         <div class="box" id="loader1"></div>
         <div class="box" id="loader2"></div>
         <div class="box" id="loader3"></div>

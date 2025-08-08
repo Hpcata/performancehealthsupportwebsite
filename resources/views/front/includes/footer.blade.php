@@ -19,7 +19,7 @@
             <p>Copyright © 2025 Kerry O'Bryan.</p>
         </div>
     </footer>
-@elseif(Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan') || Route::is('front.competition.plan') || Route::is('front.injury.recovery.plan'))
+@elseif(Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan') || Route::is('front.competition.plan') || Route::is('front.injury.recovery.plan') || Route::is('front.about-us'))
     <footer class="footer-bg">
         <div class="footer-grid container-homepage">
             <!-- Left Section: Logo, Tagline, Social, Copyright -->
@@ -41,7 +41,7 @@
 
             <!-- Navigation Links -->
             <nav class="nav-links">
-                <a href="#" class="footer-link">About</a>
+                <a href="{{ route('front.about-us') }}" class="footer-link">About</a>
                 <div class="dropdown">
                     <a class="footer-link dropdown-toggle" href="#" role="button" id="servicesDropdown"
                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -61,7 +61,7 @@
                         <li><a class="dropdown-item" href="#">Private Consultations</a></li>
                     </ul>
                 </div>
-               
+
                 <a href="#" class="footer-link contact-mobile">Contact</a>
             </nav>
 

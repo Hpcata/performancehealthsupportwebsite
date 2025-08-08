@@ -18,6 +18,11 @@ class Section extends Model
     const TYPE_FIND_YOUR_SPORT = 'find_your_sport';
     const TYPE_REAL_STORIES = 'real_stories';
     const TYPE_PARTNERS = 'partners';
+    const TYPE_ABOUT_US_BANNER = 'about_us_banner';
+    const TYPE_ATHLETE_NUTRITION_FOCUS = 'athlete_nutrition_focus';
+    const TYPE_ABOUT_KERRY_INTRO = 'about_kerry_intro';
+    const TYPE_ABOUT_BOOKING = 'about_booking';
+    const TYPE_ATHLETES_WE_WORK_WITH = 'athletes_we_work_with';
     const TYPE_TRAINING_PLAN_MAIN_BANNER = 'training_plan_main_banner';
     const TYPE_BUILT_FOR_REAL_RESULT = 'built_for_real_result';
     const TYPE_PLAN_INCLUSIONS = 'plan_inclusions';
@@ -43,6 +48,11 @@ class Section extends Model
             self::TYPE_FIND_YOUR_SPORT => 'Find Your Sport',
             self::TYPE_REAL_STORIES => 'Real Stories',
             self::TYPE_PARTNERS => 'Partners',
+            self::TYPE_ABOUT_US_BANNER => 'About Us Banner',
+            self::TYPE_ATHLETE_NUTRITION_FOCUS => 'Athlete Nutrition Focus',
+            self::TYPE_ABOUT_KERRY_INTRO => 'About Kerry Intro',
+            self::TYPE_ABOUT_BOOKING => 'About Booking',
+            self::TYPE_ATHLETES_WE_WORK_WITH => 'Athletes We Work With',
             self::TYPE_TRAINING_PLAN_MAIN_BANNER => 'Training Plan Main Banner',
             self::TYPE_BUILT_FOR_REAL_RESULT => 'Built For Real Result',
             self::TYPE_PLAN_INCLUSIONS => 'Plan Inclusions',

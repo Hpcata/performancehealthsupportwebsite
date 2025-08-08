@@ -121,7 +121,7 @@ $auth = auth()->guard('web')->check();
             @endif
         </div>
     </header>
-@elseif(Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan') || Route::is('front.competition.plan') || Route::is('front.injury.recovery.plan'))
+@elseif(Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan') || Route::is('front.competition.plan') || Route::is('front.injury.recovery.plan') || Route::is('front.about-us'))
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-custom homepage-navbar">
         <div class="container-homepage">
@@ -141,7 +141,7 @@ $auth = auth()->guard('web')->check();
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="mx-auto navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="{{ route('front.about-us') }}">About</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -168,7 +168,7 @@ $auth = auth()->guard('web')->check();
                             </li>
                         </ul>
                     </li>
-                   
+
                 </ul>
 
                 <div class="d-flex">
@@ -480,19 +480,19 @@ $auth = auth()->guard('web')->check();
                 // Custom click handler to control timing
                 navbarToggler.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     // Check if menu is currently open
                     const isMenuOpen = navbarCollapse.classList.contains('show');
-                    
+
                     if (!isMenuOpen) {
                         // Menu is closed, opening it
                         // 1. Immediately change background color
                         if (navbar) navbar.classList.add('menu-open');
-                        
+
                         // 2. Change icon immediately
                         if (barsIcon) barsIcon.style.display = 'none';
                         if (crossIcon) crossIcon.style.display = 'block';
-                        
+
                         // 3. Open menu after 0.1s delay
                         setTimeout(() => {
                             navbarCollapse.classList.add('show');
@@ -501,11 +501,11 @@ $auth = auth()->guard('web')->check();
                         // Menu is open, closing it
                         // 1. Immediately remove background color
                         if (navbar) navbar.classList.remove('menu-open');
-                        
+
                         // 2. Change icon immediately
                         if (barsIcon) barsIcon.style.display = 'block';
                         if (crossIcon) crossIcon.style.display = 'none';
-                        
+
                         // 3. Close menu after 0.1s delay
                         setTimeout(() => {
                             navbarCollapse.classList.remove('show');

@@ -55,7 +55,7 @@ class FrontController extends Controller
 {
 
     protected $requirement, $plan, $urlService, $jsonService, $stripeService;
-    
+
     public function __construct()
     {
         // $this->requirement = new Requirement;
@@ -66,11 +66,11 @@ class FrontController extends Controller
     }
 
     public function index()
-    { 
+    {
         $requirements = [];
-    
+
         $disabledDay = json_encode([]);
-       
+
         $organization = [];
         $testimonials = [];
         return view('front.pages.index', compact('requirements','disabledDay','organization','testimonials'));
@@ -619,7 +619,7 @@ class FrontController extends Controller
 
         return response()->json(['meals' => $result]);
     }
-  
+
     public function freeTestSave(Request $request)
     {
         // Validate the incoming test data
@@ -1012,7 +1012,7 @@ class FrontController extends Controller
             'weight_diff' => $weightDiff
         ]);
     }
-    
+
     public function getSportsGames(Request $request)
     {
         $categoryId = $request->input('category');
@@ -1508,7 +1508,7 @@ class FrontController extends Controller
         return response()->json(['success' => false]);
     }
 
-    public function checkGoogleLogin(Request $request) 
+    public function checkGoogleLogin(Request $request)
     {
         $token = $request->input('token');
 
@@ -1552,7 +1552,7 @@ class FrontController extends Controller
         }
     }
 
-    public function unlockFreeTestResult(Request $request) 
+    public function unlockFreeTestResult(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -1850,5 +1850,11 @@ class FrontController extends Controller
         $page = Page::with('sections')->where('slug', 'injury_recovery_nutrition_plan')->first();
 
         return view('front.pages.injury_recovery_plan', compact('page'));
+    }
+
+    public function aboutUs(Request $request)
+    {
+        $page = Page::with('sections')->where('slug', 'about_us')->first();
+        return view('front.pages.about-us', compact('page'));
     }
 }
