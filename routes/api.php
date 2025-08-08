@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\TestimonialApiController;
-use App\Http\Controllers\Api\OrganizationApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,4 +21,3 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/testimonials', [TestimonialApiController::class, 'index']);
-Route::get('/organizations', [OrganizationApiController::class, 'images']);
