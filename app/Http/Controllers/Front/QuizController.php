@@ -235,14 +235,11 @@ class QuizController extends Controller
 
             $quiz = Quiz::findOrFail($request->quiz_id);
 
-            $nutritionScore  = $request->totalAnswerCounts['nutrition-form'] ?? 0;
-            $sportsScore     = $request->totalAnswerCounts['sports-form'] ?? 0;
-            $supplementScore = $request->totalAnswerCounts['supplement-form'] ?? 0;
+            // Use the nutrition score calculated and sent from the frontend
+            $nutritionScore = $request->totalAnswerCounts['nutrition-form'] ?? 0;
 
             // Generate feedback based on score ranges
-            $nutritionFeedback  = $this->getFeedbackMessage($nutritionScore, 'nutrition-form');
-            $sportsFeedback     = $this->getFeedbackMessage($sportsScore, 'sports-form');
-            $supplementFeedback = $this->getFeedbackMessage($supplementScore, 'supplement-form');
+            $nutritionFeedback = $this->getFeedbackMessage($nutritionScore, 'nutrition-form');
 
             // Update quiz status
             $quiz->update([
@@ -251,10 +248,6 @@ class QuizController extends Controller
                 'is_completed'         => true,
                 'nutrition_score'      => $nutritionScore,
                 'nutrition_feedback'   => $nutritionFeedback,
-                'sports_score'         => $sportsScore,
-                'sports_feedback'      => $sportsFeedback,
-                'supplements_score'    => $supplementScore,
-                'supplements_feedback' => $supplementFeedback,
                 'completed_at'         => now(),
             ]);
 
@@ -278,7 +271,7 @@ class QuizController extends Controller
                 try {
                     $user       = User::find($request->user_id);
                     $adminEmail = config('constant.admin_email'); // Set admin email address
-                                                                  // $adminEmail = 'kartikvadhaiya6656@gmail.com'; // Set admin email address
+                    // $adminEmail = 'kartikvadhaiya6656@gmail.com'; // Set admin email address
                     Mail::to($adminEmail)->send(new QuizSubmittedMail($user, $quiz));
 
                     Mail::to($user->email)->send(new FreeTestResultMail($user, $quiz));
@@ -293,6 +286,7 @@ class QuizController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Quiz completed successfully',
+                'nutrition_score' => $nutritionScore,
             ]);
         } catch (\Exception $e) {
             Log::error('Quiz completed error. ' . $e->getMessage());
@@ -319,38 +313,7 @@ class QuizController extends Controller
                     return 'Not bad';
                 }
 
-                // if ($score <= 35) return 'Good';
                 return 'Good';
-
-            case 'sports-form': // Score out of 9
-                if ($score <= 4) {
-                    return 'Untapped potential';
-                }
-
-                if ($score <= 8) {
-                    return 'Much to learn';
-                }
-
-                if ($score <= 11) {
-                    return 'Ok';
-                }
-
-                return 'Good start';
-
-            case 'supplement-form': // Score out of 6
-                if ($score <= 2) {
-                    return 'Likely at risk';
-                }
-
-                if ($score <= 3) {
-                    return 'Pretty ordinary';
-                }
-
-                if ($score <= 4) {
-                    return 'Decent';
-                }
-
-                return 'Nice';
 
             default:
                 return 'No feedback available';
@@ -546,6 +509,65 @@ class QuizController extends Controller
             'percent_unsure'        => $unsureAnswerPercent,
             'correct_answer_unsure' => $correctAnswerUnsure,
         ];
+    }
+
+    /**
+     * Get nutrition score for a specific quiz
+     *
+     * @param Request $request The incoming HTTP request
+     * @return JsonResponse JSON response with nutrition score and calculated values
+     */
+    public function getNutritionScore(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'quiz_id' => 'required|exists:quizzes,id',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            $quiz = Quiz::findOrFail($request->quiz_id);
+
+            if (!$quiz->nutrition_score) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nutrition score not found for this quiz',
+                ], 404);
+            }
+
+            $nutritionScore = $quiz->nutrition_score;
+            $nutritionMaxTotal = 35; // Maximum possible score
+            $nutritionPercentage = max(0, ($nutritionScore / $nutritionMaxTotal) * 100);
+
+            // Calculate arrow rotation (5.14285714 degrees per point)
+            $nutritionDegree = 5.14285714;
+            $nutritionTotalDegree = max(0, $nutritionScore * $nutritionDegree);
+
+            // Ensure the rotation stays within the gauge limits (0-180 degrees)
+            // The gauge appears to be a semi-circle, so we limit to 180 degrees
+            $arrowRotation = min(180, max(0, $nutritionTotalDegree));
+
+            return response()->json([
+                'success' => true,
+                'nutrition_score' => $nutritionScore,
+                'nutrition_percentage' => round($nutritionPercentage, 1),
+                'arrow_rotation' => $arrowRotation,
+                'feedback' => $quiz->nutrition_feedback,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Get nutrition score error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving nutrition score: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

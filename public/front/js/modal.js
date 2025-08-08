@@ -49,8 +49,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Clear completed quiz ID (call this after successful signup/login)
     function clearCompletedQuizId() {
-        const quizId = getCompletedQuizId();
         sessionStorage.removeItem('completed_quiz_id');
+    }
+
+    // Get quiz state
+    function getQuizState() {
+        return sessionStorage.getItem(QUIZ_STORAGE_KEY);
     }
 
     // Check if user has a completed quiz waiting for signup/login
@@ -819,11 +823,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Calculate total answer counts (you can modify this based on your needs)
+            // Calculate nutrition score from stored answers
+            const nutritionScore = calculateNutritionScore();
+
+            // Calculate total answer counts
             const totalAnswerCounts = {
-                'nutrition-form': 0,
-                'sports-form': 0,
-                'supplement-form': 0
+                'nutrition-form': nutritionScore,
             };
 
             $.ajax({
@@ -856,6 +861,197 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         });
+    }
+
+    // Calculate nutrition score from stored answers
+    function calculateNutritionScore() {
+        let totalScore = 0;
+
+        // Get stored answers from sessionStorage
+        const savedState = sessionStorage.getItem(QUIZ_STORAGE_KEY);
+        if (!savedState) {
+            console.log('No saved state found');
+            return 0;
+        }
+
+        try {
+            const state = JSON.parse(savedState);
+            const savedAnswers = state.answers || {};
+
+            // Process each step's answers
+            for (let step = 2; step <= 9; step++) {
+                const stepAnswers = savedAnswers[step];
+                if (stepAnswers) {
+                    const stepScore = calculateStepScore(step, stepAnswers);
+                    totalScore += stepScore;
+                }
+            }
+        } catch (e) {
+            console.error('Error calculating nutrition score:', e);
+            return 0;
+        }
+
+        return totalScore;
+    }
+
+    // Calculate score for a specific step
+    function calculateStepScore(step, stepAnswers) {
+        let stepScore = 0;
+
+        // The answers are stored directly in stepAnswers, not nested under 'nutrition-form'
+        let answers = stepAnswers;
+
+        if (!answers) {
+            console.log(`No answers found for step ${step}`);
+            return 0;
+        }
+
+        // Process answers based on step type
+        switch(step) {
+            case 2: // Carbohydrate questions
+            case 3: // Protein questions
+            case 4: // Fat questions
+            case 5: // Healthy fat questions
+                stepScore = calculateRadioScore(answers, step);
+                break;
+            case 6: // Iron questions
+            case 7: // Calcium questions
+            case 8: // Fiber questions
+                stepScore = calculateSingleChoiceScore(answers);
+                break;
+            case 9: // Multiple choice questions
+                stepScore = calculateMultipleChoiceScore(answers);
+                break;
+        }
+
+        return stepScore;
+    }
+
+    // Calculate score for radio button questions (High/Low/Unsure)
+    function calculateRadioScore(answers, step) {
+        let score = 0;
+
+        // Define correct answers for each step specifically
+        let correctAnswers = {};
+
+        switch(step) {
+            case 2: // Carbohydrate questions
+                correctAnswers = {
+                    'chicken': 'Low',
+                    'bakedbeans': 'High',
+                    'grainbread': 'High',
+                    'avocado': 'Low',
+                    'weetbix': 'High',
+                    'fruityogurt': 'High',
+                    'crumpets': 'High',
+                    'cream': 'Low'
+                };
+                break;
+            case 3: // Protein questions
+                correctAnswers = {
+                    'salmon': 'High',
+                    'baked-beans': 'High',
+                    'grapes': 'Low',
+                    'hummus': 'Low',
+                    'cornflakes-cereal': 'Low',
+                    'almonds': 'High',
+                    'flavoured-milk': 'High',
+                    'ice-cream': 'Low',
+                    'oat-milk': 'Low'
+                };
+                break;
+            case 4: // Fat questions
+                correctAnswers = {
+                    'avocado': 'High',
+                    'baked-beans': 'Low',
+                    'cottage-cheese': 'Low',
+                    'peanut-butter': 'High',
+                    'crumpets': 'Low',
+                    'tasty-cheese': 'High'
+                };
+                break;
+            case 5: // Healthy fat questions
+                correctAnswers = {
+                    'butter': 'Low',
+                    'oliveoil': 'High',
+                    'milk': 'Low',
+                    'chips': 'Low',
+                    'salmon': 'High',
+                    'chocolate': 'Low',
+                    'macadamia': 'High'
+                };
+                break;
+        }
+
+        // Check each answer
+        for (const [food, answerData] of Object.entries(answers)) {
+            if (answerData && answerData.option && correctAnswers[food]) {
+                if (answerData.option === correctAnswers[food]) {
+                    score += 1;
+                }
+            }
+        }
+
+        return score;
+    }
+
+    // Calculate score for single choice questions
+    function calculateSingleChoiceScore(answers) {
+        let score = 0;
+
+        // Define correct answers for single choice questions
+        const correctAnswers = {
+            // Step 6 - Iron
+            'Grilled steak, 130g': true,
+
+            // Step 7 - Calcium
+            'Firm tofu, 100g': true,
+
+            // Step 8 - Fiber
+            'Raw oats, 1/2 cup': true
+        };
+
+        // Check each answer
+        for (const [food, answerData] of Object.entries(answers)) {
+            if (answerData && answerData.value === 1 && correctAnswers[food]) {
+                score += 1;
+            }
+        }
+
+        return score;
+    }
+
+    // Calculate score for multiple choice questions
+    function calculateMultipleChoiceScore(answers) {
+        let score = 0;
+
+        // Define correct answers for multiple choice questions with complete questions
+        const correctAnswers = {
+            'Approximately how many decisions do we make every day about what we eat?': 'Over 200',
+            'Which of the following is NOT a \'Macronutrient\'?': 'Iron'
+        };
+
+        // Check each answer
+        for (const [question, answerData] of Object.entries(answers)) {
+            if (answerData && answerData.option) {
+                // Clean the question text to handle variations (remove newlines, extra spaces)
+                const cleanQuestion = question.trim().replace(/\s+/g, ' ').replace(/\n/g, ' ');
+
+                // Check if the cleaned question matches any of our correct answers
+                for (const [correctQuestion, correctAnswer] of Object.entries(correctAnswers)) {
+                    const cleanCorrectQuestion = correctQuestion.trim().replace(/\s+/g, ' ');
+
+                    if (cleanQuestion === cleanCorrectQuestion) {
+                        if (answerData.option === correctAnswer) {
+                            score += 1;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        return score;
     }
 
     // Handle next button clicks with validation and saving
@@ -1462,6 +1658,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // Get current quiz ID (if still in progress)
         getCurrentQuizId: function() {
             return getCurrentQuizId();
+        },
+
+        // Get quiz state
+        getQuizState: function() {
+            return getQuizState();
         }
     };
 });

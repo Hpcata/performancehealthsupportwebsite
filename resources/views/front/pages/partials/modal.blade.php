@@ -499,18 +499,18 @@
                                         <div class="food-label">Ice cream</div>
                                         <div class="radio-options">
                                             <div class="radio-option">
-                                                <input type="radio" id="ice-cream-high" name="ice-cream"
+                                                <input type="radio" id="protein-ice-cream-high" name="protein-ice-cream"
                                                     value="high">
-                                                <label for="ice-cream-high">High</label>
+                                                <label for="protein-ice-cream-high">High</label>
                                             </div>
                                             <div class="radio-option">
-                                                <input type="radio" id="ice-cream-low" name="ice-cream" value="low">
-                                                <label for="ice-cream-low">Low</label>
+                                                <input type="radio" id="protein-ice-cream-low" name="protein-ice-cream" value="low">
+                                                <label for="protein-ice-cream-low">Low</label>
                                             </div>
                                             <div class="radio-option">
-                                                <input type="radio" id="ice-cream-unsure" name="ice-cream"
+                                                <input type="radio" id="protein-ice-cream-unsure" name="protein-ice-cream"
                                                     value="unsure">
-                                                <label for="ice-cream-unsure">Unsure</label>
+                                                <label for="protein-ice-cream-unsure">Unsure</label>
                                             </div>
                                         </div>
                                     </div>
