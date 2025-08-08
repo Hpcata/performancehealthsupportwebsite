@@ -21,7 +21,6 @@ use App\Models\UserPlan;
 use App\Models\SportCategory;
 use Illuminate\Support\Str;
 use App\Models\Plan;
-use App\Models\Coupon;
 use App\Models\CouponUsage;
 
 class PaymentController extends Controller
