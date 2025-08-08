@@ -121,7 +121,7 @@ $auth = auth()->guard('web')->check();
             @endif
         </div>
     </header>
-@elseif(Route::is('front.sub-home-page') || Route::is('front.about-us'))
+@elseif(Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan') || Route::is('front.competition.plan') || Route::is('front.injury.recovery.plan') || Route::is('front.about-us'))
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-custom homepage-navbar">
         <div class="container-homepage">
@@ -168,12 +168,7 @@ $auth = auth()->guard('web')->check();
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Resources</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Store</a>
-                    </li>
+
                 </ul>
 
                 <div class="d-flex">

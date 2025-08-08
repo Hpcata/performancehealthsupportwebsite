@@ -53,7 +53,7 @@
                                 <!-- Title Field -->
                                 <div class="col-md-12">
                                     <label for="title" class="form-label">Title</label>
-                                    <input type="text" name="title" id="title" class="form-control" value="{{ $meal->title ?? '' }}" required>
+                                    <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $meal->title ?? '') }}" required>
                                     @error('title')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -64,13 +64,13 @@
                                     <label for="description" class="form-label d-flex justify-content-between">
                                         <span>Description</span>
                                     </label>
-                                    <textarea name="description" id="description" class="form-control" rows="4" maxlength="180">{{ $meal->description ?? '' }}</textarea>
+                                    <textarea name="description" id="description" class="form-control" rows="4" maxlength="180">{{ old('description', $meal->description ?? '') }}</textarea>
                                     <small id="desc-count" class="text-muted" style="bottom: 10px; left: 15px; font-size: 0.75rem;">0 / 180</small>
                                 </div>
 
                                 <div class="col-md-12">
                                     <label for="note" class="form-label">Notes</label>
-                                    <textarea name="note" class="form-control" rows="2">{{ $meal->note ?? '' }}</textarea>
+                                    <textarea name="note" class="form-control" rows="2">{{ old('note', $meal->note ?? '') }}</textarea>
                                 </div>
 
                                 <div class="col-md-12">
@@ -78,7 +78,7 @@
                                     <select name="tag_ids[]" class="form-control select2" id="tag_ids" multiple>
                                         @foreach ($tags as $tag)
                                             <option value="{{ $tag->id }}"
-                                                    {{ isset($meal) && $meal->tags->contains($tag->id) ? 'selected' : '' }}>
+                                                {{ collect(old('tag_ids', isset($meal) ? $meal->tags->pluck('id') : []))->contains($tag->id) ? 'selected' : '' }}>
                                                 {{ $tag->name }}
                                             </option>
                                         @endforeach
@@ -91,7 +91,7 @@
                                     <select name="meal_times[]" id="meal_times" class="form-control select2" multiple>
                                         @foreach ($categories as $category)
                                         <option value="{{ $category->id }}"
-                                            {{ isset($meal) && $meal->categories->contains($category->id) ? 'selected' : '' }}>
+                                            {{ collect(old('meal_times', isset($meal) ? $meal->categories->pluck('id') : []))->contains($category->id) ? 'selected' : '' }}>
                                             {{ $category->title }}
                                         </option>
                                         @endforeach
@@ -104,7 +104,7 @@
                                     <select name="categories[]" id="categories" class="form-control select2" multiple>
                                         @foreach ($subCategories as $subCategory)
                                         <option value="{{ $subCategory->id }}"
-                                            {{ isset($meal) && $meal->subCategories->contains($subCategory->id) ? 'selected' : '' }}>
+                                            {{ collect(old('categories', isset($meal) ? $meal->subCategories->pluck('id') : []))->contains($subCategory->id) ? 'selected' : '' }}>
                                             {{ $subCategory->title }}
                                         </option>
                                         @endforeach
@@ -124,7 +124,67 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="sortable-food-items">
-                                                @if(isset($meal) && $meal->items->count() > 0)
+                                                @php
+                                                    $flaggedFoodIds = $foods->filter(fn($f) => $f->flags->isNotEmpty())->pluck('id')->toArray();
+                                                    $oldFoodIds = old('food_ids', []);
+                                                @endphp
+
+                                                @if (old('food_ids'))
+                                                    @foreach (old('food_ids') as $index => $foodId)
+                                                        <tr class="food-row">
+                                                            <td class="drag-handle p-0" style="cursor: move; text-align: center; vertical-align: middle;">
+                                                                <i class="icofont-expand-alt" style="font-size:30px;"></i>
+                                                            </td>
+                                                            <td>
+                                                                <select name="food_ids[]" class="form-control food-select">
+                                                                    <option value="">Select Food</option>
+                                                                    @foreach ($foods as $food)
+                                                                        <option value="{{ $food->id }}" {{ $food->id == $foodId ? 'selected' : '' }}>
+                                                                            {{ $food->title }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+
+                                                                <p class="food-title-qty mt-2 mb-0">
+                                                                    @if (in_array($foodId, $flaggedFoodIds))
+                                                                        <span style="color: purple; font-size: 24px;">&#9679;</span>
+                                                                    @endif
+                                                                    <strong>{{ $foods->firstWhere('id', $foodId)->title ?? '' }}</strong>
+                                                                </p>
+
+                                                                <p class="nutrition-info mt-2 mb-0 text-muted">
+                                                                    Energy: {{ old('energy.' . $index, 0) }}kJ,
+                                                                    Protein: {{ old('protein.' . $index, 0) }}g,
+                                                                    Carb: {{ old('carbs.' . $index, 0) }}g,
+                                                                    Fat: {{ old('fat.' . $index, 0) }}g
+                                                                </p>
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-outline-success edit-food col-btn"
+                                                                    data-carbs="{{ old('carbs.' . $index, '') }}"
+                                                                    data-protein="{{ old('protein.' . $index, '') }}"
+                                                                    data-fat="{{ old('fat.' . $index, '') }}"
+                                                                    data-energy="{{ old('energy.' . $index, 0) }}"
+                                                                    data-serving-size="{{ old('serving_size.' . $index, '') }}"
+                                                                    data-serving-size-unit="{{ old('serving_size_unit.' . $index, '') }}">
+                                                                    <i class="icofont-edit text-success"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-outline-danger remove-food">
+                                                                    <i class="icofont-ui-delete text-danger"></i>
+                                                                </button>
+                                                            </td>
+
+                                                            <input type="hidden" class="hidden-selected-qty-unit" name="selected_qty_unit[]" value='{{ old('selected_qty_unit.' . $index, '') }}'>
+                                                            <input type="hidden" class="hidden-protein" name="protein[]" value="{{ old('protein.' . $index, 0) }}">
+                                                            <input type="hidden" class="hidden-carbs" name="carbs[]" value="{{ old('carbs.' . $index, 0) }}">
+                                                            <input type="hidden" class="hidden-fat" name="fat[]" value="{{ old('fat.' . $index, 0) }}">
+                                                            <input type="hidden" class="hidden-energy" name="energy[]" value="{{ old('energy.' . $index, 0) }}">
+                                                            <input type="hidden" class="hidden-serving-size" name="serving_size[]" value="{{ old('serving_size.' . $index, '') }}">
+                                                            <input type="hidden" class="hidden-serving-size-unit" name="serving_size_unit[]" value="{{ old('serving_size_unit.' . $index, '') }}">
+                                                            <input type="hidden" class="food-order-input" name="food_order[]" value="{{ $index }}">
+                                                        </tr>
+                                                    @endforeach
+                                                @elseif(isset($meal) && $meal->items->count() > 0)
                                                     @foreach ($meal->items as $item)
                                                         @php
                                                             $quantityInfo = '';
@@ -176,10 +236,10 @@
 
                                                                 {{-- ✅ Show purple dot if item->flags is a non-empty collection --}}
                                                                 <p class="food-title-qty mt-2 mb-0">
+                                                                    @if ($item->flags && $item->flags->isNotEmpty())
+                                                                        <span style="color: purple; font-size: 24px;">&#9679;</span>
+                                                                    @endif
                                                                     <strong>
-                                                                        @if ($item->flags && $item->flags->isNotEmpty())
-                                                                            <span style="color: purple; font-size: 24px;">&#9679;</span>
-                                                                        @endif
                                                                         {{ $item->title }} {{ $quantityInfo }}
                                                                     </strong>
                                                                 </p>
@@ -666,7 +726,7 @@
                                 <option value="{{ $food->id }}">{{ $food->title }}</option>
                             @endforeach
                         </select>
-                        <p class="food-title-qty mt-2 mb-0"><strong></strong></p>
+                        <p class="food-title-qty mt-2 mb-0"><strong class="food-title"></strong></p>
                         <p class="nutrition-info mt-2 mb-0 text-muted">Energy: 0kJ, Protein: 0g, Carb: 0g, Fat: 0g</p>
                     </td>
                     <td>
@@ -994,7 +1054,7 @@
             // Update display title
             const foodTitle = $editingRow.find('.food-select option:selected').text();
             const displayQty = displayQtyParts.join(' or ');
-            $editingRow.find('.food-title-qty').html(`<strong>${foodTitle} ${displayQty}</strong>`);
+            $editingRow.find('.food-title').html(`<strong>${foodTitle} ${displayQty}</strong>`);
 
             // Update the edit button's data attributes with the new nutrition values
             const $editButton = $editingRow.find('.edit-food');

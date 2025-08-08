@@ -67,7 +67,6 @@
     <script>
         window.AppConfig = {
             testimonialsApiUrl: "{{ url('/api/testimonials') }}",
-            organizationsApiUrl: "{{ url('/api/organizations') }}"
         };
     </script>
 	@stack('styles')

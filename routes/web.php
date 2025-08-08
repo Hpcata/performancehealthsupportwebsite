@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\Admin\Auth\LoginController as AdminAuthController;
@@ -111,14 +110,6 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
     	Route::get('/remove-front-logo/{id}', [AdminAuthController::class, 'removeFrontLogo'])->name('remove-front-logo');
     	Route::get('/remove-aboutus-image/{id}', [AdminAuthController::class, 'removeAboutUsImage'])->name('remove-aboutus-image');
     	Route::post('/profile', [AdminAuthController::class, 'profilePost'])->name('profile-post');
-
-		Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations');
-    	Route::group(['prefix' => 'organizations', 'as' => 'organizations.'], function () {
-			Route::post('/media-upload', [OrganizationController::class, 'mediaUpload'])->name('media-upload');
-			Route::post('/image-list', [OrganizationController::class, 'getImageList'])->name('image-list');
-			Route::post('/image-delete', [OrganizationController::class, 'imageDelete'])->name('image-delete');
-			Route::post('/sort-order', [OrganizationController::class, 'sorting'])->name('sort-order');
-		});
 
 		// Testimonial routes
 		Route::group(['prefix' => 'testimonials', 'as' => 'testimonials.'], function () {
@@ -284,6 +275,8 @@ Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPla
 Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
 Route::get('/get-default-plan-details/{id}', [FrontPlanController::class, 'getDefaultPlanDetails'])->name('front.get-default-plan-details');
 Route::get('/training-nutrition-plan', [FrontController::class, 'trainingNutritionPlan'])->name('front.training.nutrition.plan');
+Route::get('/competition-plan', [FrontController::class, 'competitionPlan'])->name('front.competition.plan');
+Route::get('/injury-recovery-plan', [FrontController::class, 'injuryRecoveryPlan'])->name('front.injury.recovery.plan');
 
 // Front auth
 Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
