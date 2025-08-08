@@ -1,4 +1,4 @@
-@if (Route::is('front.profile') || Route::is('front.plans.details'))
+@if (Route::is('front.profile') || Route::is('front.plans.details') || Route::is('front.my-plans'))
     <footer class="footer">
         <div class="footer-content">
             <div class="logo">
@@ -19,12 +19,12 @@
             <p>Copyright © 2025 Kerry O'Bryan.</p>
         </div>
     </footer>
-@elseif(Route::is('front.sub-home-page'))
+@elseif(Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan') || Route::is('front.competition.plan') || Route::is('front.injury.recovery.plan') || Route::is('front.about-us'))
     <footer class="footer-bg">
         <div class="footer-grid container-homepage">
             <!-- Left Section: Logo, Tagline, Social, Copyright -->
             <div class="navbar-brand">
-                <img src="{!! frontAssets('images/logo.webp') !!}" alt="ATHLEAT Fuel Logo" />
+                <img src="{!! frontAssets('images/logo.svg') !!}" alt="ATHLEAT Fuel Logo" width="142" height="30"/>
                 <p class="tagline">Be elite - Get Athleat</p>
                 <a href="#" class="mb-auto social-icon">
                     <!-- LinkedIn Icon (using a simple text placeholder for demonstration) -->
@@ -41,7 +41,7 @@
 
             <!-- Navigation Links -->
             <nav class="nav-links">
-                <a href="#" class="footer-link">About</a>
+                <a href="{{ route('front.about-us') }}" class="footer-link">About</a>
                 <div class="dropdown">
                     <a class="footer-link dropdown-toggle" href="#" role="button" id="servicesDropdown"
                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -61,8 +61,7 @@
                         <li><a class="dropdown-item" href="#">Private Consultations</a></li>
                     </ul>
                 </div>
-                <a href="#" class="footer-link">Resources</a>
-                <a href="#" class="footer-link">Store</a>
+
                 <a href="#" class="footer-link contact-mobile">Contact</a>
             </nav>
 
@@ -71,8 +70,8 @@
                 @if (auth()->guard('web')->check())
                     <a href="#" class="btn btn-login mob-hide">My Profile</a>
                 @else
-                    <button class=" btn-login mob-hide">Log in</button>
-                    <button class=" btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up for free</button>
+                    <button class=" btn-login mob-hide" onclick="openSingupFreePopup(true)">Log in</button>
+                    <button class=" btn-signup" onclick="openSingupFreePopup()">Sign up for free</button>
                 @endif
             </div>
 
@@ -81,8 +80,8 @@
                 @if (auth()->guard('web')->check())
                     <a href="#" class="btn btn-login rounded-md">My Profile</a>
                 @else
-                    <button type="button" class="rounded-md  btn-login">Log in</button>
-                    <button type="button" class="rounded-md  btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up for free</button>
+                    <button type="button" class="rounded-md  btn-login" onclick="openSingupFreePopup(true)">Log in</button>
+                    <button type="button" class="rounded-md  btn-signup" onclick="openSingupFreePopup()">Sign up for free</button>
                 @endif
             </div>
             <p class="copyright-text web-hide">Copyright {{ date('Y') }} Catalysta Pty Ltd</p>

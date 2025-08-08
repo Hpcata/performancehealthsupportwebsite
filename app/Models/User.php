@@ -90,34 +90,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function media()
-    {
-        return $this->belongsToMany(Media::class, 'media_organization');
-    }
-
     public function blogs()
     {
         return $this->hasMany(Blog::class, 'author');
-    }
-
-    public function getOrganizationImages() {
-        $imageList = DB::table('media')
-            ->join('media_organization', 'media_organization.media_id', '=', 'media.id')
-            ->where('user_id', $this->id)
-            ->orderBy('media_organization.position', 'ASC')
-            ->orderBy('media_organization.sort_order', 'ASC')
-            ->get([
-                'media.path',
-                'media.name',
-                'media_organization.position',
-            ]);
-
-        $organization = [];
-        foreach ($imageList as $key => $_list) {
-            $organization[$_list->position][] = webAssets('storage/'.$_list->path . '/' . $_list->name);
-        }
-
-        return $organization;
     }
 
     public function getTestimonials() {

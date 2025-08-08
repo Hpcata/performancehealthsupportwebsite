@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\Admin\Auth\LoginController as AdminAuthController;
@@ -112,14 +111,6 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
     	Route::get('/remove-aboutus-image/{id}', [AdminAuthController::class, 'removeAboutUsImage'])->name('remove-aboutus-image');
     	Route::post('/profile', [AdminAuthController::class, 'profilePost'])->name('profile-post');
 
-		Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations');
-    	Route::group(['prefix' => 'organizations', 'as' => 'organizations.'], function () {
-			Route::post('/media-upload', [OrganizationController::class, 'mediaUpload'])->name('media-upload');
-			Route::post('/image-list', [OrganizationController::class, 'getImageList'])->name('image-list');
-			Route::post('/image-delete', [OrganizationController::class, 'imageDelete'])->name('image-delete');
-			Route::post('/sort-order', [OrganizationController::class, 'sorting'])->name('sort-order');
-		});
-
 		// Testimonial routes
 		Route::group(['prefix' => 'testimonials', 'as' => 'testimonials.'], function () {
 			Route::get('/', [TestimonialController::class, 'index'])->name('index');
@@ -129,7 +120,7 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 			Route::post('/save', [TestimonialController::class, 'save'])->name('save');
 			Route::post('/delete', [TestimonialController::class, 'delete'])->name('delete');
 		});
-		
+
 		Route::as('backend.')->group(function () {
 			Route::resource('blogs', BlogController::class);
 		});
@@ -142,7 +133,7 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 
 		Route::get('/site-settings/{slug}', [SiteSettingsController::class, 'index'])->name('site-settings');
 		Route::post('/site-settings-save', [SiteSettingsController::class, 'saveSiteSettings'])->name('save-site-settings');
-		
+
 		Route::get('/tags', [TagController::class, 'index'])->name('admin.tags.index');
 		Route::get('/tags/create', [TagController::class, 'create'])->name('admin.tags.create');
 		Route::post('/tags', [TagController::class, 'store'])->name('admin.tags.store');
@@ -178,7 +169,7 @@ Route::group(['middleware' => ['auth:admin', 'admin']], function () {
 		Route::put('/sections/{section}', [SectionController::class, 'update'])->name('sections.update');
 		Route::delete('/sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy');
 		Route::post('/sections/reorder', [SectionController::class, 'reorder'])->name('sections.reorder');
-Route::get('/sections/used-types', [SectionController::class, 'getUsedSectionTypes'])->name('sections.used-types');
+		Route::get('/sections/used-types', [SectionController::class, 'getUsedSectionTypes'])->name('sections.used-types');
 
 		// Category
 		Route::get('categories', [CategoryController::class, 'index'])->name('admin.categories.index');
@@ -226,13 +217,6 @@ Route::get('/sections/used-types', [SectionController::class, 'getUsedSectionTyp
 		Route::get('meals/import/form', [MealController::class, 'viewImport'])->name('admin.meals.import-view');
 		Route::post('/meals/import', [MealController::class, 'import'])->name('admin.meals.import');
 
-		// Route::get('meal-times', [MealTimeController::class, 'index'])->name('admin.meal-times.index');
-		// Route::get('meal-times/create', [MealTimeController::class, 'create'])->name('admin.meal-times.create');
-		// Route::post('meal-times', [MealTimeController::class, 'store'])->name('admin.meal-times.store');
-		// Route::get('meal-times/{id}/edit', [MealTimeController::class, 'edit'])->name('admin.meal-times.edit');
-		// Route::put('meal-times/{id}', [MealTimeController::class, 'update'])->name('admin.meal-times.update');
-		// Route::delete('meal-times/{id}', [MealTimeController::class, 'destroy'])->name('admin.meal-times.destroy');
-		
 		Route::get('/purchase-plans', [PurchasePlanController::class, 'index'])->name('admin.purchase-plans.index');
 		Route::get('/purchase-plans/{id}/create', [PurchasePlanController::class, 'create'])->name('admin.purchase-plans.create');
 		Route::post('/purchase-plans', [PurchasePlanController::class, 'store'])->name('admin.purchase-plans.store');
@@ -290,6 +274,9 @@ Route::get('/get-foods/{key}', [FrontController::class, 'getFoodItems'])->name('
 Route::get('/competition-plan/{id}', [FrontController::class, 'getCompetitionPlanDetails'])->name('front.competition-plan-details');
 Route::get('/get-meals-items', [FrontController::class, 'getAllMeals'])->name('front.get.meals.items');
 Route::get('/get-default-plan-details/{id}', [FrontPlanController::class, 'getDefaultPlanDetails'])->name('front.get-default-plan-details');
+Route::get('/training-nutrition-plan', [FrontController::class, 'trainingNutritionPlan'])->name('front.training.nutrition.plan');
+Route::get('/competition-plan', [FrontController::class, 'competitionPlan'])->name('front.competition.plan');
+Route::get('/injury-recovery-plan', [FrontController::class, 'injuryRecoveryPlan'])->name('front.injury.recovery.plan');
 
 // Front auth
 Route::post('front/register', [FrontController::class, 'register'])->name('front.register');
@@ -348,8 +335,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/plans/{id}/print', [FrontPlanController::class, 'generatePdf'])->name('plans.generatePdf');
 	Route::get('/plans/preview/{id}', [FrontPlanController::class, 'preview'])->name('plans.preview');
 	Route::post('/plans/preview/', [FrontPlanController::class, 'planPreview'])->name('front.plans.preview');
-	
-	// TODO : New Design profile-landing page Route// 
+
+	// TODO : New Design profile-landing page Route//
 	Route::get('/profile-landing/{id}', [FrontController::class, 'getProfile'])->name('front.profile');
 	Route::get('/profile/{id}', [FrontController::class, 'getProfileDetails'])->name('front.profile-old');
 	Route::post('/profile/update', [FrontController::class, 'updateProfile'])->name('front.profile.update');
@@ -371,6 +358,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/meal-details', [FrontPlanController::class, 'getMealDetails'])->name('front.meal.details');
 	Route::post('/meal-smart-swaps', [FrontPlanController::class, 'getMealSmartSwaps'])->name('front.meal.smart.swaps');
 
+	// My Plans page - accessible only to authenticated users
+	Route::get('/my-plans', [FrontController::class, 'myPlans'])->name('front.my-plans');
+
 });
 Route::get('/set-user-session/{id}', [FrontController::class, 'setUserSession'])->name('front.set-user-session');
 
@@ -387,4 +377,7 @@ Route::prefix('quiz')->group(function () {
     Route::post('/save-step', [FrontQuizController::class, 'saveStep'])->name('front.quiz.save-step');
     Route::post('/complete', [FrontQuizController::class, 'completeQuiz'])->name('front.quiz.complete');
     Route::post('/abandon', [FrontQuizController::class, 'abandonQuiz'])->name('front.quiz.abandon');
+    Route::post('/nutrition-score', [FrontQuizController::class, 'getNutritionScore'])->name('front.quiz.nutrition-score');
 });
+
+Route::get('/about-us', [FrontController::class, 'aboutUs'])->name('front.about-us');

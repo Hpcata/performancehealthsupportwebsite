@@ -17,7 +17,7 @@
 
 		setTimeout(function(){
 
-			var hasChildrens = document.querySelector('.site-mobile-menu').querySelectorAll(' .has-children');
+			var hasChildrens = document.querySelector('.site-mobile-menu').querySelectorAll('.has-children');
 
 			var counter = 0;
 			hasChildrens.forEach( hasChild => {

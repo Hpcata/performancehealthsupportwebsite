@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Http\Controllers\Controller;
+use App\Models\Quiz;
 use App\Models\User;
 use App\Models\SportGame;
-use App\Services\OtpService;
+use Illuminate\Support\Str;
 use App\Constants\AgeGroups;
+use App\Services\OtpService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class OtpRegistrationController extends Controller
 {
@@ -76,12 +77,12 @@ class OtpRegistrationController extends Controller
                 
                 // If user exists, include user info (without sensitive data)
                 if ($existingUser) {
-                    $response['existing_user'] = [
-                        'id' => $existingUser->id,
-                        'name' => $existingUser->name,
-                        'email' => $existingUser->email,
-                        'free_user' => $existingUser->free_user
-                    ];
+                    // $response['existing_user'] = [
+                    //     'id' => $existingUser->id,
+                    //     'name' => $existingUser->name,
+                    //     'email' => $existingUser->email,
+                    //     'free_user' => $existingUser->free_user
+                    // ];
                 }
                 
                 return response()->json($response);
@@ -140,17 +141,32 @@ class OtpRegistrationController extends Controller
         $mobileNumber = $request->input('mobile_number');
         $otp = $request->input('otp');
 
+        $isFromQuizPopup = $request->input('isFromQuizPopup');
+        $completedQuizId = $request->input('completed_quiz_id');
+
         try {
             $result = $this->otpService->verifyOtp($mobileNumber, $otp);
-            
+
             if ($result['success']) {
                 // Check if user exists with this mobile number
                 $existingUser = User::where('phone', $mobileNumber)->first();
-                
-                if ($existingUser) {
+
+                if ($existingUser && $existingUser->email) {
                     // User exists - log them in
                     Auth::login($existingUser);
-                    
+
+                    if($isFromQuizPopup && $completedQuizId) {
+                        $quiz = Quiz::where('id', $completedQuizId)->first();
+                        if($quiz) {
+                            $quiz->user_id = $existingUser->id;
+                            $quiz->save();
+
+                            if($existingUser->email) {
+                                $this->sendAfterQuizEmail($existingUser->email);
+                            }
+                        }
+                    }
+
                     return response()->json([
                         'success' => true,
                         'message' => 'Login successful! Welcome back.',
@@ -261,6 +277,8 @@ class OtpRegistrationController extends Controller
         $userType = $request->input('userType');
         $sportGameId = $request->input('sport');
         $ageGroup = $request->input('ageGroup');
+        $isFromQuizPopup = $request->input('isFromQuizPopup');
+        $completedQuizId = $request->input('completed_quiz_id');
 
         // Check if OTP is verified
         if (!$this->otpService->isOtpVerified($mobileNumber)) {
@@ -275,26 +293,57 @@ class OtpRegistrationController extends Controller
 
         // Check if user already exists with this email
         $existingUser = User::where('email', $email)->first();
-        if ($existingUser) {
+        $existingUserByPhone = User::where('phone', $mobileNumber)->first();
+
+        if($existingUser?->is_superadmin == 1 || $existingUserByPhone?->is_superadmin == 1) {
             return response()->json([
                 'success' => false,
-                'message' => 'A user with this email already exists.',
+                'message' => 'Invalid access with others account.',
                 'errors' => [
-                    'email' => ['This email address is already registered.']
+                    'general' => ['Invalid access with others account.']
                 ]
-            ], 422);
+            ], 500);
         }
 
-        // Check if user already exists with this mobile number (double check)
-        $existingUserByPhone = User::where('phone', $mobileNumber)->first();
-        if ($existingUserByPhone) {
-            return response()->json([
-                'success' => false,
-                'message' => 'A user with this mobile number already exists. Please login instead.',
-                'errors' => [
-                    'mobile_number' => ['This mobile number is already registered. Please use the login option.']
-                ]
-            ], 422);
+        if ($existingUser) {
+            if($existingUserByPhone && $existingUserByPhone->id != $existingUser->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Phone number and email belongs to different users.',
+                    'errors' => [
+                        'email' => ['Phone number and email belongs to different users.']
+                    ]
+                ], 422);
+            } else {
+                // Clear OTP verification
+                $this->otpService->clearOtpVerification($mobileNumber);
+
+                $existingUser->phone = $mobileNumber;
+                $existingUser->save();
+
+                // Log in the user
+                Auth::login($existingUser);
+
+                if($isFromQuizPopup && $completedQuizId) {
+                    $quiz = Quiz::where('id', $completedQuizId)->first();
+                    if($quiz) {
+                        $quiz->user_id = $existingUser->id;
+                        $quiz->save();
+
+                        if($existingUser->email) {
+                            $this->sendAfterQuizEmail($existingUser->email);
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful! Welcome back.',
+                    'user' => $existingUser,
+                    'redirectUrl' => route('front.profile', ['id' => $existingUser->id]),
+                    'action' => 'login'
+                ]);
+            }
         }
 
         // Generate a random password for the user
@@ -322,6 +371,18 @@ class OtpRegistrationController extends Controller
 
             // Log in the user
             Auth::login($user);
+
+            if($isFromQuizPopup && $completedQuizId) {
+                $quiz = Quiz::where('id', $completedQuizId)->first();
+                if($quiz) {
+                    $quiz->user_id = $user->id;
+                    $quiz->save();
+
+                    if($user->email) {
+                        $this->sendAfterQuizEmail($user->email);
+                    }
+                }
+            }
 
             return response()->json([
                 'success' => true,
@@ -456,5 +517,18 @@ class OtpRegistrationController extends Controller
                 'driver' => config('database.connections.' . config('database.default') . '.driver')
             ]
         ]);
+    }
+
+    public function sendAfterQuizEmail($email) {
+        try {
+            mail($email, "After Quiz", "Thank you for completing the quiz.");
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Failed to send after quiz email', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+            ]);
+            return false;
+        }
     }
 }

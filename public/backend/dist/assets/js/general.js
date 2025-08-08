@@ -141,7 +141,6 @@ if (window.bootstrap) {
   function updateSidebarTooltips() {
     var sidebar = document.querySelector('.sidebar');
     var links = document.querySelectorAll('.sidebar .m-link');
-    console.log('Sidebar mini:', sidebar && sidebar.classList.contains('sidebar-mini'));
   
     // Always destroy all tooltips and remove attributes first
     links.forEach(function(link) {
