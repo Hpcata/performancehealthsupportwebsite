@@ -121,7 +121,11 @@ $auth = auth()->guard('web')->check();
             @endif
         </div>
     </header>
-@elseif(Route::is('front.sub-home-page') || Route::is('front.training.nutrition.plan') || Route::is('front.competition.plan') || Route::is('front.injury.recovery.plan') || Route::is('front.about-us'))
+@elseif(Route::is('front.sub-home-page') ||
+        Route::is('front.training.nutrition.plan') ||
+        Route::is('front.competition.plan') ||
+        Route::is('front.injury.recovery.plan') ||
+        Route::is('front.about-us'))
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-custom homepage-navbar">
         <div class="container-homepage">
@@ -132,9 +136,9 @@ $auth = auth()->guard('web')->check();
                 <button class="me-0 btn-login web-hide" onclick="openSingupFreePopup(true)">Log in</button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     style="border: none">
-                    <span  class="menu-icon" style="color: white">
-                        <img src="{{ frontAssets('images/bars.svg') }}" alt="ATHLEAT Fuel Logo" class="bars-icon"/>
-                          <img src="{{ frontAssets('images/cross.svg') }}" alt="Menu" class="cross-icon" />
+                    <span class="menu-icon" style="color: white">
+                        <img src="{{ frontAssets('images/bars.svg') }}" alt="ATHLEAT Fuel Logo" class="bars-icon" />
+                        <img src="{{ frontAssets('images/cross.svg') }}" alt="Menu" class="cross-icon" />
                     </span>
                 </button>
             </div>
@@ -172,12 +176,14 @@ $auth = auth()->guard('web')->check();
                 </ul>
 
                 <div class="d-flex">
-                    @if(Auth::check())
-                        <a href="{{ route('front.profile', ['id' => Auth::guard('web')?->user()?->id]) }}" class="btn btn-signup mob-hide">
+                    @if (Auth::check())
+                        <a href="{{ route('front.profile', ['id' => Auth::guard('web')?->user()?->id]) }}"
+                            class="btn btn-signup mob-hide">
                             My Account
                         </a>
                     @else
-                        <button class=" btn-login mob-hide" id="login" href="#" onclick="openSingupFreePopup(true)">Log in</button>
+                        <button class=" btn-login mob-hide" id="login" href="#"
+                            onclick="openSingupFreePopup(true)">Log in</button>
                         <button class=" btn-signup" id="show-new-signup-modal" onclick="openSingupFreePopup()">
                             Sign up for free
                         </button>
@@ -258,8 +264,8 @@ $auth = auth()->guard('web')->check();
                                     @elseif($title == 'Login')
                                         <li class="nav-item">
                                             <a class="nav-link restriction-page" id="login" href="#"
-                                                onclick="openSingupFreePopup(true)"><i
-                                                    class="fa-solid fa-user"></i> Login</a>
+                                                onclick="openSingupFreePopup(true)"><i class="fa-solid fa-user"></i>
+                                                Login</a>
                                         </li>
                                     @else
                                         <li class="nav-item">
@@ -298,7 +304,7 @@ $auth = auth()->guard('web')->check();
                         </div>
 
                         <!-- Sign In Button -->
-                           <button type="submit" id="login-submit" class="btn-primary w-100 mt-3">
+                        <button type="submit" id="login-submit" class="btn-primary w-100 mt-3">
                             Sign In
                         </button>
                     </form>
@@ -373,14 +379,15 @@ $auth = auth()->guard('web')->check();
                         if (response.message == 'CSRF token mismatch.') {
                             $('#login-error').text(
                                 'Your session has expired. Please reload the page and login again.'
-                                );
+                            );
                         } else {
                             $('#login-error').text(response
-                            .message); // Display error message in #login-error div
+                                .message); // Display error message in #login-error div
                         }
                     } else {
                         $('#login-error').text(
-                        'An error occurred. Please try again.'); // General error message
+                            'An error occurred. Please try again.'
+                            ); // General error message
                     }
 
                     $('#login-submit').prop('disabled', false); // Re-enable submit button
@@ -434,7 +441,7 @@ $auth = auth()->guard('web')->check();
     }
 
     function openSingupFreePopup(isLogin = false, isQuiz = false) {
-        if(isQuiz) {
+        if (isQuiz) {
             $('#signupModalathlete .signup-login-h2-title').addClass('d-none');
             $('#signupModalathlete .quiz-h2-title').removeClass('d-none');
             $('#isFromQuizPopup').val(1);
@@ -445,7 +452,7 @@ $auth = auth()->guard('web')->check();
             // manage this
             $('#signupModalathlete .signup-login-h2-title .welcome-title').html(isLogin ? 'Welcome Back' : 'Welcome');
 
-            if(isLogin) {
+            if (isLogin) {
                 $('#signupModalathlete #new-user-singup').removeClass('d-none');
                 $('#signupModalathlete #existing-user-login').addClass('d-none');
             } else {
@@ -459,65 +466,65 @@ $auth = auth()->guard('web')->check();
     }
 
     $(document).ready(function() {
-        $(document).on('click','#existing-user-login', function(){
+        $(document).on('click', '#existing-user-login', function() {
             openSingupFreePopup(true);
         });
 
-        $(document).on('click','#new-user-singup', function(){
+        $(document).on('click', '#new-user-singup', function() {
             openSingupFreePopup();
         });
     });
 
-      // Mobile menu toggle functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const navbarToggler = document.querySelector('.navbar-toggler');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-            const navbar = document.querySelector('.homepage-navbar');
-            const barsIcon = document.querySelector('.bars-icon');
-            const crossIcon = document.querySelector('.cross-icon');
+    // Mobile menu toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const navbarToggler = document.querySelector('.navbar-toggler');
+        const navbarCollapse = document.querySelector('.navbar-collapse');
+        const navbar = document.querySelector('.homepage-navbar');
+        const barsIcon = document.querySelector('.bars-icon');
+        const crossIcon = document.querySelector('.cross-icon');
 
-            if (navbarToggler && navbarCollapse) {
-                // Custom click handler to control timing
-                navbarToggler.addEventListener('click', function(e) {
-                    e.preventDefault();
+        if (navbarToggler && navbarCollapse) {
+            // Custom click handler to control timing
+            navbarToggler.addEventListener('click', function(e) {
+                e.preventDefault();
 
-                    // Check if menu is currently open
-                    const isMenuOpen = navbarCollapse.classList.contains('show');
+                // Check if menu is currently open
+                const isMenuOpen = navbarCollapse.classList.contains('show');
 
-                    if (!isMenuOpen) {
-                        // Menu is closed, opening it
-                        // 1. Immediately change background color
-                        if (navbar) navbar.classList.add('menu-open');
+                if (!isMenuOpen) {
+                    // Menu is closed, opening it
+                    // 1. Immediately change background color
+                    if (navbar) navbar.classList.add('menu-open');
 
-                        // 2. Change icon immediately
-                        if (barsIcon) barsIcon.style.display = 'none';
-                        if (crossIcon) crossIcon.style.display = 'block';
+                    // 2. Change icon immediately
+                    if (barsIcon) barsIcon.style.display = 'none';
+                    if (crossIcon) crossIcon.style.display = 'block';
 
-                        // 3. Open menu after 0.1s delay
-                        setTimeout(() => {
-                            navbarCollapse.classList.add('show');
-                        }, 100);
-                    } else {
-                        // Menu is open, closing it
-                        // 1. Immediately remove background color
-                        if (navbar) navbar.classList.remove('menu-open');
+                    // 3. Open menu after 0.1s delay
+                    setTimeout(() => {
+                        navbarCollapse.classList.add('show');
+                    }, 100);
+                } else {
+                    // Menu is open, closing it
+                    // 1. Immediately remove background color
+                    if (navbar) navbar.classList.remove('menu-open');
 
-                        // 2. Change icon immediately
-                        if (barsIcon) barsIcon.style.display = 'block';
-                        if (crossIcon) crossIcon.style.display = 'none';
+                    // 2. Change icon immediately
+                    if (barsIcon) barsIcon.style.display = 'block';
+                    if (crossIcon) crossIcon.style.display = 'none';
 
-                        // 3. Close menu after 0.1s delay
-                        setTimeout(() => {
-                            navbarCollapse.classList.remove('show');
-                        }, 100);
-                    }
-                });
+                    // 3. Close menu after 0.1s delay
+                    setTimeout(() => {
+                        navbarCollapse.classList.remove('show');
+                    }, 100);
+                }
+            });
 
-                // Remove Bootstrap's default toggle behavior
-                navbarToggler.removeAttribute('data-bs-toggle');
-                navbarToggler.removeAttribute('data-bs-target');
-            }
-            // Smooth navbar background change on scroll
+            // Remove Bootstrap's default toggle behavior
+            navbarToggler.removeAttribute('data-bs-toggle');
+            navbarToggler.removeAttribute('data-bs-target');
+        }
+        // Smooth navbar background change on scroll
         window.addEventListener("scroll", function() {
             const navbar = document.querySelector(".navbar-custom");
             if (window.scrollY > 50) {
@@ -526,5 +533,5 @@ $auth = auth()->guard('web')->check();
                 navbar.style.background = "transparent";
             }
         });
-        });
+    });
 </script>
