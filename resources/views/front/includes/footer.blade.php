@@ -61,8 +61,7 @@
                         <li><a class="dropdown-item" href="#">Private Consultations</a></li>
                     </ul>
                 </div>
-                <a href="#" class="footer-link">Resources</a>
-                <a href="#" class="footer-link">Store</a>
+               
                 <a href="#" class="footer-link contact-mobile">Contact</a>
             </nav>
 

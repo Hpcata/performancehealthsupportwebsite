@@ -57,7 +57,6 @@ body {
     .container-homepage {
         max-width: 1140px;
     }
-    
 }
 
 /* Extra extra large devices (≥1400px) */
@@ -207,7 +206,7 @@ body {
     background: white;
     color: #333;
     border-color: white;
-    transform: translateY(-2px);
+    
 }
 
 .btn-signup {
@@ -238,7 +237,7 @@ body {
     background: rgba(23, 81, 170, 1);
     border-color: rgba(23, 81, 170, 1);
     color: white;
-    transform: translateY(-2px);
+    
 }
 
 .btn-white {
@@ -637,7 +636,7 @@ body {
 }
 
 .food-section .food-card:hover {
-    transform: translateY(-5px);
+    
     box-shadow: 0 8px 25px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -1078,7 +1077,7 @@ body {
 }
 
 .choose-plan-section .plan-card:hover {
-    transform: translateY(-5px);
+    
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
@@ -2383,8 +2382,6 @@ svg.user-type-icon path {
     text-align: center;
 }
 
-
-
 .signup-container.quiz-container .close-button {
     position: absolute;
     top: 8px;
@@ -2404,7 +2401,7 @@ svg.user-type-icon path {
     padding: 12px;
     /* transition: all 0.3s ease; */
     cursor: pointer;
-    height: 190px;
+    /* height: 190px; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2412,7 +2409,7 @@ svg.user-type-icon path {
 }
 
 .quiz-step .food-image-container:hover {
-    /* transform: translateY(-2px); */
+    /*  */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -2448,8 +2445,6 @@ svg.user-type-icon path {
     fill: var(--White, #FFF);
     stroke-width: 0.5px;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
-
-
 }
 
 .quiz-step .food-checkbox:checked {
@@ -2563,7 +2558,6 @@ svg.user-type-icon path {
     background-color: rgba(216, 216, 216, 1);
 }
 
-
 .quiz-step:not(:first-child)~.image-section {
     display: none;
 }
@@ -2607,7 +2601,6 @@ svg.user-type-icon path {
 }
 
 .quiz-step .radio-option:hover {
-    background-color: #f9fafb;
     border-color: #4a84dd;
 }
 
@@ -2670,7 +2663,7 @@ svg.user-type-icon path {
 }
 
 .quiz-step.completed {
- max-width: 100%;
+    max-width: 100%;
     margin-bottom: 0;
 }
 
@@ -2703,19 +2696,14 @@ svg.user-type-icon path {
     gap: 6px;
     justify-content: space-between;
     flex-wrap: wrap;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
 }
 
 .quiz-step .radio-option {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 0;
-}
-
-.quiz-step .radio-option:hover {
-    background-color: #f9fafb;
-    border-color: #4a84dd;
+    padding: 6px 0;
 }
 
 .quiz-step .radio-option input[type="radio"] {
@@ -2761,6 +2749,7 @@ svg.user-type-icon path {
     font-weight: 400;
     line-height: normal;
 }
+
 #step-9.quiz-step .radio-option label {
     color: #000;
     font-family: Poppins;
@@ -2769,6 +2758,7 @@ svg.user-type-icon path {
     font-weight: 400;
     line-height: normal;
 }
+
 /* phone input*/
 #quizModal .phone-input-container,
 #signupModalathlete .phone-input-container,
@@ -2779,7 +2769,7 @@ svg.user-type-icon path {
     border: 1px solid var(--Kerry-grey-200, #D8D8D8);
     background: var(--White, #FFF);
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
-    padding:16px;
+    padding: 16px;
     width: 100%;
     position: relative;
 }
@@ -2806,13 +2796,13 @@ svg.user-type-icon path {
 }
 
 #quizModal .phone-input-container .dropdown-wrapper:hover .arrow,
-#signupModalathlete .phone-input-container .dropdown-wrapper:hover .arrow ,
+#signupModalathlete .phone-input-container .dropdown-wrapper:hover .arrow,
 #loginModalathlete .phone-input-container .dropdown-wrapper:hover .arrow {
     color: #1751AA;
 }
 
 #quizModal .phone-input-container .dropdown-wrapper.active .arrow,
-#signupModalathlete .phone-input-container .dropdown-wrapper.active .arrow ,
+#signupModalathlete .phone-input-container .dropdown-wrapper.active .arrow,
 #loginModalathlete .phone-input-container .dropdown-wrapper.active .arrow {
     transform: rotate(180deg);
     color: #1751AA;
@@ -2849,7 +2839,7 @@ svg.user-type-icon path {
 }
 
 #quizModal .phone-input-container .dropdown input,
-#signupModalathlete .phone-input-container .dropdown input ,
+#signupModalathlete .phone-input-container .dropdown input,
 #loginModalathlete .phone-input-container .dropdown input {
     width: 100%;
     padding: 6px 10px;
@@ -2862,7 +2852,7 @@ svg.user-type-icon path {
 #signupModalathlete .phone-input-container #country-list li,
 #signupModalathlete .phone-input-container #login-country-list li,
 #loginModalathlete .phone-input-container #login-country-list li,
-#quizModal .phone-input-container #quiz-phone-country-list li{
+#quizModal .phone-input-container #quiz-phone-country-list li {
     padding: 8px;
     display: flex;
     align-items: center;
@@ -4082,7 +4072,7 @@ svg.user-type-icon path {
     .signup-container.quiz-container .welcome-title {
         margin-top: 0px;
         font-size: 28px !important;
-        line-height: 39px;
+        line-height: 39px !important;
     }
 
     .signup-container .welcome-title.steps {
@@ -4108,15 +4098,18 @@ svg.user-type-icon path {
     }
 
     .signup-container .image-section img {
-        max-height: 300px;
+        max-height: 300px !important;
+        object-position: top;
     }
+
     .otp-input-group {
         gap: 12px;
     }
+
     .signup-container .otp-input {
         width: 50px;
         height: 50px;
-                padding: 12px;
+        padding: 12px;
     }
 
     .welcome-title {
@@ -4134,9 +4127,15 @@ svg.user-type-icon path {
     }
 
     .quiz-step .food-image-container {
-        height: 240px;
+        height: 280px;
         padding: 8px;
         justify-content: flex-end;
+    }
+
+    .quiz-step#step-6 .food-image-container,
+    .quiz-step#step-7 .food-image-container,
+    .quiz-step#step-8 .food-image-container {
+        height: 200px;
     }
 
     .quiz-step.food-placeholder {
@@ -4221,17 +4220,19 @@ svg.user-type-icon path {
 
 /* Mobile (480px and below) */
 @media (max-width: 480px) {
-    .otp-input-group svg{
+    .otp-input-group svg {
         display: none;
     }
+
     .quiz-step .radio-options {
-       display: flex;
+        display: flex;
         gap: 10px 12px;
         justify-content: start;
         flex-wrap: wrap;
         margin-bottom: 10px;
         margin-top: 5px;
     }
+
     #signupModalathlete .modal-content,
     #loginModalathlete .modal-content,
     #quizModal .modal-content {
@@ -4472,6 +4473,13 @@ svg.user-type-icon path {
 }
 
 @media (max-width: 400px) {
+    .phone-vertical-line {
+        position: absolute;
+        top: 61%;
+        right: 10px;
+        transform: translate(-50%, -63%);
+    }
+
     #heroCarouselMobile.carousel {
         margin-top: -60px;
     }
@@ -4543,43 +4551,53 @@ ul#login-country-list,
 ul#quiz-phone-country-list {
     padding-left: 0px;
 }
-.signup-login-h2-title{
+
+.signup-login-h2-title {
     width: 100%;
 }
- .coming-soon-tooltip {
-        background-color: #333;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        animation: tooltipFadeIn 0.3s ease-out;
-        white-space: nowrap;
-      }
-      
-      .coming-soon-tooltip::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 6px solid transparent;
-        border-top-color: #333;
-      }
-      
-      @keyframes tooltipFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .modal-backdrop
- {
+
+.coming-soon-tooltip {
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: tooltipFadeIn 0.3s ease-out;
+    white-space: nowrap;
+}
+
+.coming-soon-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #333;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-backdrop {
     backdrop-filter: none !important;
     background-color: black !important;
+}
+
+.quiz-step#step-2 .food-image-container,
+.quiz-step#step-3 .food-image-container,
+.quiz-step#step-4 .food-image-container,
+.quiz-step#step-5 .food-image-container {
+    cursor: default;
 }
