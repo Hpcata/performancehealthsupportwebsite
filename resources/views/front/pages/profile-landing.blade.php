@@ -6,7 +6,6 @@
     coaches, and sports dietitians in Australia to boost health and performance.')
 
 @section('content')
-
     <!-- Main Content -->
     <main class="main">
         <div class="container">
