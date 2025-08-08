@@ -101,7 +101,7 @@ class QuizQuestionSeeder extends Seeder
             [
                 'form_slug'      => 'nutrition',
                 'question_index' => 5,
-                'question_text'  => 'Which of these foods has the most iron?(Select one answer)',
+                'question_text'  => 'Which of these foods has the most iron? (Select one answer)',
                 'options'        => [
                     "Spinach, cooked, 1/2 cup"  => "0",
                     "Brown rice, cooked, 1 cup" => "0",
@@ -116,7 +116,7 @@ class QuizQuestionSeeder extends Seeder
             [
                 'form_slug'      => 'nutrition',
                 'question_index' => 6,
-                'question_text'  => 'Which of these foods has the most calcium?(Select one answer)',
+                'question_text'  => 'Which of these foods has the most calcium? (Select one answer)',
                 'options'        => [
                     "Baby spinach, 1 cup" => "0",
                     "Firm tofu, 100g"     => "0",
@@ -130,7 +130,7 @@ class QuizQuestionSeeder extends Seeder
             [
                 'form_slug'      => 'nutrition',
                 'question_index' => 7,
-                'question_text'  => 'Which of these foods has the most fibre?(Select one answer)',
+                'question_text'  => 'Which of these foods has the most fibre? (Select one answer)',
                 'options'        => [
                     "Banana, 1 large"    => "0",
                     "Raw oats, 1/2 cup"  => "0",
