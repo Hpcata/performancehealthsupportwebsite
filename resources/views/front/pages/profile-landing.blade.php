@@ -10,6 +10,12 @@
     <!-- Main Content -->
     <main class="main">
         <div class="container">
+
+                    <!-- Button to open the custom popup -->
+                    <button type="button" class="btn btn-primary" onclick="openCustomCongratsModal()" style="border-radius: 6px; height: 46px;">
+                        Open Congrats Modal
+                    </button>
+
             <!-- Welcome Section -->
             <section class="welcome-section">
                 <div class="welcome-card hover-card">
@@ -608,6 +614,77 @@
         @include('front.modal.smart-swap-items')
     </main>
     
+    <!-- Custom Congrats Modal -->
+    <div class="modal" id="customCongratsModal" tabindex="-1" aria-labelledby="customCongratsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="p-0 modal-body">
+                <div class="recipe-dialog">
+                <button class="dialog-close" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M0.366171 2.13422C-0.122057 1.64599 -0.122057 0.8544 0.366171 0.366171C0.8544 -0.122057 1.64599 -0.122057 2.13422 0.366171L9.99993 8.23198L17.8655 0.366388C18.3538 -0.12184 19.1454 -0.12184 19.6335 0.366388C20.1217 0.854617 20.1217 1.64621 19.6335 2.13444L11.7681 9.99993L19.6335 17.8655C20.1217 18.3538 20.1217 19.1454 19.6335 19.6335C19.1454 20.1217 18.3538 20.1217 17.8655 19.6335L9.99993 11.7681L2.13422 19.6338C1.64599 20.1221 0.8544 20.1221 0.366171 19.6338C-0.122057 19.1456 -0.122057 18.3539 0.366171 17.8657L8.23198 9.99993L0.366171 2.13422Z" fill="#3B3B3B" />
+                    </svg>
+                </button>
+                <div class="dialog-content">
+                    <div class="dialog-main-view">
+                        <div class="dialog-header" style="position:relative;">
+                            <div class="custom-popup-main-row">
+                            <div class="custom-popup-text-section">
+                                <div class="custom-popup-text">
+                                    <h3>Congrats, you're in!</h3>
+                                    <p>You've just taken the first step toward smarter fuel, stronger performance, and better results. We're stoked to have you - let's get started. 🚀</p>
+                                    <h4>Your quiz score as promised </h4>
+                                </div>
+                            </div>
+                            <div class="custom-popup-gauge-section">
+                                <div class="custom-popup-gauge">
+                                    <div class="score-meter-box">
+                                        <div class="score-meter-text">
+                                        <span class="meter-text-01">Needs <br>work </span>
+                                        <span class="meter-text-02">Pretty <br>ordinary</span>
+                                        <span class="meter-text-03">Not bad</span>
+                                        <span class="meter-text-04">Good</span>
+                                        </div>
+                                        <div class="score-meter-box-frame">
+                                        <svg version="1.1" x="0px" y="0px" viewBox="0 0 500 243"
+                                            style="enable-background:new 0 0 500 243;"
+                                            xml:space="preserve">
+                                            <path
+                                                d="M0,0v243h500V0H0z M474.7,233.7h-79.1c-4.9,0-9.2-3.6-9.9-8.5c-9.6-65.5-66.1-115.9-134.3-115.9s-124.6,50.3-134.3,115.9c-0.7,4.9-4.9,8.5-9.9,8.5H28.2c-5.9,0-10.5-5.1-10-11c11.3-119,111.4-212,233.2-212s221.9,93.1,233.2,212C485.2,228.6,480.6,233.7,474.7,233.7z"
+                                                fill="#ffffff" />
+                                        </svg>
+                                        <div class="bgradient-bg"
+                                            style="background: conic-gradient(from -1.65deg at 48.15% 84.72%, #FF9500 -33.16deg, #FFDE48 31.45deg, #03741B 91.78deg, #CF080A 265.07deg, #FF9500 326.84deg, #FFDE48 391.45deg);">
+                                        </div>
+                                        </div>
+                                        <span class="meter-arrow nutrition-result"
+                                        style="transform: rotate(75deg);">
+                                        <svg version="1.1" x="0px" y="0px" viewBox="0 0 133 22"
+                                            style="enable-background:new 0 0 133 22;"
+                                            xml:space="preserve">
+                                            <path
+                                                d="M91.8,0.4L3.4,8.7c-2.5,0.2-2.5,3.8,0,4.1l88.4,8.9c20.5-0.4,12.7-0.4,20.5-0.4c11.8,0,19.2,1.6,19.2-10.1c0-11.8-10-10.2-21.7-10.3C101.9,0.8,112,0.9,91.8,0.4z" />
+                                        </svg>
+                                        </span>
+                                    </div>
+                                    <h4 class="mt-4">General Nutrition Knowledge
+                                    </h4>
+                                    <h3 class="mt-1 text-black nutrition-percentage">40%
+                                    </h3>
+                                </div>
+                            </div>
+                            </div>
+                            
+                        </div>
+                        <p>If you have any gaps, we are here to help and will add some tips and info into the Level-up library for you.</p>
+                    </div>
+                   
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
     <script>
         const user = @json($userPlan);
         const userId = user ? user.user_id : 0;
@@ -1288,4 +1365,29 @@
         });
 
     </script>
+    <script>
+        // Function to open quiz outcome modal
+        function openCustomCongratsModal() {
+            const modal = new bootstrap.Modal(document.getElementById('customCongratsModal'));
+            modal.show();
+        }
+
+        // Function to close the modal
+        function closeCustomCongratsModal() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('customCongratsModal'));
+            if (modal) {
+                modal.hide();
+            }
+        }
+
+        // Optional: Add event listener for when modal is hidden
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('customCongratsModal');
+            modal.addEventListener('hidden.bs.modal', function () {
+                // Any cleanup code can go here
+                console.log('Modal closed');
+            });
+        });
+    </script>
+        
 @endsection
