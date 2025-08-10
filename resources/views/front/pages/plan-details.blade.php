@@ -136,7 +136,7 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay ">
+                                                            <div class="quick-view-overlay">
                                                                 <span style="padding: 12px;
                                                                     border-radius: 12px;
                                                                     background-color:#709ef1;
@@ -377,6 +377,13 @@
                 const imageSrc = this.getAttribute('data-image');
                 if (plateImg && imageSrc) {
                     plateImg.src = imageSrc;
+                }
+
+                // Close the Bootstrap dropdown after selection
+                const toggleEl = document.getElementById('trainingLoadDropdown');
+                if (typeof bootstrap !== 'undefined' && toggleEl) {
+                    const dd = bootstrap.Dropdown.getOrCreateInstance(toggleEl);
+                    dd.hide();
                 }
             });
         });

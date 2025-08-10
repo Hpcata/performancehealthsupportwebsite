@@ -64,6 +64,7 @@ body {
 .header .logo .logo-text {
     background: linear-gradient(135deg, #4a84dd, #1d4ed8);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: #fff0;
     font-size: 1.5rem;
     font-weight: 700;
@@ -1793,7 +1794,7 @@ box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
 }
 
 .modal {
-    /* z-index: 9999 !important; */
+    z-index: 9999 !important;
 }
 
 @media (max-width: 1024px) {
@@ -1906,7 +1907,7 @@ box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
 
 .dropdown-container {
     position: relative;
-    width: 232px;
+    width: 252px;
     margin-top: 12px;
     margin-bottom: 24px;
 }
@@ -2061,34 +2062,32 @@ button:focus,
     overflow-y: auto;
 }
 
-.modal-body {
-    /* overflow-y: auto;
-    max-height: 60vh; */
-}
+/* .modal-body {
+    overflow-y: auto;
+    max-height: 60vh;
+} */
 
 .dialog-content {
     overflow-y: auto;
     max-height: 80vh;
 }
 
-/* Remove custom dropdown-menu rules that conflict with Bootstrap */
+/* Align with Bootstrap dropdown defaults (hidden by default; visible when .show) */
 .dropdown-menu {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
     display: none;
 }
 
 .dropdown-menu.show {
+    display: block;
     border-radius: 8px;
-    margin-top: 50px !important;
     background: var(--White, #fff);
     box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
-    display: block;
+    margin-top: 0; /* let callers override if needed */
 }
 
-.dropdown-menu.show {
-    display: block;
+/* Training load dropdown specific spacing */
+.dropdown-container .dropdown-menu.show {
+    margin-top: 4px !important;
 }
 
 .dropdown-toggle::after {
@@ -2422,7 +2421,11 @@ button:focus,
 }
 
 .custom-dropdown-menu.show {
-    margin-top: 90px !important;
+    margin-top: 8px !important;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .custom-dropdown-button:hover {
@@ -2495,7 +2498,7 @@ button:focus,
     transform: translateY(-4px);
     transition: all 0.2s ease;
     margin-top: 4px;
-    display: block;
+    /* use Bootstrap's display control */
 }
 
 .custom-dropdown-menu.open {
@@ -2903,6 +2906,10 @@ button:focus,
 }
 
 @media (max-width: 1024px) {
+    .hero-container {
+        width: 100%;
+        margin-top: 72px;
+    }
     .slider-arrow.right-arrow,
     .slider-arrow.left-arrow {
         display: none !important;
@@ -3293,7 +3300,7 @@ font-size: 11px;
 }
     .hero-content {
         position: absolute;
-        bottom: 21px;
+        bottom: 0px;
     }
 
     .hero-bottom {

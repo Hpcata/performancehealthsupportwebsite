@@ -315,6 +315,39 @@ document.addEventListener('DOMContentLoaded', function () {
         sessionStorage.removeItem(QUIZ_STORAGE_KEY);
     }
 
+    // Utility: scroll the quiz modal to the top (handles various containers and mobile viewport)
+    function scrollQuizToTop() {
+        try {
+            const selectors = [
+                '#quizModal .modal-content',
+                '#quizModal .modal-dialog',
+                '#quizModal .signup-modal',
+                '#quizModal .signup-container',
+                '#quizModal .form-section-content'
+            ];
+            let didScroll = false;
+            selectors.forEach(selector => {
+                const el = document.querySelector(selector);
+                if (el) {
+                    if (typeof el.scrollTo === 'function') {
+                        el.scrollTo({ top: 0, behavior: 'auto' });
+                    }
+                    el.scrollTop = 0;
+                    didScroll = true;
+                }
+            });
+
+            // Fallback: scroll document/viewport (some mobile browsers scroll page instead of modal)
+            if (!didScroll) {
+                window.scrollTo({ top: 0, behavior: 'auto' });
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            }
+        } catch (e) {
+            // no-op
+        }
+    }
+
     // Show specific step
     function showStep(stepNumber) {
         const allSteps = document.querySelectorAll('.quiz-step');
@@ -338,6 +371,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         currentStep = stepNumber;
         saveQuizState();
+
+        // Ensure the modal content is positioned at the top after step change (especially on mobile)
+        requestAnimationFrame(() => {
+            scrollQuizToTop();
+        });
     }
 
     // Quiz step navigation functionality
