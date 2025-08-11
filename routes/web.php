@@ -377,6 +377,7 @@ Route::prefix('quiz')->group(function () {
     Route::post('/save-step', [FrontQuizController::class, 'saveStep'])->name('front.quiz.save-step');
     Route::post('/complete', [FrontQuizController::class, 'completeQuiz'])->name('front.quiz.complete');
     Route::post('/abandon', [FrontQuizController::class, 'abandonQuiz'])->name('front.quiz.abandon');
+    Route::post('/nutrition-score', [FrontQuizController::class, 'getNutritionScore'])->name('front.quiz.nutrition-score');
 });
 
 Route::get('/about-us', [FrontController::class, 'aboutUs'])->name('front.about-us');
