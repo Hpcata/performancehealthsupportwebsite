@@ -4198,3 +4198,122 @@ button:focus,
     transition: all 0.2s ease;
     text-align: left;
 }
+
+
+/* Plan placeholder styles */
+.plan-placeholder-container {
+    background: linear-gradient(217deg, #e0edff42 0, #b6d0f7 100%);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 16px 0 rgb(30 41 59 / 0.1);
+}
+
+
+.plan-placeholder-icon {
+  position: relative;
+  margin: 0 auto 20px;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.clock-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #fff;
+    border-radius: 50%;
+    padding: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #4a84dd;
+    animation: bounce 2s infinite;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.plan-placeholder-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+
+.plan-placeholder-message {
+  font-size: 16px;
+  color: #64748b;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.plan-placeholder-message .highlight {
+  color: #4A84DD;
+  font-weight: 600;
+}
+
+.plan-placeholder-progress {
+  margin-top: 30px;
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 0 auto;
+  max-width: 300px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 70%;
+  background: linear-gradient(90deg, #649EF7, #6E428F);
+  border-radius: 3px;
+  animation: progress 2s ease-in-out infinite alternate;
+}
+
+/* Animations */
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes progress {
+  0% {
+    width: 30%;
+  }
+  100% {
+    width: 70%;
+  }
+}
