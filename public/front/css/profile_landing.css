@@ -232,46 +232,13 @@ body {
 }
 
 .welcome-section .profile-info .profile-avatar-container .profile-popover,
-.welcome-section
-    .profile-info
-    .profile-avatar-container
-    .profile-popover
-    .popover-content,
-.welcome-section
-    .profile-info
-    .profile-avatar-container
-    .profile-popover
-    .popover-content
-    .popover-actions,
-.welcome-section
-    .profile-info
-    .profile-avatar-container
-    .profile-popover
-    .popover-content
-    .popover-actions
-    button,
-.welcome-section
-    .profile-info
-    .profile-avatar-container
-    .profile-popover
-    .popover-content
-    .popover-avatar,
-.welcome-section
-    .profile-info
-    .profile-avatar-container
-    .profile-popover
-    .popover-content
-    h3,
-.welcome-section
-    .profile-info
-    .profile-avatar-container
-    .profile-popover
-    .popover-content
-    p,
-.welcome-section
-    .profile-info
-    .profile-avatar-container:hover
-    .profile-popover {
+.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content,
+.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content .popover-actions,
+.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content .popover-actions button,
+.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content .popover-avatar,
+.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content h3,
+.welcome-section .profile-info .profile-avatar-container .profile-popover .popover-content p,
+.welcome-section .profile-info .profile-avatar-container:hover .profile-popover {
     display: none !important;
 }
 
@@ -360,7 +327,7 @@ body {
     flex-direction: row;
     overflow-x: auto;
     scroll-behavior: smooth;
-    gap: 20px;
+    gap: 15px;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
@@ -433,11 +400,16 @@ body {
 }
 
 .quick-view-overlay span {
-    padding: 12px;
-    border-radius: 12px;
-    background-color: #0d6efd87;
-    font-weight: 700;
+    border-radius: 6px;
+    background: var(--Blue-600, #4A84DD);
+    padding: 12px 18px;
     cursor: pointer;
+    color: #FFF;
+    font-family: "Noto Sans";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
 }
 
 .challenge-card:hover .quick-view-overlay {
@@ -575,12 +547,7 @@ body {
     font-size: 0.7rem;
 }
 
-.resources
-    .resources-grid
-    .resource-card.video-card
-    .card-content
-    .video-meta
-    i {
+.resources .resources-grid .resource-card.video-card .card-content .video-meta i {
     font-size: 0.6rem;
 }
 
@@ -723,7 +690,6 @@ body {
 }
 
 .surfing-videos h2 {
-    margin-bottom: 1.5rem;
     color: #1e293b;
 }
 
@@ -770,7 +736,6 @@ body {
 }
 
 .surfing-videos .video-grid .video-card .video-thumbnail .play-btn:hover {
-
     transform: translate(-50%, -50%) scale(1.1);
 }
 
@@ -795,27 +760,14 @@ body {
     align-items: start;
 }
 
-.surfing-videos
-    .video-grid
-    .video-card
-    .video-info
-    .top
-    .channel-name
-    .channel-name-main {
+.surfing-videos .video-grid .video-card .video-info .top .channel-name .channel-name-main {
     display: flex;
     justify-content: start;
     align-items: center;
     gap: 4px;
 }
 
-.surfing-videos
-    .video-grid
-    .video-card
-    .video-info
-    .top
-    .channel-name
-    .channel-name-main
-    img {
+.surfing-videos .video-grid .video-card .video-info .top .channel-name .channel-name-main img {
     width: 16px;
 }
 
@@ -1153,11 +1105,13 @@ body {
     font-weight: 600;
     font-size: 1rem;
 }
-.plan-subtitle-mob{
+
+.plan-subtitle-mob {
     font-size: 14px;
-    font-weight: 700;   
+    font-weight: 700;
     margin-bottom: 8px;
 }
+
 .consults-plans-grid,
 .consults-plans-grid.grid-1 {
     display: grid;
@@ -1167,9 +1121,9 @@ body {
 }
 
 .consultation-card-custom {
-border-radius: 12px;
-background: linear-gradient(232deg, #FFF -2.09%, var(--Orange-300, #F9CC99) 95.9%);
-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    background: linear-gradient(232deg, #FFF -2.09%, var(--Orange-300, #F9CC99) 95.9%);
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -1210,7 +1164,7 @@ box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
     height: 28px;
     border-radius: 50%;
     object-fit: cover;
-        border: 1px solid #fff;
+    border: 1px solid #fff;
 }
 
 .consult-avatar.overlap1 {
@@ -1327,9 +1281,7 @@ box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
     position: absolute;
     top: 50%;
     left: 50%;
-   
     transform: translate(-50%, -50%);
-  
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1520,8 +1472,8 @@ box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px !important;
-    border-radius: 12px !important;
+    padding: 12px 18px !important;
+    border-radius: 6px !important;
     font-weight: 500 !important;
     font-size: 14px;
     border: none;
@@ -2066,7 +2018,6 @@ button:focus,
     overflow-y: auto;
     max-height: 60vh;
 } */
-
 .dialog-content {
     overflow-y: auto;
     max-height: 80vh;
@@ -2074,6 +2025,9 @@ button:focus,
 
 /* Align with Bootstrap dropdown defaults (hidden by default; visible when .show) */
 .dropdown-menu {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
     display: none;
 }
 
@@ -2082,7 +2036,8 @@ button:focus,
     border-radius: 8px;
     background: var(--White, #fff);
     box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
-    margin-top: 0; /* let callers override if needed */
+    margin-top: 0;
+    /* let callers override if needed */
 }
 
 /* Training load dropdown specific spacing */
@@ -2188,8 +2143,8 @@ button:focus,
 .smart-swap-btn {
     background: #fff;
     border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    padding: 14px;
+    border-radius: 6px;
+    padding: 8.5px 14px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -2206,11 +2161,17 @@ button:focus,
 .smart-swap-btn:hover {
     background: #eaeaea;
 }
-
+.heading-wrap{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
 .dialog-body h3 {
     font-size: 18px;
     font-weight: 600;
-    margin: 0 0 8px 0;
+    margin: 0;
     color: #080808;
 }
 
@@ -2224,8 +2185,7 @@ button:focus,
 }
 
 .smart-swap-btn {
-    margin-bottom: 24px;
-    margin-top: 4px;
+    min-height: 44px;
 }
 
 .dialog-body p {
@@ -2524,6 +2484,7 @@ button:focus,
 
 .custom-dropdown-option.selected {
     background-color: #eff6ff;
+        border-radius: 6px;
 }
 
 /* --- End Custom Training Load Dropdown Styles --- */
@@ -2557,7 +2518,7 @@ button:focus,
 }
 
 .apply-changes-btn {
-    background-color: #4a84dd !important;
+background: var(--Blue-600, #4A84DD);
 }
 
 .slider-arrow.right-arrow {
@@ -2714,6 +2675,7 @@ button:focus,
 }
 
 @keyframes loader {
+
     0%,
     100% {
         height: 90px;
@@ -2726,7 +2688,7 @@ button:focus,
 
 .modal-confirm {
     color: #434e65;
-    width: 525px;
+    max-width: 525px;
 }
 
 .modal-confirm .modal-content {
@@ -2737,7 +2699,7 @@ button:focus,
 }
 
 .modal-confirm .modal-header {
-    background: rgba(187, 8, 31, 1);
+    background: #A60015;
     border-bottom: none;
     position: relative;
     text-align: center;
@@ -2827,9 +2789,9 @@ button:focus,
 
 /* Ensure modal backdrop is visible for error modal */
 #errormodalmain,
-#comingSoonModal {
+#comingSoonModal,#smartSwapModal {
     z-index: 9999;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-coming-soon .modal-header {
@@ -2884,9 +2846,11 @@ button:focus,
     opacity: 1;
     pointer-events: auto;
 }
-.surfing-videos .video-grid{
+
+.surfing-videos .video-grid {
     padding-bottom: 5px;
 }
+
 @media (max-width: 1800px) {
     .downloadplan-inner-content {
         max-height: 510px;
@@ -2910,6 +2874,7 @@ button:focus,
         width: 100%;
         margin-top: 72px;
     }
+
     .slider-arrow.right-arrow,
     .slider-arrow.left-arrow {
         display: none !important;
@@ -3139,6 +3104,7 @@ button:focus,
 }
 
 @media (max-width: 768px) {
+
     .modal-lg .modal-content,
     #print-plan-modal .modal-content,
     #shoppingListModal .modal-content {
@@ -3260,44 +3226,62 @@ button:focus,
 }
 
 @media (max-width: 600px) {
+    .modal-confirm h4 {
+        font-size: 28px;
+    }
+
     .welcome-section {
         margin-bottom: 114px;
         margin-top: 88px;
     }
+
     .section-header {
-    margin-bottom: 16px;
-}
+        margin-bottom: 16px;
+    }
+
     .section-header h2 {
-    font-size: 18px;
-    margin-bottom: 0;
-}
-.training-plan .tabs .tab {
-font-size: 11px;
-}
+        font-size: 18px;
+        margin-bottom: 0;
+    }
+
+    .training-plan .tabs .tab {
+        font-size: 11px;
+    }
+
     .training-plan .tabs {
-    gap: 6px;
-    margin-bottom: 1.5rem;
-    overflow: auto;
-    padding-bottom: 1px;
-}
-.challenges h3, .training-plan .meal-cards .meal-card h3 {
-    padding: 0;
-    margin-top: 8px;
-    margin-bottom: 0;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: normal;
-    color: #080808;
-}
-.challenges .challenge-cards .challenge-card .rating {
-    padding-top: 8px;
-}
-.challenges, .optimize-performance, .plans-section, .resources, .surfing-videos {
-    margin-bottom: 36px;
-}
-.training-plan {
-    margin-bottom: 36px;
-}
+        gap: 6px;
+        margin-bottom: 1.5rem;
+        overflow: auto;
+        padding-bottom: 1px;
+    }
+
+    .challenges h3,
+    .training-plan .meal-cards .meal-card h3 {
+        padding: 0;
+        margin-top: 8px;
+        margin-bottom: 0;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: normal;
+        color: #080808;
+    }
+
+    .challenges .challenge-cards .challenge-card .rating {
+        padding-top: 8px;
+    }
+
+    .challenges,
+    .optimize-performance,
+    .plans-section,
+    .resources,
+    .surfing-videos {
+        margin-bottom: 36px;
+    }
+
+    .training-plan {
+        margin-bottom: 36px;
+    }
+
     .hero-content {
         position: absolute;
         bottom: 0px;
@@ -3369,8 +3353,8 @@ font-size: 11px;
 
     .surfing-videos .video-grid .video-card {
         flex-direction: row;
-            background: transparent;
-    box-shadow: none;
+        background: transparent;
+        box-shadow: none;
     }
 
     .video-card .video-player {
@@ -3405,23 +3389,21 @@ font-size: 11px;
         font-size: 12px !important;
         font-weight: 400;
     }
-.surfing-videos .video-grid .video-card .video-info .top {
-    gap: 8px;
-}
-    .surfing-videos
-        .video-grid
-        .video-card
-        .video-info
-        .top
-        .channel-name
-        label {
+
+    .surfing-videos .video-grid .video-card .video-info .top {
+        gap: 8px;
+    }
+
+    .surfing-videos .video-grid .video-card .video-info .top .channel-name label {
         font-size: 9px;
         font-weight: 400;
     }
-.insta-handle-name {
-    font-size: 12px !important;
-    font-weight: 600 !important;
-}
+
+    .insta-handle-name {
+        font-size: 12px !important;
+        font-weight: 600 !important;
+    }
+
     .footer .footer-content .footer-nav a {
         font-size: 13px;
         font-weight: 400;
@@ -3487,67 +3469,87 @@ font-size: 11px;
     .resources-custom-grid {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
-        gap:12px;
+        gap: 12px;
         margin-bottom: 12px;
     }
-.resource-card-custom.resource-chat .icon-bg, .resource-card-custom.resource-chat .resource-title, .resource-card-custom.resource-supplement .icon-bg, .resource-card-custom.resource-supplement .resource-title {
-    font-size: 14px;
-}
-.resource-card-custom.resource-supplement,
-.resource-card-custom.resource-chat{
-            padding: 12px 9.5px 12px 12px;
-    min-height: 138px;
-}
-.icon-bg {
-    width: 48px;
-    height: 48px;
-}
-.resource-tip .tip-title {
-    font-size: 12px;
-    font-weight: 400;
-}
-.resource-tip .tip-text {
-    font-weight: 500;
-    font-size: 14px;
-}
-.video-thumb-container {
-    position: relative;
-    width: 100px;
-    min-width: 100px;
-    height: 109px;
-}
-.resource-article .video-title, .resource-video .video-title {
-    font-weight: 500;
-    font-size: 14px;
-    margin-bottom: 2px;
-}
-.video-info {
-    padding: 12px;
-}
-.resource-article .video-meta, .resource-video .video-meta {
-    font-size: 12px;
-    color: rgba(59, 59, 59, 1);
-}
-.clock-img {
-    width: 16px;
-    margin-bottom: 2px;
-    margin-right: 5px;
-}
-.resource-card-custom.resource-video {
-max-height: 109px;
-    min-height: 109px;
 
-}
-.consult-title, .plan-title {
-    font-size: 16px;
-}
-.consult-desc {
-    font-size: 12px;
-}
-.surfing-videos .video-grid{
-            grid-template-columns: 1fr;
-            display: grid !important;
-}
+    .resource-card-custom.resource-chat .icon-bg,
+    .resource-card-custom.resource-chat .resource-title,
+    .resource-card-custom.resource-supplement .icon-bg,
+    .resource-card-custom.resource-supplement .resource-title {
+        font-size: 14px;
+    }
+
+    .resource-card-custom.resource-supplement,
+    .resource-card-custom.resource-chat {
+        padding: 12px 9.5px 12px 12px;
+        min-height: 138px;
+    }
+
+    .icon-bg {
+        width: 48px;
+        height: 48px;
+    }
+
+    .resource-tip .tip-title {
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .resource-tip .tip-text {
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .video-thumb-container {
+        position: relative;
+        width: 100px;
+        min-width: 100px;
+        height: 109px;
+    }
+
+    .resource-article .video-title,
+    .resource-video .video-title {
+        font-weight: 500;
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+
+    .video-info {
+        padding: 12px;
+    }
+
+    .resource-article .video-meta,
+    .resource-video .video-meta {
+        font-size: 12px;
+        color: rgba(59, 59, 59, 1);
+    }
+
+    .clock-img {
+        width: 16px;
+        margin-bottom: 2px;
+        margin-right: 5px;
+    }
+
+    .resource-card-custom.resource-video {
+        max-height: 109px;
+        min-height: 109px;
+    }
+
+    .consult-title,
+    .plan-title {
+        font-size: 16px;
+    }
+
+    .consult-desc {
+        font-size: 12px;
+    }
+
+    .surfing-videos .video-grid {
+        grid-template-columns: 1fr;
+        display: grid !important;
+    }
+
     .consults-plans-grid.grid-1 {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
@@ -3878,12 +3880,14 @@ max-height: 109px;
     color: #222;
     margin: 0 0 16px 0;
 }
+
 .custom-popup-text h4 {
     font-size: 22px;
     font-weight: 700;
     color: #222;
     margin: 16px 0;
 }
+
 .custom-popup-text p {
     font-size: 1rem;
     color: #666;
@@ -3904,9 +3908,11 @@ max-height: 109px;
     width: 100%;
     height: 100%;
 }
+
 .custom-popup-gauge h4 {
     font-size: 18px;
 }
+
 .custom-popup-gauge-arc {
     fill: none;
     stroke-width: 8;
@@ -4093,6 +4099,7 @@ max-height: 109px;
     width: 100%;
     height: auto;
 }
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .custom-popup-content {
@@ -4107,12 +4114,14 @@ max-height: 109px;
     .custom-popup-body {
         padding: 24px;
     }
+
     .custom-popup-text h3 {
         font-size: 20px;
         font-weight: 700;
         color: #222;
         margin: 0 0 16px 0;
     }
+
     .custom-popup-main-row {
         flex-direction: column;
         gap: 24px;
@@ -4123,17 +4132,35 @@ max-height: 109px;
         width: 260px;
         height: 205px;
     }
+
     .custom-popup-gauge h3 {
         font-size: 20px;
         font-weight: 700;
         color: #222;
         margin: 0 0 16px 0;
     }
-    .custom-popup-text h4 {
-    font-size: 18px;
 
-}
+    .custom-popup-text h4 {
+        font-size: 18px;
+    }
+
     #customCongratsModal .dialog-main-view {
         padding: 24px 16px 16px 16px;
     }
+}
+.coming-soon-close{
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+}
+.coming-soon-close svg{
+    width: 9px;
+    height: 9px;
+}
+.tooltip.bs-tooltip-auto{
+    z-index: 999999;
+}
+.training-load-dropdown{
+    
 }

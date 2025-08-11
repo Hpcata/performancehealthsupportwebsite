@@ -144,7 +144,7 @@
             <section class="challenges">
                 <div class="section-header">
                     <h2>Challenges</h2>
-                    <!-- <a href="/challenges" class="see-all">See all</a> -->
+                    <a href="#" class="see-all coming-soon-popup">See all</a>
                 </div>
                 <div class="slider-container">
 
@@ -277,7 +277,7 @@
             <section class="resources">
                 <div class="section-header">
                     <h2>Resources and tools</h2>
-                    <!-- <a href="#" class="see-all">See all</a> -->
+                    <a href="#" class="see-all coming-soon-popup">See all</a>
                 </div>
                 <div class="resources-custom-grid">
                     <div class="cursor-pointer resource-card-custom resource-supplement hover-card" id="scanner-btn">
@@ -420,7 +420,7 @@
                                 <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                             </div>
                              </div>
-                            <button class="btn-consult">Learn more</button>
+                            <button class="btn-consult coming-soon-popup">Learn more</button>
                        
                     </div>
                     <div class="plan-card-custom plan-injury">
@@ -439,7 +439,7 @@
                             <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                         </div>
                         </div>
-                        <button class="btn-consult">Learn more</button>
+                        <button class="btn-consult coming-soon-popup">Learn more</button>
                     </div>
                 </div>
             </section>
@@ -1020,11 +1020,11 @@
                                                         data-sub-category-id="${userSubCategoryId}"
                                                         data-user-category-id="${userCategoryId}">
                                                         <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; vertical-align: middle; margin-right: 4px;" />
-                                                        <span>Smart swap</span>
+                                                        <span>Swap</span>
                                                     </button>` : ''}
                                             ${item.description ? `
                                                     <button class="smart-swap-btn" data-bs-toggle="tooltip" title="${item.description}">
-                                                        <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
+                                                        <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 24px; vertical-align: middle" />
                                                     </button>` : ''}
                                         </div>
                                         </div>

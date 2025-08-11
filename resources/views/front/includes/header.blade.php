@@ -74,7 +74,8 @@ $auth = auth()->guard('web')->check();
                     height="30" />
             </div>
             <nav class="nav-center">
-                <a class="text-decoration-none nav-item" href="{{ route('front.my-plans') }}">My Plans</a>
+                <!-- <a class="text-decoration-none nav-item" href="{{ route('front.my-plans') }}">My Plans</a> -->
+                <a class="text-decoration-none nav-item" href="#">Home</a>
                 <span class="nav-item">Challenges and Rewards</span>
                 <div class="nav-item dropdown">
                     <span>Resources <i class="fas fa-chevron-down"></i></span>
@@ -528,6 +529,7 @@ $auth = auth()->guard('web')->check();
         // Function to update navbar background based on scroll position
         function updateNavbarBackground() {
             const navbar = document.querySelector(".navbar-custom");
+            if (!navbar) return;
             if (window.scrollY > 50) {
                 navbar.style.background = "rgba(59, 59, 59, 1)";
             } else {

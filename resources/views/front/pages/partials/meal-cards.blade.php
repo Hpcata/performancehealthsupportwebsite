@@ -38,12 +38,7 @@
                  >
 
                  @if(!$isFreeUser)
-                 <span
-                    style="padding: 12px;
-                    border-radius: 12px;
-                    background-color:#709ef1;
-                    font-weight: 700;
-                    cursor:pointer;">
+                 <span class="swap-btn-overlay">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16"
                         height="16" viewBox="0 0 18 18"
                         fill="none">

@@ -139,7 +139,7 @@
                 <div class="icon-box">
                     <i class="fas fa-clock"></i>
                 </div>
-                <button class="dialog-close" style="top: -20px; right: -20px;" data-bs-dismiss="modal"
+                <button class="dialog-close coming-soon-close" data-bs-dismiss="modal"
                     aria-label="Close">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
                         fill="none">
