@@ -144,8 +144,8 @@
             <section class="challenges">
                 <div class="section-header">
                     <h2>Challenges</h2>
-                    <label class="see-all" style="cursor:pointer;" onclick="showLearnMoreTooltip(this, 'Coming Soon')">See all</label>
-                    <!-- <a href="#" class="see-all " onclick="showLearnMoreTooltip(this, 'Coming Soon')">See all</a> -->
+                    <!-- <label class="see-all" style="cursor:pointer;" onclick="showLearnMoreTooltip(this, 'Coming Soon')">See all</label> -->
+                    <a href="#" class="see-all coming-soon-popup">See all</a>
                 </div>
                 <div class="slider-container">
 
