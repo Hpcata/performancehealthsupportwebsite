@@ -1507,7 +1507,11 @@
         // Function to check if user has completed a quiz and show results
         function checkAndShowQuizResults() {
             const quizId = sessionStorage.getItem('completed_quiz_id');
-            if (quizId) {
+            const userId = '{{ Auth::id() }}'; // Get current user ID
+            const hasShownModal = localStorage.getItem(`congrats_modal_shown_${userId}`);
+
+            // Only show modal if we haven't shown it before for this user and there's a quiz ID
+            if (quizId && !hasShownModal && userId) {
                 // Check if this is a completed quiz by looking for nutrition score
                 $.ajax({
                     url: "{{ route('front.quiz.nutrition-score') }}",
@@ -1521,6 +1525,8 @@
                             // User has completed a quiz, show the modal
                             setTimeout(() => {
                                 openCustomCongratsModal();
+                                // Mark that we've shown the modal for this user
+                                localStorage.setItem(`congrats_modal_shown_${userId}`, 'true');
                             }, 1000); // Small delay to ensure page is fully loaded
                         } else {
                             console.log('Quiz not completed or no nutrition score found');
@@ -1535,7 +1541,7 @@
                     }
                 });
             } else {
-                console.log('No quiz ID found in storage');
+                console.log('No quiz ID found, modal already shown, or no user ID');
                 // Set default display when no quiz data is available
                 setDefaultNutritionDisplay();
             }
