@@ -144,12 +144,13 @@
             <section class="challenges">
                 <div class="section-header">
                     <h2>Challenges</h2>
-                    <a href="#" class="see-all coming-soon-popup">See all</a>
+                    <label class="see-all" style="cursor:pointer;" onclick="showLearnMoreTooltip(this, 'Coming Soon')">See all</label>
+                    <!-- <a href="#" class="see-all " onclick="showLearnMoreTooltip(this, 'Coming Soon')">See all</a> -->
                 </div>
                 <div class="slider-container">
 
                     <div class="challenge-cards horizontal-scroll" style="overflow-x:auto;scroll-behavior:smooth;">
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
+                        <div class="challenge-card clickable hover-card"  onclick="showLearnMoreTooltip(this, 'Coming Soon')">
                             <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                                 alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                             <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
@@ -180,7 +181,7 @@
                                 <span>30</span>
                             </div>
                         </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
+                        <div class="challenge-card clickable hover-card"  onclick="showLearnMoreTooltip(this, 'Coming Soon')">
                             <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1 (1).webp') }}"
                                 alt="Fat Loss Protein and Fats Diet Plan thumbnail" />
                             <h3>Fat VS. Protein quiz: Take this quiz and learn</h3>
@@ -210,7 +211,7 @@
                                 <span>10</span>
                             </div>
                         </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
+                        <div class="challenge-card clickable hover-card"  onclick="showLearnMoreTooltip(this, 'Coming Soon')">
                             <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                                 alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                             <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
@@ -239,7 +240,7 @@
                                 <span>30</span>
                             </div>
                         </div>
-                        <div class="challenge-card clickable hover-card coming-soon-popup">
+                        <div class="challenge-card clickable hover-card"  onclick="showLearnMoreTooltip(this, 'Coming Soon')">
                             <img src="{{ frontAssets('images/Peanut-Butter-Breakfast-Oatmeal-Bowl-6 1.webp') }}"
                                 alt="Eat, Snap, Repeat: 3-Day Food Awareness Sprint thumbnail" />
                             <h3>Eat, Snap, Repeat: 3-Day Food Awareness Sprint</h3>
@@ -420,7 +421,7 @@
                                 <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                             </div>
                              </div>
-                            <button class="btn-consult coming-soon-popup">Learn more</button>
+                            <button class="btn-consult"  onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                        
                     </div>
                     <div class="plan-card-custom plan-injury">
@@ -439,7 +440,7 @@
                             <span>{{ $mealCount }} meals • 18 Nutrition tips</span>
                         </div>
                         </div>
-                        <button class="btn-consult coming-soon-popup">Learn more</button>
+                        <button class="btn-consult"  onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                     </div>
                 </div>
             </section>
@@ -1554,5 +1555,91 @@
             }
         }
     </script>
+    <script>
+     // Learn more tooltip functionality
+function showLearnMoreTooltip(button, planType, event) {
+    if (event) {
+        event.preventDefault(); // Stops link navigation or form submit
+        event.stopPropagation(); // Stops bubbling
+    }
+
+    // Remove any existing learn more tooltips
+    const existingTooltip = document.querySelector('.learn-more-tooltip');
+    if (existingTooltip) {
+        existingTooltip.remove();
+    }
+
+    // Create tooltip element
+    const tooltip = document.createElement('div');
+    tooltip.className = 'learn-more-tooltip';
+    tooltip.textContent = `${planType} `;
+
+    // Position tooltip above the button
+    const buttonRect = button.getBoundingClientRect();
+    tooltip.style.position = 'fixed';
+    tooltip.style.top = (buttonRect.top - 45) + 'px';
+    tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
+    tooltip.style.zIndex = '9999';
+
+    document.body.appendChild(tooltip);
+
+    // Auto-hide tooltip after 3 seconds
+    setTimeout(() => {
+        const tooltipToRemove = document.querySelector('.learn-more-tooltip');
+        if (tooltipToRemove) {
+            tooltipToRemove.remove();
+        }
+    }, 2000);
+}
+
+// Add CSS for tooltip
+const tooltipStyle = document.createElement('style');
+tooltipStyle.textContent = `
+    .coming-soon-tooltip,
+    .learn-more-tooltip {
+        background-color: #333;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: tooltipFadeIn 0.3s ease-out;
+        white-space: nowrap;
+        position: relative;
+    }
+
+    .coming-soon-tooltip::after,
+    .learn-more-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 6px solid transparent;
+        border-top-color: #333;
+    }
+
+    @keyframes tooltipFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(tooltipStyle);
+
+// Example binding
+document.querySelectorAll('.learn-more-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        showLearnMoreTooltip(this, 'Pro Plan', e);
+    });
+});
+
+        </script>
 
 @endsection
