@@ -1547,7 +1547,7 @@ body {
     border-radius: 1rem;
     display: flex;
     align-items: center;
-    justify-content: start;
+    justify-content: center;
     min-height: 350px;
 }
 
