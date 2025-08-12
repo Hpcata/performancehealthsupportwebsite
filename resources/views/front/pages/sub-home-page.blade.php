@@ -595,7 +595,7 @@
                                             O'Bryan.
                                         </p>
                                     </div>
-                                    <button class="btn-signup">Learn more</button>
+                                    <a href="/training-nutrition-plan" class="btn-signup">Learn more</a>
                                 </div>
                             </div>
                             <div class="col-md-4">

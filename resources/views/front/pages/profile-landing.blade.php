@@ -122,7 +122,7 @@
                             <div class="fade-full"></div>
                             @if (isset($userPlan->free_user_plan) && count($userPlan->free_user_plan))
                                 @foreach ($userPlan->free_user_plan as $plan)
-                                    <div class="challenge-card clickable hover-card coming-soon-popup">
+                                    <div class="challenge-card clickable hover-card">
                                         @php
                                             $imgSrc = !empty($plan['image'])
                                                 ? (Str::startsWith($plan['image'], 'http')
@@ -700,16 +700,8 @@
                 location.href = "https://phenomenal-torrone-cee914.netlify.app/";
             });
 
-            document.querySelectorAll('.coming-soon-popup').forEach(function(card) {
-                card.addEventListener('click', function(e) {
-                    var comingSoonModal = document.getElementById('comingSoonModal');
-                    if (comingSoonModal && typeof bootstrap !== 'undefined') {
-                        e.preventDefault();
-                        var modal = new bootstrap.Modal(comingSoonModal);
-                        modal.show();
-                    }
-                });
-            });
+            // This is now handled in the DOMContentLoaded event below
+            // to ensure proper backdrop management
         });
 
         function showLoader() {
@@ -1575,6 +1567,88 @@
         btn.addEventListener('click', function (e) {
             showLearnMoreTooltip(this, 'Pro Plan', e);
         });
+    });
+
+    // Add CSS to fix modal backdrop issues
+    const modalBackdropFix = document.createElement('style');
+    modalBackdropFix.textContent = `
+        .modal-backdrop.show {
+            opacity: 0.5 !important;
+        }
+        .modal-backdrop.fade {
+            opacity: 0 !important;
+        }
+        .modal-backdrop:not(.show) {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    `;
+    document.head.appendChild(modalBackdropFix);
+
+    // Fix for coming soon modal close button
+    document.addEventListener('DOMContentLoaded', function() {
+        const comingSoonModal = document.getElementById('comingSoonModal');
+        const comingSoonCloseBtn = comingSoonModal?.querySelector('.coming-soon-close');
+        
+        if (comingSoonCloseBtn) {
+            // Remove the data-bs-dismiss attribute to prevent conflicts
+            comingSoonCloseBtn.removeAttribute('data-bs-dismiss');
+            
+            comingSoonCloseBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Force hide the modal and remove backdrop
+                comingSoonModal.style.display = 'none';
+                comingSoonModal.classList.remove('show');
+                document.body.classList.remove('modal-open');
+                
+                // Restore body scroll
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                
+                // Remove all modal backdrops
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => {
+                    backdrop.remove();
+                });
+                
+                // Also try Bootstrap method as backup
+                if (typeof bootstrap !== 'undefined') {
+                    const modal = bootstrap.Modal.getInstance(comingSoonModal);
+                    if (modal) {
+                        modal.hide();
+                    }
+                }
+            });
+        }
+        
+        // Also handle the modal opening to ensure proper backdrop management
+        document.querySelectorAll('.coming-soon-popup').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                var comingSoonModal = document.getElementById('comingSoonModal');
+                if (comingSoonModal && typeof bootstrap !== 'undefined') {
+                    e.preventDefault();
+                    
+                    // Remove any existing backdrops first
+                    const existingBackdrops = document.querySelectorAll('.modal-backdrop');
+                    existingBackdrops.forEach(backdrop => backdrop.remove());
+                    
+                    var modal = new bootstrap.Modal(comingSoonModal);
+                    modal.show();
+                }
+            });
+        });
+        
+        // Add event listener for modal hidden event to ensure body scroll is restored
+        if (comingSoonModal) {
+            comingSoonModal.addEventListener('hidden.bs.modal', function() {
+                // Restore body scroll when modal is hidden
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                document.body.classList.remove('modal-open');
+            });
+        }
     });
 
     </script>

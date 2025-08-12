@@ -4854,3 +4854,6 @@ ul#quiz-phone-country-list {
 .quiz-step#step-5 .food-image-container {
     cursor: default;
 }
+a.btn-signup{
+    text-decoration: none;
+}
