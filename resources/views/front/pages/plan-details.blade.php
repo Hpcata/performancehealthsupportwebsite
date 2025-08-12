@@ -296,7 +296,7 @@
 
             </div>
              <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
-                <button id="download-plan-btn" class="btn btn-primary apply-changes-btn" onclick="downloadPDF()">
+                <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
                     Download Plan
                 </button>
             </div>
