@@ -3001,7 +3001,7 @@ svg.user-type-icon path {
 .quiz-step .radio-option input[type="radio"]:checked {
     background: white;
     border-radius: 50%;
-    border: 3px solid #4a84dd;
+    border: 5px solid #4a84dd;
 }
 
 .quiz-step .radio-option input[type="radio"]:checked::after {
