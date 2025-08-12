@@ -112,7 +112,7 @@
                                     questions that matter most.
                                 </p>
                             </div>
-                            <button class="btn-learn-more coming-soon-popup">Learn more</button>
+                            <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="btn-learn-more ">Learn more</a>
                         </div>
                         <div class="plan-card white-card">
                             <div class="plan-card-wrapper">

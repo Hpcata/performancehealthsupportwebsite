@@ -295,7 +295,7 @@
             <section class="optimize-performance">
                 <div class="section-header">
                     <h2>Optimise your performance</h2>
-                    <a href="#" class="see-all">All Plans</a>
+                    <a href="/my-plans" class="see-all">All Plans</a>
                 </div>
                 <label class="plan-subtitle-mob">Consults</label>
                 <div class="consults-plans-grid grid-1">
