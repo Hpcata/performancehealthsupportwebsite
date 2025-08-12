@@ -14,7 +14,7 @@
     <main class="main">
         <div class="container">
             <!-- Resources and Tools -->
-            <section class="resources" style="margin-top: 56px">
+            <section class="resources my-plans-main">
                 <div class="section-header">
                     <h2>My Plans</h2>
                 </div>
@@ -41,7 +41,7 @@
                         <div class="plan-card">
                             <div class="plan-card-wrapper">
                                 <div class="plan-icon">
-                                    <img src="{{ asset('front/images/my-plan/fitness.svg') }}" alt="No Plan Yet" class="no-plan-image" />
+                                    <img src="{{ asset('front/images/my-plan/fitness.svg') }}" alt="No Plan Yet" class="    " />
                                 </div>
                                 <h3 class="card-title">Training Nutrition Plan</h3>
                                 <p class="card-text">
@@ -51,12 +51,12 @@
                                     O'Bryan.
                                 </p>
                             </div>
-                            <button class="btn-learn-more">Learn more</button>
+                            <a href="/training-nutrition-plan" class="btn-learn-more">Learn more</a>
                         </div>
                         <div class="plan-card">
                             <div class="plan-card-wrapper">
                                 <div class="plan-icon">
-                                    <img src="{{ asset('front/images/my-plan/Game winner trophy.svg') }}" alt="No Plan Yet" class="no-plan-image" />
+                                    <img src="{{ asset('front/images/my-plan/Game winner trophy.svg') }}" alt="No Plan Yet" class=" " />
                                 </div>
                                 <h3 class="card-title">Competition Plan</h3>
                                 <p class="card-text">
@@ -65,12 +65,12 @@
                                     weakness!
                                 </p>
                             </div>
-                            <button class="btn-learn-more coming-soon-popup">Learn more</button>
+                            <button class="btn-learn-more" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                         </div>
                         <div class="plan-card ">
                             <div class="plan-card-wrapper">
                                 <div class="plan-icon">
-                                    <img src="{{ asset('front/images/my-plan/health insurance.svg') }}" alt="No Plan Yet" class="no-plan-image" />
+                                    <img src="{{ asset('front/images/my-plan/health insurance.svg') }}" alt="No Plan Yet" class="   " />
                                 </div>
                                 <h3 class="card-title">Injury & Recovery Nutrition Plan</h3>
                                 <p class="card-text">
@@ -79,7 +79,7 @@
                                     recovery is the goal & nutrition is too often overlooked!
                                 </p>
                             </div>
-                            <button class="btn-learn-more coming-soon-popup">Learn more</button>
+                            <button class="btn-learn-more" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                         </div>
                     </div>
                     <label class="choose-plan-label web-hidden">Consults</label>
@@ -87,7 +87,7 @@
                         <div class="plan-card mobile-hidden">
                             <div class="plan-card-wrapper">
                                 <div class="plan-icon">
-                                    <img src="{{ asset('front/images/my-plan/Bed.svg') }}" alt="No Plan Yet" class="no-plan-image" />
+                                    <img src="{{ asset('front/images/my-plan/Bed.svg') }}" alt="No Plan Yet" class="    " />
                                 </div>
                                 <h3 class="card-title">Pre & Post Surgery Nutrition Plan</h3>
                                 <p class="card-text">
@@ -97,12 +97,12 @@
                                     in the game!
                                 </p>
                             </div>
-                            <button class="btn-learn-more coming-soon-popup">Learn more</button>
+                            <button class="btn-learn-more"  onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                         </div>
                         <div class="plan-card orange-card">
                             <div class="plan-card-wrapper">
                                 <div class="plan-icon">
-                                    <img src="{{ asset('front/images/my-plan/Speak.svg') }}" alt="No Plan Yet" class="no-plan-image" />
+                                    <img src="{{ asset('front/images/my-plan/Speak.svg') }}" alt="No Plan Yet" class="  " />
                                 </div>
                                 <h3 class="card-title">Consultations (1 on 1)</h3>
                                 <p class="card-text">
@@ -112,12 +112,12 @@
                                     questions that matter most.
                                 </p>
                             </div>
-                            <button class="btn-learn-more coming-soon-popup">Learn more</button>
+                            <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="btn-learn-more ">Learn more</a>
                         </div>
                         <div class="plan-card white-card">
                             <div class="plan-card-wrapper">
                                 <div class="plan-icon">
-                                    <img src="{{ asset('front/images/my-plan/Team.svg') }}" alt="No Plan Yet" class="no-plan-image" />
+                                    <img src="{{ asset('front/images/my-plan/Team.svg') }}" alt="No Plan Yet" class="   " />
                                 </div>
                                 <h3 class="card-title">Clubs and Group bookings</h3>
                                 <p class="card-text">
@@ -125,7 +125,7 @@
                                     deals and group bookings.
                                 </p>
                             </div>
-                            <button class="btn-learn-more coming-soon-popup">Learn more</button>
+                            <button class="btn-learn-more" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                         </div>
                     </div>
                 </div>
@@ -139,5 +139,96 @@
                 $('#comingSoonModal').modal('show');
             });
         });
+             // Learn more tooltip functionality
+        function showLearnMoreTooltip(button, planType) {
+            // Remove any existing learn more tooltips
+            const existingTooltip = document.querySelector('.learn-more-tooltip');
+            if (existingTooltip) {
+                existingTooltip.remove();
+            }
+
+            // Create tooltip element
+            const tooltip = document.createElement('div');
+            tooltip.className = 'learn-more-tooltip';
+            tooltip.textContent = `${planType} `;
+
+            // Position tooltip above the button
+            const buttonRect = button.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = (buttonRect.top - 45) + 'px';
+            tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
+            tooltip.style.zIndex = '9999';
+
+            // Add tooltip to body
+            document.body.appendChild(tooltip);
+
+            // Auto-hide tooltip after 3 seconds
+            setTimeout(() => {
+                const tooltipToRemove = document.querySelector('.learn-more-tooltip');
+                if (tooltipToRemove) {
+                    tooltipToRemove.remove();
+                }
+            }, 3000);
+        }
+
+        // Add CSS for tooltip
+        const tooltipStyle = document.createElement('style');
+        tooltipStyle.textContent = `
+            .coming-soon-tooltip {
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: tooltipFadeIn 0.3s ease-out;
+            white-space: nowrap;
+          }
+
+          .coming-soon-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #333;
+          }
+
+          .learn-more-tooltip {
+             background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: tooltipFadeIn 0.3s ease-out;
+            white-space: nowrap;
+          }
+
+          .learn-more-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #333;
+          }
+
+          @keyframes tooltipFadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+            `;
+        document.head.appendChild(tooltipStyle);
     </script>
 @endsection
