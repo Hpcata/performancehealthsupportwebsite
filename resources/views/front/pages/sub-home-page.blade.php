@@ -1032,10 +1032,10 @@
     @endif
 
     {{-- Include modal file --}}
-    @include('front.pages.partials.modal')
+    @include('front.pages.partials.quiz-modal')
 
-    <!-- contact sectoin -->
-    <section class="py-5 contact-section" id="contact-section">
+    <!-- contact section -->
+    <section class="contact-section py-5" id="contact-section">
         <div class="container-homepage">
             <div class="justify-content-center row">
                 <div class="col-12">
@@ -1075,7 +1075,7 @@
         </div>
     </section>
 
-    <!-- Single Signup Modal -->
+    <!-- Single Sign up Modal -->
     <div class="modal fade" id="signupModalathlete" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -1448,6 +1448,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <script>
         // Define all OTP-related routes for use in otp-registration.js
         window.otpRoutes = {
@@ -1458,8 +1459,9 @@
             // Add more OTP-related routes here as needed
         };
     </script>
+
     <script src="{{ asset('js/otp-registration.js') }}"></script>
-    {{-- TODO: This below is old page script so I have commented and when it required you can uncomment as well --}}
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const toggleLink = document.getElementById('toggle-coupon-link');
@@ -2601,7 +2603,7 @@
                                 $('#signed-in-email').text('{{ Auth::user()->email }}');
                             @endif
 
-                            }
+                                }
 
                         $('#purchaseModal').modal('show');
 
@@ -3564,61 +3566,61 @@
         // Add CSS for tooltip
         const tooltipStyle = document.createElement('style');
         tooltipStyle.textContent = `
-            .coming-soon-tooltip {
-            background-color: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: tooltipFadeIn 0.3s ease-out;
-            white-space: nowrap;
-          }
+                .coming-soon-tooltip {
+                background-color: #333;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                animation: tooltipFadeIn 0.3s ease-out;
+                white-space: nowrap;
+              }
 
-          .coming-soon-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #333;
-          }
+              .coming-soon-tooltip::after {
+                content: '';
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border: 6px solid transparent;
+                border-top-color: #333;
+              }
 
-          .learn-more-tooltip {
-             background-color: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: tooltipFadeIn 0.3s ease-out;
-            white-space: nowrap;
-          }
+              .learn-more-tooltip {
+                 background-color: #333;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                animation: tooltipFadeIn 0.3s ease-out;
+                white-space: nowrap;
+              }
 
-          .learn-more-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #333;
-          }
+              .learn-more-tooltip::after {
+                content: '';
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border: 6px solid transparent;
+                border-top-color: #333;
+              }
 
-          @keyframes tooltipFadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-            `;
+              @keyframes tooltipFadeIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(20px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+                `;
         document.head.appendChild(tooltipStyle);
 
         // Step navigation functionality
@@ -3877,5 +3879,5 @@
         };
     </script>
 
-    <script src="{!! frontAssets('js/modal.js') !!}"></script>
+    <script src="{!! frontAssets('js/quiz-modal.js') !!}"></script>
 @endpush

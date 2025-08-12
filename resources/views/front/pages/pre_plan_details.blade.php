@@ -214,10 +214,10 @@
                                                 <label class="form-check-label" for="diagnosed7">
                                                     No
                                                 </label>
-                                            </div>  
+                                            </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
                                             <h5>List any dietary vitamins or supplements you are <strong>currently</strong> taking (if any):<span class="text-danger required-asterisk">*</span></h5>
@@ -236,7 +236,7 @@
                                             <small class="text-muted">Use commas to separate items. Eg: Coeilac, Asthma or Nil.</small>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-6 col-lg-6">
                                         <div class="no-form-floating form-floating my-3">
                                             <h5>If female which statement best describes your current menstrual function?<span class="text-danger required-asterisk">*</span></h5>
@@ -247,7 +247,7 @@
                                                     <label class="form-check-label" for="diagnose1">
                                                         Male - Not applicable
                                                     </label>
-                                                </div>  
+                                                </div>
                                                 <div class="form-check my-2">
                                                     <input class="form-check-input" type="radio" value="I am on contraception with controlled cycles" name="ans[medical_history][menstrual_function]" id="diagnose2">
                                                     <label class="form-check-label" for="diagnose2">
@@ -257,7 +257,7 @@
                                                 <div class="form-check my-2">
                                                     <input class="form-check-input" type="radio" value="I am not on contraception and have regular menstrual cycles" name="ans[medical_history][menstrual_function]" id="diagnose3">
                                                     <label class="form-check-label" for="diagnose3">
-                                                        I am not on contraception and have regular menstrual cycles 
+                                                        I am not on contraception and have regular menstrual cycles
                                                     </label>
                                                 </div>
                                                 <div class="form-check my-2">
@@ -289,7 +289,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="step-tab-box " id="div3">
                         <div class="card">
                             <div class="bg-white card-header p-4">
@@ -345,7 +345,7 @@
                                                 <label class="form-check-label" for="weightover5">
                                                     Unsure
                                                 </label>
-                                            </div>  
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
@@ -531,7 +531,7 @@
                                         <div class="no-form-floating form-floating my-3">
                                             <label>List your favourite foods?<span class="text-danger required-asterisk">*</span></label>
                                             <input type="hidden" name="questions[dietary_information][favoutire_foods]" value="List your favourite foods?" />
-                                            <input type="text" class="form-control" name="ans[dietary_information][favoutire_foods]" placeholder="">                                        
+                                            <input type="text" class="form-control" name="ans[dietary_information][favoutire_foods]" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-6">
@@ -545,7 +545,7 @@
                                         <h5>Do you have any allergies or intolerances?<span class="text-danger required-asterisk">*</span></h5><span>(more than 1 box can be checked)</span>
                                         <input type="hidden" name="questions[dietary_information][dietaryneeds]" value="Do you have any allergies or intolerances?" />
                                         <div class="form-floating my-3">
-                                            
+
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[dietary_information][dietaryneeds][]" value="Coeliac / Gluten Free" id="dietaryneeds2">
                                                 <label class="form-check-label" for="dietaryneeds2">
@@ -801,7 +801,7 @@
                                             <div class="row row-cols-1 row-cols-md-3 g-2">
                                                 <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Cereals][]" value="" id="repair1" data-food-key="Cereals" 
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Cereals][]" value="" id="repair1" data-food-key="Cereals"
                                                         data-food-group="grains">
                                                         <label class="form-check-label" for="repair1">Cereals</label>
                                                     </div>
@@ -809,7 +809,7 @@
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Pasta & Noodles][]" value="" id="repair2" data-food-key="Pasta & Noodles" 
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Pasta & Noodles][]" value="" id="repair2" data-food-key="Pasta & Noodles"
                                                         data-food-group="grains">
                                                         <label class="form-check-label" for="repair2">Pasta & Noodles</label>
                                                     </div>
@@ -817,7 +817,7 @@
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Small Grains][]" value="" id="repair3" data-food-key="Small Grains" 
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Small Grains][]" value="" id="repair3" data-food-key="Small Grains"
                                                         data-food-group="grains">
                                                         <label class="form-check-label" for="repair3">Small Grains</label>
                                                     </div>
@@ -825,7 +825,7 @@
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Bread & Rolls][]" value="" id="repair7" data-food-key="Bread & Rolls" 
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Bread & Rolls][]" value="" id="repair7" data-food-key="Bread & Rolls"
                                                         data-food-group="grains">
                                                         <label class="form-check-label" for="repair7">Bread & Rolls</label>
                                                     </div>
@@ -833,16 +833,16 @@
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Specialty Breads][]" value="" id="repair8" data-food-key="Specialty Breads" 
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Specialty Breads][]" value="" id="repair8" data-food-key="Specialty Breads"
                                                         data-food-group="grains">
                                                         <label class="form-check-label" for="repair8">Specialty Breads</label>
                                                     </div>
                                                     <div class="food-dropdown-wrapper" data-wrapper-for="Specialty Breads"></div>
                                                 </div>
-                                               
+
                                                 <div class="col">
                                                     <div class="form-check my-2">
-                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Flat Bread][]" value="" id="repair-8" data-food-key="Flat Bread" 
+                                                        <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][grains][Flat Bread][]" value="" id="repair-8" data-food-key="Flat Bread"
                                                         data-food-group="grains">
                                                         <label class="form-check-label" for="repair-8">Flat Bread</label>
                                                     </div>
@@ -853,7 +853,7 @@
                                     </div>
                                     <div class="col-md-12">
                                         <h5>2. Legumes & Beans</h5>
-                                        <input type="hidden" name="questions[food_preference][legumes_beans_and_pulses]" 
+                                        <input type="hidden" name="questions[food_preference][legumes_beans_and_pulses]"
                                         value="Legumes & Beans" />
                                         <div class="form-floating my-3">
                                              <div class="row row-cols-1 row-cols-md-4 g-2">
@@ -1043,7 +1043,7 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        
+
                                         <h5>10. Fruit</h5>
                                         <input type="hidden" name="questions[food_preference][fruit]" value="Fruit" />
                                         <!-- <div class="form-check">
@@ -1091,7 +1091,7 @@
                                                     </div>
                                                     <div class="food-dropdown-wrapper" data-wrapper-for="Butters"></div>
                                                 </div>
-                                                
+
                                                 <div class="col">
                                                     <div class="form-check ">
                                                         <input class="form-check-input food-checkbox" type="checkbox" name="ans[food_preference][oils_butter][Oils][]" value="" id="protein4" data-food-key="Oils" data-food-group="oils_butter">
@@ -1143,7 +1143,7 @@
                                                 <div class="food-dropdown-wrapper" data-wrapper-for="Other Snacks"></div>
                                                 <!-- <input type="text" id="snack_popcorn" name="ans[food_preference][snacks][popcorn]" class="form-control" placeholder=""> -->
                                             </div>
-                                            
+
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
@@ -1161,7 +1161,7 @@
                                                 <small class="form-text text-muted">(Use commas to separate items. Eg: Snakes, Sour Worms.)</small>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                     <!-- Drinks Section -->
                                     <div class="col-12 mb-4">
@@ -1183,7 +1183,7 @@
                                                 <!-- <input type="text" id="drink_iced_tea" name="ans[food_preference][cold_drink][iced_tea]" class="form-control" placeholder="> -->
                                             </div>
                                         </div>
-                                        
+
                                     </div>
 
                                     <!-- Cuisines Section -->
@@ -1437,7 +1437,7 @@
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Health & immunity" id="relatedgoals5">
                                                 <label class="form-check-label" for="relatedgoals5">Health & immunity</label>
                                             </div>
-                                            
+
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Comp day nutrition" id="relatedgoals9">
                                                 <label class="form-check-label" for="relatedgoals9">Comp day nutrition</label>
@@ -1466,7 +1466,7 @@
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Gut issues" id="relatedgoals8">
                                                 <label class="form-check-label" for="relatedgoals8">Gut issues</label>
                                             </div>
-                                            
+
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][related_goals][]" value="Other" id="relatedgoals10">
                                                 <label class="form-check-label" for="relatedgoals10">Other:</label>
@@ -1496,7 +1496,7 @@
                                             </div>
                                             <div class="form-check my-2">
                                                 <input class="form-check-input" type="checkbox" name="ans[nutrition_goals][like_assistance_with][]" value="Other" id="likeassistancewith5">
-			
+
                                                 <label class="form-check-label" for="likeassistancewith5">Other:</label>
                                             </div>
                                         </div>
@@ -1627,7 +1627,7 @@
                                         <div class="no-form-floating form-floating my-3">
                                             <label>What are the 3 top things you want to obtain from the consultation? </label>
                                             <input type="hidden" name="questions[nutrition_goals][topthings]" value="What are the 3 top things you want to obtain from the consultation?" />
-                                            <input type="text" class="form-control" name="ans[nutrition_goals][topthings]" id="topthings" placeholder="">                                        
+                                            <input type="text" class="form-control" name="ans[nutrition_goals][topthings]" id="topthings" placeholder="">
                                         </div>
                                     </div> -->
                                 </div>
@@ -1638,7 +1638,7 @@
                             </div>
                         </div>
                     </div>
-                  
+
                     <div class="step-tab-box" id="div9">
                         <div class="card">
                             <div class="bg-white card-header p-4">
@@ -1848,7 +1848,7 @@
         rankOptions.forEach((radio) => {
             radio.addEventListener("change", function () {
                 const selectedRank = this.value;
-                const selectedCategory = this.name; 
+                const selectedCategory = this.name;
 
                 // Find previous selection with the same rank
                 rankOptions.forEach((option) => {
@@ -1910,7 +1910,7 @@
             }
         });
     });
-    
+
     // Handle checkbox changes
     document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
         checkbox.addEventListener('change', function () {
@@ -2083,7 +2083,7 @@
                 $('#drink_alcohol_drinks').val('');
             }
         });
-        
+
         const trackerUsage = stepData.find(item =>
             item.question === "Do you CURRENTLY use any exercise or nutrition trackers/apps?" &&
             item.answer
@@ -2187,7 +2187,7 @@
 
         //     targetStep = parseInt(button.getAttribute("target")) - 1;
         //     console.log("Clicked Step Button => Target Step:", targetStep);
-            
+
         //     if (targetStep > currentStep && !validateStep(currentStep)) return;
 
         //     if (targetStep > currentStep) {
@@ -2242,7 +2242,7 @@
                         if (success) {
                             currentStep = targetStep;
                             showStep(currentStep);
-                            
+
                             // ✅ Immediately prefill step data from server/database
                             prefillData(currentStep);
                         }
@@ -2304,7 +2304,7 @@
                 if ((input.type === "text" || input.type === "number" || input.type === "date" ||
                     input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "select") &&
                     !input.value.trim()) {
-                    
+
                     if (stepIndex === 6) {
                         const isRequiredIfChecked = input.classList.contains('required-if-checked');
                         const relatedCheckboxId = input.id + '_checkbox';
@@ -2325,7 +2325,7 @@
 
                 if ((input.type === "radio" || input.type === "checkbox") &&
                     !document.querySelector(`input[name="${input.name}"]:checked`)) {
-                    
+
                     if (stepIndex === 6) {
                         const isActuallyRequired = input.hasAttribute('required');
                         if (isActuallyRequired) {
@@ -2626,7 +2626,7 @@
                 }
             });
         });
-        
+
 
         // ✅ Real-time validation border cleanup
         document.addEventListener("input", function (e) {
@@ -2684,7 +2684,7 @@
             }
         }
 
-            
+
         $('#thankYouModal').on('hidden.bs.modal', function () {
             window.location.href =  "{{ route('front.sub-home-page') }}"; // Redirect to home after modal is closed
         })
@@ -2870,7 +2870,7 @@
             activeFoodCheckbox = null;
             userConfirmed = false;
         });
-        
+
         // Prefill food checkboxes + hidden inputs on page load
         function prefillFoodDataFromPrevious(previousData) {
             console.log("Prefilling food data from previous answers...");
@@ -2936,7 +2936,7 @@
             const checkbox = document.querySelector(
                 `.food-checkbox[data-food-group="${group.toLowerCase()}"][data-food-key="${groupKey}"]`
             );
-            
+
             if (checkbox) {
                 checkbox.checked = true;
                 checkbox.classList.add("selected"); // optional for visual effect
@@ -3021,25 +3021,25 @@
         editIcon.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             // Set active checkbox and show modal
             activeFoodCheckbox = checkbox;
             selectedFoodKey = checkbox.dataset.foodKey;
             selectedFoodGroup = checkbox.dataset.foodGroup;
-            
+
             // Get previously selected items
             const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${selectedFoodKey}"]`);
             const selectedValues = Array.from(wrapper.querySelectorAll('input[type="hidden"]')).map(input => input.value);
-            
+
             // Load and show modal with pre-selected items
             const url = "{{ route('front.flag.items', ['key' => 'FOOD_KEY_PLACEHOLDER']) }}".replace('FOOD_KEY_PLACEHOLDER', encodeURIComponent(selectedFoodKey));
-            
+
             $.ajax({
                 url: url,
                 method: 'GET',
                 success: function(data) {
                     $('#foodListContainer').empty();
-                    
+
                     // Add Select All checkbox at the top
                     $('#foodListContainer').append(`
                         <div class="col-md-12 mb-3">
@@ -3062,7 +3062,7 @@
                                 <div class="card h-100 p-3">
                                     <div class="d-flex justify-content-between align-items-center flex-wrap">
                                         <div class="d-flex align-items-center flex-grow-1">
-                                            <input type="checkbox" class="form-check-input me-2 sub-food-checkbox" 
+                                            <input type="checkbox" class="form-check-input me-2 sub-food-checkbox"
                                                 id="sub-${item.name}" value="${item.name}" ${isChecked ? 'checked' : ''}>
                                             <label class="form-check-label mb-0" for="sub-${item.name}">
                                                 ${item.name}
@@ -3080,9 +3080,9 @@
                     // Add Select All functionality
                     const selectAllCheckbox = document.getElementById('selectAllFoods');
                     const subCheckboxes = document.querySelectorAll('.sub-food-checkbox');
-                    
+
                     // Set initial state of Select All
-                    selectAllCheckbox.checked = subCheckboxes.length > 0 && 
+                    selectAllCheckbox.checked = subCheckboxes.length > 0 &&
                         Array.from(subCheckboxes).every(cb => cb.checked);
 
                     // Handle Select All checkbox change
@@ -3129,7 +3129,7 @@
 
         const selectedItems = document.querySelectorAll('.sub-food-checkbox:checked');
         const wrapper = document.querySelector(`.food-dropdown-wrapper[data-wrapper-for="${selectedFoodKey}"]`);
-        
+
         if (!wrapper) return;
 
         // Clear old hidden inputs
@@ -3155,13 +3155,13 @@
         selectedItems.forEach(item => {
             const input = document.createElement('input');
             input.type = 'hidden';
-            
+
             if (selectedFoodGroup.toLowerCase() !== selectedFoodKey.toLowerCase()) {
                 input.name = `ans[food_preference][${selectedFoodGroup}][${selectedFoodKey}][]`;
             } else {
                 input.name = `ans[food_preference][${selectedFoodGroup}][]`;
             }
-            
+
             input.value = item.value;
             wrapper.appendChild(input);
         });
@@ -3234,7 +3234,7 @@
                 $('#trackingDetailsField').removeClass('d-none');
             }
         });
-        
+
         // Toggle file upload visibility based on radio button selection
         $('input[name="ans[medical_history][blood_test][answer]"]').on('change', function () {
             if ($('#bloodTestYes').is(':checked')) {
@@ -3340,7 +3340,7 @@
     //             tab.style.display = "none";
     //         }
     //     });
-        
+
     //     // Show step tabs on direct click
     //     document.querySelectorAll('.showStepTab').forEach(button => {
     //         button.addEventListener('click', () => {

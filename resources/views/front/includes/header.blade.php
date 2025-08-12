@@ -219,7 +219,9 @@ $auth = auth()->guard('web')->check();
                             <li>
                                 <a class="dropdown-item" href="{{ route('front.training.nutrition.plan') }}">Training Nutrition Plan</a>
                             </li>
-                            <li><a class="dropdown-item coming-soon-popup" href="#">Competition plan</a></li>
+                            <li>
+                                <a class="dropdown-item coming-soon-popup" href="#">Competition plan</a>
+                            </li>
                             <li>
                                 <a class="dropdown-item coming-soon-popup" href="#">Injury & Recovery Plan</a>
                             </li>
