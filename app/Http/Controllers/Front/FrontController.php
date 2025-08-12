@@ -1825,8 +1825,9 @@ class FrontController extends Controller
     public function trainingNutritionPlan(Request $request)
     {
         $page = Page::with('sections')->where('slug', 'training_nutrition_plan')->first();
+        $planDetails = Plan::where('name', 'Training Nutrition Plan')->first();
 
-        return view('front.pages.training_nutrition_plan', compact('page'));
+        return view('front.pages.training_nutrition_plan', compact('page', 'planDetails'));
     }
 
     public function competitionPlan(Request $request)
