@@ -446,7 +446,7 @@
             </section>
 
             <!-- Surfing Videos -->
-            <section class="surfing-videos">
+            <!-- <section class="surfing-videos">
                 <div class="section-header">
                     <h2>What's hot in... Surfing</h2>
                 </div>
@@ -579,7 +579,7 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> -->
         </div>
         @include('front.modal.shopping-list')
         @include('front.modal.print-shopping-list')
@@ -1597,7 +1597,7 @@
         tooltipStyle.textContent = `
         .coming-soon-tooltip,
         .learn-more-tooltip {
-            background - color: #333;
+        background-color: #333;
         color: white;
         padding: 8px 12px;
         border-radius: 6px;
