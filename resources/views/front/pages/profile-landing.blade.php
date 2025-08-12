@@ -1555,49 +1555,49 @@
             }
         }
     </script>
-    <script>
+   <script>
      // Learn more tooltip functionality
-function showLearnMoreTooltip(button, planType, event) {
-    if (event) {
-        event.preventDefault(); // Stops link navigation or form submit
+    function showLearnMoreTooltip(button, planType, event) {
+        if (event) {
+            event.preventDefault(); // Stops link navigation or form submit
         event.stopPropagation(); // Stops bubbling
-    }
+        }
 
-    // Remove any existing learn more tooltips
-    const existingTooltip = document.querySelector('.learn-more-tooltip');
-    if (existingTooltip) {
-        existingTooltip.remove();
-    }
+        // Remove any existing learn more tooltips
+        const existingTooltip = document.querySelector('.learn-more-tooltip');
+        if (existingTooltip) {
+            existingTooltip.remove();
+        }
 
-    // Create tooltip element
-    const tooltip = document.createElement('div');
-    tooltip.className = 'learn-more-tooltip';
-    tooltip.textContent = `${planType} `;
+        // Create tooltip element
+        const tooltip = document.createElement('div');
+        tooltip.className = 'learn-more-tooltip';
+        tooltip.textContent = `${planType} `;
 
-    // Position tooltip above the button
-    const buttonRect = button.getBoundingClientRect();
-    tooltip.style.position = 'fixed';
-    tooltip.style.top = (buttonRect.top - 45) + 'px';
-    tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
-    tooltip.style.zIndex = '9999';
+        // Position tooltip above the button
+        const buttonRect = button.getBoundingClientRect();
+        tooltip.style.position = 'fixed';
+        tooltip.style.top = (buttonRect.top - 45) + 'px';
+        tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
+        tooltip.style.zIndex = '9999';
 
-    document.body.appendChild(tooltip);
+        document.body.appendChild(tooltip);
 
-    // Auto-hide tooltip after 3 seconds
-    setTimeout(() => {
-        const tooltipToRemove = document.querySelector('.learn-more-tooltip');
+        // Auto-hide tooltip after 3 seconds
+        setTimeout(() => {
+            const tooltipToRemove = document.querySelector('.learn-more-tooltip');
         if (tooltipToRemove) {
             tooltipToRemove.remove();
-        }
-    }, 2000);
+            }
+        }, 2000);
 }
 
-// Add CSS for tooltip
-const tooltipStyle = document.createElement('style');
-tooltipStyle.textContent = `
-    .coming-soon-tooltip,
-    .learn-more-tooltip {
-        background-color: #333;
+    // Add CSS for tooltip
+    const tooltipStyle = document.createElement('style');
+        tooltipStyle.textContent = `
+        .coming-soon-tooltip,
+        .learn-more-tooltip {
+            background - color: #333;
         color: white;
         padding: 8px 12px;
         border-radius: 6px;
@@ -1607,39 +1607,39 @@ tooltipStyle.textContent = `
         animation: tooltipFadeIn 0.3s ease-out;
         white-space: nowrap;
         position: relative;
-    }
+            }
 
-    .coming-soon-tooltip::after,
-    .learn-more-tooltip::after {
-        content: '';
+        .coming-soon-tooltip::after,
+        .learn-more-tooltip::after {
+            content: '';
         position: absolute;
         top: 100%;
         left: 50%;
         transform: translateX(-50%);
         border: 6px solid transparent;
         border-top-color: #333;
-    }
+            }
 
-    @keyframes tooltipFadeIn {
-        from {
+        @keyframes tooltipFadeIn {
+            from {
             opacity: 0;
-            transform: translateY(20px);
-        }
+        transform: translateY(20px);
+                }
         to {
             opacity: 1;
-            transform: translateY(0);
-        }
-    }
-`;
-document.head.appendChild(tooltipStyle);
+        transform: translateY(0);
+                }
+            }
+    `;
+    document.head.appendChild(tooltipStyle);
 
-// Example binding
-document.querySelectorAll('.learn-more-btn').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        showLearnMoreTooltip(this, 'Pro Plan', e);
+    // Example binding
+    document.querySelectorAll('.learn-more-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            showLearnMoreTooltip(this, 'Pro Plan', e);
+        });
     });
-});
 
-        </script>
+    </script>
 
 @endsection
