@@ -160,11 +160,11 @@ $auth = auth()->guard('web')->check();
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="#">Training Nutrition Plan</a>
+                                <a class="dropdown-item" href="{{ route('front.training.nutrition.plan') }}">Training Nutrition Plan</a>
                             </li>
-                            <li><a class="dropdown-item" href="#">Competition plan</a></li>
+                            <li><a class="dropdown-item" href="{{ route('front.competition.plan') }}">Competition plan</a></li>
                             <li>
-                                <a class="dropdown-item" href="#">Injury & Recovery Plan</a>
+                                <a class="dropdown-item" href="{{ route('front.injury.recovery.plan') }}">Injury & Recovery Plan</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="#">Pre & Post Surgery Plan </a>
