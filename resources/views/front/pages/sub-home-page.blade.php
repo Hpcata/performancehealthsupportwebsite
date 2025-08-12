@@ -1204,7 +1204,7 @@
                                         <div>&nbsp;</div>
                                     </button>
                                     <button class="social-button" onmouseenter="showComingSoonTooltip(this, 'Apple')"
-                                        onmouseleave="hideComingSoonTooltip()" style="justify-content: center;">
+                                        onmouseleave="hideComingSoonTooltip()">
 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20"
                                             fill="none" style="margin-right: 6px;">
@@ -1220,6 +1220,7 @@
                                             </defs>
                                         </svg>
                                         Sign in with Apple
+                                        <div>&nbsp;</div>
                                     </button>
                                 </div>
                             </div>
