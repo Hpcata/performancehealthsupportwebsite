@@ -148,13 +148,13 @@
                     <h5 class="modal-title">Plan Required</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
+                <div class="text-center modal-body">
                     <p>You have not purchased any plans.<br>Please purchase a plan.</p>
 
-                    <div class="d-grid justify-content-center gap-3 mt-5">
-                        <a href="{{ route('front.sub-home-page') }}#sport-plans" class="btn btn-primary btn-sm px-4"
+                    <div class="justify-content-center gap-3 d-grid mt-5">
+                        <a href="{{ route('front.sub-home-page') }}#sport-plans" class="px-4 btn btn-primary btn-sm"
                             style="width: 300px;">View Plans</a>
-                        <a href="{{ route('front.index') }}#bookingtypecontainer" class="btn btn-secondary px-4"
+                        <a href="{{ route('front.index') }}#bookingtypecontainer" class="px-4 btn btn-secondary"
                             style="width: 300px;">Book Consultation</a>
                     </div>
                 </div>
@@ -165,7 +165,7 @@
     @if(isset($page->sections))
         @foreach($page->sections as $section)
             @if($section->section_type == \App\Models\Section::TYPE_MAIN_BANNER && $section->enabled == 1) <!-- done -->
-                <div id="heroCarouselDesktop" class="d-md-block carousel slide  d-none" data-bs-ride="carousel" data-bs-interval="3000"
+                <div id="heroCarouselDesktop" class="d-md-block carousel slide d-none" data-bs-ride="carousel" data-bs-interval="3000"
                     data-bs-wrap="true">
                     <div class="carousel-inner">
                         <!-- Slide 1 - Fitness/Nutrition Image (Desktop) -->
@@ -183,7 +183,7 @@
                         </div>
                     </div>
                     <!-- Chat Widget -->
-                    <div class="chat-widget desktop-view mob-hide ">
+                    <div class="chat-widget desktop-view mob-hide">
                         <div class="chat-avatar">
                             <img src="{{ frontAssets('images/virtual kez.svg') }}" alt="Virtual Kez Avatar" />
                         </div>
@@ -576,7 +576,7 @@
                         <p class="choose-plan-subtitle">{!! $section->content !!}</p>
                         <label class="choose-plan-label">Nutrition plans</label>
                         <div class="row">
-                            <div class="mb-4 col-md-4">
+                            <div class="col-md-4">
                                 <div class="plan-card">
                                     <div class="plan-card-wrapper">
                                         <div class="plan-icon">
@@ -595,10 +595,10 @@
                                             O'Bryan.
                                         </p>
                                     </div>
-                                    <button class=" btn-signup">Learn more</button>
+                                    <button class="btn-signup">Learn more</button>
                                 </div>
                             </div>
-                            <div class="mb-4 col-md-4">
+                            <div class="col-md-4">
                                 <div class="plan-card">
                                     <div class="plan-card-wrapper">
                                         <div class="plan-icon">
@@ -638,10 +638,10 @@
                                             it’s game time so that nutrition is never your weakness!
                                         </p>
                                     </div>
-                                    <button class=" btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
+                                    <button class="btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                                 </div>
                             </div>
-                            <div class="mb-4 col-md-4">
+                            <div class="col-md-4">
                                 <div class="plan-card">
                                     <div class="plan-card-wrapper">
                                         <div class="plan-icon">
@@ -666,10 +666,10 @@
                                             recovery is the goal & nutrition is too often overlooked!
                                         </p>
                                     </div>
-                                    <button class=" btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
+                                    <button class="btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                                 </div>
                             </div>
-                            <div class="mb-4 col-md-4 web-hide">
+                            <div class="col-md-4 web-hide">
                                 <div class="plan-card">
                                     <div class="plan-card-wrapper">
                                         <div class="plan-icon">
@@ -689,13 +689,13 @@
                                             gain & get you back in the game!
                                         </p>
                                     </div>
-                                    <button class=" btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
+                                    <button class="btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                                 </div>
                             </div>
                         </div>
                         <label class="choose-plan-label">Consults</label>
                         <div class="row">
-                            <div class="mb-4 col-md-4 mob-hide">
+                            <div class="col-md-4 mob-hide">
                                 <div class="plan-card">
                                     <div class="plan-card-wrapper">
                                         <div class="plan-icon">
@@ -715,10 +715,10 @@
                                             gain & get you back in the game!
                                         </p>
                                     </div>
-                                    <button class=" btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
+                                    <button class="btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                                 </div>
                             </div>
-                            <div class="mb-4 col-md-4">
+                            <div class="col-md-4">
                                 <div class="plan-card orange-card">
                                     <div class="plan-card-wrapper">
                                         <div class="plan-icon">
@@ -738,10 +738,10 @@
                                             the questions that matter most.
                                         </p>
                                     </div>
-                                    <button class=" btn-signup">Learn more</button>
+                                    <button class="btn-signup">Learn more</button>
                                 </div>
                             </div>
-                            <div class="mb-4 col-md-4">
+                            <div class="col-md-4">
                                 <div class="plan-card white-card">
                                     <div class="plan-card-wrapper">
                                         <div class="plan-icon">
@@ -765,7 +765,7 @@
                                             Contact us for club deals and group bookings.
                                         </p>
                                     </div>
-                                    <button class=" btn-signup" onclick="scrollToContact()">Learn more</button>
+                                    <button class="btn-signup" onclick="scrollToContact()">Learn more</button>
                                 </div>
                             </div>
                         </div>
@@ -783,30 +783,51 @@
                                     <h2 class="sport-nutrition-promo__title">{{ $section->title }}</h2>
                                     <p class="sport-nutrition-promo__desc">{!! $section->content !!}</p>
                                     <div class="sport-nutrition-promo__form">
-                                        <select name="sport" id="sport" required>
+                                        <div class="custom-select-wrapper">
+                                        <select name="sport" id="sport" required data-custom="true">
                                             <option value="">Select Your Sport</option>
                                             @foreach($sportCategories as $category)
                                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="custom-select-arrow">
+                                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#3b3b3b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        </div>
                                         <div class="vertical-line"></div>
-                                        <select name="state" required>
-                                            <option value="">Choose Your State</option>
-                                            <option value="New South Wales">New South Wales (NSW)</option>
-                                            <option value="Victoria">Victoria (VIC)</option>
-                                            <option value="Queensland">Queensland (QLD)</option>
-                                            <option value="South Australia">South Australia (SA)</option>
-                                            <option value="Western Australia">Western Australia (WA)</option>
-                                            <option value="Tasmania">Tasmania (TAS)</option>
-                                            <option value="Australian Capital Territory">Australian Capital Territory (ACT)</option>
-                                            <option value="Northern Territory">Northern Territory (NT)</option>
-                                        </select>
+                                        <div class="custom-select-wrapper">
+                                            <select name="state" required data-custom="true">
+                                                <option value="">Choose Your State</option>
+                                                <option value="New South Wales">New South Wales (NSW)</option>
+                                                <option value="Victoria">Victoria (VIC)</option>
+                                                <option value="Queensland">Queensland (QLD)</option>
+                                                <option value="South Australia">South Australia (SA)</option>
+                                                <option value="Western Australia">Western Australia (WA)</option>
+                                                <option value="Tasmania">Tasmania (TAS)</option>
+                                                <option value="Australian Capital Territory">Australian Capital Territory (ACT)</option>
+                                                <option value="Northern Territory">Northern Territory (NT)</option>
+                                            </select>
+                                            <div class="custom-select-arrow">
+                                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#3b3b3b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        </div>
                                         <div class="vertical-line"></div>
-                                        <select name="sport_game" id="sport_game" required>
-                                            <option value="">Select Your Sport Game</option>
-                                        </select>
+                                        <div class="custom-select-wrapper">
+                                            <select name="sport_game" id="sport_game" required data-custom="true">
+                                                <option value="">Select Your Sport Game</option>
+                                            </select>
+                                            <div class="custom-select-arrow">
+                                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#3b3b3b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <button class=" btn-signup" type="submit">
+                                    <button class="btn-signup" type="submit">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                             style="margin-left: 8px">
                                             <path
@@ -845,7 +866,7 @@
                 {{-- Make this section dynamic --}}
                 <section class="testimonial-section">
                     <div class="container-homepage">
-                        <h2 class="section-title text-center text-md-start">REAL STORIES. REAL RESULTS.</h2>
+                        <h2 class="text-md-start text-center section-title">REAL STORIES. REAL RESULTS.</h2>
 
                         <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
@@ -858,7 +879,7 @@
                                                     $testimonialImage = $testimonial->testimonialImage ? asset('storage' . $testimonial->testimonialImage->path . '/' . $testimonial->testimonialImage->name) : null;
                                                 @endphp
                                                 <img src="{{ $testimonialImage }}" alt="{{ $testimonial->name }}"
-                                                    class="img-fluid rounded-3" />
+                                                    class="rounded-3 img-fluid" />
                                             </div>
                                             <div class="text-md-start text-center testimonial-content">
                                                 <div class="quote-icon web">
@@ -891,7 +912,7 @@
                             </div>
 
                             <!-- Carousel Controls for Desktop -->
-                            <button class="carousel-control-prev d-none d-md-flex" type="button" data-bs-target="#testimonialCarousel"
+                            <button class="d-md-flex carousel-control-prev d-none" type="button" data-bs-target="#testimonialCarousel"
                                 data-bs-slide="prev">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none">
                                     <path
@@ -899,7 +920,7 @@
                                         fill="#3B3B3B" />
                                 </svg>
                             </button>
-                            <button class="carousel-control-next d-none d-md-flex" type="button" data-bs-target="#testimonialCarousel"
+                            <button class="d-md-flex carousel-control-next d-none" type="button" data-bs-target="#testimonialCarousel"
                                 data-bs-slide="next">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none">
                                     <path
@@ -909,7 +930,7 @@
                             </button>
 
                             <!-- Carousel Controls for Mobile -->
-                            <div class="carousel-controls-mobile d-flex d-md-none justify-content-center mt-4">
+                            <div class="d-flex justify-content-center mt-4 carousel-controls-mobile d-md-none">
                                 <button class="carousel-control-prev-mobile" type="button" data-bs-target="#testimonialCarousel"
                                     data-bs-slide="prev">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="9" height="16" viewBox="0 0 9 16" fill="none">
@@ -918,7 +939,7 @@
                                             fill="#3B3B3B" />
                                     </svg>
                                 </button>
-                                <button class="carousel-control-next-mobile ms-3" type="button" data-bs-target="#testimonialCarousel"
+                                <button class="ms-3 carousel-control-next-mobile" type="button" data-bs-target="#testimonialCarousel"
                                     data-bs-slide="next">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="9" height="16" viewBox="0 0 9 16" fill="none">
                                         <path
@@ -933,16 +954,16 @@
             @endif
             @if($section->section_type == \App\Models\Section::TYPE_PARTNERS && $section->enabled == 1)
                 <!-- trusted partners section -->
-                <section class="partners-section py-5">
+                <section class="py-5 partners-section">
                     <div class="container-homepage">
-                        <h2 class="section-title text-center text-md-start mb-5">
+                        <h2 class="mb-5 text-md-start text-center section-title">
                             {!! $section->title !!}
                         </h2>
                     </div>
 
 
                     <div class="slider-container">
-                        <div class="logo-row slide-left">
+                        <div class="slide-left logo-row">
                             <!-- Duplicate content for seamless loop -->
                             @if(!empty($section->banner_image) && is_array($section->banner_image))
                                 @foreach($section->banner_image as $bannerImage)
@@ -960,7 +981,7 @@
                             @endif
                         </div>
 
-                        <div class="logo-row slide-right">
+                        <div class="slide-right logo-row">
                             <!-- Duplicate content for seamless loop -->
                             @if(!empty($section->image) && is_array($section->image))
                                 @foreach($section->image as $bannerImage)
@@ -990,12 +1011,12 @@
     <!-- contact section -->
     <section class="contact-section py-5" id="contact-section">
         <div class="container-homepage">
-            <div class="row justify-content-center">
+            <div class="justify-content-center row">
                 <div class="col-12">
-                    <div class="contact-card d-flex flex-column flex-md-row align-items-center">
-                        <div class="contact-form-wrapper p-4 p-md-5">
-                            <h2 class="contact-title mb-3">GET IN TOUCH</h2>
-                            <p class="contact-description mb-4">Not sure where to start? Reach out - we're here to help and
+                    <div class="d-flex flex-column flex-md-row align-items-center contact-card">
+                        <div class="p-4 p-md-5 contact-form-wrapper">
+                            <h2 class="mb-3 contact-title">GET IN TOUCH</h2>
+                            <p class="mb-4 contact-description">Not sure where to start? Reach out - we're here to help and
                                 will get back to you as soon as we can.</p>
                             <form id="query-form">
                                 <div class="mb-3">
@@ -1016,10 +1037,10 @@
                                             class="text-danger">*</span></label>
                                     <textarea class="form-control" id="query-message" rows="5" required></textarea>
                                 </div>
-                                <button type="submit" class=" btn-signup" id="submit-query">Send message</button>
+                                <button type="submit" class="btn-signup" id="submit-query">Send message</button>
                             </form>
                         </div>
-                        <div class="phone-mockup-wrapper d-none d-md-flex justify-content-center align-items-center">
+                        <div class="d-md-flex align-items-center justify-content-center phone-mockup-wrapper d-none">
                             <img src="{{ frontAssets('images/mockup.webp') }}" alt="Mobile App Interface" class="img-fluid">
                         </div>
                     </div>
@@ -1125,7 +1146,7 @@
                             </div>
 
 
-                            <button class=" btn-signup" style="margin-top:8px;" onclick="sendOtp()">Continue</button>
+                            <button class="btn-signup" style="margin-top:8px;" onclick="sendOtp()">Continue</button>
 
                             <!--  -->
                             <div class='quiz-h2-title d-none'>
@@ -1354,7 +1375,7 @@
                             <img src="{{ asset('front/images/signup/login-bg.svg') }}" alt="Bowl of healthy food"
                                 class="food-image" />
                         </div>
-                        <div class="image-section quiz-h2-title d-none p-4 quiz-h2-img">
+                        <div class="p-4 image-section quiz-h2-title d-none quiz-h2-img">
                             <img src="{{ asset('front/images/quiz/last-step-login-bg.svg') }}" alt="Bowl of healthy food"
                                 class="food-image" />
                         </div>

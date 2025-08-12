@@ -74,7 +74,8 @@ $auth = auth()->guard('web')->check();
                     height="30" />
             </div>
             <nav class="nav-center">
-                <a class="nav-item text-decoration-none" href="{{ route('front.my-plans') }}">My Plans</a>
+                <!-- <a class="text-decoration-none nav-item" href="{{ route('front.my-plans') }}">My Plans</a> -->
+                <a class="text-decoration-none nav-item" href="#">Home</a>
                 <span class="nav-item">Challenges and Rewards</span>
                 <div class="nav-item dropdown">
                     <span>Resources <i class="fas fa-chevron-down"></i></span>
@@ -183,13 +184,13 @@ $auth = auth()->guard('web')->check();
                             My Account
                         </a>
                     @else
-                        <button class=" btn-login mob-hide" id="login" href="#"
+                        <button class="btn-login mob-hide" id="login" href="#"
                             onclick="openSingupFreePopup(true)">Log in</button>
-                        <button class=" btn-signup" id="show-new-signup-modal" onclick="openSingupFreePopup()">
+                        <button class="btn-signup" id="show-new-signup-modal" onclick="openSingupFreePopup()">
                             Sign up for free
                         </button>
                     @endif
-                    <button class="ms-2  btn-login web-hide">Virtual Kez</button>
+                    <button class="ms-2 btn-login web-hide">Virtual Kez</button>
                 </div>
             </div>
         </div>
@@ -305,7 +306,7 @@ $auth = auth()->guard('web')->check();
                         </div>
 
                         <!-- Sign In Button -->
-                        <button type="submit" id="login-submit" class="btn-primary w-100 mt-3">
+                        <button type="submit" id="login-submit" class="mt-3 w-100 btn-primary">
                             Sign In
                         </button>
                     </form>
@@ -525,14 +526,72 @@ $auth = auth()->guard('web')->check();
             navbarToggler.removeAttribute('data-bs-toggle');
             navbarToggler.removeAttribute('data-bs-target');
         }
-        // Smooth navbar background change on scroll
-        window.addEventListener("scroll", function() {
+        // Function to update navbar background based on scroll position
+        function updateNavbarBackground() {
             const navbar = document.querySelector(".navbar-custom");
+            if (!navbar) return;
             if (window.scrollY > 50) {
                 navbar.style.background = "rgba(59, 59, 59, 1)";
             } else {
                 navbar.style.background = "transparent";
             }
+        }
+
+        // Check initial scroll position on page load
+        updateNavbarBackground();
+
+        // Smooth navbar background change on scroll
+        window.addEventListener("scroll", updateNavbarBackground);
+
+        // Custom select arrow rotation and enhanced styling
+        const customSelects = document.querySelectorAll('.custom-select-wrapper select');
+        customSelects.forEach(select => {
+            // Add custom styling to options
+            const options = select.querySelectorAll('option');
+            options.forEach(option => {
+                option.style.padding = '12px 16px';
+                option.style.margin = '2px 0';
+                option.style.fontFamily = '"Noto Sans"';
+                option.style.fontSize = '16px';
+                option.style.fontWeight = '400';
+                option.style.color = '#3b3b3b';
+                option.style.backgroundColor = '#fff';
+                option.style.border = 'none';
+                option.style.cursor = 'pointer';
+                option.style.lineHeight = '1.5';
+                option.style.minHeight = '44px';
+            });
+
+            select.addEventListener('change', function() {
+                const arrow = this.nextElementSibling;
+                if (arrow && arrow.classList.contains('custom-select-arrow')) {
+                    arrow.style.transform = 'translateY(-50%) rotate(180deg)';
+                    setTimeout(() => {
+                        arrow.style.transform = 'translateY(-50%) rotate(0deg)';
+                    }, 200);
+                }
+            });
+
+            select.addEventListener('focus', function() {
+                const arrow = this.nextElementSibling;
+                if (arrow && arrow.classList.contains('custom-select-arrow')) {
+                    arrow.style.transform = 'translateY(-50%) rotate(180deg)';
+                }
+            });
+
+            select.addEventListener('blur', function() {
+                const arrow = this.nextElementSibling;
+                if (arrow && arrow.classList.contains('custom-select-arrow')) {
+                    arrow.style.transform = 'translateY(-50%) rotate(0deg)';
+                }
+            });
+
+            // Add click event to show dropdown with better styling
+            select.addEventListener('click', function() {
+                // Force the dropdown to open with better styling
+                this.style.padding = '12px 16px';
+                this.style.lineHeight = '1.5';
+            });
         });
     });
 </script>
