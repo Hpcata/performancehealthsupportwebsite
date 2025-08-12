@@ -17,9 +17,7 @@ $auth = auth()->guard('web')->check();
             <span id="mobile-menu-icon">
                 <!-- This will be replaced by JS -->
                  <img src="{{ frontAssets('images/bars.svg') }}" alt="hamburger" class=""  id="hamburger-icon"/>
-                <!-- <i class="fas fa-bars" aria-hidden="true" ></i> -->
-                <!-- <img src="{{ frontAssets('images/hamburger.svg') }}" alt="" id="hamburger-icon" style="display:inline;"> -->
-                <span id="close-icon" style="display:none;">&times;</span>
+                <span id="close-icon" style="display:none;"><img src="{{ frontAssets('images/cross.svg') }}" alt="hamburger" class=""  /></span>
             </span>
         </button>
     </header>
@@ -206,7 +204,10 @@ $auth = auth()->guard('web')->check();
                     <button class="collapsed navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                         aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+                        <span class="menu-icon">
+                            <img src="{{ frontAssets('images/bars.svg') }}" alt="Menu" class="bars-icon">
+                            <img src="{{ frontAssets('images/cross.svg') }}" alt="Close" class="cross-icon">
+                        </span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="ms-lg-auto header-navbar navbar-nav">
@@ -430,16 +431,21 @@ $auth = auth()->guard('web')->check();
         console.log('toggleMobileMenu called');
         var menu = document.getElementById('mobile-menu');
         var overlay = document.getElementById('mobile-menu-overlay');
+        var hamburgerIcon = document.getElementById('hamburger-icon');
+        var closeIcon = document.getElementById('close-icon');
         var isOpen = menu.classList.contains('open');
         if (isOpen) {
             menu.classList.remove('open');
             overlay.classList.remove('open');
             document.body.style.overflow = '';
+            hamburgerIcon.style.display = 'inline';
+            closeIcon.style.display = 'none';
         } else {
             menu.classList.add('open');
             overlay.classList.add('open');
             document.body.style.overflow = 'hidden';
-        }
+            hamburgerIcon.style.display = 'none';
+            closeIcon.style.display = 'inline';}
     }
 
     function openSingupFreePopup(isLogin = false, isQuiz = false) {
