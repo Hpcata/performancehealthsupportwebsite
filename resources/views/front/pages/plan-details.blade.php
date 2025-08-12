@@ -136,12 +136,8 @@
                                                                 height="252"
                                                                 width="160" />
                                                             <h3>{{ $meal->meal->title }}</h3>
-                                                            <div class="quick-view-overlay ">
-                                                                <span style="padding: 12px;
-                                                                    border-radius: 12px;
-                                                                    background-color:#709ef1;
-                                                                    font-weight: 700;
-                                                                    cursor:pointer;">
+                                                            <div class="quick-view-overlay">
+                                                                <span style="swap-btn-overlay">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                         height="16" viewBox="0 0 18 18"
                                                                         fill="none">
@@ -184,7 +180,7 @@
                 for peak performance. Protein stays the same. See the ideal ratios
                 and what foods to choose below.
             </p>
-            <div class="dropdown dropdown-container">
+            <div class="dropdown dropdown-container training-load-dropdown">
                 <label class="dropdown-label">Training load</label>
                 <button class="btn custom-dropdown-button dropdown-toggle" type="button" id="trainingLoadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="custom-dropdown-content">
@@ -300,7 +296,7 @@
 
             </div>
              <div class="modal-footer" style="text-align: end; padding: 12px 16px; border-top: 1px solid #d8d8d8; border-radius:0 0 12px 12px; background-color:#fff;">
-                <button id="download-plan-btn" class="btn btn-primary" onclick="downloadPDF()">
+                <button id="download-plan-btn" class="btn btn-primary apply-changes-btn" onclick="downloadPDF()">
                     Download Plan
                 </button>
             </div>
@@ -377,6 +373,13 @@
                 const imageSrc = this.getAttribute('data-image');
                 if (plateImg && imageSrc) {
                     plateImg.src = imageSrc;
+                }
+
+                // Close the Bootstrap dropdown after selection
+                const toggleEl = document.getElementById('trainingLoadDropdown');
+                if (typeof bootstrap !== 'undefined' && toggleEl) {
+                    const dd = bootstrap.Dropdown.getOrCreateInstance(toggleEl);
+                    dd.hide();
                 }
             });
         });
@@ -1090,11 +1093,11 @@
                                             data-sub-category-id="${userSubCategoryId}"
                                             data-user-category-id="${userCategoryId}">
                                             <img src="{{ frontAssets('images/dialog/swap.svg') }}" style="width: 18px; vertical-align: middle; margin-right: 4px;" />
-                                            <span>Smart swap</span>
+                                            <span>Swap</span>
                                         </button>` : ''}
                                     ${item.description ? `
                                         <button class="smart-swap-btn" data-bs-toggle="tooltip" title="${item.description}">
-                                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 18px; vertical-align: middle" />
+                                            <img src="{{ frontAssets('images/dialog/Info.svg') }}" alt="Info" style="width: 24px; vertical-align: middle" />
                                         </button>` : ''}
                                 </div>
                                  </div>
