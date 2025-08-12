@@ -6,6 +6,7 @@ $auth = auth()->guard('web')->check();
 
 @if (Route::is('front.profile') || Route::is('front.plans.details') || Route::is('front.my-plans'))
     <!-- Mobile Menu Overlay -->
+     <?php $user = auth()->user();?>
     <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"
         style=" position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:1999;">
     </div>
@@ -84,68 +85,98 @@ $auth = auth()->guard('web')->check();
             @endif
         </ul>
     </div>
+    @if (Auth::check() && Auth::guard('web')->user()->is_superadmin == 0)
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="{{ frontAssets('images/logo.svg') }}" alt="Athleat Logo" class="logo-img" width="142"
+                        height="30" />
+                </div>
+                    @php
+                        $userId = Auth::guard('web')->user()->id;
+                        $userPlan = \App\Models\UserPlan::with([
+                            'plan',
+                        ])
+                        ->where('user_id', $userId)
+                        ->first();
 
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <img src="{{ frontAssets('images/logo.svg') }}" alt="Athleat Logo" class="logo-img" width="142"
-                    height="30" />
-            </div>
-            @if (Auth::check() && Auth::guard('web')->user()->is_superadmin == 0)
-            @php
-                $userId = Auth::guard('web')->user()->id;
-                $userPlan = \App\Models\UserPlan::with([
-                    'plan',
-                ])
-                ->where('user_id', $userId)
-                ->first();
-
-                $myPlanUrl = route('front.my-plans');
-                if(isset($userPlan)){
-                    $myPlanUrl = route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]);
-                }
-            @endphp
-            <nav class="nav-center">
-                <!-- <a class="text-decoration-none nav-item" href="{{ route('front.my-plans') }}">My Plans</a> -->
-                <a class="text-decoration-none nav-item" href="{{ route('front.profile', ['id' => Auth::guard('web')->user()->id]) }}">Home</a>
-                <span class="nav-item coming-soon-popup">Challenges and Rewards</span>
-                <div class="nav-item dropdown">
-                    <span>Resources <i class="fas fa-chevron-down"></i></span>
-                    <div class="dropdown-content">
-                        <a href="#" id="scanner-btn" class="scanner-btn">Supplement Scanner</a>
-                        <a href="#" class="coming-soon-popup">Level-Up Library</a>
-                        <a href="#" onclick="openBookingAndModal()">BioHealth
-                            Passport</a>
+                        $myPlanUrl = route('front.my-plans');
+                        if(isset($userPlan)){
+                            $myPlanUrl = route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]);
+                        }
+                    @endphp
+                    <nav class="nav-center">
+                        <!-- <a class="text-decoration-none nav-item" href="{{ route('front.my-plans') }}">My Plans</a> -->
+                        <a class="text-decoration-none nav-item" href="{{ route('front.profile', ['id' => Auth::guard('web')->user()->id]) }}">Home</a>
+                        <span class="nav-item coming-soon-popup">Challenges and Rewards</span>
+                        <div class="nav-item dropdown">
+                            <span>Resources <i class="fas fa-chevron-down"></i></span>
+                            <div class="dropdown-content">
+                                <a href="#" id="scanner-btn" class="scanner-btn">Supplement Scanner</a>
+                                <a href="#" class="coming-soon-popup">Level-Up Library</a>
+                                <a href="#" onclick="openBookingAndModal()">BioHealth
+                                    Passport</a>
+                            </div>
+                        </div>
+                    </nav>
+                    <div class="nav-right">
+                        <div class="nav-item dropdown">
+                            <div class="nav-end">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
+                                    fill="none">
+                                    <path
+                                        d="M9 9C10.1935 9 11.3381 8.52589 12.182 7.68198C13.0259 6.83807 13.5 5.69347 13.5 4.5C13.5 3.30653 13.0259 2.16193 12.182 1.31802C11.3381 0.474106 10.1935 0 9 0C7.80653 0 6.66193 0.474106 5.81802 1.31802C4.97411 2.16193 4.5 3.30653 4.5 4.5C4.5 5.69347 4.97411 6.83807 5.81802 7.68198C6.66193 8.52589 7.80653 9 9 9ZM7.39336 10.6875C3.93047 10.6875 1.125 13.493 1.125 16.9559C1.125 17.5324 1.59258 18 2.16914 18H15.8309C16.4074 18 16.875 17.5324 16.875 16.9559C16.875 13.493 14.0695 10.6875 10.6066 10.6875H7.39336Z"
+                                        fill="white" />
+                                </svg>
+                                <span>My Account <i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="dropdown-content">
+                                <a href="{{ $myPlanUrl }}">My Plan</a>
+                                <form id="logout-form" action="{{ route('front.logout') }}" method="POST"
+                                    style="display: none;">
+                                    @csrf
+                                </form>
+                                <a class="p-2 dropdown-item" style="padding:0.75rem 1rem !important;" href="#"
+                                    onclick="handleLogout(event)">
+                                    Sign Out
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </nav>
-            <div class="nav-right">
-                <div class="nav-item dropdown">
-                    <div class="nav-end">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
-                            fill="none">
-                            <path
-                                d="M9 9C10.1935 9 11.3381 8.52589 12.182 7.68198C13.0259 6.83807 13.5 5.69347 13.5 4.5C13.5 3.30653 13.0259 2.16193 12.182 1.31802C11.3381 0.474106 10.1935 0 9 0C7.80653 0 6.66193 0.474106 5.81802 1.31802C4.97411 2.16193 4.5 3.30653 4.5 4.5C4.5 5.69347 4.97411 6.83807 5.81802 7.68198C6.66193 8.52589 7.80653 9 9 9ZM7.39336 10.6875C3.93047 10.6875 1.125 13.493 1.125 16.9559C1.125 17.5324 1.59258 18 2.16914 18H15.8309C16.4074 18 16.875 17.5324 16.875 16.9559C16.875 13.493 14.0695 10.6875 10.6066 10.6875H7.39336Z"
-                                fill="white" />
-                        </svg>
-                        <span>My Account <i class="fas fa-chevron-down"></i></span>
-                    </div>
-                    <div class="dropdown-content">
-                        <a href="{{ $myPlanUrl }}">My Plan</a>
-                        <form id="logout-form" action="{{ route('front.logout') }}" method="POST"
-                            style="display: none;">
-                            @csrf
-                        </form>
-                        <a class="p-2 dropdown-item" style="padding:0.75rem 1rem !important;" href="#"
-                            onclick="handleLogout(event)">
-                            Sign Out
-                        </a>
+        </header>
+    @else
+        @php $id = request()->route('id'); @endphp
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="{{ frontAssets('images/logo.svg') }}" alt="Athleat Logo" class="logo-img" width="142"
+                        height="30" />
+                </div>
+                    <nav class="nav-center">
+                        <!-- <a class="text-decoration-none nav-item" href="{{ route('front.my-plans') }}">My Plans</a> -->
+                        <a class="text-decoration-none nav-item" href="{{ route('front.profile', ['id' => $id]) }}?admin_view=1">Home</a>
+                        <span class="nav-item coming-soon-popup">Challenges and Rewards</span>
+                        <div class="nav-item dropdown">
+                            <span>Resources <i class="fas fa-chevron-down"></i></span>
+                            <div class="dropdown-content">
+                                <a href="#" id="scanner-btn" class="scanner-btn">Supplement Scanner</a>
+                                <a href="#" class="coming-soon-popup">Level-Up Library</a>
+                                <a href="#" onclick="openBookingAndModal()">BioHealth
+                                    Passport</a>
+                            </div>
+                        </div>
+                    </nav>
+                    <div class="nav-right">
+                        <button class="btn-login mob-hide" id="login" href="#"
+                        onclick="openSingupFreePopup(true)">Log in</button>
+                        <button class="btn-signup" id="show-new-signup-modal" onclick="openSingupFreePopup()">
+                            Sign up for free
+                        </button>
                     </div>
                 </div>
-            </div>
-            @endif
-        </div>
-    </header>
+        </header>
+    @endif
 @elseif(Route::is('front.sub-home-page') ||
         Route::is('front.training.nutrition.plan') ||
         Route::is('front.competition.plan') ||
