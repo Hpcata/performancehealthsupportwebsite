@@ -220,16 +220,16 @@ $auth = auth()->guard('web')->check();
                                 <a class="dropdown-item" href="{{ route('front.training.nutrition.plan') }}">Training Nutrition Plan</a>
                             </li>
                             <li>
-                                <a class="dropdown-item coming-soon-popup" href="#">Competition plan</a>
+                                <a class="scroll-to-plans dropdown-item" href="#choose-plan-section">Competition plan</a>
                             </li>
                             <li>
-                                <a class="dropdown-item coming-soon-popup" href="#">Injury & Recovery Plan</a>
+                                <a class="scroll-to-plans dropdown-item" href="#choose-plan-section">Injury & Recovery Plan</a>
                             </li>
                             <li>
-                                <a class="dropdown-item coming-soon-popup" href="#">Pre & Post Surgery Plan </a>
+                                <a class="scroll-to-plans dropdown-item" href="#choose-plan-section">Pre & Post Surgery Plan </a>
                             </li>
                             <li>
-                                <a class="dropdown-item coming-soon-popup" href="#">Private Consultations </a>
+                                <a class="scroll-to-plans dropdown-item" href="#choose-plan-section">Private Consultations </a>
                             </li>
                         </ul>
                     </li>
@@ -676,6 +676,38 @@ $auth = auth()->guard('web')->check();
                     e.preventDefault();
                     var modal = new bootstrap.Modal(comingSoonModal);
                     modal.show();
+                }
+            });
+        });
+
+        // Smooth scroll to plans section
+        document.querySelectorAll('.scroll-to-plans').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Close mobile menu if open
+                const navbarCollapse = document.querySelector('.navbar-collapse');
+                if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                    const navbarToggler = document.querySelector('.navbar-toggler');
+                    if (navbarToggler) {
+                        navbarToggler.click();
+                    }
+                }
+                
+                // Find the target section
+                const targetSection = document.querySelector('.choose-plan-section');
+                if (targetSection) {
+                    // Smooth scroll to the section
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                } else {
+                    // Fallback: scroll to top if section not found
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 }
             });
         });
