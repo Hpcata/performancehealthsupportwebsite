@@ -570,7 +570,7 @@
                 </section>
             @endif
             @if($section->section_type == \App\Models\Section::TYPE_CHOOSE_YOUR_PLAN && $section->enabled == 1)
-                <section class="choose-plan-section">
+                <section class="choose-plan-section" id="choose-plan-section">
                     <div class="container-homepage">
                         <h2 class="choose-plan-title">{{ $section->title }}</h2>
                         <p class="choose-plan-subtitle">{!! $section->content !!}</p>
@@ -1035,7 +1035,7 @@
     @include('front.pages.partials.quiz-modal')
 
     <!-- contact section -->
-    <section class="contact-section py-5" id="contact-section">
+    <section class="py-5 contact-section" id="contact-section">
         <div class="container-homepage">
             <div class="justify-content-center row">
                 <div class="col-12">
@@ -1536,7 +1536,53 @@
             });
         });
 
+        // iOS detection and fixes
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        }
+
+        // iOS-specific select improvements
+        function enhanceSelectForIOS() {
+            if (isIOS()) {
+                const selects = document.querySelectorAll('.sport-nutrition-promo__form select[data-custom="true"]');
+                selects.forEach(select => {
+                    // Ensure proper touch handling
+                    select.addEventListener('touchstart', function(e) {
+                        e.stopPropagation();
+                    }, { passive: true });
+                    
+                    // Prevent zoom on focus
+                    select.addEventListener('focus', function() {
+                        this.style.fontSize = '16px';
+                    });
+                    
+                    // Handle blur to reset if needed
+                    select.addEventListener('blur', function() {
+                        // Small delay to ensure proper handling
+                        setTimeout(() => {
+                            if (this.value === '') {
+                                this.style.fontSize = '16px';
+                            }
+                        }, 100);
+                    });
+                    
+                    // Improve change event handling for iOS
+                    select.addEventListener('change', function() {
+                        // Force reflow to ensure proper rendering
+                        this.style.transform = 'translateZ(0)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 10);
+                    });
+                });
+            }
+        }
+
         $(document).ready(function () {
+            // Initialize iOS enhancements
+            enhanceSelectForIOS();
+            
             $("#sport").change(function () {
                 let selectedSport = $(this).val();
                 let sportGameSelect = $("#sport_game");
@@ -1555,6 +1601,11 @@
                                 });
                             }
                             $('#sport_game').html(options);
+                            
+                            // Re-enhance the new select for iOS
+                            if (isIOS()) {
+                                enhanceSelectForIOS();
+                            }
                         },
                         error: function (xhr) {
                             console.error("Error fetching sports games:", xhr.responseText);
@@ -1568,6 +1619,20 @@
             $("#sport-form").submit(function (e) {
                 e.preventDefault();
 
+                // iOS-specific form handling
+                if (isIOS()) {
+                    // Force blur on all inputs to ensure proper value capture
+                    $(this).find('select').blur();
+                    // Small delay to ensure iOS has processed the blur
+                    setTimeout(() => {
+                        processFormSubmission();
+                    }, 100);
+                } else {
+                    processFormSubmission();
+                }
+            });
+
+            function processFormSubmission() {
                 // Get user-selected values
                 var sport = $("#sport").val();
                 var state = $("select[name='state']").val();
