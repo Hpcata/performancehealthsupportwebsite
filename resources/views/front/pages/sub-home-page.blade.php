@@ -376,8 +376,7 @@
                                                 <div class="feature-content">
                                                     <h3>Fuel Up Right</h3>
                                                     <p>
-                                                        Custom plans for your training phase, comp prep, or recovery
-                                                        - all built to get results.
+                                                        Understand how your choices effect - energy, strength, power, muscle, recovery, immunity AND long-term gains
                                                     </p>
                                                 </div>
                                             </div>
@@ -390,8 +389,7 @@
                                                 <div class="feature-content">
                                                     <h3>Built by a Pro</h3>
                                                     <p>
-                                                        Created by Kerry O'Bryan - Olympic Dietitian and coach to NRL, Surfing,
-                                                        Skate, and BMX champions.
+                                                        Created by  Kerry O’Bryan- Extreme Sports Dietition to Olympic gold medalists and  pro sports like NRL, Surfing, Skate, and BMX champions.
                                                     </p>
                                                 </div>
                                             </div>
@@ -416,8 +414,7 @@
                                                 <div class="feature-content">
                                                     <h3>Challenge for Rewards</h3>
                                                     <p>
-                                                        Earn points, climb leaderboards, and get real prizes for showing up and
-                                                        learning like a boss.
+                                                        Earn points, climb leaderboards, and get real prizes for showing up and learning like a boss.
                                                     </p>
                                                 </div>
                                             </div>
@@ -431,8 +428,7 @@
                                                 <div class="feature-content">
                                                     <h3>Supplement smart</h3>
                                                     <p>
-                                                        Use the scanner to check batch testing, safety, and learn if it's actually
-                                                        worth your money.
+                                                        Use the scanner to check batch testing, safety, and learn if it's actually worth your money.
                                                     </p>
                                                 </div>
                                             </div>
@@ -444,11 +440,9 @@
                                                         alt="Balanced meal with lean protein and vegetables" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Accountability That Works<br />
-                                                        *Coming soon</h3>
+                                                    <h3>Accountability That Works</h3>
                                                     <p>
-                                                        Built-in tracking, meal photo uploads, and progress checks through our
-                                                        secure platform.
+                                                        Track meals, upload pics and get progress feedback in our platform. *Coming Soon
                                                     </p>
                                                 </div>
                                             </div>
@@ -457,9 +451,7 @@
 
                                     <div class="tab-pane fade" id="parents" role="tabpanel">
                                         <p class="tab-description">
-                                            Give your child the tools to thrive – in sport and in life. ATHLEAT drives athlete
-                                            growth, performance, and well-being with expert Sports Dietitian guidance and practical
-                                            systems for lifelong success.
+                                            Give your child the tools to thrive – in sport and in life. ATHLEAT drives athlete growth, performance, and well-being with expert Sports Dietitian guidance and practical systems for lifelong success.
                                         </p>
 
                                         <div class="feature-grid">
@@ -468,10 +460,9 @@
                                                     <img src="{{ frontAssets('images/bulb.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Knowledge, Skills & Tools</h3>
+                                                    <h3>Knowledge & Tools </h3>
                                                     <p>
-                                                        We teach what to eat, why it matters, how to prepare it, and give athletes
-                                                        the tools to make it happen.
+                                                        Understand how your choices impact energy,ecovery, and long-term gains.
                                                     </p>
                                                 </div>
                                             </div>
@@ -484,8 +475,7 @@
                                                 <div class="feature-content">
                                                     <h3>Planning Made Easy</h3>
                                                     <p>
-                                                        Get organised with shopping lists, menu plans, Comp day nutrition guides,
-                                                        Injury recovery and Pre/Post Surgery support.
+                                                       Get organised with menu plans, shopping lists, the right snacks pre & post training
                                                     </p>
                                                 </div>
                                             </div>
@@ -499,8 +489,7 @@
                                                 <div class="feature-content">
                                                     <h3>Kez On Call</h3>
                                                     <p>
-                                                        Get 24/7 support with Virtual Kez Calls – from food to
-                                                        recovery advice.
+                                                        Get 24/7 support with Virtual Kez Calls – from food to recovery advice.
                                                     </p>
                                                 </div>
                                             </div>
@@ -514,7 +503,7 @@
                                                 <div class="feature-content">
                                                     <h3>Avoid Misinformation</h3>
                                                     <p>
-                                                        Cut through TikTok trends and unqualified advice.
+                                                        Cut through TikTok trends and unqualified advice. 
                                                     </p>
                                                 </div>
                                             </div>
@@ -537,11 +526,9 @@
                                                     <img src="{{ frontAssets('images/dart.svg') }}" width="25" height="33" alt="bulb" />
                                                 </div>
                                                 <div class="feature-content">
-                                                    <h3>Accountability That Works<br />
-                                                        *Coming soon</h3>
+                                                    <h3>Accountability That Works</h3>
                                                     <p>
-                                                        Built-in tracking, meal photo uploads, and progress checks through our
-                                                        secure platform.
+                                                       Built-in tracking, meal photo uploads, and progress checks through our secure platform *coming soon
                                                     </p>
                                                 </div>
                                             </div>
