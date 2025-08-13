@@ -595,7 +595,7 @@
                                             O'Bryan.
                                         </p>
                                     </div>
-                                    <button class="btn-signup">Learn more</button>
+                                    <a href="/training-nutrition-plan" class="btn-signup">Learn more</a>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -738,7 +738,7 @@
                                             the questions that matter most.
                                         </p>
                                     </div>
-                                    <button class="btn-signup">Learn more</button>
+                                    <a href="https://booking.biohealthpassport.com.au/kerry-obryan" target="_blank" class="btn-signup">Learn more</a>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -870,9 +870,9 @@
 
                         <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                @foreach($testimonials as $testimonial)
-                                    <!-- Testimonial 1 -->
-                                    <div class="carousel-item active">
+                                @foreach($testimonials as $key => $testimonial)
+                                    <!-- Testimonial {{ $key + 1 }} -->
+                                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                                         <div class="d-flex flex-column flex-md-row align-items-center testimonial-card">
                                             <div class="me-md-5 mb-4 mb-md-0 testimonial-image-wrapper">
                                                 @php
@@ -948,6 +948,32 @@
                                     </svg>
                                 </button>
                             </div>
+                            
+                            <!-- Testimonial Carousel Initialization Script -->
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    // Initialize the testimonial carousel
+                                    var testimonialCarousel = new bootstrap.Carousel(document.getElementById('testimonialCarousel'), {
+                                        interval: 3000,
+                                        wrap: true,
+                                        keyboard: true,
+                                        pause: 'hover',
+                                        touch: true
+                                    });
+                                    
+                                    // Ensure controls work properly
+                                    document.querySelectorAll('[data-bs-target="#testimonialCarousel"]').forEach(function(control) {
+                                        control.addEventListener('click', function(e) {
+                                            e.preventDefault();
+                                            if (this.getAttribute('data-bs-slide') === 'prev') {
+                                                testimonialCarousel.prev();
+                                            } else {
+                                                testimonialCarousel.next();
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
                         </div>
                     </div>
                 </section>

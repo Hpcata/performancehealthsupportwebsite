@@ -375,8 +375,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    min-width: 0;
-    max-width: 500px;
+    margin: 0;
 }
 
 .no-plan-container .no-plan-image {
@@ -418,8 +417,19 @@ body {
     min-width: 260px;
 }
 
+.plan-card h3 {
+    color: #080808;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.plan-card .card-text {
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
 .plan-card:hover {
-    transform: translateY(-5px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
@@ -430,6 +440,10 @@ body {
 .plan-card.white-card {
     background: linear-gradient(219deg, var(--White, #fff) -8.51%, #e3e7f2 97.57%);
     box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+}
+
+.plan-card .plan-icon img {
+    margin-bottom: 8px;
 }
 
 .btn-learn-more {
@@ -454,7 +468,6 @@ body {
     background: rgba(23, 81, 170, 1);
     border-color: rgba(23, 81, 170, 1);
     color: white;
-    transform: translateY(-2px);
 }
 
 .plan-cards-wrap {
@@ -475,6 +488,10 @@ body {
 
 .mobile-hidden {
     display: block;
+}
+
+.my-plans-main {
+    margin-top: 56px;
 }
 
 @media (min-width: 1024px) {
@@ -656,6 +673,10 @@ body {
 }
 
 @media (max-width: 768px) {
+    .my-plans-main {
+        margin-top: 88px;
+    }
+
     .card-row {
         display: flex;
         flex-direction: column;
@@ -731,6 +752,7 @@ body {
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
         padding-bottom: 20px;
+        padding-top: 0;
         scrollbar-width: none;
         -ms-overflow-style: none;
         scroll-snap-type: x mandatory;
@@ -741,6 +763,7 @@ body {
         max-width: 310px;
         flex: 0 0 auto;
         scroll-snap-align: start;
+        min-height: 310px;
     }
 
     .footer .footer-content .footer-nav a {
@@ -797,4 +820,17 @@ body {
     .mobile-menu-toggle {
         margin: 0 !important;
     }
+        .section-header {
+        margin-bottom: 16px;
+    }
+        .section-header h2 {
+        font-size: 18px;
+        margin-bottom: 0;
+    }
+        .plan-card h3 {
+        font-size: 16px;
+    }
+    .plan-card .card-text {
+    font-size: 12px;
+}
 }
