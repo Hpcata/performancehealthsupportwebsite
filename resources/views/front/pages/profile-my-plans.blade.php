@@ -51,7 +51,7 @@
                                     O'Bryan.
                                 </p>
                             </div>
-                            <a href="/training-nutrition-plan" class="btn-learn-more">Learn more</a>
+                            <a href="{{ route('front.training.nutrition.plan') }}" class="btn-learn-more">Learn more</a>
                         </div>
                         <div class="plan-card">
                             <div class="plan-card-wrapper">
