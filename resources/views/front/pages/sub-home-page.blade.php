@@ -772,7 +772,7 @@
                                     <div class="sport-nutrition-promo__form">
                                         <div class="custom-select-wrapper">
                                         <select name="sport" id="sport" required data-custom="true">
-                                            <option value="">Select Your Sport</option>
+                                            <option value="">Select Category</option>
                                             @foreach($sportCategories as $category)
                                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
@@ -783,10 +783,21 @@
                                                 </svg>
                                             </div>
                                         </div>
+                                         <div class="vertical-line"></div>
+                                        <div class="custom-select-wrapper">
+                                            <select name="sport_game" id="sport_game" required data-custom="true">
+                                                <option value="">Sport</option>
+                                            </select>
+                                            <div class="custom-select-arrow">
+                                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#3b3b3b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        </div>
                                         <div class="vertical-line"></div>
                                         <div class="custom-select-wrapper">
                                             <select name="state" required data-custom="true">
-                                                <option value="">Choose Your State</option>
+                                                <option value="">State</option>
                                                 <option value="New South Wales">New South Wales (NSW)</option>
                                                 <option value="Victoria">Victoria (VIC)</option>
                                                 <option value="Queensland">Queensland (QLD)</option>
@@ -802,17 +813,7 @@
                                                 </svg>
                                             </div>
                                         </div>
-                                        <div class="vertical-line"></div>
-                                        <div class="custom-select-wrapper">
-                                            <select name="sport_game" id="sport_game" required data-custom="true">
-                                                <option value="">Select Your Sport Game</option>
-                                            </select>
-                                            <div class="custom-select-arrow">
-                                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#3b3b3b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
-                                            </div>
-                                        </div>
+                                       
                                     </div>
                                     <button class="btn-signup" type="submit">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -1084,7 +1085,7 @@
                                 <!-- singup/login  -->
                                 <img src="{{ frontAssets('images/athleat_logo_full_colour.svg') }}" alt="ATHLEAT Fuel Logo"
                                     width="168" height="19" style="margin-bottom: 47px;" />
-                                <h2 class="welcome-title">Welcome to Athleat</h2>
+                                <h2 class="welcome-title">Welcome to ATHLEAT</h2>
                             </div>
                             <!-- or -->
                             <div class='quiz-h2-title d-none'>

@@ -8,7 +8,7 @@
 
     <meta name="author" content="Untree.co">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" href="{!! frontAssets('favicon.png') !!}">
+    <link rel="shortcut icon" href="{!! frontAssets('favicon.svg') !!}">
 
     <meta name="description" content="@yield('meta_description', 'Performance Health Support offers expert care from top sports nutritionists, strength coaches, and sports dietitians in Australia to boost health and performance.')">
     <meta name="keywords" content="bootstrap, bootstrap5" />

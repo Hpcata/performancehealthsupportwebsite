@@ -25,7 +25,7 @@
             <!-- Left Section: Logo, Tagline, Social, Copyright -->
             <div class="navbar-brand">
                 <img src="{!! frontAssets('images/logo.svg') !!}" alt="ATHLEAT Fuel Logo" width="142" height="30"/>
-                <p class="tagline">Be elite - Get Athleat</p>
+                <p class="tagline">Be elite - Get ATHLEAT</p>
                 <a href="#" class="mb-auto social-icon">
                     <!-- LinkedIn Icon (using a simple text placeholder for demonstration) -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">

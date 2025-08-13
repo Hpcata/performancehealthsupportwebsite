@@ -136,8 +136,8 @@ body {
 }
 
 .homepage-navbar .navbar-brand img {
-    width: 192px;
-    height: 21px;
+    width: 202px;
+    height: auto;
 }
 
 .homepage-navbar .navbar-nav .nav-link {
@@ -1344,7 +1344,7 @@ body {
     width: 100% !important;
     box-sizing: border-box !important;
     text-indent: 0 !important;
-    padding-right: 50px !important;
+    padding-right: 30px !important;
 }
 
 /* Style for dropdown options only (not the selected option) */
@@ -4810,6 +4810,7 @@ svg.user-type-icon path {
     gap: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: all 0.2s ease;
+    text-decoration: none;
 }
 
 ul#country-list,
