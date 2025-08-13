@@ -7,9 +7,17 @@ script.onload = function () {
     setTimeout(function() {
         try {
             // Initialize Stripe immediately
-            const stripe = Stripe(
-                "pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3xqBDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt"
-            );
+            let stripe;
+            if (window.purchasePlanConfig.env === "production" || window.purchasePlanConfig.env === "staging") {
+                stripe = Stripe(
+                    "pk_live_51Pfz1YLSisFoEruHvHpdQQZLynQoR3xqBDuBgpb84zTK3EnTlROWMjxVpZhrp1rLmaqCJbusOUNHUoTKBLK7CXru00CkS5tVbt"
+                );
+            } else {
+                stripe = Stripe(
+                    "pk_test_51Pfz1YLSisFoEruHJsESsPDWs6hAT5sKbgJrpx3ThRMPIO1pFJCG896zwDiQa34ulhfjHJb6cLErvc9s99air7xf00bfkV8AGc"
+                );
+            }
+
             const elements = stripe.elements();
             const style = {
                 base: {
@@ -154,9 +162,9 @@ script.onload = function () {
 
                         // Set user data if available
                         if (userData) {
-                            $("#name").val(userData.name || "");
-                            $("#emailId").val(userData.email || "");
-                            $("#phone").val(userData.phone || "");
+                            $("#user_name").val(userData.name || "");
+                            $("#user_email").val(userData.email || "");
+                            $("#user_phone").val(userData.phone || "");
                             $("#signed-in-email").text(userData.email || "");
                         }
                     }
@@ -178,10 +186,10 @@ script.onload = function () {
                             const formData = {
                                 discountCode: $("#promo-code").val(),
                                 discount: $("#discount").val(),
-                                email: $("#emailId").val(),
-                                name: $("#name").val(),
-                                phone: $("#phone").val(),
-                                password: $("#password").val(),
+                                email: $("#user_email").val(),
+                                name: $("#user_name").val(),
+                                phone: $("#user_phone").val(),
+                                password: $("#user_password").val(),
                             };
 
                             // Validate required fields
@@ -205,7 +213,7 @@ script.onload = function () {
                                     formData[field].trim() === ""
                             );
 
-                            if (missingFields.length > 0) {
+                            if (missingFields.length > 0 && $("#registration-details").css("display") !== "none") {
                                 $("#submit").prop("disabled", false);
 
                                 // Join missing fields with commas, and 'and' before the last one
@@ -259,7 +267,6 @@ script.onload = function () {
                     function processStripePayment(formData, planId, price) {
                         stripe
                             .createPaymentMethod({
-                                amount: price,
                                 type: "card",
                                 card: card,
                                 billing_details: {
@@ -324,14 +331,14 @@ script.onload = function () {
                             ) {
                                 alert(response.message);
                                 $("#purchaseModal").modal("hide");
-                                $("html, body").animate(
-                                    {
-                                        scrollTop: $(
-                                            "#nutrition-login-section"
-                                        ).offset().top,
-                                    },
-                                    500
-                                );
+                                // $("html, body").animate(
+                                //     {
+                                //         scrollTop: $(
+                                //             "#nutrition-login-section"
+                                //         ).offset().top,
+                                //     },
+                                //     500
+                                // );
                             } else {
                                 alert("Payment failed: " + response.message);
                             }

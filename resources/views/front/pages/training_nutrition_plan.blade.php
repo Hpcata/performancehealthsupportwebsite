@@ -97,20 +97,7 @@
         @endforeach
     @endif
 
-    <!-- Nutrition Login Section (for scrolling when user already has plan) -->
-    <section id="nutrition-login-section" class="py-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8 text-center">
-                    <h3>Already have a plan?</h3>
-                    <p>Login to your account to manage your existing plans.</p>
-                    <a href="{{ route('front.login') }}" class="btn btn-primary">Login</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-       <!-- Single Signup Modal -->
+    <!-- Single Signup Modal -->
     <div class="modal fade" id="signupModalathlete" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -505,7 +492,8 @@
                 'name' => Auth::user()->first_name . ' ' . Auth::user()->last_name,
                 'email' => Auth::user()->email,
                 'phone' => Auth::user()->phone ?? ''
-            ] : null)
+            ] : null),
+            env: "{{ env('APP_ENV') }}"
         };
     </script>
 
