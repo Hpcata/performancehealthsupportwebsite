@@ -1,24 +1,25 @@
 <?php
 namespace App\Http\Controllers\Front;
 
-use App\Http\Controllers\Controller;
+use Stripe\Stripe;
+use App\Models\User;
+use App\Models\Coupon;
+use App\Models\Payment;
+use App\Models\UserPlan;
+use Stripe\PaymentIntent;
+use App\Models\CouponUsage;
+use App\Models\UserPrePlan;
+use App\Models\TrackingType;
 use Illuminate\Http\Request;
+use App\Models\SportCategory;
+use App\Mail\PlanPurchaseMail;
+use App\Services\ActivityTracker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Models\User;
-use Hash;
-use App\Models\UserPrePlan;
-use App\Mail\PlanPurchaseMail;
 use App\Mail\PrePlanDetailsSubmitMail;
-use App\Models\Payment;
-use App\Models\Coupon;
-use App\Services\ActivityTracker;
-use App\Models\TrackingType;
-use App\Models\UserPlan;
-use App\Models\SportCategory;
 
 class PaymentController extends Controller
 {
@@ -81,12 +82,12 @@ class PaymentController extends Controller
                         'user_id' => $user->id,
                     ]
                 );
-                
+
                 $isNewUser = true;
                 Log::debug('New user created.', ['user_id' => $user->id]);
             }
 
-            $submitQuestionnaire = $isNewUser || !\App\Models\UserPrePlan::where('user_id', $user->id)->exists();
+            $submitQuestionnaire = $isNewUser || !UserPrePlan::where('user_id', $user->id)->exists();
 
             $existingPayment = Payment::where('plan_id', $validated['plan_id'])
                 ->where('user_id', $user->id)
@@ -109,7 +110,7 @@ class PaymentController extends Controller
                     ->first();
 
                 if ($coupon) {
-                    $userUsageCount = \App\Models\CouponUsage::where('coupon_id', $coupon->id)
+                    $userUsageCount = CouponUsage::where('coupon_id', $coupon->id)
                         ->where('user_id', $user->id)
                         ->count();
 
@@ -126,7 +127,7 @@ class PaymentController extends Controller
 
                     $couponSource = null;
                     if ($sourceSlug) {
-                        $couponSource = \DB::table('coupon_source')->select('id', 'name')->where('slug', $sourceSlug)->first();
+                        $couponSource = DB::table('coupon_source')->select('id', 'name')->where('slug', $sourceSlug)->first();
                     }
 
                     // 🔹 Determine discount
@@ -174,7 +175,7 @@ class PaymentController extends Controller
 
             $paymentIntentId = null;
             $status = 'discount_applied';
-            
+
             // If payment is required, create Stripe payment intent
             if ($finalPrice > 0) {
                 Log::debug('Creating Stripe payment intent.', ['amount' => $finalPrice * 100]);
@@ -223,7 +224,7 @@ class PaymentController extends Controller
             // Track coupon usage
             if ($coupon) {
                 $coupon->increment('usage_count');
-                \App\Models\CouponUsage::create([
+                CouponUsage::create([
                     'coupon_id' => $coupon->id,
                     'user_id' => $user->id,
                 ]);
@@ -409,7 +410,7 @@ class PaymentController extends Controller
                     'payment_id' => $payment_id,
                 ]);
             }
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Step data saved successfully!',
