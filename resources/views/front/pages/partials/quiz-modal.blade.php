@@ -893,8 +893,7 @@
                         <div class="quiz-step" id="step-6" data-step="6" style="display: none;">
                             <div class="quiz-step-header">
                                 <h3 class="step-title">STEP 5/8</h3>
-                                <div class="step-instruction">Which of these foods has the most iron?(Select one
-                                    answer)</div>
+                                <div class="step-instruction">Which of these foods has the most iron? (Select one answer)</div>
                             </div>
 
                             <div class="food-grid three-grid">
@@ -975,8 +974,7 @@
                         <div class="quiz-step" id="step-7" data-step="7" style="display: none;">
                             <div class="quiz-step-header">
                                 <h3 class="step-title">STEP 6/8</h3>
-                                <div class="step-instruction">Which of these foods has the most calcium?(Select one
-                                    answer)</div>
+                                <div class="step-instruction">Which of these foods has the most calcium? (Select one answer)</div>
                             </div>
 
                             <div class="food-grid three-grid">
@@ -1051,8 +1049,7 @@
                         <div class="quiz-step" id="step-8" data-step="8" style="display: none;">
                             <div class="quiz-step-header">
                                 <h3 class="step-title">STEP 7/8</h3>
-                                <div class="step-instruction">Which of these foods has the most fibre?(Select one
-                                    answer)</div>
+                                <div class="step-instruction">Which of these foods has the most fibre? (Select one answer)</div>
                             </div>
 
                             <div class="food-grid three-grid">
