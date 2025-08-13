@@ -18,21 +18,21 @@
                         <h6 class="mb-3" style="font-weight: 800;">Create Account</h6>
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name">
+                            <input type="text" class="form-control" id="user_name">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="emailId">
+                            <input type="email" class="form-control" id="user_email">
                         </div>
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" id="phone">
+                            <input type="text" class="form-control" id="user_phone">
                         </div>
 
                         {{-- New Password Field --}}
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password">
+                            <input type="password" class="form-control" id="user_password">
                             <small class="form-text text-muted">Password must be at least 8 characters long.</small>
                         </div>
 

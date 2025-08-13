@@ -582,7 +582,7 @@
                                             O'Bryan.
                                         </p>
                                     </div>
-                                    <a href="/training-nutrition-plan" class="btn-signup">Learn more</a>
+                                    <a href="{{ route('front.training.nutrition.plan') }}" class="btn-signup">Learn more</a>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -936,7 +936,7 @@
                                     </svg>
                                 </button>
                             </div>
-                            
+
                             <!-- Testimonial Carousel Initialization Script -->
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
@@ -948,7 +948,7 @@
                                         pause: 'hover',
                                         touch: true
                                     });
-                                    
+
                                     // Ensure controls work properly
                                     document.querySelectorAll('[data-bs-target="#testimonialCarousel"]').forEach(function(control) {
                                         control.addEventListener('click', function(e) {
@@ -1539,12 +1539,12 @@
                     select.addEventListener('touchstart', function(e) {
                         e.stopPropagation();
                     }, { passive: true });
-                    
+
                     // Prevent zoom on focus
                     select.addEventListener('focus', function() {
                         this.style.fontSize = '16px';
                     });
-                    
+
                     // Handle blur to reset if needed
                     select.addEventListener('blur', function() {
                         // Small delay to ensure proper handling
@@ -1554,7 +1554,7 @@
                             }
                         }, 100);
                     });
-                    
+
                     // Improve change event handling for iOS
                     select.addEventListener('change', function() {
                         // Force reflow to ensure proper rendering
@@ -1570,7 +1570,7 @@
         $(document).ready(function () {
             // Initialize iOS enhancements
             enhanceSelectForIOS();
-            
+
             $("#sport").change(function () {
                 let selectedSport = $(this).val();
                 let sportGameSelect = $("#sport_game");
@@ -1589,7 +1589,7 @@
                                 });
                             }
                             $('#sport_game').html(options);
-                            
+
                             // Re-enhance the new select for iOS
                             if (isIOS()) {
                                 enhanceSelectForIOS();
