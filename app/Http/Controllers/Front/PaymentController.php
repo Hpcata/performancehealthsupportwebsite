@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Front;
 
 use Stripe\Stripe;
+use App\Models\Plan;
 use App\Models\User;
 use App\Models\Coupon;
 use App\Models\Payment;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use App\Models\SportCategory;
 use App\Mail\PlanPurchaseMail;
 use App\Services\ActivityTracker;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -393,9 +395,9 @@ class PaymentController extends Controller
 
             DB::commit();
 
-            $payment = \App\Models\Payment::with('user')->where('id',$payment_id)->first();
+            $payment = Payment::with('user')->where('id',$payment_id)->first();
             $email = $payment->user->email;
-            $planName = \App\Models\Plan::where('id', $payment->plan_id)->first()->name;
+            $planName = Plan::where('id', $payment->plan_id)->first()->name;
             $user = $payment->user;
 
             if($step == 9) {
@@ -409,12 +411,16 @@ class PaymentController extends Controller
                     'questionnaire_id' => $prePlanId,
                     'payment_id' => $payment_id,
                 ]);
+
+                // Log the user in after questionnaire completion
+                Auth::guard('web')->login($user);
             }
 
             return response()->json([
                 'success' => true,
                 'message' => 'Step data saved successfully!',
-                'redirect_url' => $step == 9 ? route('front.sub-home-page') : null // example redirect after last step
+                'user_id' => $user->id,
+                'redirect_url' => $step == 9 ? route('front.profile', $user->id) : null // example redirect after last step
             ]);
 
         } catch (\Exception $e) {

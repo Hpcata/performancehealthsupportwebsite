@@ -331,14 +331,6 @@ script.onload = function () {
                             ) {
                                 alert(response.message);
                                 $("#purchaseModal").modal("hide");
-                                // $("html, body").animate(
-                                //     {
-                                //         scrollTop: $(
-                                //             "#nutrition-login-section"
-                                //         ).offset().top,
-                                //     },
-                                //     500
-                                // );
                             } else {
                                 alert("Payment failed: " + response.message);
                             }
@@ -380,6 +372,7 @@ script.onload = function () {
 
                     // Handle coupon code application
                     $("#apply-promo-code").on("click", function () {
+                        $("#promo-message").text("");
                         const promoCode = $("#promo-code").val().trim();
                         const promoMessage = $("#promo-message");
 

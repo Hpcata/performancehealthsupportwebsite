@@ -24,9 +24,11 @@
         <div class="footer-grid container-homepage">
             <!-- Left Section: Logo, Tagline, Social, Copyright -->
             <div class="navbar-brand">
-                <img src="{!! frontAssets('images/logo.svg') !!}" alt="ATHLEAT Fuel Logo" width="142" height="30"/>
+                <a href="{{ route('front.sub-home-page') }}">
+                    <img src="{!! frontAssets('images/logo.svg') !!}" alt="ATHLEAT Fuel Logo" width="142" height="30"/>
+                </a>
                 <p class="tagline">Be elite - Get ATHLEAT</p>
-                <a href="#" class="mb-auto social-icon">
+                <a href="javascript:void(0)" onclick="showLearnMoreTooltip(this, 'Coming Soon')" class="mb-auto social-icon" style="position: relative;">
                     <!-- LinkedIn Icon (using a simple text placeholder for demonstration) -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                         <path
@@ -41,7 +43,7 @@
 
             <!-- Navigation Links -->
             <nav class="nav-links">
-                <a href="{{ route('front.about-us') }}" class="footer-link">About</a>
+                <a href="javascript:void(0)" onclick="showLearnMoreTooltip(this, 'Coming Soon')" class="footer-link" style="position: relative;">About</a>
                 <div class="dropdown">
                     <a class="footer-link dropdown-toggle" href="#" role="button" id="servicesDropdown"
                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -62,7 +64,7 @@
                     </ul>
                 </div>
 
-                <a href="#" class="footer-link contact-mobile">Contact</a>
+                <a href="javascript:void(0)" onclick="showLearnMoreTooltip(this, 'Coming Soon')" class="footer-link contact-mobile" style="position: relative;">Contact</a>
             </nav>
 
             <!-- Buttons (Desktop) -->

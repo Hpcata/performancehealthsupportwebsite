@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Questionnaire;
 use App\Models\Payment;
+use App\Models\Questionnaire;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,32 +13,32 @@ class UserController extends Controller
     public function index()
     {
         $users = User::where('is_superadmin', 0)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-        
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         // Get quiz submissions and plan purchases
         $quizSubmissions = Questionnaire::pluck('email')->toArray();
-        $planPurchases = Payment::where('status', 'succeeded')
-                              ->orWhere('status', 'discount_applied')
-                              ->pluck('user_id')
-                              ->toArray();
-                    
+        $planPurchases   = Payment::where('status', 'succeeded')
+            ->orWhere('status', 'discount_applied')
+            ->pluck('user_id')
+            ->toArray();
+
         return view('backend.pages.user.index', compact('users', 'quizSubmissions', 'planPurchases'));
     }
 
     public function getUserDetails(Request $request)
     {
         $user = User::find($request->user_id);
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'User not found'
+                'message' => 'User not found',
             ]);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data'    => $user,
         ]);
     }
 
@@ -58,7 +57,7 @@ class UserController extends Controller
             // Delete related records
             Payment::where('user_id', $id)->delete();
             Questionnaire::where('email', $user->email)->delete();
-            
+
             // Delete the user
             $user->delete();
 
@@ -70,4 +69,4 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Error deleting user: ' . $e->getMessage());
         }
     }
-} 
+}

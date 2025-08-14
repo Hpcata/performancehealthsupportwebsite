@@ -83,14 +83,14 @@
 
     @include('front.includes.footer')
 
-    <!-- Includes the script file -->
-    @include('front.includes.script')
-
     <style>
         #delphi-bubble-trigger {
             display: none !important;
         }
     </style>
+
+    <!-- Includes the script file -->
+    @include('front.includes.script')
 
     @stack('scripts')
 
@@ -119,7 +119,7 @@
             // alert('2');
             loadCustomDelphi();
         });
-        
+
         document.addEventListener('click', function(event) {
             if (event.target.closest('.chat-widget')) {
                 return;
@@ -139,7 +139,7 @@
             }
         });
     });
-    
+
     </script>
 
     <script id="delphi-bubble-bootstrap" src="https://embed.delphi.ai/loader.js"></script>
@@ -167,12 +167,12 @@
                     </button>
                 </div>
                 <div class="text-center modal-body">
-                    <h4>Ooops!</h4>	
+                    <h4>Ooops!</h4>
                     <p id="error">Something went wrong.</p>
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
     <!-- Coming Soon Modal -->
     <div class="modal" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonLabel" aria-hidden="true">

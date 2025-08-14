@@ -1256,168 +1256,6 @@
                             </div>
                         </div>
                     </div>
-                {{--<div class="step-tab-box" id="div5">
-                        <div class="card">
-                            <div class="bg-white card-header p-4">
-                                <h4 class="m-0">Fuel, Repeat, Protect, Hydrate</h4>
-                            </div>
-                            <div class="card-body px-4">
-                                <div class="graph-img">
-                                    <figure>
-                                        <img src="{!! frontAssets('images/graph-img-02.png') !!}" alt="">
-                                    </figure>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <h5>Fuel</h5>
-                                        <input type="hidden" name="questions[fuel_repeat_protect_hydrate][fuel]" value="Fuel" />
-                                        <div class="form-floating my-3">
-                                            <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][fuel][]" value="Rice" id="fuel1">
-                                                <label class="form-check-label" for="fuel1">Rice</label>
-                                            </div>
-                                            <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][fuel][]" value="Spaghetti" id="fuel2">
-                                                <label class="form-check-label" for="fuel2">Spaghetti</label>
-                                            </div>
-                                            <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][fuel][]" value="Pasta" id="fuel3">
-                                                <label class="form-check-label" for="fuel3">Pasta</label>
-                                            </div>
-                                            <div class="form-check my-2">
-                                                <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][fuel][]" value="Bread" id="fuel4">
-                                                <label class="form-check-label" for="fuel4">Bread</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md">
-                                        <h5>Repair</h5>
-                                        <input type="hidden" name="questions[fuel_repeat_protect_hydrate][repair]" value="Repair" />
-
-                                        <div class="form-floating my-3">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="Beef" id="repair1">
-                                                        <label class="form-check-label" for="repair1">Beef</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="Turkey" id="repair2">
-                                                        <label class="form-check-label" for="repair2">Turkey</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="Pork" id="repair3">
-                                                        <label class="form-check-label" for="repair3">Pork</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="chicken" id="repair4">
-                                                        <label class="form-check-label" for="repair4">chicken</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="Tuna" id="repair5">
-                                                        <label class="form-check-label" for="repair5">Tuna</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="salmon" id="repair6">
-                                                        <label class="form-check-label" for="repair6">salmon</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="Smoked salmon" id="repair7">
-                                                        <label class="form-check-label" for="repair7">Smoked salmon</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][repair][]" value="Eggs" id="repair12">
-                                                        <label class="form-check-label" for="repair12">Eggs</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md">
-                                        <h5>Protect</h5>
-                                        <input type="hidden" name="questions[fuel_repeat_protect_hydrate][protect]" value="Protect" />
-                                        <div class="form-floating my-3">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Plant plants" id="protect1">
-                                                        <label class="form-check-label" for="protect1">Plant plants</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Sauces" id="protect2">
-                                                        <label class="form-check-label" for="protect2">Sauces</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Tempe" id="protect3">
-                                                        <label class="form-check-label" for="protect3">Tempe</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Tofu" id="protect4">
-                                                        <label class="form-check-label" for="protect4">Tofu</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Kidney beans" id="protect5">
-                                                        <label class="form-check-label" for="protect5">Kidney beans</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Black beans" id="protect6">
-                                                        <label class="form-check-label" for="protect6">Black beans</label>
-                                                    </div>
-                                                </div>
-                                                <!-- <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Vegetable protein" id="protect7">
-                                                        <label class="form-check-label" for="protect7">Vegetable protein</label>
-                                                    </div>
-                                                </div> -->
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Nuts" id="protect8">
-                                                        <label class="form-check-label" for="protect8">Nuts</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-check my-2">
-                                                        <input class="form-check-input" type="checkbox" name="ans[fuel_repeat_protect_hydrate][protect][]" value="Brazil nuts" id="protect9">
-                                                        <label class="form-check-label" for="protect9">Brazil nuts</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="bg-white text-end py-3 card-footer d-flex px-4">
-                                <button id="prev" type="button" class="btn btn-secondary me-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="4">Back</button>
-                                <button id="next" type="button" class="btn btn-primary ms-auto showStepTab prev-step pt-2 pb-2 px-4 py-4" target="6">Next</button>
-                            </div>
-                        </div>
-                    </div>
-                --}}
                     <div class="step-tab-box " id="div8">
                         <div class="card">
                             <div class="bg-white card-header p-4">
@@ -1638,7 +1476,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="step-tab-box" id="div9">
                         <div class="card">
                             <div class="bg-white card-header p-4">
@@ -1766,6 +1603,7 @@
                         <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
                     </div>
                     <h2 class="modal-title mb-2" id="thankYouModalLabel">Thank You!</h2>
+                    <input type="hidden" name="redirect_url" id="thankYouModalRedirectUrl" value="">
                     <p class="mb-2">Your form is submitted.</p>
                     <p class="mb-4">Your plan will be created by Kez and sent via email in the coming days.</p>
                     <button type="button" class="btn btn-primary w-50" data-bs-dismiss="modal">Close</button>
@@ -2015,11 +1853,8 @@
         const startingStep = {{ $nextStep ?? 1 }};
         const stepDataRaw = @json($stepData->toArray());
         const stepData = Object.values(stepDataRaw).flat();
-        console.log(stepData);
-        console.log(stepDataRaw);
         currentStep = startingStep - 1;
-        // console.log(currentStep);
-        // console.log(startingStep);
+
         // ✅ Initial display moved here
         showStep(currentStep);
         prefillData(currentStep);
@@ -2035,8 +1870,6 @@
             }
             return false;
         });
-
-        console.log("Alcohol Data:", alcoholData);
 
         if (alcoholData && alcoholData.answer) {
             // Try to parse the answer string
@@ -2181,32 +2014,6 @@
             }
         }
 
-        // document.body.addEventListener("click", function (e) {
-        //     const button = e.target.closest(".showStepTab");
-        //     if (!button) return;
-
-        //     targetStep = parseInt(button.getAttribute("target")) - 1;
-        //     console.log("Clicked Step Button => Target Step:", targetStep);
-
-        //     if (targetStep > currentStep && !validateStep(currentStep)) return;
-
-        //     if (targetStep > currentStep) {
-        //         saveStepData(currentStep, function (success) {
-        //             if (success) {
-        //                 currentStep = targetStep;
-        //                 showStep(currentStep);
-        //                 prefillData(currentStep);
-        //                 prefillFoodInputsOnStep(currentStep); // Prefill food data
-        //             }
-        //         });
-        //     }else {
-        //         currentStep = targetStep;
-        //         showStep(currentStep);
-        //         prefillData(currentStep);
-        //         prefillFoodInputsOnStep(currentStep); // Prefill food data
-        //     }
-        // });
-
         document.body.addEventListener("click", function (e) {
             const button = e.target.closest(".showStepTab");
             const stepCircle = e.target.closest(".tab-steps");
@@ -2342,93 +2149,6 @@
             return isValid;
         }
 
-        // function validateStep(stepIndex) {
-        //     const stepTab = stepTabs[stepIndex];
-        //     const inputs = stepTab.querySelectorAll("input, select, textarea");
-        //     let isValid = true;
-
-        //     // -------------------------
-        //     // INTENSITY FIELD HANDLING
-        //     // -------------------------
-        //     // const intensityFields = [
-        //     //     stepTab.querySelector('input[name="ans[physical_activity_and_exercise][intensity][Low Intensity]"]'),
-        //     //     stepTab.querySelector('input[name="ans[physical_activity_and_exercise][intensity][Moderate Intensity]"]'),
-        //     //     stepTab.querySelector('input[name="ans[physical_activity_and_exercise][intensity][High Intensity]"]')
-        //     // ].filter(Boolean); // remove nulls
-
-        //     // const isIntensityStep = stepTab.querySelector('input[name="questions[physical_activity_and_exercise][intensity]"]');
-
-        //     // if (isIntensityStep) {
-        //     //     const anyFilled = intensityFields.some(field => field.value.trim() !== '');
-        //     //     if (!anyFilled) {
-        //     //         // If none are filled, mark all 3 as invalid
-        //     //         intensityFields.forEach(field => {
-        //     //             field.style.border = "1px solid red";
-        //     //         });
-        //     //         isValid = false;
-        //     //     } else {
-        //     //         // If at least one is filled, clear all borders
-        //     //         intensityFields.forEach(field => {
-        //     //             field.style.border = "";
-        //     //         });
-        //     //     }
-        //     // }
-
-        //     // -------------------------
-        //     // OTHER FIELD VALIDATION
-        //     // -------------------------
-        //     inputs.forEach(input => {
-        //         const isHidden = input.offsetParent === null || getComputedStyle(input).display === 'none';
-        //         if (input.disabled || isHidden) return;
-
-        //         // Skip referral field
-        //         if (input.name === "ans[personal_details][referredBy]") return;
-
-        //         // Skip validation for intensity fields (already handled)
-        //         if (input.name?.startsWith("ans[physical_activity_and_exercise][intensity]")) return;
-
-        //         input.style.border = "";
-
-        //         const isTextInput =
-        //             input.type === "text" ||
-        //             input.type === "date" ||
-        //             input.type === "number" ||
-        //             input.tagName.toLowerCase() === "textarea" ||
-        //             input.tagName.toLowerCase() === "select";
-
-        //         if (isTextInput && !input.value.trim()) {
-        //             if (stepIndex === 6) {
-        //                 const isRequiredIfChecked = input.classList.contains('required-if-checked');
-        //                 const relatedCheckboxId = input.id + '_checkbox';
-        //                 const relatedCheckbox = document.getElementById(relatedCheckboxId);
-        //                 const isActuallyRequired = input.hasAttribute('required') || (isRequiredIfChecked && relatedCheckbox?.checked);
-
-        //                 if (isActuallyRequired) {
-        //                     input.style.border = "1px solid red";
-        //                     isValid = false;
-        //                 }
-        //             } else {
-        //                 input.style.border = "1px solid red";
-        //                 isValid = false;
-        //             }
-        //         }
-
-        //         if ((input.type === "radio" || input.type === "checkbox") && !document.querySelector(`input[name="${input.name}"]:checked`)) {
-        //             if (stepIndex === 6) {
-        //                 if (input.hasAttribute('required')) {
-        //                     input.style.border = "1px solid red";
-        //                     isValid = false;
-        //                 }
-        //             } else {
-        //                 input.style.border = "1px solid red";
-        //                 isValid = false;
-        //             }
-        //         }
-        //     });
-
-        //     return isValid;
-        // }
-
         function saveStepData(stepIndex, callback) {
             const stepTab = stepTabs[stepIndex];
 
@@ -2468,10 +2188,8 @@
                 success: function (res) {
                     if (res.success) {
                         if (res.redirect_url) {
+                            $('#thankYouModalRedirectUrl').val(res.redirect_url);
                             $('#thankYouModal').modal('show');
-                            // setTimeout(() => {
-                            //     window.location.href = res.redirect_url;
-                            // }, 3000);
 
                             $.ajax({
                                 url: "{{ route('front.questionnaire.send-mail') }}",
@@ -2627,7 +2345,6 @@
             });
         });
 
-
         // ✅ Real-time validation border cleanup
         document.addEventListener("input", function (e) {
             const input = e.target;
@@ -2684,9 +2401,21 @@
             }
         }
 
-
         $('#thankYouModal').on('hidden.bs.modal', function () {
-            window.location.href =  "{{ route('front.sub-home-page') }}"; // Redirect to home after modal is closed
+            // Get the user ID from the hidden input
+            const redirectUrl = $('#thankYouModalRedirectUrl').val();
+
+            if (redirectUrl) {
+                // User is already logged in from the controller, redirect to profile page
+                // Add a small delay to ensure the modal is fully closed
+                setTimeout(function() {
+                    window.location.href = redirectUrl;
+                }, 100);
+            } else {
+                // Fallback: redirect to home page if no user ID found
+                console.log('No user ID found, redirecting to home page...');
+                window.location.href = "{{ route('front.sub-home-page') }}";
+            }
         })
 
         // Prefill food checkboxes + hidden inputs on page load
@@ -3314,90 +3043,5 @@
             }
         });
     });
-
-    // $(document).ready(function() {
-    //     // Handle clicking on step circles
-    //     $('.tab-steps').on('click', function(e) {
-    //         console.log('clicked');
-    //         e.preventDefault();
-    //         const $this = $(this);
-    //         $this.removeClass('active');
-    //     });
-    // });
-    // document.addEventListener("DOMContentLoaded", () => {
-    //     // const nextButtons = document.querySelectorAll('.next-step');
-    //     // const prevButtons = document.querySelectorAll('.prev-step');
-    //     const stepCircles = document.querySelectorAll('.tab-steps');
-    //     const stepTabs = document.querySelectorAll(".step-tab-box");
-
-    //     let currentStep = 0; // Track the active step index
-
-    //     // Initially, show only the first step-tab-box
-    //     stepTabs.forEach((tab, index) => {
-    //         if (index === 0) {
-    //             tab.style.display = "block";
-    //         } else {
-    //             tab.style.display = "none";
-    //         }
-    //     });
-
-    //     // Show step tabs on direct click
-    //     document.querySelectorAll('.showStepTab').forEach(button => {
-    //         button.addEventListener('click', () => {
-    //             const target = parseInt(button.getAttribute('target'), 10) - 1;
-    //             if (target >= 0 && target < stepCircles.length) {
-    //                 // Set all steps before the target to active
-    //                 stepCircles.forEach((step, index) => {
-    //                     if (index <= target) {
-    //                         step.classList.add('active');
-    //                     } else {
-    //                         step.classList.remove('active');
-    //                     }
-    //                 });
-
-    //                 // Update step tabs
-    //                 stepTabs.forEach(tab => tab.style.display = "none");
-    //                 stepTabs[target].style.display = "block";
-    //                 currentStep = target;
-    //             }
-    //         });
-    //     });
-    // });
-
-
-    // $(document).ready(function () {
-    //     $('#submit-nutrition-form').on('click', function () {
-    //         // Serialize form data
-    //         event.preventDefault(); // Prevent the default form submission
-    //         var formData = $('#nutrition-screen-form').serialize();
-
-    //         $.ajaxSetup({
-    //             headers: {
-    //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-    //             }
-    //         });
-    //         // Serialize form data
-    //         // Perform AJAX request
-    //         $.ajax({
-    //             url: "{{ route('front.pre-plan-details.store') }}",
-    //             method: 'POST',
-    //             data: formData,
-    //             success: function (response) {
-    //                 // Show thank you modal
-    //                 $('#thankYouModal').modal('show');
-
-    //                 // Optional: Redirect after showing modal
-    //                 setTimeout(function () {
-    //                     window.location.href = response.redirect_url;
-    //                 }, 3000); // Redirect after 3 seconds
-    //             },
-    //             error: function (xhr, status, error) {
-    //                 console.error('Form submission failed:', xhr.responseText);
-    //                 alert('Something went wrong! Please try again.');
-    //             }
-    //         });
-    //     });
-    // });
-
 </script>
 @endsection
