@@ -1,5 +1,8 @@
 <?php
 
+// Increase memory limit to handle large data operations
+ini_set('memory_limit', '1G');
+
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
