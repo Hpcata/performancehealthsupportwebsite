@@ -54,19 +54,19 @@
                             <div class="fade-full"></div>
                             <div class="challenge-card clickable hover-card">
                                 <img src="{{ frontAssets('images/personalised-1.webp') }}" alt="personalised-1" />
-                                <h3>Energy breakfast: Oats with banana and berries</h3>
+                                <h3>Creamy oats topped with banana, berries, and chia for lasting energy.</h3>
                             </div>
                             <div class="challenge-card clickable hover-card">
                                 <img src="{{ frontAssets('images/personalised-2.webp') }}" alt="personalised-1" />
-                                <h3>Energy breakfast: Oats with banana and berries</h3>
+                                <h3>Char-grilled chicken with crisp salad in a soft pita pocket.</h3>
                             </div>
                             <div class="challenge-card clickable hover-card">
                                 <img src="{{ frontAssets('images/personalised-3.webp') }}" alt="personalised-1" />
-                                <h3>Energy breakfast: Oats with banana and berries</h3>
+                                <h3>Grilled chicken with rice, beans, corn, avocado, and fresh veg.</h3>
                             </div>
                             <div class="challenge-card clickable hover-card">
                                 <img src="{{ frontAssets('images/personalised-4.webp') }}" alt="personalised-1" />
-                                <h3>Energy breakfast: Oats with banana and berries</h3>
+                                <h3>Glazed tofu with broccoli, carrots, and capsicum over brown rice.</h3>
                             </div>
                         </div>
                     </div>

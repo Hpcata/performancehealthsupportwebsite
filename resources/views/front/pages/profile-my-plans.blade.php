@@ -44,9 +44,9 @@ and performance goals with expert guidance from Australia’s leading sports nut
                                 Dietitian Kerry O’Bryan.
                             </div>
                             <div class="consult-user-row">
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-1.svg') }}"
                                     class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-2.svg') }}"
                                     class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
                                 <span>12 meals</span>
                             </div>
@@ -72,9 +72,9 @@ and performance goals with expert guidance from Australia’s leading sports nut
                                 hydrated, fuelled & ON when it’s game time so that nutrition is never your weakness!
                             </div>
                             <div class="consult-user-row">
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-1.svg') }}"
                                     class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-2.svg') }}"
                                     class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
                                 <span>21 meals customised for you</span>
                             </div>
@@ -92,9 +92,9 @@ and performance goals with expert guidance from Australia’s leading sports nut
                                 nutrition is too often overlooked!
                             </div>
                             <div class="consult-user-row">
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-1.svg') }}"
                                     class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-2.svg') }}"
                                     class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
                                 <span>21 meals customised for you</span>
                             </div>
@@ -112,9 +112,9 @@ and performance goals with expert guidance from Australia’s leading sports nut
                                 the game!
                             </div>
                             <div class="consult-user-row">
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-1.svg') }}"
                                     class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-2.svg') }}"
                                     class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
                                 <span>21 meals customised for you</span>
                             </div>
@@ -132,9 +132,9 @@ and performance goals with expert guidance from Australia’s leading sports nut
                                 the game!
                             </div>
                             <div class="consult-user-row">
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-1.svg') }}"
                                     class="consult-avatar" alt="Kerry O'Bryan, expert coach avatar" />
-                                <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                                <img src="{{ asset('front/images/circled-meal-2.svg') }}"
                                     class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
                                 <span>21 meals customised for you</span>
                             </div>
@@ -193,9 +193,9 @@ and performance goals with expert guidance from Australia’s leading sports nut
                             </p>
                         </div>
                         <div class="consult-user-row">
-                            <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}" class="consult-avatar"
+                            <img src="{{ asset('front/images/circled-meal-1.svg') }}" class="consult-avatar"
                                 alt="Kerry O'Bryan, expert coach avatar" />
-                            <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                            <img src="{{ asset('front/images/circled-meal-1.svg') }}"
                                 class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
 
                             <span style="padding-left:0;">21 meals customised for you</span>
@@ -223,9 +223,9 @@ and performance goals with expert guidance from Australia’s leading sports nut
                             </p>
                         </div>
                         <div class="consult-user-row">
-                            <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}" class="consult-avatar"
+                            <img src="{{ asset('front/images/circled-meal-1.svg') }}" class="consult-avatar"
                                 alt="Kerry O'Bryan, expert coach avatar" />
-                            <img src="{{ asset('front/images/sports-training/fooditem6.svg') }}"
+                            <img src="{{ asset('front/images/circled-meal-1.svg') }}"
                                 class="consult-avatar overlap1" alt="Kerry O'Bryan, expert coach avatar" />
 
                             <span style="padding-left:0;">21 meals customised for you</span>
