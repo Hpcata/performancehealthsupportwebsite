@@ -37,11 +37,11 @@ use App\Services\StripeService;
 use App\Services\UrlService;
 use Carbon\Carbon;
 use Exception;
-use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -132,7 +132,8 @@ class FrontController extends Controller
         // Get age groups from constants
         $ageGroups = \App\Constants\AgeGroups::getAll();
 
-        $sports = SportGame::all();
+        // Get all sports as an alphabetically sorted array
+        $sports = SportGame::orderBy('name', 'asc')->get();
 
         return view('front.pages.sub-home-page', compact('page', 'plans', 'isAuthenticated', 'sportCategories', 'testimonials', 'ageGroups', 'sports'));
     }
@@ -196,7 +197,7 @@ class FrontController extends Controller
             $planIds = DB::table('payments')->where('email', $user->email)->where('status', 'succeeded')->orWhere('status', 'discount_applied')->pluck('plan_id')->toArray();
             if ($planIds) {
                 if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])) {
-                    if (! Auth::guard('web')->user()->isSuperAdmin()) {
+                    if (! Auth::guard('web')->user()->is_superadmin == 1) {
                         $redirectUrl = route('front.profile', ['id' => $user->id]); // Change this to the page you want
                         $click       = ActivityTracker::click('user_logged_in', $user->id);
 
@@ -1080,7 +1081,7 @@ class FrontController extends Controller
     public function samplePlan(Request $request)
     {
         $isAuthenticated = "";
-        $page = Page::with('sections')->where('slug', 'sample-plan')->first();
+        $page            = Page::with('sections')->where('slug', 'sample-plan')->first();
 
         if (! $page) {
             return redirect()->route('front.index')->with('error', 'Page not found.');
@@ -1732,9 +1733,7 @@ class FrontController extends Controller
 
             $userPlan = UserPlan::with([
                 'plan',
-            ])
-                ->where('user_id', $userId)
-                ->first();
+            ])->where('user_id', $userId)->first();
 
             // Also fetch the free_user column from the user table
             if (! $userPlan && $user->free_user) {
@@ -1747,7 +1746,7 @@ class FrontController extends Controller
                 $userPlan->free_user = $user->free_user ?? null;
             }
 
-            return view('front.pages.profile-landing', compact('userPlan'));
+            return view('front.pages.profile-landing', compact('userPlan', 'payment'));
         } catch (Exception $e) {
             // Log the error for debugging
             Log::error('Error fetching user profile: ' . $e->getMessage());
@@ -1824,7 +1823,7 @@ class FrontController extends Controller
 
     public function trainingNutritionPlan(Request $request)
     {
-        $page = Page::with('sections')->where('slug', 'training_nutrition_plan')->first();
+        $page        = Page::with('sections')->where('slug', 'training_nutrition_plan')->first();
         $planDetails = Plan::where('name', 'Training Nutrition Plan')->first();
 
         return view('front.pages.training_nutrition_plan', compact('page', 'planDetails'));

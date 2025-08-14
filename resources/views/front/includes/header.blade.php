@@ -6,13 +6,12 @@ $auth = auth()->guard('web')->check();
 
 @if (Route::is('front.profile') || Route::is('front.plans.details') || Route::is('front.my-plans'))
     <!-- Mobile Menu Overlay -->
-     <?php $user = auth()->user();?>
+    <?php $user = auth()->user();?>
     <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"
         style=" position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:1999;">
     </div>
     <header class="mobile-header">
-        <img src="{{ frontAssets('images/logo.svg') }}" alt="athleat logo" class="mobile-logo-img" width="140"
-            height="30" />
+        <img src="{{ frontAssets('images/logo.svg') }}" alt="athleat logo" class="mobile-logo-img" width="140"height="30" />
         <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" onclick="toggleMobileMenu()"
             style="background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;margin: 0 !important;">
             <span id="mobile-menu-icon">
@@ -26,20 +25,15 @@ $auth = auth()->guard('web')->check();
     <!-- Mobile Menu Markup -->
     <div class="mobile-menu" id="mobile-menu" style="z-index:2000;">
         <ul class="mobile-menu-list">
-            <!-- <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()"
-                    style="color: #fff; text-decoration: none; display: block; padding: 16px 16px;">My Plans</a></li> -->
-
             @if (Auth::check() && Auth::guard('web')->user()->is_superadmin == 0)
                 @php
                     $userId = Auth::guard('web')->user()->id;
                     $userPlan = \App\Models\UserPlan::with([
                         'plan',
-                    ])
-                    ->where('user_id', $userId)
-                    ->first();
+                    ])->where('user_id', $userId)->first();
 
                     $myPlanUrl = route('front.my-plans');
-                    if(isset($userPlan)){
+                    if (isset($userPlan)) {
                         $myPlanUrl = route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]);
                     }
                 @endphp
@@ -64,10 +58,6 @@ $auth = auth()->guard('web')->check();
             <li><a href="#" id="scanner-btn" class="scanner-btn">Supplement Scanner</a></li>
             <li><a href="#" class="coming-soon-popup">Level-Up Library</a></li>
             <li><a href="#" onclick="openBookingAndModal()">BioHealth Passport</a></li>
-            <!-- <li class="mobile-menu-link coming-soon-popup"><a href="#" onclick="toggleMobileMenu()"
-                    style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Store</a></li>
-            <li class="mobile-menu-link"><a href="#" onclick="toggleMobileMenu()"
-                    style="color: #fff; text-decoration: none; display: block; padding: 8px 16px;">Main Website</a></li> -->
             <li>
                 <div class="mobile-menu-divider" style="height:1px; background:#555; margin: 12px 16px;"></div>
             </li>
@@ -89,61 +79,60 @@ $auth = auth()->guard('web')->check();
         <header class="header">
             <div class="header-content">
                 <div class="logo">
+                    <a href="{{ route('front.sub-home-page') }}">
                     <img src="{{ frontAssets('images/logo.svg') }}" alt="Athleat Logo" class="logo-img" width="142"
                         height="30" />
+                    </a>
                 </div>
-                    @php
-                        $userId = Auth::guard('web')->user()->id;
-                        $userPlan = \App\Models\UserPlan::with([
-                            'plan',
-                        ])
-                        ->where('user_id', $userId)
-                        ->first();
+                @php
+                    $userId = Auth::guard('web')->user()->id;
+                    $userPlan = \App\Models\UserPlan::with([
+                        'plan',
+                    ])->where('user_id', $userId)->first();
 
-                        $myPlanUrl = route('front.my-plans');
-                        if(isset($userPlan)){
-                            $myPlanUrl = route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]);
-                        }
-                    @endphp
-                    <nav class="nav-center">
-                        <!-- <a class="text-decoration-none nav-item" href="{{ route('front.my-plans') }}">My Plans</a> -->
-                        <a class="text-decoration-none nav-item" href="{{ route('front.profile', ['id' => Auth::guard('web')->user()->id]) }}">Home</a>
-                        <span class="nav-item coming-soon-popup">Challenges and Rewards</span>
-                        <div class="nav-item dropdown">
-                            <span>Resources <i class="fas fa-chevron-down"></i></span>
-                            <div class="dropdown-content">
-                                <a href="#" id="scanner-btn" class="scanner-btn">Supplement Scanner</a>
-                                <a href="#" class="coming-soon-popup">Level-Up Library</a>
-                                <a href="#" onclick="openBookingAndModal()">BioHealth
-                                    Passport</a>
-                            </div>
+                    $myPlanUrl = route('front.my-plans');
+                    if (isset($userPlan)) {
+                        $myPlanUrl = route('front.plans.details', ['id' => $userPlan->plan->id, 'user_id' => $userPlan->user->id]);
+                    }
+                @endphp
+                <nav class="nav-center">
+                    <a class="text-decoration-none nav-item" href="{{ route('front.profile', ['id' => Auth::guard('web')->user()->id]) }}">Home</a>
+                    <span class="nav-item coming-soon-popup">Challenges and Rewards</span>
+                    <div class="nav-item dropdown">
+                        <span>Resources <i class="fas fa-chevron-down"></i></span>
+                        <div class="dropdown-content">
+                            <a href="#" id="scanner-btn" class="scanner-btn">Supplement Scanner</a>
+                            <a href="#" class="coming-soon-popup">Level-Up Library</a>
+                            <a href="#" onclick="openBookingAndModal()">BioHealth
+                                Passport</a>
                         </div>
-                    </nav>
-                    <div class="nav-right">
-                        <div class="nav-item dropdown">
-                            <div class="nav-end">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
-                                    fill="none">
-                                    <path
-                                        d="M9 9C10.1935 9 11.3381 8.52589 12.182 7.68198C13.0259 6.83807 13.5 5.69347 13.5 4.5C13.5 3.30653 13.0259 2.16193 12.182 1.31802C11.3381 0.474106 10.1935 0 9 0C7.80653 0 6.66193 0.474106 5.81802 1.31802C4.97411 2.16193 4.5 3.30653 4.5 4.5C4.5 5.69347 4.97411 6.83807 5.81802 7.68198C6.66193 8.52589 7.80653 9 9 9ZM7.39336 10.6875C3.93047 10.6875 1.125 13.493 1.125 16.9559C1.125 17.5324 1.59258 18 2.16914 18H15.8309C16.4074 18 16.875 17.5324 16.875 16.9559C16.875 13.493 14.0695 10.6875 10.6066 10.6875H7.39336Z"
-                                        fill="white" />
-                                </svg>
-                                <span>My Account <i class="fas fa-chevron-down"></i></span>
-                            </div>
-                            <div class="dropdown-content">
-                                <a href="{{ $myPlanUrl }}">My Plan</a>
-                                <form id="logout-form" action="{{ route('front.logout') }}" method="POST"
-                                    style="display: none;">
-                                    @csrf
-                                </form>
-                                <a class="p-2 dropdown-item" style="padding:0.75rem 1rem !important;" href="#"
-                                    onclick="handleLogout(event)">
-                                    Sign Out
-                                </a>
-                            </div>
+                    </div>
+                </nav>
+                <div class="nav-right">
+                    <div class="nav-item dropdown">
+                        <div class="nav-end">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
+                                fill="none">
+                                <path
+                                    d="M9 9C10.1935 9 11.3381 8.52589 12.182 7.68198C13.0259 6.83807 13.5 5.69347 13.5 4.5C13.5 3.30653 13.0259 2.16193 12.182 1.31802C11.3381 0.474106 10.1935 0 9 0C7.80653 0 6.66193 0.474106 5.81802 1.31802C4.97411 2.16193 4.5 3.30653 4.5 4.5C4.5 5.69347 4.97411 6.83807 5.81802 7.68198C6.66193 8.52589 7.80653 9 9 9ZM7.39336 10.6875C3.93047 10.6875 1.125 13.493 1.125 16.9559C1.125 17.5324 1.59258 18 2.16914 18H15.8309C16.4074 18 16.875 17.5324 16.875 16.9559C16.875 13.493 14.0695 10.6875 10.6066 10.6875H7.39336Z"
+                                    fill="white" />
+                            </svg>
+                            <span>My Account <i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="{{ $myPlanUrl }}">My Plan</a>
+                            <form id="logout-form" action="{{ route('front.logout') }}" method="POST"
+                                style="display: none;">
+                                @csrf
+                            </form>
+                            <a class="p-2 dropdown-item" style="padding:0.75rem 1rem !important;" href="#"
+                                onclick="handleLogout(event)">
+                                Sign Out
+                            </a>
                         </div>
                     </div>
                 </div>
+            </div>
         </header>
     @else
         @php $id = request()->route('id'); @endphp
@@ -154,7 +143,6 @@ $auth = auth()->guard('web')->check();
                         height="30" />
                 </div>
                     <nav class="nav-center">
-                        <!-- <a class="text-decoration-none nav-item" href="{{ route('front.my-plans') }}">My Plans</a> -->
                         <a class="text-decoration-none nav-item" href="{{ route('front.profile', ['id' => $id]) }}?admin_view=1">Home</a>
                         <span class="nav-item coming-soon-popup">Challenges and Rewards</span>
                         <div class="nav-item dropdown">
@@ -177,15 +165,17 @@ $auth = auth()->guard('web')->check();
                 </div>
         </header>
     @endif
-@elseif(Route::is('front.sub-home-page') ||
-        Route::is('front.training.nutrition.plan') ||
-        Route::is('front.competition.plan') ||
-        Route::is('front.injury.recovery.plan') ||
-        Route::is('front.about-us'))
+@elseif(
+    Route::is('front.sub-home-page') ||
+    Route::is('front.training.nutrition.plan') ||
+    Route::is('front.competition.plan') ||
+    Route::is('front.injury.recovery.plan') ||
+    Route::is('front.about-us')
+)
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-custom homepage-navbar">
         <div class="container-homepage">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{{ route('front.sub-home-page') }}">
                 <img src="{{ frontAssets('images/logo.svg') }}" alt="ATHLEAT Fuel Logo" />
             </a>
             <div class="mob-btn-wrap">
@@ -193,8 +183,8 @@ $auth = auth()->guard('web')->check();
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     style="border: none">
                     <span class="menu-icon" style="color: white">
-                        <img src="{{ frontAssets('images/bars.svg') }}" alt="ATHLEAT Fuel Logo" class="bars-icon" />
-                        <img src="{{ frontAssets('images/cross.svg') }}" alt="Menu" class="cross-icon" />
+                        <img href="{{ route('front.sub-home-page') }}" src="{{ frontAssets('images/bars.svg') }}" alt="ATHLEAT Fuel Logo" class="bars-icon" />
+                        <img href="{{ route('front.sub-home-page') }}" src="{{ frontAssets('images/cross.svg') }}" alt="Menu" class="cross-icon" />
                     </span>
                 </button>
             </div>
@@ -203,9 +193,6 @@ $auth = auth()->guard('web')->check();
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('front.sub-home-page') }}">Home</a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li> -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             Services
@@ -308,11 +295,7 @@ $auth = auth()->guard('web')->check();
                                                         My Profile
                                                     </a>
                                                 </li>
-                                                <!-- <li>
-                                        <a class="p-2 text-dark dropdown-item" href="">View My Plan</a>
-                                    </li> -->
                                                 <li>
-                                                    <!-- Logout form (hidden) -->
                                                     <form id="logout-form" action="{{ route('front.logout') }}"
                                                         method="POST" style="display: none;">
                                                         @csrf
@@ -381,6 +364,21 @@ $auth = auth()->guard('web')->check();
         </div>
     </div>
 @endif
+
+@include('front.modal.single-signup')
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css">
+<script>
+    window.otpRoutes = {
+        sendOtp: "{{ route('front.otp.send') }}",
+        verifyOtp: "{{ route('front.otp.verify') }}",
+        resendOtp: "{{ route('front.otp.resend') }}",
+        registerWithOtp: "{{ route('front.otp.register') }}"
+    }
+</script>
+<script src="{!! frontAssets('js/jquery-3.6.min.js') !!}"></script>
+<script src="{!! frontAssets('js/otp-registration.js') !!}"></script>
+<script src="{!! frontAssets('js/single-signup.js') !!}"></script>
 
 <script>
     function handleLogout(event) {
@@ -505,7 +503,8 @@ $auth = auth()->guard('web')->check();
             overlay.classList.add('open');
             document.body.style.overflow = 'hidden';
             hamburgerIcon.style.display = 'none';
-            closeIcon.style.display = 'inline';}
+            closeIcon.style.display = 'inline';
+        }
     }
 
     function openSingupFreePopup(isLogin = false, isQuiz = false) {
@@ -528,7 +527,6 @@ $auth = auth()->guard('web')->check();
                 $('#signupModalathlete #existing-user-login').removeClass('d-none');
             }
         }
-
 
         $('#signupModalathlete').modal('show');
     }
@@ -684,7 +682,7 @@ $auth = auth()->guard('web')->check();
         document.querySelectorAll('.scroll-to-plans').forEach(function(link) {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                
+
                 // Close mobile menu if open
                 const navbarCollapse = document.querySelector('.navbar-collapse');
                 if (navbarCollapse && navbarCollapse.classList.contains('show')) {
@@ -693,7 +691,7 @@ $auth = auth()->guard('web')->check();
                         navbarToggler.click();
                     }
                 }
-                
+
                 // Find the target section
                 const targetSection = document.querySelector('.choose-plan-section');
                 if (targetSection) {

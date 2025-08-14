@@ -4,6 +4,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{!! frontAssets('js/bootstrap/bootstrap-5.3.min.js') !!}"></script>
     <script src="{!! frontAssets('js/tiny-slider.js') !!}"></script>
+    <script src="{!! frontAssets('js/coming-soon.js') !!}"></script>
 @else
     <script src="{!! frontAssets('js/aos.js') !!}"></script>
     <script src="{!! frontAssets('js/navbar.js') !!}"></script>

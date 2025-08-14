@@ -65,9 +65,6 @@
                                 </td>
                                 <td>{{ $user->created_at->format('d M Y H:i') }}</td>
                                 <td>
-                                    <!-- <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary view-user-details" data-user-id="{{ $user->id }}">
-                                        <i class="icofont-eye text-primary"></i>
-                                    </a> -->
                                     <a href="{{ route('front.profile', ['id' => $user->id]) }}" class="btn btn-sm btn-outline-success" target="_blank">
                                         <i class="icofont-user text-success"></i>
                                     </a>
@@ -79,7 +76,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                    
                 </div>
             </div>
         </div>
@@ -140,7 +136,7 @@ $(document).ready(function() {
     // Handle user details view
     $('.view-user-details').click(function() {
         const userId = $(this).data('user-id');
-        
+
         $.ajax({
             url: '{{ route("admin.user.details") }}',
             method: 'GET',
@@ -160,7 +156,7 @@ $(document).ready(function() {
                                 <p><strong>Last Updated:</strong> ${new Date(user.updated_at).toLocaleString()}</p>
                             </div>
                         </div>`;
-                    
+
                     $('#userDetailsModal .modal-body').html(modalContent);
                     $('#userDetailsModal').modal('show');
                 }
@@ -176,12 +172,12 @@ $(document).ready(function() {
         // alert('delete');
         const userId = $(this).data('user-id');
         const userName = $(this).data('user-name');
-        
+
         $('#deleteUserName').text(userName);
         $('#deleteUserForm').attr('action', '{{ route("admin.users.destroy", "") }}/' + userId);
         $('#deleteUserModal').modal('show');
     });
 });
 </script>
-@endpush 
+@endpush
 @endsection

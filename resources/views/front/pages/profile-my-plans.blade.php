@@ -51,7 +51,7 @@ and performance goals with expert guidance from Australia’s leading sports nut
                                 <span>12 meals</span>
                             </div>
                         </div>
-                        <button class="btn-consult" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn
+                        <button class="btn-consult" onclick="window.location.href='{{ route('front.training.nutrition.plan') }}'">Learn
                             more</button>
                     </div>
                 </div>
@@ -245,96 +245,5 @@ $(document).ready(function() {
         $('#comingSoonModal').modal('show');
     });
 });
-// Learn more tooltip functionality
-function showLearnMoreTooltip(button, planType) {
-    // Remove any existing learn more tooltips
-    const existingTooltip = document.querySelector('.learn-more-tooltip');
-    if (existingTooltip) {
-        existingTooltip.remove();
-    }
-
-    // Create tooltip element
-    const tooltip = document.createElement('div');
-    tooltip.className = 'learn-more-tooltip';
-    tooltip.textContent = `${planType} `;
-
-    // Position tooltip above the button
-    const buttonRect = button.getBoundingClientRect();
-    tooltip.style.position = 'fixed';
-    tooltip.style.top = (buttonRect.top - 45) + 'px';
-    tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
-    tooltip.style.zIndex = '9999';
-
-    // Add tooltip to body
-    document.body.appendChild(tooltip);
-
-    // Auto-hide tooltip after 3 seconds
-    setTimeout(() => {
-        const tooltipToRemove = document.querySelector('.learn-more-tooltip');
-        if (tooltipToRemove) {
-            tooltipToRemove.remove();
-        }
-    }, 3000);
-}
-
-// Add CSS for tooltip
-const tooltipStyle = document.createElement('style');
-tooltipStyle.textContent = `
-            .coming-soon-tooltip {
-            background-color: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: tooltipFadeIn 0.3s ease-out;
-            white-space: nowrap;
-          }
-
-          .coming-soon-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #333;
-          }
-
-          .learn-more-tooltip {
-             background-color: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: tooltipFadeIn 0.3s ease-out;
-            white-space: nowrap;
-          }
-
-          .learn-more-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #333;
-          }
-
-          @keyframes tooltipFadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-            `;
-document.head.appendChild(tooltipStyle);
 </script>
 @endsection

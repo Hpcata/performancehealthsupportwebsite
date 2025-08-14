@@ -2,6 +2,9 @@
 
 // use Route;
 use Carbon\Carbon;
+use App\Models\SportGame;
+use App\Constants\AgeGroups;
+use Illuminate\Support\Facades\Auth;
 
 // APP FUNCTIONS
 function appName() {
@@ -121,7 +124,7 @@ function cleanDecimal($value)
 
 function getAdminProfileImage()
 {
-    $admin = \Auth::guard('admin')->user();
+    $admin = Auth::guard('admin')->user();
 
     if ($admin && !empty($admin->profile_image)) {
         return asset($admin->profile_image);
@@ -154,4 +157,16 @@ function scaleNutritionValue($value, $num_servings)
     } else {
         return $scaled . $unit;
     }
+}
+
+// Get age groups from constants
+function getAgeGroups()
+{
+    return AgeGroups::getAll();
+}
+
+// Get all sports as an alphabetically sorted array
+function getSports()
+{
+    return SportGame::orderBy('name', 'asc')->get();
 }

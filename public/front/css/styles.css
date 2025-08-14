@@ -234,6 +234,7 @@ body {
     width: max-content;
     border-radius: 6px;
     border: 1px solid var(--Blue-600, #4a84dd);
+    position: relative;
 }
 
 .btn-signup:hover,
