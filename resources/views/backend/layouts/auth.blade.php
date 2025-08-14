@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>::eBazar:: @yield('title')</title>
-	<link rel="icon" href="{{ url('/') }}/favicon.ico" type="image/x-icon"> <!-- Favicon-->
+	<link rel="icon" href="{{ url('/') }}/favicon.svg" type="image/x-icon"> <!-- Favicon-->
 
 	@stack('styles')
 

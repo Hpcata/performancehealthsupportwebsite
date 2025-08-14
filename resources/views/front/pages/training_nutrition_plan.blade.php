@@ -64,7 +64,7 @@
 
             @if($section->section_type == \App\Models\Section::TYPE_PLAN_INTERESTS && $section->enabled == 1) <!-- done -->
                 <section class="recommended-plans-section">
-                    <div class="container">
+                    <div class="container-homepage">
                         <h2 class="section-title">{{ $section->title }}</h2>
                         {!! $section->content !!}
 
@@ -75,7 +75,7 @@
                                 <h3 class="card-title">Competition Plan</h3>
                                 <p class="card-description">A personalised 24-hour competition plan designed to fuel peak
                                     performance when it matters most.</p>
-                                <button class="btn-signup">Learn more</button>
+                                <button class="btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                                 <img src="{{ frontAssets('images/training-nutrition-plan/card-1.webp') }}" alt="Competition Plan"
                                     class="left-card-image card-image">
                             </div>
@@ -86,7 +86,7 @@
                                 <h3 class="card-title">Injury & Recovery Plan</h3>
                                 <p class="card-description">A targeted mix of healing meals, expert tips, and supplement guidance to
                                     speed recovery, reduce inflammation, and rebuild strength.</p>
-                                <button class="btn-signup">Learn more</button>
+                                <button class="btn-signup" onclick="showLearnMoreTooltip(this, 'Coming Soon')">Learn more</button>
                                 <img src="{{ frontAssets('images/training-nutrition-plan/card-2.webp') }}" alt="Injury & Recovery Plan"
                                     class="right-card-image card-image">
                             </div>
@@ -119,7 +119,7 @@
                                 <!-- singup/login  -->
                                 <img src="{{ frontAssets('images/athleat_logo_full_colour.svg') }}" alt="ATHLEAT Fuel Logo"
                                     width="168" height="19" style="margin-bottom: 47px;" />
-                                <h2 class="welcome-title">Welcome to Athleat</h2>
+                                <h2 class="welcome-title">Welcome to ATHLEAT</h2>
                             </div>
                             <!-- or -->
                             <div class='quiz-h2-title d-none'>
@@ -495,6 +495,98 @@
             ] : null),
             env: "{{ env('APP_ENV') }}"
         };
+
+            // Learn more tooltip functionality
+        function showLearnMoreTooltip(button, planType) {
+            // Remove any existing learn more tooltips
+            const existingTooltip = document.querySelector('.learn-more-tooltip');
+            if (existingTooltip) {
+                existingTooltip.remove();
+            }
+
+            // Create tooltip element
+            const tooltip = document.createElement('div');
+            tooltip.className = 'learn-more-tooltip';
+            tooltip.textContent = `${planType} `;
+
+            // Position tooltip above the button
+            const buttonRect = button.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = (buttonRect.top - 45) + 'px';
+            tooltip.style.left = (buttonRect.left + buttonRect.width / 2 - 80) + 'px';
+            tooltip.style.zIndex = '9999';
+
+            // Add tooltip to body
+            document.body.appendChild(tooltip);
+
+            // Auto-hide tooltip after 3 seconds
+            setTimeout(() => {
+                const tooltipToRemove = document.querySelector('.learn-more-tooltip');
+                if (tooltipToRemove) {
+                    tooltipToRemove.remove();
+                }
+            }, 3000);
+        }
+
+        // Add CSS for tooltip
+        const tooltipStyle = document.createElement('style');
+        tooltipStyle.textContent = `
+                .coming-soon-tooltip {
+                background-color: #333;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                animation: tooltipFadeIn 0.3s ease-out;
+                white-space: nowrap;
+              }
+
+              .coming-soon-tooltip::after {
+                content: '';
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border: 6px solid transparent;
+                border-top-color: #333;
+              }
+
+              .learn-more-tooltip {
+                 background-color: #333;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                animation: tooltipFadeIn 0.3s ease-out;
+                white-space: nowrap;
+              }
+
+              .learn-more-tooltip::after {
+                content: '';
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border: 6px solid transparent;
+                border-top-color: #333;
+              }
+
+              @keyframes tooltipFadeIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(20px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+                `;
+        document.head.appendChild(tooltipStyle);
     </script>
 
     <script src="{!! frontAssets('js/purchase-plan.js') !!}"></script>

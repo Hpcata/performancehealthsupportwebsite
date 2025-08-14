@@ -1046,12 +1046,12 @@ body {
     background: #e0ecfd;
     color: #174ea6;
     align-items: flex-start;
-    padding: 18px 24px;
+    padding: 12px 16px;
     box-shadow: none;
 }
 
 .resource-tip .tip-title {
-    font-size: 18px;
+    font-size: 16px;
     margin-bottom: 8px;
 }
 
@@ -4211,6 +4211,7 @@ button:focus,
     align-items: center;
     text-align: center;
     box-shadow: 0 2px 16px 0 rgb(30 41 59 / 0.1);
+    width: 100%;
 }
 
 
@@ -4317,4 +4318,26 @@ button:focus,
   100% {
     width: 70%;
   }
+}
+
+.button-wrapper{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 20px 0;
+    gap: 16px;   
+}
+
+/* Fix for training-load-dropdown overlapping issue */
+.training-load-dropdown .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    transform: none !important;
+    margin-top: 5px !important;
+    width: 100% !important;
+}
+
+.training-load-dropdown {
+    position: relative !important;
 }

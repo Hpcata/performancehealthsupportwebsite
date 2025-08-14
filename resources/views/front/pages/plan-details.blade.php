@@ -39,7 +39,27 @@
         </div>
     </div>
     <div class="container">
-        <div class="dropdown action-buttons">
+        <div class="button-wrapper">
+            <button class="btn btn-share ">
+                <a href="#" class="ms-0 print-plan-btn" data-user-id="{{ $user->id}}" data-plan-id="{{ $plan->id}}" style="text-decoration:none; color:#3b3b3b">View plan</a>
+            </button>
+            <button class="btn-outline btn" id="shoppingList" data-bs-toggle="modal" data-bs-target="#shoppingListModal">Shopping list</button>
+            <button class="btn btn-share coming-soon-popup" type="button" id="">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <g clip-path="url(#clip0_3008_7695)">
+                        <path d="M0.888672 8.50124V14.3194C0.888672 14.7052 1.07597 15.0752 1.40937 15.3479C1.74277 15.6207 2.19495 15.774 2.66645 15.774H13.3331C13.8046 15.774 14.2568 15.6207 14.5902 15.3479C14.9236 15.0752 15.1109 14.7052 15.1109 14.3194V8.50124M11.5553 4.13761L7.99978 1.22852M7.99978 1.22852L4.44423 4.13761M7.99978 1.22852V10.6831" stroke="#3B3B3B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_3008_7695">
+                        <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+                    Share
+            </button>
+            
+        </div>    
+        <!-- <div class="dropdown action-buttons">
             <button class="btn btn-share dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                 <g clip-path="url(#clip0_3008_7695)">
@@ -75,7 +95,7 @@
                 </li>
             </ul>
             <button class="btn-outline btn" id="shoppingList" data-bs-toggle="modal" data-bs-target="#shoppingListModal">Shopping list</button>
-        </div>
+        </div> -->
         <!-- Meal Sections -->
         <section aria-label="Meal Plan Categories">
             <!-- Sweet Breakfast -->
@@ -176,12 +196,12 @@
                 <h2>Main Meal Plate Portions</h2>
             </div>
             <p>
-                Your carb and veggie portions vary by meal type and training load
-                for peak performance. Protein stays the same. See the ideal ratios
-                and what foods to choose below.
+                Your carb and veggie portions vary by meal type and training 
+                load for peak performance. Your protein, however, stays the 
+                same. Select your training load below to view: 
             </p>
             <div class="dropdown dropdown-container training-load-dropdown">
-                <label class="dropdown-label">Training load</label>
+                <!-- <label class="dropdown-label">Training load</label> -->
                 <button class="btn custom-dropdown-button dropdown-toggle" type="button" id="trainingLoadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="custom-dropdown-content">
                         <div class="custom-dropdown-content-inner">
@@ -202,20 +222,14 @@
                     </li>
                     <li>
                         <div class="custom-dropdown-option" data-value="moderate" data-image="{{ webAssets('front/images/medium-load.png') }}">
-                            <div class="option-title">Moderate</div>
-                            <div class="option-subtitle">Balanced training and recovery</div>
+                            <div class="option-title">Medium </div>
+                            <div class="option-subtitle">Training days</div>
                         </div>
                     </li>
                     <li>
-                        <div class="custom-dropdown-option" data-value="high" data-image="{{ webAssets('front/images/high-load.png') }}">
-                            <div class="option-title">High</div>
-                            <div class="option-subtitle">Intense training, peak performance</div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="custom-dropdown-option" data-value="peak" data-image="{{ webAssets('front/images/high-load.png') }}">
-                            <div class="option-title">Peak</div>
-                            <div class="option-subtitle">Maximum load, competition ready</div>
+                        <div class="custom-dropdown-option" data-value="high" data-image="{{ webAssets('front/images/high-load.svg') }}">
+                            <div class="option-title">High </div>
+                            <div class="option-subtitle">Competition or heavy training days</div>
                         </div>
                     </li>
                 </ul>
@@ -237,6 +251,18 @@
                     class="plate-img"
                     id="plate-img"/>
                 <ul style="list-style: none; padding-left: 0; font-size: 1rem">
+                     <li class="list-w-image">
+                        <img
+                            src="{{ webAssets('front/images/boiled egg.svg') }}"
+                            alt="Plate like this image"
+                            style="width: 32px; height: auto"
+                            width="32"
+                            height="33" />
+                        <div>
+                            <span style="color: #A60015; font-weight: bold">Protein: Repair foods</span>
+                            <br />Keep one-quarter of the plate for protein. Choose soft, lean sources like boiled eggs, tofu, fish, or skinless chicken.
+                        </div>
+                    </li>
                     <li class="list-w-image">
                         <img
                             src="{{ webAssets('front/images/Bread.svg') }}"
@@ -246,7 +272,7 @@
                             height="33" />
                         <div>
                             <span style="color: #967500; font-weight: bold">Carbs: Fuel</span>
-                            <br />Get your carbs from bread or cereal at breakfast.
+                            <br />Choose easily digestible carbs like boiled potatoes, white rice, or white bread. Avoid high-fiber or heavy grains before surgery.
                         </div>
                     </li>
                     <li class="list-w-image">
@@ -258,21 +284,10 @@
                             height="33" />
                         <div>
                             <span style="color: #3E8E00; font-weight: bold">Fruit and vegetables: Protect</span>
-                            <br />A quarter must be colourful fruit and vegetables.
+                            <br />Lightly cooked or peeled vegetables are easier on the gut. Go for colorful but low-fiber options like carrots, zucchini, or bell peppers.
                         </div>
                     </li>
-                    <li class="list-w-image">
-                        <img
-                            src="{{ webAssets('front/images/boiled egg.svg') }}"
-                            alt="Plate like this image"
-                            style="width: 32px; height: auto"
-                            width="32"
-                            height="33" />
-                        <div>
-                            <span style="color: #A60015; font-weight: bold">Protein: Repair foods</span>
-                            <br />One quarter stays protein. Try eggs or dairy.
-                        </div>
-                    </li>
+                   
                 </ul>
             </div>
         </section>
@@ -738,7 +753,7 @@
 
     });
 
-    window.logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO8AAAAiCAYAAAC3Bo7TAAAACXBIWXMAABYlAAAWJQFJUiTwAAAFGmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjUtMDYtMzBUMDg6Mjc6MTIrMDU6MzAiIHhtcDpNb2RpZnlEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI1LTA2LTMwVDA5OjI0OjM1KzA1OjMwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjJlOTY2MjBmLWU4YWQt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'; // Replace with base64 logo image
+    window.logoBase64 = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAzIiBoZWlnaHQ9IjQ1IiB2aWV3Qm94PSIwIDAgMjAzIDQ1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNODguNjI3IDMyLjU5OTZWNDIuNDU0MUg5Ni40MDA0VjQ0LjQwMDRIODYuNTk5NlYzMi41OTk2SDg4LjYyN1oiIGZpbGw9IiM2NDlFRjciIHN0cm9rZT0iIzY0OUVGNyIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KPHBhdGggZD0iTTEzNS4yMTggMzIuNTk5NlYzNC41NDU5SDEyNi42NVYzNy40MTIxSDEzNC44NTlWMzkuMzU4NEgxMjYuNjVWNDIuNDU0MUgxMzUuNFY0NC40MDA0SDEyNC42VjMyLjU5OTZIMTM1LjIxOFoiIGZpbGw9IiM2NDlFRjciIHN0cm9rZT0iIzY0OUVGNyIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KPHBhdGggZD0iTTgwLjU5NTcgMzIuNTk5NlYzNC41NDU5SDcyLjU3MTNWMzcuNDEyMUg4MC4yNjA3VjM5LjM1ODRINzIuNTcxM1Y0Mi40NTQxSDgwLjc2NjZWNDQuNDAwNEg3MC41OTk2VjMyLjU5OTZIODAuNTk1N1oiIGZpbGw9IiM2NDlFRjciIHN0cm9rZT0iIzY0OUVGNyIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KPHBhdGggZD0iTTEwMy43MzMgMC42NTAzOTFWMjAuMTkxNEgxMjEuMDAyVjIzLjE2NDFIMTAwLjMwN1YwLjY1MDM5MUgxMDMuNzMzWiIgZmlsbD0iIzY0OUVGNyIgc3Ryb2tlPSIjNjQ5RUY3IiBzdHJva2Utd2lkdGg9IjAuNyIvPgo8cGF0aCBkPSJNNzIuNzc0NCAwLjY1MDM5MVYxMC4xOTM0SDkyLjA3MDNWMC42NTAzOTFIOTUuNDk3MVYyMy4xNjQxSDkyLjA3MDNWMTMuMTY2SDcyLjc3NDRWMjMuMTY0MUg2OS4zNDc3VjAuNjUwMzkxSDcyLjc3NDRaIiBmaWxsPSIjNjQ5RUY3IiBzdHJva2U9IiM2NDlFRjciIHN0cm9rZS13aWR0aD0iMC43Ii8+CjxwYXRoIGQ9Ik0xMTkuMzUgMzIuNjUwNFYzNC40OTYxSDExNC45MDVWNDQuMzQ5NkgxMTMuMDk1VjM0LjQ5NjFIMTA4LjY1VjMyLjY1MDRIMTE5LjM1WiIgZmlsbD0iIzY0OUVGNyIgc3Ryb2tlPSIjNjQ5RUY3IiBzdHJva2Utd2lkdGg9IjAuNyIvPgo8cGF0aCBkPSJNMjYuMjcwNSAwLjY1MDM5MUwyNi4zNzIxIDAuODIzMjQyTDM5LjA5NjcgMjIuNjM3N0wzOS40MDMzIDIzLjE2NDFIMzUuNDA1M0wzNS4zMDU3IDIyLjk4MTRMMzIuNjc4NyAxOC4xNjVIMTUuODI0MkwxMy4xOTczIDIyLjk4MTRMMTMuMDk3NyAyMy4xNjQxSDkuMDk5NjFMOS40MDYyNSAyMi42Mzc3TDIyLjEzMTggMC44MjMyNDJMMjIuMjMyNCAwLjY1MDM5MUgyNi4yNzA1Wk0xNy41ODMgMTUuMTkyNEgzMC45MTk5TDI0LjI1MSAzLjUyMzQ0TDE3LjU4MyAxNS4xOTI0WiIgZmlsbD0iIzY0OUVGNyIgc3Ryb2tlPSIjNjQ5RUY3IiBzdHJva2Utd2lkdGg9IjAuNyIvPgo8cGF0aCBkPSJNMjAyLjIyMyAwLjVWMy43OTE5OUgxOTIuMTQzVjIzLjVIMTg4LjYyM1YzLjc5MTk5SDE3OC41NDNWMC41SDIwMi4yMjNaIiBmaWxsPSIjM0IzQjNCIiBzdHJva2U9IiMzQjNCM0IiLz4KPHBhdGggZD0iTTE2Ny42MTEgMC41TDE2Ny43NTIgMC43NjQ2NDhMMTc5LjUxMyAyMi43NjQ2TDE3OS45MDUgMjMuNUgxNzUuODIyTDE3NS42ODUgMjMuMjIzNkwxNzMuMzAyIDE4LjQ1OEgxNTcuOTYxTDE1NS41NzkgMjMuMjIzNkwxNTUuNDQgMjMuNUgxNTEuMzU3TDE1MS43NSAyMi43NjQ2TDE2My41MTEgMC43NjQ2NDhMMTYzLjY1MSAwLjVIMTY3LjYxMVpNMTU5LjczNyAxNS4xNjdIMTcxLjUyNUwxNjUuNjMxIDMuOTExMTNMMTU5LjczNyAxNS4xNjdaIiBmaWxsPSIjM0IzQjNCIiBzdHJva2U9IiMzQjNCM0IiLz4KPHBhdGggZD0iTTE0Ni40NDMgMC41VjMuNzkxOTlIMTI5LjE3VjEwLjEyNUgxNDUuNzIxVjEzLjQxN0gxMjkuMTdWMjAuMjA4SDE0Ni44MTFWMjMuNUgxMjUuNjVWMC41SDE0Ni40NDNaIiBmaWxsPSIjM0IzQjNCIiBzdHJva2U9IiMzQjNCM0IiLz4KPHBhdGggZD0iTTIuNDE1MzQgMzZINjNMNjEgMzlIMEwyLjQxNTM0IDM2WiIgZmlsbD0iIzY0OUVGNyIvPgo8cGF0aCBkPSJNMTQ0LjAwMSAzNkgyMDJMMjAwIDM5SDE0MkwxNDQuMDAxIDM2WiIgZmlsbD0iIzY0OUVGNyIvPgo8cGF0aCBkPSJNMTAzLjM1IDMyLjY1MDRWNDQuMzQ5NkgxMDEuNjVWMzIuNjUwNEgxMDMuMzVaIiBmaWxsPSIjNjQ5RUY3IiBzdHJva2U9IiM2NDlFRjciIHN0cm9rZS13aWR0aD0iMC43Ii8+CjxwYXRoIGQ9Ik02NS44OTA2IDAuNjUwMzkxVjMuNjIyMDdINTQuOTgzNFYyMy4xNjQxSDUxLjU1NjZWMy42MjIwN0g0MC42NTA0VjAuNjUwMzkxSDY1Ljg5MDZaIiBmaWxsPSIjNjQ5RUY3IiBzdHJva2U9IiM2NDlFRjciIHN0cm9rZS13aWR0aD0iMC43Ii8+Cjwvc3ZnPgo='; // Replace with base64 logo image
 
     function downloadPDF() {
         showLoader();

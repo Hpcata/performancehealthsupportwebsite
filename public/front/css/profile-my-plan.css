@@ -289,11 +289,11 @@ body {
 }
 
 .btn-consult {
-    background: #3b82f6;
+    background: #4a84dd;
     color: #fff;
     border: none;
     height: 46px;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 8px 20px;
     font-size: 18px;
     font-weight: 600;
@@ -302,7 +302,7 @@ body {
 }
 
 .btn-consult:hover {
-    background: #2563eb;
+    background: rgba(23, 81, 170, 1);
 }
 
 .plan-card-custom {
@@ -317,9 +317,9 @@ body {
     min-width: 0;
 }
 
-.plan-title {
+/* .plan-title {
     margin-bottom: 0;
-}
+} */
 
 .plan-desc {
     font-size: 1rem;
@@ -472,14 +472,14 @@ body {
 
 .plan-cards-wrap {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 24px;
+    margin-bottom: 24px;
 }
 
 .card-row {
     display: flex;
     flex-direction: column;
-    gap: 24px;
 }
 
 .web-hidden {
@@ -756,6 +756,7 @@ body {
         scrollbar-width: none;
         -ms-overflow-style: none;
         scroll-snap-type: x mandatory;
+        margin-bottom: 0;
     }
 
     .plan-card {
@@ -833,4 +834,15 @@ body {
     .plan-card .card-text {
     font-size: 12px;
 }
+}
+
+.transparent-card{
+    border-radius: 8px;
+background: var(--White, #FFF);
+box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.12);
+    min-height: 310px;
+}
+.transparent-card-header{
+    display: flex;
+    gap: 4px;
 }
