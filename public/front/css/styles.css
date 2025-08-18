@@ -1742,6 +1742,7 @@ body {
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     margin-bottom: 24px;
+    gap: 24px;
 }
 
 .partners-section .logo-row:last-child {
@@ -1757,6 +1758,9 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0 12px;
+    background: white;
+    max-height: 140px;
+    padding: 20px;
 }
 
 .partners-section .logo-card img {
